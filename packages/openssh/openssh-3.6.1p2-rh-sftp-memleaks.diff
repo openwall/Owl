@@ -1,0 +1,50 @@
+--- openssh-3.6.1p2/sftp-client.c.leak	2003-03-10 01:21:18.000000000 +0100
++++ openssh-3.6.1p2/sftp-client.c	2005-05-25 13:09:48.836644747 +0200
+@@ -179,6 +179,7 @@
+ 		int status = buffer_get_int(&msg);
+ 
+ 		error("Couldn't get handle: %s", fx2txt(status));
++		buffer_free(&msg);
+ 		return(NULL);
+ 	} else if (type != SSH2_FXP_HANDLE)
+ 		fatal("Expected SSH2_FXP_HANDLE(%u) packet, got %u",
+@@ -213,6 +214,7 @@
+ 			debug("Couldn't stat remote file: %s", fx2txt(status));
+ 		else
+ 			error("Couldn't stat remote file: %s", fx2txt(status));
++		buffer_free(&msg);
+ 		return(NULL);
+ 	} else if (type != SSH2_FXP_ATTRS) {
+ 		fatal("Expected SSH2_FXP_ATTRS(%u) packet, got %u",
+@@ -988,7 +990,7 @@
+ 		TAILQ_ENTRY(outstanding_ack) tq;
+ 	};
+ 	TAILQ_HEAD(ackhead, outstanding_ack) acks;
+-	struct outstanding_ack *ack;
++	struct outstanding_ack *ack = NULL;
+ 
+ 	TAILQ_INIT(&acks);
+ 
+--- openssh-3.6.1p2/sftp-int.c.leak	2003-03-10 01:21:18.000000000 +0100
++++ openssh-3.6.1p2/sftp-int.c	2005-05-25 13:55:18.723034643 +0200
+@@ -567,6 +567,7 @@
+ 		xfree(abs_dst);
+ 	if (tmp_dst)
+ 		xfree(tmp_dst);
++	globfree(&g);
+ 	return(err);
+ }
+ 
+@@ -1093,8 +1094,11 @@
+ 		if (remote_is_dir(conn, dir) && file2 == NULL) {
+ 			printf("Changing to: %s\n", dir);
+ 			snprintf(cmd, sizeof cmd, "cd \"%s\"", dir);
+-			if (parse_dispatch_command(conn, cmd, &pwd, 1) != 0)
++			if (parse_dispatch_command(conn, cmd, &pwd, 1) != 0) {
++				xfree(dir);
++				xfree(pwd);
+ 				return (-1);
++			}
+ 		} else {
+ 			if (file2 == NULL)
+ 				snprintf(cmd, sizeof cmd, "get %s", dir);

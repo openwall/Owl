@@ -1,0 +1,52 @@
+make signal handler termination path shorter; risky code pointed out by
+mark dowd; ok djm markus
+CVE-2006-5051
+
+--- openssh-3.6.1p2.orig/log.c
++++ openssh-3.6.1p2/log.c
+@@ -124,6 +124,18 @@ error(const char *fmt,...)
+ 	va_end(args);
+ }
+ 
++void
++sigdie(const char *fmt,...)
++{
++	va_list args;
++
++	va_start(args, fmt);
++	do_log(SYSLOG_LEVEL_FATAL, fmt, args);
++	va_end(args);
++	_exit(1);
++}
++
++
+ /* Log this message (information that usually should go to the log). */
+ 
+ void
+--- openssh-3.6.1p2.orig/log.h
++++ openssh-3.6.1p2/log.h
+@@ -55,6 +55,7 @@ LogLevel log_level_number(char *);
+ 
+ void     fatal(const char *, ...) __attribute__((format(printf, 1, 2)));
+ void     error(const char *, ...) __attribute__((format(printf, 1, 2)));
++void     sigdie(const char *, ...) __attribute__((format(printf, 1, 2)));
+ void     log(const char *, ...) __attribute__((format(printf, 1, 2)));
+ void     verbose(const char *, ...) __attribute__((format(printf, 1, 2)));
+ void     debug(const char *, ...) __attribute__((format(printf, 1, 2)));
+--- openssh-3.6.1p2.orig/sshd.c
++++ openssh-3.6.1p2/sshd.c
+@@ -301,13 +301,11 @@ main_sigchld_handler(int sig)
+ static void
+ grace_alarm_handler(int sig)
+ {
+-	/* XXX no idea how fix this signal handler */
+-
+ 	if (use_privsep && pmonitor != NULL && pmonitor->m_pid > 0)
+ 		kill(pmonitor->m_pid, SIGALRM);
+ 
+ 	/* Log error and exit. */
+-	fatal("Timeout before authentication for %s", get_remote_ipaddr());
++	sigdie("Timeout before authentication for %s", get_remote_ipaddr());
+ }
+ 
+ /*

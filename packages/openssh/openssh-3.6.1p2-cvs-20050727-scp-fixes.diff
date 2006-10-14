@@ -1,0 +1,433 @@
+revision 1.125
+date: 2005/07/27 10:39:03;  author: dtucker;  state: Exp;  lines: +2 -2
+branches:  1.125.2;
+Silence bogus -Wuninitialized warnings; ok djm@
+----------------------------
+revision 1.124
+date: 2005/06/17 02:44:33;  author: djm;  state: Exp;  lines: +5 -5
+make this -Wsign-compare clean; ok avsm@ markus@
+----------------------------
+revision 1.123
+date: 2005/05/26 02:08:05;  author: avsm;  state: Exp;  lines: +6 -4
+If copying multiple files to a target file (which normally fails, as it
+must be a target directory), kill the spawned ssh child before exiting.
+This stops it trying to authenticate and spewing lots of output.
+deraadt@ ok
+----------------------------
+revision 1.121
+date: 2005/04/02 12:41:16;  author: djm;  state: Exp;  lines: +2 -4
+since ssh has xstrdup, use it instead of strdup+test. unbreaks -Werror build
+----------------------------
+revision 1.120
+date: 2005/03/31 18:39:21;  author: deraadt;  state: Exp;  lines: +8 -5
+copy argv[] element instead of smashing the one that ps will see; ok otto
+----------------------------
+revision 1.119
+date: 2005/01/24 10:22:06;  author: dtucker;  state: Exp;  lines: +4 -2
+branches:  1.119.2;
+Have scp and sftp wait for the spawned ssh to exit before they exit
+themselves.  This prevents ssh from being unable to restore terminal
+modes (not normally a problem on OpenBSD but common with -Portable
+on POSIX platforms).  From peak at argo.troja.mff.cuni.cz (bz#950);
+ok djm@ markus@
+----------------------------
+revision 1.118
+date: 2004/09/15 18:46:04;  author: deraadt;  state: Exp;  lines: +2 -2
+scratch that do { } while (0) wrapper in this case
+----------------------------
+revision 1.116
+date: 2004/07/08 12:47:21;  author: dtucker;  state: Exp;  lines: +7 -3
+Prevent scp from skipping the file following a double-error.
+bz #863, ok markus@
+----------------------------
+revision 1.115
+date: 2004/06/21 17:36:31;  author: avsm;  state: Exp;  lines: +5 -5
+make ssh -Wshadow clean, no functional changes
+markus@ ok
+----------------------------
+revision 1.114
+date: 2004/04/01 12:19:57;  author: markus;  state: Exp;  lines: +9 -1
+limit trust between local and remote rcp/scp process,
+noticed by lcamtuf; ok deraadt@, djm@
+----------------------------
+revision 1.112
+date: 2003/11/21 11:57:03;  author: djm;  state: Exp;  lines: +2 -2
+unexpand and delete whitespace at EOL; ok markus@
+----------------------------
+revision 1.111
+date: 2003/11/12 10:12:15;  author: dtucker;  state: Exp;  lines: +2 -1
+When called with -q, pass -q to ssh; suppresses SSH2 banner.  ok markus@
+----------------------------
+revision 1.110
+date: 2003/10/08 08:27:36;  author: jmc;  state: Exp;  lines: +3 -3
+scp and sftp: add options list and sort options. options list requested
+by deraadt@
+sshd: use same format as ssh
+ssh: remove wrong option from list
+sftp-server: Subsystem is documented in ssh_config(5), not sshd(8)
+
+ok deraadt@ markus@
+----------------------------
+revision 1.109
+date: 2003/09/19 17:40:20;  author: markus;  state: Exp;  lines: +3 -2
+error handling for remote-remote copy; #638; report Harald Koenig;
+ok millert, fgs, henning, deraadt
+----------------------------
+revision 1.108
+date: 2003/07/18 01:54:25;  author: deraadt;  state: Exp;  lines: +2 -2
+branches:  1.108.2;
+userid is unsigned, but well, force it anyways; andrushock@korovino.net
+----------------------------
+revision 1.106
+date: 2003/06/12 15:34:09;  author: nino;  state: Exp;  lines: +2 -2
+Typo.
+
+Ok markus@.
+----------------------------
+revision 1.105
+date: 2003/06/04 12:40:39;  author: djm;  state: Exp;  lines: +14 -2
+kill ssh process upon receipt of signal, bz #241.
+based on patch from esb AT hawaii.edu; ok markus@
+----------------------------
+revision 1.104
+date: 2003/06/04 12:18:49;  author: djm;  state: Exp;  lines: +11 -28
+ansify; ok markus@
+----------------------------
+
+--- scp.c	5 Mar 2003 22:33:43 -0000	1.102
++++ scp.c	27 Jul 2005 10:39:03 -0000	1.125
+@@ -107,7 +103,20 @@ int showprogress = 1;
+ char *ssh_program = _PATH_SSH_PROGRAM;
+ 
+ /* This is used to store the pid of ssh_program */
+-pid_t do_cmd_pid;
++pid_t do_cmd_pid = -1;
++
++static void
++killchild(int signo)
++{
++	if (do_cmd_pid > 1) {
++		kill(do_cmd_pid, signo ? signo : SIGTERM);
++		waitpid(do_cmd_pid, NULL, 0);
++	}
++
++	if (signo)
++		_exit(1);
++	exit(1);
++}
+ 
+ /*
+  * This function executes the given command as the specified user on the
+@@ -142,7 +151,7 @@ do_cmd(char *host, char *remuser, char *
+ 	close(reserved[0]);
+ 	close(reserved[1]);
+ 
+-	/* For a child to execute the command on the remote host using ssh. */
++	/* Fork a child to execute the command on the remote host using ssh. */
+ 	do_cmd_pid = fork();
+ 	if (do_cmd_pid == 0) {
+ 		/* Child. */
+@@ -170,11 +179,14 @@ do_cmd(char *host, char *remuser, char *
+ 	*fdout = pin[1];
+ 	close(pout[1]);
+ 	*fdin = pout[0];
++	signal(SIGTERM, killchild);
++	signal(SIGINT, killchild);
++	signal(SIGHUP, killchild);
+ 	return 0;
+ }
+ 
+ typedef struct {
+-	int cnt;
++	size_t cnt;
+ 	char *buf;
+ } BUF;
+ 
+@@ -202,9 +214,7 @@ void toremote(char *, int, char *[]);
+ void usage(void);
+ 
+ int
+-main(argc, argv)
+-	int argc;
+-	char *argv[];
++main(int argc, char **argv)
+ {
+ 	int ch, fflag, tflag, status;
+ 	double speed;
+@@ -261,6 +271,7 @@ main(argc, argv)
+ 			verbose_mode = 1;
+ 			break;
+ 		case 'q':
++			addargs(&args, "-q");
+ 			showprogress = 0;
+ 			break;
+ 
+@@ -283,7 +294,7 @@ main(argc, argv)
+ 	argv += optind;
+ 
+ 	if ((pwd = getpwuid(userid = getuid())) == NULL)
+-		fatal("unknown user %d", (int) userid);
++		fatal("unknown user %u", (u_int) userid);
+ 
+ 	if (!isatty(STDERR_FILENO))
+ 		showprogress = 0;
+@@ -344,25 +355,24 @@ main(argc, argv)
+ }
+ 
+ void
+-toremote(targ, argc, argv)
+-	char *targ, *argv[];
+-	int argc;
++toremote(char *targ, int argc, char **argv)
+ {
+ 	int i, len;
+-	char *bp, *host, *src, *suser, *thost, *tuser;
++	char *bp, *host, *src, *suser, *thost, *tuser, *arg;
+ 
+ 	*targ++ = 0;
+ 	if (*targ == 0)
+ 		targ = ".";
+ 
+-	if ((thost = strrchr(argv[argc - 1], '@'))) {
++	arg = xstrdup(argv[argc - 1]);
++	if ((thost = strrchr(arg, '@'))) {
+ 		/* user@host */
+ 		*thost++ = 0;
+-		tuser = argv[argc - 1];
++		tuser = arg;
+ 		if (*tuser == '\0')
+ 			tuser = NULL;
+ 	} else {
+-		thost = argv[argc - 1];
++		thost = arg;
+ 		tuser = NULL;
+ 	}
+ 
+@@ -413,7 +423,8 @@ toremote(targ, argc, argv)
+ 			}
+ 			if (verbose_mode)
+ 				fprintf(stderr, "Executing: %s\n", bp);
+-			(void) system(bp);
++			if (system(bp) != 0)
++				errs = 1;
+ 			(void) xfree(bp);
+ 		} else {	/* local to remote */
+ 			if (remin == -1) {
+@@ -434,9 +445,7 @@ toremote(targ, argc, argv)
+ }
+ 
+ void
+-tolocal(argc, argv)
+-	int argc;
+-	char *argv[];
++tolocal(int argc, char **argv)
+ {
+ 	int i, len;
+ 	char *bp, *host, *src, *suser;
+@@ -485,15 +494,14 @@ tolocal(argc, argv)
+ }
+ 
+ void
+-source(argc, argv)
+-	int argc;
+-	char *argv[];
++source(int argc, char **argv)
+ {
+ 	struct stat stb;
+ 	static BUF buffer;
+ 	BUF *bp;
+-	off_t i, amt, result, statbytes;
+-	int fd, haderr, indx;
++	off_t i, amt, statbytes;
++	size_t result;
++	int fd = -1, haderr, indx;
+ 	char *last, *name, buf[2048];
+ 	int len;
+ 
+@@ -595,9 +603,7 @@ next:			(void) close(fd);
+ }
+ 
+ void
+-rsource(name, statp)
+-	char *name;
+-	struct stat *statp;
++rsource(char *name, struct stat *statp)
+ {
+ 	DIR *dirp;
+ 	struct dirent *dp;
+@@ -654,7 +660,7 @@ bwlimit(int amount)
+ {
+ 	static struct timeval bwstart, bwend;
+ 	static int lamt, thresh = 16384;
+-	u_int64_t wait;
++	u_int64_t waitlen;
+ 	struct timespec ts, rm;
+ 
+ 	if (!timerisset(&bwstart)) {
+@@ -672,10 +678,10 @@ bwlimit(int amount)
+ 		return;
+ 
+ 	lamt *= 8;
+-	wait = (double)1000000L * lamt / limitbw;
++	waitlen = (double)1000000L * lamt / limitbw;
+ 
+-	bwstart.tv_sec = wait / 1000000L;
+-	bwstart.tv_usec = wait % 1000000L;
++	bwstart.tv_sec = waitlen / 1000000L;
++	bwstart.tv_usec = waitlen % 1000000L;
+ 
+ 	if (timercmp(&bwstart, &bwend, >)) {
+ 		timersub(&bwstart, &bwend, &bwend);
+@@ -704,9 +710,7 @@ bwlimit(int amount)
+ }
+ 
+ void
+-sink(argc, argv)
+-	int argc;
+-	char *argv[];
++sink(int argc, char **argv)
+ {
+ 	static BUF buffer;
+ 	struct stat stb;
+@@ -714,8 +718,9 @@ sink(argc, argv)
+ 		YES, NO, DISPLAYED
+ 	} wrerr;
+ 	BUF *bp;
+-	off_t i, j;
+-	int amt, count, exists, first, mask, mode, ofd, omode;
++	off_t i;
++	size_t j, count;
++	int amt, exists, first, mask, mode, ofd, omode;
+ 	off_t size, statbytes;
+ 	int setimes, targisdir, wrerrno = 0;
+ 	char ch, *cp, *np, *targ, *why, *vect[1], buf[2048];
+@@ -723,7 +728,7 @@ sink(argc, argv)
+ 
+ #define	atime	tv[0]
+ #define	mtime	tv[1]
+-#define	SCREWUP(str)	do { why = str; goto screwup; } while (0)
++#define	SCREWUP(str)	{ why = str; goto screwup; }
+ 
+ 	setimes = targisdir = 0;
+ 	mask = umask(0);
+@@ -752,6 +757,8 @@ sink(argc, argv)
+ 			*cp++ = ch;
+ 		} while (cp < &buf[sizeof(buf) - 1] && ch != '\n');
+ 		*cp = 0;
++		if (verbose_mode)
++			fprintf(stderr, "Sink: %s", buf);
+ 
+ 		if (buf[0] == '\01' || buf[0] == '\02') {
+ 			if (iamremote == 0)
+@@ -815,9 +822,13 @@ sink(argc, argv)
+ 			size = size * 10 + (*cp++ - '0');
+ 		if (*cp++ != ' ')
+ 			SCREWUP("size not delimited");
++		if ((strchr(cp, '/') != NULL) || (strcmp(cp, "..") == 0)) {
++			run_err("error: unexpected filename: %s", cp);
++			exit(1);
++		}
+ 		if (targisdir) {
+ 			static char *namebuf;
+-			static int cursize;
++			static size_t cursize;
+ 			size_t need;
+ 
+ 			need = strlen(targ) + strlen(cp) + 250;
+@@ -836,6 +847,8 @@ sink(argc, argv)
+ 		exists = stat(np, &stb) == 0;
+ 		if (buf[0] == 'D') {
+ 			int mod_flag = pflag;
++			if (!iamrecursive)
++				SCREWUP("received directory without -r");
+ 			if (exists) {
+ 				if (!S_ISDIR(stb.st_mode)) {
+ 					errno = ENOTDIR;
+@@ -930,22 +940,26 @@ bad:			run_err("%s: %s", np, strerror(er
+ 		}
+ 		if (pflag) {
+ 			if (exists || omode != mode)
+ #ifdef HAVE_FCHMOD
+-				if (fchmod(ofd, omode))
++				if (fchmod(ofd, omode)) {
+ #else /* HAVE_FCHMOD */
+-				if (chmod(np, omode))
++				if (chmod(np, omode)) {
+ #endif /* HAVE_FCHMOD */
+ 					run_err("%s: set mode: %s",
+ 					    np, strerror(errno));
++					wrerr = DISPLAYED;
++				}
+ 		} else {
+ 			if (!exists && omode != mode)
+ #ifdef HAVE_FCHMOD
+-				if (fchmod(ofd, omode & ~mask))
++				if (fchmod(ofd, omode & ~mask)) {
+ #else /* HAVE_FCHMOD */
+-				if (chmod(np, omode & ~mask))
++				if (chmod(np, omode & ~mask)) {
+ #endif /* HAVE_FCHMOD */
+ 					run_err("%s: set mode: %s",
+ 					    np, strerror(errno));
++					wrerr = DISPLAYED;
++				}
+ 		}
+ 		if (close(ofd) == -1) {
+ 			wrerr = YES;
+@@ -1005,8 +1019,8 @@ void
+ usage(void)
+ {
+ 	(void) fprintf(stderr,
+-	    "usage: scp [-pqrvBC1246] [-F config] [-S program] [-P port]\n"
+-	    "           [-c cipher] [-i identity] [-l limit] [-o option]\n"
++	    "usage: scp [-1246BCpqrv] [-c cipher] [-F ssh_config] [-i identity_file]\n"
++	    "           [-l limit] [-o ssh_option] [-P port] [-S program]\n"
+ 	    "           [[user@]host1:]file1 [...] [[user@]host2:]file2\n");
+ 	exit(1);
+ }
+@@ -1037,8 +1051,7 @@ run_err(const char *fmt,...)
+ }
+ 
+ void
+-verifydir(cp)
+-	char *cp;
++verifydir(char *cp)
+ {
+ 	struct stat stb;
+ 
+@@ -1048,12 +1061,11 @@ verifydir(cp)
+ 		errno = ENOTDIR;
+ 	}
+ 	run_err("%s: %s", cp, strerror(errno));
+-	exit(1);
++	killchild(0);
+ }
+ 
+ int
+-okname(cp0)
+-	char *cp0;
++okname(char *cp0)
+ {
+ 	int c;
+ 	char *cp;
+@@ -1083,9 +1095,7 @@ bad:	fprintf(stderr, "%s: invalid user n
+ }
+ 
+ BUF *
+-allocbuf(bp, fd, blksize)
+-	BUF *bp;
+-	int fd, blksize;
++allocbuf(BUF *bp, int fd, int blksize)
+ {
+ 	size_t size;
+ 	struct stat stb;
+@@ -1109,8 +1119,7 @@ allocbuf(bp, fd, blksize)
+ }
+ 
+ void
+-lostconn(signo)
+-	int signo;
++lostconn(int signo)
+ {
+ 	if (!iamremote)
+ 		write(STDERR_FILENO, "lost connection\n", 16);
