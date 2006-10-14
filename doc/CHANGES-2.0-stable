@@ -5,6 +5,20 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+(2006/10/03)
+2006/10/14	Package: openssh
+SECURITY FIX	Severity: low/none to high, remote/local, active
+Backported upstream fixes for sshd connection consumption vulnerability
+(severity: low, remote, active), scp local arbitrary command execution
+vulnerability (severity: none to high, local, active), CRC compensation
+attack detector DoS (severity: low, remote, active), client NULL
+dereference on protocol error (severity: low, remote, passive).
+References:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2004-2069
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0225
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4924
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4925
+
 (2006/09/29)
 2006/10/01	Package: openssl
 SECURITY FIX	Severity: none to low/high, remote, active/passive
@@ -107,4 +121,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.14 2006/10/02 12:08:13 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.15 2006/10/14 19:48:03 ldv Exp $
