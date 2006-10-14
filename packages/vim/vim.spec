@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.27 2005/12/18 23:41:59 mci Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.27.2.1 2006/10/14 19:51:33 ldv Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -12,7 +12,7 @@ Name: vim
 %define patchlevel 4
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl1
+Release: owl2
 License: Charityware
 Group: Applications/Editors
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%major.%minor%alpha.tar.bz2
@@ -122,7 +122,7 @@ test ! -e failed
 %patch6 -p1
 %patch7 -p1
 rm src/auto/configure
-install -m 644 %_sourcedir/README .
+install -pm644 %_sourcedir/README .
 
 %if %BUILD_USE_GPM
 %define	gpmflag --enable-gpm
@@ -191,20 +191,20 @@ mkdir -p %buildroot%_prefix/X11R6/bin
 cd src
 %makeinstall installmacros BINDIR=/bin DESTDIR=%buildroot
 mv %buildroot/bin/xxd %buildroot%_bindir
-install -m 755 vim-enhanced %buildroot%_bindir/vim
+install -m755 vim-enhanced %buildroot%_bindir/vim
 %if %BUILD_USE_X
-install -m 755 gvim %buildroot%_prefix/X11R6/bin/
+install -m755 gvim %buildroot%_prefix/X11R6/bin/
 %endif
 
-install -m 755 vitmp %buildroot/bin/
-install -m 644 %_sourcedir/vitmp.1 %buildroot%_mandir/man1/
+install -m755 vitmp %buildroot/bin/
+install -pm644 %_sourcedir/vitmp.1 %buildroot%_mandir/man1/
 
 pushd %buildroot
 mv bin/vim bin/vi
-mv bin/vimtutor .%_bindir
-rm bin/rvim
+mv bin/rview bin/view bin/vimtutor .%_bindir/
+rm bin/ex bin/rvim
 ln -s vi bin/rvi
-ln -s vim .%_bindir/ex
+ln -s vi bin/ex
 ln -s vim .%_bindir/rvim
 ln -s vim .%_bindir/vimdiff
 sed -i "s,%buildroot,," .%_mandir/man1/{vim,vimtutor}.1
@@ -230,7 +230,7 @@ cp %_sourcedir/gvim.desktop etc/X11/applnk/Applications/
 rm -r .%_mandir/man1/evim.1*
 %endif
 
-install -m 644 %_sourcedir/vimrc .%_datadir/vim/
+install -pm644 %_sourcedir/vimrc .%_datadir/vim/
 
 # Dependency cleanups
 chmod 644 .%_datadir/vim/%vimdir/{doc/vim2html.pl,tools/{*.pl,vim132}}
@@ -243,29 +243,31 @@ chmod 644 ../runtime/doc/vim2html.pl
 %_bindir/xxd
 %_datadir/vim
 %_mandir/man1/vim.*
-%_mandir/man1/vimdiff.*
-%_mandir/man1/vi.*
-%_mandir/man1/ex.*
-%_mandir/man1/view.*
-%_mandir/man1/rvi.*
-%_mandir/man1/rview.*
 %_mandir/man1/xxd.*
 
 %files small
 %defattr(-,root,root)
-/bin/vi
 /bin/ex
-/bin/view
 /bin/rvi
-/bin/rview
+/bin/vi
 /bin/vitmp
+%_mandir/man1/ex.*
+%_mandir/man1/rvi.*
+%_mandir/man1/vi.*
 %_mandir/man1/vitmp.*
 
 %files enhanced
 %defattr(-,root,root)
+%_bindir/rview
+%_bindir/rvim
+%_bindir/view
 %_bindir/vim
-%_bindir/ex
+%_bindir/vimdiff
 %_bindir/vimtutor
+%_mandir/man1/rview.*
+%_mandir/man1/rvim.*
+%_mandir/man1/view.*
+%_mandir/man1/vimdiff.*
 %_mandir/man1/vimtutor.*
 
 %if %BUILD_USE_X
@@ -285,6 +287,12 @@ chmod 644 ../runtime/doc/vim2html.pl
 %endif
 
 %changelog
+* Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.4.4-owl2
+- Relocated view and rview from /bin to %_bindir.
+- Removed ex from %_bindir, ex in /bin should be enough.
+- Packaged rvim and vimdiff symlinks.
+- Package manpages according to related binaries.
+
 * Sun Dec 18 2005 Michail Litvak <mci-at-owl.openwall.com> 6.4.4-owl1
 - Updated to 6.4 patchlevel 4.
 - Reviewed patches, added some patches from Debian.
