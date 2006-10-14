@@ -5,6 +5,11 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+(2006/04/04)
+2006/10/14	Package: vim
+Repaired ex, view and rview symlinks.
+Packaged rvim and vimdiff symlinks for completeness.
+
 (2006/10/03)
 2006/10/14	Package: openssh
 SECURITY FIX	Severity: low/none to high, remote/local, active
@@ -121,4 +126,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.15 2006/10/14 19:48:03 ldv Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.16 2006/10/14 21:22:24 ldv Exp $
