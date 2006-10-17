@@ -267,12 +267,6 @@ http://www.kernel.org/pub/linux/utils/kernel/hotplug/udev.html
 With the ncurses UI, default to using cfdisk, but offer plain fdisk as
 well.
 
-[PRIORITY: medium]
-[ASSIGNED: croco@]
-Talk to PAM rather than invoke passwd(1).  With the ncurses UI, display
-prompts and messages with the appropriate CDK widgets.  Buffer multiple
-subsequent messages like the old passwdlg.c did.
-
 
 	owl-startup.
 
@@ -479,4 +473,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.169 2006/10/13 16:05:35 solar Exp $
+$Owl: Owl/doc/TODO,v 1.170 2006/10/17 00:20:21 solar Exp $
