@@ -17,8 +17,14 @@ software is generally available for GNU/*/Linux systems.  It offers
 some compatibility (read below) for software packages found in or
 developed for other major Linux distributions, such as Red Hat Linux.
 
-Additionally, being a server platform, Owl will include a growing set
-of integrated Internet services.
+Being a server platform, Owl includes a growing set of integrated
+Internet services.
+
+Additionally, all of our official CDs and downloadable ISO images
+provide a complete live system usable right off the CD in multi-user
+mode, with networking and development tools.  Of course, the same CDs
+and ISOs also contain packages to be installed on a hard drive (using
+the included installer program called "settle") and full source code.
 
 Owl includes a complete build environment capable to re-build the
 entire system from source with one simple command ("make buildworld").
@@ -118,4 +124,4 @@ cases it is possible to install applications packaged for a recent
 version of Fedora Core or Red Hat Enterprise Linux on Owl (as of Owl 2.0
 release, this applies to FC3 and RHEL4).
 
-$Owl: Owl/doc/CONCEPTS,v 1.12 2006/04/23 22:37:14 solar Exp $
+$Owl: Owl/doc/CONCEPTS,v 1.13 2006/10/17 00:31:15 solar Exp $

@@ -32,7 +32,7 @@ sources			source tree (original tarballs to be patched)
 kernel			kernel sources and recommended patches
 Owl.mtree		mtree(8) specification of the above
 i?86, sparc*, alpha*	Owl binary packages
-iso			ISO-9660 images of Owl CDs
+iso			ISO-9660 images of Owl CDs (live + installable)
 
 Some of the subdirectories may use symlinks to files common to several
 Owl branches.  Thus, to download just one Owl branch you may need to
@@ -44,9 +44,15 @@ corresponding PGP public key is available from:
 
 http://www.openwall.com/signatures/
 
-You will always need the CVS tree, -- even if you choose to install
-binary packages only.  In order to (re-)build Owl from source, you'll
-need both the CVS and the source trees.
+All of our official CDs and downloadable ISO images include a complete
+live system (usable right off the CD), packages to be installed on a
+hard drive (using the included installer program called "settle"), and
+full source code ("native", "sources", and "kernel").
+
+Unless you've opted for the CD or ISO image, you will always need to
+download the CVS tree, -- even if you choose to install binary packages
+only.  In order to (re-)build Owl from source, you'll need both the CVS
+and the source trees.
 
 More documentation (including BUILD and INSTALL) is available in the
 CVS tree, under Owl/doc/.
@@ -73,4 +79,4 @@ Finally, the CVSweb interface is provided at:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/DOWNLOAD,v 1.35 2006/02/23 17:14:32 solar Exp $
+$Owl: Owl/doc/DOWNLOAD,v 1.36 2006/10/17 00:15:44 solar Exp $
