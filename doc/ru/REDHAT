@@ -57,7 +57,7 @@ auth       required	pam_listfile.so item=user sense=allow onerr=fail file=/etc/x
 в файле /etc/xserver.allow .
 
 
-	Отсутствие модуля pam_stack.
+	Отсутствие модуля pam_stack (sudo).
 
 Мы отказались от модуля pam_stack в пользу директивы include. Данный модуль
 входит в пакет pam-compat из поставки Owl, который по умолчанию не ставится.
@@ -133,4 +133,4 @@ NPTL требует особой поддержки со стороны ядра, которую мы пока не
 свежие версии RPM требуют поддержки NPTL. Эта проблема решена нами
 посредством особой сборки RPM.
 
-$Owl: Owl/doc/ru/REDHAT,v 1.12 2006/04/24 16:06:51 gremlin Exp $
+$Owl: Owl/doc/ru/REDHAT,v 1.13 2006/10/21 23:35:48 gremlin Exp $
