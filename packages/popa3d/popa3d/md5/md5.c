@@ -44,7 +44,7 @@
  * SET reads 4 input bytes in little-endian byte order and stores them
  * in a properly aligned word in host byte order.
  *
- * The check for little-endian architectures which tolerate unaligned
+ * The check for little-endian architectures that tolerate unaligned
  * memory accesses is just an optimization.  Nothing will break if it
  * doesn't work.
  */
