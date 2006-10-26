@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.39 2006/10/26 21:01:13 ldv Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.40 2006/10/26 21:05:15 ldv Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 1.0
+Version: 1.1
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -90,6 +90,11 @@ fi
 %dir /owl
 
 %changelog
+* Thu Oct 26 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1-owl1
+- Changed floppy geometry from 1.44Mb to 2.88Mb floppy.
+- Removed explicit loopback device specification.
+- Updated dot-config, added dot-config-x86_64.
+
 * Sun Feb 12 2006 Solar Designer <solar-at-owl.openwall.com> 1.0-owl1
 - Updated the suggested "setfont ..." command in welcome-cdrom.sh to apply to
 our current version of kbd.
