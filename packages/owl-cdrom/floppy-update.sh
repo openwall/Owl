@@ -1,9 +1,9 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-cdrom/Attic/floppy-update.sh,v 1.3 2005/11/16 13:21:53 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/Attic/floppy-update.sh,v 1.4 2006/10/26 20:10:02 ldv Exp $
 
 set -e
 
-dd if=/dev/zero of=floppy.image bs=18k count=80
+dd if=/dev/zero of=floppy.image bs=36k count=80
 /sbin/mke2fs -m 0 -F floppy.image
 
 mount floppy.image /mnt/floppy -oloop=/dev/loop0
