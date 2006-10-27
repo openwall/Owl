@@ -1,4 +1,4 @@
-#ifdef __i386__
+#if defined(__i386__) || defined(__x86_64__)
 
 #include <stdio.h>
 
@@ -72,4 +72,4 @@ void install_kernel_and_lilo(OwlInstallInterface *the_iface)
         the_iface->Message("Warning: LILO failed");
 }
 
-#endif
+#endif // __i386__ || __x86_64__

@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.71 2006/09/25 22:29:27 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.72 2006/10/27 06:20:03 ldv Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 1.1.4
+Version: 1.1.5
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -34,6 +34,9 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
+* Thu Oct 26 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1.5-owl1
+- Updated #ifdef's to handle x86-64 as well as x86.
+
 * Tue Sep 26 2006 Croco <croco-at-owl.openwall.com> 1.1.4-owl1
 - implemented console font & primary locale configuration
 - fixed the bug with 'up arrow' in selection boxes

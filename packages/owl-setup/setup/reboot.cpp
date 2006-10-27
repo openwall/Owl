@@ -1,4 +1,4 @@
-#ifdef __i386__
+#if defined(__i386__) || defined(__x86_64__)
 
 #include <unistd.h>
 
@@ -50,4 +50,4 @@ void reboot_it(OwlInstallInterface *the_iface)
     }
 }
 
-#endif
+#endif // __i386__ || __x86_64__

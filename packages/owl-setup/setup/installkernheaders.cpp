@@ -1,4 +1,4 @@
-#ifdef __i386__
+#if defined(__i386__) || defined(__x86_64__)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -169,4 +169,4 @@ void install_kernel_headers(OwlInstallInterface *the_iface)
     }
 }
 
-#endif // __i386__
+#endif // __i386__ || __x86_64__
