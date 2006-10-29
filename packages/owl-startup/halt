@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-startup/halt,v 1.4 2005/11/16 13:21:54 solar Exp $
+# $Owl: Owl/packages/owl-startup/halt,v 1.5 2006/10/29 14:18:11 ldv Exp $
 #
 # This file is based on several Debian scripts by Miquel van Smoorenburg.
 #
@@ -27,7 +27,7 @@ echo "Turning off swap"
 swapoff -a
 
 if [ -x /sbin/accton ]; then
-	/sbin/accton
+	/sbin/accton off
 fi
 
 if [ -x /sbin/quotaoff ]; then

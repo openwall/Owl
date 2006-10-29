@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.69 2006/05/21 01:38:46 solar Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.70 2006/10/29 14:18:11 ldv Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.30
+Version: 0.31
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -166,6 +166,9 @@ fi
 %doc redhat
 
 %changelog
+* Sun Oct 29 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.31-owl1
+- Changed /etc/init.d/halt to call accton(8) with "off" argument.
+
 * Fri May 19 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.30-owl1
 - Added logging to rc.sysinit (the log file is /var/log/boot).
 - Adjusted the grep pattern used to determine whether /etc/fstab contains
