@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.39 2006/06/16 16:42:20 solar Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.40 2006/10/29 18:15:46 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -13,7 +13,7 @@
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
 Version: 1.39
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
@@ -21,6 +21,7 @@ Patch0: e2fsprogs-1.39-owl-alt-fixes.diff
 Patch1: e2fsprogs-1.39-owl-tests.diff
 Patch2: e2fsprogs-1.37-owl-blkid-env.diff
 Patch3: e2fsprogs-1.39-owl-tmp.diff
+Patch4: e2fsprogs-1.39-up-20060530-sigbus.diff
 PreReq: /sbin/ldconfig
 BuildRequires: gettext, texinfo, automake, autoconf
 BuildRequires: glibc >= 0:2.2, sed >= 0:4.1
@@ -57,6 +58,7 @@ chmod -R u+w .
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 bzip2 -9k ChangeLog RELEASE-NOTES
 
 # remove these unwanted header files just in case
@@ -249,6 +251,10 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Sun Oct 29 2006 Alexandr D. Kanevskiy <kad-at-owl.openwall.com> 1.39-owl3
+- Patch from upstream Mercurial repository:
+Changeset 1953: Fix SIGBUS through unaligned access to FAT superblocks.
+
 * Fri Jun 16 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.39-owl2
 - Fixed temporary file handling issues during the build process.
 
