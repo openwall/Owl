@@ -12,6 +12,15 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2006/10/29	Package: screen
+SECURITY FIX	Severity: low, remote, passive
+Applied upstream patch that fixes two bugs in UTF-8 combining characters
+handling.  The bugs could be used to crash/hang screen by writing a
+special string to a window.
+References:
+http://lists.gnu.org/archive/html/screen-users/2006-10/msg00028.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4573
+
 2006/10/03	Package: openssh
 SECURITY FIX	Severity: low/none to high, remote/local, active
 Backported upstream fixes for sshd connection consumption vulnerability
@@ -270,4 +279,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.57 2006/10/05 04:13:43 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.58 2006/10/29 21:36:31 ldv Exp $
