@@ -14,14 +14,11 @@ DOWNLOAD for locations where you may obtain the ISO-9660 CD images and
 burn one onto a CD-R.
 
 The Owl CDs for x86 are bootable, so if your machine supports booting
-off a CD just do so.  Otherwise take the boot floppy image from the CD
-under boot/floppy.image, write it onto a formatted 1.44 MB floppy
-(with dd(1) or an equivalent tool), and boot off the floppy.  In
-either case, the boot loader will prompt you for your CD-ROM device
-which the kernel will use for the root filesystem.  If you're using an
-IDE CD-ROM drive, select the proper IDE controller and whether the
-drive is set to master or slave.  If you're using a SCSI CD-ROM drive,
-select "scsi".
+off a CD just do so.  The boot loader will prompt you for your CD-ROM
+device that the kernel will use for the root filesystem.  If you're
+using an IDE CD-ROM drive, select the proper IDE controller and whether
+the drive is set to master or slave.  If you're using a SCSI CD-ROM
+drive, select "scsi".
 
 Owl should boot into single user mode.  Once in the shell, you can
 optionally configure the CD-booted system by simply typing:
@@ -91,4 +88,4 @@ already installed on the system (if any).
 Once the installation is complete, make sure to manually unmount the
 filesystems with umount(8) prior to rebooting the system.
 
-$Owl: Owl/doc/INSTALL,v 1.20 2006/02/02 10:33:35 solar Exp $
+$Owl: Owl/doc/INSTALL,v 1.21 2006/10/29 18:45:53 solar Exp $
