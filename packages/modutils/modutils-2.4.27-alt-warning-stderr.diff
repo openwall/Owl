@@ -168,7 +168,7 @@ diff -upk.orig modutils-2.4.27.orig/util/logger.c modutils-2.4.27/util/logger.c
 +	va_list args;
 +
 +	if (silent);
-+	else if (log) {
++	else if (logging) {
 +		char buf[2*PATH_MAX];
 +		va_start(args, fmt);
 +		vsnprintf(buf, sizeof(buf), fmt, args);

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/modutils/modutils.spec,v 1.25 2006/02/03 22:02:14 ldv Exp $
+# $Owl: Owl/packages/modutils/modutils.spec,v 1.26 2006/10/30 23:17:13 ldv Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
 Version: 2.4.27
-Release: owl3
+Release: owl4
 License: GPL
 Group: System Environment/Kernel
 Source0: ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.4/modutils-%version.tar.bz2
@@ -18,13 +18,14 @@ Patch5: modutils-2.4.27-alt-modprobe-bL.diff
 Patch6: modutils-2.4.27-alt-depmod-prtdepend-cut_prefix.diff
 Patch7: modutils-2.4.27-alt-allowable-licenses.diff
 Patch8: modutils-2.4.27-alt-insmod-force_load.diff
-Patch9: modutils-2.4.27-alt-warning-stderr.diff
-Patch10: modutils-2.4.27-owl-warnings.diff
-Patch11: module-init-tools-3.1-alt-release-memory.diff
-Patch12: module-init-tools-3.1-alt-depmod-check-aliases.diff
-Patch13: module-init-tools-3.1-alt-modinfo-legacy.diff
-Patch14: modutils-2.4.27-alt-mit-combined.diff
-Patch15: modutils-2.4.27-alt-owl-doc.diff
+Patch9: modutils-2.4.27-deb-alt-fixes.diff
+Patch10: modutils-2.4.27-alt-warning-stderr.diff
+Patch11: modutils-2.4.27-owl-warnings.diff
+Patch12: module-init-tools-3.1-alt-release-memory.diff
+Patch13: module-init-tools-3.1-alt-depmod-check-aliases.diff
+Patch14: module-init-tools-3.1-alt-modinfo-legacy.diff
+Patch15: modutils-2.4.27-alt-mit-combined.diff
+Patch16: modutils-2.4.27-alt-owl-doc.diff
 PreReq: /sbin/chkconfig
 Provides: module-init-tools = %mitver
 Obsoletes: modules
@@ -51,13 +52,14 @@ mv module-init-tools-%mitver module-init-tools
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
-pushd module-init-tools
 %patch11 -p1
+pushd module-init-tools
 %patch12 -p1
 %patch13 -p1
-popd # module-init-tools
 %patch14 -p1
+popd # module-init-tools
 %patch15 -p1
+%patch16 -p1
 bzip2 -9k ChangeLog
 
 %{expand:%%define optflags %optflags -Wall}
@@ -99,6 +101,10 @@ fi
 %_mandir/*/*
 
 %changelog
+* Mon Oct 30 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.4.27-owl4
+- Fixed check for verbose flag in insmod, patch from Alexander Kanevskiy.
+- Imported Debian patch that fixes build with recent versions of flex and gcc.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.4.27-owl3
 - Compressed ChangeLog file.
 

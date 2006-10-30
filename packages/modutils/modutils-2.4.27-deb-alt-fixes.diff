@@ -1,0 +1,449 @@
+--- modutils-2.4.27.0.orig/man/insmod.8
++++ modutils-2.4.27.0/man/insmod.8
+@@ -294,7 +294,8 @@
+ 	  find /var/log/ksymoops -type f -atime +2 -exec rm {} \e;
+   fi
+ .SH SEE ALSO
+-\fBrmmod\fP(8), \fBmodprobe\fP(8), \fBdepmod\fP(8), \fBlsmod\fP(8),
++\fBrmmod\fP(8), \fBmodprobe\fP(8), \fBdepmod\fP(8), \fBlsmod\fP(8), 
++\fBmodinfo\fP(8),
+ \fBksyms\fP(8), \fBmodules\fP(2), \fBgenksyms\fP(8), \fBkerneld\fP(8),
+ \fBksymoops\fP(kernel).
+ .SH BUGS
+--- modutils-2.4.27.0.orig/man/lsmod.8
++++ modutils-2.4.27.0/man/lsmod.8
+@@ -19,6 +19,10 @@
+ .I can_unload
+ routine then the user count displayed by lsmod is always -1,
+ irrespective of the real use count.
++.PP
++If you want to list \fBall\fR modules that could be loaded with your current
++kernel, use:
++.B modprobe -l
+ .SH OPTIONS
+ .TP
+ .BR \-h ", " \-\-help
+@@ -27,7 +31,7 @@
+ .BR \-V ", " \-\-version
+ Display the version of \fBlsmod\fR and immediately exit.
+ .SH SEE ALSO
+-insmod(8), modprobe(8), depmod(8), rmmod(8), ksyms(8)
++\fBinsmod\fP(8), \fBmodprobe\fP(8), \fBdepmod\fP(8), \fBrmmod\fP(8), \fBksyms\fP(8), \fBmodinfo\fP(8).
+ .SH HISTORY
+ Module support was first conceived by Anonymous
+ .br
+--- modutils-2.4.27.0.orig/man/modprobe.8
++++ modutils-2.4.27.0/man/modprobe.8
+@@ -83,7 +83,7 @@
+ .TP
+ .BR \-s ", " \-\-syslog
+ Report via syslog instead of stderr.
+-This options will automatically be sent to \fBinsmod\fR.
++This option will automatically be sent to \fBinsmod\fR.
+ .TP
+ \fB\-t\fR\ \fImoduletype\fR;\ \fB\-\-type\fR\ \fImoduletype\fR
+ Only consider modules of this type that match given \fIpattern\fR.  modprobe
+@@ -137,7 +137,7 @@
+ the pre- and post-remove commands in the configuration file
+ \fI/etc/modules.conf\fR.
+ .PP
+-The combining the options \fB\-l\fR and \fB\-t\fR lists all available
++Combining the options \fB\-l\fR and \fB\-t\fR lists all available
+ modules of a certain type.
+ .PP
+ Option \fB\-c\fR will print the currently used configuration (default +
+@@ -165,7 +165,7 @@
+ The idea is that \fBmodprobe\fR will look first in the directory containing
+ modules compiled for the current release of the kernel.  If the module is not
+ found there, \fBmodprobe\fR will look in the directory common to the kernel
+-version (e.g. 2.0, 2.2).  If the module is still found, \fBmodprobe\fR
++version (e.g. 2.0, 2.2).  If the module is still not found, \fBmodprobe\fR
+ will look in the directory containing modules for a default release,
+ and so on.
+ .PP
+@@ -186,7 +186,7 @@
+ .TP
+ .B modprobe \-t net
+ Load one of the modules that are stored in the directory tagged "net".
+-Each module are tried until one succeeds.
++Each module is tried until one succeeds.
+ .TP
+ .B modprobe \-a \-t boot
+ All modules that are stored in directories tagged "boot" will be loaded.
+@@ -208,7 +208,8 @@
+ .I  /lib/modules/*
+ .fi
+ .SH SEE ALSO
+-.BR depmod "(8), " lsmod "(8), " kerneld "(8), " ksyms "(8), " rmmod "(8)."
++.BR depmod "(8), " lsmod "(8), " kerneld "(8), " ksyms "(8), " rmmod "(8),"
++.BR modinfo "(8), " modprobe.conf "(5).
+ .SH SAFE MODE
+ If the effective uid is not equal to the real uid then \fBmodprobe\fR treats
+ its input with extreme suspicion.  The last parameter is always treated
+@@ -220,7 +221,7 @@
+ .PP
+ euid may not be equal to uid when modprobe is invoked from the kernel,
+ this is true for kernels >= 2.4.0-test11.  In an ideal world, \fBmodprobe\fR
+-could trust the kernel to only pass valid parameters to modprobe.
++could trust the kernel to pass only valid parameters to modprobe.
+ However at least one local root exploit has occurred because high level
+ kernel code passed unverified parameters direct from the user to
+ modprobe.  So modprobe no longer trusts kernel input.
+@@ -233,7 +234,7 @@
+  TERM=linux
+  PATH=/sbin:/usr/sbin:/bin:/usr/bin
+ .fi
+-This detects modprobe execution from the kernel on kernels 2.2 though
++This detects modprobe execution from the kernel on kernels 2.2 through
+ 2.4.0-test11, even if uid == euid, which it does on the earlier
+ kernels.
+ .SH "LOGGING COMMANDS"
+--- modutils-2.4.27.0.orig/man/modules.conf.5
++++ modutils-2.4.27.0/man/modules.conf.5
+@@ -87,6 +87,11 @@
+ When this prefix is used, the new module_list will be
+ .B added
+ to the previous module_list instead of replacing it.
++.PP
++All commands (in \fIpost-install\fR, \fIpost-remove\fR, 
++\fIpre-install\fR, \fIpre-remove\fR, and \fIremove\fR) are executed using
++the \fBsystem()\fR call. Commands need to be posixly correct, as they
++will be processed by \fB/bin/sh\fR.
+ .SH SEMANTICS
+ .B A_PATH
+ is the fully qualified path to the target.
+@@ -693,7 +698,7 @@
+ exists, later versions will give an error message and refuse to load
+ modules.
+ .SH SEE ALSO
+-depmod(8), modprobe(8), insmod(8)
++\fBdepmod\fP(8), \fBmodprobe\fP(8), \fBinsmod\fP(8), \fBupdate-modules\fP(8).
+ .SH AUTHOR
+ .nf
+ Bjorn Ekwall <bj0rn@blox.se>
+--- modutils-2.4.27.0.orig/depmod/depmod.c
++++ modutils-2.4.27.0/depmod/depmod.c
+@@ -1133,7 +1133,7 @@
+ 
+ 		for (ksym = ksyms; so_far < nksyms; ++so_far, ksym++) {
+ 			if (strncmp((char *)ksym->name, "GPLONLY_", 8) == 0)
+-				((char *)ksym->name) += 8;
++				ksym->name += 8;
+ 			assert(n_syms < MAX_MAP_SYM);
+ 			symtab[n_syms++] = addsym((char *)ksym->name, mod, SYM_DEFINED, 0);
+ 		}
+@@ -1265,7 +1265,7 @@
+ 				 * error.  Use the error() routine but do not count
+ 				 * any errors.  Remove in 2.5.
+ 				 */
+-				int save_errors = errors;
++				int save_errors = error_count;
+ 				if (!quiet && nberr == 0)
+ 					error("*** Unresolved symbols in %s",
+ 					      ptmod->name);
+@@ -1274,7 +1274,7 @@
+ 				nberr++;
+ 				if (flag_unresolved_error)
+ 					ret = 1;
+-				errors = save_errors;
++				error_count = save_errors;
+ 			}
+ 		}
+ 		verbose("%s\n", ptmod->name + skipchars);
+@@ -1675,6 +1675,6 @@
+ #else
+ int main(int argc, char **argv)
+ {
+-	return depmod_main(argc, argv) || errors;
++	return depmod_main(argc, argv) || error_count;
+ }
+ #endif	/* defined(COMMON_3264) && defined(ONLY_32) */
+--- modutils-2.4.27.0.orig/genksyms/genksyms.c
++++ modutils-2.4.27.0/genksyms/genksyms.c
+@@ -45,7 +45,7 @@
+ int flag_debug, flag_dump_defs, flag_warnings;
+ int checksum_version = 1, kernel_version = version(2,0,0);
+ 
+-static int errors;
++static int num_errors;
+ static int nsyms;
+ 
+ static struct symbol *expansion_trail;
+@@ -458,7 +458,7 @@
+       va_end(args);
+       putc('\n', stderr);
+ 
+-      errors++;
++      num_errors++;
+     }
+ }
+ 
+@@ -476,7 +476,7 @@
+       va_end(args);
+       putc('\n', stderr);
+ 
+-      errors++;
++      num_errors++;
+     }
+ }
+ 
+@@ -597,5 +597,5 @@
+ 	      nsyms, HASH_BUCKETS, (double)nsyms / (double)HASH_BUCKETS);
+     }
+ 
+-  return errors != 0;
++  return num_errors != 0;
+ }
+--- modutils-2.4.27.0.orig/genksyms/lex.l
++++ modutils-2.4.27.0/genksyms/lex.l
+@@ -130,6 +130,7 @@
+ 
+   static int suppress_type_lookup, dont_want_brace_phrase;
+   static struct string_list *next_node;
++  static int next_token = 0;
+ 
+   int token, count = 0;
+   struct string_list *cur_node;
+@@ -144,7 +145,12 @@
+     }
+ 
+ repeat:
+-  token = yylex1();
++  if (next_token != 0) {
++    token = next_token;
++    next_token = 0;
++  }
++  else
++    token = yylex1();
+ 
+   if (token == 0)
+     return 0;
+@@ -425,7 +431,7 @@
+ 	    {
+ 	      /* Put back the token we just read so's we can find it again
+ 		 after registering the expression.  */
+-	      unput(token);
++	      next_token = token;
+ 
+ 	      lexstate = ST_NORMAL;
+ 	      token = EXPRESSION_PHRASE;
+--- modutils-2.4.27.0.orig/include/util.h
++++ modutils-2.4.27.0/include/util.h
+@@ -39,8 +39,8 @@
+ extern int xftw(const char *directory, xftw_func_t);
+ 
+ /* Error logging */
+-extern int log;
+-extern int errors;
++extern int logging;
++extern int error_count;
+ extern const char *error_file;
+ 
+ extern int flag_verbose;
+--- modutils-2.4.27.0.orig/insmod/insmod.c
++++ modutils-2.4.27.0/insmod/insmod.c
+@@ -275,7 +275,7 @@
+ 		if (strncmp((char *)s->name, "GPLONLY_", 8) == 0) {
+ 			gplonly_seen = 1;
+ 			if (gpl)
+-				((char *)s->name) += 8;
++				s->name += 8;
+ 			else
+ 				continue;
+ 		}
+@@ -1679,7 +1679,7 @@
+ 	error_file = "insmod";
+ 
+ 	/* To handle repeated calls from combined modprobe */
+-	errors = optind = 0;
++	error_count = optind = 0;
+ 
+ 	/* Process the command line.  */
+ 	while ((o = getopt_long(argc, argv, "fhkLmnpqrsSvVxXyYNe:o:O:P:R:",
+@@ -2064,7 +2064,7 @@
+ 		goto out;
+ 	/**** No symbols or sections to be changed after kallsyms above ***/
+ 
+-	if (errors)
++	if (error_count)
+ 		goto out;
+ 
+ 	/* If we were just checking, we made it.  */
+@@ -2123,10 +2123,10 @@
+ 		test_read.m.read_start = m_addr + sizeof(struct module);
+ 		test_read.m.read_end = test_read.m.read_start + sizeof(test_read.data);
+ 		if (sys_init_module(m_name, (struct module *) &test_read)) {
+-			int old_errors = errors;
++			int old_errors = error_count;
+ 			error("has persistent data but the kernel is too old to support it."
+ 				"  Expect errors during rmmod as well");
+-			errors = old_errors;
++			error_count = old_errors;
+ 		}
+ 	}
+ 
+@@ -2152,7 +2152,7 @@
+ #else
+ 	init_module(m_name, f, m_size, blob_name, noload, flag_load_map);
+ #endif
+-	if (errors) {
++	if (error_count) {
+ 		if (!noload)
+ 			delete_module(m_name);
+ 		goto out;
+--- modutils-2.4.27.0.orig/insmod/insmod_ksymoops_clean
++++ modutils-2.4.27.0/insmod/insmod_ksymoops_clean
+@@ -7,5 +7,5 @@
+ 	d=`date +%Y%m%d%H%M%S`
+ 	cp -a /proc/ksyms /var/log/ksymoops/${d}.ksyms
+ 	cp -a /proc/modules /var/log/ksymoops/${d}.modules
+-	find /var/log/ksymoops -type f -atime +2 -exec rm {} \;
++	find /var/log/ksymoops -type f -mtime +2 -exec rm {} \;
+ fi
+--- modutils-2.4.27.0.orig/insmod/kallsyms.c
++++ modutils-2.4.27.0/insmod/kallsyms.c
+@@ -80,7 +80,7 @@
+     error_file = "kallsyms";
+ 
+     /* To handle repeated calls from combined modprobe */
+-    errors = optind = 0;
++    error_count = optind = 0;
+ 
+     /* Process the command line.  */
+     while ((c = getopt_long(argc, argv, "Vh",
+--- modutils-2.4.27.0.orig/insmod/modprobe.c
++++ modutils-2.4.27.0/insmod/modprobe.c
+@@ -1023,7 +1023,7 @@
+ 		if (quiet)
+ 			my_argv[my_argc++] = "-q";
+ 
+-		if (log)
++		if (logging)
+ 			my_argv[my_argc++] = "-s";
+ 
+ 		if (insmod_opt) {
+--- modutils-2.4.27.0.orig/insmod/rmmod.c
++++ modutils-2.4.27.0/insmod/rmmod.c
+@@ -261,9 +261,9 @@
+ 	read_parm.m.read_start = mp->sym->value;
+ 	read_parm.m.read_end = read_parm.m.read_start + datasize;
+ 	if (sys_init_module(module, (struct module *) &read_parm)) {
+-		int old_errors = errors;
++		int old_errors = error_count;
+ 		error("has persistent data but the kernel is too old to support it.");
+-		errors = old_errors;
++		error_count = old_errors;
+ 		return(0);
+ 	}
+ 
+--- modutils-2.4.27.0.orig/obj/obj_kallsyms.c
++++ modutils-2.4.27.0/obj/obj_kallsyms.c
+@@ -200,8 +200,8 @@
+ 
+     /* Initial contents, header + one entry per input section.  No strings. */
+     osec->header.sh_size = sizeof(*a_hdr) + loaded*sizeof(*a_sec);
+-    a_hdr = (struct kallsyms_header *) osec->contents =
+-    	xmalloc(osec->header.sh_size);
++    osec->contents = xmalloc(osec->header.sh_size);
++    a_hdr = (struct kallsyms_header *) osec->contents;
+     memset(osec->contents, 0, osec->header.sh_size);
+     a_hdr->size = sizeof(*a_hdr);
+     a_hdr->sections = loaded;
+@@ -275,8 +275,8 @@
+ 	a_hdr->symbol_off +
+ 	a_hdr->symbols*a_hdr->symbol_size +
+ 	strings_size - strings_left;
+-    a_hdr = (struct kallsyms_header *) osec->contents =
+-	xrealloc(a_hdr, a_hdr->total_size);
++    osec->contents = xrealloc(a_hdr, a_hdr->total_size);
++    a_hdr = (struct kallsyms_header *) osec->contents;
+     p = (char *)a_hdr + a_hdr->symbol_off;
+     memcpy(p, symbols, a_hdr->symbols*a_hdr->symbol_size);
+     free(symbols);
+--- modutils-2.4.27.0.orig/obj/obj_ppc.c
++++ modutils-2.4.27.0/obj/obj_ppc.c
+@@ -25,6 +25,7 @@
+ #include <obj.h>
+ #include <util.h>
+ #include <assert.h>
++#include <stdlib.h>
+ 
+ 
+ /*======================================================================*/
+@@ -255,7 +256,8 @@
+   archdata_sec->header.sh_size = 0;
+   sec = obj_find_section(f, "__ftr_fixup");
+   if (sec) {
+-    ad = (struct archdata *) (archdata_sec->contents) = xmalloc(sizeof(*ad));
++    archdata_sec->contents = xmalloc(sizeof(*ad));
++    ad = (struct archdata *) (archdata_sec->contents);
+     memset(ad, 0, sizeof(*ad));
+     archdata_sec->header.sh_size = sizeof(*ad);
+     ad->__start___ftr_fixup = sec->header.sh_addr;
+--- modutils-2.4.27.0.orig/util/logger.c
++++ modutils-2.4.27.0/util/logger.c
+@@ -31,10 +31,10 @@
+ 
+ /*======================================================================*/
+ 
+-int log;
++int logging;
+ static int silent;
+ 
+-int errors;
++int error_count;
+ const char *error_file;
+ const char *program_name;
+ 
+@@ -75,7 +75,7 @@
+ 
+ 	if (silent)
+ 		;
+-	else if (log) {
++	else if (logging) {
+ 		char buf[2*PATH_MAX];
+ 		int n;
+ 
+@@ -100,7 +100,7 @@
+ 		putc('\n', stderr);
+ 	}
+ 
+-	errors++;
++	error_count++;
+ }
+ 
+ void lprintf(const char *fmt,...)
+@@ -108,7 +108,7 @@
+ 	va_list args;
+ 
+ 	if (silent);
+-	else if (log) {
++	else if (logging) {
+ 		char buf[2*PATH_MAX];
+ 		va_start(args, fmt);
+ 		vsnprintf(buf, sizeof(buf), fmt, args);
+@@ -132,5 +132,5 @@
+ #ifdef STOREMSG
+ 	atexit(dumpmsg);
+ #endif
+-	log = 1;
++	logging = 1;
+ }
+--- modutils-2.4.27.0.orig/util/snap_shot.c
++++ modutils-2.4.27.0/util/snap_shot.c
+@@ -76,6 +76,7 @@
+ 		return;
+ 	t = time(NULL);
+ 	local = localtime(&t);
++	umask(umask(077) | 022);
+ 	for (i = 0; i < sizeof(infile)/sizeof(infile[0]); ++i) {
+ 		snprintf(file, sizeof(file), "%04d%02d%02d%02d%02d%02d.%s",
+ 			local->tm_year+1900,
+@@ -129,6 +130,7 @@
+ 		return;
+ 	t = time(NULL);
+ 	local = localtime(&t);
++	umask(umask(077) | 022);
+ 	snprintf(date, sizeof(date), "%04d%02d%02d",
+ 			local->tm_year+1900,
+ 			local->tm_mon + 1,
