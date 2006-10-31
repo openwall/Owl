@@ -1,0 +1,12 @@
+--- gdb-6.3.orig/gdb/ada-lang.c  2006-10-29 21:24:51 +0000
++++ gdb-6.3/gdb/ada-lang.c      2006-10-29 21:26:20 +0000
+@@ -1205,8 +1205,8 @@ desc_bounds (struct value *arr)
+       struct type *bounds_type =
+         desc_bounds_type (thin_descriptor_type (type));
+       LONGEST addr;
+ 
+-      if (desc_bounds_type == NULL)
++      if (bounds_type == NULL)
+         error ("Bad GNAT array descriptor");
+ 
+       /* NOTE: The following calculation is not really kosher, but

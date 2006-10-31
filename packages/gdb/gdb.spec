@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gdb/gdb.spec,v 1.26 2006/09/05 19:59:09 galaxy Exp $
+# $Owl: Owl/packages/gdb/gdb.spec,v 1.27 2006/10/31 00:54:29 ldv Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
 Version: 6.3
-Release: owl3
+Release: owl4
 License: GPL
 Group: Development/Debuggers
 URL: http://www.gnu.org/software/gdb/
@@ -19,6 +19,7 @@ Patch7: gdb-6.3-rh-inheritance.diff
 Patch8: gdb-6.3-rh-gdbtypes.diff
 Patch9: gdb-6.3-cvs-20050526-bfd.diff
 Patch10: gdb-6.3-gentoo-alt-gdbinit.diff
+Patch11: gdb-6.3-owl-desc_bounds.diff
 PreReq: /sbin/install-info
 BuildRequires: ncurses-devel >= 5.0
 BuildRequires: readline-devel >= 0:4.3
@@ -44,6 +45,7 @@ supported compiler, such as those from the GNU Compiler Collection.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 %build
 # readline texinfo files are needed to generate gdb documentation
@@ -109,6 +111,9 @@ fi
 %_infodir/stabs.info*
 
 %changelog
+* Mon Oct 30 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.3-owl4
+- Fixed bounds type check in Ada support, patch from Alexander Kanevskiy.
+
 * Sun Sep 03 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.3-owl3
 - Relaxed the build dependency on readline-devel.
 
