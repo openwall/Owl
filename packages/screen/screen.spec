@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/screen/screen.spec,v 1.40 2006/01/30 07:15:08 solar Exp $
+# $Owl: Owl/packages/screen/screen.spec,v 1.40.2.1 2006/11/01 01:12:12 ldv Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
 Version: 4.0.2
-Release: owl7
+Release: owl9
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%version.tar.gz
@@ -22,10 +22,9 @@ Patch10: screen-4.0.2-owl-warnings.diff
 Patch11: screen-4.0.2-owl-logging.diff
 Patch12: screen-4.0.2-owl-info.diff
 Patch13: screen-4.0.2-owl-Makefile.diff
+Patch14: screen-4.0.2-up-utf8_handle_comb.diff
 PreReq: /sbin/install-info
 Requires: tcb, pam_userpass, libutempter
-# Just in case this is built with an older version of RPM package.
-Requires: libutempter.so.0(UTEMPTER_1.1)
 Prefix: %_prefix
 BuildRequires: pam-devel, pam_userpass-devel, libutempter-devel
 BuildRoot: /override/%name-%version
@@ -52,6 +51,7 @@ but want to use more than one session.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -116,6 +116,8 @@ fi
 %attr(2711,root,screen) %_bindir/screen
 %_mandir/man1/screen.1.*
 %_infodir/screen.info*
+%dir %_datadir/screen
+%dir %_datadir/screen/utf8encodings
 %_datadir/screen/utf8encodings/*
 %config(noreplace) /etc/screenrc
 %config(noreplace) /etc/pam.d/screen
@@ -127,6 +129,14 @@ fi
 /usr/share/terminfo/s/screen*
 
 %changelog
+* Sun Oct 29 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.0.2-owl9
+- Applied upstream patch that fixes two bugs in UTF-8 combining characters
+handling (CVE-2006-4573).
+
+* Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.0.2-owl8
+- Added the %%_datadir/screen and %%_datadir/screen/utf8encoding directories
+to the filelist, so they will be covered by the RPM database.
+
 * Mon Jan 30 2006 Solar Designer <solar-at-owl.openwall.com> 4.0.2-owl7
 - Force USEVARARGS, do not try to detect vsprintf() (that configure test was
 broken for current gcc and glibc).
