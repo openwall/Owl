@@ -5,6 +5,16 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+(2006/10/29)
+2006/10/31	Package: screen
+SECURITY FIX	Severity: low, remote, passive
+Applied upstream patch that fixes two bugs in UTF-8 combining characters
+handling.  The bugs could be used to crash/hang screen by writing a
+special string to a window.
+References:
+http://lists.gnu.org/archive/html/screen-users/2006-10/msg00028.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4573
+
 (2006/04/04)
 2006/10/14	Package: vim
 Repaired ex, view and rview symlinks.
@@ -126,4 +136,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.16 2006/10/14 21:22:24 ldv Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.17 2006/11/01 01:12:59 ldv Exp $
