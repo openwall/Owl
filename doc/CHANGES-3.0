@@ -12,6 +12,13 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2006/11/07	Package: texinfo
+SECURITY FIX	Severity: low, indirect, passive
+Applied upstream patch that fixes potential heap buffer overflow in
+texindex utility.
+Reference:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4810
+
 2006/10/29	Package: screen
 SECURITY FIX	Severity: low, remote, passive
 Applied upstream patch that fixes two bugs in UTF-8 combining characters
@@ -279,4 +286,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.58 2006/10/29 21:36:31 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.59 2006/11/06 23:07:01 ldv Exp $
