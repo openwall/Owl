@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/texinfo/texinfo.spec,v 1.27 2006/04/04 14:43:25 ldv Exp $
+# $Owl: Owl/packages/texinfo/texinfo.spec,v 1.28 2006/11/06 22:56:45 ldv Exp $
 
 %define BUILD_TEST 1
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
 Version: 4.8
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/Publishing
 Source0: ftp://ftp.gnu.org/gnu/texinfo/texinfo-%version.tar.bz2
@@ -16,6 +16,7 @@ Patch2: texinfo-4.8-mdk-alt-bz2-support.diff
 Patch3: texinfo-4.2-rh-owl-data_size-fix.diff
 Patch4: texinfo-4.8-deb-fixes.diff
 Patch5: texinfo-4.8-owl-info.diff
+Patch6: texinfo-4.8-rh-bound.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 Requires: mktemp >= 1:1.3.1
@@ -46,6 +47,7 @@ browser program for viewing Info files.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %{expand: %%define optflags %optflags -Wall}
 %define __spec_install_post %_prefix/lib/rpm/brp-strip \; %_prefix/lib/rpm/brp-strip-comment-note
@@ -120,6 +122,10 @@ fi
 %_mandir/man5/info.5*
 
 %changelog
+* Sat Oct 28 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.8-owl4
+- Fixed potential heap buffer overflow in texindex (CVE-2006-4810),
+patch from Miloslav Trmac.
+
 * Sun Mar 12 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.8-owl3
 - Made %_infodir/dir symlink relative.
 
