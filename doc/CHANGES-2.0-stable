@@ -5,6 +5,13 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+2006/11/07	Package: texinfo
+SECURITY FIX	Severity: high, indirect, passive
+Applied upstream patch that fixes potential heap buffer overflow in
+texindex utility.
+Reference:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4810
+
 (2006/10/29)
 2006/10/31	Package: screen
 SECURITY FIX	Severity: low, remote, passive
@@ -136,4 +143,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.17 2006/11/01 01:12:59 ldv Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.18 2006/11/07 21:22:32 solar Exp $
