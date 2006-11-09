@@ -12,6 +12,13 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2006/11/09	Package: openssh
+Backported upstream fix for a bug in the sshd privilege separation
+monitor that weakened its verification of successful authentication.
+References:
+http://lists.mindrot.org/pipermail/openssh-unix-dev/2006-November/024882.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-5794
+
 2006/11/07	Package: texinfo
 SECURITY FIX	Severity: high, indirect, passive
 Applied upstream patch that fixes potential heap buffer overflow in
@@ -286,4 +293,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.60 2006/11/07 21:20:47 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.61 2006/11/09 21:46:47 ldv Exp $
