@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.94 2006/10/05 04:13:43 solar Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.95 2006/11/09 18:05:04 ldv Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl19
+Release: owl20
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -39,6 +39,7 @@ Patch22: openssh-3.6.1p2-cvs-20060818-sigdie.diff
 Patch23: openssh-3.6.1p2-cvs-20060916-deattack.diff
 Patch24: openssh-3.6.1p2-cvs-20060919-packet_enable_delayed_compress.diff
 Patch25: openssh-3.6.1p2-rh-sftp-memleaks.diff
+Patch26: openssh-3.6.1p2-cvs-20061108-monitor.diff
 PreReq: openssl >= 0.9.7, openssl < 0.9.8
 Requires: pam >= 0:0.80-owl2
 Obsoletes: ssh
@@ -137,6 +138,7 @@ rm -r autom4te.cache
 %patch23 -p1
 %patch24 -p0
 %patch25 -p1
+%patch26 -p1
 bzip2 -9k ChangeLog
 
 %{expand:%%define _sysconfdir %_sysconfdir/ssh}
@@ -259,6 +261,11 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Wed Nov 08 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl20
+- Backported upstream fix for a bug in the sshd privilege separation
+monitor that weakened its verification of successful authentication
+(CVE-2006-5794).
+
 * Tue Oct 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl19
 - Backported upstream fixes for:
 sshd connection consumption vulnerability
