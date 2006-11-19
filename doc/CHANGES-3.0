@@ -12,6 +12,14 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2006/11/19	Package: rpm
+Backported upstream fix for potential heap buffer overflow in
+showQueryPackage function.  Although this particular bug is fixed,
+it remains unsafe to invoke "rpm" queries on untrusted package files.
+References:
+https://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=212833
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-5466
+
 2006/11/09	Package: openssh
 Backported upstream fix for a bug in the sshd privilege separation
 monitor that weakened its verification of successful authentication.
@@ -293,4 +301,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.61 2006/11/09 21:46:47 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.62 2006/11/19 23:01:27 ldv Exp $
