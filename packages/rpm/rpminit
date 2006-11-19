@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/rpm/rpminit,v 1.4 2005/11/18 13:01:35 solar Exp $
+# $Owl: Owl/packages/rpm/rpminit,v 1.5 2006/11/19 18:15:19 ldv Exp $
 #
 # Written by Solar Designer <solar at owl.openwall.com> and placed in the
 # public domain.
@@ -18,6 +18,9 @@ mkdir -p $RPMDIR/RPMS/noarch
 case "`uname -m`" in
 *86)
 	mkdir -p $RPMDIR/RPMS/{i386,i486,i586,i686,athlon}
+	;;
+x86_64)
+	mkdir -p $RPMDIR/RPMS/x86_64
 	;;
 sparc*)
 	mkdir -p $RPMDIR/RPMS/{sparc,sparcv9}

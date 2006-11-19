@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.70 2006/11/19 17:11:30 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.71 2006/11/19 18:15:19 ldv Exp $
 
 %define WITH_PYTHON 0
 
@@ -493,6 +493,7 @@ fi
 * Sun Nov 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl17
 - Backported upstream fix for potential heap buffer overflow in
 showQueryPackage function (CVE-2006-5466).
+- Added x86-64 support to rpminit script.
 
 * Sun May 07 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl16
 - Removed unused macros: WITH_INCLUDED_GETTEXT, WITH_API_DOCS, and WITH_BZIP2.
