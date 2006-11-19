@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.69 2006/09/16 01:58:29 galaxy Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.70 2006/11/19 17:11:30 ldv Exp $
 
 %define WITH_PYTHON 0
 
@@ -8,7 +8,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl16
+Release: owl17
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -56,6 +56,7 @@ Patch33: rpm-4.2-owl-runScript-umask.diff
 Patch34: rpm-4.2-owl-man.diff
 Patch35: rpm-4.2-cvs-20030515-parseSpec.diff
 Patch36: rpm-4.2-cvs-20050827-check-prereqs.diff
+Patch37: rpm-4.2-cvs-20061030-showQueryPackage.diff
 
 PreReq: /sbin/ldconfig
 PreReq: sh-utils, fileutils, mktemp, gawk
@@ -169,6 +170,7 @@ rm -r tests
 %patch34 -p1
 %patch35 -p0
 %patch36 -p0
+%patch37 -p0
 
 bzip2 -9k CHANGES
 
@@ -488,6 +490,10 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Sun Nov 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl17
+- Backported upstream fix for potential heap buffer overflow in
+showQueryPackage function (CVE-2006-5466).
+
 * Sun May 07 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl16
 - Removed unused macros: WITH_INCLUDED_GETTEXT, WITH_API_DOCS, and WITH_BZIP2.
 - Added a dependency on the file package to rpm-build (find-provides is
