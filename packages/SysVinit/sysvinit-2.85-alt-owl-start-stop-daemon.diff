@@ -113,7 +113,7 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  badusage(const char *msg)
  {
  	if (msg && *msg)
-@@ -234,15 +222,49 @@ parse_options(int argc, char * const *ar
+@@ -234,15 +222,50 @@ parse_options(int argc, char * const *ar
  
  
  static int
@@ -150,13 +150,14 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
 +			size_t exec_len = strlen(exec);
 +
 +			if ((rc >= exec_len + addon_len) &&
-+			    (!strncmp(exec, value, exec_len) &&
-+			     (!strcmp(deleted_suffix, value + exec_len) ||
-+			      !strcmp("-RPMDELETE (deleted)", value + exec_len)
++			    ((!strncmp(exec, value, exec_len) &&
++			      (!strcmp(deleted_suffix, value + exec_len) ||
++			       !strcmp("-RPMDELETE (deleted)", value + exec_len)
++			      )
++			     ) ||
++			     (!strncmp(deleted_prefix, value, addon_len) &&
++			      !strcmp(exec, value + addon_len)
 +			     )
-+			    ) ||
-+			    (!strncmp(deleted_prefix, value, addon_len) &&
-+			     !strcmp(exec, value + addon_len)
 +			    )
 +			   )
 +				return 1;
