@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/SysVinit/SysVinit.spec,v 1.27 2005/11/16 13:34:48 solar Exp $
+# $Owl: Owl/packages/SysVinit/SysVinit.spec,v 1.28 2006/11/19 21:24:16 ldv Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
 Version: 2.86
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source: ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/sysvinit-%version.tar.gz
@@ -119,6 +119,11 @@ fi
 %attr(0600,root,root) /dev/initctl
 
 %changelog
+* Sun Nov 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.86-owl2
+- Merged ALT's patch for start-stop-daemon to recognize deleted
+executables when kernel adds "(deleted) " name prefix in addition to
+already recognized case when kernel adds " (deleted)" name suffix.
+
 * Mon Oct 24 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.86-owl1
 - Updated to 2.86, dropped patches which were included upstream.
 - Adjusted make command according to Makefile of the new version.
