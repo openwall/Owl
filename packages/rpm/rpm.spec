@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.67 2006/02/03 22:15:30 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.67.2.1 2006/11/19 18:24:43 ldv Exp $
 
 %define WITH_PYTHON 0
 %define WITH_API_DOCS 0
@@ -11,7 +11,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl14
+Release: owl14.2.0.1
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -58,6 +58,8 @@ Patch32: rpm-4.2-owl-honor-buildtime.diff
 Patch33: rpm-4.2-owl-runScript-umask.diff
 Patch34: rpm-4.2-owl-man.diff
 Patch35: rpm-4.2-cvs-20030515-parseSpec.diff
+Patch36: rpm-4.2-cvs-20050827-check-prereqs.diff
+Patch37: rpm-4.2-cvs-20061030-showQueryPackage.diff
 
 PreReq: /sbin/ldconfig
 PreReq: sh-utils, fileutils, mktemp, gawk
@@ -169,6 +171,8 @@ rm -r tests
 %patch33 -p1
 %patch34 -p1
 %patch35 -p0
+%patch36 -p0
+%patch37 -p0
 
 bzip2 -9k CHANGES
 
@@ -483,6 +487,11 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Sun Nov 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl14.2.0.1
+- Backported upstream fix to check-prereqs script.
+- Backported upstream fix for potential heap buffer overflow in
+showQueryPackage function (CVE-2006-5466).
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl14
 - Compressed CHANGES file.
 
