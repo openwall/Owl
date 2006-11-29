@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.38 2006/09/05 19:59:41 galaxy Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.39 2006/11/29 00:22:00 ldv Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
 Version: 1.4.5
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
@@ -16,6 +16,7 @@ Patch2: gnupg-1.4.2-alt-cp1251.diff
 Patch3: gnupg-1.4.2-fw-secret-key-checks.diff
 Patch4: gnupg-1.4.3-deb-man.diff
 Patch5: gnupg-1.4.2-alt-owl-info.diff
+Patch6: gnupg-1.4.5-up-ask_outfile_name.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
 BuildRequires: zlib-devel, bzip2-devel, texinfo, readline-devel >= 0:4.3
@@ -38,6 +39,7 @@ only IDEA for symmetric-key encryption, which is patented worldwide).
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p0
 bzip2 -9k NEWS doc/{DETAILS,FAQ}
 
 %build
@@ -97,6 +99,12 @@ fi
 %exclude %_datadir/gnupg/faq.html
 
 %changelog
+* Tue Nov 28 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.5-owl3
+- Applied upstream fix for heap buffer overflow bug in interactive
+gpg, see
+http://lists.gnupg.org/pipermail/gnupg-announce/2006q4/000241.html
+for details.
+
 * Sun Sep 03 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.4.5-owl2
 - Relaxed the build dependency on readline-devel.
 
