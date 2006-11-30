@@ -20,3 +20,16 @@ diff -upk.orig tar-1.15.1.orig/src/list.c tar-1.15.1/src/list.c
    union block *header;
    union block *header_copy;
    char *bp;
+--- tar-1.15.1.orig/tests/genfile.c	2004-09-08 11:50:20 +0000
++++ tar-1.15.1/tests/genfile.c	2006-05-15 22:21:18 +0000
+@@ -60,8 +60,8 @@
+ /* Block buffer for sparse file */
+ char *buffer;
+ 
+-static const char *argp_program_version = "genfile (" PACKAGE ") " VERSION;
+-static const char *argp_program_bug_address = "<" PACKAGE_BUGREPORT ">";
++const char *argp_program_version = "genfile (" PACKAGE ") " VERSION;
++const char *argp_program_bug_address = "<" PACKAGE_BUGREPORT ">";
+ static char doc[] = N_("genfile generates data files for GNU paxutils test suite");
+ 
+ static struct argp_option options[] = {

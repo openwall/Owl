@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.27.2.1 2006/03/25 14:25:28 solar Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.27.2.2 2006/11/30 00:38:20 ldv Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.15.1
-Release: owl5
+Release: owl7
 License: GPL
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
@@ -30,6 +30,7 @@ Patch16: tar-1.15.1-deb-doc.diff
 Patch17: tar-1.15.1-deb-lone-zero-block-warning.diff
 Patch18: tar-1.15.1-alt-warnings.diff
 Patch19: tar-1.15.1-owl-tests.diff
+Patch20: tar-1.15.1-ubuntu-GNUTYPE_NAMES.diff
 PreReq: /sbin/install-info, grep
 BuildRequires: automake, autoconf, cvs, gettext, texinfo
 BuildRequires: rpm-build >= 0:4
@@ -66,6 +67,7 @@ backups.
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
+%patch20 -p1
 install -pm644 %_sourcedir/append.at tests/
 
 %{expand:%%define optflags %optflags -Wall -Dlint}
@@ -88,8 +90,8 @@ ln -sf tar %buildroot/bin/gtar
 mkdir -p %buildroot%_mandir/man1
 install -m 644 %_sourcedir/tar.1 %buildroot%_mandir/man1/
 
-# Remove unpackaged files if any
-rm -f %buildroot%_infodir/dir
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
 
 %post
 # Get rid of an old, incorrect info entry when replacing older versions
@@ -121,6 +123,14 @@ fi
 %doc AUTHORS NEWS THANKS
 
 %changelog
+* Tue Nov 28 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.15.1-owl7
+- Disabled GNUTYPE_NAMES handling by default and added
+--allow-name-mangling option to re-enable it.
+(CVE-2006-6097, patch from Kees Cook).
+
+* Mon Jun 26 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.15.1-owl6
+- Fixed build with gcc-4.x.
+
 * Mon Feb 20 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.15.1-owl5
 - Backported upstream fix for potential heap buffer overrun in handling
 extended headers (CVE-2006-0300).
