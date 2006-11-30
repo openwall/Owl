@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.31.2.3 2006/08/03 23:26:55 ldv Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.31.2.4 2006/11/30 00:39:27 ldv Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
 Version: 1.4.5
-Release: owl0.2.0.1
+Release: owl0.2.0.2
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
@@ -16,6 +16,7 @@ Patch2: gnupg-1.4.2-alt-cp1251.diff
 Patch3: gnupg-1.4.2-fw-secret-key-checks.diff
 Patch4: gnupg-1.4.3-deb-man.diff
 Patch5: gnupg-1.4.2-alt-owl-info.diff
+Patch6: gnupg-1.4.5-up-ask_outfile_name.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
 BuildRequires: zlib-devel, bzip2-devel, texinfo, readline-devel
@@ -38,6 +39,7 @@ only IDEA for symmetric-key encryption, which is patented worldwide).
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p0
 bzip2 -9k NEWS doc/{DETAILS,FAQ}
 
 %build
@@ -97,6 +99,12 @@ fi
 %exclude %_datadir/gnupg/faq.html
 
 %changelog
+* Wed Nov 29 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.5-owl0.2.0.2
+- Applied upstream fix for heap buffer overflow bug in interactive
+gpg, see
+http://lists.gnupg.org/pipermail/gnupg-announce/2006q4/000241.html
+for details.
+
 * Fri Aug 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.5-owl0.2.0.1
 - Updated to 1.4.5.  This includes fixes for two more possible memory
 allocation bugs (CVE-2006-3746), similar to the problem fixed in 1.4.4.
