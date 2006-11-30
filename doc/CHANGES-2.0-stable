@@ -5,16 +5,16 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
-(2006/11/29)
-2006/11/28	Package: gnupg
+(2006/11/28)
+2006/11/29	Package: gnupg
 SECURITY FIX	Severity: high, indirect, passive
 Applied upstream fix for heap buffer overflow bug in gpg when running
 gpg interactively.
 Reference:
 http://lists.gnupg.org/pipermail/gnupg-announce/2006q4/000241.html
 
-(2006/11/29)
-2006/11/28	Package: tar
+(2006/11/28)
+2006/11/29	Package: tar
 SECURITY FIX	Severity: high, indirect, passive
 Disabled GNUTYPE_NAMES handling by default to avoid directory traversal
 in GNU tar (where a malicious archive containing GNUTYPE_NAMES record
@@ -180,4 +180,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.23 2006/11/30 00:40:33 ldv Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.24 2006/11/30 00:58:57 solar Exp $
