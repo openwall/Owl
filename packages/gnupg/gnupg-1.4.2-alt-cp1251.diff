@@ -1,15 +1,3 @@
-diff -upk.orig gnupg-1.4.2.orig/doc/gpg.1 gnupg-1.4.2/doc/gpg.1
---- gnupg-1.4.2.orig/doc/gpg.1	2005-07-22 20:30:52 +0000
-+++ gnupg-1.4.2/doc/gpg.1	2005-11-18 22:53:42 +0000
-@@ -960,6 +960,8 @@ This is currently an alias for 
- the Latin 1 set. 
- .IP "koi8-r" 10 
- The usual Russian set (rfc1489). 
-+.IP "cp1251" 10 
-+The cp1251 aka windows-1251 Cyrillic set.
- .IP "utf-8" 10 
- Bypass all translations and assume 
- that the OS uses native UTF-8 encoding. 
 diff -upk.orig gnupg-1.4.2.orig/doc/gpg.texi gnupg-1.4.2/doc/gpg.texi
 --- gnupg-1.4.2.orig/doc/gpg.texi	2005-07-26 18:44:12 +0000
 +++ gnupg-1.4.2/doc/gpg.texi	2005-11-18 22:53:42 +0000

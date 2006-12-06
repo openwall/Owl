@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.39 2006/11/29 00:22:00 ldv Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.40 2006/12/06 22:30:50 ldv Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.4.5
-Release: owl3
+Version: 1.4.6
+Release: owl1
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
@@ -14,9 +14,7 @@ Patch0: gnupg-1.4.3-alt-ru.po.diff
 Patch1: gnupg-1.4.3-alt-always-trust.diff
 Patch2: gnupg-1.4.2-alt-cp1251.diff
 Patch3: gnupg-1.4.2-fw-secret-key-checks.diff
-Patch4: gnupg-1.4.3-deb-man.diff
-Patch5: gnupg-1.4.2-alt-owl-info.diff
-Patch6: gnupg-1.4.5-up-ask_outfile_name.diff
+Patch4: gnupg-1.4.6-alt-owl-info.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
 BuildRequires: zlib-devel, bzip2-devel, texinfo, readline-devel >= 0:4.3
@@ -38,8 +36,6 @@ only IDEA for symmetric-key encryption, which is patented worldwide).
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%patch6 -p0
 bzip2 -9k NEWS doc/{DETAILS,FAQ}
 
 %build
@@ -65,13 +61,11 @@ mv %buildroot%_mandir/man1/gpg.ru.1 %buildroot%_mandir/ru/man1/gpg.1
 rm %buildroot%_infodir/dir
 
 %post
-/sbin/install-info %_infodir/gpg.info %_infodir/dir
-/sbin/install-info %_infodir/gpgv.info %_infodir/dir
+/sbin/install-info %_infodir/gnupg1.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-        /sbin/install-info --delete %_infodir/gpg.info %_infodir/dir
-        /sbin/install-info --delete %_infodir/gpgv.info %_infodir/dir
+        /sbin/install-info --delete %_infodir/gnupg1.info %_infodir/dir
 fi
 
 %files
@@ -90,8 +84,7 @@ fi
 %_mandir/man1/*
 %_mandir/ru/man1/gpg.*
 %_mandir/man7/gnupg.*
-%_infodir/gpg.*
-%_infodir/gpgv.*
+%_infodir/gnupg1.*
 %_libexecdir/*
 %dir %_datadir/gnupg
 %config(noreplace) %_datadir/gnupg/options.skel
@@ -99,6 +92,9 @@ fi
 %exclude %_datadir/gnupg/faq.html
 
 %changelog
+* Wed Dec 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.6-owl1
+- Updated to 1.4.6.
+
 * Tue Nov 28 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.5-owl3
 - Applied upstream fix for heap buffer overflow bug in interactive
 gpg, see
