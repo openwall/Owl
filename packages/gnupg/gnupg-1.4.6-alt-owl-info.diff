@@ -1,0 +1,11 @@
+--- gnupg-1.4.6/doc/gnupg1.texi.orig	2006-12-06 16:45:02 +0000
++++ gnupg-1.4.6/doc/gnupg1.texi	2006-12-06 16:50:33 +0000
+@@ -48,7 +48,7 @@ section entitled ``Copying''.
+ 
+ @dircategory GNU Utilities
+ @direntry
+-* gpg: (gpg).            OpenPGP encryption and signing tool (v1).
++* gpg: (gnupg1).                                OpenPGP encryption and signing tool (v1).
+ @end direntry
+ 
+ 

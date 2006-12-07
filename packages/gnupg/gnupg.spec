@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.31.2.4 2006/11/30 00:39:27 ldv Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.31.2.5 2006/12/07 22:15:19 ldv Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.4.5
-Release: owl0.2.0.2
+Version: 1.4.6
+Release: owl0.2.0.1
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
@@ -14,9 +14,7 @@ Patch0: gnupg-1.4.3-alt-ru.po.diff
 Patch1: gnupg-1.4.3-alt-always-trust.diff
 Patch2: gnupg-1.4.2-alt-cp1251.diff
 Patch3: gnupg-1.4.2-fw-secret-key-checks.diff
-Patch4: gnupg-1.4.3-deb-man.diff
-Patch5: gnupg-1.4.2-alt-owl-info.diff
-Patch6: gnupg-1.4.5-up-ask_outfile_name.diff
+Patch4: gnupg-1.4.6-alt-owl-info.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
 BuildRequires: zlib-devel, bzip2-devel, texinfo, readline-devel
@@ -38,8 +36,6 @@ only IDEA for symmetric-key encryption, which is patented worldwide).
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%patch6 -p0
 bzip2 -9k NEWS doc/{DETAILS,FAQ}
 
 %build
@@ -65,14 +61,16 @@ mv %buildroot%_mandir/man1/gpg.ru.1 %buildroot%_mandir/ru/man1/gpg.1
 rm %buildroot%_infodir/dir
 
 %post
-/sbin/install-info %_infodir/gpg.info %_infodir/dir
-/sbin/install-info %_infodir/gpgv.info %_infodir/dir
+/sbin/install-info %_infodir/gnupg1.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-        /sbin/install-info --delete %_infodir/gpg.info %_infodir/dir
-        /sbin/install-info --delete %_infodir/gpgv.info %_infodir/dir
+        /sbin/install-info --delete %_infodir/gnupg1.info %_infodir/dir
 fi
+
+%triggerpostun -- %name < 1.4.6
+/sbin/install-info --delete %_infodir/gpg.info %_infodir/dir
+/sbin/install-info --delete %_infodir/gpgv.info %_infodir/dir
 
 %files
 %defattr(-,root,root)
@@ -90,8 +88,7 @@ fi
 %_mandir/man1/*
 %_mandir/ru/man1/gpg.*
 %_mandir/man7/gnupg.*
-%_infodir/gpg.*
-%_infodir/gpgv.*
+%_infodir/gnupg1.*
 %_libexecdir/*
 %dir %_datadir/gnupg
 %config(noreplace) %_datadir/gnupg/options.skel
@@ -99,6 +96,12 @@ fi
 %exclude %_datadir/gnupg/faq.html
 
 %changelog
+* Thu Dec 07 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.6-owl0.2.0.1
+- Updated to 1.4.6.  This includes a fix for a remotely controllable
+function pointer vulnerability (CVE-2006-6235): using malformed OpenPGP
+packets an attacker was able to modify and dereference a function pointer
+in gpg.
+
 * Wed Nov 29 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.5-owl0.2.0.2
 - Applied upstream fix for heap buffer overflow bug in interactive
 gpg, see
