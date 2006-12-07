@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.40 2006/12/06 22:30:50 ldv Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.41 2006/12/07 10:13:19 ldv Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
@@ -67,6 +67,10 @@ rm %buildroot%_infodir/dir
 if [ $1 -eq 0 ]; then
         /sbin/install-info --delete %_infodir/gnupg1.info %_infodir/dir
 fi
+
+%triggerpostun -- %name < 1.4.6
+/sbin/install-info --delete %_infodir/gpg.info %_infodir/dir
+/sbin/install-info --delete %_infodir/gpgv.info %_infodir/dir
 
 %files
 %defattr(-,root,root)
