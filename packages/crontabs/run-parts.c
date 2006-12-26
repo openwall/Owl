@@ -164,7 +164,7 @@ reg_init(void)
 
   if (lsbsysinit_mode) {
     reg_compile(&hierre, "^_?([a-z0-9_.]+-)+[a-z0-9]+$");
-    reg_compile(&excsre, "^[a-z0-9-].*rpm(old|new|orig)$");
+    reg_compile(&excsre, "^[a-z0-9-].*rpm(orig|new|save)$");
     reg_compile(&tradre, "^[a-z0-9][a-z0-9-]*$");
   }
   else
