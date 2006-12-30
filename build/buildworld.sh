@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/buildworld.sh,v 1.43 2006/05/28 18:18:56 galaxy Exp $
+# $Owl: Owl/build/buildworld.sh,v 1.44 2006/12/30 17:26:15 ldv Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -21,7 +21,7 @@ FOREIGN=$HOME/foreign
 RPMQ=rpm
 RPMB=rpm
 
-function log()
+log()
 {
 	local MESSAGE
 
@@ -30,7 +30,7 @@ function log()
 	echo "`date +%H:%M:%S`: $MESSAGE" | tee -a $HOME/logs/buildworld
 }
 
-function spec()
+spec()
 {
 	local PACKAGE DIR SPEC
 
@@ -49,7 +49,7 @@ function spec()
 	echo "$SPEC"
 }
 
-function binaries()
+binaries()
 {
 	local SPEC SOURCE TOTAL SUB
 
@@ -73,7 +73,7 @@ EOF`"
 	fi
 }
 
-function built()
+built()
 {
 	local SPEC SOURCE BINARY REGEX
 
@@ -90,7 +90,7 @@ function built()
 	done
 }
 
-function build_native()
+build_native()
 {
 	local NUMBER PACKAGE WORK NAME VERSION ARCHIVE FLAGS
 
@@ -150,7 +150,7 @@ function build_native()
 	cd $HOME/native-work || exit 1
 }
 
-function build_foreign()
+build_foreign()
 {
 	local NUMBER PACKAGE WORK
 
@@ -178,7 +178,7 @@ function build_foreign()
 	rm -rf $WORK/BUILD/*
 }
 
-function builder()
+builder()
 {
 	local NUMBER SOURCE SPEC
 
@@ -242,7 +242,7 @@ function builder()
 	exit 0
 }
 
-function detect_arch()
+detect_arch()
 {
 	local MACHINE
 
@@ -264,7 +264,7 @@ function detect_arch()
 	esac
 }
 
-function detect_proc()
+detect_proc()
 {
 	case "$ARCHITECTURE" in
 	sparc*)
@@ -286,7 +286,7 @@ function detect_proc()
 	test "$PROCESSORS" -ge 1 || PROCESSORS=1
 }
 
-function detect()
+detect()
 {
 	test -n "$ARCHITECTURE" || detect_arch
 	test -n "$PROCESSORS" || detect_proc
@@ -322,13 +322,13 @@ function detect()
 	test -x "$PERSONALITY" || PERSONALITY=
 }
 
-function check_includes()
+check_includes()
 {
 	test `find /usr/include/linux/ /usr/include/asm/ \
 		-type f ! -perm +004 -print 2>&1 | wc -c` = '0'
 }
 
-function sanity_check()
+sanity_check()
 {
 	log "Sanity check"
 
@@ -344,7 +344,7 @@ function sanity_check()
 	}
 }
 
-function clean_death()
+clean_death()
 {
 	kill 0
 
@@ -355,7 +355,7 @@ function clean_death()
 	exit 1
 }
 
-function setup_rpm()
+setup_rpm()
 {
 	local RPM_VERSION
 
@@ -382,13 +382,12 @@ function setup_rpm()
 }
 
 if [ "`id -u`" = "0" -o ! -O $HOME ]; then
-	echo "Run this as the owner of $HOME (typically, as user \"build\")"
+	echo >&2 "Run this as the owner of $HOME (typically, as user \"build\")"
 	exit 1
 fi
 
-unset LANG LANGUAGE
-unset LC_ALL LC_COLLATE LC_CTYPE LC_MESSAGES LC_MONETARY LC_NUMERIC LC_TIME
-unset LINGUAS
+unset LANG LANGUAGE LINGUAS
+unset LC_ADDRESS LC_ALL LC_COLLATE LC_CTYPE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE LC_TIME
 
 umask $UMASK
 cd $HOME || exit 1
