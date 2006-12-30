@@ -1,4 +1,4 @@
-# $Owl: Owl/build/Makefile,v 1.19 2006/02/09 19:07:32 solar Exp $
+# $Owl: Owl/build/Makefile,v 1.20 2006/12/30 18:06:13 ldv Exp $
 
 # The Owl branch to build and/or install, specified by its tag in the
 # CVS.  This should only be set to build and/or install a non-current
@@ -26,6 +26,13 @@ buildworld: symlinks
 
 installworld: symlinks
 	native/$(BRANCH)/build/installworld.sh
+
+buildkernel: symlinks
+	BRANCH=$(BRANCH) native/$(BRANCH)/build/buildkernel.sh
+
+buildisotree: symlinks
+	MAKE_CDROM=yes native/$(BRANCH)/build/installworld.sh
+	BRANCH=$(BRANCH) native/$(BRANCH)/build/buildisotree.sh
 
 setup: symlinks
 	native/$(BRANCH)/build/setup.sh
