@@ -22,16 +22,18 @@ static void plain_dir_scan(ScriptVector &res,
     while((ent = dir.Next())) {
         if(ent[0] == '.') continue;
         ScriptVariable ents(ent);
-        int slen = suffix.Length();
-        ScriptVariable::Substring suf(ents, -slen, slen);
-        if(suf.Get() == suffix) {
-            suf.Erase();
+        if(suffix != "") {
+            int slen = suffix.Length();
+            ScriptVariable::Substring suf(ents, -slen, slen);
+            if(suf.Get() == suffix) {
+                suf.Erase();
+                res.AddItem(ents);
+            }
+        } else {
             res.AddItem(ents);
-            continue;
         }
     }
 }
-
 
 static void uniq_sort(ScriptVector &res)
 {
@@ -105,6 +107,13 @@ public:
         console_changed = true;
     }
 
+    void RemoveConsolefont()
+    {
+        file_i18n.Undefine("SYSFONT");
+        console_changed = true;
+    }
+
+
     ScriptVariable GetUnimap() const
     {
         if(file_i18n.IsDefined("UNIMAP"))
@@ -127,6 +136,31 @@ public:
     void RemoveUnimap()
     {
         file_i18n.Undefine("UNIMAP");
+        console_changed = true;
+    }
+
+    ScriptVariable GetACM() const
+    {
+        if(file_i18n.IsDefined("SYSFONTACM"))
+            return file_i18n["SYSFONTACM"].Value();
+        else
+            return "";
+    }
+
+    bool HaveACM() const
+    {
+        return file_i18n.IsDefined("SYSFONTACM");
+    }
+
+    void SetACM(const ScriptVariable &k)
+    {
+        file_i18n["SYSFONTACM"].Value() = k;
+        console_changed = true;
+    }
+
+    void RemoveACM()
+    {
+        file_i18n.Undefine("SYSFONTACM");
         console_changed = true;
     }
 
@@ -176,6 +210,21 @@ public:
             }
         }
 
+        return res;
+    }
+
+    ScriptVariable ConsoleFontSummary() const
+    {
+        ScriptVariable res;
+        res += "console font (SYSFONT): ";
+        res += GetConsolefont();
+        res += "\n";
+        res += "unimap (UNIMAP):        ";
+        res += GetUnimap();
+        res += "\n";
+        res += "char map (SYSFONTACM):  ";
+        res += GetACM();
+        res += "\n";
         return res;
     }
 };
@@ -259,6 +308,163 @@ static void request_and_load_keys(OwlInstallInterface *the_iface,
 /////////////////////////////////////////////////////////////////
 // screen fonts	
 
+static void configure_screen_font_preset(OwlInstallInterface *the_iface,
+                                         LocalizationInfo *the_info)
+{
+    IfaceHierChoice *hc = the_iface->CreateHierChoice();
+    hc->SetCaption("Select console font scheme");
+    hc->SetSorting(false);
+    ScriptVector v;
+    const OwlInstallConfig::PresetFontItem *presets =
+        the_config->PresetSetfontCombinations();
+    hc->AddItem("  NONE  ", 0);
+    for(int i=0; presets[i].comment; i++)
+        hc->AddItem(presets[i].comment, presets+i);
+    ScriptVector r;
+    OwlInstallConfig::PresetFontItem *res_p;
+    bool ok = hc->Run(r, (const void**)&res_p);
+    delete hc;
+    if(!ok) {
+        return;
+    }
+    if(res_p) {
+        the_info->SetConsolefont(res_p->sysfont);
+        if(res_p->unimap)
+            the_info->SetUnimap(res_p->unimap);
+        else
+            the_info->RemoveUnimap();
+        if(res_p->sysfontacm)
+            the_info->SetACM(res_p->sysfontacm);
+        else
+            the_info->RemoveACM();
+    } else {
+        // this means the user has just selected "NONE"
+        the_info->RemoveConsolefont();
+        the_info->RemoveUnimap();
+        the_info->RemoveACM();
+    }
+}
+
+static void configure_screen_font_font(OwlInstallInterface *the_iface,
+                                       LocalizationInfo *the_info)
+{
+    IfaceHierChoice *hc = the_iface->CreateHierChoice();
+    hc->SetCaption("Select console font");
+    ScriptVector v;
+    const char nofont[] = "    USE NO FONT";
+    hc->AddItem(nofont);
+    plain_dir_scan(v, the_config->ConsolefontsDbPath(),
+                      the_config->ConsolefontsSuffix());
+    for(int i=0; i<v.Length(); i++)
+        hc->AddItem(v[i]);
+    ScriptVector res;
+    bool ok = hc->Run(res);
+    delete hc;
+    if(!ok) {
+        return;
+    }
+    if(res[0] != nofont)
+        the_info->SetConsolefont(res[0]);
+    else {
+        the_info->RemoveConsolefont();
+        the_info->RemoveUnimap();
+        the_info->RemoveACM();
+    }
+}
+
+static void configure_screen_font_unimap(OwlInstallInterface *the_iface,
+                                         LocalizationInfo *the_info)
+{
+    IfaceHierChoice *hc = the_iface->CreateHierChoice();
+    hc->SetCaption("Select unicode mapping for console");
+    ScriptVector v;
+    const char nomap[] = "    NO UNIMAP";
+    hc->AddItem(nomap);
+    plain_dir_scan(v, the_config->UnimapsDbPath(),
+                      the_config->UnimapsSuffix());
+    for(int i=0; i<v.Length(); i++)
+        hc->AddItem(v[i] + the_config->UnimapsSuffix());
+    ScriptVector res;
+    bool ok = hc->Run(res);
+    delete hc;
+    if(!ok) {
+        return;
+    }
+    if(res[0] != nomap)
+        the_info->SetUnimap(res[0]);
+    else
+        the_info->RemoveUnimap();
+}
+
+static void configure_screen_font_acm(OwlInstallInterface *the_iface,
+                                      LocalizationInfo *the_info)
+{
+    IfaceHierChoice *hc = the_iface->CreateHierChoice();
+    hc->SetCaption("Select charmap");
+    ScriptVector v;
+    const char nomap[] = "    NO CHARMAP";
+    hc->AddItem(nomap);
+    plain_dir_scan(v, the_config->CharmapsDbPath(),
+                      the_config->CharmapsSuffix());
+    for(int i=0; i<v.Length(); i++)
+        if(v[i].Strstr("to_uni.trans").Invalid())
+            hc->AddItem(v[i]);
+    ScriptVector res;
+    bool ok = hc->Run(res);
+    delete hc;
+    if(!ok) {
+        return;
+    }
+    if(res[0] != nomap)
+        the_info->SetACM(res[0]);
+    else
+        the_info->RemoveACM();
+}
+
+static void configure_screen_font(OwlInstallInterface *the_iface,
+                                  LocalizationInfo *the_info)
+{
+    IfaceSingleChoice *pm = the_iface->CreateSingleChoice();
+    pm->SetCaption("Console font settings");
+    pm->AddItem("v", "View the current settings");
+    pm->AddItem("p", "Pick a preset combination of parameters");
+    pm->AddItem("f", "Choose a font file (experts only)");
+    pm->AddItem("u", "Choose a unimap file (experts only)");
+    pm->AddItem("c", "Choose a charmap/encoding file (experts only)");
+    pm->AddItem("q", "Return to i18n menu");
+    do {
+        ScriptVariable choice = pm->Run();
+        if(choice=="") continue;
+        else if(choice=="v") {
+            the_iface->Message(the_info->ConsoleFontSummary());
+        }
+        else if(choice=="p") {
+            configure_screen_font_preset(the_iface, the_info);
+        }
+        else if(choice=="f") {
+            configure_screen_font_font(the_iface, the_info);
+        }
+        else if(choice=="u") {
+            configure_screen_font_unimap(the_iface, the_info);
+        }
+        else if(choice=="c") {
+            configure_screen_font_acm(the_iface, the_info);
+        }
+        else if(choice == "q" ||
+                choice == OwlInstallInterface::qs_escape ||
+                choice == OwlInstallInterface::qs_cancel)
+        {
+            break;
+        }
+        else if(choice == OwlInstallInterface::qs_eof)
+        {
+            break;
+        }
+    } while(1);
+    delete pm;
+}
+
+#if 0
 static void configure_screen_font(OwlInstallInterface *the_iface,
                                   LocalizationInfo *the_info)
 {
@@ -311,6 +517,7 @@ static void configure_screen_font(OwlInstallInterface *the_iface,
     else
         the_info->RemoveUnimap();
 }
+#endif
 
 static void request_and_load_console(OwlInstallInterface *the_iface,
                                      LocalizationInfo *the_info)
@@ -321,12 +528,16 @@ static void request_and_load_console(OwlInstallInterface *the_iface,
                                      "Try to load it now?");
     if(r) {
         ScriptVector sf;
+#if 0
         sf.AddItem(the_config->SetfontPath());
         sf.AddItem(the_info->GetConsolefont());
         if(the_info->HaveUnimap()) {
             sf.AddItem("-u");
             sf.AddItem(the_info->GetUnimap());
         }
+#else
+        sf.AddItem(the_config->SetsysfontPath());
+#endif
         the_iface->ExecWindow(ScriptVariable("Invoking ") +
                               sf.Join(" "));
         char **sfargv = sf.MakeArgv();

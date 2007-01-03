@@ -18,7 +18,7 @@ class NcursesIfaceHierChoice : public IfaceHierChoice {
     void *the_cdkscreen;
     NcursesIfaceHierChoice(void *a_screen);
 public:
-    bool Run(ScriptVector &result);
+    bool Run(ScriptVector &result, const void **uptr);
 };
 
 class NcursesIfaceProgressBar : public IfaceProgressBar {

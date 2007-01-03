@@ -17,7 +17,7 @@ class DumbIfaceHierChoice : public IfaceHierChoice {
     friend class DumbOwlInstallInterface;
     DumbIfaceHierChoice();
 public:
-    bool Run(ScriptVector &result);
+    bool Run(ScriptVector &result, const void **uptr);
 };
 
 class DumbIfaceProgressBar : public IfaceProgressBar {

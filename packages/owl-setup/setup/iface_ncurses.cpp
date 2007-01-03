@@ -337,7 +337,7 @@ quit:
     return res;
 }
 
-bool NcursesIfaceHierChoice::Run(ScriptVector &result)
+bool NcursesIfaceHierChoice::Run(ScriptVector &result, const void **uptr)
 {
     if(!first) {
        return false;
@@ -382,6 +382,9 @@ bool NcursesIfaceHierChoice::Run(ScriptVector &result)
                     } else {
                         // here it is!
                         result.Clear();
+                        if(uptr) {
+                            *uptr = p->userptr;
+                        }
                         result[0] = res;
                         while(level->parent) {
                             result.Insert(0, level->parent->name);

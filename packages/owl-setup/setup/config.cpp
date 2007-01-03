@@ -114,13 +114,24 @@ ScriptVariable OwlInstallConfig::ConsolefontsSuffix() const
 { return ".gz"; }
 
 ScriptVariable OwlInstallConfig::UnimapsDbPath() const
-{ return "/lib/kbd/unimaps"; }
+{ return "/lib/kbd/consoletrans"; }
 
 ScriptVariable OwlInstallConfig::UnimapsSuffix() const
-{ return ".uni"; }
+{ return ".trans"; }
 
+ScriptVariable OwlInstallConfig::CharmapsDbPath() const
+{ return "/lib/kbd/consoletrans"; }
+
+ScriptVariable OwlInstallConfig::CharmapsSuffix() const
+{ return ""; }
+
+#if 0
 ScriptVariable OwlInstallConfig::SetfontPath() const
 { return "/bin/setfont"; }
+#endif
+
+ScriptVariable OwlInstallConfig::SetsysfontPath() const
+{ return "/sbin/setsysfont"; }
 
 ScriptVariable OwlInstallConfig::LocalePath() const
 { return "/usr/bin/locale"; }
@@ -128,6 +139,42 @@ ScriptVariable OwlInstallConfig::LocalePath() const
 ScriptVariable OwlInstallConfig::I18nSysconf() const
 { return root+"/etc/sysconfig/i18n"; }
 
+const OwlInstallConfig::PresetFontItem*
+OwlInstallConfig::PresetSetfontCombinations() const
+{
+    /*
+        The following table contains the combinations of setfont(8)
+        parameters which are known to work for us the Openwall
+        team members. If you've got a combination to share, PLEASE
+        PLEASE PLEASE report it to us!
+     */
+    static PresetFontItem the_table[] = {
+            // from http://linuxgazette.net/issue91/loozzr.html
+        { "lat1-16", 0, "cp437", "Default (cp437, looks like latin1)" },
+
+            // legacy is from older Linux distros
+        { "alt-8x16", 0, "koi2alt", "Cyrillic koi8-r legacy (with koi2alt)" },
+        { "alt-8x14", 0, "koi2alt", "Cyrillic koi8-r legacy, 28 lines" },
+        { "alt-8x8",  0, "koi2alt", "Cyrillic koi8-r legacy, 50 lines" },
+
+#if 0
+            // from AltLinux
+            //    disabled: our version of kbd doesn't contain the font
+        { "UniCyr_8x16",  0, "koi8-r", "Cyrillic koi8-r, using UniCyr" },
+#endif
+
+            // recommended by Gremlin
+        { "koi8r-8x16", "koi8-r_to_uni.trans",  0,   "Cyrillic koi8-r" },
+
+            // the one from Owl CD /README file
+        { "koi8r-8x16", "/lib/kbd/unimaps/iso01",  0,
+                                         "Cyrillic koi8-r Owl default" },
+
+        { 0, 0, 0, 0 }
+    };
+
+    return the_table;
+}
 
 
 ScriptVariable OwlInstallConfig::ZoneinfoDbPath() const

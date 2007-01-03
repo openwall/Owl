@@ -55,10 +55,25 @@ public:
     ScriptVariable ConsolefontsSuffix() const;
     ScriptVariable UnimapsDbPath() const;
     ScriptVariable UnimapsSuffix() const;
+    ScriptVariable CharmapsDbPath() const;
+    ScriptVariable CharmapsSuffix() const;
+#if 0
     ScriptVariable SetfontPath() const;
+#endif
+    ScriptVariable SetsysfontPath() const;
         // locale
     ScriptVariable LocalePath() const;
     ScriptVariable I18nSysconf() const;
+
+        // preset setfont combinations
+    struct PresetFontItem {
+        const char *sysfont;
+        const char *unimap;
+        const char *sysfontacm;
+        const char *comment;
+    };
+
+    const PresetFontItem* PresetSetfontCombinations() const;
 
         // time zone
     ScriptVariable ZoneinfoDbPath() const;

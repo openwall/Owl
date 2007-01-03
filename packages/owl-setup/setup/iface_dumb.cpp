@@ -183,7 +183,7 @@ DumbIfaceHierChoice::DumbIfaceHierChoice()
     : IfaceHierChoice()
 {}
 
-bool DumbIfaceHierChoice::Run(ScriptVector &result)
+bool DumbIfaceHierChoice::Run(ScriptVector &result, const void **uptr)
 {
     if(!first) {
         printf("\n\nNo items to choose\n\n");
@@ -244,6 +244,9 @@ bool DumbIfaceHierChoice::Run(ScriptVector &result)
                         // here it is!
                         result.Clear();
                         result[0] = p->name;
+                        if(uptr) {
+                            *uptr = p->userptr;
+                        }
                         while(level->parent) {
                             result.Insert(0, level->parent->name);
                             level = level->parent;

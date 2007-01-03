@@ -49,7 +49,7 @@ IfaceHierChoice::~IfaceHierChoice()
     RmTree(first);
 }
 
-void IfaceHierChoice::AddItem(const ScriptVariable& name)
+void IfaceHierChoice::AddItem(const ScriptVariable& name, const void *uptr)
 {
     if(sorted) {
         Item **tmp = last;
@@ -59,11 +59,11 @@ void IfaceHierChoice::AddItem(const ScriptVariable& name)
         {
             tmp = &((*tmp)->next);
         }
-        Item *p = new Item(name, parent);
+        Item *p = new Item(name, parent, uptr);
         p->next = *tmp;
         *tmp = p;
     } else {
-        *last = new Item(name, parent);
+        *last = new Item(name, parent, uptr);
         last = &((*last)->next);
     }
 }
@@ -76,13 +76,13 @@ void IfaceHierChoice::AddDir(const ScriptVariable& name)
         {
             tmp = &((*tmp)->next);
         }
-        Item *p = new Item(name, parent);
+        Item *p = new Item(name, parent, 0);
         p->next = *tmp;
         *tmp = p;
         parent = p;
         last = &(p->children);
     } else {
-        *last = new Item(name, parent);
+        *last = new Item(name, parent, 0);
         parent = *last;
         last = &((*last)->children);
     }

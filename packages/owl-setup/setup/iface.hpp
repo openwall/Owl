@@ -43,8 +43,9 @@ protected:
         Item *parent;
         Item *children;
         Item *next;
-        Item(const ScriptVariable &a, Item* a_parent)
-            : name(a), parent(a_parent)
+        const void *userptr;
+        Item(const ScriptVariable &a, Item* a_parent, const void *a_uptr)
+            : name(a), parent(a_parent), userptr(a_uptr)
             { children = next = 0; }
     };
 
@@ -62,11 +63,11 @@ public:
 
     void SetCaption(const ScriptVariable& a) { caption = a; }
 
-    void AddItem(const ScriptVariable& name);
+    void AddItem(const ScriptVariable& name, const void *userptr = 0);
     void AddDir(const ScriptVariable& name);
     void EndDir();
 
-    virtual bool Run(ScriptVector &result) = 0;
+    virtual bool Run(ScriptVector &result, const void **userptr = 0) = 0;
 
     void SetSorting(bool sorting) { sorted = sorting; }
     void SetCaseSensitivity(bool sensitive) { ignore_case = !sensitive; }
