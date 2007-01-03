@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/kbd/kbd.spec,v 1.21 2007/01/03 07:51:17 croco Exp $
+# $Owl: Owl/packages/kbd/kbd.spec,v 1.22 2007/01/03 15:57:58 solar Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
-Version: 1.13
-Release: owl2
+Version: 1.12
+Release: owl3
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/kbd/kbd-%version.tar.bz2
@@ -142,7 +142,7 @@ fi
 /lib/kbd/*
 
 %changelog
-* Wed Jan 03 2007 (Croco) <croco-at-owl.openwall.com> 1.13-owl2
+* Wed Jan 03 2007 (Croco) <croco-at-owl.openwall.com> 1.12-owl3
 - setsysfont updated to handle the SYSFONTACM variable
 
 * Tue Oct 25 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.12-owl2
