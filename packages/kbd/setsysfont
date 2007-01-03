@@ -6,8 +6,12 @@ if [ -f /etc/sysconfig/i18n ]; then
 	. /etc/sysconfig/i18n
 fi
 
-if [ -n "$SYSFONT" -a -n "$UNIMAP" ]; then
-	setfont "$SYSFONT" -u "$UNIMAP"
+if [ -n "$SYSFONT" -a -n "$UNIMAP" -a -n "$SYSFONTACM" ]; then
+	setfont "$SYSFONT" -u "$UNIMAP" -m "$SYSFONTACM"
+elif [ -n "$SYSFONT" -a -n "$UNIMAP" ]; then
+	setfont "$SYSFONT" -u "$UNIMAP" 
+elif [ -n "$SYSFONT" -a -n "$SYSFONTACM" ]; then
+	setfont "$SYSFONT" -m "$SYSFONTACM"
 elif [ -n "$SYSFONT" ]; then
 	setfont "$SYSFONT"
 fi

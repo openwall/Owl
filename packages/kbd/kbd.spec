@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/kbd/kbd.spec,v 1.20 2005/11/16 13:11:15 solar Exp $
+# $Owl: Owl/packages/kbd/kbd.spec,v 1.21 2007/01/03 07:51:17 croco Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
-Version: 1.12
+Version: 1.13
 Release: owl2
 License: GPL
 Group: System Environment/Base
@@ -142,6 +142,9 @@ fi
 /lib/kbd/*
 
 %changelog
+* Wed Jan 03 2007 (Croco) <croco-at-owl.openwall.com> 1.13-owl2
+- setsysfont updated to handle the SYSFONTACM variable
+
 * Tue Oct 25 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.12-owl2
 - Removed the -owl-rh-sparc patch since it does nothing nor now, nor in
 1.08 dates.
