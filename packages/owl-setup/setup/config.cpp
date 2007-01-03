@@ -152,11 +152,6 @@ OwlInstallConfig::PresetSetfontCombinations() const
             // from http://linuxgazette.net/issue91/loozzr.html
         { "lat1-16", 0, "cp437", "Default (cp437, looks like latin1)" },
 
-            // legacy is from older Linux distros
-        { "alt-8x16", 0, "koi2alt", "Cyrillic koi8-r legacy (with koi2alt)" },
-        { "alt-8x14", 0, "koi2alt", "Cyrillic koi8-r legacy, 28 lines" },
-        { "alt-8x8",  0, "koi2alt", "Cyrillic koi8-r legacy, 50 lines" },
-
 #if 0
             // from AltLinux
             //    disabled: our version of kbd doesn't contain the font
@@ -169,6 +164,11 @@ OwlInstallConfig::PresetSetfontCombinations() const
             // the one from Owl CD /README file
         { "koi8r-8x16", "/lib/kbd/unimaps/iso01",  0,
                                          "Cyrillic koi8-r Owl default" },
+
+            // legacy is from older Linux distros
+        { "alt-8x16", 0, "koi2alt", "Cyrillic koi8-r legacy (with koi2alt)" },
+        { "alt-8x14", 0, "koi2alt", "Cyrillic koi8-r legacy, 28 lines" },
+        { "alt-8x8",  0, "koi2alt", "Cyrillic koi8-r legacy, 50 lines" },
 
         { 0, 0, 0, 0 }
     };

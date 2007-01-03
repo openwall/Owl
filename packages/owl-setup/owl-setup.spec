@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.74 2007/01/03 07:15:54 galaxy Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.75 2007/01/03 19:21:00 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -37,6 +37,7 @@ rm -rf %buildroot
 * Wed Jan 03 2007 Croco <croco-at-owl.openwall.com> 1.1.6-owl1
 - implemented separate selection of console unimaps and console
   char maps (ACMs) together with preset font/map combinations
+- locale setting and tuning implemented
 - iface* modified so that HierChoice now has a "user pointer" support
 
 * Thu Oct 26 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1.5-owl1

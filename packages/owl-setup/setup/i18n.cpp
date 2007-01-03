@@ -86,7 +86,6 @@ public:
         else
             return "";
     }
-
     void SetKeyboard(const ScriptVariable &k)
     {
         file_keyboard["KEYTABLE"].Value() = k;
@@ -100,19 +99,16 @@ public:
         else
             return "";
     }
-
     void SetConsolefont(const ScriptVariable &k)
     {
         file_i18n["SYSFONT"].Value() = k;
         console_changed = true;
     }
-
     void RemoveConsolefont()
     {
         file_i18n.Undefine("SYSFONT");
         console_changed = true;
     }
-
 
     ScriptVariable GetUnimap() const
     {
@@ -121,18 +117,15 @@ public:
         else
             return "";
     }
-
     bool HaveUnimap() const
     {
         return file_i18n.IsDefined("UNIMAP");
     }
-
     void SetUnimap(const ScriptVariable &k)
     {
         file_i18n["UNIMAP"].Value() = k;
         console_changed = true;
     }
-
     void RemoveUnimap()
     {
         file_i18n.Undefine("UNIMAP");
@@ -146,18 +139,15 @@ public:
         else
             return "";
     }
-
     bool HaveACM() const
     {
         return file_i18n.IsDefined("SYSFONTACM");
     }
-
     void SetACM(const ScriptVariable &k)
     {
         file_i18n["SYSFONTACM"].Value() = k;
         console_changed = true;
     }
-
     void RemoveACM()
     {
         file_i18n.Undefine("SYSFONTACM");
@@ -179,7 +169,33 @@ public:
             file_i18n["LC_ALL"].Value() = s;
         }
     }
-
+    void SetLocale(const ScriptVariable& name, const ScriptVariable& val)
+    {
+        if(!name.HasPrefix("LC_")) return;
+        if(val == "C" || val == "") {
+            file_i18n.Undefine(name);
+        } else {
+            file_i18n[name].Value() = val;
+        }
+    }
+    void ClearLocaleSettings()
+    {
+        file_i18n.Undefine("LANG");
+        file_i18n.Undefine("LANGUAGE");
+        bool done;
+        do {
+            done = true;
+            ParametersFile::Parameter *p;
+            ParametersFile::Iterator i(file_i18n);
+            while((p = i.GetNext())) {
+                if(p->GetName().HasPrefix("LC_")) {
+                    done = false;
+                    file_i18n.Undefine(p->GetName());
+                    break;
+                }
+            }
+        } while(!done);
+    }
 
     ScriptVariable Summary() const
     {
@@ -225,6 +241,24 @@ public:
         res += "char map (SYSFONTACM):  ";
         res += GetACM();
         res += "\n";
+        return res;
+    }
+
+    ScriptVariable LocaleSummary() const
+    {
+        ScriptVariable res;
+        ParametersFile::Parameter *p;
+        ParametersFile::Iterator i(file_i18n);
+        while((p = i.GetNext())) {
+            if(p->GetName() == "LANG" || p->GetName().HasPrefix("LC_")) {
+                res += "  ";
+                res += p->GetName();
+                res += "=";
+                res += p->Value();
+                res += "\n";
+            }
+        }
+        if(res == "") res = "No locale values defined";
         return res;
     }
 };
@@ -464,61 +498,6 @@ static void configure_screen_font(OwlInstallInterface *the_iface,
     delete pm;
 }
 
-#if 0
-static void configure_screen_font(OwlInstallInterface *the_iface,
-                                  LocalizationInfo *the_info)
-{
-    IfaceHierChoice *hc = the_iface->CreateHierChoice();
-    hc->SetCaption("Select console font");
-    ScriptVector v;
-    plain_dir_scan(v, the_config->ConsolefontsDbPath(),
-                      the_config->ConsolefontsSuffix());
-    for(int i=0; i<v.Length(); i++)
-        hc->AddItem(v[i]);
-    ScriptVector res;
-    bool ok = hc->Run(res);
-    delete hc;
-    if(!ok) {
-        return;
-    }
-    ScriptVariable selected_font = res[0];
-
-    // as stated in /lib/kbd/consolefonts/README.psfu,
-    // .psfu fonts have built-in unimap so we don't need to choose
-    // an external map for them
-
-
-    ScriptVariable selected_map = "";
-    if(selected_font.Range(-5, 5).Get() != ".psfu") {
-        // so, let's choose a unimap
-        const char nomap[] = "   [NONE]";
-
-        IfaceHierChoice *hc = the_iface->CreateHierChoice();
-        hc->SetCaption("Please choose unimap");
-        ScriptVector v;
-        plain_dir_scan(v, the_config->UnimapsDbPath(),
-                          the_config->UnimapsSuffix());
-        hc->AddItem(nomap);
-        for(int i=0; i<v.Length(); i++)
-            hc->AddItem(v[i]);
-        ScriptVector res;
-        bool ok = hc->Run(res);
-        delete hc;
-        if(!ok) {
-            return;
-        }
-        if(res[0] != nomap) selected_map = res[0];
-    }
-
-
-    the_info->SetConsolefont(selected_font);
-    if(selected_map != "")
-        the_info->SetUnimap(selected_map);
-    else
-        the_info->RemoveUnimap();
-}
-#endif
-
 static void request_and_load_console(OwlInstallInterface *the_iface,
                                      LocalizationInfo *the_info)
 {
@@ -567,12 +546,43 @@ static void scan_locales(ScriptVector &res)
     }
 }
 
+static void scan_lc_vars(ScriptVector &res)
+{
+   /*
+       The locale(1) command displays several strings which pretend
+       to be standard shell VAR=VAL assignments. Surprisingly enough,
+       locale(1) doesn't handle most of the "variables" displayed so
+       it doesn't make any sense to set them. Therefore, this function
+       (initially intended to scan the locale(1)'s output) just returns
+       the list of variables explicitly enumerated in the locale(1) man
+       page.
+    */
+#if 0
+    ExecResultParse loc(the_config->LocalePath().c_str(), 0);
+    res.Clear();
+    ScriptVector v;
+    while(loc.ReadLine(v, 2, "=")) {
+        res.AddItem(v[0]);
+    }
+#else
+    res.AddItem("LANG");
+    res.AddItem("LANGUAGE");
+    res.AddItem("LC_ALL");
+    res.AddItem("LC_CTYPE");
+    res.AddItem("LC_COLLATE");
+    res.AddItem("LC_TIME");
+    res.AddItem("LC_NUMERIC");
+    res.AddItem("LC_MONETARY");
+    res.AddItem("LC_MESSAGES");
+#endif
+}
 
-static void configure_main_locale(OwlInstallInterface *the_iface,
-                                  LocalizationInfo *the_info)
+static bool choose_locale(OwlInstallInterface *the_iface,
+                          const ScriptVariable& caption,
+                          ScriptVariable& result)
 {
     IfaceHierChoice *hc = the_iface->CreateHierChoice();
-    hc->SetCaption("Select your primary locale");
+    hc->SetCaption(caption);
     hc->SetSorting(false);
     ScriptVector v;
     scan_locales(v);
@@ -582,13 +592,100 @@ static void configure_main_locale(OwlInstallInterface *the_iface,
     bool ok = hc->Run(res);
     delete hc;
     if(!ok) {
-        return;
+        return false;
     }
-    the_info->SetMainLocale(res[0]);
+    result = res[0];
+    return true;
 }
 
+static void configure_locale_default(OwlInstallInterface *the_iface,
+                                     LocalizationInfo *the_info)
+{
+    ScriptVariable r;
+    bool res = choose_locale(the_iface, "Select your main locale", r);
+    if(res) {
+        the_info->ClearLocaleSettings();
+        the_info->SetMainLocale(r);
+    }
+}
 
-	
+static void configure_locale_geek(OwlInstallInterface *the_iface,
+                                  LocalizationInfo *the_info)
+{
+    ScriptVariable r;
+    bool res = choose_locale(the_iface, "Select locale for LC_CTYPE", r);
+    if(res) {
+        the_info->ClearLocaleSettings();
+        the_info->SetLocale("LC_CTYPE", r);
+    }
+}
+
+static void configure_locale_customize(OwlInstallInterface *the_iface,
+                                       LocalizationInfo *the_info)
+{
+    IfaceHierChoice *hc = the_iface->CreateHierChoice();
+    hc->SetCaption("Choose the locale variable to set");
+    hc->SetSorting(false);
+    ScriptVector v;
+    scan_lc_vars(v);
+    for(int i=0; i<v.Length(); i++)
+        hc->AddItem(v[i]);
+    ScriptVector res;
+    bool ok = hc->Run(res);
+    delete hc;
+    if(!ok) {
+        return;
+    }
+
+    ScriptVariable r;
+    bool rs = choose_locale(the_iface,
+                            ScriptVariable("Select locale for ")+res[0],
+                            r);
+    if(rs) the_info->SetLocale(res[0], r);
+}
+
+static void configure_locales(OwlInstallInterface *the_iface,
+                              LocalizationInfo *the_info)
+{
+    IfaceSingleChoice *pm = the_iface->CreateSingleChoice();
+    pm->SetCaption("Locale settings");
+    pm->AddItem("v", "View the current settings");
+    pm->AddItem("d", "Default configuration (LC_ALL only)");
+    pm->AddItem("g", "Geek configuration (LC_CTYPE only)");
+    pm->AddItem("c", "Customize locale variables");
+    pm->AddItem("u", "Unset all");
+    pm->AddItem("q", "Return to i18n menu");
+    do {
+        ScriptVariable choice = pm->Run();
+        if(choice=="") continue;
+        else if(choice=="v") {
+            the_iface->Message(the_info->LocaleSummary());
+        }
+        else if(choice=="d") {
+            configure_locale_default(the_iface, the_info);
+        }
+        else if(choice=="g") {
+            configure_locale_geek(the_iface, the_info);
+        }
+        else if(choice=="c") {
+            configure_locale_customize(the_iface, the_info);
+        }
+        else if(choice=="u") {
+            the_info->ClearLocaleSettings();
+        }
+        else if(choice == "q" ||
+                choice == OwlInstallInterface::qs_escape ||
+                choice == OwlInstallInterface::qs_cancel)
+        {
+            break;
+        }
+        else if(choice == OwlInstallInterface::qs_eof)
+        {
+            break;
+        }
+    } while(1);
+    delete pm;
+}
 
 /////////////////////////////////////////////////////////////////
 // main	
@@ -600,10 +697,7 @@ void i18n_settings(OwlInstallInterface *the_iface)
     pm->AddItem("v", "View the current settings");
     pm->AddItem("k", "Select keyboard layout");
     pm->AddItem("f", "Configure console font and charmap");
-    pm->AddItem("l", "Configure main locale");
-#if 0
-    pm->AddItem("c", "Customize locale settings");
-#endif
+    pm->AddItem("l", "Configure locales");
     pm->AddItem("s", "Save and return to main menu");
     pm->AddItem("x", "Return to main menu without saving");
     LocalizationInfo info;
@@ -621,12 +715,8 @@ void i18n_settings(OwlInstallInterface *the_iface)
             configure_screen_font(the_iface, &info);
         }
         else if(choice=="l") {
-            configure_main_locale(the_iface, &info);
+            configure_locales(the_iface, &info);
         }
-#if 0
-        else if(choice=="c") {
-        }
-#endif
         else if(choice=="s") {
             if(the_iface->YesNoMessage("Really save and quit?")) {
                 if(info.Save())
