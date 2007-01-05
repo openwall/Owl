@@ -1,0 +1,32 @@
+--- cdrtools-2.01.01/mkisofs/mkisofs.c.orig	2006-12-18 00:24:19 +0000
++++ cdrtools-2.01.01/mkisofs/mkisofs.c	2007-01-05 17:04:19 +0000
+@@ -1053,11 +1053,13 @@ read_rcfile(appname)
+ 	char		filename[1000];
+ 	int		linum;
+ 
++#if 0
+ 	strlcpy(filename, rcfn, sizeof (filename));
+ 	if (access(filename, R_OK) == 0)
+ 		rcfile = fopen(filename, "r");
+ 	if (!rcfile && errno != ENOENT)
+ 		errmsg("Cannot open '%s'.\n", filename);
++#endif
+ 
+ 	if (!rcfile) {
+ 		pnt = getenv("MKISOFSRC");
+@@ -1085,6 +1087,7 @@ read_rcfile(appname)
+ 				errmsg("Cannot open '%s'.\n", filename);
+ 		}
+ 	}
++#if 0
+ 	if (!rcfile && strlen(appname) + sizeof (rcfn) + 2 <=
+ 							sizeof (filename)) {
+ 		strlcpy(filename, appname, sizeof (filename));
+@@ -1098,6 +1101,7 @@ read_rcfile(appname)
+ 				errmsg("Cannot open '%s'.\n", filename);
+ 		}
+ 	}
++#endif
+ 	if (!rcfile)
+ 		return;
+ 	if (verbose > 0) {

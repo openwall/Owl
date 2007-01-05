@@ -1,0 +1,31 @@
+--- cdrtools-2.01/mkisofs/write.c.gcc4	2006-08-16 09:25:28 +0200
++++ cdrtools-2.01/mkisofs/write.c	2006-08-16 09:25:28 +0200
+@@ -1907,7 +1907,7 @@
+ 	/* Next we write out the primary descriptor for the disc */
+ 	memset(&vol_desc, 0, sizeof (vol_desc));
+ 	vol_desc.type[0] = ISO_VD_PRIMARY;
+-	memcpy(vol_desc.id, ISO_STANDARD_ID, sizeof (ISO_STANDARD_ID));
++	memcpy(vol_desc.id, ISO_STANDARD_ID, sizeof (ISO_STANDARD_ID) - 1);
+ 	vol_desc.version[0] = 1;
+ 
+ 	memset(vol_desc.system_id, ' ', sizeof (vol_desc.system_id));
+@@ -2030,7 +2030,7 @@
+ 	 */
+ 	memset(&evol_desc, 0, sizeof (evol_desc));
+ 	evol_desc.type[0] = (unsigned char) ISO_VD_END;
+-	memcpy(evol_desc.id, ISO_STANDARD_ID, sizeof (ISO_STANDARD_ID));
++	memcpy(evol_desc.id, ISO_STANDARD_ID, sizeof (ISO_STANDARD_ID) - 1);
+ 	evol_desc.version[0] = 1;
+ 	xfwrite(&evol_desc, SECTOR_SIZE, 1, outfile, 0, TRUE);
+ 	last_extent_written += 1;
+--- cdrtools-2.01/mkisofs/eltorito.c.gcc4	2004-05-23 22:46:05 +0200
++++ cdrtools-2.01/mkisofs/eltorito.c	2006-08-16 09:25:28 +0200
+@@ -270,7 +270,7 @@
+ 
+ 	memset(boot_desc, 0, sizeof (*boot_desc));
+ 	boot_desc->type[0] = 0;
+-	memcpy(boot_desc->id, ISO_STANDARD_ID, sizeof (ISO_STANDARD_ID));
++	memcpy(boot_desc->id, ISO_STANDARD_ID, sizeof (ISO_STANDARD_ID) - 1);
+ 	boot_desc->version[0] = 1;
+ 
+ 	memcpy(boot_desc->system_id, EL_TORITO_ID, sizeof (EL_TORITO_ID));

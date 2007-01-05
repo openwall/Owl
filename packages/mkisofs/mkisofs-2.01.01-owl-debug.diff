@@ -1,0 +1,11 @@
+diff -upk.orig cdrtools-2.01.01.orig/mkisofs/write.c cdrtools-2.01.01/mkisofs/write.c
+--- cdrtools-2.01.01.orig/mkisofs/write.c	2006-11-19 21:54:01 +0000
++++ cdrtools-2.01.01/mkisofs/write.c	2007-01-05 13:30:13 +0000
+@@ -1918,6 +1918,7 @@ vers_write(outfile)
+ 	idx += 25;
+ 	strlcpy(&cp[idx], version_string, SECTOR_SIZE - idx);
+ 	idx += strlen(version_string);
++	if (debug)
+ 	for (i = 1; i < X_ac; i++) {
+ 		len = strlen(X_av[i]);
+ 		if ((idx + len + 2) >= SECTOR_SIZE)
