@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.70 2006/10/29 14:18:11 ldv Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.71 2007/01/05 19:27:14 galaxy Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.31
+Version: 0.32
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -166,6 +166,10 @@ fi
 %doc redhat
 
 %changelog
+* Fri Jan 05 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.32-owl1
+- Added the default shell and for the --user option of daemon() in
+/etc/rc.d/init.d/functions.
+
 * Sun Oct 29 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.31-owl1
 - Changed /etc/init.d/halt to call accton(8) with "off" argument.
 
