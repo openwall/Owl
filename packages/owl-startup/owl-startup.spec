@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.71 2007/01/05 19:27:14 galaxy Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.72 2007/01/05 19:28:32 galaxy Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -167,7 +167,7 @@ fi
 
 %changelog
 * Fri Jan 05 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.32-owl1
-- Added the default shell and for the --user option of daemon() in
+- Added the default shell for the --user option of daemon() in
 /etc/rc.d/init.d/functions.
 
 * Sun Oct 29 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.31-owl1
