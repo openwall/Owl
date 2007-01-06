@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/Attic/buildkernel.sh,v 1.1 2006/12/30 18:05:42 ldv Exp $
+# $Owl: Owl/build/Attic/buildkernel.sh,v 1.2 2007/01/06 22:25:49 ldv Exp $
 
 set -e
 
@@ -11,6 +11,7 @@ log()
 
 	stamp="$(date +%H:%M:%S)"
 	printf '%s: %s\n' "$stamp" "$*"
+	printf >&3 '%s: %s\n' "$stamp" "$*"
 }
 
 exit_handler()
@@ -30,6 +31,56 @@ exit_handler()
 	exit $rc
 }
 
+detect_arch()
+{
+	local MACHINE
+
+	MACHINE=`uname -m` || MACHINE="unknown"
+
+	case "$MACHINE" in
+	*86)
+		ARCHITECTURE=i386
+		;;
+	x86_64)
+		ARCHITECTURE=x86_64
+		;;
+	sparc*)
+		ARCHITECTURE=sparc
+		;;
+	alpha)
+		ARCHITECTURE=alpha
+		;;
+	esac
+}
+
+detect_proc()
+{
+	case "$ARCHITECTURE" in
+	sparc*)
+		PROCESSORS="`sed -n \
+			's/^ncpus active[[:space:]]\+: \([0-9]\+\)$/\1/p' \
+			/proc/cpuinfo`"
+		;;
+	alpha*)
+		PROCESSORS="`sed -n \
+			's/^cpus detected[[:space:]]\+: \([0-9]\+\)$/\1/p' \
+			/proc/cpuinfo`"
+		;;
+	*)
+		PROCESSORS="`grep -cw ^processor /proc/cpuinfo`"
+		;;
+	esac || :
+
+	test -n "$PROCESSORS" || PROCESSORS=1
+	test "$PROCESSORS" -ge 1 || PROCESSORS=1
+}
+
+detect()
+{
+	test -n "$ARCHITECTURE" || detect_arch
+	test -n "$PROCESSORS" || detect_proc
+}
+
 if [ "`id -u`" = 0 -o ! -O "$HOME" ]; then
 	echo >&2 "Run this as the owner of $HOME (typically, as user \"build\")"
 	exit 1
@@ -43,6 +94,7 @@ cd $HOME
 
 mkdir -p logs
 
+exec 3>&1
 exec </dev/null >logs/buildkernel 2>&1
 echo "`date '+%Y %b %e %H:%M:%S'`: Started"
 
@@ -50,6 +102,8 @@ log "Removing stale temporary files if any"
 rm -rf tmp-work kernel-work
 
 trap exit_handler HUP INT QUIT TERM EXIT
+
+detect
 
 mkdir tmp-work kernel-work kernel-work/boot
 
@@ -106,7 +160,7 @@ log "Building kernel dependencies"
 make dep
 
 log "Building kernel image for $ARCH"
-make bzImage
+make "-j$PROCESSORS" bzImage
 	
 log "Copying kernel image"
 install -pm644 System.map "arch/$ARCH/boot/bzImage" "$HOME/kernel-work/boot/"
