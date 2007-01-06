@@ -1,4 +1,4 @@
-# $Owl: Owl/build/Makefile,v 1.21 2007/01/06 02:05:17 solar Exp $
+# $Owl: Owl/build/Makefile,v 1.22 2007/01/06 21:57:37 ldv Exp $
 
 # The Owl branch to build and/or install, specified by its tag in the
 # CVS.  This should only be set to build and/or install a non-current
@@ -41,6 +41,7 @@ clean:
 	test -d RPMS && rm -f RPMS/* || :
 	test -d SRPMS && rm -f SRPMS/* || :
 	test -d archives && rm -f archives/* || :
+	test -d kernel-work && rm -rf kernel-work || :
 
 .PHONY: default checkout symlinks
 .PHONY: buildworld installworld buildkernel buildisotree setup clean
