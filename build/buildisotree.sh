@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/Attic/buildisotree.sh,v 1.1 2006/12/30 18:05:42 ldv Exp $
+# $Owl: Owl/build/Attic/buildisotree.sh,v 1.2 2007/01/06 22:07:31 ldv Exp $
 
 set -e
 
@@ -11,6 +11,7 @@ log()
 
 	stamp="$(date +%H:%M:%S)"
 	printf '%s: %s\n' "$stamp" "$*"
+	printf >&3 '%s: %s\n' "$stamp" "$*"
 }
 
 exit_handler()
@@ -36,10 +37,11 @@ fi
 umask $UMASK
 cd $HOME
 
+trap exit_handler HUP INT QUIT TERM EXIT
 mkdir -p logs
+exec 3>&1
 exec </dev/null >logs/buildisotree 2>&1
 echo "`date '+%Y %b %e %H:%M:%S'`: Started"
-trap exit_handler HUP INT QUIT TERM EXIT
 
 log "Removing extra documentation"
 cd "$ROOT"
@@ -70,7 +72,10 @@ chmod -R u=rwX,go=rX .
 
 log "Installing userspace sources"
 cd "$ROOT/rom/world"
-tar xzf "$HOME/Owl/current/native.tar.gz"
+tar -cf- --owner=build --group=sources --exclude Root -C "$HOME" \
+	"native/$BRANCH" Makefile |
+	tar -xf-
+
 cp -rpL "$HOME/RPMS" .
 cp -rpL "$HOME/sources" .
 chown -hR build:sources .
