@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/Attic/buildisotree.sh,v 1.2 2007/01/06 22:07:31 ldv Exp $
+# $Owl: Owl/build/Attic/buildisotree.sh,v 1.3 2007/01/07 23:35:06 ldv Exp $
 
 set -e
 
@@ -77,7 +77,8 @@ tar -cf- --owner=build --group=sources --exclude Root -C "$HOME" \
 	tar -xf-
 
 cp -rpL "$HOME/RPMS" .
-cp -rpL "$HOME/sources" .
+mkdir sources
+cp -rpL "$HOME/sources/$BRANCH" sources/
 chown -hR build:sources .
 chmod -R u=rwX,go=rX .
 
