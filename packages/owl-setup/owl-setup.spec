@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.75 2007/01/03 19:21:00 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.76 2007/01/07 09:20:20 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 1.1.6
+Version: 1.1.7
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -34,6 +34,13 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
+* Sun Jan 07 2007 Croco <croco-at-owl.openwall.com> 1.1.7-owl1
+- running cfdisk instead of fdisk for the case of ncurses interface
+  implemented; cmdline flags to force either fdisk or cfdisk created
+- fixed a problem with HierChoice having long items in dumb interface mode
+- fixed an ugly-looing output after reading an input line in dumb
+  interface mode (added extra linefeed)
+
 * Wed Jan 03 2007 Croco <croco-at-owl.openwall.com> 1.1.6-owl1
 - implemented separate selection of console unimaps and console
   char maps (ACMs) together with preset font/map combinations

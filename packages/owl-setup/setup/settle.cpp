@@ -15,7 +15,7 @@
 
 #include "command_line.hpp"
 
-extern void repartition_hard_drive(OwlInstallInterface *);
+extern void repartition_hard_drive(OwlInstallInterface *, bool);
 extern void select_and_mount_partitions(OwlInstallInterface *);
 extern void activate_swap(OwlInstallInterface *);
 extern void install_packages(OwlInstallInterface *);
@@ -38,11 +38,29 @@ bool is_terminal_curses_capable();
 #endif
 
 struct CommandLine : public OwlSetupCommandline {
+    enum { use_whatever, use_fdisk, use_cfdisk } fdisk_mode;
     const char* HelpMessage() const {
         return "Usage: settle -d      use dumb terminal interface\n"
-               "       settle -m      use ncurses interface\n"
-               "       settle -b      force bw mode for ncurses\n";
+               "              -m      use ncurses interface\n"
+               "              -b      force bw mode for ncurses\n"
+               "              -f      force using of plain fdisk\n"
+               "              -c      force using of cfdisk\n";
     }
+    virtual const char* OptChars() const { return "dmbhfc"; }
+    virtual bool SpecificProcess(int c)
+    {
+        switch(c) {
+            case 'f':
+                fdisk_mode = use_fdisk;
+                return true;
+            case 'c':
+                fdisk_mode = use_cfdisk;
+                return true;
+            default:
+                return false;
+        }
+    }
+    
 };
 
 int main(int argc, char **argv)
@@ -103,6 +121,21 @@ int main(int argc, char **argv)
     the_interface = new DumbOwlInstallInterface;
 #endif
 
+    bool use_cfdisk;
+    switch(cmdline.fdisk_mode) {
+        case CommandLine::use_fdisk:
+            use_cfdisk = false;
+            break;
+        case CommandLine::use_cfdisk:
+            use_cfdisk = true;
+            break;
+        case CommandLine::use_whatever:
+        default: // default is just to make the compiler happy
+            use_cfdisk = cmdline.ncurses_interface;
+            break;
+    }
+
+
     for(;;) {
         IfaceSingleChoice *mm = the_interface->CreateSingleChoice();
         ScriptVariable defval("");
@@ -132,7 +165,7 @@ int main(int argc, char **argv)
             break;
         } else
         if(choice == "f") {
-            repartition_hard_drive(the_interface);
+            repartition_hard_drive(the_interface, use_cfdisk);
         } else
         if(choice == "m") {
             select_and_mount_partitions(the_interface);

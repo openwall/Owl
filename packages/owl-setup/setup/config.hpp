@@ -12,6 +12,7 @@ public:
     void SetRoot(const char *rt) { root = rt; }
 
     ScriptVariable FdiskPath() const;
+    ScriptVariable CfdiskPath() const;
     ScriptVariable CpPath() const;
     ScriptVariable SuPath() const;
     ScriptVariable MkdirPath() const;

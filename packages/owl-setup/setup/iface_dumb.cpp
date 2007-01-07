@@ -13,6 +13,19 @@
 
 #include "iface_dumb.hpp"
 
+   /* if any item of a "hierarchical choice" menu is longer than 
+      this, then print item numbers and expect the user to type 
+      them instead of the item text
+    */
+static const int maximum_length_for_unnumbered_hierchoice = 15;
+   /* reduce the number of columns until there's at least this
+      many (fully filled) rows. Well it looks ugly when there are 
+      2 raws and the second of them isn't filled
+    */
+static const int minimum_rows_for_multicol_hierchoice = 3;
+
+
+
 class SymbolicInterruption {
     struct termios save_ti;
 public:
@@ -115,6 +128,7 @@ static ScriptVariable KeyboardRead(bool blind = false)
     if(c==EOF) {
         return OwlInstallInterface::qs_eof;
     }
+    putchar('\n');
     return res;
 }
 
@@ -180,7 +194,7 @@ ScriptVariable DumbIfaceSingleChoice::Run()
 //
 
 DumbIfaceHierChoice::DumbIfaceHierChoice()
-    : IfaceHierChoice()
+    : IfaceHierChoice(), numbers(false)
 {}
 
 bool DumbIfaceHierChoice::Run(ScriptVector &result, const void **uptr)
@@ -192,22 +206,38 @@ bool DumbIfaceHierChoice::Run(ScriptVector &result, const void **uptr)
     Item *level = first;
     do {
         int maxlen = 0;
+        int itscount = 0;
         for(Item *p = level; p; p = p->next) {
             int l = p->name.Length();
             if(p->children) l+=2;
             if(l>maxlen) maxlen = l;
+            itscount++;
+        }
+        if(maxlen > maximum_length_for_unnumbered_hierchoice) {
+            numbers = true;
+            maxlen += 5; // 5 == length("125) ")
+            // well let's assume noone will ever need 1000 items
+            // in a single level in the numbered mode (that is, 
+            // when some items are longer than 15), because no 
+            // user can read such a list without getting totally mad
         }
         int cols = get_terminal_columns() / (maxlen+1);
+        while(cols > 1 && 
+              itscount/cols < minimum_rows_for_multicol_hierchoice) cols--;
         int n = 0;
         printf("\n\n");
         for(Item *p = level; p; p = p->next) {
              if(n>0 && n%cols == 0) printf("\n");
              n++;
+             ScriptVariable num;
+             if(numbers) {
+                 num = ScriptVariable(7, "%3d) ", n);
+             }
              if(p->children)
                  printf("%-*s ", maxlen,
-                        (ScriptVariable("[")+p->name+"]").c_str());
+                        (num+"["+p->name+"]").c_str());
              else
-                 printf("%-*s ", maxlen, p->name.c_str());
+                 printf("%-*s ", maxlen, (num+p->name).c_str());
         }
         printf("\n\nYour choice? (Ctrl-C to cancel%s) ",
                level == first ? "" : ", Escape to UP");
@@ -231,31 +261,39 @@ bool DumbIfaceHierChoice::Run(ScriptVector &result, const void **uptr)
             }
         } else {
             res.Trim("[] ");
+            long intres;
             Item *p;
-            for(p = level; p; p = p->next) {
-                bool eq = ignore_case ?
-                    strcasecmp(p->name.c_str(), res.c_str()) == 0 :
-                    p->name == res;
-                if(eq) {
-                    if(p->children) {
-                        level = p->children;
-                        break;
-                    } else {
-                        // here it is!
-                        result.Clear();
-                        result[0] = p->name;
-                        if(uptr) {
-                            *uptr = p->userptr;
-                        }
-                        while(level->parent) {
-                            result.Insert(0, level->parent->name);
-                            level = level->parent;
-                        }
-                        return true;
-                    }
+            if(numbers && res.GetLong(intres) 
+               && intres>0 && intres<=itscount)
+            {
+                // item number entered
+                int i;
+                for(i=1, p=level; i<intres && p; i++, p=p->next) {}
+            } else {
+                for(p = level; p; p = p->next) {
+                    bool eq = ignore_case ?
+                        strcasecmp(p->name.c_str(), res.c_str()) == 0 :
+                        p->name == res;
+                    if(eq) break;
                 }
             }
-            if(!p) printf("Invalid choice!\n");
+            if(!p) {
+                printf("Invalid choice!\n");
+            } else if(p->children) {
+                level = p->children;
+            } else {
+                // here it is!
+                result.Clear();
+                result[0] = p->name;
+                if(uptr) {
+                    *uptr = p->userptr;
+                }
+                while(level->parent) {
+                    result.Insert(0, level->parent->name);
+                    level = level->parent;
+                }
+                return true;
+            }
         }
     } while(true);
 }

@@ -6,6 +6,9 @@
 ScriptVariable OwlInstallConfig::FdiskPath() const
 { return "/sbin/fdisk"; }
 
+ScriptVariable OwlInstallConfig::CfdiskPath() const
+{ return "/sbin/cfdisk"; }
+
 ScriptVariable OwlInstallConfig::CpPath() const
 { return "/bin/cp"; }
 

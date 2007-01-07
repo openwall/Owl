@@ -16,6 +16,7 @@ public:
 class DumbIfaceHierChoice : public IfaceHierChoice {
     friend class DumbOwlInstallInterface;
     DumbIfaceHierChoice();
+    bool numbers;
 public:
     bool Run(ScriptVector &result, const void **uptr);
 };
