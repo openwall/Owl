@@ -60,7 +60,6 @@ struct CommandLine : public OwlSetupCommandline {
                 return false;
         }
     }
-    
 };
 
 int main(int argc, char **argv)

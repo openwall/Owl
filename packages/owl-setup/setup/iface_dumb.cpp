@@ -13,13 +13,13 @@
 
 #include "iface_dumb.hpp"
 
-   /* if any item of a "hierarchical choice" menu is longer than 
-      this, then print item numbers and expect the user to type 
+   /* if any item of a "hierarchical choice" menu is longer than
+      this, then print item numbers and expect the user to type
       them instead of the item text
     */
 static const int maximum_length_for_unnumbered_hierchoice = 15;
    /* reduce the number of columns until there's at least this
-      many (fully filled) rows. Well it looks ugly when there are 
+      many (fully filled) rows. Well it looks ugly when there are
       2 raws and the second of them isn't filled
     */
 static const int minimum_rows_for_multicol_hierchoice = 3;
@@ -217,12 +217,12 @@ bool DumbIfaceHierChoice::Run(ScriptVector &result, const void **uptr)
             numbers = true;
             maxlen += 5; // 5 == length("125) ")
             // well let's assume noone will ever need 1000 items
-            // in a single level in the numbered mode (that is, 
-            // when some items are longer than 15), because no 
+            // in a single level in the numbered mode (that is,
+            // when some items are longer than 15), because no
             // user can read such a list without getting totally mad
         }
         int cols = get_terminal_columns() / (maxlen+1);
-        while(cols > 1 && 
+        while(cols > 1 &&
               itscount/cols < minimum_rows_for_multicol_hierchoice) cols--;
         int n = 0;
         printf("\n\n");
@@ -263,7 +263,7 @@ bool DumbIfaceHierChoice::Run(ScriptVector &result, const void **uptr)
             res.Trim("[] ");
             long intres;
             Item *p;
-            if(numbers && res.GetLong(intres) 
+            if(numbers && res.GetLong(intres)
                && intres>0 && intres<=itscount)
             {
                 // item number entered
