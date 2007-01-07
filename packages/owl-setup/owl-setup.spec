@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.76 2007/01/07 09:20:20 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.77 2007/01/07 18:12:45 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -38,7 +38,7 @@ rm -rf %buildroot
 - running cfdisk instead of fdisk for the case of ncurses interface
   implemented; cmdline flags to force either fdisk or cfdisk created
 - fixed a problem with HierChoice having long items in dumb interface mode
-- fixed an ugly-looing output after reading an input line in dumb
+- fixed ugly-looking output after reading an input line in dumb
   interface mode (added extra linefeed)
 
 * Wed Jan 03 2007 Croco <croco-at-owl.openwall.com> 1.1.6-owl1
@@ -116,7 +116,7 @@ the help and the fstab windows are closed.
 * Mon Jan 02 2006 Croco <croco-at-owl.openwall.com> 0.30-owl1
 - checking whether the /etc/localtime is UTC added
 - ncurses interface is now enabled by default
-- command line is now parsed using getopt(3) and the code is now in a 
+- command line is now parsed using getopt(3) and the code is now in a
   separated module
 
 * Sat Dec 10 2005 Croco <croco-at-owl.openwall.com> 0.29-owl1
@@ -144,7 +144,7 @@ the help and the fstab windows are closed.
 
 * Wed Sep 21 2005 Croco <croco-at-owl.openwall.com> 0.25-owl1
 - careful handling of /etc/hosts added
-- timezone and keyb. layout in the dumb interface made case insensitive 
+- timezone and keyb. layout in the dumb interface made case insensitive
 
 * Mon Sep 19 2005 Croco <croco-at-owl.openwall.com> 0.24-owl1
 - UTC/local hw clock handled; creation of /etc/sysconfig/clock implemented
