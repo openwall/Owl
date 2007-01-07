@@ -19,8 +19,8 @@
     */
 static const int maximum_length_for_unnumbered_hierchoice = 15;
    /* reduce the number of columns until there's at least this
-      many (fully filled) rows. Well it looks ugly when there are
-      2 raws and the second of them isn't filled
+      many (fully filled) rows. Well, it looks ugly when there are
+      2 rows and the second of them isn't filled
     */
 static const int minimum_rows_for_multicol_hierchoice = 3;
 
