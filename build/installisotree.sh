@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/Attic/buildisotree.sh,v 1.3 2007/01/07 23:35:06 ldv Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.1 2007/01/07 23:48:20 ldv Exp $
 
 set -e
 
@@ -40,7 +40,7 @@ cd $HOME
 trap exit_handler HUP INT QUIT TERM EXIT
 mkdir -p logs
 exec 3>&1
-exec </dev/null >logs/buildisotree 2>&1
+exec </dev/null >logs/installisotree 2>&1
 echo "`date '+%Y %b %e %H:%M:%S'`: Started"
 
 log "Removing extra documentation"

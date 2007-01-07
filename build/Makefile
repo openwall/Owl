@@ -1,4 +1,4 @@
-# $Owl: Owl/build/Makefile,v 1.22 2007/01/06 21:57:37 ldv Exp $
+# $Owl: Owl/build/Makefile,v 1.23 2007/01/07 23:48:20 ldv Exp $
 
 # The Owl branch to build and/or install, specified by its tag in the
 # CVS.  This should only be set to build and/or install a non-current
@@ -30,9 +30,9 @@ installworld: symlinks
 buildkernel: symlinks
 	BRANCH=$(BRANCH) native/$(BRANCH)/build/buildkernel.sh
 
-buildisotree: symlinks
+installisotree: symlinks
 	MAKE_CDROM=yes native/$(BRANCH)/build/installworld.sh
-	BRANCH=$(BRANCH) native/$(BRANCH)/build/buildisotree.sh
+	BRANCH=$(BRANCH) native/$(BRANCH)/build/installisotree.sh
 
 setup: symlinks
 	native/$(BRANCH)/build/setup.sh
@@ -44,4 +44,4 @@ clean:
 	test -d kernel-work && rm -rf kernel-work || :
 
 .PHONY: default checkout symlinks
-.PHONY: buildworld installworld buildkernel buildisotree setup clean
+.PHONY: buildworld installworld buildkernel installisotree setup clean
