@@ -351,7 +351,7 @@ static void configure_screen_font_preset(OwlInstallInterface *the_iface,
     ScriptVector v;
     const OwlInstallConfig::PresetFontItem *presets =
         the_config->PresetSetfontCombinations();
-    hc->AddItem("  NONE  ", 0);
+    hc->AddItem("* NONE *", 0, true);
     for(int i=0; presets[i].comment; i++)
         hc->AddItem(presets[i].comment, presets+i);
     ScriptVector r;
@@ -379,14 +379,17 @@ static void configure_screen_font_preset(OwlInstallInterface *the_iface,
     }
 }
 
+static const char choose_none[] = "* NONE *";
+static const char choose_unlisted[] = "* UNLISTED *";
+
 static void configure_screen_font_font(OwlInstallInterface *the_iface,
                                        LocalizationInfo *the_info)
 {
     IfaceHierChoice *hc = the_iface->CreateHierChoice();
     hc->SetCaption("Select console font");
     ScriptVector v;
-    const char nofont[] = "    USE NO FONT";
-    hc->AddItem(nofont);
+    hc->AddItem(choose_none, 0, true);
+    hc->AddItem(choose_unlisted, 0, true);
     plain_dir_scan(v, the_config->ConsolefontsDbPath(),
                       the_config->ConsolefontsSuffix());
     for(int i=0; i<v.Length(); i++)
@@ -397,12 +400,22 @@ static void configure_screen_font_font(OwlInstallInterface *the_iface,
     if(!ok) {
         return;
     }
-    if(res[0] != nofont)
-        the_info->SetConsolefont(res[0]);
-    else {
+    if(res[0] == choose_none) {
         the_info->RemoveConsolefont();
         the_info->RemoveUnimap();
         the_info->RemoveACM();
+    } else if(res[0] == choose_unlisted) {
+        ScriptVariable s =
+            the_iface->QueryString("Please enter your font", "", false);
+        if(s == OwlInstallInterface::qs_cancel ||
+           s == OwlInstallInterface::qs_eof)
+        {
+            the_iface->Notice("Unimap unchanged");
+        } else {
+            the_info->SetConsolefont(s);
+        }
+    } else {
+        the_info->SetConsolefont(res[0]);
     }
 }
 
@@ -412,8 +425,8 @@ static void configure_screen_font_unimap(OwlInstallInterface *the_iface,
     IfaceHierChoice *hc = the_iface->CreateHierChoice();
     hc->SetCaption("Select unicode mapping for console");
     ScriptVector v;
-    const char nomap[] = "    NO UNIMAP";
-    hc->AddItem(nomap);
+    hc->AddItem(choose_none, 0, true);
+    hc->AddItem(choose_unlisted, 0, true);
     plain_dir_scan(v, the_config->UnimapsDbPath(),
                       the_config->UnimapsSuffix());
     for(int i=0; i<v.Length(); i++)
@@ -424,10 +437,21 @@ static void configure_screen_font_unimap(OwlInstallInterface *the_iface,
     if(!ok) {
         return;
     }
-    if(res[0] != nomap)
-        the_info->SetUnimap(res[0]);
-    else
+    if(res[0] == choose_none) {
         the_info->RemoveUnimap();
+    } else if(res[0] == choose_unlisted) {
+        ScriptVariable s =
+            the_iface->QueryString("Please enter your unimap", "", false);
+        if(s == OwlInstallInterface::qs_cancel ||
+           s == OwlInstallInterface::qs_eof)
+        {
+            the_iface->Notice("Unimap unchanged");
+        } else {
+            the_info->SetUnimap(s);
+        }
+    } else {
+        the_info->SetUnimap(res[0]);
+    }
 }
 
 static void configure_screen_font_acm(OwlInstallInterface *the_iface,
@@ -436,8 +460,8 @@ static void configure_screen_font_acm(OwlInstallInterface *the_iface,
     IfaceHierChoice *hc = the_iface->CreateHierChoice();
     hc->SetCaption("Select charmap");
     ScriptVector v;
-    const char nomap[] = "    NO CHARMAP";
-    hc->AddItem(nomap);
+    hc->AddItem(choose_none, 0, true);
+    hc->AddItem(choose_unlisted, 0, true);
     plain_dir_scan(v, the_config->CharmapsDbPath(),
                       the_config->CharmapsSuffix());
     for(int i=0; i<v.Length(); i++)
@@ -449,10 +473,21 @@ static void configure_screen_font_acm(OwlInstallInterface *the_iface,
     if(!ok) {
         return;
     }
-    if(res[0] != nomap)
-        the_info->SetACM(res[0]);
-    else
+    if(res[0] == choose_none) {
         the_info->RemoveACM();
+    } else if(res[0] == choose_unlisted) {
+        ScriptVariable s =
+            the_iface->QueryString("Please enter your charmap", "", false);
+        if(s == OwlInstallInterface::qs_cancel ||
+           s == OwlInstallInterface::qs_eof)
+        {
+            the_iface->Notice("Charmap unchanged");
+        } else {
+            the_info->SetACM(s);
+        }
+    } else {
+        the_info->SetACM(res[0]);
+    }
 }
 
 static void configure_screen_font(OwlInstallInterface *the_iface,

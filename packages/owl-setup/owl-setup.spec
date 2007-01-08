@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.77 2007/01/07 18:12:45 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.78 2007/01/08 21:35:19 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 1.1.7
+Version: 1.1.8
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -34,6 +34,12 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
+* Tue Jan 09 2007 Croco <croco-at-owl.openwall.com> 1.1.8-owl1
+- fdisk program selection menu for the case of ncurses interface (and no
+  commandline selection) implemented
+- specifying unlisted font, charmap and unimap implemented, and, by the
+  way, fixed some problems with HierChoice interface element
+
 * Sun Jan 07 2007 Croco <croco-at-owl.openwall.com> 1.1.7-owl1
 - running cfdisk instead of fdisk for the case of ncurses interface
   implemented; cmdline flags to force either fdisk or cfdisk created

@@ -49,21 +49,29 @@ IfaceHierChoice::~IfaceHierChoice()
     RmTree(first);
 }
 
-void IfaceHierChoice::AddItem(const ScriptVariable& name, const void *uptr)
+void IfaceHierChoice::AddItem(const ScriptVariable& name,
+                              const void *uptr,
+                              bool stick_on_top)
 {
     if(sorted) {
         Item **tmp = last;
-        while(*tmp &&
-              ((*tmp)->children || (*tmp)->name.Strcasecmp(name)<0)
-             )
-        {
-            tmp = &((*tmp)->next);
+        if(!stick_on_top) {
+            while(*tmp &&
+                  (
+                     (*tmp)->children ||
+                     (*tmp)->stick_on_top ||
+                     (*tmp)->name.Strcasecmp(name)<0
+                  )
+                 )
+            {
+                tmp = &((*tmp)->next);
+            }
         }
-        Item *p = new Item(name, parent, uptr);
+        Item *p = new Item(name, parent, uptr, stick_on_top);
         p->next = *tmp;
         *tmp = p;
     } else {
-        *last = new Item(name, parent, uptr);
+        *last = new Item(name, parent, uptr, stick_on_top);
         last = &((*last)->next);
     }
 }
@@ -72,17 +80,19 @@ void IfaceHierChoice::AddDir(const ScriptVariable& name)
 {
     if(sorted) {
         Item **tmp = last;
-        while(*tmp && (*tmp)->children && (*tmp)->name.Strcasecmp(name)<0)
+        while(*tmp && (
+               (*tmp)->stick_on_top ||
+               (*tmp)->children && (*tmp)->name.Strcasecmp(name)<0))
         {
             tmp = &((*tmp)->next);
         }
-        Item *p = new Item(name, parent, 0);
+        Item *p = new Item(name, parent, 0, false);
         p->next = *tmp;
         *tmp = p;
         parent = p;
         last = &(p->children);
     } else {
-        *last = new Item(name, parent, 0);
+        *last = new Item(name, parent, 0, false);
         parent = *last;
         last = &((*last)->children);
     }

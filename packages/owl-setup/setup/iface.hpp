@@ -44,9 +44,12 @@ protected:
         Item *children;
         Item *next;
         const void *userptr;
-        Item(const ScriptVariable &a, Item* a_parent, const void *a_uptr)
-            : name(a), parent(a_parent), userptr(a_uptr)
-            { children = next = 0; }
+        bool stick_on_top;
+        Item(const ScriptVariable &a, Item* a_parent,
+             const void *a_uptr, bool a_stick_on_top
+        ) : name(a), parent(a_parent),
+            userptr(a_uptr), stick_on_top(a_stick_on_top)
+        { children = next = 0; }
     };
 
     Item* first;
@@ -63,7 +66,8 @@ public:
 
     void SetCaption(const ScriptVariable& a) { caption = a; }
 
-    void AddItem(const ScriptVariable& name, const void *userptr = 0);
+    void AddItem(const ScriptVariable& name,
+                 const void *userptr = 0, bool stick_on_top = false);
     void AddDir(const ScriptVariable& name);
     void EndDir();
 

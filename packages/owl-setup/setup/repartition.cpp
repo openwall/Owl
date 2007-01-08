@@ -5,7 +5,8 @@
 #include "cmd.hpp"
 #include "config.hpp"
 
-void repartition_hard_drive(OwlInstallInterface *the_iface, bool use_cfdisk)
+void repartition_hard_drive(OwlInstallInterface *the_iface,
+                            bool use_cfdisk, bool select_fdisk)
 {
     IfaceSingleChoice *dm = the_iface->CreateSingleChoice();
 
@@ -25,6 +26,24 @@ void repartition_hard_drive(OwlInstallInterface *the_iface, bool use_cfdisk)
         }
         dm->AddItem("q", "quit (return to main menu)");
         dm->SetDefault(defval);
+    }
+    if(select_fdisk) {
+        IfaceSingleChoice *pm = the_iface->CreateSingleChoice();
+        pm->SetCaption("Select fdisk program to use");
+        pm->AddItem("f", "Use traditional fdisk");
+        pm->AddItem("c", "Use ncurses-based cfdisk");
+        pm->AddItem("x", "Cancel, return to main menu");
+        if(use_cfdisk) pm->SetDefault("c");
+        ScriptVariable res = pm->Run();
+        delete pm;
+        if(res == "f")
+            use_cfdisk = false;
+        else if(res == "c")
+            use_cfdisk = true;
+        else {
+            delete dm;
+            return;
+        }
     }
     for(;;) {
         ScriptVariable choice = dm->Run();

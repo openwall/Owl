@@ -15,7 +15,8 @@
 
 #include "command_line.hpp"
 
-extern void repartition_hard_drive(OwlInstallInterface *, bool);
+extern void repartition_hard_drive(OwlInstallInterface *,
+                                   bool try_cfdisk, bool select_fdisk);
 extern void select_and_mount_partitions(OwlInstallInterface *);
 extern void activate_swap(OwlInstallInterface *);
 extern void install_packages(OwlInstallInterface *);
@@ -120,17 +121,22 @@ int main(int argc, char **argv)
     the_interface = new DumbOwlInstallInterface;
 #endif
 
-    bool use_cfdisk;
+    bool try_cfdisk;
+    bool select_fdisk;
     switch(cmdline.fdisk_mode) {
         case CommandLine::use_fdisk:
-            use_cfdisk = false;
+            try_cfdisk = false;
+            select_fdisk = false;
             break;
         case CommandLine::use_cfdisk:
-            use_cfdisk = true;
+            try_cfdisk = true;
+            select_fdisk = false;
             break;
         case CommandLine::use_whatever:
         default: // default is just to make the compiler happy
-            use_cfdisk = cmdline.ncurses_interface;
+            try_cfdisk = cmdline.ncurses_interface;
+            select_fdisk = try_cfdisk;
+                // only run selection for the ncurses interface mode
             break;
     }
 
@@ -164,7 +170,7 @@ int main(int argc, char **argv)
             break;
         } else
         if(choice == "f") {
-            repartition_hard_drive(the_interface, use_cfdisk);
+            repartition_hard_drive(the_interface, try_cfdisk, select_fdisk);
         } else
         if(choice == "m") {
             select_and_mount_partitions(the_interface);
