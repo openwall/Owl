@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installisotree.sh,v 1.2 2007/01/08 00:51:32 ldv Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.3 2007/01/08 12:37:24 ldv Exp $
 
 set -e
 
@@ -91,7 +91,11 @@ chmod -R u=rwX,go=rX .
 
 log "Preparing README files"
 cd "$ROOT"
-echo "current as of $(TZ=UTC date +%Y/%m/%d)" >.Owl-CD-ROM
+if [ "$BRANCH" = "Owl" ]; then
+	echo "current as of $(TZ=UTC date +%Y/%m/%d)" >.Owl-CD-ROM
+else
+	touch .Owl-CD-ROM
+fi
 chroot "$ROOT" sh -c '. /etc/profile.d/welcome-cdrom.sh >/README'
 chmod 644 .Owl-CD-ROM README
 
