@@ -1,10 +1,11 @@
-.TH SETTLE 8 "10 April 2006" "Openwall Project" "System Administration"
+.TH SETTLE 8 "09 January 2007" "Openwall Project" "System Administration"
 .SH NAME
 settle \- the system installer
 .SH SYNOPSIS
 .B settle
 .RB [ -d | -m ]
 .RB [ -b ]
+.RB [ -f | -c ]
 .SH DESCRIPTION
 .B settle
 is an interactive program which guides you through the process of
@@ -22,7 +23,8 @@ lets you partition your hard drive(s) as desired,
 creates filesystems,
 initializes swap partitions (if any) for use with Linux,
 mounts your chosen root filesystem and any additional filesystems under
-.IR /owl ,
+.IR /owl
+,
 installs and lets you configure the new system in there,
 installs a kernel and a bootloader,
 and finally reboots the machine cleanly (with your approval).
@@ -65,6 +67,36 @@ in case of using the ncurses-based interface, don't use colors even if
 the terminal appears to be sufficiently capable;
 instead, just stay black and white.
 .TP
+.B -f
+use traditional
+.IR fdisk.
+By default, if
+.B settle
+is using ncurses-based
+interface, it asks the user what
+.IR fdisk
+program (traditional
+.IR fdisk
+or ncurses-based
+.IR cfdisk )
+to use for repartitioning hard drives. Giving
+the
+.B -f
+option, you force
+.B settle
+to use the traditional one without asking
+any questions.
+.TP
+.B -c
+use
+.I cfdisk
+instead of fdisk regardless of the interface type. No questions
+are asked as well. Please note
+.B -f
+and
+.B -c
+are mutually exclusive.
+.TP
 .B -h
 print short usage information and exit.
 .SH AUTHORS
@@ -73,3 +105,5 @@ Andrey Vikt. Stolyarov a.k.a. Croco <croco at owl.openwall.com>
 with guidelines and fixes by Solar Designer <solar at owl.openwall.com>
 .SH SEE ALSO
 .BR setup (8)
+.BR fdisk (8)
+.BR cfdisk (8)
