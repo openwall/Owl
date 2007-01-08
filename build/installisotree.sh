@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installisotree.sh,v 1.1 2007/01/07 23:48:20 ldv Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.2 2007/01/08 00:51:32 ldv Exp $
 
 set -e
 
@@ -34,10 +34,17 @@ if [ ! -d "$ROOT" -o ! -O "$ROOT" -o "$(readlink -e "$ROOT")" = / ]; then
 	exit 1
 fi
 
+trap exit_handler HUP INT QUIT TERM EXIT
+
 umask $UMASK
 cd $HOME
 
-trap exit_handler HUP INT QUIT TERM EXIT
+# Ensure that root directory is empty, re-create it with proper permissions.
+rmdir -- "$ROOT"
+mkdir -- "$ROOT"
+
+MAKE_CDROM=yes "$HOME/native/$BRANCH/build/installworld.sh"
+
 mkdir -p logs
 exec 3>&1
 exec </dev/null >logs/installisotree 2>&1
