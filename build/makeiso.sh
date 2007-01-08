@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/makeiso.sh,v 1.1 2007/01/08 00:54:08 ldv Exp $
+# $Owl: Owl/build/makeiso.sh,v 1.2 2007/01/08 12:41:10 ldv Exp $
 
 set -e
 
@@ -15,5 +15,10 @@ fi
 umask $UMASK
 cd $HOME
 
+if [ "$BRANCH" = "Owl" ]; then
+	ISO="Owl-current-$(TZ=UTC date +%Y%m%d).iso"
+else
+	ISO="$BRANCH-$(TZ=UTC date +%Y%m%d).iso"
+fi
 mkisofs -quiet -lRJ -b boot/floppy.image -c boot/boot.catalog \
-	-o "$BRANCH-$(TZ=UTC date +%Y%m%d).iso" "$ROOT"
+	-o "$ISO" "$ROOT"
