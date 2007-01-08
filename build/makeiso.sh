@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/makeiso.sh,v 1.2 2007/01/08 12:41:10 ldv Exp $
+# $Owl: Owl/build/makeiso.sh,v 1.3 2007/01/08 17:01:54 ldv Exp $
 
 set -e
 
@@ -20,5 +20,11 @@ if [ "$BRANCH" = "Owl" ]; then
 else
 	ISO="$BRANCH-$(TZ=UTC date +%Y%m%d).iso"
 fi
-mkisofs -quiet -lRJ -b boot/floppy.image -c boot/boot.catalog \
-	-o "$ISO" "$ROOT"
+
+if [ -z "$COMPRESS_ISO" ]; then
+	mkisofs -quiet -lRJ -b boot/floppy.image -c boot/boot.catalog \
+		-o "$ISO" "$ROOT"
+else
+	mkisofs -quiet -lRJ -b boot/floppy.image -c boot/boot.catalog "$ROOT" |
+		gzip -9 >"$ISO.gz"
+fi
