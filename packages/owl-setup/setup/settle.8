@@ -23,8 +23,7 @@ lets you partition your hard drive(s) as desired,
 creates filesystems,
 initializes swap partitions (if any) for use with Linux,
 mounts your chosen root filesystem and any additional filesystems under
-.IR /owl
-,
+.IR /owl ,
 installs and lets you configure the new system in there,
 installs a kernel and a bootloader,
 and finally reboots the machine cleanly (with your approval).
@@ -69,29 +68,28 @@ instead, just stay black and white.
 .TP
 .B -f
 use traditional
-.IR fdisk.
+.IR fdisk .
 By default, if
 .B settle
-is using ncurses-based
-interface, it asks the user what
-.IR fdisk
+is using the ncurses-based interface, it asks the user which
+.I fdisk
 program (traditional
-.IR fdisk
+.I fdisk
 or ncurses-based
 .IR cfdisk )
-to use for repartitioning hard drives. Giving
-the
+to use for repartitioning hard drives.
+Giving the
 .B -f
 option, you force
 .B settle
-to use the traditional one without asking
-any questions.
+to use the traditional fdisk without asking any questions.
 .TP
 .B -c
 use
 .I cfdisk
-instead of fdisk regardless of the interface type. No questions
-are asked as well. Please note
+instead of fdisk regardless of the interface type.
+No questions are asked as well.
+Please note that
 .B -f
 and
 .B -c
@@ -104,6 +102,6 @@ Andrey Vikt. Stolyarov a.k.a. Croco <croco at owl.openwall.com>
 .PP
 with guidelines and fixes by Solar Designer <solar at owl.openwall.com>
 .SH SEE ALSO
-.BR setup (8)
-.BR fdisk (8)
+.BR setup (8),
+.BR fdisk (8),
 .BR cfdisk (8)
