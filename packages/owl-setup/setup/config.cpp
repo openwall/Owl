@@ -128,6 +128,40 @@ ScriptVariable OwlInstallConfig::CharmapsDbPath() const
 ScriptVariable OwlInstallConfig::CharmapsSuffix() const
 { return ""; }
 
+/* kbd package recognize these suffixes as needed to be decompressed... 
+   the empty string means "no decompress" :-)
+   See ${KBD}/src/findfile.c
+*/
+static const char *setfont_decompressor_suffixes[] = {"", ".gz", ".bz2", 0};
+
+static void suffixes_by_decompression(const char **sfs, ScriptVector &res)
+{
+    res.Clear();
+    for(const char **t = sfs; *t; t++)
+        for(const char **p = setfont_decompressor_suffixes; *p; p++)
+            res.AddItem(ScriptVariable(*t)+*p);
+}
+
+void OwlInstallConfig::ConsolefontsSuffixes(ScriptVector &res) const
+{
+    /* from ${KBD}/src/setfont.c */
+    static const char *cfs[] = { "", ".psfu", ".psf", ".cp", ".fnt", 0 };
+    suffixes_by_decompression(cfs, res);
+}
+
+void OwlInstallConfig::UnimapsSuffixes(ScriptVector &res) const
+{
+    static const char *ufs[] = { "", ".uni", ".trans", "_to_uni.trans", 0 };
+    suffixes_by_decompression(ufs, res);
+}
+
+void OwlInstallConfig::CharmapsSuffixes(ScriptVector &res) const
+{
+    static const char *cfs[] = { "", ".trans", 0 };
+    suffixes_by_decompression(cfs, res);
+}
+
+
 #if 0
 ScriptVariable OwlInstallConfig::SetfontPath() const
 { return "/bin/setfont"; }

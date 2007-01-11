@@ -51,13 +51,18 @@ public:
     ScriptVariable KeymapFileSuffix() const;
     ScriptVariable KeymapSysconf() const;
     ScriptVariable LoadkeysPath() const;
-        // screen font
+        // screen font (*Suffix() functions are for making lists)
     ScriptVariable ConsolefontsDbPath() const;
     ScriptVariable ConsolefontsSuffix() const;
     ScriptVariable UnimapsDbPath() const;
     ScriptVariable UnimapsSuffix() const;
     ScriptVariable CharmapsDbPath() const;
     ScriptVariable CharmapsSuffix() const;
+        // these are used to check user-entered file names
+    void ConsolefontsSuffixes(ScriptVector &result) const;
+    void UnimapsSuffixes(ScriptVector &result) const;
+    void CharmapsSuffixes(ScriptVector &result) const;
+
 #if 0
     ScriptVariable SetfontPath() const;
 #endif

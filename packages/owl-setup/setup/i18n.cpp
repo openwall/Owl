@@ -379,6 +379,19 @@ static void configure_screen_font_preset(OwlInstallInterface *the_iface,
     }
 }
 
+static bool check_file(ScriptVariable fname,
+                       const ScriptVariable &dir,
+                       const ScriptVector &suffixes)
+{
+    if(fname[0] != '/') {
+         fname = dir + "/" + fname;
+    }
+    if(FileStat(fname.c_str()).Exists()) return true;
+    for(int i=0; i<suffixes.Length(); i++)
+        if(FileStat((fname+suffixes[i]).c_str()).Exists()) return true;
+    return false;
+}
+
 static const char choose_none[] = "* NONE *";
 static const char choose_unlisted[] = "* UNLISTED *";
 
@@ -406,13 +419,19 @@ static void configure_screen_font_font(OwlInstallInterface *the_iface,
         the_info->RemoveACM();
     } else if(res[0] == choose_unlisted) {
         ScriptVariable s =
-            the_iface->QueryString("Please enter your font", "", false);
+            the_iface->QueryString("Please enter your font file name",
+                                   "", false);
         if(s == OwlInstallInterface::qs_cancel ||
            s == OwlInstallInterface::qs_eof)
         {
             the_iface->Notice("Unimap unchanged");
         } else {
             the_info->SetConsolefont(s);
+            ScriptVector suf;
+            the_config->ConsolefontsSuffixes(suf);
+            if(!check_file(s, the_config->ConsolefontsDbPath(), suf)) {
+                the_iface->Message("WARNING: I couldn't find the file");
+            }
         }
     } else {
         the_info->SetConsolefont(res[0]);
@@ -441,13 +460,20 @@ static void configure_screen_font_unimap(OwlInstallInterface *the_iface,
         the_info->RemoveUnimap();
     } else if(res[0] == choose_unlisted) {
         ScriptVariable s =
-            the_iface->QueryString("Please enter your unimap", "", false);
+            the_iface->QueryString("Please enter your "
+                                       "unimap file name",
+                                   "", false);
         if(s == OwlInstallInterface::qs_cancel ||
            s == OwlInstallInterface::qs_eof)
         {
             the_iface->Notice("Unimap unchanged");
         } else {
             the_info->SetUnimap(s);
+            ScriptVector suf;
+            the_config->UnimapsSuffixes(suf);
+            if(!check_file(s, the_config->UnimapsDbPath(), suf)) {
+                the_iface->Message("WARNING: I couldn't find the file");
+            }
         }
     } else {
         the_info->SetUnimap(res[0]);
@@ -477,13 +503,20 @@ static void configure_screen_font_acm(OwlInstallInterface *the_iface,
         the_info->RemoveACM();
     } else if(res[0] == choose_unlisted) {
         ScriptVariable s =
-            the_iface->QueryString("Please enter your charmap", "", false);
+            the_iface->QueryString("Please enter your "
+                                       "charmap file name",
+                                   "", false);
         if(s == OwlInstallInterface::qs_cancel ||
            s == OwlInstallInterface::qs_eof)
         {
             the_iface->Notice("Charmap unchanged");
         } else {
             the_info->SetACM(s);
+            ScriptVector suf;
+            the_config->CharmapsSuffixes(suf);
+            if(!check_file(s, the_config->CharmapsDbPath(), suf)) {
+                the_iface->Message("WARNING: I couldn't find the file");
+            }
         }
     } else {
         the_info->SetACM(res[0]);
