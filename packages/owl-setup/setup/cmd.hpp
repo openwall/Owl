@@ -80,6 +80,9 @@ public:
     bool IsDir() const;
     bool IsRegularFile() const;
     bool IsSymlink() const;
+    bool IsChardev() const;
+    bool IsBlockdev() const;
+    void GetMajorMinor(int &majn, int &minn) const;
     bool IsEmpty() const;
 };
 

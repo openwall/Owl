@@ -12,6 +12,7 @@
 #include <signal.h>
 #include <termios.h>
 
+
 #include "scriptpp/scrvar.hpp"
 #include "scriptpp/scrvect.hpp"
 
@@ -308,7 +309,27 @@ bool FileStat::IsSymlink() const
     return stat_info && S_ISLNK(((struct stat*)stat_info)->st_mode);
 }
 
+bool FileStat::IsChardev() const
+{
+    return stat_info && S_ISCHR(((struct stat*)stat_info)->st_mode);
+}
 
+bool FileStat::IsBlockdev() const
+{
+    return stat_info && S_ISBLK(((struct stat*)stat_info)->st_mode);
+}
+
+// from <linux/fs.h> // well, it doesn't seem to wish to be included
+#define MINORBITS       8
+#define MINORMASK       ((1U << MINORBITS) - 1)
+#define MAJOR(dev)      ((unsigned int) ((dev) >> MINORBITS))
+#define MINOR(dev)      ((unsigned int) ((dev) & MINORMASK))
+
+void FileStat::GetMajorMinor(int &majorn, int &minorn) const
+{
+    majorn = MAJOR(((struct stat*)stat_info)->st_rdev);
+    minorn = MINOR(((struct stat*)stat_info)->st_rdev);
+}
 
 ReadDir::ReadDir(const char *path)
 {

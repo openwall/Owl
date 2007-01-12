@@ -5,6 +5,9 @@
 #include "cmd.hpp"
 #include "config.hpp"
 
+// defined in part_scan.cpp
+void scan_proc_partitions(ScriptVector &result);
+
 void repartition_hard_drive(OwlInstallInterface *the_iface,
                             bool use_cfdisk, bool select_fdisk)
 {
@@ -12,9 +15,10 @@ void repartition_hard_drive(OwlInstallInterface *the_iface,
 
     //
     {
+        ScriptVariable defval;
+#if 0
         ExecResultParse fdisk(the_config->FdiskPath().c_str(), "-l", 0);
         ScriptVector v;
-        ScriptVariable defval;
         while(fdisk.ReadLine(v, 1)) {
             if(v[0].Range(0,5).Get()=="Disk ") {
                 ScriptVariable::Substring sub(v[0].Range(5));
@@ -24,6 +28,13 @@ void repartition_hard_drive(OwlInstallInterface *the_iface,
                 if(defval == "") defval = disk.Get();
             }
         }
+#else
+        ScriptVector v;
+        scan_proc_partitions(v);
+        for(int i=0; i<v.Length(); i++)
+            dm->AddItem(v[i].Range(5).Get(), v[i]);
+        defval = v[0].Range(5).Get();
+#endif
         dm->AddItem("q", "quit (return to main menu)");
         dm->SetDefault(defval);
     }

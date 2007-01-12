@@ -42,7 +42,7 @@ PROJ = settle setup
 
 SETTLE_OBJS = settle.o iface.o iface_dumb.o $(CURSES_OBJ) \
 	cmd.o parmfile.o\
-	state.o repartition.o \
+	state.o repartition.o part_scan.o\
 	select_partitions.o \
 	swap.o installworld.o root_passwd_settle.o pam_root_passwd.o \
 	installkernel.o installkernheaders.o \
