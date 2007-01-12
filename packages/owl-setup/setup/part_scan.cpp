@@ -46,7 +46,7 @@ static void scan_dev_dir(dev_item *the_list)
     while((name = devdir.Next())) {
         FileStat st((ScriptVariable("/dev/")+name).c_str(),
                     false /* no symlinks dereference */);
-        if(!st.IsBlockdev()) continue; 
+        if(!st.IsBlockdev()) continue;
         int ma, mi;
         st.GetMajorMinor(ma, mi);
         place_name(the_list, ma, mi, name);

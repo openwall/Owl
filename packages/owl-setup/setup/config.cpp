@@ -128,7 +128,7 @@ ScriptVariable OwlInstallConfig::CharmapsDbPath() const
 ScriptVariable OwlInstallConfig::CharmapsSuffix() const
 { return ""; }
 
-/* kbd package recognize these suffixes as needed to be decompressed... 
+/* kbd package recognize these suffixes as needed to be decompressed...
    the empty string means "no decompress" :-)
    See ${KBD}/src/findfile.c
 */
