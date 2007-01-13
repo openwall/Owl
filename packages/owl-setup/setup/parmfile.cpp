@@ -71,7 +71,7 @@ bool ParametersFile::Load(const ScriptVariable &filename)
         } else {
             // must be parameter
             ScriptVariable::Substring eq = line2.Strchr('=');
-            if(eq.Invalid()) {
+            if(eq.IsInvalid()) {
                 error = "Invalid line: ";
                 error += line2;
                 return false;

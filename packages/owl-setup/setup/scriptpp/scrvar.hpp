@@ -1,6 +1,6 @@
 // +-------------------------------------------------------------------------+
-// |                     Script Plus Plus vers. 0.2.14                       |
-// | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2003-2006 |
+// |                     Script Plus Plus vers. 0.2.15                       |
+// | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2003-2007 |
 // | ----------------------------------------------------------------------- |
 // | This is free software.  Permission is granted to everyone to use, copy  |
 // |        or modify this software under the terms and conditions of        |
@@ -153,6 +153,8 @@ public:
 
     bool HasPrefix(const char *prefix) const;
     bool HasPrefix(const ScriptVariable& prefix) const;
+    bool HasSuffix(const char *suffix) const;
+    bool HasSuffix(const ScriptVariable& suffix) const;
 
     void Trim(const char *spaces = " \t\n\r");
 
@@ -200,8 +202,8 @@ public:
         int Index() const { return pos; }
         int Length() const { return len; }
 
-        bool Valid() const { return master && (len >= 0); }
-        bool Invalid() const { return !master || len < 0; }
+        bool IsValid() const { return master && (len >= 0); }
+        bool IsInvalid() const { return !master || len < 0; }
         void Invalidate() { master = 0; len = -1; }
     };
     friend class ScriptVariable::Substring;

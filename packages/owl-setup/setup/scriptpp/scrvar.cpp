@@ -1,6 +1,6 @@
 // +-------------------------------------------------------------------------+
-// |                     Script Plus Plus vers. 0.2.14                       |
-// | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2003-2006 |
+// |                     Script Plus Plus vers. 0.2.15                       |
+// | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2003-2007 |
 // | ----------------------------------------------------------------------- |
 // | This is free software.  Permission is granted to everyone to use, copy  |
 // |        or modify this software under the terms and conditions of        |
@@ -264,7 +264,6 @@ int ScriptVariable::Strcasecmp(const ScriptVariable &o2) const
     return strcasecmp(p->buf, o2.p->buf);
 }
 
-
 bool ScriptVariable::HasPrefix(const char *pr) const
 {
     for(const char *qq = p->buf; *pr; pr++, qq++)
@@ -275,6 +274,20 @@ bool ScriptVariable::HasPrefix(const char *pr) const
 bool ScriptVariable::HasPrefix(const ScriptVariable& prefix) const
 {
     return HasPrefix(prefix.c_str());
+}
+
+bool ScriptVariable::HasSuffix(const char *suf) const
+{
+    int suflen = strlen(suf);
+    for(const char *qq = p->buf + Length() - suflen; *suf; suf++, qq++)
+        if(*suf!=*qq) return false;
+    return true;
+}
+
+bool ScriptVariable::HasSuffix(const ScriptVariable& suffix) const
+{
+    int l = suffix.Length();
+    return (*const_cast<ScriptVariable*>(this)).Range(-l, l).Get() == suffix;
 }
 
 void ScriptVariable::Trim(const char *spaces)

@@ -33,7 +33,7 @@ static void place_name(dev_item *the_list, int ma, int mi, const char *name)
 {
     for(; the_list; the_list = the_list->next) {
         if(the_list->ma == ma && the_list->mi == mi) {
-            the_list->name = ScriptVariable("/dev/") + name;
+            the_list->name = name;
             return;
         }
     }
@@ -80,10 +80,36 @@ static void make_result(dev_item *the_list, ScriptVector &result)
     make_result(the_list->next, result);
 }
 
+static bool is_cdrom(const ScriptVariable &dev)
+{
+    if(dev[0]!='h') return false; // well, I don't know how to handle scsi
+                                  // but it looks like scsi cdroms will
+                                  // never get into /proc/partitions anyway
+    ReadText mediafile(
+        ScriptVariable(32, "/proc/ide/%s/media", dev.c_str()).c_str());
+    ScriptVariable s;
+    if(mediafile.ReadLine(s) && s.HasPrefix("cdrom"))
+        return true;
+    return false;
+}
+
+static void purge_cdroms(ScriptVector &result)
+{
+    int i=0;
+    while(i < result.Length()) {
+        if(is_cdrom(result[i])) {
+            result.Remove(i,1);
+            continue;
+        }
+        i++;
+    }
+}
+
 void scan_proc_partitions(ScriptVector &result)
 {
     dev_item *list = scan_part_file();
     scan_dev_dir(list);
     result.Clear();
     make_result(list, result);
+    purge_cdroms(result);
 }

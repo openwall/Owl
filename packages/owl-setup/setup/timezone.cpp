@@ -18,8 +18,8 @@ static void scan_dirs(IfaceHierChoice *hc,
         ScriptVariable ents(ent);
         if(ents.HasPrefix("GMT+") ||
            ents.HasPrefix("GMT-") ||
-           ents.Strchr(' ').Valid() ||
-           ents.Strchr('.').Valid() ||
+           ents.Strchr(' ').IsValid() ||
+           ents.Strchr('.').IsValid() ||
            ents[0] == '-')
         {
             continue;

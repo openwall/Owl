@@ -1,6 +1,6 @@
 // +-------------------------------------------------------------------------+
-// |                     Script Plus Plus vers. 0.2.14                       |
-// | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2003-2006 |
+// |                     Script Plus Plus vers. 0.2.15                       |
+// | Copyright (c) Andrey Vikt. Stolyarov <crocodil_AT_croco.net>  2003-2007 |
 // | ----------------------------------------------------------------------- |
 // | This is free software.  Permission is granted to everyone to use, copy  |
 // |        or modify this software under the terms and conditions of        |
@@ -113,8 +113,8 @@ void ScriptVector::Remove(int idx, int amount)
 {
     if(idx>=len)
         return;
-    if(idx+amount>=len)
-        amount = len-idx-1;
+    if(idx+amount>len)
+        amount = len-idx;
     int i;
     for(i=idx; i<len-amount; i++)
         vec[i] = vec[i+amount];

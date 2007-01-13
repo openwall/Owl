@@ -1,4 +1,8 @@
-Version 0.2.14 (unreleased)
+Version 0.2.15 (unreleased)
+   - fixed bug in ScriptVector::Remove()
+   - HasSuffix() method added
+   - Valid()/Invalid() renamed to IsValid()/IsInvalid()
+Version 0.2.14 (released Apr 09, 2006)
    - ScriptNumber class for conversions added
 Version 0.2.13 (released Jan 04, 2006)
    - Added Substring::ExtendToBegin()/ExtendToEnd()

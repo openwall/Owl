@@ -491,7 +491,7 @@ static void configure_screen_font_acm(OwlInstallInterface *the_iface,
     plain_dir_scan(v, the_config->CharmapsDbPath(),
                       the_config->CharmapsSuffix());
     for(int i=0; i<v.Length(); i++)
-        if(v[i].Strstr("to_uni.trans").Invalid())
+        if(v[i].Strstr("to_uni.trans").IsInvalid())
             hc->AddItem(v[i]);
     ScriptVector res;
     bool ok = hc->Run(res);

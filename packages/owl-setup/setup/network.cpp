@@ -649,7 +649,7 @@ static void edit_interfaces(OwlInstallInterface* the_iface,
                                        "eth0", false);
             if(name == OwlInstallInterface::qs_eof) return;
             if(name == OwlInstallInterface::qs_cancel) continue;
-            if(name == "" || name.Strchr(' ').Valid()) {
+            if(name == "" || name.Strchr(' ').IsValid()) {
                 the_iface->Message("Invalid interface name");
                 continue;
             }

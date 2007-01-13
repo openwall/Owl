@@ -32,8 +32,8 @@ void repartition_hard_drive(OwlInstallInterface *the_iface,
         ScriptVector v;
         scan_proc_partitions(v);
         for(int i=0; i<v.Length(); i++)
-            dm->AddItem(v[i].Range(5).Get(), v[i]);
-        defval = v[0].Range(5).Get();
+            dm->AddItem(v[i], ScriptVariable("/dev/")+v[i]);
+        defval = v[0];
 #endif
         dm->AddItem("q", "quit (return to main menu)");
         dm->SetDefault(defval);
@@ -68,7 +68,7 @@ void repartition_hard_drive(OwlInstallInterface *the_iface,
         ScriptVariable fds = use_cfdisk ?
             the_config->CfdiskPath() : the_config->FdiskPath();
         ScriptVariable msg = ScriptVariable("Invoking ") +
-                             fds + " " + choice + "\n";
+                             fds + " /dev/" + choice + "\n";
         if(use_cfdisk) {
         } else {
             msg += "When you're done, type \"w\" to save changes \n"
@@ -76,7 +76,7 @@ void repartition_hard_drive(OwlInstallInterface *the_iface,
         }
 
         the_iface->ExecWindow(msg);
-        ExecAndWait(fds.c_str(), choice.c_str(), 0);
+        ExecAndWait(fds.c_str(), (ScriptVariable("/dev/")+choice).c_str(), 0);
         the_iface->CloseExecWindow();
     }
     delete dm;
