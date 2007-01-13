@@ -1,0 +1,79 @@
+ Debian release of PCRE 4.5 had
+ 
+ PCRE_LIB_VERSION=13:0:10
+ PCRE_POSIXLIB_VERSION=13:0:10
+ 
+ which corresponds to latest debian-revision (soname libpcre.so.3,
+ installed as libpcre.so.3.9.0) and followed the instructions about version
+ numbering in the libtool manual:
+ |  3. If the library source code has changed at all since the last
+ |     update, then increment REVISION (`C:R:A' becomes `C:r+1:A').
+ 
+ 13:1:10
+ 
+   4. If any interfaces have been added, removed, or changed since the
+      last update, increment CURRENT, and set REVISION to 0.
+ 
+ 14:0:10
+ 
+   5. If any interfaces have been added since the last public release,
+      then increment AGE.
+ 
+ 14:0:11
+ 
+   6. If any interfaces have been removed since the last public release,
+      then set AGE to 0.
+ 
+ n/a
+ 
+ Therefore I'm using 14:0:11 for this release of PCRE 5.0
+
+--- pcre-6.3.orig/configure.ac
++++ pcre-6.3/configure.ac
+@@ -38,8 +38,8 @@
+ dnl Provide versioning information for libtool shared libraries that
+ dnl are built by default on Unix systems.
+ 
+-PCRE_LIB_VERSION=0:1:0
+-PCRE_POSIXLIB_VERSION=0:0:0
++PCRE_LIB_VERSION=16:0:13
++PCRE_POSIXLIB_VERSION=16:0:13
+ PCRE_CPPLIB_VERSION=0:0:0
+ 
+ dnl Handle --disable-cpp
+--- pcre-6.3.orig/configure
++++ pcre-6.3/configure
+@@ -1514,8 +1514,8 @@
+ POSIX_MALLOC_THRESHOLD=-DPOSIX_MALLOC_THRESHOLD=10
+ 
+ 
+-PCRE_LIB_VERSION=0:1:0
+-PCRE_POSIXLIB_VERSION=0:0:0
++PCRE_LIB_VERSION=16:0:13
++PCRE_POSIXLIB_VERSION=16:0:13
+ PCRE_CPPLIB_VERSION=0:0:0
+ 
+ 
+--- pcre-6.3.orig/pcreposix.h
++++ pcre-6.3/pcreposix.h
+@@ -109,11 +109,16 @@
+ 
+ /* The functions */
+ 
+-PCRE_DATA_SCOPE int regcomp(regex_t *, const char *, int);
+-PCRE_DATA_SCOPE int regexec(const regex_t *, const char *, size_t,
++PCRE_DATA_SCOPE int pcreposix_regcomp(regex_t *, const char *, int);
++PCRE_DATA_SCOPE int pcreposix_regexec(const regex_t *, const char *, size_t,
+                   regmatch_t *, int);
+-PCRE_DATA_SCOPE size_t regerror(int, const regex_t *, char *, size_t);
+-PCRE_DATA_SCOPE void regfree(regex_t *);
++PCRE_DATA_SCOPE size_t pcreposix_regerror(int, const regex_t *, char *, size_t);
++PCRE_DATA_SCOPE void pcreposix_regfree(regex_t *);
++
++#define regcomp pcreposix_regcomp
++#define regexec pcreposix_regexec
++#define regerror pcreposix_regerror
++#define regfree pcreposix_regfree
+ 
+ #ifdef __cplusplus
+ }   /* extern "C" */
