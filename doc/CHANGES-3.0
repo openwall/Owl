@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2007/01/13	Package: pcre
+Updated to 7.0.
+
 2007/01/03 -
 2007/01/09	Package: owl-setup
 Configuration of console font and locales has been implemented under a
@@ -347,4 +350,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.72 2007/01/09 08:43:52 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.73 2007/01/13 03:18:39 solar Exp $
