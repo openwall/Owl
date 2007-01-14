@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.80 2007/01/13 13:04:40 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.81 2007/01/14 13:44:55 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -34,7 +34,7 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
-* Sat Jan 13 2007 Croco <croco-at-owl.openwall.com> 1.1.9-owl1
+* Sun Jan 14 2007 Croco <croco-at-owl.openwall.com> 1.1.9-owl1
 - repartition module reworked so that it doesn't rely on "fdisk -l"
 - scriptpp 0.2.14 replaced with 0.2.15
 

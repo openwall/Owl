@@ -3,6 +3,8 @@
 
 #include "cmd.hpp"
 
+#include <linux/major.h> // for SCSI_CDROM_MAJOR
+
 struct dev_item {
     int ma;
     int mi;
@@ -49,6 +51,7 @@ static void scan_dev_dir(dev_item *the_list)
         if(!st.IsBlockdev()) continue;
         int ma, mi;
         st.GetMajorMinor(ma, mi);
+        if(ma == SCSI_CDROM_MAJOR) continue;
         place_name(the_list, ma, mi, name);
     }
 }
@@ -82,9 +85,8 @@ static void make_result(dev_item *the_list, ScriptVector &result)
 
 static bool is_cdrom(const ScriptVariable &dev)
 {
-    if(dev[0]!='h') return false; // well, I don't know how to handle scsi
-                                  // but it looks like scsi cdroms will
-                                  // never get into /proc/partitions anyway
+    if(dev.HasPrefix("scd")) return true; // scsi cdrom
+    if(dev[0]!='h') return false; // not ide device, but not scsi cdrom
     ReadText mediafile(
         ScriptVariable(32, "/proc/ide/%s/media", dev.c_str()).c_str());
     ScriptVariable s;
