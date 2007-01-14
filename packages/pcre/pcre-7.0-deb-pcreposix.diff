@@ -1,0 +1,23 @@
+--- pcre-7.0.orig/pcreposix.h	2006-12-19 09:31:35 +0000
++++ pcre-7.0/pcreposix.h	2007-01-13 13:01:50 +0000
+@@ -134,11 +134,16 @@ when building PCRE. */
+ 
+ /* The functions */
+ 
+-PCRE_DATA_SCOPE int regcomp(regex_t *, const char *, int);
+-PCRE_DATA_SCOPE int regexec(const regex_t *, const char *, size_t,
++PCRE_DATA_SCOPE int pcreposix_regcomp(regex_t *, const char *, int);
++PCRE_DATA_SCOPE int pcreposix_regexec(const regex_t *, const char *, size_t,
+                   regmatch_t *, int);
+-PCRE_DATA_SCOPE size_t regerror(int, const regex_t *, char *, size_t);
+-PCRE_DATA_SCOPE void regfree(regex_t *);
++PCRE_DATA_SCOPE size_t pcreposix_regerror(int, const regex_t *, char *, size_t);
++PCRE_DATA_SCOPE void pcreposix_regfree(regex_t *);
++
++#define regcomp pcreposix_regcomp
++#define regexec pcreposix_regexec
++#define regerror pcreposix_regerror
++#define regfree pcreposix_regfree
+ 
+ #ifdef __cplusplus
+ }   /* extern "C" */

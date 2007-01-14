@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/pcre/pcre.spec,v 1.6 2007/01/13 02:28:12 galaxy Exp $
+# $Owl: Owl/packages/pcre/pcre.spec,v 1.7 2007/01/14 00:13:39 ldv Exp $
 
 Summary: Perl-compatible regular expression library.
 Name: pcre
@@ -9,7 +9,7 @@ Group: System Environment/Libraries
 URL: http://www.pcre.org
 Source0: ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-%version.tar.bz2
 Source1: pcre-config.1
-Patch0: pcre-6.6-deb-alt-shlib.diff
+Patch0: pcre-7.0-deb-pcreposix.diff
 Patch1: pcre-6.3-deb-pcretest.diff
 Patch2: pcre-6.4-owl-testdata.diff
 Patch3: pcre-6.6-rh-multilib.diff
@@ -46,7 +46,7 @@ This package contains PCRE development libraries and header files.
 %patch2 -p1
 %patch3 -p1
 
-bzip2 -9fk ChangeLog
+bzip2 -9k ChangeLog
 
 # Fix configure.in; bundled one is broken.
 sed -i '/^AC_LIBTOOL_WIN32_DLL/ d' configure.ac
@@ -79,6 +79,7 @@ install -pm644 %_sourcedir/pcre-config.1 %buildroot%_mandir/man1/
 rm %buildroot%_bindir/pcregrep
 rm %buildroot%_mandir/man1/pcregrep.*
 rm %buildroot%_libdir/*.la
+rm %buildroot%_libdir/pkgconfig/libpcrecpp.pc
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
