@@ -1,17 +1,14 @@
-# $Owl: Owl/packages/strace/strace.spec,v 1.23 2006/04/21 18:47:01 ldv Exp $
+# $Owl: Owl/packages/strace/strace.spec,v 1.24 2007/01/18 11:28:42 ldv Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
-Version: 4.5.14
-Release: owl2
+Version: 4.5.15
+Release: owl1
 License: BSD
 Group: Development/Debuggers
 URL: http://sourceforge.net/projects/strace/
 Source: http://prdownloads.sourceforge.net/%name/%name-%version.tar.bz2
-Patch0: strace-4.5.14-alt-quotactl.diff
-Patch1: strace-4.5.14-alt-keep_status.diff
-Patch2: strace-4.5.14-alt-tcb.diff
-Patch3: strace-4.5.14-owl-x86_64.diff
+Patch0: strace-4.5.15-alt.diff
 BuildRequires: automake, autoconf
 BuildRoot: /override/%name-%version
 
@@ -33,10 +30,7 @@ commands do.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
+%patch0 -p2
 bzip2 -9k ChangeLog
 
 %{expand:%%define optflags %optflags -Wall}
@@ -62,6 +56,9 @@ rm -rf %buildroot
 %_bindir/strace-graph
 
 %changelog
+* Thu Jan 18 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.5.15-owl1
+- Updated to 4.5.15.
+
 * Fri Apr 21 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.5.14-owl2
 - Fixed race condition in tcb allocation code.
 - Fixed build on x86_64.

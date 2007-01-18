@@ -1,0 +1,174 @@
+git://git.altlinux.org/people/ldv/packages/strace.git cvs..master -- strace
+diff --git a/strace/sock.c b/strace/sock.c
+index 462df22..187ca5d 100644
+--- a/strace/sock.c
++++ b/strace/sock.c
+@@ -84,9 +84,7 @@ struct ifreq *ifr;
+ }
+ 
+ int
+-sock_ioctl(tcp, code, arg)
+-struct tcb *tcp;
+-long code, arg;
++sock_ioctl(struct tcb *tcp, long code, long arg)
+ {
+ 	struct ifreq ifr;
+ 	struct ifconf ifc;
+@@ -95,8 +93,8 @@ long code, arg;
+ 
+ 	if (entering(tcp)) {
+ 		if (code == SIOCGIFCONF) {
+-			umove(tcp, tcp->u_arg[2], &ifc);
+-			if (ifc.ifc_buf == NULL)
++			if (umove(tcp, tcp->u_arg[2], &ifc) >= 0
++			    && ifc.ifc_buf == NULL)
+ 				tprintf(", {%d -> ", ifc.ifc_len);
+ 			else
+ 				tprintf(", {");
+@@ -146,8 +144,11 @@ long code, arg;
+ 	case SIOCGIFMTU:
+ 	case SIOCGIFSLAVE:
+ 	case SIOCGIFHWADDR:
+-		umove(tcp, tcp->u_arg[2], &ifr);
+-                if (syserror(tcp)) {
++	case SIOCGIFTXQLEN:
++	case SIOCGIFMAP:
++		if (umove(tcp, tcp->u_arg[2], &ifr) < 0)
++			tprintf(", %#lx", tcp->u_arg[2]);
++		else if (syserror(tcp)) {
+ 			if (code == SIOCGIFNAME)
+ 				tprintf(", {ifr_index=%d, ifr_name=???}", ifr.ifr_ifindex);
+ 			else
+@@ -204,12 +205,29 @@ long code, arg;
+ 			case SIOCGIFSLAVE:
+ 				tprintf("ifr_slave=\"%s\"", ifr.ifr_slave);
+ 				break;
++			case SIOCGIFTXQLEN:
++				tprintf("ifr_qlen=%d", ifr.ifr_qlen);
++				break;
++			case SIOCGIFMAP:
++				tprintf("ifr_map={mem_start=%#lx, "
++					"mem_end=%#lx, base_addr=%#x, "
++					"irq=%u, dma=%u, port=%u}",
++					ifr.ifr_map.mem_start,
++					ifr.ifr_map.mem_end,
++					(unsigned) ifr.ifr_map.base_addr,
++					(unsigned) ifr.ifr_map.irq,
++					(unsigned) ifr.ifr_map.dma,
++					(unsigned) ifr.ifr_map.port);
++				break;
+ 			}
+ 			tprintf("}");
+ 		}
+ 		return 1;
+ 	case SIOCGIFCONF:
+-		umove(tcp, tcp->u_arg[2], &ifc);
++		if (umove(tcp, tcp->u_arg[2], &ifc) < 0) {
++			tprintf("???}");
++			return 1;
++		}
+ 		tprintf("%d, ", ifc.ifc_len);
+                 if (syserror(tcp)) {
+ 			tprintf("%lx", (unsigned long) ifc.ifc_buf);
+diff --git a/strace/strace.1 b/strace/strace.1
+index aa79d6e..4b38572 100644
+--- a/strace/strace.1
++++ b/strace/strace.1
+@@ -43,7 +43,7 @@ strace \- trace system calls and signals
+ .SH SYNOPSIS
+ .B strace
+ [
+-.B \-dffhiqrtttTvxx
++.B \-dffhikqrtttTvxx
+ ]
+ [
+ .BI \-a column
+@@ -280,6 +280,11 @@ Suppress messages about attaching, detaching etc.  This happens
+ automatically when output is redirected to a file and the command
+ is run directly instead of attaching.
+ .TP
++.B \-k
++Attempt to keep exit status of the first traced process, and return
++it to the caller.  Main purpose of this option is to exit with nonzero
++code in case of unsucessful exit of the first traced process.
++.TP
+ .B \-r
+ Print a relative timestamp upon entry to each system call.  This
+ records the time difference between the beginning of successive
+diff --git a/strace/strace.c b/strace/strace.c
+index 5e3b875..95d5b75 100644
+--- a/strace/strace.c
++++ b/strace/strace.c
+@@ -70,6 +70,9 @@ static int iflag = 0, interactive = 0, pflag_seen = 0, rflag = 0, tflag = 0;
+ /* Sometimes we want to print only succeeding syscalls. */
+ int not_failing_only = 0;
+ 
++static int keep_status = 0;
++static int return_code = 0;
++
+ static char *username = NULL;
+ uid_t run_uid;
+ gid_t run_gid;
+@@ -134,7 +137,7 @@ FILE *ofp;
+ int exitval;
+ {
+ 	fprintf(ofp, "\
+-usage: strace [-dffhiqrtttTvVxx] [-a column] [-e expr] ... [-o file]\n\
++usage: strace [-dffhikqrtttTvVxx] [-a column] [-e expr] ... [-o file]\n\
+               [-p pid] ... [-s strsize] [-u username] [-E var=val] ...\n\
+               [command [arg ...]]\n\
+    or: strace -c [-e expr] ... [-O overhead] [-S sortby] [-E var=val] ...\n\
+@@ -143,6 +146,7 @@ usage: strace [-dffhiqrtttTvVxx] [-a column] [-e expr] ... [-o file]\n\
+ -f -- follow forks, -ff -- with output into separate files\n\
+ -F -- attempt to follow vforks, -h -- print help message\n\
+ -i -- print instruction pointer at time of syscall\n\
++-k -- attempt to keep exit status of the first traced process\n\
+ -q -- suppress messages about attaching, detaching, etc.\n\
+ -r -- print relative timestamp, -t -- absolute timestamp, -tt -- with usecs\n\
+ -T -- print time spent in each syscall, -V -- print version\n\
+@@ -349,7 +353,7 @@ char *argv[];
+ 	qualify("verbose=all");
+ 	qualify("signal=all");
+ 	while ((c = getopt(argc, argv,
+-		"+cdfFhiqrtTvVxza:e:o:O:p:s:S:u:E:")) != EOF) {
++		"+cdfFhikqrtTvVxza:e:o:O:p:s:S:u:E:")) != EOF) {
+ 		switch (c) {
+ 		case 'c':
+ 			cflag++;
+@@ -370,6 +374,9 @@ char *argv[];
+ 		case 'i':
+ 			iflag++;
+ 			break;
++		case 'k':
++			keep_status++;
++			break;
+ 		case 'q':
+ 			qflag++;
+ 			break;
+@@ -801,7 +808,7 @@ Process %u attached - interrupt to quit\n",
+ 	if (trace() < 0)
+ 		exit(1);
+ 	cleanup();
+-	exit(0);
++	exit(return_code);
+ }
+ 
+ int
+@@ -2229,6 +2236,8 @@ Process %d attached (waiting for parent)\n",
+ 			continue;
+ 		}
+ 		if (WIFSIGNALED(status)) {
++			if (keep_status)
++				return_code = 128 + WTERMSIG(status);
+ 			if (!cflag
+ 			    && (qual_flags[WTERMSIG(status)] & QUAL_SIGNAL)) {
+ 				printleader(tcp);
+@@ -2248,6 +2257,8 @@ Process %d attached (waiting for parent)\n",
+ 			continue;
+ 		}
+ 		if (WIFEXITED(status)) {
++			if (keep_status)
++				return_code = WEXITSTATUS(status);
+ 			if (debug)
+ 				fprintf(stderr, "pid %u exited\n", pid);
+ 			if ((tcp->flags & TCB_ATTACHED)
