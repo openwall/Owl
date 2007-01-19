@@ -90,7 +90,7 @@ index aa79d6e..4b38572 100644
 +.B \-k
 +Attempt to keep exit status of the first traced process, and return
 +it to the caller.  Main purpose of this option is to exit with nonzero
-+code in case of unsucessful exit of the first traced process.
++code in case of unsuccessful exit of the first traced process.
 +.TP
  .B \-r
  Print a relative timestamp upon entry to each system call.  This
