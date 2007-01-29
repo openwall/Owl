@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bind/bind.spec,v 1.17 2006/09/06 11:21:15 ldv Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.18 2007/01/29 23:56:40 ldv Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -6,8 +6,8 @@
 
 Summary: ISC BIND - DNS server.
 Name: bind
-Version: 9.3.2
-Release: owl2
+Version: 9.3.4
+Release: owl1
 License: BSD-like
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -35,14 +35,13 @@ Patch0: bind-9.3.1-owl-warnings.diff
 Patch1: bind-9.3.1-openbsd-owl-pidfile.diff
 Patch2: bind-9.3.2-openbsd-owl-chroot-defaults.diff
 Patch3: bind-9.3.1-alt-owl-chroot.diff
-Patch4: bind-9.3.2-owl-checkconf-chroot.diff
+Patch4: bind-9.3.3-owl-checkconf-chroot.diff
 Patch5: bind-9.3.1-rh-owl-bsdcompat.diff
 Patch6: bind-9.3.1-rh-h_errno.diff
 Patch7: bind-9.3.1-alt-isc-config.diff
-Patch8: bind-9.3.2-alt-man.diff
+Patch8: bind-9.3.3-alt-man.diff
 Patch9: bind-9.3.1-alt-owl-rndc-confgen.diff
 Patch10: bind-9.3.1-owl-rfc-index.diff
-Patch11: bind-9.3.2-cvs-20060817-P1.diff
 
 Requires: %name-libs = %version-%release
 Requires: owl-startup
@@ -120,7 +119,6 @@ for building applications with ISC BIND libraries.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
-%patch11 -p1
 
 install -pm644 %_sourcedir/rfc1912.txt.bz2 doc/rfc/
 find doc -type f -name '*.txt' -print0 |
@@ -163,6 +161,7 @@ CPP="%__cpp"; export CPP
 %endif
 %if %BUILD_OPENSSL
 	--with-openssl \
+	--disable-openssl-version-check \
 %else
 	--without-openssl \
 %endif
@@ -220,8 +219,7 @@ cp -a CHANGES COPYRIGHT FAQ README* doc/{arm,draft,misc,rfc} \
 bzip2 -9q -- %buildroot%docdir/{CHANGES,FAQ}
 rm -- %buildroot%docdir/*/{Makefile*,README-SGML,*.xml}
 
-# Create ghost files
-mkdir %buildroot/var/run
+# Create ghost file
 touch %buildroot/var/run/named.pid
 
 # Remove lwresd files
@@ -346,6 +344,9 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Mon Jan 29 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.4-owl1
+- Updated to 9.3.4.
+
 * Wed Sep 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.2-owl2
 - Updated to 9.3.2-P1.
 

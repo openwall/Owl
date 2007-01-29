@@ -5,7 +5,7 @@
  \fIdirectory\fR
  so that include directives in the configuration file are processed as if run by a similarly chrooted named.
 +By default, \fBnamed\-checkconf\fR \fBchroot()\fR's to \fI@ROOT@\fR.
- .TP
+ .TP 3n
  \-v
  Print the version of the
 --- bind-9.3.2/bin/check/named-checkconf.c.orig	2005-03-03 06:33:38 +0000
