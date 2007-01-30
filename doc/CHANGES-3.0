@@ -12,6 +12,19 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2007/01/29	Package: bind
+SECURITY FIX	Severity: low, remote, active
+Updated to 9.3.4, which fixes two security issues.
+The first issue is a "use after free" vulnerability which allowed remote
+DoS attack via unspecified vectors that cause BIND to "dereference (read)
+a freed fetch context".
+The second issue allowed remote DoS attack via a type ANY DNS query
+response that contains multiple RR sets in the answer section, which
+triggers an assertion error if DNSSEC validation is enabled.
+References:
+http://marc.theaimsgroup.com/?l=bind-announce&m=116968519321296&w=2
+http://marc.theaimsgroup.com/?l=bind-announce&m=116968519300764&w=2
+
 2007/01/18	Package: strace
 Updated to 4.5.15.
 
@@ -353,4 +366,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.74 2007/01/18 11:31:31 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.75 2007/01/30 00:14:48 ldv Exp $
