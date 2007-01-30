@@ -17,19 +17,19 @@
 +To debug \fBnamed\fR with \fBrndc\fR(8),
 +use \fBcontrol\fR(8) for the \fBbind\-debug\fR facility.
  .SH "FILES"
- .TP
+ .TP 3n
 -\fI/etc/named.conf\fR
 +\fI@ROOT@\fR
 +The \fBnamed\fR chroot jail.
-+.TP
++.TP 3n
 +\fI@ROOT@/etc/named.conf\fR
  The default configuration file.
- .TP
+ .TP 3n
  \fI/var/run/named.pid\fR
-@@ -178,7 +193,8 @@ RFC 1034,
- RFC 1035,
+@@ -179,7 +194,8 @@ RFC 1034,
  \fBrndc\fR(8),
  \fBlwresd\fR(8),
+ \fBnamed.conf\fR(5),
 -BIND 9 Administrator Reference Manual.
 +BIND 9 Administrator Reference Manual
 +(\fB\fI@DOCDIR@/arm/Bv9ARM.html\fR).
@@ -58,14 +58,15 @@
  .SH "LIMITATIONS"
  .PP
  \fBrndc\fR
-@@ -109,10 +113,12 @@ without using the configuration file.
+@@ -109,11 +113,12 @@ without using the configuration file.
  Several error messages could be clearer.
  .SH "SEE ALSO"
  .PP
 +\fBnamed.conf\fR(5),
  \fBrndc.conf\fR(5),
  \fBnamed\fR(8),
--\fBnamed.conf\fR(5)\fBndc\fR(8),
+-\fBnamed.conf\fR(5)
+-\fBndc\fR(8),
 -BIND 9 Administrator Reference Manual.
 +\fBrndc\fR(8),
 +BIND 9 Administrator Reference Manual
