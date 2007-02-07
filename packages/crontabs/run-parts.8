@@ -1,0 +1,110 @@
+.\" Hey, Emacs!  This is an -*- nroff -*- source file.
+.\" Build-from-directory and this manpage are Copyright 1994 by Ian Jackson.
+.\" Changes to this manpage are Copyright 1996 by Jeff Noxon.
+.\" More
+.\"
+.\" This is free software; see the GNU General Public Licence version 2
+.\" or later for copying conditions.  There is NO warranty.
+.TH RUN\-PARTS 8 "9 May 2004" "Debian"
+.SH NAME
+run\-parts \- run scripts or programs in a directory
+.SH SYNOPSIS
+.PP
+.B run\-parts
+[\-\-test] [\-\-verbose] [\-\-report] [\-\-lsbsysinit] [\-\-umask=umask]
+[\-\-arg=argument] [\-\-exit\-on\-error] [\-\-help] [\-\-version]
+[\-\-list] [\-\-reverse] [\-\-] DIRECTORY
+.PP
+.B run\-parts
+\-V
+.SH DESCRIPTION
+.PP
+.B run\-parts
+runs all the executable files named within constraints described below, found
+in directory
+.IR directory .
+Other files and directories are silently ignored.
+
+If the \-\-lsbsysinit option is not given then the names must consist
+entirely of upper and lower case letters, digits, underscores, and
+hyphens.                           
+                                                                                
+If the \-\-lsbsysinit option is given, then the names must not end
+in .rpmorig  or .rpmnew or .rpmsave, and must
+belong to one or more of the following namespaces: the
+LANANA-assigned namespace (^[a\-z0\-9]+$); the LSB hierarchical and
+reserved namespaces (^_?([a\-z0\-9_.]+\-)+[a\-z0\-9]+$);
+and the Debian cron script namespace (^[a\-z0\-9][a\-z0\-9\-]*$).      
+
+Files are run in the lexical sort order of their names unless the
+\-\-reverse option is given, in which case they are run in the
+opposite order.
+
+.SS OPTIONS
+.TP
+.B \-\-test
+print the names of the scripts which would be run, but don't actually run
+them.
+.TP
+.B \-\-list
+print the names of the all matching files (not limited to executables),
+but don't actually run them. This option cannot be used with --test.
+.TP
+.B \-v, \-\-verbose
+print the name of each script to stderr before running.
+.TP
+.B \-\-report
+similar to
+.BR \-\-verbose ,
+but only prints the name of scripts which produce output.  The script's name is printed to whichever of stdout or stderr the script first produces output on.
+.TP
+.B \-\-reverse
+reverse the scripts' execution order.
+.TP
+.B \-\-exit\-on\-error
+exit as soon as a script returns with a non-zero exit code.
+.TP
+.B \-\-lsbsysinit
+Use LSB namespaces instead of classical behavior.
+.TP
+.BI "\-u, \-\-umask=" umask
+Sets the umask to
+.I umask
+before running the scripts.
+.I umask
+should be specified in octal.  By default the umask is set to 077.
+.TP
+.BI "\-a, \-\-arg=" argument
+Pass
+.I argument
+to the scripts.  Use
+.B --arg
+once for each argument you want passed.
+.TP
+.B "\-\-"
+Specifies that this is the end of the options.  Any filename after
+.B "\-\-"
+will be not be interpreted as an option even if it starts with a
+hyphen.
+.TP
+.B \-h, \-\-help
+Display usage information and exit.
+.TP
+.B \-V, \-\-version
+Display version and copyright and exit.
+
+.SH COPYRIGHT
+.P
+Copyright (C) 1994 Ian Jackson.
+.P
+Copyright (C) 1996 Jeff Noxon.
+.P
+Copyright (C) 1996, 1997, 1998 Guy Maor
+.P
+Copyright (C) 2002, 2003, 2004 Clint Adams
+
+.B run\-parts
+is free software; see the GNU General Public License version 2 or
+later for copying conditions.  There is
+.I no
+warranty.

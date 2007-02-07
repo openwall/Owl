@@ -1,17 +1,14 @@
-# $Owl: Owl/packages/crontabs/crontabs.spec,v 1.16 2005/11/16 12:19:21 solar Exp $
+# $Owl: Owl/packages/crontabs/crontabs.spec,v 1.16.2.1 2007/02/07 17:19:59 ldv Exp $
 
 Summary: System crontab files used to schedule the execution of programs.
 Name: crontabs
-Version: 2.0
-Release: owl6
+Version: 2.1
+Release: owl1
 License: GPL
 Group: System Environment/Base
-Source0: run-parts-1.15.tar.gz
-Source1: crontab
-Patch0: run-parts-1.15-owl-umask.diff
-Patch1: run-parts-1.15-owl-races.diff
-Patch2: run-parts-1.15-owl-write_loop.diff
-Patch3: run-parts-1.15-owl-fixes.diff
+Source0: run-parts.c
+Source1: run-parts.8
+Source2: crontab
 Requires: crond
 BuildRoot: /override/%name-%version
 
@@ -31,14 +28,11 @@ The crontabs package handles a basic system function, so it should be
 installed on your system.
 
 %prep
-%setup -q -n run-parts-1.15
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
+%setup -qcT
+install -pm644 %_sourcedir/run-parts.{c,8} .
 
 %build
-%__cc run-parts.c -o run-parts %optflags -Wall
+%__cc run-parts.c -o run-parts %optflags -Wall -W
 
 %install
 rm -rf %buildroot
@@ -46,12 +40,12 @@ mkdir -p %buildroot/etc/cron.{hourly,daily,weekly,monthly}
 mkdir -p %buildroot%_bindir
 mkdir -p %buildroot%_mandir/man8/
 
-install -m 644 %_sourcedir/crontab %buildroot/etc/
-install -m 755 run-parts %buildroot%_bindir/
-install -m 644 run-parts.8 %buildroot%_mandir/man8/
+install -m600 %_sourcedir/crontab %buildroot/etc/
+install -m755 run-parts %buildroot%_bindir/
+install -m644 run-parts.8 %buildroot%_mandir/man8/
 
 %files
-%defattr(-,root,root)
+%defattr(-,root,root,700)
 %config /etc/crontab
 %_bindir/run-parts
 %_mandir/man8/*
@@ -61,6 +55,13 @@ install -m 644 run-parts.8 %buildroot%_mandir/man8/
 %dir /etc/cron.monthly
 
 %changelog
+* Tue Dec 26 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.1-owl1
+- Updated run-parts from debianutils-2.17.4.
+
+* Mon Jun 26 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.0-owl7
+- Changed /etc/cron.* access permissions to 0700.
+- Changed /etc/crontab access permissions to 0600.
+
 * Sat Sep 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.0-owl6
 - Added crond to the package requirements.
 
