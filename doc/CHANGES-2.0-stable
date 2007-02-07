@@ -5,6 +5,12 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+(2006/12/26)
+2007/02/07	Package: crontabs
+Updated run-parts from debianutils-2.17.4.
+Restricted permissions to /etc/cron.* directories and /etc/crontab file
+to root only.
+
 (2007/01/29)
 2007/01/30	Package: bind
 SECURITY FIX	Severity: low, remote, active
@@ -210,4 +216,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.29 2007/01/30 23:35:33 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.30 2007/02/07 17:26:01 ldv Exp $
