@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.39 2006/06/05 21:55:22 ldv Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.40 2007/02/21 19:04:00 ldv Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
 %define bash_version 3.1
 %define bash_patchlevel 17
 Version: %bash_version.%bash_patchlevel
-Release: owl1
+Release: owl2
 Group: System Environment/Shells
 License: GPL
 Source0: ftp://ftp.gnu.org/gnu/bash/bash-%bash_version.tar.gz
@@ -205,6 +205,9 @@ fi
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Wed Feb 21 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.17-owl2
+- Fixed redundant RLIMIT_LOCKS.
+
 * Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.17-owl1
 - Updated to 3.1 patchlevel 17.
 
