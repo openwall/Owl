@@ -36,16 +36,6 @@
  #ifdef RLIMIT_STACK
    { 's',	RLIMIT_STACK, 1024,	"stack size",		"kbytes" },
  #endif
-@@ -233,6 +241,9 @@
- #ifdef RLIMIT_LOCKS
-   { 'x',	RLIMIT_LOCKS,	1,	"file locks",		(char *)NULL },
- #endif
-+#ifdef RLIMIT_LOCKS
-+  { 'x',	RLIMIT_LOCKS, 1,	"file locks",		(char *)NULL},
-+#endif
-   { -1, -1, -1, (char *)NULL, (char *)NULL }
- };
- #define NCMDS	(sizeof(limits) / sizeof(limits[0]))
 --- bash-3.1/doc/bash.1.ulimit	2006-01-10 11:21:49 +0000
 +++ bash-3.1/doc/bash.1	2006-01-10 11:24:43 +0000
 @@ -8496,7 +8496,7 @@
@@ -108,13 +98,3 @@
  @item -s
  The maximum stack size.
  
-@@ -3890,6 +3896,9 @@
- @item -x
- The maximum number of file locks.
- 
-+@item -x
-+The maximum amount of file locks.
-+
- @end table
- 
- If @var{limit} is given, it is the new value of the specified resource;
