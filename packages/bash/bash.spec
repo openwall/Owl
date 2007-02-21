@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.35 2006/02/08 23:32:48 ldv Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.35.2.1 2007/02/21 17:48:07 solar Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
 %define bash_version 3.1
 %define bash_patchlevel 7
 Version: %bash_version.%bash_patchlevel
-Release: owl1
+Release: owl1.2.0.1
 Group: System Environment/Shells
 License: GPL
 Source0: ftp://ftp.gnu.org/gnu/bash/bash-%bash_version.tar.gz
@@ -206,6 +206,9 @@ fi
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Wed Feb 21 2007 Solar Designer <solar-at-owl.openwall.com> 3.1.7-owl1.2.0.1
+- Fixed redundant RLIMIT_LOCKS (from the -current commit by ldv@owl).
+
 * Wed Feb 08 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.7-owl1
 - Updated to 3.1 patchlevel 7.
 - Imported FC fix for bug in setting login shell invocation attribute.
