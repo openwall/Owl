@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.40 2007/02/21 19:04:00 ldv Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.41 2007/02/25 13:23:54 ldv Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
@@ -206,7 +206,7 @@ fi
 
 %changelog
 * Wed Feb 21 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.17-owl2
-- Fixed redundant RLIMIT_LOCKS.
+- Fixed redundant RLIMIT_LOCKS in "ulimit -a", reported by galaxy@owl.
 
 * Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.17-owl1
 - Updated to 3.1 patchlevel 17.
