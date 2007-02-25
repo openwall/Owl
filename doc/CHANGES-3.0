@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2007/02/25	Package: openssl
+Updated to 0.9.7m.
+
 2007/01/29	Package: bind
 SECURITY FIX	Severity: low, remote, active
 Updated to 9.3.4, which fixes two security issues.
@@ -368,4 +371,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.77 2007/01/30 23:35:06 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.78 2007/02/25 14:00:08 ldv Exp $
