@@ -1,15 +1,15 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.64 2006/09/28 23:51:36 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.65 2007/02/25 13:57:30 ldv Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 0.9.7l
+Version: 0.9.7m
 Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
 Source: ftp://ftp.openssl.org/source/%name-%version.tar.gz
 Patch0: openssl-0.9.7g-owl-alt-issetugid.diff
-Patch1: openssl-0.9.7l-mdk-alt-owl-Makefile.diff
+Patch1: openssl-0.9.7m-mdk-alt-owl-Makefile.diff
 Patch2: openssl-0.9.7l-rh-alt-owl-soversion.diff
 Patch3: openssl-0.9.7g-rh-mdk-ia64-asm.diff
 Patch4: openssl-0.9.7g-rh-version-engines.diff
@@ -242,6 +242,9 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %attr(0644,root,root) %_mandir/man1/CA.pl.1*
 
 %changelog
+* Sun Feb 25 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7m-owl1
+- Updated to 0.9.7m.
+
 * Fri Sep 29 2006 Solar Designer <solar-at-owl.openwall.com> 0.9.7l-owl1
 - Updated to 0.9.7l.
 

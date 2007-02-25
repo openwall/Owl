@@ -13,18 +13,6 @@ diff -urp openssl-0.9.7l.orig/crypto/bn/bn_div.c openssl-0.9.7l/crypto/bn/bn_div
  
  			q=bn_div_words(n0,n1,d0);
  #ifdef BN_DEBUG_LEVITTE
-diff -urp openssl-0.9.7l.orig/crypto/dh/dh_key.c openssl-0.9.7l/crypto/dh/dh_key.c
---- openssl-0.9.7l.orig/crypto/dh/dh_key.c	Thu Sep 28 11:53:49 2006
-+++ openssl-0.9.7l/crypto/dh/dh_key.c	Thu Sep 28 23:40:55 2006
-@@ -175,7 +175,7 @@ err:
- 
- static int compute_key(unsigned char *key, const BIGNUM *pub_key, DH *dh)
- 	{
--	BN_CTX *ctx;
-+	BN_CTX *ctx = NULL;
- 	BN_MONT_CTX *mont=NULL;
- 	BIGNUM *tmp;
- 	int ret= -1;
 diff -urp openssl-0.9.7l.orig/crypto/mem_clr.c openssl-0.9.7l/crypto/mem_clr.c
 --- openssl-0.9.7l.orig/crypto/mem_clr.c	Tue Dec  3 16:07:03 2002
 +++ openssl-0.9.7l/crypto/mem_clr.c	Thu Sep 28 23:41:37 2006

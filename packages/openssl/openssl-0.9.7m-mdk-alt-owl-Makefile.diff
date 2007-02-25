@@ -1,7 +1,7 @@
-diff -ur openssl-0.9.7l.orig/Makefile.org openssl-0.9.7l/Makefile.org
---- openssl-0.9.7l.orig/Makefile.org	2006-04-24 13:32:57 +0000
-+++ openssl-0.9.7l/Makefile.org	2006-09-28 21:52:27 +0000
-@@ -25,6 +25,7 @@
+diff -upk.orig openssl-0.9.7m.orig/Makefile.org openssl-0.9.7m/Makefile.org
+--- openssl-0.9.7m.orig/Makefile.org	2007-01-16 19:30:19 +0000
++++ openssl-0.9.7m/Makefile.org	2007-02-25 13:31:25 +0000
+@@ -25,6 +25,7 @@ HERE=.
  # Normally it is left empty.
  INSTALL_PREFIX=
  INSTALLTOP=/usr/local/ssl
@@ -9,7 +9,7 @@ diff -ur openssl-0.9.7l.orig/Makefile.org openssl-0.9.7l/Makefile.org
  
  # Do not edit this manually. Use Configure --openssldir=DIR do change this!
  OPENSSLDIR=/usr/local/ssl
-@@ -336,7 +337,7 @@
+@@ -337,7 +338,7 @@ do_darwin-shared: 
  		--verbose -dynamiclib -o lib$$i${SHLIB_EXT} \
  		lib$$i.a $$libs -all_load -current_version ${SHLIB_MAJOR}.${SHLIB_MINOR} \
  		-compatibility_version ${SHLIB_MAJOR}.`echo ${SHLIB_MINOR} | cut -d. -f1` \
@@ -18,7 +18,7 @@ diff -ur openssl-0.9.7l.orig/Makefile.org openssl-0.9.7l/Makefile.org
  	libs="-l`basename $$i${SHLIB_EXT} .dylib` $$libs"; \
  	echo "" ; \
  	done
-@@ -411,7 +412,7 @@
+@@ -412,7 +413,7 @@ do_tru64-shared-rpath:
  		fi; \
  		( set -x; $${FIPSLD:-${CC}} ${SHARED_LDFLAGS} \
  			-shared -msym -o lib$$i.so \
@@ -27,7 +27,7 @@ diff -ur openssl-0.9.7l.orig/Makefile.org openssl-0.9.7l/Makefile.org
  			-set_version "${SHLIB_VERSION_HISTORY}${SHLIB_VERSION_NUMBER}" \
  			-all lib$$i.a -none $$libs ${EX_LIBS} ) || exit 1; \
  		libs="-l$$i $$libs"; \
-@@ -599,7 +600,7 @@
+@@ -600,7 +601,7 @@ do_reliantunix-shared:
  openssl.pc: Makefile
  	@ ( echo 'prefix=$(INSTALLTOP)'; \
  	    echo 'exec_prefix=$${prefix}'; \
@@ -36,7 +36,7 @@ diff -ur openssl-0.9.7l.orig/Makefile.org openssl-0.9.7l/Makefile.org
  	    echo 'includedir=$${prefix}/include'; \
  	    echo ''; \
  	    echo 'Name: OpenSSL'; \
-@@ -783,8 +784,8 @@
+@@ -784,8 +785,8 @@ install: all install_docs install_sw
  
  install_sw:
  	@$(PERL) $(TOP)/util/mkdir-p.pl $(INSTALL_PREFIX)$(INSTALLTOP)/bin \
@@ -47,7 +47,7 @@ diff -ur openssl-0.9.7l.orig/Makefile.org openssl-0.9.7l/Makefile.org
  		$(INSTALL_PREFIX)$(INSTALLTOP)/include/openssl \
  		$(INSTALL_PREFIX)$(OPENSSLDIR)/misc \
  		$(INSTALL_PREFIX)$(OPENSSLDIR)/certs \
-@@ -805,14 +806,14 @@
+@@ -806,14 +807,14 @@ install_sw:
  	do \
  		if [ -f "$$i" ]; then \
  		(       echo installing $$i; \
@@ -66,7 +66,7 @@ diff -ur openssl-0.9.7l.orig/Makefile.org openssl-0.9.7l/Makefile.org
  		fi; \
  	done;
  	@if [ -n "$(SHARED_LIBS)" ]; then \
-@@ -822,22 +823,22 @@
+@@ -823,22 +824,22 @@ install_sw:
  			if [ -f "$$i" -o -f "$$i.a" ]; then \
  			(       echo installing $$i; \
  				if [ "$(PLATFORM)" != "Cygwin" ]; then \
@@ -96,7 +96,7 @@ diff -ur openssl-0.9.7l.orig/Makefile.org openssl-0.9.7l/Makefile.org
  			set $(MAKE); \
  			$$1 -f $$here/Makefile link-shared ); \
  		if [ "$(INSTALLTOP)" != "/usr" ]; then \
-@@ -847,8 +848,8 @@
+@@ -848,8 +849,8 @@ install_sw:
  			sed -e '1,/^$$/d' doc/openssl-shared.txt; \
  		fi; \
  	fi
@@ -107,10 +107,10 @@ diff -ur openssl-0.9.7l.orig/Makefile.org openssl-0.9.7l/Makefile.org
  
  install_docs:
  	@$(PERL) $(TOP)/util/mkdir-p.pl \
-diff -ur openssl-0.9.7l.orig/fips-1.0/Makefile openssl-0.9.7l/fips-1.0/Makefile
---- openssl-0.9.7l.orig/fips-1.0/Makefile	2006-03-28 12:10:37 +0000
-+++ openssl-0.9.7l/fips-1.0/Makefile	2006-09-28 23:25:51 +0000
-@@ -11,6 +11,7 @@
+diff -upk.orig openssl-0.9.7m.orig/fips-1.0/Makefile openssl-0.9.7m/fips-1.0/Makefile
+--- openssl-0.9.7m.orig/fips-1.0/Makefile	2007-01-18 13:29:15 +0000
++++ openssl-0.9.7m/fips-1.0/Makefile	2007-02-25 13:32:13 +0000
+@@ -11,6 +11,7 @@ CFLAG=		-g
  INSTALL_PREFIX=
  OPENSSLDIR=     /usr/local/ssl
  INSTALLTOP=	/usr/local/ssl
@@ -118,16 +118,13 @@ diff -ur openssl-0.9.7l.orig/fips-1.0/Makefile openssl-0.9.7l/fips-1.0/Makefile
  MAKEFILE=       Makefile
  MAKEDEPPROG=	makedepend
  MAKEDEPEND=	$(TOP)/util/domd $(TOP) -MD $(MAKEDEPPROG)
-@@ -177,10 +178,10 @@
- 		mv -f $(INSTALL_PREFIX)$(INSTALLTOP)/bin/$$i.new $(INSTALL_PREFIX)$(INSTALLTOP)/bin/$$i; \
+@@ -177,8 +178,8 @@ install:
  	done
  	@cp -p -f fipscanister.o fipscanister.o.sha1 fips_premain.c \
+ 		fips_premain.c.sha1 \
 -		$(INSTALL_PREFIX)$(INSTALLTOP)/lib/; \
-+		$(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/; \
- 	strings fipscanister.o | grep "HMAC-SHA1(fips_premain\\.c)" > \
--		$(INSTALL_PREFIX)$(INSTALLTOP)/lib/fips_premain.c.sha1; \
 -	chmod 0444 $(INSTALL_PREFIX)$(INSTALLTOP)/lib/fips*
-+		$(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/fips_premain.c.sha1; \
++		$(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/; \
 +	chmod 0444 $(INSTALL_PREFIX)$(INSTALLTOP)/$(SLIB)/fips*
  
  lint:
