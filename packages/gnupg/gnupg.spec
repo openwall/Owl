@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.31.2.5 2006/12/07 22:15:19 ldv Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.31.2.6 2007/03/06 01:03:13 ldv Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.4.6
+Version: 1.4.7
 Release: owl0.2.0.1
 License: GPL
 Group: Applications/Cryptography
@@ -96,6 +96,13 @@ fi
 %exclude %_datadir/gnupg/faq.html
 
 %changelog
+* Tue Mar 06 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.7-owl0.2.0.1
+- Updated to 1.4.7.  This includes a fix for an unsigned data injection
+vulnerability (CVE-2007-1263):
+An attacker is able to add arbitrary content to a signed message, and
+the receiver of the message may not be able to distinguish the forged
+and the properly signed parts of the message.
+
 * Thu Dec 07 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.6-owl0.2.0.1
 - Updated to 1.4.6.  This includes a fix for a remotely controllable
 function pointer vulnerability (CVE-2006-6235): using malformed OpenPGP
