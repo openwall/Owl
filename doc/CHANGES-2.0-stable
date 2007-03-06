@@ -5,6 +5,18 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+(2007/03/06)
+2007/03/06	Package: gnupg
+SECURITY FIX	Severity: medium, indirect, passive
+Updated to 1.4.7.  This includes a fix for an unsigned data injection
+vulnerability:
+An attacker is able to add arbitrary content to a signed message, and
+the receiver of the message may not be able to distinguish the forged
+and the properly signed parts of the message.
+References:
+http://www.coresecurity.com/?action=item&id=1687
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-1263
+
 (2007/02/21)
 2007/02/21	Package: bash
 Removed the duplicate "file locks" entries from "ulimit -a" and the
@@ -220,4 +232,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.32 2007/02/25 20:12:21 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.33 2007/03/06 01:04:57 ldv Exp $
