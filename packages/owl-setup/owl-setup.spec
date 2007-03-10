@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.81 2007/01/14 13:44:55 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.82 2007/03/10 15:31:59 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 1.1.9
+Version: 1.1.10
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -34,6 +34,9 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
+* Sat Mar 10 2007 Croco <croco-at-owl.openwall.com> 1.1.10-owl1
+- worked around the issue with GATEWAYDEV set to an alias interface
+
 * Sun Jan 14 2007 Croco <croco-at-owl.openwall.com> 1.1.9-owl1
 - repartition module reworked so that it doesn't rely on "fdisk -l"
 - scriptpp 0.2.14 replaced with 0.2.15

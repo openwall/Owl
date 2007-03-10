@@ -209,7 +209,17 @@ public:
 
     ScriptVariable GatewayIface() const {
         Iface *p = GetIfaceByReachableIp(gateway);
-        return p ? p->name : "???";
+        if(!p) return "";
+        ScriptVariable res = p->name;
+        /* startup scripts seem not to work correctly if the gateway
+         * interface is an alias such as eth0:1 ; workaround follows
+         */
+        ScriptVariable::Substring colon = res.Strchr(':');
+        if(colon.IsValid()) {
+            colon.ExtendToEnd();
+            colon.Erase();
+        }
+        return res;
     }
 
     ScriptVariable MainIpAddress() const {
