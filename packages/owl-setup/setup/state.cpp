@@ -166,11 +166,6 @@ bool root_password_set()
     return v[1].Length() > 3;
 }
 
-bool fstab_exists()
-{
-    return FileStat(the_config->FstabFile().c_str()).IsRegularFile();
-}
-
 bool fstab_contains_root()
 {
     ReadText rt(the_config->FstabFile().c_str());

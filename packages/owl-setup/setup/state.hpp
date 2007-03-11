@@ -27,7 +27,6 @@ bool is_mounted(class ScriptVariable &part);
 bool packages_installed();
 bool keyboard_selected();
 bool root_password_set();
-bool fstab_exists();
 bool fstab_contains_root();
 bool timezone_selected();
 bool network_configured();

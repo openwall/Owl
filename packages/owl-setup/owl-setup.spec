@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.82 2007/03/10 15:31:59 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.83 2007/03/11 14:16:31 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -34,7 +34,9 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
-* Sat Mar 10 2007 Croco <croco-at-owl.openwall.com> 1.1.10-owl1
+* Sun Mar 11 2007 Croco <croco-at-owl.openwall.com> 1.1.10-owl1
+- 'Create fstab' is made available when the packages seem to be installed,
+  rather than checking for fstab existance
 - worked around the issue with GATEWAYDEV set to an alias interface
 
 * Sun Jan 14 2007 Croco <croco-at-owl.openwall.com> 1.1.9-owl1

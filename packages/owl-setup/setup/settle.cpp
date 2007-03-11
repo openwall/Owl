@@ -89,7 +89,7 @@ int main(int argc, char **argv)
         { "l", "Configure localization (i18n)",
             packages_installed, keyboard_selected },
         { "p", "Set root password", packages_installed, root_password_set },
-        { "t", "Create /etc/fstab", fstab_exists, fstab_contains_root },
+        { "t", "Create /etc/fstab", packages_installed, fstab_contains_root },
         { "z", "Select timezone", packages_installed, timezone_selected },
         { "n", "Configure network", packages_installed, network_configured },
 #if defined(__i386__) || defined(__x86_64__)
