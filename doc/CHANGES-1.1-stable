@@ -62,7 +62,7 @@ DoS by a malicious smbfs server; potential: remote root by a malicious
 server).
 References:
 http://www.isec.pl/vulnerabilities/isec-0017-binfmt_elf.txt
-http://marc.theaimsgroup.com/?l=bugtraq&m=110091183206580
+http://marc.info/?l=bugtraq&m=110091183206580
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0883
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0949
 
@@ -106,7 +106,7 @@ the default kernels on Owl CDs, it's only the Intel PRO/1000 Gigabit
 Ethernet driver (e1000) which has a vulnerability allowing for more
 than a DoS attack fixed with this update.
 References:
-http://marc.theaimsgroup.com/?l=openwall-announce&m=108763826328168
+http://marc.info/?l=openwall-announce&m=108763826328168
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0495
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0554
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0535
@@ -221,4 +221,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Owl: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.32 2006/10/28 18:27:01 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.33 2007/03/18 09:40:05 solar Exp $
