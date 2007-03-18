@@ -8,7 +8,7 @@ stellen.  Um sich einzuschreiben, schickt man eine leere E-Mail an
 <owl-users-subscribe at lists.openwall.com>.  Die Listen-Archive sind
 auf MARC verfügbar:
 
-http://marc.theaimsgroup.com/?l=owl-users
+http://marc.info/?l=owl-users
 
 Zusätzlich zu der owl-users Liste hat man die Möglichkeit Kommentare
 über Owl via <feedback at owl.openwall.com> direkt an uns zu richten.
@@ -16,4 +16,4 @@ Zusätzlich zu der owl-users Liste hat man die Möglichkeit Kommentare
 Berichte über mögliche Sicherheitslücken bitte an
 <security at owl.openwall.com>, andere Bugs an <bugs at owl.openwall.com>.
 
-$Owl: Owl/doc/de/CONTACT,v 1.7 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/de/CONTACT,v 1.8 2007/03/18 09:33:42 solar Exp $

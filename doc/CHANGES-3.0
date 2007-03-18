@@ -36,9 +36,9 @@ The second issue allowed remote DoS attack via a type ANY DNS query
 response that contains multiple RR sets in the answer section, which
 triggers an assertion error if DNSSEC validation is enabled.
 References:
-http://marc.theaimsgroup.com/?l=bind-announce&m=116968519321296
+http://marc.info/?l=bind-announce&m=116968519321296
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-0493
-http://marc.theaimsgroup.com/?l=bind-announce&m=116968519300764
+http://marc.info/?l=bind-announce&m=116968519300764
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-0494
 
 2007/01/18	Package: strace
@@ -382,4 +382,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.81 2007/03/06 00:14:03 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.82 2007/03/18 09:23:09 solar Exp $

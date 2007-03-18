@@ -7,7 +7,7 @@ Owl et poser vos questions. Pour s'abonner, envoyez un message vide à
 <owl-users-subscribe at lists.openwall.com>. Les archives de la liste sont
 disponibles sur MARC :
 
-http://marc.theaimsgroup.com/?l=owl-users
+http://marc.info/?l=owl-users
 
 En plus de la liste owl-users, vous avez l'option d'adresser vos
 commentaires concernant Owl à nous en privé via <feedback at owl.openwall.com>.
@@ -16,4 +16,4 @@ Merci de signaler les problèmes potentiels de sécurité à
 <security at owl.openwall.com> et les bogues non relatifs à la sécurité à
 <bugs at owl.openwall.com>.
 
-$Owl: Owl/doc/fr/CONTACT,v 1.4 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/fr/CONTACT,v 1.5 2007/03/18 09:33:43 solar Exp $
