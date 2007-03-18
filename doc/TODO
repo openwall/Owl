@@ -155,8 +155,8 @@ field widths.
 	gnupg.
 
 [PRIORITY: medium]
-[ASSIGNED: mci@]
-Keep it to latest release.
+[ASSIGNED: ldv@]
+Keep it to latest 1.x release.
 
 
 	libnet, libnids.
@@ -473,4 +473,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.170 2006/10/17 00:20:21 solar Exp $
+$Owl: Owl/doc/TODO,v 1.171 2007/03/18 08:58:37 solar Exp $
