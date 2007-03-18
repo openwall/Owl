@@ -5,9 +5,11 @@ http://www.openwall.com/Owl/
 There's a mailing list where you can share your experience with Owl
 and ask questions.  To subscribe, send an empty message to
 <owl-users-subscribe at lists.openwall.com>.  The list archives are
-available on MARC:
+available on the web:
 
-http://marc.theaimsgroup.com/?l=owl-users
+http://www.openwall.com/lists/owl-users/
+http://marc.info/?l=owl-users
+http://dir.gmane.org/gmane.linux.openwall.user
 
 In addition to the owl-users list, you have the option to direct your
 comments regarding Owl to us privately via <feedback at owl.openwall.com>.
@@ -15,4 +17,4 @@ comments regarding Owl to us privately via <feedback at owl.openwall.com>.
 Please report potential security issues to <security at owl.openwall.com>
 and non-security bugs to <bugs at owl.openwall.com>.
 
-$Owl: Owl/doc/CONTACT,v 1.4 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/CONTACT,v 1.4.2.1 2007/03/18 09:28:57 solar Exp $
