@@ -320,10 +320,6 @@ Solve the DoS-against-itself on the temporary file.
 
 	perl.
 
-[PRIORITY: medium]
-[ASSIGNED: galaxy@]
-Deal with FC4/RHEL4 compatibility issues.
-
 [PRIORITY: low]
 Re-implement temporary file handling in CGI.pm making use of File::Temp.
 
@@ -466,4 +462,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.173 2007/03/18 09:04:49 solar Exp $
+$Owl: Owl/doc/TODO,v 1.174 2007/03/18 09:11:09 solar Exp $
