@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.53 2006/09/05 20:01:48 galaxy Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.54 2007/03/22 00:50:51 galaxy Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -27,7 +27,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.8
-Release: owl4
+Release: owl5
 Epoch: 4
 License: GPL
 Group: Development/Languages
@@ -37,6 +37,7 @@ Patch1: perl-5.8.8-owl-tmp.diff
 Patch2: perl-5.8.3-owl-vitmp.diff
 Patch3: perl-5.8.8-owl-CPAN-tools.diff
 Patch4: perl-5.8.8-owl-tests-proc.diff
+Patch5: perl-5.8.8-owl-tests-hostent.diff
 %if %KERNEL_CONFIG_HARDEN_SHM
 Patch10: perl-5.8.8-owl-tests-shm.diff
 %endif
@@ -103,6 +104,7 @@ introduce security holes.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 %if %KERNEL_CONFIG_HARDEN_SHM
 %patch10 -p1
 %endif
@@ -144,7 +146,7 @@ chmod +x filter_depends.sh
 
 %define __find_requires	%_builddir/%name-%version/filter_depends.sh
 
-# if we ain't run from 'make buildworld' the buildhost macro is undefined
+# if we don't run from 'make buildworld' the buildhost macro is undefined
 %{expand: %%define buildhost %{?buildhost:%buildhost}%{?!buildhost:localhost}}
 
 %build
@@ -203,8 +205,15 @@ rm -rf %buildroot
 %__make
 
 %if %BUILD_TEST
-# Some of the tests might require network access.
-%__make test
+cat << EOF > lib/Net/libnet.cfg
+{
+        test_hosts => 0,
+        test_exists => 0,
+}
+__END__
+EOF
+IN_RPM=1 %__make test
+rm lib/Net/libnet.cfg
 %endif
 
 %install
@@ -289,6 +298,12 @@ chmod -R u+w %buildroot
 %endif
 
 %changelog
+* Wed Mar 21 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4:5.8.8-owl5
+- applied a fix to run tests without a need for network access.
+- disabled the hostent checks - this helps to build the package inside
+unconfigured chroot environment (i.e. after make installworld and chroot
+there).
+
 * Sun Sep 03 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4:5.8.8-owl4
 - Relaxed the build dependency on db4-devel.
 
