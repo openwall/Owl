@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/file/file.spec,v 1.15 2005/11/16 12:21:36 solar Exp $
+# $Owl: Owl/packages/file/file.spec,v 1.15.2.1 2007/03/25 20:54:48 ldv Exp $
 
 Summary: A utility for determining file types.
 Name: file
 Version: 4.16
-Release: owl1
+Release: owl3
 License: distributable
 Group: Applications/File
 URL: http://www.darwinsys.com/file/
@@ -17,6 +17,7 @@ Patch4: file-4.16-rh-selinux.diff
 Patch5: file-4.16-alt-magic.diff
 Patch6: file-4.16-deb-magic.diff
 Patch7: file-4.16-deb-owl-man.diff
+Patch8: file-4.16-owl-bound.diff
 Prefix: %_prefix
 Requires: libmagic = %version-%release
 BuildRequires: zlib-devel, automake, autoconf
@@ -54,13 +55,14 @@ magic files.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
-%{expand:%%define optflags %optflags -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -Wall}
+%{expand:%%define optflags %optflags -D_GNU_SOURCE -Wall}
 
 %build
 autoreconf -f
 %configure --enable-fsect-man5
-%__make LDFLAGS=-s
+%__make
 
 %install
 rm -rf %buildroot
@@ -74,14 +76,14 @@ install -p -D -m 644 %_sourcedir/magic.local %buildroot/etc/magic
 ln -s file/magic %buildroot%_datadir/magic
 ln -s file/magic.mime %buildroot%_datadir/magic.mime
 
-rm -f %buildroot%_libdir/*.la
+rm %buildroot%_libdir/*.la
 
 %files
 %defattr(-,root,root)
 %config(noreplace) /etc/magic
 %_bindir/*
 %_datadir/magic*
-%_datadir/file/*
+%_datadir/file/
 %_mandir/man1/*
 %_mandir/man5/*
 
@@ -97,6 +99,16 @@ rm -f %buildroot%_libdir/*.la
 %_mandir/man3/*
 
 %changelog
+* Sun Mar 25 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.16-owl3
+- Fixed potential heap corruption in file_printf function (CVE-2007-1536).
+- Removed no longer required addition of "-D_FILE_OFFSET_BITS=64
+-D_LARGEFILE_SOURCE" flags to %%optflags.
+
+* Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.16-owl2
+- Dropped LDFLAGS=-s from the %%build section, let's allow brp-* scripts
+to do their work.
+- Added the %%_datadir/file directory to the filelist (it was orphaned).
+
 * Sun Oct 23 2005 Michail Litvak <mci-at-owl.openwall.com> 4.16-owl1
 - 4.16
 - Updated patches.
