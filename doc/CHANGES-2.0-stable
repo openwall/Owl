@@ -5,6 +5,14 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+(2007/03/25)
+2007/03/25	Package: file
+SECURITY FIX	Severity: high, indirect, passive
+Fixed potential heap buffer overflow in the file_printf function of the
+libmagic library.
+Reference:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-1536
+
 (2007/03/06)
 2007/03/06	Package: gnupg
 SECURITY FIX	Severity: medium, indirect, passive
@@ -232,4 +240,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.34 2007/03/18 09:31:15 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.35 2007/03/25 20:56:08 ldv Exp $
