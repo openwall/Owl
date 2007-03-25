@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/file/file.spec,v 1.19 2007/03/25 18:27:31 ldv Exp $
+# $Owl: Owl/packages/file/file.spec,v 1.20 2007/03/25 20:20:57 ldv Exp $
 
 Summary: A utility for determining file types.
 Name: file
@@ -102,6 +102,8 @@ rm -f %buildroot%_libdir/*.la
 %changelog
 * Sun Mar 25 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.16-owl3
 - Fixed potential heap corruption in file_printf function (CVE-2007-1536).
+- Removed no longer required addition of "-D_FILE_OFFSET_BITS=64
+-D_LARGEFILE_SOURCE" flags to %%optflags.
 
 * Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.16-owl2
 - Dropped LDFLAGS=-s from the %%build section, let's allow brp-* scripts
