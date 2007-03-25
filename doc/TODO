@@ -323,10 +323,6 @@ Solve the DoS-against-itself on the temporary file.
 [PRIORITY: low]
 Re-implement temporary file handling in CGI.pm making use of File::Temp.
 
-[PRIORITY: low]
-Determine which of the tests result in network accesses (is it just
-DNS lookups?) and disable those from within our perl.spec.
-
 
 	popa3d, scanlogd.
 
@@ -462,4 +458,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.174 2007/03/18 09:11:09 solar Exp $
+$Owl: Owl/doc/TODO,v 1.175 2007/03/25 02:04:44 solar Exp $
