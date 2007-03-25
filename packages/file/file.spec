@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/file/file.spec,v 1.20 2007/03/25 20:20:57 ldv Exp $
+# $Owl: Owl/packages/file/file.spec,v 1.21 2007/03/25 20:49:36 ldv Exp $
 
 Summary: A utility for determining file types.
 Name: file
@@ -76,15 +76,14 @@ install -p -D -m 644 %_sourcedir/magic.local %buildroot/etc/magic
 ln -s file/magic %buildroot%_datadir/magic
 ln -s file/magic.mime %buildroot%_datadir/magic.mime
 
-rm -f %buildroot%_libdir/*.la
+rm %buildroot%_libdir/*.la
 
 %files
 %defattr(-,root,root)
 %config(noreplace) /etc/magic
 %_bindir/*
 %_datadir/magic*
-%dir %_datadir/file
-%_datadir/file/*
+%_datadir/file/
 %_mandir/man1/*
 %_mandir/man5/*
 
