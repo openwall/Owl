@@ -1,16 +1,16 @@
-# $Owl: Owl/packages/lftp/lftp.spec,v 1.33 2006/09/05 20:00:29 galaxy Exp $
+# $Owl: Owl/packages/lftp/lftp.spec,v 1.34 2007/03/26 21:55:14 ldv Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
-Version: 3.4.6
-Release: owl3
+Version: 3.5.9
+Release: owl1
 License: GPL
 Group: Applications/Internet
 URL: http://lftp.yar.ru
 Source0: ftp://ftp.yars.free.net/pub/source/lftp/lftp-%version.tar.bz2
 Source1: lftpget.1
 Patch0: lftp-3.4.4-owl-n-option.diff
-Patch1: lftp-3.4.6-alt-Makefile.diff
+Patch1: lftp-3.5.9-alt-Makefile.diff
 Prefix: %_prefix
 Requires: less
 BuildRequires: openssl-devel >= 0.9.7g-owl1, readline-devel >= 0:4.3
@@ -43,6 +43,7 @@ downloading files.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+bzip2 -9k NEWS
 
 %build
 CC=%__cc CXX=%__cxx
@@ -60,7 +61,7 @@ rm -rf %buildroot
 chmod a-x %buildroot%_datadir/%name/{convert-netscape-cookies,verify-file}
 
 # Remove unpackaged files
-find %buildroot%_libdir/lftp -type f -name '*.la' -delete -print
+find %buildroot%_libdir/ -type f -name '*.la' -delete
 
 install -pm644 %_sourcedir/lftpget.1 %buildroot%_mandir/man1/
 
@@ -80,15 +81,19 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc BUGS COPYING FAQ FEATURES NEWS README* THANKS TODO lftp.lsm
+%doc AUTHORS BUGS COPYING FAQ FEATURES NEWS.bz2 README* THANKS TODO lftp.lsm
 %config /etc/lftp.conf
 %_bindir/*
+%_libdir/liblftp*.so*
 %_libdir/lftp
 %_mandir/man1/lftp*
 %_datadir/lftp
 %_datadir/locale/*/LC_MESSAGES/lftp.mo
 
 %changelog
+* Mon Mar 26 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.5.9-owl1
+- Updated to 3.5.9.
+
 * Sun Sep 03 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.4.6-owl3
 - Relaxed the build dependency on readline-devel.
 

@@ -1,0 +1,110 @@
+--- lftp-3.5.9/src/Makefile.am
++++ lftp-3.5.9/src/Makefile.am
+@@ -49,16 +49,18 @@ proto_sftp_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
+ cmd_mirror_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
+ cmd_sleep_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
+ liblftp_pty_la_LDFLAGS     = -avoid-version -rpath $(pkgverlibdir)
++liblftp_pty_la_LIBADD      = liblftp-tasks.la
+ liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(OPENSSL_LDFLAGS)
+-liblftp_network_la_LIBADD  = $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS)
++liblftp_network_la_LIBADD  = liblftp-tasks.la $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS)
+ liblftp_getdate_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir)
+ 
+-proto_ftp_la_LIBADD  = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la
+-proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la $(EXPAT_LIBS)
+-proto_fish_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la liblftp-pty.la
+-proto_sftp_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la liblftp-pty.la
+-cmd_mirror_la_LIBADD = liblftp-getdate.la
+-cmd_sleep_la_LIBADD  = liblftp-getdate.la
++proto_file_la_LIBADD = liblftp-tasks.la
++proto_ftp_la_LIBADD  = -L$(DESTDIR)$(pkgverlibdir) liblftp-tasks.la liblftp-network.la
++proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-tasks.la liblftp-network.la $(EXPAT_LIBS)
++proto_fish_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-tasks.la liblftp-network.la liblftp-pty.la
++proto_sftp_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-tasks.la liblftp-network.la liblftp-pty.la
++cmd_mirror_la_LIBADD = liblftp-jobs.la liblftp-tasks.la liblftp-getdate.la
++cmd_sleep_la_LIBADD  = liblftp-jobs.la liblftp-tasks.la liblftp-getdate.la
+ 
+ liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
+  ProcWait.h GetPass.cc GetPass.h ConnectionSlot.cc ConnectionSlot.h\
+--- lftp-3.5.9/src/Makefile.in
++++ lftp-3.5.9/src/Makefile.in
+@@ -85,11 +85,11 @@ libLTLIBRARIES_INSTALL = $(INSTALL)
+ pkgverlibLTLIBRARIES_INSTALL = $(INSTALL)
+ LTLIBRARIES = $(lib_LTLIBRARIES) $(noinst_LTLIBRARIES) \
+ 	$(pkgverlib_LTLIBRARIES)
+-cmd_mirror_la_DEPENDENCIES = liblftp-getdate.la
++cmd_mirror_la_DEPENDENCIES = liblftp-jobs.la liblftp-tasks.la liblftp-getdate.la
+ am_cmd_mirror_la_OBJECTS = MirrorJob.lo
+ cmd_mirror_la_OBJECTS = $(am_cmd_mirror_la_OBJECTS)
+ @WITH_MODULES_TRUE@am_cmd_mirror_la_rpath = -rpath $(pkgverlibdir)
+-cmd_sleep_la_DEPENDENCIES = liblftp-getdate.la
++cmd_sleep_la_DEPENDENCIES = liblftp-jobs.la liblftp-tasks.la liblftp-getdate.la
+ am_cmd_sleep_la_OBJECTS = SleepJob.lo
+ cmd_sleep_la_OBJECTS = $(am_cmd_sleep_la_OBJECTS)
+ @WITH_MODULES_TRUE@am_cmd_sleep_la_rpath = -rpath $(pkgverlibdir)
+@@ -112,8 +112,8 @@ am_liblftp_jobs_la_OBJECTS = Job.lo CmdExec.lo commands.lo mgetJob.lo \
+ 	OutputJob.lo FileCopyOutputJob.lo buffer_std.lo
+ liblftp_jobs_la_OBJECTS = $(am_liblftp_jobs_la_OBJECTS)
+ am__DEPENDENCIES_3 =
+-liblftp_network_la_DEPENDENCIES = $(am__DEPENDENCIES_3) \
+-	$(am__DEPENDENCIES_3) $(am__DEPENDENCIES_3)
++liblftp_pty_la_DEPENDENCIES = liblftp-tasks.la
++liblftp_network_la_DEPENDENCIES = liblftp-tasks.la $(am__DEPENDENCIES_3)
+ am_liblftp_network_la_OBJECTS = NetAccess.lo Resolver.lo lftp_ssl.lo \
+ 	buffer_ssl.lo
+ liblftp_network_la_OBJECTS = $(am_liblftp_network_la_OBJECTS)
+@@ -139,24 +139,25 @@ am_liblftp_tasks_la_OBJECTS = PollVec.lo SMTask.lo ProcWait.lo \
+ 	GetFileInfo.lo StringPool.lo DirColors.lo IdNameCache.lo \
+ 	PatternSet.lo LocalDir.lo mbswidth.lo
+ liblftp_tasks_la_OBJECTS = $(am_liblftp_tasks_la_OBJECTS)
++proto_file_la_DEPENDENCIES = liblftp-tasks.la
+ proto_file_la_LIBADD =
+ am_proto_file_la_OBJECTS = LocalAccess.lo
+ proto_file_la_OBJECTS = $(am_proto_file_la_OBJECTS)
+ @WITH_MODULES_TRUE@am_proto_file_la_rpath = -rpath $(pkgverlibdir)
+-proto_fish_la_DEPENDENCIES = liblftp-network.la liblftp-pty.la
++proto_fish_la_DEPENDENCIES = liblftp-tasks.la liblftp-network.la liblftp-pty.la
+ am_proto_fish_la_OBJECTS = Fish.lo
+ proto_fish_la_OBJECTS = $(am_proto_fish_la_OBJECTS)
+ @WITH_MODULES_TRUE@am_proto_fish_la_rpath = -rpath $(pkgverlibdir)
+-proto_ftp_la_DEPENDENCIES = liblftp-network.la
++proto_ftp_la_DEPENDENCIES = liblftp-tasks.la liblftp-network.la
+ am_proto_ftp_la_OBJECTS = ftpclass.lo FtpListInfo.lo FtpDirList.lo \
+ 	md5.lo ftp-opie.lo FileCopyFtp.lo
+ proto_ftp_la_OBJECTS = $(am_proto_ftp_la_OBJECTS)
+ @WITH_MODULES_TRUE@am_proto_ftp_la_rpath = -rpath $(pkgverlibdir)
+-proto_http_la_DEPENDENCIES = liblftp-network.la $(am__DEPENDENCIES_3)
++proto_http_la_DEPENDENCIES = liblftp-tasks.la liblftp-network.la $(am__DEPENDENCIES_3)
+ am_proto_http_la_OBJECTS = Http.lo HttpDir.lo HttpDirXML.lo
+ proto_http_la_OBJECTS = $(am_proto_http_la_OBJECTS)
+ @WITH_MODULES_TRUE@am_proto_http_la_rpath = -rpath $(pkgverlibdir)
+-proto_sftp_la_DEPENDENCIES = liblftp-network.la liblftp-pty.la
++proto_sftp_la_DEPENDENCIES = liblftp-tasks.la liblftp-network.la liblftp-pty.la
+ am_proto_sftp_la_OBJECTS = SFtp.lo
+ proto_sftp_la_OBJECTS = $(am_proto_sftp_la_OBJECTS)
+ @WITH_MODULES_TRUE@am_proto_sftp_la_rpath = -rpath $(pkgverlibdir)
+@@ -393,15 +394,17 @@ proto_sftp_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
+ cmd_mirror_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
+ cmd_sleep_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
+ liblftp_pty_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir)
++liblftp_pty_la_LIBADD = liblftp-tasks.la
+ liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(OPENSSL_LDFLAGS)
+-liblftp_network_la_LIBADD = $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS)
++liblftp_network_la_LIBADD = liblftp-tasks.la $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS)
+ liblftp_getdate_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir)
+-proto_ftp_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la
+-proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la $(EXPAT_LIBS)
+-proto_fish_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la liblftp-pty.la
+-proto_sftp_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la liblftp-pty.la
+-cmd_mirror_la_LIBADD = liblftp-getdate.la
+-cmd_sleep_la_LIBADD = liblftp-getdate.la
++proto_file_la_LIBADD = liblftp-tasks.la
++proto_ftp_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-tasks.la liblftp-network.la
++proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-tasks.la liblftp-network.la $(EXPAT_LIBS)
++proto_fish_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-tasks.la liblftp-network.la liblftp-pty.la
++proto_sftp_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-tasks.la liblftp-network.la liblftp-pty.la
++cmd_mirror_la_LIBADD = liblftp-jobs.la liblftp-tasks.la liblftp-getdate.la
++cmd_sleep_la_LIBADD = liblftp-jobs.la liblftp-tasks.la liblftp-getdate.la
+ liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
+  ProcWait.h GetPass.cc GetPass.h ConnectionSlot.cc ConnectionSlot.h\
+  CharReader.cc CharReader.h Cache.cc Cache.h LsCache.cc LsCache.h\
