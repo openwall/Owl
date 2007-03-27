@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2007/03/27	Package: elinks
+Updated to 0.11.2.
+
 2007/03/26	Package: lftp
 Updated to 3.5.9.
 
@@ -392,4 +395,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.84 2007/03/26 21:57:48 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.85 2007/03/27 11:30:52 galaxy Exp $
