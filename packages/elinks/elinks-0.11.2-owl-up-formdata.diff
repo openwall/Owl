@@ -1,0 +1,71 @@
+This is a reworked patch from the upstream:
+
+http://www.mail-archive.com/elinks-dev@linuxfromscratch.org/msg00355.html
+
+diff -puNr elinks-0.11.2.orig/src/protocol/user.c elinks-0.11.2/src/protocol/user.c
+--- elinks-0.11.2.orig/src/protocol/user.c	2007-03-25 14:58:20 +0000
++++ elinks-0.11.2/src/protocol/user.c	2007-03-25 16:25:21 +0000
+@@ -217,34 +217,45 @@ static unsigned char *
+ save_form_data_to_file(struct uri *uri)
+ {
+ 	unsigned char *filename = get_tempdir_filename("formdata");
+-	int formfd;
+-	FILE *formfile;
++	int fd;
++	FILE *fp;
++	unsigned char *formdata;
++	size_t len, nmemb;
+ 
+-	if (!filename) return NULL;
++	if (!filename || !uri->post) return NULL;
+ 
+-	formfd = safe_mkstemp(filename);
+-	if (formfd < 0) {
++	fd = safe_mkstemp(filename);
++	if (fd < 0) {
+ 		mem_free(filename);
+ 		return NULL;
+ 	}
+ 
+-	formfile = fdopen(formfd, "w");
+-	if (!formfile) {
+-		mem_free(filename);
+-		close(formfd);
+-		return NULL;
++	/* Jump the content type */
++	formdata = strchr(uri->post, '\n');
++	formdata = formdata ? formdata + 1 : uri->post;
++	len = strlen(formdata);
++	if (len == 0) goto error;
++
++	fp = fdopen(fd, "w");
++	if (!fp) goto error;
++
++	nmemb = fwrite(formdata, len, 1, fp);
++	if (nmemb != 1) {
++		if (fclose(fp) != 0) goto error2;
++		goto error;
+ 	}
+ 
+-	if (uri->post) {
+-		/* Jump the content type */
+-		unsigned char *formdata = strchr(uri->post, '\n');
+-
+-		formdata = formdata ? formdata + 1 : uri->post;
+-		fwrite(formdata, strlen(formdata), 1, formfile);
+-	}
+-	fclose(formfile);
++	if (fclose(fp) != 0)
++		goto error;
+ 
+ 	return filename;
++
++error:
++	close(fd);
++error2:
++	unlink(filename);
++	mem_free(filename);
++	return NULL;
+ }
+ 
+ void

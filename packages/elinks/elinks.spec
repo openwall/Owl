@@ -1,24 +1,20 @@
-# $Owl: Owl/packages/elinks/elinks.spec,v 1.22 2006/09/24 01:27:29 galaxy Exp $
+# $Owl: Owl/packages/elinks/elinks.spec,v 1.23 2007/03/27 11:29:25 galaxy Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
-Version: 0.9.1
-Release: owl7
+Version: 0.11.2
+Release: owl1
 License: GPL
 Group: Applications/Internet
 URL: http://elinks.or.cz
 Source: http://elinks.or.cz/download/%name-%version.tar.bz2
-Patch0: elinks-0.9.1-owl-config.diff
-Patch1: elinks-0.9.1-owl-config-handling.diff
-Patch2: elinks-0.9.1-owl-tmp.diff
-Patch3: elinks-0.9.1-owl-vitmp.diff
-Patch4: elinks-0.9.1-owl-no-xterm-title.diff
-Patch5: elinks-0.9.1-owl-no-uname-leak.diff
-Patch6: elinks-0.9.1-owl-external-programs.diff
-Patch7: elinks-0.9.1-owl-typeahead.diff
-Patch8: elinks-0.9.1-owl-page-scrolling.diff
-Patch9: elinks-0.9.1-owl-document-height.diff
-Patch10: elinks-0.9.1-owl-man.diff
+Patch0: elinks-0.11.2-owl-tmp.diff
+Patch1: elinks-0.11.2-owl-vitmp.diff
+Patch2: elinks-0.11.2-owl-no-xterm-title.diff
+Patch3: elinks-0.11.2-owl-no-uname-leak.diff
+Patch4: elinks-0.11.2-owl-external-programs.diff
+Patch5: elinks-0.11.2-owl-man.diff
+Patch6: elinks-0.11.2-owl-up-formdata.diff
 Requires: gpm, zlib, bzip2, openssl
 Provides: links
 Obsoletes: links
@@ -46,16 +42,21 @@ It is in no way associated with Twibright Labs and their Links version.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
 
 %build
 export ac_cv_header_expat_h=no \
 %configure \
-	--with-gpm --with-zlib --with-bzlib --with-openssl \
-	--without-guile --without-lua --without-gnutls --without-x \
+	--disable-xbel \
+	--disable-sm-scripting \
+	--disable-backtrace \
+	--with-gpm \
+	--with-zlib \
+	--with-bzlib \
+	--with-openssl \
+	--without-guile \
+	--without-lua \
+	--without-gnutls \
+	--without-x \
 	--enable-ipv6
 %__make
 
@@ -68,6 +69,9 @@ ln -sf elinks .%_bindir/links
 ln -s elinks.1 .%_mandir/man1/links.1
 popd
 
+# We want the chunked version of the manual since it has index.
+cp -al doc/html/manual.html-chunked doc/html/manual
+
 # Remove unpackaged files
 rm %buildroot%_datadir/locale/locale.alias
 
@@ -76,12 +80,18 @@ rm %buildroot%_datadir/locale/locale.alias
 %files -f %name.lang
 %defattr(-,root,root)
 %doc AUTHORS BUGS NEWS README SITES THANKS TODO
-%doc doc/bookmarks.txt doc/feedback.txt doc/mailcap.html doc/mime.html
+%doc doc/html/manual
 %_bindir/%name
 %_bindir/links
 %_mandir/man?/*
 
 %changelog
+* Sun Mar 25 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.11.2-owl1
+- Updated to 0.11.2.
+- Reviewed all patches and re-applied ones that are relevant.
+- Merged a patch for the upstream, however, re-worked it to hunt down the
+introduced bugs.
+
 * Sat Sep 23 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.9.1-owl7
 - Fixed an issue with page scrolling.
 - Fixed a bug with the document height calculations.

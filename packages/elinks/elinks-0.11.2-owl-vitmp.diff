@@ -1,0 +1,12 @@
+diff -puNr elinks-0.11.2.orig/src/viewer/text/textarea.c elinks-0.11.2/src/viewer/text/textarea.c
+--- elinks-0.11.2.orig/src/viewer/text/textarea.c	2007-03-25 14:57:26 +0000
++++ elinks-0.11.2/src/viewer/text/textarea.c	2007-03-25 16:29:46 +0000
+@@ -351,7 +351,7 @@ textarea_edit(int op, struct terminal *t
+ 
+ 		if (!ed || !*ed) {
+ 			ed = getenv("EDITOR");
+-			if (!ed || !*ed) ed = "vi";
++			if (!ed || !*ed) ed = "vitmp";
+ 		}
+ 
+ 		ex = straconcat(ed, " ", fn, NULL);

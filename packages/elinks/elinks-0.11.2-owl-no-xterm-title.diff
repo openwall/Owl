@@ -1,0 +1,36 @@
+diff -puNr elinks-0.11.2.orig/src/config/options.inc elinks-0.11.2/src/config/options.inc
+--- elinks-0.11.2.orig/src/config/options.inc	2007-03-25 16:34:34 +0000
++++ elinks-0.11.2/src/config/options.inc	2007-03-25 18:49:33 +0000
+@@ -1225,10 +1225,11 @@ static struct option_info config_options
+ #endif
+ 
+ 	INIT_OPT_BOOL("ui", N_("Set window title"),
+-		"window_title", 0, 1,
++		"window_title", 0, 0,
+ 		N_("Set the window title when running in a windowing environment\n"
+ 		"in an xterm-like terminal. This way the document's title is\n"
+-		"shown on the window titlebar.")),
++		"shown on the window titlebar. This functionality is disabled\n"
++		"at compile time and may be re-enabled int the future.")),
+ 
+ 
+ 
+diff -puNr elinks-0.11.2.orig/src/osdep/osdep.c elinks-0.11.2/src/osdep/osdep.c
+--- elinks-0.11.2.orig/src/osdep/osdep.c	2006-11-19 13:46:37 +0000
++++ elinks-0.11.2/src/osdep/osdep.c	2007-03-25 18:47:42 +0000
+@@ -377,6 +377,7 @@ set_clipboard_text(unsigned char *data)
+ void
+ set_window_title(unsigned char *title)
+ {
++#if 0
+ 	unsigned char *s;
+ 	int xsize, ysize;
+ 	int j = 0;
+@@ -442,6 +443,7 @@ set_window_title(unsigned char *title)
+ 	fflush(stdout);
+ 
+ 	mem_free(s);
++#endif
+ }
+ 
+ #ifdef HAVE_X11

@@ -1,0 +1,188 @@
+diff -puNr elinks-0.11.2.orig/src/protocol/user.c elinks-0.11.2/src/protocol/user.c
+--- elinks-0.11.2.orig/src/protocol/user.c	2006-11-19 13:46:37 +0000
++++ elinks-0.11.2/src/protocol/user.c	2007-03-25 14:58:20 +0000
+@@ -216,7 +216,7 @@ get_subject_from_query(unsigned char *qu
+ static unsigned char *
+ save_form_data_to_file(struct uri *uri)
+ {
+-	unsigned char *filename = get_tempdir_filename("elinks-XXXXXX");
++	unsigned char *filename = get_tempdir_filename("formdata");
+ 	int formfd;
+ 	FILE *formfile;
+ 
+diff -puNr elinks-0.11.2.orig/src/session/download.c elinks-0.11.2/src/session/download.c
+--- elinks-0.11.2.orig/src/session/download.c	2006-11-19 13:46:37 +0000
++++ elinks-0.11.2/src/session/download.c	2007-03-25 15:26:47 +0000
+@@ -561,23 +561,21 @@ create_download_file_do(struct terminal 
+ 	unsigned char *wd;
+ 	int h = -1;
+ 	int saved_errno;
+-#ifdef NO_FILE_SECURITY
+-	int sf = 0;
+-#else
+-	int sf = cdf_hop->safe;
+-#endif
+ 
+ 	if (!file) goto finish;
+ 
+ 	wd = get_cwd();
+ 	set_cwd(term->cwd);
+ 
+-	/* O_APPEND means repositioning at the end of file before each write(),
+-	 * thus ignoring seek()s and that can hide mysterious bugs. IMHO.
+-	 * --pasky */
+-	h = open(file, O_CREAT | O_WRONLY | (resume ? 0 : O_TRUNC)
+-			| (sf && !resume ? O_EXCL : 0),
+-		 sf ? 0600 : 0666);
++	if (cdf_hop->safe) {
++		h = safe_mkstemp(file);
++	} else {
++		/* O_APPEND means repositioning at the end of file before each write(),
++		 * thus ignoring seek()s and that can hide mysterious bugs. IMHO.
++		 * --pasky */
++		h = open(file,
++			O_WRONLY | (resume ? 0 : (O_CREAT | O_TRUNC)), 0666);
++	}
+ 	saved_errno = errno; /* Saved in case of ... --Zas */
+ 
+ 	if (wd) {
+@@ -655,37 +653,6 @@ create_download_file(struct terminal *te
+ 
+ 
+ static unsigned char *
+-get_temp_name(struct uri *uri)
+-{
+-	struct string name;
+-	unsigned char *extension;
+-	/* FIXME
+-	 * We use tempnam() here, which is unsafe (race condition), for now.
+-	 * This should be changed at some time, but it needs an in-depth work
+-	 * of whole download code. --Zas */
+-	unsigned char *nm = tempnam(NULL, ELINKS_TEMPNAME_PREFIX);
+-
+-	if (!nm) return NULL;
+-
+-	if (!init_string(&name)) {
+-		free(nm);
+-		return NULL;
+-	}
+-
+-	add_to_string(&name, nm);
+-	free(nm);
+-
+-	extension = get_extension_from_uri(uri);
+-	if (extension) {
+-		add_shell_safe_to_string(&name, extension, strlen(extension));
+-		mem_free(extension);
+-	}
+-
+-	return name.source;
+-}
+-
+-
+-static unsigned char *
+ subst_file(unsigned char *prog, unsigned char *file)
+ {
+ 	struct string name;
+@@ -783,7 +750,6 @@ resume_download(void *ses, unsigned char
+ struct codw_hop {
+ 	struct type_query *type_query;
+ 	unsigned char *real_file;
+-	unsigned char *file;
+ };
+ 
+ static void
+@@ -807,9 +773,8 @@ continue_download_do(struct terminal *te
+ 
+ 	if (type_query->external_handler) {
+ 		file_download->external_handler = subst_file(type_query->external_handler,
+-							     codw_hop->file);
++							     codw_hop->real_file);
+ 		file_download->delete = 1;
+-		mem_free(codw_hop->file);
+ 		mem_free_set(&type_query->external_handler, NULL);
+ 	}
+ 
+@@ -826,7 +791,6 @@ continue_download_do(struct terminal *te
+ 	return;
+ 
+ cancel:
+-	if (type_query->external_handler) mem_free_if(codw_hop->file);
+ 	tp_cancel(type_query);
+ 	mem_free(codw_hop);
+ }
+@@ -843,8 +807,7 @@ continue_download(void *data, unsigned c
+ 	}
+ 
+ 	if (type_query->external_handler) {
+-		/* FIXME: get_temp_name() calls tempnam(). --Zas */
+-		file = get_temp_name(type_query->uri);
++		file = get_tempdir_filename("download");
+ 		if (!file) {
+ 			mem_free(codw_hop);
+ 			tp_cancel(type_query);
+@@ -853,7 +816,6 @@ continue_download(void *data, unsigned c
+ 	}
+ 
+ 	codw_hop->type_query = type_query;
+-	codw_hop->file = file;
+ 
+ 	kill_downloads_to_file(file);
+ 
+@@ -861,6 +823,7 @@ continue_download(void *data, unsigned c
+ 			     &codw_hop->real_file,
+ 			     !!type_query->external_handler, 0,
+ 			     continue_download_do, codw_hop);
++	if (type_query->external_handler && file) mem_free(file);
+ }
+ 
+ 
+diff -puNr elinks-0.11.2.orig/src/util/file.c elinks-0.11.2/src/util/file.c
+--- elinks-0.11.2.orig/src/util/file.c	2006-11-19 13:46:37 +0000
++++ elinks-0.11.2/src/util/file.c	2007-03-25 14:19:30 +0000
+@@ -181,12 +181,10 @@ get_tempdir_filename(unsigned char *name
+ {
+ 	unsigned char *tmpdir = getenv("TMPDIR");
+ 
+-	if (!tmpdir || !*tmpdir) tmpdir = getenv("TMP");
+-	if (!tmpdir || !*tmpdir) tmpdir = getenv("TEMPDIR");
+-	if (!tmpdir || !*tmpdir) tmpdir = getenv("TEMP");
+ 	if (!tmpdir || !*tmpdir) tmpdir = "/tmp";
+ 
+-	return straconcat(tmpdir, "/", name, NULL);
++	return straconcat(tmpdir,
++		"/" ELINKS_TEMPNAME_PREFIX "-", name, ".XXXXXX", NULL);
+ }
+ 
+ unsigned char *
+diff -puNr elinks-0.11.2.orig/src/viewer/text/textarea.c elinks-0.11.2/src/viewer/text/textarea.c
+--- elinks-0.11.2.orig/src/viewer/text/textarea.c	2006-11-19 13:46:37 +0000
++++ elinks-0.11.2/src/viewer/text/textarea.c	2007-03-25 14:57:26 +0000
+@@ -295,19 +295,21 @@ save_textarea_file(unsigned char *value)
+ 	FILE *file = NULL;
+ 	int h;
+ 
+-	filename = get_tempdir_filename("elinks-area-XXXXXX");
++	filename = get_tempdir_filename("textarea");
+ 	if (!filename) return NULL;
+ 
+ 	h = safe_mkstemp(filename);
+-	if (h >= 0) file = fdopen(h, "w");
++	if (h == -1) return NULL;
+ 
+-	if (file) {
+-		fwrite(value, strlen(value), 1, file);
+-		fclose(file);
+-	} else {
++	file = fdopen(h, "w");
++	if (!file) {
+ 		mem_free(filename);
++		return NULL;
+ 	}
+ 
++	fwrite(value, strlen(value), 1, file);
++	fclose(file);
++
+ 	return filename;
+ }
+ 

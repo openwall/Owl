@@ -1,0 +1,59 @@
+diff -puNr elinks-0.11.2.orig/doc/man/man1/elinks.1.in elinks-0.11.2/doc/man/man1/elinks.1.in
+--- elinks-0.11.2.orig/doc/man/man1/elinks.1.in	2006-11-19 13:46:36 +0000
++++ elinks-0.11.2/doc/man/man1/elinks.1.in	2007-03-25 18:33:14 +0000
+@@ -327,5 +327,6 @@ This manual page was written by Peter Ge
+ .SH "SEE ALSO"
+ 
+ 
+-\fBelinkskeys\fR(5), \fBelinks\&.conf\fR(5), \fBlinks\fR(1), \fBlynx\fR(1), \fBw3m\fR(1), \fBwget\fR(1)
+-
++.BR lftp (1),
++.BR elinks.conf (5),
++.BR elinkskeys (5)
+diff -puNr elinks-0.11.2.orig/doc/man/man5/elinks.conf.5 elinks-0.11.2/doc/man/man5/elinks.conf.5
+--- elinks-0.11.2.orig/doc/man/man5/elinks.conf.5	2006-11-19 13:46:36 +0000
++++ elinks-0.11.2/doc/man/man5/elinks.conf.5	2007-03-25 18:43:46 +0000
+@@ -991,8 +991,10 @@ mime\&.mailcap\&.enable [0|1] (default: 
+ Enable mailcap support\&.
+ 
+ .TP
+-mime\&.mailcap\&.path <str> (default: "~/\&.mailcap:/etc/mailcap:/usr/etc/mailcap:/usr/local/etc/mailcap:/usr/share/mailcap:/usr/share/misc/mailcap")
++mime\&.mailcap\&.path <str>
+ Mailcap search path\&. Colon\-separated list of files\&. Leave as "" to use MAILCAP environment variable instead\&.
++.BR
++(default: "~/\&.mailcap:/etc/mailcap:/usr/etc/mailcap:/usr/local/etc/mailcap:/usr/share/mailcap:/usr/share/misc/mailcap")
+ 
+ .TP
+ mime\&.mailcap\&.ask [0|1] (default: 1)
+@@ -1029,8 +1031,11 @@ mime\&.mimetypes\&.enable [0|1] (default
+ Enable mime\&.types support\&.
+ 
+ .TP
+-mime\&.mimetypes\&.path <str> (default: "~/\&.mime\&.types:/etc/mime\&.types:/usr/etc/mime\&.types:/usr/local/etc/mime\&.types:/usr/share/mime\&.types:/usr/share/misc/mime\&.types")
++mime\&.mimetypes\&.path <str>
+ The search path for mime\&.types files\&. Colon\-separated list of files\&.
++.cflags 4 /
++(default: "~/\&.mime\&.types:/etc/mime\&.types:/usr/etc/mime\&.types:/usr/local/etc/mime\&.types:/usr/share/mime\&.types:/usr/share/misc/mime\&.types")
++.cflags 0 /
+ 
+ .TP
+ mime\&.type
+@@ -2589,5 +2594,5 @@ Generated using output from ELinks versi
+ .SH "SEE ALSO"
+ 
+ 
+-\fBelinks\fR(1), \fBelinkskeys\fR(5)
+-
++.BR elinks (1),
++.BR elinkskeys (5)
+diff -puNr elinks-0.11.2.orig/doc/man/man5/elinkskeys.5 elinks-0.11.2/doc/man/man5/elinkskeys.5
+--- elinks-0.11.2.orig/doc/man/man5/elinkskeys.5	2006-11-19 13:46:36 +0000
++++ elinks-0.11.2/doc/man/man5/elinkskeys.5	2007-03-25 18:34:10 +0000
+@@ -1316,5 +1316,5 @@ This manual page was finally written by 
+ .SH "SEE ALSO"
+ 
+ 
+-\fBelinks\fR(1), \fBelinks\&.conf\fR(5)
+-
++.BR elinks (1),
++.BR elinks.conf (5)

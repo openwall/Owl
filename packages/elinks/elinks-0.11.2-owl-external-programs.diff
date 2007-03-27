@@ -1,0 +1,29 @@
+diff -puNr elinks-0.11.2.orig/src/setup.h elinks-0.11.2/src/setup.h
+--- elinks-0.11.2.orig/src/setup.h	2006-11-19 13:46:37 +0000
++++ elinks-0.11.2/src/setup.h	2007-03-25 16:48:17 +0000
+@@ -96,10 +96,10 @@
+ /* Default external programs for protocol.user.* autocreated options */
+ #define DEFAULT_AC_OPT_MAILTO		"mutt %h -s \"%s\" -i \"%f\""
+ #define DEFAULT_AC_OPT_TELNET		"telnet %h %p"
+-#define DEFAULT_AC_OPT_TN3270		"tn3270 %h %p"
+-#define DEFAULT_AC_OPT_GOPHER		"lynx %u"
+-#define DEFAULT_AC_OPT_NEWS		"lynx %u"
+-#define DEFAULT_AC_OPT_IRC		"irc %u"
++#define DEFAULT_AC_OPT_TN3270		""
++#define DEFAULT_AC_OPT_GOPHER		""
++#define DEFAULT_AC_OPT_NEWS		""
++#define DEFAULT_AC_OPT_IRC		""
+ 
+ /* Default terminal size. Used for -dump and for normal runs if detection
+  * through ioctl() and environment variables fails. */
+diff -puNr elinks-0.11.2.orig/src/terminal/terminal.c elinks-0.11.2/src/terminal/terminal.c
+--- elinks-0.11.2.orig/src/terminal/terminal.c	2006-11-19 13:46:37 +0000
++++ elinks-0.11.2/src/terminal/terminal.c	2007-03-25 16:42:51 +0000
+@@ -173,6 +173,7 @@ exec_thread(unsigned char *path, int p)
+ #if defined(HAVE_SETPGID) && !defined(CONFIG_BEOS) && !defined(HAVE_BEGINTHREAD)
+ 	if (path[0] == 2) setpgid(0, 0);
+ #endif
++	/* XXX: This interface should be re-arranged to use execvp(3). */
+ 	exe(path + 1);
+ 	if (path[plen]) unlink(path + plen);
+ }

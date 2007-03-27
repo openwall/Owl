@@ -1,0 +1,21 @@
+diff -puNr elinks-0.11.2.orig/src/protocol/http/http.c elinks-0.11.2/src/protocol/http/http.c
+--- elinks-0.11.2.orig/src/protocol/http/http.c	2006-11-19 13:46:37 +0000
++++ elinks-0.11.2/src/protocol/http/http.c	2007-03-25 16:38:11 +0000
+@@ -185,7 +185,7 @@ static struct option_info http_options[]
+ 
+ 	/* OSNews.com is supposed to be relying on the textmode token, at least. */
+ 	INIT_OPT_STRING("protocol.http", N_("User-agent identification"),
+-		"user_agent", 0, "ELinks/%v (textmode; %s; %t-%b)",
++		"user_agent", 0, "ELinks/%v (textmode; Linux; %t-%b)",
+ 		N_("Change the User Agent ID. That means identification string, which\n"
+ 		"is sent to HTTP server when a document is requested. The 'textmode'\n"
+ 		"token in the first field is our silent attempt to establish this as\n"
+@@ -193,7 +193,7 @@ static struct option_info http_options[]
+ 		"have just a single uniform test for these if they are ie. pushing\n"
+ 		"some lite version to them automagically.\n"
+ 		"%v in the string means ELinks version\n"
+-		"%s in the string means system identification\n"
++		"%s in the string means system identification (uname -srm)\n"
+ 		"%t in the string means size of the terminal\n"
+ 		"%b in the string means number of bars displayed by ELinks\n"
+ 		"Use \" \" if you don't want any User-Agent header to be sent at all.")),
