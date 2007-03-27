@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.40 2006/10/29 18:15:46 solar Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.41 2007/03/27 11:46:06 galaxy Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -13,7 +13,7 @@
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
 Version: 1.39
-Release: owl3
+Release: owl4
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
@@ -22,6 +22,7 @@ Patch1: e2fsprogs-1.39-owl-tests.diff
 Patch2: e2fsprogs-1.37-owl-blkid-env.diff
 Patch3: e2fsprogs-1.39-owl-tmp.diff
 Patch4: e2fsprogs-1.39-up-20060530-sigbus.diff
+Patch5: e2fsprogs-1.39-owl-tests-no_proc.diff
 PreReq: /sbin/ldconfig
 BuildRequires: gettext, texinfo, automake, autoconf
 BuildRequires: glibc >= 0:2.2, sed >= 0:4.1
@@ -59,6 +60,15 @@ chmod -R u+w .
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+
+# e2fsprogs can't perform its testsuite on a system without /proc, so we
+# are performing a simple check and are patching the testsuite.
+if [ ! -h /proc/self/exe ]; then
+	echo "No /proc filesystem is detected, adjusting the testsuite ..."
+%patch5 -p1
+	chmod +x tests/no_proc.sh
+fi
+
 bzip2 -9k ChangeLog RELEASE-NOTES
 
 # remove these unwanted header files just in case
@@ -251,6 +261,15 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Mon Mar 26 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.39-owl4
+- Added a fix for running tests on a system without the /proc filesystem
+mounted (e.g. chroot'ed installation).
+A side effect of the above patch is that resize2fs honours the -f
+option now and the tool doesn't abort if it cannot determine whether a
+requested filesystem is mounted or not.  IMHO, this is not an issue
+since -f is dangerous anyway and only experiencied users should use this
+option.
+
 * Sun Oct 29 2006 Alexandr D. Kanevskiy <kad-at-owl.openwall.com> 1.39-owl3
 - Patch from upstream Mercurial repository:
 Changeset 1953: Fix SIGBUS through unaligned access to FAT superblocks.

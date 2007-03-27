@@ -1,0 +1,162 @@
+This patch allows the e2fsprogs testsuite to run on a system where /proc is
+not mounted.  The lastest hunk introduces a change in the behaviour of
+resize2fs: the -f option (force) now enforces the program to ignore the fact
+that it was unable to retrieve the information whether the filesystem is
+mounted or not.  Anyway, if user uses '-f' they are know what they are
+doing since '-f' is very dangerous for an unexperienced user... -- (GM)
+
+diff -puNr e2fsprogs-1.39/tests/f_journal/expect.1 e2fsprogs-1.39.no_proc/tests/f_journal/expect.1
+--- e2fsprogs-1.39/tests/f_journal/expect.1	2005-09-06 09:40:14 +0000
++++ e2fsprogs-1.39.no_proc/tests/f_journal/expect.1	2007-03-26 07:27:31 +0000
+@@ -49,8 +49,6 @@ Clearing orphaned inode 24 (uid=0, gid=0
+ Clearing orphaned inode 59 (uid=0, gid=0, mode=0100600, size=4096)
+ Backing up journal inode block information.
+ 
+-Moving journal from /journal to hidden inode.
+-
+ Pass 1: Checking inodes, blocks, and sizes
+ Pass 2: Checking directory structure
+ Pass 3: Checking directory connectivity
+@@ -58,5 +56,5 @@ Pass 4: Checking reference counts
+ Pass 5: Checking group summary information
+ 
+ test_filesys: ***** FILE SYSTEM WAS MODIFIED *****
+-test_filesys: 53/2048 files (1.9% non-contiguous), 1409/8192 blocks
++test_filesys: 54/2048 files (1.9% non-contiguous), 1409/8192 blocks
+ Exit status is 1
+diff -puNr e2fsprogs-1.39/tests/f_journal/expect.2 e2fsprogs-1.39.no_proc/tests/f_journal/expect.2
+--- e2fsprogs-1.39/tests/f_journal/expect.2	2005-09-06 09:40:14 +0000
++++ e2fsprogs-1.39.no_proc/tests/f_journal/expect.2	2007-03-26 07:27:38 +0000
+@@ -3,5 +3,5 @@ Pass 2: Checking directory structure
+ Pass 3: Checking directory connectivity
+ Pass 4: Checking reference counts
+ Pass 5: Checking group summary information
+-test_filesys: 53/2048 files (1.9% non-contiguous), 1409/8192 blocks
++test_filesys: 54/2048 files (1.9% non-contiguous), 1409/8192 blocks
+ Exit status is 0
+diff -puNr e2fsprogs-1.39/tests/no_proc.sh e2fsprogs-1.39.no_proc/tests/no_proc.sh
+--- e2fsprogs-1.39/tests/no_proc.sh	1970-01-01 00:00:00 +0000
++++ e2fsprogs-1.39.no_proc/tests/no_proc.sh	2007-03-26 07:35:20 +0000
+@@ -0,0 +1,5 @@
++#!/bin/sh
++( $@ ; echo $? > ./.wrapper.status ) 2>&1 | grep -vE '^ext2fs_check_(if_mount|mount_point): No such file.+ is mounted\.\$'
++STATUS=$(cat ./.wrapper.status)
++rm -f ./.wrapper.status
++exit $STATUS
+diff -puNr e2fsprogs-1.39/tests/test_config e2fsprogs-1.39.no_proc/tests/test_config
+--- e2fsprogs-1.39/tests/test_config	2006-05-29 03:08:44 +0000
++++ e2fsprogs-1.39.no_proc/tests/test_config	2007-03-26 07:52:38 +0000
+@@ -3,8 +3,8 @@
+ #
+ 
+ unset LANG LANGUAGE LC_ADDRESS LC_ALL LC_COLLATE LC_CTYPE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE LC_TIME PAGER
+-FSCK="$USE_VALGRIND ../e2fsck/e2fsck"
+-MKE2FS="$USE_VALGRIND ../misc/mke2fs"
++FSCK="./no_proc.sh $USE_VALGRIND ../e2fsck/e2fsck"
++MKE2FS="./no_proc.sh $USE_VALGRIND ../misc/mke2fs"
+ DUMPE2FS="$USE_VALGRIND ../misc/dumpe2fs"
+ TUNE2FS="$USE_VALGRIND ../misc/tune2fs"
+ CHATTR="$USE_VALGRIND../misc/chattr"
+@@ -12,7 +12,7 @@ LSATTR="$USE_VALGRIND ../misc/lsattr"
+ DEBUGFS="$USE_VALGRIND ../debugfs/debugfs"
+ TEST_BITS="../debugfs/debugfs"
+ RESIZE2FS_EXE="../resize/resize2fs"
+-RESIZE2FS="$USE_VALGRIND $RESIZE2FS_EXE"
++RESIZE2FS="./no_proc.sh $USE_VALGRIND $RESIZE2FS_EXE -f"
+ TEST_REL=../tests/progs/test_rel
+ TEST_ICOUNT=../tests/progs/test_icount
+ LD_LIBRARY_PATH=../lib:../lib/ext2fs:../lib/e2p:../lib/et:../lib/ss
+diff -puNr e2fsprogs-1.39.orig/tests/r_move_itable/expect e2fsprogs-1.39/tests/r_move_itable/expect
+--- e2fsprogs-1.39.orig/tests/r_move_itable/expect	2006-05-24 16:57:05 +0000
++++ e2fsprogs-1.39/tests/r_move_itable/expect	2007-03-26 08:47:02 +0000
+@@ -302,17 +302,13 @@ Begin pass 1 (max = 39)
+ Extending the inode table     ----------------------------------------XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+ The filesystem on ./test.img is now 19969 blocks long.
+ 
+-Filesystem did not have a UUID; generating one.
+-
+ Pass 1: Checking inodes, blocks, and sizes
+ Pass 2: Checking directory structure
+ Pass 3: Checking directory connectivity
+ Pass 4: Checking reference counts
+ Pass 5: Checking group summary information
+-
+-test_filesys: ***** FILE SYSTEM WAS MODIFIED *****
+ test_filesys: 11/2496 files (0.0% non-contiguous), 1644/19969 blocks
+-Exit status is 1
++Exit status is 0
+ dumpe2fs test.img
+ 
+ Filesystem volume name:   <none>
+@@ -839,17 +835,13 @@ Begin pass 1 (max = 39)
+ Extending the inode table     ----------------------------------------XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+ The filesystem on ./test.img is now 29953 blocks long.
+ 
+-Filesystem did not have a UUID; generating one.
+-
+ Pass 1: Checking inodes, blocks, and sizes
+ Pass 2: Checking directory structure
+ Pass 3: Checking directory connectivity
+ Pass 4: Checking reference counts
+ Pass 5: Checking group summary information
+-
+-test_filesys: ***** FILE SYSTEM WAS MODIFIED *****
+ test_filesys: 11/3744 files (0.0% non-contiguous), 2007/29953 blocks
+-Exit status is 1
++Exit status is 0
+ dumpe2fs test.img
+ 
+ Filesystem volume name:   <none>
+@@ -1612,17 +1604,13 @@ Begin pass 1 (max = 40)
+ Extending the inode table     ----------------------------------------XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+ The filesystem on ./test.img is now 40000 blocks long.
+ 
+-Filesystem did not have a UUID; generating one.
+-
+ Pass 1: Checking inodes, blocks, and sizes
+ Pass 2: Checking directory structure
+ Pass 3: Checking directory connectivity
+ Pass 4: Checking reference counts
+ Pass 5: Checking group summary information
+-
+-test_filesys: ***** FILE SYSTEM WAS MODIFIED *****
+ test_filesys: 11/5024 files (0.0% non-contiguous), 2376/40000 blocks
+-Exit status is 1
++Exit status is 0
+ dumpe2fs test.img
+ 
+ Filesystem volume name:   <none>
+diff -puNr e2fsprogs-1.39.orig/tests/r_resize_inode/expect e2fsprogs-1.39/tests/r_resize_inode/expect
+--- e2fsprogs-1.39.orig/tests/r_resize_inode/expect	2006-05-24 16:59:05 +0000
++++ e2fsprogs-1.39/tests/r_resize_inode/expect	2007-03-26 08:48:11 +0000
+@@ -604,17 +604,13 @@ resize2fs test.img 165536
+ Resizing the filesystem on ./test.img to 165536 (1k) blocks.
+ The filesystem on ./test.img is now 165536 blocks long.
+ 
+-Filesystem did not have a UUID; generating one.
+-
+ Pass 1: Checking inodes, blocks, and sizes
+ Pass 2: Checking directory structure
+ Pass 3: Checking directory connectivity
+ Pass 4: Checking reference counts
+ Pass 5: Checking group summary information
+-
+-test_filesys: ***** FILE SYSTEM WAS MODIFIED *****
+ test_filesys: 11/41472 files (0.0% non-contiguous), 8361/165536 blocks
+-Exit status is 1
++Exit status is 0
+ dumpe2fs test.img
+ 
+ Filesystem volume name:   <none>
+diff -puNr e2fsprogs-1.39/resize/main.c e2fsprogs-1.39.no_proc/resize/main.c
+--- e2fsprogs-1.39/resize/main.c	2007-03-26 07:53:10 +0000
++++ e2fsprogs-1.39.no_proc/resize/main.c	2007-03-26 07:50:28 +0000
+@@ -231,7 +231,7 @@ int main (int argc, char ** argv)
+ 			com_err("ext2fs_check_mount_point", retval,
+ 				_("while determining whether %s is mounted."),
+ 				device_name);
+-			exit(1);
++			if (!force) exit(1);
+ 		}
+ 		if (!(mount_flags & EXT2_MF_MOUNTED) || (mtpt[len-1] == 0))
+ 			break;
