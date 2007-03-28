@@ -169,7 +169,7 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/database.c vixie-cron
  	/* if we don't do this, then when our children eventually call
  	 * getpwnam() in do_command.c's child_process to verify MAILTO=,
  	 * they will screw us up (and v-v).
-@@ -180,19 +207,33 @@ process_crontab(const char *uname, const
+@@ -180,19 +207,34 @@ process_crontab(const char *uname, const
  {
  	struct passwd *pw = NULL;
  	int crontab_fd = OK - 1;
@@ -197,7 +197,8 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/database.c vixie-cron
 +		log_it(fname, getpid(), "NOT REGULAR", tabname);
 +		goto next_crontab;
 +	}
-+	if (pw && (lstatbuf.st_mode & 07533) != 0400) {
++	if ((!pw && (lstatbuf.st_mode & 07533) != 0400) ||
++	    (pw && (lstatbuf.st_mode & 07577) != 0400)) {
 +		log_it(fname, getpid(), "BAD FILE MODE", tabname);
 +		goto next_crontab;
 +	}
@@ -209,16 +210,17 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/database.c vixie-cron
  	if ((crontab_fd = open(tabname, O_RDONLY|O_NONBLOCK|O_NOFOLLOW, 0)) < OK) {
  		/* crontab not accessible?
  		 */
-@@ -208,7 +249,7 @@ process_crontab(const char *uname, const
+@@ -208,7 +250,8 @@ process_crontab(const char *uname, const
  		log_it(fname, getpid(), "NOT REGULAR", tabname);
  		goto next_crontab;
  	}
 -	if ((statbuf->st_mode & 07577) != 0400) {
-+	if (pw && (statbuf->st_mode & 07533) != 0400) {
++	if ((!pw && (statbuf->st_mode & 07533) != 0400) ||
++	    (pw && (statbuf->st_mode & 07577) != 0400)) {
  		log_it(fname, getpid(), "BAD FILE MODE", tabname);
  		goto next_crontab;
  	}
-@@ -221,6 +262,11 @@ process_crontab(const char *uname, const
+@@ -221,6 +264,11 @@ process_crontab(const char *uname, const
  		log_it(fname, getpid(), "BAD LINK COUNT", tabname);
  		goto next_crontab;
  	}

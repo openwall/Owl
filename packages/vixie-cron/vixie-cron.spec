@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/vixie-cron/vixie-cron.spec,v 1.47 2006/06/26 13:17:58 ldv Exp $
+# $Owl: Owl/packages/vixie-cron/vixie-cron.spec,v 1.48 2007/03/28 00:25:46 ldv Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
 Version: 4.1.20060426
-Release: owl2
+Release: owl3
 License: distributable
 Group: System Environment/Base
 Source0: vixie-cron-%version.tar.bz2
@@ -15,13 +15,14 @@ Patch0: vixie-cron-4.1.20040916-alt-warnings.diff
 Patch1: vixie-cron-4.1.20060426-owl-alt-linux.diff
 Patch2: vixie-cron-4.1.20040916-owl-vitmp.diff
 Patch3: vixie-cron-4.1.20040916-owl-crond.diff
-Patch4: vixie-cron-4.1.20040916-alt-owl-Makefile.diff
-Patch5: vixie-cron-4.1.20040916-alt-progname.diff
-Patch6: vixie-cron-4.1.20040916-alt-sigpipe.diff
-Patch7: vixie-cron-4.1.20040916-alt-pam.diff
-Patch8: vixie-cron-4.1.20040916-alt-setlocale.diff
-Patch9: vixie-cron-4.1.20040916-alt-children.diff
-Patch10: vixie-cron-4.1.20060426-owl-tmp.diff
+Patch4: vixie-cron-4.1.20060426-owl-st_nlink.diff
+Patch5: vixie-cron-4.1.20040916-alt-owl-Makefile.diff
+Patch6: vixie-cron-4.1.20040916-alt-progname.diff
+Patch7: vixie-cron-4.1.20040916-alt-sigpipe.diff
+Patch8: vixie-cron-4.1.20040916-alt-pam.diff
+Patch9: vixie-cron-4.1.20040916-alt-setlocale.diff
+Patch10: vixie-cron-4.1.20040916-alt-children.diff
+Patch11: vixie-cron-4.1.20060426-owl-tmp.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: pam >= 0:0.80-owl2
@@ -48,6 +49,7 @@ modifications by the NetBSD, OpenBSD, Red Hat, ALT, and Owl teams.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 sed -i -e 's/^\(static char const rcsid\[\] =\).*/\1 "%name-%version-%release";/' \
 	usr.sbin/cron/crontab.c
 
@@ -150,6 +152,11 @@ fi
 %attr(640,root,crontab) %config(noreplace) /etc/*.deny
 
 %changelog
+* Wed Mar 28 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.1.20060426-owl3
+- Hardened system crontab files permissions check to "st_mode & 07533 == 0400".
+- Hardened spool crontab files permissions check to "st_mode & 07577 == 0400".
+- Restricted link count check to spool crontab files.
+
 * Mon Jun 26 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.1.20060426-owl2
 - Changed /etc/cron.d access permissions to 0700.
 
