@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/lftp/lftp.spec,v 1.34 2007/03/26 21:55:14 ldv Exp $
+# $Owl: Owl/packages/lftp/lftp.spec,v 1.35 2007/03/29 21:23:03 ldv Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
-Version: 3.5.9
+Version: 3.5.10
 Release: owl1
 License: GPL
 Group: Applications/Internet
@@ -91,6 +91,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/lftp.mo
 
 %changelog
+* Thu Mar 29 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.5.10-owl1
+- Updated to 3.5.10.
+
 * Mon Mar 26 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.5.9-owl1
 - Updated to 3.5.9.
 
