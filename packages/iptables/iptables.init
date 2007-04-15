@@ -1,9 +1,9 @@
 #!/bin/sh
-# $Owl: Owl/packages/iptables/iptables.init,v 1.7 2006/03/02 12:42:12 ldv Exp $
+# $Owl: Owl/packages/iptables/iptables.init,v 1.8 2007/04/15 13:25:26 ldv Exp $
 #
 # chkconfig: 2345 08 92
 # description: \
-#	ipchains is an interface to the Linux IP packet filtering code.
+#	iptables is an interface to the Linux IP packet filtering code.
 # config: /etc/sysconfig/iptables
 # config: /etc/sysconfig/iptables-config
 
