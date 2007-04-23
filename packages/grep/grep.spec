@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/grep/grep.spec,v 1.21 2007/04/23 20:36:42 ldv Exp $
+# $Owl: Owl/packages/grep/grep.spec,v 1.22 2007/04/23 20:37:30 ldv Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
@@ -94,7 +94,7 @@ fi
 %_prefix/share/locale/*/*/grep.*
 
 %changelog
-* Mon Apr 23 2007 Dmitry V. Levin <ldv@altlinux.org> 1:2.5.1a-owl4
+* Mon Apr 23 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.5.1a-owl4
 - Applied "fgrep -w" fix by Pavel Kankovsky.
 - Adopted Debian fix for big file handling.
 
