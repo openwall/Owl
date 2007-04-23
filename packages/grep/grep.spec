@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/grep/grep.spec,v 1.20 2006/09/23 22:48:06 ldv Exp $
+# $Owl: Owl/packages/grep/grep.spec,v 1.21 2007/04/23 20:36:42 ldv Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
 Version: 2.5.1a
-Release: owl3
+Release: owl4
 Epoch: 1
 License: GPL
 Group: Applications/Text
@@ -17,10 +17,12 @@ Patch21: grep-2.5.1a-deb-case-fold.diff
 Patch22: grep-2.5.1a-deb-case-fold-range.diff
 Patch23: grep-2.5.1a-deb-owl-charclass-bracket.diff
 Patch24: grep-2.5.1a-deb-owl-man.diff
+Patch25: grep-2.5.1a-deb-alt-bigfile.diff
 Patch30: grep-2.5.1a-owl-info.diff
 Patch31: grep-2.5.1a-owl-fixes.diff
 Patch32: grep-2.5.1a-owl-program_name.diff
 Patch33: grep-2.5.1a-alt-bound.diff
+Patch34: grep-2.5.1a-owl-fgrep-w.diff
 PreReq: /sbin/install-info
 BuildRequires: pcre-devel
 BuildRequires: texinfo, gettext, sed
@@ -43,10 +45,12 @@ include grep, egrep, and fgrep.
 %patch22 -p1
 %patch23 -p1
 %patch24 -p1
+%patch25 -p1
 %patch30 -p1
 %patch31 -p1
 %patch32 -p1
 %patch33 -p1
+%patch34 -p1
 bzip2 -9k ChangeLog
 
 %{expand:%%define optflags %optflags -Wall}
@@ -62,7 +66,7 @@ install -pm644 %_includedir/regex.h lib/
 
 %install
 rm -rf %buildroot
-%makeinstall bindir=%buildroot/bin LDFLAGS=-s
+%makeinstall bindir=%buildroot/bin LDFLAGS=
 
 # Use symlinks for egrep, fgrep and pcregrep
 ln -sf grep %buildroot/bin/egrep
@@ -90,6 +94,10 @@ fi
 %_prefix/share/locale/*/*/grep.*
 
 %changelog
+* Mon Apr 23 2007 Dmitry V. Levin <ldv@altlinux.org> 1:2.5.1a-owl4
+- Applied "fgrep -w" fix by Pavel Kankovsky.
+- Adopted Debian fix for big file handling.
+
 * Sun Sep 24 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.5.1a-owl3
 - Applied upstream fix for "-D skip".
 - Fixed several potential NULL dereferences and reads beyond end of buffer

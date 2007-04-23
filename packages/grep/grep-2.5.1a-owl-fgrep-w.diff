@@ -1,0 +1,108 @@
+# It appears fgrep -w fails to detect the presence of word "pro" iff a word
+# different from "pro" but having "pro" as its prefix appears on a before
+# "pro" on the same line or on a preceding nonmatching line within the same
+# chunk of input bytes (32 KiB when reading from a pipe).
+# 
+# I think the culprit is the following piece of code in Fexecute() in 
+# search.c:
+# 
+#       else if (match_words)
+#         for (try = beg; len; )
+#           {
+#             if (try > buf && WCHAR((unsigned char) try[-1]))
+#               break;
+#             if (try + len < buf + size && WCHAR((unsigned char) try[len]))
+#               {
+# [*]             offset = kwsexec (kwset, beg, --len, &kwsmatch);
+#                 if (offset == (size_t) -1)
+#                   {
+# #ifdef MBS_SUPPORT
+#                     if (MB_CUR_MAX > 1)
+#                       free (mb_properties);
+# #endif /* MBS_SUPPORT */
+#                     return offset;
+#                   }
+#                 try = beg + offset;
+#                 len = kwsmatch.size[0];
+#               }
+#             else
+#               goto success;
+#           }
+# 
+# Fgrep executes the command marked with [*] when it finds an occurence of
+# one of the patterns starting but not ending at a word boundary (e.g. "pro"
+# in "proc"). This command is probably supposed to check for cases like [6a]
+# when the partially matching pattern is a multi-word phrase and a complete
+# match of another pattern can be found within this phrase but it fails
+# miserably when the other match overlaps the phrase -- see [6b], or starts
+# after the phrase altogether -- see [6c].
+# 
+# [6a] $ echo 'a b cd' | fgrep -w -e 'a b c' -e 'b'
+#      a b cd
+# [6b] $ echo 'a b cd e' | fgrep -w -e 'a b c' -e 'cd e'
+# [6b] $ echo 'a b cd e' | fgrep -w -e 'a b c' -e 'e'
+# 
+# 
+# It looks like some braindead optimization. I think the aformentioned piece
+# of code should be rewritten as follows:
+# 
+#       else if (match_words)
+#         {
+#           if (beg > buf && WCHAR((unsigned char) beg[-1]))
+#             continue;
+#           if (beg + len < buf + size && WCHAR((unsigned char) beg[len]))
+#             continue;
+#           goto success;
+#         }
+# 
+# 
+# 
+# --Pavel Kankovsky aka Peak  [ Boycott Microsoft--http://www.vcnet.com/bms ]
+# "Resistance is futile. Open your source code and prepare for assimilation."
+
+--- grep-2.5.1a/src/search.c
++++ grep-2.5.1a/src/search.c
+@@ -531,7 +531,7 @@
+ static size_t
+ Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
+ {
+-  register char const *beg, *try, *end;
++  register char const *beg, *end;
+   register size_t len;
+   char eol = eolbyte;
+   struct kwsmatch kwsmatch;
+@@ -571,27 +571,13 @@ Fexecute (char const *buf, size_t size, 
+ 	  goto success;
+ 	}
+       else if (match_words)
+-	for (try = beg; len; )
+-	  {
+-	    if (try > buf && WCHAR((unsigned char) try[-1]))
+-	      break;
+-	    if (try + len < buf + size && WCHAR((unsigned char) try[len]))
+-	      {
+-		offset = kwsexec (kwset, beg, --len, &kwsmatch);
+-		if (offset == (size_t) -1)
+-		  {
+-#ifdef MBS_SUPPORT
+-		    if (MB_CUR_MAX > 1)
+-		      free (mb_properties);
+-#endif /* MBS_SUPPORT */
+-		    return offset;
+-		  }
+-		try = beg + offset;
+-		len = kwsmatch.size[0];
+-	      }
+-	    else
+-	      goto success;
+-	  }
++	{
++	  if (beg > buf && WCHAR((unsigned char) beg[-1]))
++	    continue;
++	  if (beg + len < buf + size && WCHAR((unsigned char) beg[len]))
++	    continue;
++	  goto success;
++	}
+       else
+ 	goto success;
+     }
