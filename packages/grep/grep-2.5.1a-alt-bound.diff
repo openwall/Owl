@@ -1,0 +1,123 @@
+2006-09-02  Dmitry V. Levin  <ldv at altlinux.org>
+
+	* src/dfa.c (dfaexec): Fix check for end of buffer.
+	* src/grep.c (nlscan, prpending, prtext): Fix memchr() usage.
+	* src/search.c (EGexecute, Fexecute, Pexecute): Likewise.
+
+--- grep-2.5.1a.orig/src/dfa.c
++++ grep-2.5.1a/src/dfa.c
+@@ -2853,7 +2853,7 @@ dfaexec (struct dfa *d, char const *begin, size_t size, int *backref)
+ 
+       if (s < 0)
+ 	{
+-	  if (p == end)
++	  if (p >= end)
+ 	    {
+ #ifdef MBS_SUPPORT
+ 	      if (MB_CUR_MAX > 1)
+--- grep-2.5.1a.orig/src/grep.c
++++ grep-2.5.1a/src/grep.c
+@@ -484,9 +484,14 @@ 
+ nlscan (char const *lim)
+ {
+   size_t newlines = 0;
+-  char const *beg;
+-  for (beg = lastnl; beg != lim; beg = memchr (beg, eolbyte, lim - beg), beg++)
+-    newlines++;
++  char const *beg = lastnl;
++  while (beg && beg < lim)
++    {
++      newlines++;
++      beg = memchr (beg, eolbyte, lim - beg);
++      if (beg)
++	beg++;
++    }
+   totalnl = add_count (totalnl, newlines);
+   lastnl = lim;
+ }
+@@ -623,9 +628,9 @@ prpending (char const *lim)
+       size_t match_size;
+       --pending;
+       if (outleft
+-	  || (((*execute) (lastout, nl - lastout, &match_size, 0) == (size_t) -1)
++	  || (((*execute) (lastout, (nl?:lim) - lastout, &match_size, 0) == (size_t) -1)
+ 	      == !out_invert))
+-	prline (lastout, nl + 1, '-');
++	prline (lastout, (nl?nl + 1:lim), '-');
+       else
+ 	pending = 0;
+     }
+@@ -665,7 +670,10 @@ prtext (char const *beg, char const *lim
+       while (p < beg)
+ 	{
+ 	  char const *nl = memchr (p, eol, beg - p);
+-	  nl++;
++	  if (nl)
++	    nl++;
++	  else
++	    nl = beg;
+ 	  prline (p, nl, '-');
+ 	  p = nl;
+ 	}
+@@ -677,7 +685,10 @@ prtext (char const *beg, char const *lim
+       for (n = 0; p < lim && n < outleft; n++)
+ 	{
+ 	  char const *nl = memchr (p, eol, lim - p);
+-	  nl++;
++	  if (nl)
++	    nl++;
++	  else
++	    nl = lim;
+ 	  if (!out_quiet)
+ 	    prline (p, nl, ':');
+ 	  p = nl;
+--- grep-2.5.1a.orig/src/search.c
++++ grep-2.5.1a/src/search.c
+@@ -371,7 +371,10 @@ EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
+ 	      /* Narrow down to the line containing the candidate, and
+ 		 run it through DFA. */
+ 	      end = memchr(beg, eol, buflim - beg);
+-	      end++;
++	      if (end)
++		end++;
++	      else
++		end = buflim;
+ #ifdef MBS_SUPPORT
+ 	      if (MB_CUR_MAX > 1 && mb_properties[beg - buf] == 0)
+ 		continue;
+@@ -392,7 +395,10 @@ EGexecute (char const *buf, size_t size, size_t *match_size, int exact)
+ 	      /* Narrow down to the line we've found. */
+ 	      beg += offset;
+ 	      end = memchr (beg, eol, buflim - beg);
+-	      end++;
++	      if (end)
++		end++;
++	      else
++		end = buflim;
+ 	      while (beg > buf && beg[-1] != eol)
+ 		--beg;
+ 	    }
+@@ -580,7 +586,10 @@ Fexecute (char const *buf, size_t size, size_t *match_size, int exact)
+ 
+  success:
+   end = memchr (beg + len, eol, (buf + size) - (beg + len));
+-  end++;
++  if (end)
++    end++;
++  else
++    end = buf + size;
+   while (buf < beg && beg[-1] != eol)
+     --beg;
+   *match_size = end - beg;
+@@ -702,7 +711,10 @@ Pexecute (char const *buf, size_t size, size_t *match_size, int exact)
+       if (!exact)
+ 	{
+ 	  end = memchr (end, eol, buflim - end);
+-	  end++;
++	  if (end)
++	    end++;
++	  else
++	    end = buflim;
+ 	  while (buf < beg && beg[-1] != eol)
+ 	    --beg;
+ 	}
