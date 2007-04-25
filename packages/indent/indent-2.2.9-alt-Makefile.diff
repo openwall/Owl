@@ -1,0 +1,21 @@
+--- indent-2.2.9/man/Makefile.am.orig	2002-11-10 21:02:48 +0000
++++ indent-2.2.9/man/Makefile.am	2003-09-09 13:34:02 +0000
+@@ -10,6 +10,6 @@
+ 
+ MAINTAINERCLEANFILES = @PACKAGE@.1 Makefile.in texinfo2man 
+ 
+-@PACKAGE@.1: ${srcdir}/@PACKAGE@.1.in  ${srcdir}/../doc/@PACKAGE@.texinfo texinfo2man.c  Makefile.am
++@PACKAGE@.1: ${srcdir}/@PACKAGE@.1.in  ${srcdir}/../doc/@PACKAGE@.texinfo ./texinfo2man  Makefile.am
+ 	./texinfo2man ${srcdir}/@PACKAGE@.1.in ${srcdir}/../doc/@PACKAGE@.texinfo > $@
+ 
+--- indent-2.2.9/man/Makefile.in.orig	2002-12-17 17:31:37 +0000
++++ indent-2.2.9/man/Makefile.in	2003-09-09 13:37:45 +0000
+@@ -398,7 +398,7 @@
+ 	uninstall-man1
+ 
+ 
+-@PACKAGE@.1: ${srcdir}/@PACKAGE@.1.in  ${srcdir}/../doc/@PACKAGE@.texinfo texinfo2man.c  Makefile.am
++@PACKAGE@.1: ${srcdir}/@PACKAGE@.1.in  ${srcdir}/../doc/@PACKAGE@.texinfo ./texinfo2man  Makefile.am
+ 	./texinfo2man ${srcdir}/@PACKAGE@.1.in ${srcdir}/../doc/@PACKAGE@.texinfo > $@
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+ # Otherwise a system limit (for SysV at least) may be exceeded.

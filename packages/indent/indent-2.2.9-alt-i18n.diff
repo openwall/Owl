@@ -1,0 +1,13 @@
+--- indent-2.2.9/src/indent.c.orig	2002-10-28 20:00:56 +0000
++++ indent-2.2.9/src/indent.c	2005-12-11 22:16:32 +0000
+@@ -3062,8 +3062,8 @@ int main (
+     BOOLEAN using_stdin = false;
+     exit_values_ty exit_status;
+ 
+-#if defined (HAVE_SETLOCALE) && defined (HAVE_LC_MESSAGES)
+-    setlocale (LC_MESSAGES, "");
++#if defined (HAVE_SETLOCALE)
++    setlocale (LC_ALL, "");
+ #endif
+     bindtextdomain (PACKAGE, LOCALEDIR);
+     textdomain (PACKAGE);
