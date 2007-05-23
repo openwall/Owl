@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/file/file.spec,v 1.15.2.1 2007/03/25 20:54:48 ldv Exp $
+# $Owl: Owl/packages/file/file.spec,v 1.15.2.2 2007/05/23 17:45:39 solar Exp $
 
 Summary: A utility for determining file types.
 Name: file
 Version: 4.16
-Release: owl3
+Release: owl4
 License: distributable
 Group: Applications/File
 URL: http://www.darwinsys.com/file/
@@ -99,6 +99,10 @@ rm %buildroot%_libdir/*.la
 %_mandir/man3/*
 
 %changelog
+* Tue May 22 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.16-owl4
+- Fixed integer overflow check in file_printf function, reported by
+Colin Percival.
+
 * Sun Mar 25 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.16-owl3
 - Fixed potential heap corruption in file_printf function (CVE-2007-1536).
 - Removed no longer required addition of "-D_FILE_OFFSET_BITS=64

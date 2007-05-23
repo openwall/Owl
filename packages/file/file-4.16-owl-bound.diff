@@ -1,6 +1,14 @@
 CVE-2007-1536: Fix potential heap corruption in file_printf().
 --- file-4.16/src/funcs.c
 +++ file-4.16/src/funcs.c
+@@ -30,6 +30,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <ctype.h>
++#include <limits.h>
+ 
+ #ifndef	lint
+ FILE_RCSID("@(#)$Id: funcs.c,v 1.14 2005/01/07 19:17:27 christos Exp $")
 @@ -46,27 +46,27 @@ protected int
  file_printf(struct magic_set *ms, const char *fmt, ...)
  {
@@ -49,7 +57,7 @@ CVE-2007-1536: Fix potential heap corruption in file_printf().
  		return ms->o.buf;
  
  	nsize = ms->o.len * 4 + 1;
-+	if (nsize <= ms->o.len) {
++	if (ms->o.len > (ULONG_MAX - 1) / 4) {
 +		file_oomem(ms);
 +		return NULL;
 +	}
