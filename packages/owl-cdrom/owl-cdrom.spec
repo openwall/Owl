@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.40 2006/10/26 21:05:15 ldv Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.41 2007/05/31 21:57:36 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 1.1
+Version: 1.2
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -90,6 +90,18 @@ fi
 %dir /owl
 
 %changelog
+* Fri Jun 01 2007 Solar Designer <solar-at-owl.openwall.com> 1.2-owl1
+- In dot-config for plain x86, enabled more IDE chipset drivers (ALI15X3,
+PDC202XX_OLD, PDC202XX_NEW, SVWKS, SIS5513, VIA82CXXX), RAID controller
+drivers (CONFIG_BLK_DEV_3W_XXXX_RAID, CONFIG_SCSI_DPT_I2O), SCSI emulation
+and SATA support (CONFIG_BLK_DEV_IDESCSI, CONFIG_SCSI_SATA), SATA drivers
+for AHCI and ICH (CONFIG_SCSI_SATA_AHCI, CONFIG_SCSI_ATA_PIIX), USB and
+HID support (CONFIG_USB, EHCI_HCD, UHCI_ALT, OHCI, HID, HIDINPUT;
+CONFIG_INPUT, KEYBDEV, MOUSEDEV), USB storage support (CONFIG_USB_STORAGE),
+NFS v3 client (CONFIG_NFS_V3).
+- In lilo.conf, renamed the "scsi" option to "non-ide" as it should also
+work for USB drives.
+
 * Thu Oct 26 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1-owl1
 - Changed floppy geometry from 1.44Mb to 2.88Mb floppy.
 - Removed explicit loopback device specification.

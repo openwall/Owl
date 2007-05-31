@@ -284,7 +284,7 @@ CONFIG_IDEDISK_MULTI_MODE=y
 CONFIG_BLK_DEV_IDECD=y
 # CONFIG_BLK_DEV_IDETAPE is not set
 # CONFIG_BLK_DEV_IDEFLOPPY is not set
-# CONFIG_BLK_DEV_IDESCSI is not set
+CONFIG_BLK_DEV_IDESCSI=y
 # CONFIG_IDE_TASK_IOCTL is not set
 
 #
@@ -305,7 +305,7 @@ CONFIG_BLK_DEV_IDEDMA=y
 # CONFIG_IDEDMA_PCI_WIP is not set
 # CONFIG_BLK_DEV_ADMA100 is not set
 # CONFIG_BLK_DEV_AEC62XX is not set
-# CONFIG_BLK_DEV_ALI15X3 is not set
+CONFIG_BLK_DEV_ALI15X3=y
 # CONFIG_WDC_ALI15X3 is not set
 # CONFIG_BLK_DEV_AMD74XX is not set
 # CONFIG_AMD74XX_OVERRIDE is not set
@@ -320,21 +320,23 @@ CONFIG_BLK_DEV_IDEDMA=y
 CONFIG_BLK_DEV_PIIX=y
 # CONFIG_BLK_DEV_NS87415 is not set
 # CONFIG_BLK_DEV_OPTI621 is not set
-# CONFIG_BLK_DEV_PDC202XX_OLD is not set
-# CONFIG_PDC202XX_BURST is not set
-# CONFIG_BLK_DEV_PDC202XX_NEW is not set
+CONFIG_BLK_DEV_PDC202XX_OLD=y
+CONFIG_PDC202XX_BURST=y
+CONFIG_BLK_DEV_PDC202XX_NEW=y
+CONFIG_PDC202XX_FORCE=y
 CONFIG_BLK_DEV_RZ1000=y
 # CONFIG_BLK_DEV_SC1200 is not set
-# CONFIG_BLK_DEV_SVWKS is not set
+CONFIG_BLK_DEV_SVWKS=y
 CONFIG_BLK_DEV_SIIMAGE=y
-# CONFIG_BLK_DEV_SIS5513 is not set
+CONFIG_BLK_DEV_SIS5513=y
 # CONFIG_BLK_DEV_SLC90E66 is not set
 # CONFIG_BLK_DEV_TRM290 is not set
-# CONFIG_BLK_DEV_VIA82CXXX is not set
+CONFIG_BLK_DEV_VIA82CXXX=y
 # CONFIG_IDE_CHIPSETS is not set
 CONFIG_IDEDMA_AUTO=y
 # CONFIG_IDEDMA_IVB is not set
 # CONFIG_DMA_NONPCI is not set
+CONFIG_BLK_DEV_PDC202XX=y
 # CONFIG_BLK_DEV_ATARAID is not set
 # CONFIG_BLK_DEV_ATARAID_PDC is not set
 # CONFIG_BLK_DEV_ATARAID_HPT is not set
@@ -369,7 +371,7 @@ CONFIG_SCSI_CONSTANTS=y
 #
 # SCSI low-level drivers
 #
-# CONFIG_BLK_DEV_3W_XXXX_RAID is not set
+CONFIG_BLK_DEV_3W_XXXX_RAID=y
 # CONFIG_SCSI_7000FASST is not set
 # CONFIG_SCSI_ACARD is not set
 # CONFIG_SCSI_AHA152X is not set
@@ -392,16 +394,16 @@ CONFIG_AIC79XX_RESET_DELAY_MS=5000
 # CONFIG_AIC79XX_DEBUG_ENABLE is not set
 CONFIG_AIC79XX_DEBUG_MASK=0
 # CONFIG_AIC79XX_REG_PRETTY_PRINT is not set
-# CONFIG_SCSI_DPT_I2O is not set
+CONFIG_SCSI_DPT_I2O=y
 # CONFIG_SCSI_ADVANSYS is not set
 # CONFIG_SCSI_IN2000 is not set
 # CONFIG_SCSI_AM53C974 is not set
 # CONFIG_SCSI_MEGARAID is not set
 # CONFIG_SCSI_MEGARAID2 is not set
-# CONFIG_SCSI_SATA is not set
-# CONFIG_SCSI_SATA_AHCI is not set
+CONFIG_SCSI_SATA=y
+CONFIG_SCSI_SATA_AHCI=y
 # CONFIG_SCSI_SATA_SVW is not set
-# CONFIG_SCSI_ATA_PIIX is not set
+CONFIG_SCSI_ATA_PIIX=y
 # CONFIG_SCSI_SATA_NV is not set
 # CONFIG_SCSI_SATA_QSTOR is not set
 # CONFIG_SCSI_SATA_PROMISE is not set
@@ -629,10 +631,11 @@ CONFIG_TIGON3=y
 #
 # Input core support
 #
-# CONFIG_INPUT is not set
-# CONFIG_INPUT_KEYBDEV is not set
-# CONFIG_DUMMY_KEYB is not set
-# CONFIG_INPUT_MOUSEDEV is not set
+CONFIG_INPUT=y
+CONFIG_INPUT_KEYBDEV=y
+CONFIG_INPUT_MOUSEDEV=y
+CONFIG_INPUT_MOUSEDEV_SCREEN_X=1024
+CONFIG_INPUT_MOUSEDEV_SCREEN_Y=768
 # CONFIG_INPUT_JOYDEV is not set
 # CONFIG_INPUT_EVDEV is not set
 # CONFIG_INPUT_UINPUT is not set
@@ -668,14 +671,36 @@ CONFIG_PSMOUSE=y
 # Joysticks
 #
 # CONFIG_INPUT_GAMEPORT is not set
+# CONFIG_INPUT_NS558 is not set
+# CONFIG_INPUT_LIGHTNING is not set
+# CONFIG_INPUT_PCIGAME is not set
+# CONFIG_INPUT_CS461X is not set
+# CONFIG_INPUT_EMU10K1 is not set
+# CONFIG_INPUT_SERIO is not set
+# CONFIG_INPUT_SERPORT is not set
 
 #
-# Input core support is needed for gameports
+# Joysticks
 #
-
-#
-# Input core support is needed for joysticks
-#
+# CONFIG_INPUT_ANALOG is not set
+# CONFIG_INPUT_A3D is not set
+# CONFIG_INPUT_ADI is not set
+# CONFIG_INPUT_COBRA is not set
+# CONFIG_INPUT_GF2K is not set
+# CONFIG_INPUT_GRIP is not set
+# CONFIG_INPUT_INTERACT is not set
+# CONFIG_INPUT_TMDC is not set
+# CONFIG_INPUT_SIDEWINDER is not set
+# CONFIG_INPUT_IFORCE_USB is not set
+# CONFIG_INPUT_IFORCE_232 is not set
+# CONFIG_INPUT_WARRIOR is not set
+# CONFIG_INPUT_MAGELLAN is not set
+# CONFIG_INPUT_SPACEORB is not set
+# CONFIG_INPUT_SPACEBALL is not set
+# CONFIG_INPUT_STINGER is not set
+# CONFIG_INPUT_DB9 is not set
+# CONFIG_INPUT_GAMECON is not set
+# CONFIG_INPUT_TURBOGRAFX is not set
 # CONFIG_QIC02_TAPE is not set
 # CONFIG_IPMI_HANDLER is not set
 # CONFIG_IPMI_PANIC_EVENT is not set
@@ -786,7 +811,7 @@ CONFIG_EXT2_FS=y
 # CONFIG_CODA_FS is not set
 # CONFIG_INTERMEZZO_FS is not set
 CONFIG_NFS_FS=y
-# CONFIG_NFS_V3 is not set
+CONFIG_NFS_V3=y
 # CONFIG_NFS_DIRECTIO is not set
 # CONFIG_ROOT_NFS is not set
 # CONFIG_NFSD is not set
@@ -794,6 +819,7 @@ CONFIG_NFS_FS=y
 # CONFIG_NFSD_TCP is not set
 CONFIG_SUNRPC=y
 CONFIG_LOCKD=y
+CONFIG_LOCKD_V4=y
 # CONFIG_SMB_FS is not set
 # CONFIG_NCP_FS is not set
 # CONFIG_NCPFS_PACKET_SIGNING is not set
@@ -876,7 +902,100 @@ CONFIG_VGA_CONSOLE=y
 #
 # USB support
 #
-# CONFIG_USB is not set
+CONFIG_USB=y
+# CONFIG_USB_DEBUG is not set
+
+#
+# Miscellaneous USB options
+#
+# CONFIG_USB_DEVICEFS is not set
+# CONFIG_USB_BANDWIDTH is not set
+
+#
+# USB Host Controller Drivers
+#
+CONFIG_USB_EHCI_HCD=y
+CONFIG_USB_UHCI_ALT=y
+CONFIG_USB_OHCI=y
+# CONFIG_USB_SL811HS_ALT is not set
+# CONFIG_USB_SL811HS is not set
+
+#
+# USB Device Class drivers
+#
+# CONFIG_USB_AUDIO is not set
+# CONFIG_USB_EMI26 is not set
+# CONFIG_USB_BLUETOOTH is not set
+# CONFIG_USB_MIDI is not set
+CONFIG_USB_STORAGE=y
+# CONFIG_USB_STORAGE_DEBUG is not set
+# CONFIG_USB_STORAGE_DATAFAB is not set
+# CONFIG_USB_STORAGE_FREECOM is not set
+# CONFIG_USB_STORAGE_ISD200 is not set
+# CONFIG_USB_STORAGE_DPCM is not set
+# CONFIG_USB_STORAGE_HP8200e is not set
+# CONFIG_USB_STORAGE_SDDR09 is not set
+# CONFIG_USB_STORAGE_SDDR55 is not set
+# CONFIG_USB_STORAGE_JUMPSHOT is not set
+# CONFIG_USB_ACM is not set
+# CONFIG_USB_PRINTER is not set
+
+#
+# USB Human Interface Devices (HID)
+#
+CONFIG_USB_HID=y
+CONFIG_USB_HIDINPUT=y
+# CONFIG_USB_HIDDEV is not set
+# CONFIG_USB_AIPTEK is not set
+# CONFIG_USB_WACOM is not set
+# CONFIG_USB_KBTAB is not set
+# CONFIG_USB_POWERMATE is not set
+
+#
+# USB Imaging devices
+#
+# CONFIG_USB_DC2XX is not set
+# CONFIG_USB_MDC800 is not set
+# CONFIG_USB_SCANNER is not set
+# CONFIG_USB_MICROTEK is not set
+# CONFIG_USB_HPUSBSCSI is not set
+
+#
+# USB Multimedia devices
+#
+
+#
+#   Video4Linux support is needed for USB Multimedia device support
+#
+
+#
+# USB Network adaptors
+#
+# CONFIG_USB_PEGASUS is not set
+# CONFIG_USB_RTL8150 is not set
+# CONFIG_USB_KAWETH is not set
+# CONFIG_USB_CATC is not set
+# CONFIG_USB_CDCETHER is not set
+# CONFIG_USB_USBNET is not set
+
+#
+# USB port drivers
+#
+# CONFIG_USB_USS720 is not set
+
+#
+# USB Serial Converter support
+#
+# CONFIG_USB_SERIAL is not set
+
+#
+# USB Miscellaneous drivers
+#
+# CONFIG_USB_RIO500 is not set
+# CONFIG_USB_AUERSWALD is not set
+# CONFIG_USB_TIGL is not set
+# CONFIG_USB_BRLVGER is not set
+# CONFIG_USB_LCD is not set
 
 #
 # Support for USB gadgets
