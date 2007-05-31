@@ -1,21 +1,20 @@
-# $Owl: Owl/packages/mutt/mutt.spec,v 1.25 2006/06/27 12:59:26 ldv Exp $
+# $Owl: Owl/packages/mutt/mutt.spec,v 1.26 2007/05/31 11:46:25 ldv Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
-Version: 1.4.2.1
-Release: owl6
+Version: 1.4.2.3
+Release: owl1
 License: GPL
 Group: Applications/Internet
 URL: http://www.mutt.org
-Source0: ftp://ftp.mutt.org/mutt/mutt-%{version}i.tar.gz
+Source0: ftp://ftp.mutt.org/mutt/mutt-%version.tar.gz
 Source1: Muttrc-color
 Patch0: mutt-1.4-owl-no-sgid.diff
 Patch1: mutt-1.4-owl-muttbug-tmp.diff
 Patch2: mutt-1.4.2.1-owl-tmp.diff
 Patch3: mutt-1.4.2.1-owl-bound.diff
 Patch4: mutt-1.4.2.1-owl-man.diff
-Patch5: mutt-1.4.2.1-alt-gcc4.diff
-Patch6: mutt-1.4.2.1-git-20060619-bound.diff
+Patch5: mutt-1.4.2.3-alt-fixes.diff
 Requires: mktemp >= 1:1.3.1
 Conflicts: mutt-us
 Provides: mutt-i
@@ -39,12 +38,11 @@ and more.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
 
 %{expand:%%define optflags %optflags -fno-strict-aliasing}
 
 %build
-aclocal -I m4
+autoreconf -fisv
 %configure \
 	--with-docdir=%_docdir/mutt-%version \
 	--enable-pop --enable-imap \
@@ -84,6 +82,11 @@ cat contrib/gpg.rc %_sourcedir/Muttrc-color >> %buildroot/%_sysconfdir/Muttrc
 %exclude %_mandir/man1/mutt_dotlock.*
 
 %changelog
+* Wed May 30 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.2.3-owl1
+- Updated to 1.4.2.3.  This release fixes msgid validation in APOP
+authentication (CVE-2007-1558) and potential buffer overflow in passwd
+gecos field parser (CVE-2007-2683).
+
 * Tue Jun 27 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.2.1-owl6
 - Applied upstream fix for potential stack-based buffer overflow
 when processing an overly long namespace from IMAP server.
