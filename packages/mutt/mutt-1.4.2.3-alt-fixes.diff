@@ -1,0 +1,62 @@
+diff -upk.orig mutt-1.4.2.3.orig/imap/browse.c mutt-1.4.2.3/imap/browse.c
+--- mutt-1.4.2.3.orig/imap/browse.c	2007-05-23 01:17:53 +0000
++++ mutt-1.4.2.3/imap/browse.c	2007-05-30 21:24:01 +0000
+@@ -52,7 +52,7 @@ int imap_browse (char* path, struct brow
+   int i;
+   int nsup;
+   char ctmp;
+-  int nns;
++  int nns = 0;
+   char *cur_folder;
+   short showparents = 0;
+   int noselect;
+diff -upk.orig mutt-1.4.2.3.orig/mutt_ssl.c mutt-1.4.2.3/mutt_ssl.c
+--- mutt-1.4.2.3.orig/mutt_ssl.c	2007-05-23 01:17:53 +0000
++++ mutt-1.4.2.3/mutt_ssl.c	2007-05-30 21:24:01 +0000
+@@ -409,9 +409,9 @@ static void x509_fingerprint (char *s, i
+   {
+     for (j = 0; j < (int) n; j++)
+     {
+-      char ch[8];
+-      snprintf (ch, 8, "%02X%s", md[j], (j % 2 ? " " : ""));
+-      strncat (s, ch, l);
++      char ch[9];
++      snprintf (ch, sizeof ch, "%02X%s", md[j], (j % 2 ? " " : ""));
++      strncat (s, ch, l - 1);
+     }
+   }
+ }
+@@ -623,9 +623,9 @@ static int ssl_check_certificate (sslsoc
+   
+   helpstr[0] = '\0';
+   mutt_make_help (buf, sizeof (buf), _("Exit  "), MENU_GENERIC, OP_EXIT);
+-  strncat (helpstr, buf, sizeof (helpstr));
++  strncat (helpstr, buf, sizeof (helpstr) - 1);
+   mutt_make_help (buf, sizeof (buf), _("Help"), MENU_GENERIC, OP_HELP);
+-  strncat (helpstr, buf, sizeof (helpstr));
++  strncat (helpstr, buf, sizeof (helpstr) - 1);
+   menu->help = helpstr;
+ 
+   done = 0;
+diff -upk.orig mutt-1.4.2.3.orig/muttlib.c mutt-1.4.2.3/muttlib.c
+--- mutt-1.4.2.3.orig/muttlib.c	2007-05-23 01:19:26 +0000
++++ mutt-1.4.2.3/muttlib.c	2007-05-30 21:24:05 +0000
+@@ -806,6 +806,7 @@ void mutt_expand_fmt (char *dest, size_t
+ 
+       p += 2;
+       last = p;
++      continue;
+     }
+     else if (p[1] == '%')
+       p++;
+diff -upk.orig mutt-1.4.2.3.orig/mx.c mutt-1.4.2.3/mx.c
+--- mutt-1.4.2.3.orig/mx.c	2007-05-23 01:17:53 +0000
++++ mutt-1.4.2.3/mx.c	2007-05-30 21:24:01 +0000
+@@ -152,6 +152,7 @@ int mx_lock_file (const char *path, int 
+   int count;
+   int attempt;
+   struct stat prev_sb;
++  memset (&prev_sb, 0, sizeof (prev_sb));
+ #endif
+   int r = 0;
+ 
