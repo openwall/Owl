@@ -12,9 +12,16 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2007/06/01	Package: owl-cdrom
+In the default kernel for x86, enabled more IDE chipset drivers, common
+RAID and SATA controller drivers, USB and HID support (keyboard, mouse,
+storage devices), and more.  This enables our CDs to boot off SATA and
+USB CD-ROM drives, in addition to IDE and SCSI ones that were supported
+previously.
+
 2007/05/31	Package: mutt
 Updated to 1.4.2.3.  This release fixes msgid validation in APOP
-authentication and potential buffer overflow in passwd gecos field parser.
+authentication and potential buffer overflow in passwd GECOS field parser.
 References:
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-1558
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-2683
@@ -406,4 +413,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.89 2007/05/31 11:57:01 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.90 2007/06/06 09:55:14 solar Exp $
