@@ -17,8 +17,9 @@ The Owl CDs for x86 are bootable, so if your machine supports booting
 off a CD just do so.  The boot loader will prompt you for your CD-ROM
 device that the kernel will use for the root filesystem.  If you're
 using an IDE CD-ROM drive, select the proper IDE controller and whether
-the drive is set to master or slave.  If you're using a SCSI or USB
-CD-ROM drive, select "non-ide" (or "scsi" in older versions of Owl).
+the drive is set to master or slave.  If you're using a SATA, SCSI, or
+USB CD-ROM drive, select "non-ide" (or "scsi" in older versions of Owl).
+Please note that not all SATA and SCSI controllers are supported.
 
 Owl should boot into single user mode.  Once in the shell, you can
 optionally configure the CD-booted system by simply typing:
@@ -88,4 +89,4 @@ already installed on the system (if any).
 Once the installation is complete, make sure to manually unmount the
 filesystems with umount(8) prior to rebooting the system.
 
-$Owl: Owl/doc/INSTALL,v 1.22 2007/05/31 22:00:26 solar Exp $
+$Owl: Owl/doc/INSTALL,v 1.23 2007/06/06 08:51:53 solar Exp $
