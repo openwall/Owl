@@ -12,8 +12,6 @@ ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Deutschland)
 ftp://ftp1.msk.ru.openwall.com/pub/Owl/	(Moskau, Russland)
 ftp://ftp2.msk.ru.openwall.com/pub/Owl/	(Moskau, Russland)
 ftp://ftp.spb.ru.openwall.com/pub/Owl/	(St. Petersburg, Russland)
-ftp://ftp.man.szczecin.pl/pub/Linux/Owl/	(Polen)
-ftp://ftp.se.openwall.com/pub/Owl/	(Schweden)
 ftp://ftp.cz.openwall.com/pub/Owl/	(Tschechien)
 ftp://ftp.ua.openwall.com/pub/Owl/	(Ukraine)
 ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Österreich)
@@ -78,4 +76,4 @@ Wir bieten zudem auch ein CVSweb-Interface an:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/de/DOWNLOAD,v 1.31 2006/02/23 17:50:31 schmidt Exp $
+$Owl: Owl/doc/de/DOWNLOAD,v 1.32 2007/06/15 14:49:29 solar Exp $
