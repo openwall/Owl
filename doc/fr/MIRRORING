@@ -5,7 +5,7 @@ Actuellement, nous avons spécialement besoin de miroirs officiels au Canada
 et au Japon.
 
 Avant d'installer un miroir, merci d'envoyer un e-mail à
-<mirrors at owl.openwall.com> afin que nous ayons votre adresse de contact
+<mirrors at cvs.openwall.com> afin que nous ayons votre adresse de contact
 dans les cas d'un problème technique ou d'un changement significatif dans
 les exigences décrites ci-dessous.
 
@@ -48,4 +48,4 @@ installez Owl et n'utilisez que les services qui font partie de Owl, ce
 devrait toujours être bon.) Comme exception, il peut héberger d'autres
 contenus FTP.
 
-$Owl: Owl/doc/fr/MIRRORING,v 1.4 2005/11/16 11:59:02 solar Exp $
+$Owl: Owl/doc/fr/MIRRORING,v 1.5 2007/06/15 14:18:02 solar Exp $

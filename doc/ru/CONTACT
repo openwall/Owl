@@ -11,10 +11,10 @@ http://marc.info/?l=owl-users
 
 В дополнение к списку рассылки owl-users, вы можете адресовать свои
 комментарии непосредственно разработчикам по адресу
-<feedback ПРИ owl.openwall.com>.
+<feedback ПРИ cvs.openwall.com>.
 
 Сообщения о возможных проблемах, связанных с безопасностью, просим
-отправлять на <security ПРИ owl.openwall.com>, а об остальных ошибках -
-на <bugs ПРИ owl.openwall.com>.
+отправлять на <security ПРИ cvs.openwall.com>, а об остальных ошибках -
+на <bugs ПРИ cvs.openwall.com>.
 
-$Owl: Owl/doc/ru/CONTACT,v 1.8 2007/03/18 09:33:43 solar Exp $
+$Owl: Owl/doc/ru/CONTACT,v 1.9 2007/06/15 15:04:58 solar Exp $
