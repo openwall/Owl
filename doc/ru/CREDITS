@@ -1,40 +1,40 @@
 Команда разработчиков Owl:
 
-	Solar Designer <solar ПРИ owl.openwall.com>
-	Michail Litvak <mci ПРИ owl.openwall.com>
-	Rafal Wojtczuk <nergal ПРИ owl.openwall.com>
-	(GalaxyMaster) <galaxy ПРИ owl.openwall.com>
-	Andreas Ericsson <exon ПРИ owl.openwall.com>
-	Juan M. Bello Rivas <jmbr ПРИ owl.openwall.com>
-	Dmitry V. Levin <ldv ПРИ owl.openwall.com>
+	Solar Designer <solar ПРИ cvs.openwall.com>
+	Michail Litvak <mci ПРИ cvs.openwall.com>
+	Rafal Wojtczuk <nergal ПРИ cvs.openwall.com>
+	(GalaxyMaster) <galaxy ПРИ cvs.openwall.com>
+	Andreas Ericsson <exon ПРИ cvs.openwall.com>
+	Juan M. Bello Rivas <jmbr ПРИ cvs.openwall.com>
+	Dmitry V. Levin <ldv ПРИ cvs.openwall.com>
 
 Почетный участник проекта:
 
-	Alexandr D. Kanevskiy <kad ПРИ owl.openwall.com>
+	Alexandr D. Kanevskiy <kad ПРИ cvs.openwall.com>
 
 Пакет Mutt:
 
-	Jarno Huuskonen <jhuuskon ПРИ owl.openwall.com>
+	Jarno Huuskonen <jhuuskon ПРИ cvs.openwall.com>
 
 Начальный пакет CVS:
 
-	Simon B <simonb ПРИ owl.openwall.com>
+	Simon B <simonb ПРИ cvs.openwall.com>
 
 Немецкий перевод и начальный пакет поддержки DHCP:
 
-	Matthias Schmidt <schmidt ПРИ owl.openwall.com>
+	Matthias Schmidt <schmidt ПРИ cvs.openwall.com>
 
 Русский перевод и пакет tcsh:
 
-	Gremlin from Kremlin <gremlin ПРИ owl.openwall.com>
+	Gremlin from Kremlin <gremlin ПРИ cvs.openwall.com>
 
-Французский перевод (для Owl до 1.1; не включен в 2.0):
+Французский перевод:
 
-	Denis Ducamp <ducamp ПРИ owl.openwall.com>
+	Denis Ducamp <ducamp ПРИ cvs.openwall.com>
 
 Графика и разработка логотипа:
 
-	Gleb Todosov <gleb ПРИ owl.openwall.com>
+	Gleb Todosov <gleb ПРИ cvs.openwall.com>
 
 Проект "Virtual Unix" предоставил начальное финансирование Owl. Многие
 другие компании, организации и люди оказали нам помощь деньгами,
@@ -44,4 +44,4 @@
 
 http://www.openwall.com/donations/
 
-$Owl: Owl/doc/ru/CREDITS,v 1.15.2.1 2006/02/09 19:14:31 solar Exp $
+$Owl: Owl/doc/ru/CREDITS,v 1.15.2.2 2007/06/15 15:05:48 solar Exp $

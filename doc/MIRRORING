@@ -3,7 +3,7 @@ maintain an Owl mirror, official or not.
 
 Currently, we especially need official mirrors in Canada and Japan.
 
-Before you setup a mirror, please e-mail <mirrors at owl.openwall.com>
+Before you setup a mirror, please e-mail <mirrors at cvs.openwall.com>
 such that we have your contact address in case of a technical problem
 or a significant change in the setup requirements outlined below.
 
@@ -43,4 +43,4 @@ offer other, potentially dangerous, public services.  (Well, if you
 install Owl and use just the services that are a part of Owl, that
 would still be fine.)  As an exception, it may host other FTP content.
 
-$Owl: Owl/doc/MIRRORING,v 1.7 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/MIRRORING,v 1.7.2.1 2007/06/15 14:44:38 solar Exp $

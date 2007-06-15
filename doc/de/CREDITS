@@ -1,41 +1,41 @@
 Owl Entwickler Team:
 
-	Solar Designer <solar at owl.openwall.com>
-	Alexandr D. Kanevskiy <kad at owl.openwall.com>
-	Michail Litvak <mci at owl.openwall.com>
-	Rafal Wojtczuk <nergal at owl.openwall.com>
-	(GalaxyMaster) <galaxy at owl.openwall.com>
-	Andreas Ericsson <exon at owl.openwall.com>
-	Juan M. Bello Rivas <jmbr at owl.openwall.com>
-	Dmitry V. Levin <ldv at owl.openwall.com>
+	Solar Designer <solar at cvs.openwall.com>
+	Alexandr D. Kanevskiy <kad at cvs.openwall.com>
+	Michail Litvak <mci at cvs.openwall.com>
+	Rafal Wojtczuk <nergal at cvs.openwall.com>
+	(GalaxyMaster) <galaxy at cvs.openwall.com>
+	Andreas Ericsson <exon at cvs.openwall.com>
+	Juan M. Bello Rivas <jmbr at cvs.openwall.com>
+	Dmitry V. Levin <ldv at cvs.openwall.com>
 
 Owl Installer:
 
-	Andrey V. Stolyarov a.k.a. Croco <croco at owl.openwall.com>
+	Andrey V. Stolyarov a.k.a. Croco <croco at cvs.openwall.com>
 
 Mutt Paket:
 
-	Jarno Huuskonen <jhuuskon at owl.openwall.com>
+	Jarno Huuskonen <jhuuskon at cvs.openwall.com>
 
 CVS Paket:
 
-	Simon B <simonb at owl.openwall.com>
+	Simon B <simonb at cvs.openwall.com>
 
 Deutsche Übersetzung und das DHCP Paket:
 
-	Matthias Schmidt <schmidt at owl.openwall.com>
+	Matthias Schmidt <schmidt at cvs.openwall.com>
 
 Französische Übersetzung:
 
-	Denis Ducamp <ducamp at owl.openwall.com>
+	Denis Ducamp <ducamp at cvs.openwall.com>
 
 Updates für tcsh und russische Übersetzung:
 
-	Gremlin from Kremlin <gremlin at owl.openwall.com>
+	Gremlin from Kremlin <gremlin at cvs.openwall.com>
 
 Offizielle Owl Grafiken:
 
-	Gleb Todosov <gleb at owl.openwall.com>
+	Gleb Todosov <gleb at cvs.openwall.com>
 
 Das Virtual Unix Project hat die erste Unterstützung für Owl
 gespendet.  Andere Firmen, Teams oder Personen haben Geld, Hardware
@@ -46,4 +46,4 @@ etwas zu spenden:
 
 http://www.openwall.com/donations/
 
-$Owl: Owl/doc/de/CREDITS,v 1.15 2005/11/16 11:59:01 solar Exp $
+$Owl: Owl/doc/de/CREDITS,v 1.15.2.1 2007/06/15 14:44:38 solar Exp $
