@@ -25,7 +25,7 @@ programs (although such uses of slang are strongly discouraged).
 2002/09/20 -
 2002/10/07	Owl/doc/ru/*
 New files: Russian translations of the documentation, by Gremlin from
-Kremlin <gremlin at owl.openwall.com>.
+Kremlin.
 
 2002/10/05	Package: newt
 Dropped newt from Owl, it's a Red Hat'ism that we never made use of.
@@ -256,7 +256,7 @@ unless specified explicitly in buildworld.conf.
 
 2002/06/13	Owl/doc/de/*
 New files: German translations of the documentation, from Matthias
-Schmidt <schmidt at owl.openwall.com>.
+Schmidt.
 
 2002/06/10 -
 2002/06/13	Package: modutils
@@ -641,23 +641,23 @@ into a separate configuration option (disabled by default).
 SECURITY FIX	Severity: low to high, local, active
 A new revision of the Openwall Linux kernel patch, 2.2.19-ow3, is now
 available.  It contains fixes for two Linux kernel vulnerabilities
-discovered by Rafal Wojtczuk <nergal at owl.openwall.com> and is
-strongly recommended for use with Owl.  One of the vulnerabilities
-affected SUID/SGID execution by processes being traced with ptrace(2).
-It was possible to trick the kernel into recognizing an unsuspecting
-SUID root program as the (privileged) tracer process.  Then, if that
-program would execute a program supplied by the malicious user (with
-the user's credentials), the user's program would inherit the ability
-to trace.  Fortunately, there's no program that would meet all of the
-requirements for this attack in the default Owl install.  However,
-certain supported non-default configurations of Owl are affected.  In
-particular, if newgrp(1) is made available to untrusted users (which
-is a supported owl-control setting) or certain third-party software
-which contains SUID root binaries is installed, the vulnerability may
-become exploitable and result in a local root compromise.  The other
-vulnerability allowed for an effective local DoS attack by causing the
-kernel to spend an almost arbitrary amount of time on dereferencing a
-single symlink, without giving a chance for processes to run.
+discovered by Rafal Wojtczuk, and it is strongly recommended for use
+with Owl.  One of the vulnerabilities affected SUID/SGID execution by
+processes being traced with ptrace(2).  It was possible to trick the
+kernel into recognizing an unsuspecting SUID root program as the
+(privileged) tracer process.  Then, if that program would execute a
+program supplied by the malicious user (with the user's credentials),
+the user's program would inherit the ability to trace.  Fortunately,
+there's no program that would meet all of the requirements for this
+attack in the default Owl install.  However, certain supported
+non-default configurations of Owl are affected.  In particular, if
+newgrp(1) is made available to untrusted users (which is a supported
+owl-control setting) or certain third-party software that contains SUID
+root binaries is installed, the vulnerability may become exploitable and
+result in a local root compromise.  The other vulnerability allowed for
+an effective local DoS attack by causing the kernel to spend an almost
+arbitrary amount of time on dereferencing a single symlink, without
+giving a chance for processes to run.
 
 2001/10/08	Packages: sysklogd, owl-etc
 Updated sysklogd to 1.4.1.  Based the new klogd drop root patch on one
@@ -989,7 +989,6 @@ or SGID.  Additionally, our makewhatis script was fixed since before
 we've released.  Thus, this isn't a security update.
 
 2001/05/15	Owl/doc/fr/*
-New files: French translations of the documentation, from Denis Ducamp
-<ducamp at owl.openwall.com>.
+New files: French translations of the documentation, from Denis Ducamp.
 
-$Owl: Owl/doc/CHANGES-1.0,v 1.8 2007/03/18 09:23:09 solar Exp $
+$Owl: Owl/doc/CHANGES-1.0,v 1.9 2007/06/15 14:13:36 solar Exp $
