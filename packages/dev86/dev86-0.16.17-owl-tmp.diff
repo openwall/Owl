@@ -1,7 +1,6 @@
-diff -puNr dev86-0.16.17.orig/bcc/bcc.c dev86-0.16.17/bcc/bcc.c
 --- dev86-0.16.17.orig/bcc/bcc.c	2005-01-03 22:41:55 +0000
 +++ dev86-0.16.17/bcc/bcc.c	2006-06-16 12:16:18 +0000
-@@ -122,11 +122,7 @@ int file_count = 0;
+@@ -122,11 +122,7 @@
  int dyn_count = 0;
  int error_count = 0;
  char * progname = "C";
@@ -13,7 +12,7 @@ diff -puNr dev86-0.16.17.orig/bcc/bcc.c dev86-0.16.17/bcc/bcc.c
  
  int main P((int argc, char **argv));
  void getargs P((int argc, char **argv));
-@@ -195,6 +191,18 @@ char ** argv;
+@@ -195,6 +191,18 @@ int main(argc, argv)
     if ((temp = getenv("BCC_PREFIX")) != 0 )
        localprefix = copystr(temp);
  
@@ -32,3 +31,27 @@ diff -puNr dev86-0.16.17.orig/bcc/bcc.c dev86-0.16.17/bcc/bcc.c
     getargs(argc, argv);
     validate_link_opts();
  
+@@ -727,9 +735,9 @@ void newfilename(file, last_stage, new_extn, use_o)
+    {
+       char buf[16];
+ #ifdef MSDOS
+-      sprintf(buf, "$$%05d$", dyn_count++);
++      sprintf(buf, "/$$%05d$", dyn_count++);
+ #else
+-      sprintf(buf, "$$%04d%05d", dyn_count++, getpid());
++      sprintf(buf, "/$$%04d%05d", dyn_count++, getpid());
+ #endif
+       file->file = catstr(tmpdir, buf);
+    }
+@@ -750,9 +758,9 @@ void run_unlink()
+       char buf[16];
+       char * p;
+ #ifdef MSDOS
+-      sprintf(buf, "$$%05d$", i);
++      sprintf(buf, "/$$%05d$", i);
+ #else
+-      sprintf(buf, "$$%04d%05d", i, getpid());
++      sprintf(buf, "/$$%04d%05d", i, getpid());
+ #endif
+       p = catstr(tmpdir, buf);
+       if (opt_v>1)

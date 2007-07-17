@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/dev86/dev86.spec,v 1.23 2006/06/16 12:57:41 galaxy Exp $
+# $Owl: Owl/packages/dev86/dev86.spec,v 1.24 2007/07/17 18:12:37 ldv Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
 Version: 0.16.17
-Release: owl3
+Release: owl4
 License: GPL
 Group: Development/Languages
 Source: http://www.cix.co.uk/~mayday/dev86/Dev86src-%version.tar.gz
@@ -101,6 +101,9 @@ mv bin86/ChangeLog ChangeLog.bin86
 %_mandir/man1/*
 
 %changelog
+* Tue Jul 17 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.16.17-owl4
+- Fixed bcc TMPDIR support.
+
 * Fri Jun 16 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.16.17-owl3
 - Fixed bcc to honor TMPDIR.
 
