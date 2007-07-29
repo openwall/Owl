@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.83 2007/03/11 14:16:31 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.84 2007/07/29 22:18:36 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 1.1.10
+Version: 1.1.11
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -34,6 +34,10 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
+* Mon Jul 30 2007 Croco <croco-at-owl.openwall.com> 1.1.11-owl1
+- fixed the bug with ugly contents of /etc/sysconfig/network for the
+  case when no gateway is defined
+
 * Sun Mar 11 2007 Croco <croco-at-owl.openwall.com> 1.1.10-owl1
 - 'Create fstab' is made available when the packages seem to be installed,
   rather than checking for fstab existance

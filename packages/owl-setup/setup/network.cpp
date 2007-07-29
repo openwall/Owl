@@ -197,6 +197,8 @@ public:
         return deleted_interfaces;
     }
 
+    bool IsGatewayDefined() const { return !gateway.IsInvalid(); }
+
     ScriptVariable GetGateway() const { return gateway.TextForm(); }
 
     void GetDnsServers(ScriptVector &v) const {
@@ -345,7 +347,7 @@ static ScriptVariable summary_net_config(NetconfInfo &info)
         i_p = false;
         ii.Next();
     }
-    if(info.GetGateway() == "255.255.255.255") {
+    if(!info.IsGatewayDefined()) {
         res += "Gateway:         none\n";
     } else {
         res += ScriptVariable(0, "Gateway:         %s (via %s)\n",
@@ -436,16 +438,17 @@ static bool save_net_config(const NetconfInfo &info)
                    "FORWARD_IPV4=%s\n"
 #endif
                    "HOSTNAME=%s\n"
-                   "DOMAINNAME=%s\n"
-                   "GATEWAY=%s\n"
-                   "GATEWAYDEV=%s\n",
+                   "DOMAINNAME=%s\n",
 #if 0
                    info.IsForwardingEnabled() ? "true" : "false",
 #endif
                    info.GetFullHostname().c_str(),
-                   info.GetDomain().c_str(),
-                   info.GetGateway().c_str(),
-                   info.GatewayIface().c_str());
+                   info.GetDomain().c_str());
+        if(info.IsGatewayDefined()) {
+            fprintf(f, "GATEWAY=%s\nGATEWAYDEV=%s\n",
+                       info.GetGateway().c_str(),
+                       info.GatewayIface().c_str());
+        }
         fclose(f);
     } else
         success = false;
