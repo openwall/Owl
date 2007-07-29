@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #include "cmd.hpp"
 
@@ -101,9 +105,16 @@ bool ParametersFile::Save() const
     return SaveAs(filename);
 }
 
-bool ParametersFile::SaveAs(const ScriptVariable &filename) const
+bool ParametersFile::SaveAs(const ScriptVariable &filename, int perm) const
 {
-    FILE *f = fopen(filename.c_str(), "w");
+    FILE *f = 0;
+    if(perm == -1) {
+        f = fopen(filename.c_str(), "w");
+    } else {
+        int fd = open(filename.c_str(), O_WRONLY|O_CREAT|O_TRUNC, perm);
+        f = fdopen(fd, "w");
+        if(fd>=0 && !f) close(fd);
+    }
     if(!f) {
         error = filename + ": " + strerror(errno);
         return false;

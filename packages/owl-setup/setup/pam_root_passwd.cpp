@@ -16,16 +16,25 @@ static int str_request(pam_data* data, const char *prm, bool blind,
 {
     ScriptVariable prompt(prm);
 
+#if 0
     if(data->info != "") {
         data->the_iface->Message(data->info);
         data->info = "";
     }
+#endif
 
     // remove ": " from the prompt, if any...
     while(prompt.Range(-1, 1).Get() == " ")
         prompt.Range(-1, 1).Erase();
     if(prompt.Range(-1, 1).Get() == ":")
         prompt.Range(-1, 1).Erase();
+
+#if 1
+    if(data->info != "") {
+        prompt = data->info + "\n" + prompt;
+        data->info = "";
+    }
+#endif
 
     ScriptVariable res = data->the_iface->QueryString(prompt, blind);
     if(res == OwlInstallInterface::qs_cancel ||

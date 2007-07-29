@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.84 2007/07/29 22:18:36 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.85 2007/07/29 22:53:39 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -37,6 +37,9 @@ rm -rf %buildroot
 * Mon Jul 30 2007 Croco <croco-at-owl.openwall.com> 1.1.11-owl1
 - fixed the bug with ugly contents of /etc/sysconfig/network for the
   case when no gateway is defined
+- fixed creation permissions for /etc/sysconfig/i18n
+- changed PAM dialog so that the message with passphrase hint remains
+  visible while the password is entered
 
 * Sun Mar 11 2007 Croco <croco-at-owl.openwall.com> 1.1.10-owl1
 - 'Create fstab' is made available when the packages seem to be installed,

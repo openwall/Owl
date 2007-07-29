@@ -75,8 +75,8 @@ public:
     bool Save()
     {
         return
-            file_keyboard.SaveAs(the_config->KeymapSysconf()) &&
-            file_i18n.SaveAs(the_config->I18nSysconf());
+            file_keyboard.SaveAs(the_config->KeymapSysconf(), 0644) &&
+            file_i18n.SaveAs(the_config->I18nSysconf(), 0644);
     }
 
     ScriptVariable GetKeyboard() const

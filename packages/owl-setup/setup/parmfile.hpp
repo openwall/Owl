@@ -35,7 +35,7 @@ public:
 
     bool Load(const ScriptVariable &filename);
     bool Save() const;
-    bool SaveAs(const ScriptVariable &filename) const;
+    bool SaveAs(const ScriptVariable &filename, int perm = -1) const;
 
     ScriptVariable LastError() const { return error; }
 
