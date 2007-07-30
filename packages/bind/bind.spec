@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bind/bind.spec,v 1.15.2.2 2007/01/30 22:36:21 ldv Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.15.2.3 2007/07/30 17:16:52 ldv Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -7,12 +7,12 @@
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.4
-Release: owl1
-License: BSD-like
+Release: owl2
+License: BSD-style
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
 
-Source0: ftp://ftp.isc.org/isc/bind9/%version/bind-%version.tar.gz
+Source0: ftp://ftp.isc.org/isc/bind9/%version/bind-%version-P1.tar.gz
 Source1: rfc1912.txt.bz2
 Source2: bind-debug.control
 Source3: bind-slave.control
@@ -107,7 +107,7 @@ for building applications with ISC BIND libraries.
 %endif
 
 %prep
-%setup -q -n %name-%version
+%setup -q -n bind-%version-P1
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -344,6 +344,11 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Mon Jul 30 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.4-owl2
+- Updated to 9.3.4-P1.  This release fixes a weakness in DNS query
+ids generator which could be used to perform DNS cache poisoning
+(CVE-2007-2926).
+
 * Tue Jan 30 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.4-owl1
 - Updated to 9.3.4.
 
