@@ -112,8 +112,10 @@ bool ParametersFile::SaveAs(const ScriptVariable &filename, int perm) const
         f = fopen(filename.c_str(), "w");
     } else {
         int fd = open(filename.c_str(), O_WRONLY|O_CREAT|O_TRUNC, perm);
-        f = fdopen(fd, "w");
-        if(fd>=0 && !f) close(fd);
+        if(fd>=0) {
+            f = fdopen(fd, "w");
+            if(!f) close(fd);
+        }
     }
     if(!f) {
         error = filename + ": " + strerror(errno);
