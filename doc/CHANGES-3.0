@@ -16,9 +16,10 @@ change logs for the packages themselves.
 SECURITY FIX	Severity: medium, remote, passive
 Updated to 9.3.4-P1, which fixes a weakness in DNS query ids generator
 when answering resolver questions or sending NOTIFY messages to slave
-name servers, which makes it easier for remote attackers to guess the
-next query id and perform DNS cache poisoning.
+name servers.  The weakness used to make it easier for remote attackers
+to guess the next query id and perform DNS cache poisoning.
 References:
+http://www.trusteer.com/docs/bind9dns.html
 http://marc.info/?l=bind-announce&m=118531674631565
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-2926
 
@@ -423,4 +424,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.91 2007/07/30 17:35:30 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.92 2007/07/30 18:57:57 solar Exp $
