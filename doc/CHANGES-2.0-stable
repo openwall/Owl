@@ -5,6 +5,17 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+(2007/07/30)
+2007/07/30	Package: bind
+SECURITY FIX	Severity: medium, remote, passive
+Updated to 9.3.4-P1, which fixes a weakness in DNS query ids generator
+when answering resolver questions or sending NOTIFY messages to slave
+name servers, which makes it easier for remote attackers to guess the
+next query id and perform DNS cache poisoning.
+References:
+http://marc.info/?l=bind-announce&m=118531674631565
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-2926
+
 (2007/05/31)
 2007/05/31	Package: mutt
 Updated to 1.4.2.3.  This release fixes msgid validation in APOP
@@ -256,4 +267,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.38 2007/05/31 22:06:24 ldv Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.39 2007/07/30 17:36:13 ldv Exp $
