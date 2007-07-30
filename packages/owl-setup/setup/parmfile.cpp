@@ -108,14 +108,11 @@ bool ParametersFile::Save() const
 bool ParametersFile::SaveAs(const ScriptVariable &filename, int perm) const
 {
     FILE *f = 0;
-    if(perm == -1) {
-        f = fopen(filename.c_str(), "w");
-    } else {
-        int fd = open(filename.c_str(), O_WRONLY|O_CREAT|O_TRUNC, perm);
-        if(fd>=0) {
-            f = fdopen(fd, "w");
-            if(!f) close(fd);
-        }
+    int fd = open(filename.c_str(), O_WRONLY|O_CREAT|O_TRUNC, perm);
+    if(fd>=0) {
+        fchmod(fd, perm); // undo the effect of umask
+        f = fdopen(fd, "w");
+        if(!f) close(fd);
     }
     if(!f) {
         error = filename + ": " + strerror(errno);
