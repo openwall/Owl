@@ -1,0 +1,17 @@
+--- tar/src/tar.c
++++ tar/src/tar.c
+@@ -1267,10 +1267,10 @@ parse_opt (int key, char *arg, struct argp_state *state)
+       break;
+ 
+     case 'I':
+-      USAGE_ERROR ((0, 0,
+-		    _("Warning: the -I option is not supported;"
+-		      " perhaps you meant -j or -T?")));
+-      break;
++    case 'y':
++      WARN ((0, 0, _("Warning: option '%c' is deprecated!"
++		     " Next time use -j instead."), key));
++      /* Fall through to using bzip2. */
+ 
+     case 'j':
+       set_use_compress_program_option ("bzip2");

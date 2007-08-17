@@ -1,39 +1,26 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.31 2006/11/29 00:20:20 ldv Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.32 2007/08/17 00:32:14 ldv Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
-Version: 1.15.1
-Release: owl7
-License: GPL
+Version: 1.18
+Release: owl1
+License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
 Source0: ftp://ftp.gnu.org/gnu/tar/tar-%version.tar.bz2
 Source1: tar.1
-Source2: append.at
-Patch0: tar-1.15.1-cvs-20050105-parse_opt.diff
-Patch1: tar-1.15.1-cvs-20050113-name_size.diff
-Patch2: tar-1.15.1-cvs-20050303-seekable.diff
-Patch3: tar-1.15.1-cvs-20050303-newer-verbose.diff
-Patch4: tar-1.15.1-cvs-20050512-pad.diff
-Patch5: tar-1.15.1-cvs-20050613-is_avoided_name.diff
-Patch6: tar-1.15.1-cvs-20050801-sparse-totals.diff
-Patch7: tar-1.15.1-cvs-20051105-tests.diff
-Patch8: tar-1.15.1-up-savedir.diff
-Patch9: tar-1.15.1-cvs-20050622-xheader.diff
-Patch10: tar-1.15.1-alt-parse_opt-Iy.diff
-Patch11: tar-1.15.1-owl-info.diff
-Patch12: tar-1.15.1-owl-without-librt.diff
-Patch13: tar-1.15.1-alt-contains_dot_dot.diff
-Patch14: tar-1.15.1-rh-owl-unreadable-segfault.diff
-Patch15: tar-1.15.1-mdk-optimize-ignored.diff
-Patch16: tar-1.15.1-deb-doc.diff
-Patch17: tar-1.15.1-deb-lone-zero-block-warning.diff
-Patch18: tar-1.15.1-alt-warnings.diff
-Patch19: tar-1.15.1-owl-tests.diff
-Patch20: tar-1.15.1-ubuntu-GNUTYPE_NAMES.diff
+Patch0: tar-1.18-alt-parse_opt-Iy.diff
+Patch1: tar-1.18-owl-info.diff
+Patch2: tar-1.18-alt-contains_dot_dot.diff
+Patch3: tar-1.18-mdk-optimize-ignored.diff
+Patch4: tar-1.18-deb-lone-zero-block-warning.diff
+Patch5: tar-1.18-rh-sys_truncate.diff
+Patch6: tar-1.18-owl-warnings.diff
+Patch7: paxlib-owl-safer_name_suffix-alloca.diff
+Patch8: gnulib-up-version.diff
 PreReq: /sbin/install-info, grep
 BuildRequires: automake, autoconf, cvs, gettext, texinfo
-BuildRequires: rpm-build >= 0:4
+BuildRequires: rpm-build >= 0:4, sed >= 4.0.9
 BuildRoot: /override/%name-%version
 
 %description
@@ -47,44 +34,31 @@ backups.
 
 %prep
 %setup -q
-%patch0 -p0
-%patch1 -p0
-%patch2 -p0
-%patch3 -p0
-%patch4 -p0
-%patch5 -p0
-%patch6 -p0
-%patch7 -p0
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
 %patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
-%patch17 -p1
-%patch18 -p1
-%patch19 -p1
-%patch20 -p1
-install -pm644 %_sourcedir/append.at tests/
 
-%{expand:%%define optflags %optflags -Wall -Dlint}
+%{expand:%%define optflags %optflags -Wall}
 
 %build
 rm doc/tar.info
-autoreconf -fisv
 export tar_cv_path_RSH=%_bindir/ssh
 %configure --bindir=/bin --with-rmt=/sbin/rmt
-%__make
-%__make -k check
+sed -i '/HAVE_CLOCK_GETTIME/d' config.h
+%__make LIB_CLOCK_GETTIME=
+%__make -k check LIB_CLOCK_GETTIME=
 bzip2 -9fk ChangeLog
 
 %install
 rm -rf %buildroot
 
-%makeinstall bindir=%buildroot/bin
+%makeinstall bindir=%buildroot/bin LIB_CLOCK_GETTIME=
 ln -sf tar %buildroot/bin/gtar
 
 mkdir -p %buildroot%_mandir/man1
@@ -123,6 +97,10 @@ fi
 %doc AUTHORS NEWS THANKS
 
 %changelog
+* Fri Aug 17 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.18-owl1
+- Updated to 1.18.
+- Fixed crash bug in list and extract modes.
+
 * Tue Nov 28 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.15.1-owl7
 - Disabled GNUTYPE_NAMES handling by default and added
 --allow-name-mangling option to re-enable it.

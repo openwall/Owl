@@ -1,0 +1,20 @@
+2005-05-15  Dmitry V. Levin <ldv-at-altlinux.org>
+
+	* src/names.c (contains_dot_dot): Fix ".." detection.
+	Previous edition fails to recognize "foo//.." case.
+
+--- tar/src/names.c
++++ tar/src/names.c
+@@ -1012,11 +1012,10 @@ contains_dot_dot (char const *name)
+       if (p[0] == '.' && p[1] == '.' && (ISSLASH (p[2]) || !p[2]))
+ 	return 1;
+ 
+-      do
++      while (! ISSLASH (*p))
+ 	{
+ 	  if (! *p++)
+ 	    return 0;
+ 	}
+-      while (! ISSLASH (*p));
+     }
+ }

@@ -1,0 +1,37 @@
+--- tar/src/create.c
++++ tar/src/create.c
+@@ -1542,6 +1542,17 @@ dump_file0 (struct tar_stat_info *st, const char *p,
+   if (is_avoided_name (p))
+     return;
+ 
++  if (S_ISSOCK (st->stat.st_mode))
++    {
++      WARN ((0, 0, _("%s: socket ignored"), quotearg_colon (p)));
++      return;
++    }
++  else if (S_ISDOOR (st->stat.st_mode))
++    {
++      WARN ((0, 0, _("%s: door ignored"), quotearg_colon (p)));
++      return;
++    }
++
+   is_dir = S_ISDIR (st->stat.st_mode) != 0;
+ 
+   if (!is_dir && dump_hard_link (st))
+@@ -1728,16 +1739,6 @@ dump_file0 (struct tar_stat_info *st, const char *p,
+     type = BLKTYPE;
+   else if (S_ISFIFO (st->stat.st_mode))
+     type = FIFOTYPE;
+-  else if (S_ISSOCK (st->stat.st_mode))
+-    {
+-      WARN ((0, 0, _("%s: socket ignored"), quotearg_colon (p)));
+-      return;
+-    }
+-  else if (S_ISDOOR (st->stat.st_mode))
+-    {
+-      WARN ((0, 0, _("%s: door ignored"), quotearg_colon (p)));
+-      return;
+-    }
+   else
+     {
+       unknown_file_error (p);

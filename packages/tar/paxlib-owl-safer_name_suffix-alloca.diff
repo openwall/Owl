@@ -1,0 +1,95 @@
+2007-08-15  Dmitry V. Levin <ldv-at-owl.openwall.com>
+
+	Do not use alloca to avoid stack overflow with untrusted input.
+
+	* lib/paxnames.c (hash_string_insert_direct): New function.
+	(hash_string_insert): Use it.
+	(hash_string_insert_data): New function.
+	(safer_name_suffix): Use it instead of hash_string_insert()
+	and alloca().
+
+--- tar/lib/paxnames.c
++++ tar/lib/paxnames.c
+@@ -36,22 +36,50 @@
+   return strcmp (name1, name2) == 0;
+ }
+ 
+-/* Return zero if TABLE contains a copy of STRING; otherwise, insert a
+-   copy of STRING to TABLE and return 1.  */
+-bool
+-hash_string_insert (Hash_table **table, char const *string)
++/* Return zero if TABLE contains given STRING; otherwise, insert
++   given STRING to TABLE and return 1.  */
++static bool
++hash_string_insert_direct (Hash_table **table, char const *string)
+ {
+   Hash_table *t = *table;
+-  char *s = xstrdup (string);
+   char *e;
+ 
+   if (! ((t
+ 	  || (*table = t = hash_initialize (0, 0, hash_string_hasher,
+ 					    hash_string_compare, 0)))
+-	 && (e = hash_insert (t, s))))
++	 && (e = hash_insert (t, string))))
+     xalloc_die ();
+ 
+-  if (e == s)
++  return (e == string);
++}
++
++/* Return zero if TABLE contains a copy of STRING; otherwise, insert a
++   copy of STRING to TABLE and return 1.  */
++bool
++hash_string_insert (Hash_table **table, char const *string)
++{
++  char *s = xstrdup (string);
++
++  if (hash_string_insert_direct (table, s))
++    return 1;
++  else
++    {
++      free (s);
++      return 0;
++    }
++}
++
++/* Return zero if TABLE contains a string which is a NULL-terminated
++   copy of DATA of given LENGTH; otherwise, insert a string which is a
++   NULL-terminated copy of DATA of given LENGTH to TABLE and return 1.  */
++static bool
++hash_string_insert_data (Hash_table **table, char const *data, size_t length)
++{
++  char *s = xmalloc (length + 1);
++  memcpy (s, data, length);
++  s[length] = '\0';
++
++  if (hash_string_insert_direct (table, s))
+     return 1;
+   else
+     {
+@@ -121,18 +149,16 @@ safer_name_suffix (char const *file_name, bool link_target, bool absolute_names)
+ 
+       if (prefix_len)
+ 	{
+-	  char *prefix = alloca (prefix_len + 1);
+-	  memcpy (prefix, file_name, prefix_len);
+-	  prefix[prefix_len] = '\0';
+-
+-	  if (hash_string_insert (&prefix_table[link_target], prefix))
++	  if (hash_string_insert_data (&prefix_table[link_target],
++				       file_name, prefix_len))
+ 	    {
+ 	      static char const *const diagnostic[] =
+ 	      {
+-		N_("Removing leading `%s' from member names"),
+-		N_("Removing leading `%s' from hard link targets")
++		N_("Removing leading `%.*s' from member names"),
++		N_("Removing leading `%.*s' from hard link targets")
+ 	      };
+-	      WARN ((0, 0, _(diagnostic[link_target]), prefix));
++	      WARN ((0, 0, _(diagnostic[link_target]),
++			   (unsigned)prefix_len, file_name));
+ 	    }
+ 	}
+     }
