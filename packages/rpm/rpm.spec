@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.71 2006/11/19 18:15:19 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.72 2007/08/17 00:25:42 ldv Exp $
 
 %define WITH_PYTHON 0
 
@@ -8,7 +8,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl17
+Release: owl18
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -57,6 +57,7 @@ Patch34: rpm-4.2-owl-man.diff
 Patch35: rpm-4.2-cvs-20030515-parseSpec.diff
 Patch36: rpm-4.2-cvs-20050827-check-prereqs.diff
 Patch37: rpm-4.2-cvs-20061030-showQueryPackage.diff
+Patch38: rpm-4.2-rh-owl-build-tar.diff
 
 PreReq: /sbin/ldconfig
 PreReq: sh-utils, fileutils, mktemp, gawk
@@ -171,6 +172,7 @@ rm -r tests
 %patch35 -p0
 %patch36 -p0
 %patch37 -p0
+%patch38 -p1
 
 bzip2 -9k CHANGES
 
@@ -490,6 +492,9 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Fri Aug 17 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl18
+- Changed rpmbuild to pass --wildcards to tar on build from tarball.
+
 * Sun Nov 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl17
 - Backported upstream fix for potential heap buffer overflow in
 showQueryPackage function (CVE-2006-5466).

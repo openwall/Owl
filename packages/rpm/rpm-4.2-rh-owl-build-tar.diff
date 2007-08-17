@@ -1,0 +1,31 @@
+build.c (buildForTarget): Pass --wildcards to tar on build from tarball (RH#206841)
+
+GNU tar no longer accepts globbing by default for compatibility
+with traditional implementations:
+http://lists.gnu.org/archive/html/bug-tar/2006-06/msg00001.html
+
+rpm needs to work with upstream GNU tar as well, the --wildcards option
+has been supported since 2001 so older versions shouldn't suffer either.
+
+Based on patch from http://hg.rpm.org/rpm-4.4.x?cs=1a3109298938
+
+--- rpm/build.c
++++ rpm/build.c
+@@ -153,7 +153,7 @@ static int buildForTarget(const char * arg, BTA_t ba,
+ 
+ 	(void) isCompressed(arg, &res);
+ 
+-	cmd = alloca(strlen(arg) + 50 + strlen(tmpSpecFile));
++	cmd = alloca(strlen(arg) + 64 + strlen(tmpSpecFile));
+ 	sprintf(cmd, "%s < %s | tar xOvf - Specfile 2>&1 > %s",
+ 			zcmds[res & 0x3], arg, tmpSpecFile);
+ 	if (!(fp = popen(cmd, "r"))) {
+@@ -166,7 +166,7 @@ static int buildForTarget(const char * arg, BTA_t ba,
+ 	    /* Try again */
+ 	    (void) pclose(fp);
+ 
+-	    sprintf(cmd, "%s < %s | tar xOvf - \\*.spec 2>&1 > %s",
++	    sprintf(cmd, "%s < %s | tar xOvf - --wildcards \\*.spec 2>&1 > %s",
+ 		    zcmds[res & 0x3], arg, tmpSpecFile);
+ 	    if (!(fp = popen(cmd, "r"))) {
+ 		rpmError(RPMERR_POPEN, _("Failed to open tar pipe: %m\n"));
