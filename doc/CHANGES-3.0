@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2007/08/17	Package: tar
+Updated to 1.18.
+
 2007/07/30	Package: bind
 SECURITY FIX	Severity: medium, remote, passive
 Updated to 9.3.4-P1, which fixes a weakness in DNS query ids generator
@@ -424,4 +427,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.92 2007/07/30 18:57:57 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.93 2007/08/17 00:43:58 ldv Exp $
