@@ -5,6 +5,23 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+(2007/08/18)
+2007/08/18	kernel
+Updated to Linux 2.4.35-ow2.  The single known security-relevant change
+added with Linux 2.4.35 is correction of the randomness pool update bug
+discovered by the PaX Team.  The -ow2 revision adds a fix for the parent
+process death signal bug in the Linux kernel discovered by Wojciech
+Purczynski of COSEINC PTE Ltd. and iSEC Security Research; this bug has
+no security impact on Owl with no added SUID programs.  Also added are
+two security hardening features, both enabled by default: restricted
+access to VM86 mode (specific to 32-bit x86) and restricted zero page
+mappings (generic).
+References:
+http://www.openwall.com/lists/announce/2007/08/08/1
+http://www.openwall.com/lists/announce/2007/08/14/1
+http://www.isec.pl/vulnerabilities/isec-0024-death-signal.txt
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-3848
+
 (2007/07/30)
 2007/07/30	Package: bind
 SECURITY FIX	Severity: medium, remote, passive
@@ -268,4 +285,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.40 2007/07/30 18:58:53 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.41 2007/08/18 19:10:01 solar Exp $
