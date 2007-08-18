@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.34 2007/08/18 21:27:10 ldv Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.35 2007/08/18 23:06:29 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -18,7 +18,7 @@ Patch5: tar-1.18-mdk-optimize-ignored.diff
 Patch6: tar-1.18-deb-lone-zero-block-warning.diff
 Patch7: tar-1.18-rh-sys_truncate.diff
 Patch8: tar-1.18-owl-warnings.diff
-Patch9: tar-1.18-owl-fchown-fchmod.patch
+Patch9: tar-1.18-owl-fchown-fchmod.diff
 PreReq: /sbin/install-info, grep
 BuildRequires: automake, autoconf, cvs, gettext, texinfo
 BuildRequires: rpm-build >= 0:4, sed >= 4.0.9

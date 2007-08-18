@@ -1,4 +1,5 @@
-Use fchown/fchmod instead of chown/chmod to set permissions of just created regular files
+Use fchown/fchmod instead of chown/chmod to set permissions of just created
+regular files.
 
 --- tar/src/extract.c
 +++ tar/src/extract.c
