@@ -37,7 +37,7 @@
 +    }
 +  else
 +    s = xstrdup (string);
-+  
++
    if (! ((t
  	  || (*table = t = hash_initialize (0, 0, hash_string_hasher,
  					    hash_string_compare, 0)))

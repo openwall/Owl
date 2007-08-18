@@ -565,6 +565,15 @@
  int
  main (int argc, char **argv)
  {
+@@ -276,7 +674,7 @@ main (int argc, char **argv)
+   if (optind == argc)
+     usage (stderr, 1);
+ 
+-  i = argmatch (argv[optind], opnames);
++  i = argmatch (argv[optind], opnames, NULL, 0);
+   if (i < 0)
+     {
+       argmatch_invalid ("tape operation", argv[optind], i);
 @@ -284,6 +682,8 @@ main (int argc, char **argv)
      }
    operation = operations[i];

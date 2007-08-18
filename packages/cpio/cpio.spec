@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/cpio/cpio.spec,v 1.25 2007/08/18 17:17:54 ldv Exp $
+# $Owl: Owl/packages/cpio/cpio.spec,v 1.26 2007/08/18 21:18:24 ldv Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
 Version: 2.9
 Release: owl1
-License: GPL
+License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/cpio/
 Source0: ftp://ftp.gnu.org/gnu/cpio-%version.tar.bz2
