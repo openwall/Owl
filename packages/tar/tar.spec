@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.33 2007/08/17 22:01:32 ldv Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.34 2007/08/18 21:27:10 ldv Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -10,14 +10,15 @@ URL: http://www.gnu.org/software/tar/
 Source0: ftp://ftp.gnu.org/gnu/tar/tar-%version.tar.bz2
 Source1: tar.1
 Patch0: paxlib-cvs-20070817-safer_name_suffix-alloca.diff
-Patch1: tar-1.18-alt-parse_opt-Iy.diff
-Patch2: tar-1.18-owl-info.diff
-Patch3: tar-1.18-alt-contains_dot_dot.diff
-Patch4: tar-1.18-mdk-optimize-ignored.diff
-Patch5: tar-1.18-deb-lone-zero-block-warning.diff
-Patch6: tar-1.18-rh-sys_truncate.diff
-Patch7: tar-1.18-owl-warnings.diff
-Patch8: gnulib-up-version.diff
+Patch1: gnulib-up-version.diff
+Patch2: tar-1.18-alt-parse_opt-Iy.diff
+Patch3: tar-1.18-owl-info.diff
+Patch4: tar-1.18-alt-contains_dot_dot.diff
+Patch5: tar-1.18-mdk-optimize-ignored.diff
+Patch6: tar-1.18-deb-lone-zero-block-warning.diff
+Patch7: tar-1.18-rh-sys_truncate.diff
+Patch8: tar-1.18-owl-warnings.diff
+Patch9: tar-1.18-owl-fchown-fchmod.patch
 PreReq: /sbin/install-info, grep
 BuildRequires: automake, autoconf, cvs, gettext, texinfo
 BuildRequires: rpm-build >= 0:4, sed >= 4.0.9
@@ -43,6 +44,7 @@ backups.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -100,6 +102,8 @@ fi
 * Fri Aug 17 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.18-owl1
 - Updated to 1.18.
 - Fixed crash bug in list and extract modes.
+- Use fchown/fchmod instead of chown/chmod to set permissions of just
+created regular files.
 
 * Tue Nov 28 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.15.1-owl7
 - Disabled GNUTYPE_NAMES handling by default and added
