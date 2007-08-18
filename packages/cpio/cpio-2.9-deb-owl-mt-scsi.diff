@@ -1,7 +1,6 @@
-diff -uprk.orig cpio-2.6.orig/doc/mt.1 cpio-2.6/doc/mt.1
---- cpio-2.6.orig/doc/mt.1	2003-11-17 22:42:31 +0000
-+++ cpio-2.6/doc/mt.1	2005-05-05 15:24:35 +0000
-@@ -93,6 +93,69 @@ Rewind the tape, then wind it to the end
+--- cpio/doc/mt.1
++++ cpio/doc/mt.1
+@@ -93,6 +93,69 @@ Rewind the tape, then wind it to the end of the reel,
  then rewind it again.
  .IP erase
  Erase the tape.
@@ -71,12 +70,11 @@ diff -uprk.orig cpio-2.6.orig/doc/mt.1 cpio-2.6/doc/mt.1
  .PP
  .B mt
  exits with a status of 0 if the operation succeeded, 1 if the
-diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
---- cpio-2.6.orig/src/mt.c	2005-05-05 15:24:10 +0000
-+++ cpio-2.6/src/mt.c	2005-05-05 15:25:56 +0000
-@@ -16,6 +16,10 @@
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
-    */
+--- cpio/src/mt.c
++++ cpio/src/mt.c
+@@ -17,6 +17,10 @@
+    02110-1301 USA
+ */
  
 +/* Modified for the Linux SCSI tape driver by Brian Mays from code
 +   written by Kai Makisara.
@@ -85,7 +83,7 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
  
  /* If -f is not given, the environment variable TAPE is used;
     if that is not set, a default device defined in sys/mtio.h is used.
-@@ -50,6 +54,46 @@
+@@ -51,6 +55,46 @@
     retension	Rewind the tape, then wind it to the end of the reel,
  		then rewind it again.
     erase	Erase the tape.
@@ -112,7 +110,7 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
 +		enable asynchronous writes, 4 to enable read ahead, 8
 +		to enable debugging output (if it has been compiled to
 +		the driver).
-+   stwrthreshold 
++   stwrthreshold
 +		(SCSI tapes) The write threshold for the tape device
 +		is set to COUNT kilobytes.  The value must be smaller
 +		than or equal to the driver buffer size.
@@ -132,7 +130,17 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
  
     David MacKenzie <djm@gnu.ai.mit.edu> */
  
-@@ -105,6 +149,54 @@ int atoi ();
+@@ -92,6 +136,9 @@
+ # include <stdlib.h>
+ #endif
+ 
++#include <paxlib.h>
++#include <argmatch.h>
++
+ #if !HAVE_DECL_ERRNO
+ extern int errno;
+ #endif
+@@ -104,6 +151,54 @@ int atoi ();
  #if !HAVE_DECL_EXIT
  void exit ();
  #endif
@@ -187,7 +195,7 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
  
  char *opnames[] =
  {
-@@ -115,6 +207,8 @@ char *opnames[] =
+@@ -114,6 +209,8 @@ char *opnames[] =
  #endif
  #ifdef MTEOM
    "eom",
@@ -196,7 +204,7 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
  #endif
  #ifdef MTRETEN
    "retension",
-@@ -129,6 +223,39 @@ char *opnames[] =
+@@ -128,6 +225,39 @@ char *opnames[] =
  #ifdef MTSEEK
    "seek",
  #endif
@@ -236,7 +244,7 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
    NULL
  };
  
-@@ -142,6 +269,8 @@ short operations[] =
+@@ -141,6 +271,8 @@ short operations[] =
  #endif
  #ifdef MTEOM
    MTEOM,
@@ -245,7 +253,7 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
  #endif
  #ifdef MTRETEN
    MTRETEN,
-@@ -156,6 +285,39 @@ short operations[] =
+@@ -155,6 +287,39 @@ short operations[] =
  #ifdef MTSEEK
    MTSEEK,
  #endif
@@ -285,7 +293,7 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
    0
  };
  
-@@ -168,6 +330,32 @@ struct option longopts[] =
+@@ -167,6 +332,32 @@ struct option longopts[] =
    {NULL, 0, NULL, 0}
  };
  
@@ -318,8 +326,8 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
  /* The name this program was run with.  */
  char *program_name;
  
-@@ -197,15 +385,56 @@ perform_operation (char *dev, int desc, 
-     error (2, errno, "%s", dev);
+@@ -196,15 +387,56 @@ perform_operation (char *dev, int desc, short op, int count)
+     error (2, errno, _("%s: rmtioctl failed"), dev);
  }
  
 +#ifdef MTTELL
@@ -329,7 +337,7 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
 +  struct mtpos position;
 +
 +  if (rmtioctl (desc, MTIOCPOS, (char*)&position) == -1)
-+    error (2, errno, "%s", dev);
++    error (2, errno, _("%s: rmtioctl failed"), dev);
 +  printf("At block %d.\n", (int) position.mt_blkno);
 +
 +}
@@ -342,7 +350,7 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
  
 -  if (rmtioctl (desc, MTIOCGET, (char*)&status) == -1)
 +  if (rmtioctl (desc, MTIOCGET, (char*)&status))
-     error (2, errno, "%s", dev);
+     error (2, errno, _("%s: rmtioctl failed"), dev);
  
 -  printf ("drive type = %d\n", (int) status.mt_type);
 +#ifdef MT_ISFTAPE_FLAG
@@ -377,7 +385,7 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
  #if defined(hpux) || defined(__hpux)
    printf ("drive status (high) = %d\n", (int) status.mt_dsreg1);
    printf ("drive status (low) = %d\n", (int) status.mt_dsreg2);
-@@ -218,6 +447,60 @@ print_status (char *dev, int desc)
+@@ -217,6 +449,60 @@ print_status (char *dev, int desc)
    printf ("file number = %d\n", (int) status.mt_fileno);
    printf ("block number = %d\n", (int) status.mt_blkno);
  #endif
@@ -425,7 +433,7 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
 +      if (GMT_D_800(status.mt_gstat))
 +	printf(" D_800");
 +      if (GMT_DR_OPEN(status.mt_gstat))
-+	printf(" DR_OPEN");	  
++	printf(" DR_OPEN");
 +      if (GMT_IM_REP_EN(status.mt_gstat))
 +	printf(" IM_REP_EN");
 +      printf("\n");
@@ -438,7 +446,7 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
  }
  
  void
-@@ -230,6 +513,118 @@ Usage: %s [-V] [-f device] [--file=devic
+@@ -229,6 +515,118 @@ Usage: %s [-V] [-f device] [--file=device] [--rsh-command=command]\n\
    exit (status);
  }
  
@@ -557,7 +565,7 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
  int
  main (int argc, char **argv)
  {
-@@ -287,6 +682,8 @@ main (int argc, char **argv)
+@@ -284,6 +682,8 @@ main (int argc, char **argv)
      }
    operation = operations[i];
  
@@ -566,7 +574,7 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
    if (++optind < argc)
      /* Debian hack: Replaced the atoi function call with strtol so
         that hexidecimal values can be used for the count parameter.
-@@ -300,6 +697,9 @@ main (int argc, char **argv)
+@@ -297,6 +697,9 @@ main (int argc, char **argv)
    if (++optind < argc)
      usage (stderr, 1);
  
@@ -576,7 +584,7 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
    if (tapedev == NULL)
      {
        tapedev = getenv ("TAPE");
-@@ -311,10 +711,29 @@ main (int argc, char **argv)
+@@ -308,10 +711,29 @@ main (int argc, char **argv)
  #endif
      }
  
@@ -606,8 +614,8 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
  	)
      tapedesc = rmtopen (tapedev, O_WRONLY, 0, rsh_command_option);
    else
-@@ -323,15 +742,27 @@ main (int argc, char **argv)
-     error (1, errno, "%s", tapedev);
+@@ -320,14 +742,26 @@ main (int argc, char **argv)
+     error (1, errno, _("%s: rmtopen failed"), tapedev);
    check_type (tapedev, tapedesc);
  
 -  if (operation == MTASF)
@@ -618,7 +626,6 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
 -  perform_operation (tapedev, tapedesc, operation, count);
 -  if (operation == MTNOP)
 -    print_status (tapedev, tapedesc);
--
 +#ifdef MTDATCOMP
 +  if (operation == MTDATCOMP)
 +    do_dat_compression(tapedev, tapedesc, count);
@@ -639,7 +646,6 @@ diff -uprk.orig cpio-2.6.orig/src/mt.c cpio-2.6/src/mt.c
 +    if (operation == MTNOP)
 +      print_status (tapedev, tapedesc);
 +  }
-+  
-   if (rmtclose (tapedesc) == -1)
-     error (2, errno, "%s", tapedev);
  
+   if (rmtclose (tapedesc) == -1)
+     error (2, errno, _("%s: rmtclose failed"), tapedev);

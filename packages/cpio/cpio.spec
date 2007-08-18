@@ -1,35 +1,24 @@
-# $Owl: Owl/packages/cpio/cpio.spec,v 1.24 2006/06/21 16:00:30 ldv Exp $
+# $Owl: Owl/packages/cpio/cpio.spec,v 1.25 2007/08/18 17:17:54 ldv Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
-Version: 2.6
-Release: owl4
+Version: 2.9
+Release: owl1
 License: GPL
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/cpio/
 Source0: ftp://ftp.gnu.org/gnu/cpio-%version.tar.bz2
 Source1: rmt.8
-Patch0: cpio-2.6-cvs-20050131-umask.diff
-Patch1: cpio-2.6-cvs-20041221-configure-mt.diff
-Patch10: cpio-2.6-alt-lstat.diff
-Patch11: cpio-2.6-alt-i18n.diff
-Patch12: cpio-2.6-alt-sparse.diff
-Patch13: cpio-2.6-alt-error-details.diff
-Patch14: cpio-2.6-alt-warnings.diff
-Patch15: cpio-2.6-alt-safer_name_suffix.diff
-Patch16: cpio-2.6-alt-chown-chmod.diff
-Patch17: cpio-2.6-alt-open-mkdir-mknod.diff
-Patch18: cpio-2.6-rh-alt-lfs.diff
-Patch19: cpio-2.6-rh-svr4compat.diff
-Patch20: cpio-2.6-owl-info.diff
-Patch21: cpio-2.6-pld-alt-configure.diff
-Patch22: cpio-2.6-deb-find_inode_file.diff
-Patch23: cpio-2.6-owl-mt-argmatch.diff
-Patch24: cpio-2.6-deb-owl-mt-scsi.diff
-Patch25: cpio-2.6-deb-owl-rmt.diff
-Patch26: cpio-2.6-cvs-20051112-copyout.diff
-Patch27: cpio-2.6-up-savedir.diff
-Patch28: cpio-2.6-rh-header-init.diff
+Patch0: paxlib-cvs-20070817-safer_name_suffix-alloca.diff
+Patch1: gnulib-up-version.diff
+Patch2: cpio-2.9-owl-info.diff
+Patch3: cpio-2.9-rh-svr4compat.diff
+Patch4: cpio-2.9-alt-no_abs_paths_flag.diff
+Patch5: cpio-2.9-alt-open-O_EXCL.diff
+Patch6: cpio-2.9-alt-mkdir-mknod.diff
+Patch7: cpio-2.9-owl-warnings.diff
+Patch8: cpio-2.9-deb-owl-mt-scsi.diff
+Patch9: cpio-2.9-deb-owl-rmt.diff
 PreReq: /sbin/install-info
 Provides: mt-st, rmt
 Prefix: %_prefix
@@ -50,32 +39,19 @@ and can read archives created on machines with a different byte-order.
 
 %prep
 %setup -q
-install -m644 %_sourcedir/rmt.8 .
 %patch0 -p0
 %patch1 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
-%patch17 -p1
-%patch18 -p1
-%patch19 -p1
-%patch20 -p1
-%patch21 -p1
-%patch22 -p1
-%patch23 -p1
-%patch24 -p1
-%patch25 -p1
-%patch26 -p1
-%patch27 -p1
-%patch28 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+install -m644 %_sourcedir/rmt.8 .
 
 %build
-# Several patches modify configure.ac
-%__autoconf
 %configure --enable-mt
 %__make LDFLAGS=-s
 %__make -k check
@@ -118,6 +94,10 @@ fi
 %_datadir/locale/*/LC_MESSAGES/cpio.mo
 
 %changelog
+* Fri Aug 17 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.9-owl1
+- Updated to 2.9.
+- Fixed crash bug in list and extract modes.
+
 * Wed Jun 21 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.6-owl4
 - Imported FC patch to initialize header structure in copyin mode properly.
 - Fixed build with gcc-4.x.

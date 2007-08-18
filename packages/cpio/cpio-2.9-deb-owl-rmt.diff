@@ -1,0 +1,208 @@
+--- cpio/rmt/rmt.c
++++ cpio/rmt/rmt.c
+@@ -83,6 +83,33 @@ static FILE *debug_file;
+ #define	DEBUG2(File, Arg1, Arg2) \
+   if (debug_file) fprintf(debug_file, File, Arg1, Arg2)
+ 
++#define	DEBUG3(File, Arg1, Arg2, Arg3) \
++  if (debug_file) fprintf(debug_file, File, Arg1, Arg2, Arg3)
++
++/*
++ * Support for Sun's extended RMT protocol
++ */
++#define RMTI_VERSION	-1
++#define RMT_VERSION	1
++
++/* Extended 'i' commands */
++#define RMTI_CACHE	0
++#define RMTI_NOCACHE	1
++#define RMTI_RETEN	2
++#define RMTI_ERASE	3
++#define RMTI_EOM	4
++#define RMTI_NBSF	5
++
++/* Extended 's' comands */
++#define MTS_TYPE	'T'
++#define MTS_DSREG	'D'
++#define MTS_ERREG	'E'
++#define MTS_RESID	'R'
++#define MTS_FILENO	'F'
++#define MTS_BLKNO	'B'
++#define MTS_FLAGS	'f'
++#define MTS_BF		'b'
++
+ static void
+ report_error_message (const char *string)
+ {
+@@ -506,18 +533,62 @@ read_device (void)
+ }
+ 
+ static void
+-mtioctop (void)
++mtioctop (char command)
+ {
+   char operation_string[STRING_SIZE];
+   char count_string[STRING_SIZE];
++  size_t status = 0;
++  struct mtop mtop;
+ 
+   get_string_n (operation_string);
+   get_string_n (count_string);
+-  DEBUG2 ("rmtd: I %s %s\n", operation_string, count_string);
++  DEBUG3 ("rmtd: %c %s %s\n", command, operation_string, count_string);
++
++  mtop.mt_op = get_long (operation_string);
++
++  if (command == 'i')
++    switch (mtop.mt_op)
++      {
++#ifdef MTCACHE
++      case RMTI_CACHE:
++	mtop.mt_op = MTCACHE;
++	break;
++#endif
++#ifdef MTNOCACHE
++      case RMTI_NOCACHE:
++	mtop.mt_op = MTNOCACHE;
++	break;
++#endif
++#ifdef MTRETEN
++      case RMTI_RETEN:
++	mtop.mt_op = MTRETEN;
++	break;
++#endif
++#ifdef MTERASE
++      case RMTI_ERASE:
++	mtop.mt_op = MTERASE;
++	break;
++#endif
++#ifdef MTEOM
++      case RMTI_EOM:
++	mtop.mt_op = MTEOM;
++	break;
++#endif
++#ifdef MTNBSF
++      case RMTI_NBSF:
++	mtop.mt_op = MTNBSF;
++	break;
++#endif
++      default:
++	report_numbered_error (EINVAL);
++	return;
++      }
+ 
++  if (command == 'I' && mtop.mt_op == RMTI_VERSION)
++    status = RMT_VERSION;
+ #ifdef MTIOCTOP
++  else
+   {
+-    struct mtop mtop;
+     const char *p;
+     off_t count = 0;
+     int negative;
+@@ -557,7 +628,6 @@ mtioctop (void)
+ 	report_error_message (N_("Seek offset out of range"));
+ 	exit (EXIT_FAILURE);
+       }
+-    mtop.mt_op = get_long (operation_string);
+ 
+     if (ioctl (tape, MTIOCTOP, (char *) &mtop) < 0)
+       {
+@@ -566,7 +636,7 @@ mtioctop (void)
+       }
+   }
+ #endif
+-  respond (0);
++  respond (status);
+ }
+ 
+ static void
+@@ -589,6 +659,68 @@ status_device (void)
+ #endif
+ }
+ 
++static void
++substatus_device (void)
++{
++  DEBUG ("rmtd: s\n");
++
++#ifdef MTIOCGET
++  char subcommand;
++  size_t status;
++  struct mtget operation;
++
++  if (safe_read (STDIN_FILENO, &subcommand, 1) != 1)
++    exit (EXIT_SUCCESS);
++
++  if (ioctl (tape, MTIOCGET, (char *) &operation) < 0)
++    {
++      report_numbered_error (errno);
++      return;
++    }
++
++  switch (subcommand)
++    {
++      case MTS_TYPE:
++	status = operation.mt_type;
++	break;
++
++      case MTS_DSREG:
++	status = operation.mt_dsreg;
++	break;
++
++      case MTS_ERREG:
++	status = operation.mt_erreg;
++	break;
++
++      case MTS_RESID:
++	status = operation.mt_resid;
++	break;
++
++      case MTS_FILENO:
++	status = operation.mt_fileno;
++	break;
++
++      case MTS_BLKNO:
++	status = operation.mt_blkno;
++	break;
++
++      case MTS_FLAGS:
++	status = operation.mt_gstat;
++	break;
++
++      case MTS_BF:
++	status = 0;
++	break;
++
++      default:
++	report_numbered_error (EINVAL);
++	return;
++    }
++
++  respond (status);
++#endif
++}
++
+ int
+ main (int argc, char **argv)
+ {
+@@ -660,13 +792,18 @@ main (int argc, char **argv)
+ 	  break;
+ 
+ 	case 'I':
+-	  mtioctop ();
++	case 'i':
++	  mtioctop (command);
+ 	  break;
+ 
+ 	case 'S':
+ 	  status_device ();
+ 	  break;
+ 
++	case 's':
++	  substatus_device ();
++	  break;
++
+ 	default:
+ 	  DEBUG1 ("rmtd: Garbage command %c\n", command);
+ 	  report_error_message (N_("Garbage command"));

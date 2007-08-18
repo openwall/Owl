@@ -1,0 +1,201 @@
+--- cpio/lib/rtapelib.c
++++ cpio/lib/rtapelib.c
+@@ -488,12 +488,14 @@ rmt_open__ (const char *file_name, int open_mode, int bias,
+ 	/* Child.  */
+ 
+ 	close (STDIN_FILENO);
+-	dup (to_remote[remote_pipe_number][PREAD]);
++	if (dup (to_remote[remote_pipe_number][PREAD]) != STDIN_FILENO)
++	  error (EXIT_ON_EXEC_ERROR, errno, _("Cannot dup"));
+ 	close (to_remote[remote_pipe_number][PREAD]);
+ 	close (to_remote[remote_pipe_number][PWRITE]);
+ 
+ 	close (STDOUT_FILENO);
+-	dup (from_remote[remote_pipe_number][PWRITE]);
++	if (dup (from_remote[remote_pipe_number][PWRITE]) != STDOUT_FILENO)
++	  error (EXIT_ON_EXEC_ERROR, errno, _("Cannot dup"));
+ 	close (from_remote[remote_pipe_number][PREAD]);
+ 	close (from_remote[remote_pipe_number][PWRITE]);
+ 
+--- cpio/src/copyin.c
++++ cpio/src/copyin.c
+@@ -178,7 +178,7 @@ list_file(struct cpio_file_stat* file_hdr, int in_file_des)
+ #endif
+       if (crc != file_hdr->c_chksum)
+ 	{
+-	  error (0, 0, _("%s: checksum error (0x%lx, should be 0x%lx)"),
++	  error (0, 0, _("%s: checksum error (0x%x, should be 0x%lx)"),
+ 		 file_hdr->c_name, crc, file_hdr->c_chksum);
+ 	}
+     }
+@@ -527,7 +527,7 @@ copyin_regular_file (struct cpio_file_stat* file_hdr, int in_file_des)
+       if (archive_format == arf_crcascii)
+ 	{
+ 	  if (crc != file_hdr->c_chksum)
+-	    error (0, 0, _("%s: checksum error (0x%lx, should be 0x%lx)"),
++	    error (0, 0, _("%s: checksum error (0x%x, should be 0x%lx)"),
+ 		   file_hdr->c_name, crc, file_hdr->c_chksum);
+ 	}
+       tape_skip_padding (in_file_des, file_hdr->c_filesize);
+@@ -539,8 +539,9 @@ copyin_regular_file (struct cpio_file_stat* file_hdr, int in_file_des)
+      "bug-gnu-utils@prep.ai.mit.edu".  (96/7/10) -BEM */
+   if (delayed_seek_count > 0)
+     {
+-      lseek (out_file_des, delayed_seek_count-1, SEEK_CUR);
+-      write (out_file_des, "", 1);
++      if (lseek (out_file_des, delayed_seek_count-1, SEEK_CUR) < 0 ||
++	  write (out_file_des, "", 1) != 1)
++	error (0, errno, _("cannot seek on output"));
+       delayed_seek_count = 0;
+     }
+ 
+@@ -552,7 +552,7 @@ copyin_regular_file (struct cpio_file_stat* file_hdr, int in_file_des)
+   if (archive_format == arf_crcascii)
+     {
+       if (crc != file_hdr->c_chksum)
+-	error (0, 0, _("%s: checksum error (0x%lx, should be 0x%lx)"),
++	error (0, 0, _("%s: checksum error (0x%x, should be 0x%lx)"),
+ 	       file_hdr->c_name, crc, file_hdr->c_chksum);
+     }
+ 
+@@ -1004,14 +1004,14 @@ from_ascii (char const *where, size_t digs, unsigned logbase)
+       char *p = strchr (codetab, toupper (*buf));
+       if (!p)
+ 	{
+-	  error (0, 0, _("Malformed number %.*s"), digs, where);
++	  error (0, 0, _("Malformed number %.*s"), (unsigned) digs, where);
+ 	  break;
+ 	}
+       
+       d = p - codetab;
+       if ((d >> logbase) > 1)
+ 	{
+-	  error (0, 0, _("Malformed number %.*s"), digs, where);
++	  error (0, 0, _("Malformed number %.*s"), (unsigned) digs, where);
+ 	  break;
+ 	}
+       value += d;
+@@ -1022,7 +1022,7 @@ from_ascii (char const *where, size_t digs, unsigned logbase)
+     }
+   if (overflow)
+     error (0, 0, _("Archive value %.*s is out of range"),
+-	   digs, where);
++	   (unsigned) digs, where);
+   return value;
+ }
+ 
+@@ -1534,7 +1534,7 @@ process_copy_in ()
+ 	    tape_skip_padding (in_file_des, file_hdr.c_filesize);
+ 	    if (crc != file_hdr.c_chksum)
+ 	      {
+-		error (0, 0, _("%s: checksum error (0x%lx, should be 0x%lx)"),
++		error (0, 0, _("%s: checksum error (0x%x, should be 0x%lx)"),
+ 		       file_hdr.c_name, crc, file_hdr.c_chksum);
+ 	      }
+          /* Debian hack: -v and -V now work with --only-verify-crc.
+--- cpio/src/copyout.c
++++ cpio/src/copyout.c
+@@ -595,7 +595,6 @@ assign_string (char **pvar, char *value)
+ void
+ process_copy_out ()
+ {
+-  int res;			/* Result of functions.  */
+   dynamic_string input_name;	/* Name of file read from stdin.  */
+   struct stat file_stat;	/* Stat record for file.  */
+   struct cpio_file_stat file_hdr; /* Output header information.  */
+--- cpio/src/copypass.c
++++ cpio/src/copypass.c
+@@ -189,8 +189,9 @@ process_copy_pass ()
+                  "bug-gnu-utils@prep.ai.mit.edu".  (96/7/10) -BEM */
+ 	      if (delayed_seek_count > 0)
+ 		{
+-		  lseek (out_file_des, delayed_seek_count-1, SEEK_CUR);
+-		  write (out_file_des, "", 1);
++		  if (lseek (out_file_des, delayed_seek_count-1, SEEK_CUR) < 0 ||
++		      write (out_file_des, "", 1) != 1)
++		      error (0, errno, _("cannot seek on output"));
+ 		  delayed_seek_count = 0;
+ 		}
+ 
+--- cpio/src/util.c
++++ cpio/src/util.c
+@@ -482,9 +482,9 @@ copy_files_disk_to_tape (int in_des, int out_des, off_t num_bytes,
+   while (num_bytes > 0)
+     {
+       if (input_size == 0)
+-	if (rc = disk_fill_input_buffer (in_des,
+-					 num_bytes < DISK_IO_BLOCK_SIZE ?
+-					 num_bytes : DISK_IO_BLOCK_SIZE))
++	if ((rc = disk_fill_input_buffer (in_des,
++					  num_bytes < DISK_IO_BLOCK_SIZE ?
++					  num_bytes : DISK_IO_BLOCK_SIZE)))
+ 	  {
+ 	    if (rc > 0)
+ 	      {
+@@ -497,7 +497,7 @@ copy_files_disk_to_tape (int in_des, int out_des, off_t num_bytes,
+ 	      }
+ 	    else
+ 	      error (0, 0, _("Read error at byte %lld in file %s, padding with zeros"),
+-			original_num_bytes - num_bytes, filename);
++			(long long)(original_num_bytes - num_bytes), filename);
+ 	    write_nuls_to_file (num_bytes, out_des, tape_buffered_write);
+ 	    break;
+ 	  }
+@@ -534,7 +534,7 @@ copy_files_disk_to_disk (int in_des, int out_des, off_t num_bytes,
+   while (num_bytes > 0)
+     {
+       if (input_size == 0)
+-	if (rc = disk_fill_input_buffer (in_des, num_bytes))
++	if ((rc = disk_fill_input_buffer (in_des, num_bytes)))
+ 	  {
+ 	    if (rc > 0)
+ 	      {
+@@ -547,7 +547,7 @@ copy_files_disk_to_disk (int in_des, int out_des, off_t num_bytes,
+ 	      }
+ 	    else
+ 	      error (0, 0, _("Read error at byte %lld in file %s, padding with zeros"),
+-			original_num_bytes - num_bytes, filename);
++			(long long)(original_num_bytes - num_bytes), filename);
+ 	    write_nuls_to_file (num_bytes, out_des, disk_buffered_write);
+ 	    break;
+ 	  }
+--- cpio/tests/genfile.c
++++ cpio/tests/genfile.c
+@@ -481,7 +481,8 @@ mkhole (int fd, off_t displ)
+ {
+   if (lseek (fd, displ, SEEK_CUR) == -1)
+     error (EXIT_FAILURE, errno, "lseek");
+-  ftruncate (fd, lseek (fd, 0, SEEK_CUR));
++  if (ftruncate (fd, lseek (fd, 0, SEEK_CUR)))
++    error (EXIT_FAILURE, errno, "ftruncate");
+ }
+ 
+ static void
+@@ -679,13 +680,15 @@ exec_checkpoint (struct action *p)
+ 	    error (0, errno, _("cannot open `%s'"), p->name);
+ 	    break;
+ 	  }
+-	ftruncate (fd, p->size);
++	if (ftruncate (fd, p->size))
++	  error (0, errno, _("cannot truncate `%s'"), p->name);
+ 	close (fd);
+       }
+       break;
+ 
+     case OPT_EXEC:
+-      system (p->name);
++      if (system (p->name) == -1)
++	error (0, errno, _("cannot execute `%s'"), p->name);
+       break;
+ 
+     default:
+@@ -744,7 +747,8 @@ exec_command (void)
+   signal (SIGCHLD, SIG_DFL);
+ #endif
+ 
+-  pipe (fd);
++  if (pipe (fd))
++    error (EXIT_FAILURE, errno, "pipe");
+ 
+   pid = fork ();
+   if (pid == -1)

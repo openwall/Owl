@@ -1,0 +1,55 @@
+Fix race conditions when creating regular files in copy-in and copy-pass modes
+
+* src/copyin.c (create_final_defers, copyin_regular_file): Change open(2) calls to use O_EXCL.
+* src/copypass.c (process_copy_pass): Likewise.
+
+--- cpio/src/copyin.c
++++ cpio/src/copyin.c
+@@ -373,12 +373,12 @@ create_final_defers ()
+ 	  continue;
+ 	}
+       out_file_des = open (d->header.c_name,
+-			   O_CREAT | O_WRONLY | O_BINARY, 0600);
++			   O_CREAT | O_EXCL | O_WRONLY | O_BINARY, 0600);
+       if (out_file_des < 0 && create_dir_flag)
+ 	{
+ 	  create_all_directories (d->header.c_name);
+ 	  out_file_des = open (d->header.c_name,
+-			       O_CREAT | O_WRONLY | O_BINARY,
++			       O_CREAT | O_EXCL | O_WRONLY | O_BINARY,
+ 			       0600);
+ 	}
+       if (out_file_des < 0)
+@@ -481,13 +481,13 @@ copyin_regular_file (struct cpio_file_stat* file_hdr, int in_file_des)
+     
+       /* If not linked, copy the contents of the file.  */
+       out_file_des = open (file_hdr->c_name,
+-			   O_CREAT | O_WRONLY | O_BINARY, 0600);
++			   O_CREAT | O_EXCL | O_WRONLY | O_BINARY, 0600);
+   
+       if (out_file_des < 0 && create_dir_flag)
+ 	{
+ 	  create_all_directories (file_hdr->c_name);
+ 	  out_file_des = open (file_hdr->c_name,
+-			       O_CREAT | O_WRONLY | O_BINARY,
++			       O_CREAT | O_EXCL | O_WRONLY | O_BINARY,
+ 			       0600);
+ 	}
+       
+--- cpio/src/copypass.c
++++ cpio/src/copypass.c
+@@ -168,12 +168,12 @@ process_copy_pass ()
+ 		  continue;
+ 		}
+ 	      out_file_des = open (output_name.ds_string,
+-				   O_CREAT | O_WRONLY | O_BINARY, 0600);
++				   O_CREAT | O_EXCL | O_WRONLY | O_BINARY, 0600);
+ 	      if (out_file_des < 0 && create_dir_flag)
+ 		{
+ 		  create_all_directories (output_name.ds_string);
+ 		  out_file_des = open (output_name.ds_string,
+-				       O_CREAT | O_WRONLY | O_BINARY, 0600);
++				       O_CREAT | O_EXCL | O_WRONLY | O_BINARY, 0600);
+ 		}
+ 	      if (out_file_des < 0)
+ 		{

@@ -1,0 +1,185 @@
+Fix race conditions when creating directories and devices in copy-in and copy-pass modes
+
+* src/copyin.c (try_existing_file): Add `existing_mode' argument.
+When `*existing_dir' is set to true, store file mode to `*existing_mode'.
+
+(copyin_directory): Add `existing_mode' argument.
+Change mkdir(2) and mknod(2) calls to use safe permissions.
+When reusing already existing directory, no_chown_flag is not set and
+directory mode is too permissive, chmod it to safe mode before chown(2) call.
+
+(copyin_file): Pass `existing_mode' from try_existing_file() to copyin_directory().
+
+* src/copypass.c (process_copy_pass):
+Change mkdir(2) and mknod(2) calls to use safe permissions.
+When reusing already existing directory, no_chown_flag is not set and
+directory mode is too permissive, chmod it to safe mode before chown(2) call.
+
+--- cpio/src/copyin.c
++++ cpio/src/copyin.c
+@@ -186,11 +186,12 @@ list_file(struct cpio_file_stat* file_hdr, int in_file_des)
+ 
+ static int
+ try_existing_file (struct cpio_file_stat* file_hdr, int in_file_des,
+-		   int *existing_dir)
++		   int *existing_dir, mode_t *existing_mode)
+ {
+   struct stat file_stat;
+ 
+   *existing_dir = false;
++  *existing_mode = 0;
+   if (lstat (file_hdr->c_name, &file_stat) == 0)
+     {
+       if (S_ISDIR (file_stat.st_mode)
+@@ -200,6 +201,7 @@ try_existing_file (struct cpio_file_stat* file_hdr, int in_file_des,
+ 	     we are trying to create, don't complain about
+ 	     it.  */
+ 	  *existing_dir = true;
++	  *existing_mode = file_stat.st_mode;
+ 	  return 0;
+ 	}
+       else if (!unconditional_flag
+@@ -567,7 +569,8 @@ copyin_regular_file (struct cpio_file_stat* file_hdr, int in_file_des)
+ }
+ 
+ static void
+-copyin_directory (struct cpio_file_stat *file_hdr, int existing_dir)
++copyin_directory (struct cpio_file_stat *file_hdr, int existing_dir,
++		  mode_t existing_mode)
+ {
+   int res;			/* Result of various function calls.  */
+ #ifdef HPUX_CDF
+@@ -594,8 +597,18 @@ copyin_directory (struct cpio_file_stat *file_hdr, int existing_dir)
+ #ifdef HPUX_CDF
+   cdf_flag = 0;
+ #endif
+-  if (!existing_dir)
+-
++  if (existing_dir)
++    {
++      if (!no_chown_flag &&
++	  (existing_mode & 077) != 0 &&
++	  chmod (file_hdr->c_name, existing_mode & 07700) < 0)
++	{
++	  chmod_error_details (file_hdr->c_name, existing_mode & 07700);
++	  return;
++	}
++      res = 0;
++    }
++  else
+     {
+ #ifdef HPUX_CDF
+       /* If the directory name ends in a + and is SUID,
+@@ -610,14 +623,12 @@ copyin_directory (struct cpio_file_stat *file_hdr, int existing_dir)
+ 	  cdf_flag = 1;
+ 	}
+ #endif
+-      res = mkdir (file_hdr->c_name, file_hdr->c_mode);
++      res = mkdir (file_hdr->c_name, file_hdr->c_mode & ~077);
+     }
+-  else
+-    res = 0;
+   if (res < 0 && create_dir_flag)
+     {
+       create_all_directories (file_hdr->c_name);
+-      res = mkdir (file_hdr->c_name, file_hdr->c_mode);
++      res = mkdir (file_hdr->c_name, file_hdr->c_mode & ~077);
+     }
+   if (res < 0)
+     {
+@@ -692,12 +703,12 @@ copyin_device (struct cpio_file_stat* file_hdr)
+       return;
+     }
+   
+-  res = mknod (file_hdr->c_name, file_hdr->c_mode,
++  res = mknod (file_hdr->c_name, file_hdr->c_mode & ~077,
+ 	    makedev (file_hdr->c_rdev_maj, file_hdr->c_rdev_min));
+   if (res < 0 && create_dir_flag)
+     {
+       create_all_directories (file_hdr->c_name);
+-      res = mknod (file_hdr->c_name, file_hdr->c_mode,
++      res = mknod (file_hdr->c_name, file_hdr->c_mode & ~077,
+ 	    makedev (file_hdr->c_rdev_maj, file_hdr->c_rdev_min));
+     }
+   if (res < 0)
+@@ -772,9 +783,11 @@ static void
+ copyin_file (struct cpio_file_stat* file_hdr, int in_file_des)
+ {
+   int existing_dir;
++  mode_t existing_mode;
+ 
+   if (!to_stdout_option
+-      && try_existing_file (file_hdr, in_file_des, &existing_dir) < 0)
++      && try_existing_file (file_hdr, in_file_des, &existing_dir,
++			    &existing_mode) < 0)
+     return;
+ 
+   /* Do the real copy or link.  */
+@@ -785,7 +798,7 @@ copyin_file (struct cpio_file_stat* file_hdr, int in_file_des)
+       break;
+ 
+     case CP_IFDIR:
+-      copyin_directory (file_hdr, existing_dir);
++      copyin_directory (file_hdr, existing_dir, existing_mode);
+       break;
+ 
+     case CP_IFCHR:
+--- cpio/src/copypass.c
++++ cpio/src/copypass.c
+@@ -224,7 +224,20 @@ process_copy_pass ()
+ #ifdef HPUX_CDF
+ 	  cdf_flag = 0;
+ #endif
+-	  if (!existing_dir)
++	  if (existing_dir)
++	    {
++	      if (!no_chown_flag &&
++		  (out_file_stat.st_mode & 077) != 0 &&
++		  chmod (output_name.ds_string,
++			 out_file_stat.st_mode & 07700) < 0)
++		{
++		  chmod_error_details (output_name.ds_string,
++				       out_file_stat.st_mode & 07700);
++		  continue;
++		}
++	      res = 0;
++	    }
++	  else
+ 	    {
+ #ifdef HPUX_CDF
+ 	      /* If the directory name ends in a + and is SUID,
+@@ -239,15 +252,13 @@ process_copy_pass ()
+ 		  cdf_flag = 1;
+ 		}
+ #endif
+-	      res = mkdir (output_name.ds_string, in_file_stat.st_mode);
++	      res = mkdir (output_name.ds_string, in_file_stat.st_mode & ~077);
+ 
+ 	    }
+-	  else
+-	    res = 0;
+ 	  if (res < 0 && create_dir_flag)
+ 	    {
+ 	      create_all_directories (output_name.ds_string);
+-	      res = mkdir (output_name.ds_string, in_file_stat.st_mode);
++	      res = mkdir (output_name.ds_string, in_file_stat.st_mode & ~077);
+ 	    }
+ 	  if (res < 0)
+ 	    {
+@@ -290,12 +301,14 @@ process_copy_pass ()
+ 
+ 	  if (link_res < 0)
+ 	    {
+-	      res = mknod (output_name.ds_string, in_file_stat.st_mode,
++	      res = mknod (output_name.ds_string,
++			   in_file_stat.st_mode & ~077,
+ 			   in_file_stat.st_rdev);
+ 	      if (res < 0 && create_dir_flag)
+ 		{
+ 		  create_all_directories (output_name.ds_string);
+-		  res = mknod (output_name.ds_string, in_file_stat.st_mode,
++		  res = mknod (output_name.ds_string,
++			       in_file_stat.st_mode & ~077,
+ 			       in_file_stat.st_rdev);
+ 		}
+ 	      if (res < 0)
