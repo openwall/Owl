@@ -5,6 +5,22 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+(2007/08/30)
+2007/08/30	Package: vim
+SECURITY FIX	Severity: low, indirect, passive
+Backported upstream fix to restrict dangerous functions in modelines.
+Note that vim's modelines have always been disabled on Owl by default
+(with a setting in /usr/share/vim/vimrc) and even this fix is no guarantee
+modelines will be safe to use or the restricted mode safe to rely upon
+in the future.
+Backported upstream fix for format string vulnerability in the
+helptags_one function, which allowed user-assisted remote attackers to
+execute arbitrary code via format string specifiers in a help-tags tag
+in a help file.
+References:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-2438
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-2953
+
 (2007/08/18)
 2007/08/18	kernel
 Updated to Linux 2.4.35-ow2.  The single known security-relevant change
@@ -285,4 +301,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.41 2007/08/18 19:10:01 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.42 2007/08/30 21:16:30 ldv Exp $
