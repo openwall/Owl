@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.27.2.1 2006/10/14 19:51:33 ldv Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.27.2.2 2007/08/30 20:40:29 ldv Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -12,7 +12,7 @@ Name: vim
 %define patchlevel 4
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl2
+Release: owl3
 License: Charityware
 Group: Applications/Editors
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%major.%minor%alpha.tar.bz2
@@ -30,6 +30,8 @@ Patch4: vim-6.4-rh-owl-spec-syntax.diff
 Patch5: vim-6.4-rh-owl-vim-not-vi.diff
 Patch6: vim-6.4-rh-owl-xxd-locale.diff
 Patch7: vim-6.4-rh-paths.diff
+Patch8: vim-6.4-up-format-helptags.diff
+Patch9: vim-6.4-up-modeline.diff
 Requires: mktemp >= 1:1.3.1
 BuildRequires: libtermcap-devel, ncurses-devel, perl
 BuildRequires: sed >= 4.0.9
@@ -121,6 +123,8 @@ test ! -e failed
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
+%patch9 -p1
 rm src/auto/configure
 install -pm644 %_sourcedir/README .
 
@@ -287,6 +291,12 @@ chmod 644 ../runtime/doc/vim2html.pl
 %endif
 
 %changelog
+* Thu Aug 30 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.4.4-owl3
+- Backported upstream patch to disallow system() function in modelines
+(CVE-2007-2438).
+- Backported upstream fix for format string bug in help-tags tag handling
+(CVE-2007-2953).
+
 * Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.4.4-owl2
 - Relocated view and rview from /bin to %_bindir.
 - Removed ex from %_bindir, ex in /bin should be enough.
