@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2007/09/24	Package: pcre
+Updated to 7.4.
+
 2007/08/30	Package: vim
 SECURITY FIX	Severity: none to high, indirect, passive
 Backported upstream fix to restrict dangerous functions in modelines.
@@ -461,4 +464,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.97 2007/09/10 21:37:11 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.98 2007/09/24 23:05:57 ldv Exp $
