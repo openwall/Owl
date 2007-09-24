@@ -1,18 +1,17 @@
-# $Owl: Owl/packages/pcre/pcre.spec,v 1.7 2007/01/14 00:13:39 ldv Exp $
+# $Owl: Owl/packages/pcre/pcre.spec,v 1.8 2007/09/24 23:03:35 ldv Exp $
 
 Summary: Perl-compatible regular expression library.
 Name: pcre
-Version: 7.0
+Version: 7.4
 Release: owl1
-License: BSD
+License: BSD-style
 Group: System Environment/Libraries
 URL: http://www.pcre.org
 Source0: ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-%version.tar.bz2
 Source1: pcre-config.1
-Patch0: pcre-7.0-deb-pcreposix.diff
-Patch1: pcre-6.3-deb-pcretest.diff
-Patch2: pcre-6.4-owl-testdata.diff
-Patch3: pcre-6.6-rh-multilib.diff
+Patch0: pcre-7.4-deb-pcreposix.diff
+Patch1: pcre-7.4-deb-pcretest.diff
+Patch2: pcre-7.4-rh-multilib.diff
 BuildRequires: autoconf, automake, libtool, sed >= 4.1.1
 BuildRoot: /override/%name-%version
 
@@ -44,20 +43,14 @@ This package contains PCRE development libraries and header files.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-
-bzip2 -9k ChangeLog
-
-# Fix configure.in; bundled one is broken.
-sed -i '/^AC_LIBTOOL_WIN32_DLL/ d' configure.ac
 
 %build
-# Regenerate configure script; bundled one is broken.
-aclocal --force
-libtoolize --force
-autoconf --force
+# Replace with autoreconf after toolchain update.
+%undefine __libtoolize
 
-%configure --includedir=%_includedir/pcre --disable-cpp --enable-utf8
+%define docdir %_docdir/%name-%version
+%configure --includedir=%_includedir/pcre --docdir=%docdir \
+	--disable-cpp --enable-utf8
 %__make
 %__make check
 
@@ -68,18 +61,20 @@ rm -rf %buildroot
 # Relocate shared libraries from %_libdir/ to /%_lib/.
 mkdir %buildroot/%_lib
 for f in %buildroot%_libdir/*.so; do
-	t=`objdump -p "$f" |awk '/SONAME/ {print $2}'`
+	t=`objdump -p "$f" |awk '$1=="SONAME"{print $2}'`
 	[ -n "$t" ]
 	ln -sf ../../%_lib/"$t" "$f"
 done
 mv %buildroot%_libdir/*.so.* %buildroot/%_lib/
 
 install -pm644 %_sourcedir/pcre-config.1 %buildroot%_mandir/man1/
+bzip2 -9 %buildroot%docdir/ChangeLog
+install -pm644 HACKING pcredemo.c %buildroot%docdir/
 
 rm %buildroot%_bindir/pcregrep
 rm %buildroot%_mandir/man1/pcregrep.*
 rm %buildroot%_libdir/*.la
-rm %buildroot%_libdir/pkgconfig/libpcrecpp.pc
+rm -r %buildroot%docdir/{README,html,*.txt}
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -89,7 +84,12 @@ rm %buildroot%_libdir/pkgconfig/libpcrecpp.pc
 %_bindir/pcretest
 /%_lib/*.so.*
 %_mandir/man1/pcretest.*
-%doc AUTHORS ChangeLog.bz2 LICENCE NEWS README
+%dir %docdir
+%docdir/AUTHORS
+%docdir/COPYING
+%docdir/ChangeLog.bz2
+%docdir/LICENCE
+%docdir/NEWS
 
 %files devel
 %defattr(-,root,root)
@@ -100,8 +100,14 @@ rm %buildroot%_libdir/pkgconfig/libpcrecpp.pc
 %_includedir/pcre
 %_mandir/man1/pcre-config.*
 %_mandir/man3/*
+%dir %docdir
+%docdir/HACKING
+%docdir/*.c
 
 %changelog
+* Mon Sep 24 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 7.4-owl1
+- Updated to 7.4.
+
 * Sat Jan 13 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 7.0-owl1
 - Updated to 7.0.
 

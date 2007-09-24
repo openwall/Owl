@@ -1,6 +1,6 @@
---- pcre-6.6/pcre-config.in.orig	2006-05-09 09:34:37 +0000
-+++ pcre-6.6/pcre-config.in	2006-05-09 09:36:09 +0000
-@@ -12,13 +12,6 @@
+--- pcre/pcre-config.in
++++ pcre/pcre-config.in
+@@ -12,16 +12,6 @@ if test $# -eq 0; then
        exit 1
  fi
  
@@ -9,12 +9,15 @@
 -  *SunOS*)
 -  libR=" -R@libdir@"
 -  ;;
+-  *BSD*)
+-  libR=" -Wl,-R@libdir@"
+-  ;;
 -esac
 -
  while test $# -gt 0; do
    case "$1" in
    -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
-@@ -52,10 +45,10 @@
+@@ -55,10 +45,10 @@ while test $# -gt 0; do
        echo $includes
        ;;
      --libs-posix)
