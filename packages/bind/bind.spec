@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bind/bind.spec,v 1.19 2007/07/30 17:09:57 ldv Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.20 2007/10/07 21:47:51 ldv Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -7,7 +7,7 @@
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.4
-Release: owl2
+Release: owl3
 License: BSD-style
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -344,6 +344,14 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Sun Oct 07 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.4-owl3
+- Added recursing-file directive to option.conf file, to make
+"rndc recursing" work in "control bind-debug enabled" mode, reported
+by galaxy@owl.
+- Changed startup script to use /dev/urandom as a source of randomness
+during rndc key generation.
+- Replaced "rndc stop" with killproc in startup script.
+
 * Mon Jul 30 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.4-owl2
 - Updated to 9.3.4-P1.  This release fixes a weakness in DNS query
 ids generator which could be used to perform DNS cache poisoning
