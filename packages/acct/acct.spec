@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/acct/acct.spec,v 1.36 2006/08/08 15:09:36 ldv Exp $
+# $Owl: Owl/packages/acct/acct.spec,v 1.37 2007/10/07 20:48:20 ldv Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.4
-Release: owl0.4
+Release: owl0.5
 License: GPL
 Group: Applications/System
 Source0: http://www.physik3.uni-rostock.de/tim/kernel/utils/acct/%name-%version-pre1.tar.gz
@@ -17,6 +17,7 @@ Patch2: acct-6.4pre1-owl-sa-help.diff
 Patch3: acct-6.4pre1-owl-info.diff
 Patch4: acct-6.4pre1-alt-time_t.diff
 Patch5: acct-6.4pre1-alt-program_name.diff
+Patch6: acct-6.4pre1-alt-owl-warnings.diff
 PreReq: /sbin/install-info, grep, coreutils >= 5.3.0, sed >= 4.0.9
 Provides: psacct
 Obsoletes: psacct
@@ -41,6 +42,7 @@ sed -i 's/\<getopt[1]\?\.[hc]\>//g' Makefile.am
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 autoreconf -fis
@@ -111,6 +113,9 @@ fi
 %_infodir/*
 
 %changelog
+* Sun Oct 07 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.4-owl0.5
+- Fixed compilation warnings.
+
 * Tue Aug 08 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.4-owl0.4
 - Fixed "/etc/rc.d/init.d/acct stop" to really turn off accounting.
 
