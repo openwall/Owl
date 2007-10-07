@@ -1,0 +1,246 @@
+# Replace Char* with const Char* where appropriate.
+# Declare functions which doesn't return as NORETURN.
+# Change -h/-L/-V options behaviour to output to stdout
+# instead of stderr and cause program exit without
+# processing any more options.
+# Trim usage text to bare minimum.
+
+--- bzip2-1.0.4.orig/bzip2.c	2007-01-10 22:04:48 +0000
++++ bzip2-1.0.4/bzip2.c	2007-01-10 22:05:04 +0000
+@@ -221,8 +221,11 @@ static void    configError           ( v
+ static void    crcError              ( void )        NORETURN;
+ static void    cleanUpAndFail        ( Int32 )       NORETURN;
+ static void    compressedStreamEOF   ( void )        NORETURN;
++static void    license               ( void )        NORETURN;
++static void    showHelp              ( const Char* ) NORETURN;
++static void    usage                 ( const Char* ) NORETURN;
+ 
+-static void    copyFileName ( Char*, Char* );
++static void    copyFileName ( Char*, const Char* );
+ static void*   myMalloc     ( Int32 );
+ static void    applySavedFileAttrToOutputFile ( IntNative fd );
+ 
+@@ -909,7 +912,7 @@ void configError ( void )
+ 
+ /*---------------------------------------------*/
+ static 
+-void pad ( Char *s )
++void pad ( const Char* s )
+ {
+    Int32 i;
+    if ( (Int32)strlen(s) >= longestFileName ) return;
+@@ -920,7 +923,7 @@ void pad ( Char *s )
+ 
+ /*---------------------------------------------*/
+ static 
+-void copyFileName ( Char* to, Char* from ) 
++void copyFileName ( Char* to, const Char* from ) 
+ {
+    if ( strlen(from) > FILE_NAME_LEN-10 )  {
+       fprintf (
+@@ -941,7 +944,7 @@ void copyFileName ( Char* to, Char* from
+ 
+ /*---------------------------------------------*/
+ static 
+-Bool fileExists ( Char* name )
++Bool fileExists ( const Char* name )
+ {
+    FILE *tmp   = fopen ( name, "rb" );
+    Bool exists = (tmp != NULL);
+@@ -961,7 +964,7 @@ Bool fileExists ( Char* name )
+    security issues, simple this simply behaves like fopen.
+ */
+ static
+-FILE* fopen_output_safely ( Char* name, const char* mode )
++FILE* fopen_output_safely ( const Char* name, const char* mode )
+ {
+ #  if BZ_UNIX
+    FILE*     fp;
+@@ -982,7 +985,7 @@ FILE* fopen_output_safely ( Char* name, 
+   if in doubt, return True
+ --*/
+ static 
+-Bool notAStandardFile ( Char* name )
++Bool notAStandardFile ( const Char* name )
+ {
+    IntNative      i;
+    struct MY_STAT statBuf;
+@@ -999,7 +1002,7 @@ Bool notAStandardFile ( Char* name )
+   rac 11/21/98 see if file has hard links to it
+ --*/
+ static 
+-Int32 countHardLinks ( Char* name )
++Int32 countHardLinks ( const Char* name )
+ {  
+    IntNative      i;
+    struct MY_STAT statBuf;
+@@ -1039,7 +1042,7 @@ struct MY_STAT fileMetaInfo;
+ #endif
+ 
+ static 
+-void saveInputFileMetaInfo ( Char *srcName )
++void saveInputFileMetaInfo ( const Char* srcName )
+ {
+ #  if BZ_UNIX
+    IntNative retVal;
+@@ -1051,7 +1054,7 @@ void saveInputFileMetaInfo ( Char *srcNa
+ 
+ 
+ static 
+-void applySavedTimeInfoToOutputFile ( Char *dstName )
++void applySavedTimeInfoToOutputFile ( const Char *dstName )
+ {
+ #  if BZ_UNIX
+    IntNative      retVal;
+@@ -1084,7 +1087,7 @@ void applySavedFileAttrToOutputFile ( In
+ 
+ /*---------------------------------------------*/
+ static 
+-Bool containsDubiousChars ( Char* name )
++Bool containsDubiousChars ( const Char* name )
+ {
+ #  if BZ_UNIX
+    /* On unix, files can contain any characters and the file expansion
+@@ -1111,7 +1114,7 @@ const Char* unzSuffix[BZ_N_SUFFIX_PAIRS]
+    = { "", "", ".tar", ".tar" };
+ 
+ static 
+-Bool hasSuffix ( Char* s, const Char* suffix )
++Bool hasSuffix ( const Char* s, const Char* suffix )
+ {
+    Int32 ns = strlen(s);
+    Int32 nx = strlen(suffix);
+@@ -1134,7 +1137,7 @@ Bool mapSuffix ( Char* name, 
+ 
+ /*---------------------------------------------*/
+ static 
+-void compress ( Char *name )
++void compress ( const Char* name )
+ {
+    FILE  *inStr;
+    FILE  *outStr;
+@@ -1315,7 +1318,7 @@ void compress ( Char *name )
+ 
+ /*---------------------------------------------*/
+ static 
+-void uncompress ( Char *name )
++void uncompress ( const Char* name )
+ {
+    FILE  *inStr;
+    FILE  *outStr;
+@@ -1513,7 +1516,7 @@ void uncompress ( Char *name )
+ 
+ /*---------------------------------------------*/
+ static 
+-void testf ( Char *name )
++void testf ( const Char* name )
+ {
+    FILE *inStr;
+    Bool allOK;
+@@ -1601,11 +1604,10 @@ void testf ( Char *name )
+ 
+ 
+ /*---------------------------------------------*/
+-static 
++static
+ void license ( void )
+ {
+-   fprintf ( stderr,
+-
++   printf (
+     "bzip2, a block-sorting file compressor.  "
+     "Version %s.\n"
+     "   \n"
+@@ -1622,15 +1624,15 @@ void license ( void )
+     "   \n",
+     BZ2_bzlibVersion()
+    );
++   exit ( 0 );
+ }
+ 
+ 
+ /*---------------------------------------------*/
+ static 
+-void usage ( Char *fullProgName )
++void showHelp ( const Char* fullProgName )
+ {
+-   fprintf (
+-      stderr,
++   printf (
+       "bzip2, a block-sorting file compressor.  "
+       "Version %s.\n"
+       "\n   usage: %s [flags and input files in any order]\n"
+@@ -1666,12 +1668,25 @@ void usage ( Char *fullProgName )
+       BZ2_bzlibVersion(),
+       fullProgName
+    );
++   exit ( 0 );
++}
++
++
++/*---------------------------------------------*/
++static 
++void usage ( const Char* fullProgName )
++{
++   fprintf (
++      stderr,
++      "Try `%s --help' for more information.\n", fullProgName
++   );
++   exit ( 1 );
+ }
+ 
+ 
+ /*---------------------------------------------*/
+ static 
+-void redundant ( Char* flag )
++void redundant ( const Char* flag )
+ {
+    fprintf ( 
+       stderr, 
+@@ -1730,7 +1745,7 @@ Cell *mkCell ( void )
+ 
+ /*---------------------------------------------*/
+ static 
+-Cell *snocString ( Cell *root, Char *name )
++Cell *snocString ( Cell *root, const Char* name )
+ {
+    if (root == NULL) {
+       Cell *tmp = mkCell();
+@@ -1748,7 +1763,7 @@ Cell *snocString ( Cell *root, Char *nam
+ 
+ /*---------------------------------------------*/
+ static 
+-void addFlagsFromEnvVar ( Cell** argList, Char* varName ) 
++void addFlagsFromEnvVar ( Cell** argList, const Char* varName ) 
+ {
+    Int32 i, j, k;
+    Char *envbase, *p;
+@@ -1896,13 +1911,11 @@ IntNative main ( IntNative argc, Char *a
+                case 'V':
+                case 'L': license();            break;
+                case 'v': verbosity++; break;
+-               case 'h': usage ( progName );
+-                         exit ( 0 );
++               case 'h': showHelp ( progName );
+                          break;
+                default:  fprintf ( stderr, "%s: Bad flag `%s'\n",
+                                    progName, aa->name );
+                          usage ( progName );
+-                         exit ( 1 );
+                          break;
+             }
+          }
+@@ -1928,12 +1941,11 @@ IntNative main ( IntNative argc, Char *a
+       if (ISFLAG("--fast"))              blockSize100k = 1;          else
+       if (ISFLAG("--best"))              blockSize100k = 9;          else
+       if (ISFLAG("--verbose"))           verbosity++;                else
+-      if (ISFLAG("--help"))              { usage ( progName ); exit ( 0 ); }
++      if (ISFLAG("--help"))              showHelp ( progName );
+          else
+          if (strncmp ( aa->name, "--", 2) == 0) {
+             fprintf ( stderr, "%s: Bad flag `%s'\n", progName, aa->name );
+             usage ( progName );
+-            exit ( 1 );
+          }
+    }
+ 

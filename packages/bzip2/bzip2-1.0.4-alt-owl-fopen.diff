@@ -1,7 +1,6 @@
-diff -urp bzip2-1.0.3.orig/bzip2recover.c bzip2-1.0.3/bzip2recover.c
---- bzip2-1.0.3.orig/bzip2recover.c	Tue Feb 15 16:20:57 2005
-+++ bzip2-1.0.3/bzip2recover.c	Thu May  5 22:21:08 2005
-@@ -56,6 +56,8 @@
+--- bzip2-1.0.4.orig/bzip2recover.c	2007-01-03 02:00:55 +0000
++++ bzip2-1.0.4/bzip2recover.c	2007-01-10 16:36:32 +0000
+@@ -28,6 +28,8 @@
  #include <errno.h>
  #include <stdlib.h>
  #include <string.h>
@@ -10,7 +9,7 @@ diff -urp bzip2-1.0.3.orig/bzip2recover.c bzip2-1.0.3/bzip2recover.c
  
  
  /* This program records bit locations in the file to be recovered.
-@@ -301,6 +303,24 @@ Bool endsInBz2 ( Char* name )
+@@ -273,6 +275,24 @@ static Bool endsInBz2 ( Char* name )
         name[n-1] == '2');
  }
  
@@ -35,7 +34,7 @@ diff -urp bzip2-1.0.3.orig/bzip2recover.c bzip2-1.0.3/bzip2recover.c
  
  /*---------------------------------------------------*/
  /*---                                             ---*/
-@@ -518,7 +538,7 @@ Int32 main ( Int32 argc, Char** argv )
+@@ -490,7 +510,7 @@ Int32 main ( Int32 argc, Char** argv )
           fprintf ( stderr, "   writing block %d to `%s' ...\n",
                             wrBlock+1, outFileName );
  

@@ -1,21 +1,21 @@
-# $Owl: Owl/packages/bzip2/bzip2.spec,v 1.28 2006/05/30 23:29:38 ldv Exp $
+# $Owl: Owl/packages/bzip2/bzip2.spec,v 1.29 2007/10/07 22:46:41 ldv Exp $
 
 Summary: An extremely powerful file compression utility.
 Name: bzip2
-Version: 1.0.3
-Release: owl4
-License: BSD
+Version: 1.0.4
+Release: owl1
+License: BSD-style
 Group: Applications/File
 URL: http://www.bzip.org
 Source0: http://www.bzip.org/%version/%name-%version.tar.gz
 Source1: bzip2.texi
-Patch0: bzip2-1.0.3-alt-autotools.diff
-Patch1: bzip2-1.0.3-owl-Makefile.diff
-Patch2: bzip2-1.0.3-owl-tmp.diff
-Patch3: bzip2-1.0.3-alt-progname.diff
-Patch4: bzip2-1.0.3-alt-chmod-chown.diff
-Patch5: bzip2-1.0.3-alt-owl-fopen.diff
-Patch6: bzip2-1.0.3-alt-version.diff
+Patch0: bzip2-1.0.4-alt-autotools.diff
+Patch1: bzip2-1.0.4-owl-Makefile.diff
+Patch2: bzip2-1.0.4-alt-owl-versioning.diff
+Patch3: bzip2-1.0.4-owl-bzdiff-tmp.diff
+Patch4: bzip2-1.0.4-alt-owl-fopen.diff
+Patch5: bzip2-1.0.4-alt-const.diff
+Patch6: bzip2-1.0.4-alt-progname.diff
 PreReq: /sbin/ldconfig
 Requires: mktemp >= 1:1.3.1
 %ifnarch x86_64
@@ -71,8 +71,10 @@ rm -rf %buildroot
 
 %makeinstall
 
+%ifnarch x86_64
 # Provide this symlink for backwards compatibility
 ln -s libbz2.so.%version %buildroot%_libdir/libbz2.so.0
+%endif
 
 # Remove unpackaged files
 rm %buildroot{%_bindir,%_mandir/man1}/{bzcmp,bzdiff,bzgrep,bzfgrep,bzegrep,bzmore,bzless}*
@@ -92,7 +94,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc CHANGES LICENSE README Y2K_INFO
+%doc CHANGES LICENSE README
 %_bindir/*
 %_mandir/*/*
 %_libdir/*.so.*
@@ -105,6 +107,11 @@ fi
 %_infodir/bzip2.*
 
 %changelog
+* Sun Oct 07 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.4-owl1
+- Updated to 1.0.4, synced with ALT's bzip2-1.0.4-alt3.
+- Restricted list of global symbols exported by the library to those
+which are mentioned in bzlib.h
+
 * Fri May 20 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.3-owl4
 - Relocated bzcmp, bzdiff, bz*grep, bzmore and bzless to gzip package
 which provides better versions of these utilities now.

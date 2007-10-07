@@ -1,0 +1,170 @@
+--- bzip2-1.0.4.orig/Makefile.am	1970-01-01 00:00:00 +0000
++++ bzip2-1.0.4/Makefile.am	2005-04-09 22:29:21 +0000
+@@ -0,0 +1,43 @@
++AUTOMAKE_OPTIONS = 1.4 foreign
++
++lib_LTLIBRARIES = libbz2.la
++bin_PROGRAMS = bzip2 bzip2recover
++bin_SCRIPTS = bzdiff bzgrep bzmore
++
++bzip2_SOURCES = bzip2.c
++bzip2_LDADD =  libbz2.la
++
++bzip2recover_SOURCES  = bzip2recover.c
++
++include_HEADERS = bzlib.h
++man_MANS = bzdiff.1 bzgrep.1 bzip2.1 bzmore.1
++info_TEXINFOS = bzip2.texi
++
++libbz2_la_SOURCES = \
++	blocksort.c \
++	huffman.c \
++	crctable.c \
++	randtable.c \
++	compress.c \
++	decompress.c \
++	bzlib.c
++libbz2_la_LDFLAGS = -version-info 1:4:0
++
++check-local: samples.sh bzip2
++	./samples.sh
++
++install-exec-hook:
++	$(LN_S) bzip2 $(DESTDIR)$(bindir)/bunzip2
++	$(LN_S) bzip2 $(DESTDIR)$(bindir)/bzcat
++	$(LN_S) bzdiff $(DESTDIR)$(bindir)/bzcmp
++	$(LN_S) bzgrep $(DESTDIR)$(bindir)/bzegrep
++	$(LN_S) bzgrep $(DESTDIR)$(bindir)/bzfgrep
++	$(LN_S) bzmore $(DESTDIR)$(bindir)/bzless
++
++install-data-hook:
++	echo '.so man1/bzip2.1' >$(DESTDIR)$(mandir)/man1/bunzip2.1
++	echo '.so man1/bzip2.1' >$(DESTDIR)$(mandir)/man1/bzcat.1
++	echo '.so man1/bzdiff.1' >$(DESTDIR)$(mandir)/man1/bzcmp.1
++	echo '.so man1/bzgrep.1' >$(DESTDIR)$(mandir)/man1/bzegrep.1
++	echo '.so man1/bzgrep.1' >$(DESTDIR)$(mandir)/man1/bzfgrep.1
++	echo '.so man1/bzmore.1' >$(DESTDIR)$(mandir)/man1/bzless.1
+--- bzip2-1.0.4.orig/bzip2.c	2007-01-03 02:00:55 +0000
++++ bzip2-1.0.4/bzip2.c	2007-01-10 21:57:27 +0000
+@@ -47,6 +47,10 @@
+   Some stuff for all platforms.
+ --*/
+ 
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+--- bzip2-1.0.4.orig/bzip2recover.c	2007-01-03 02:00:55 +0000
++++ bzip2-1.0.4/bzip2recover.c	2007-01-10 16:32:35 +0000
+@@ -20,6 +20,10 @@
+ /* This program is a complete hack and should be rewritten properly.
+ 	 It isn't very complicated. */
+ 
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
+ #include <stdio.h>
+ #include <errno.h>
+ #include <stdlib.h>
+--- bzip2-1.0.4.orig/bzlib_private.h	2007-01-03 02:00:55 +0000
++++ bzip2-1.0.4/bzlib_private.h	2007-01-10 16:32:35 +0000
+@@ -22,6 +22,10 @@
+ #ifndef _BZLIB_PRIVATE_H
+ #define _BZLIB_PRIVATE_H
+ 
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
+ #include <stdlib.h>
+ 
+ #ifndef BZ_NO_STDIO
+--- bzip2-1.0.4.orig/configure.ac	1970-01-01 00:00:00 +0000
++++ bzip2-1.0.4/configure.ac	2005-04-09 22:29:21 +0000
+@@ -0,0 +1,18 @@
++AC_PREREQ(2.53)
++AC_INIT([bzip2],[1.0.3],[Julian Seward <jseward@bzip.org>])
++AC_CONFIG_SRCDIR([bzlib.c])
++AM_CONFIG_HEADER([config.h])
++
++AC_GNU_SOURCE
++AC_CANONICAL_SYSTEM
++AC_PROG_LIBTOOL
++AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
++
++AC_PROG_CC
++AC_SYS_LARGEFILE
++
++AC_PROG_INSTALL
++AC_PROG_LN_S
++
++AC_CONFIG_FILES([Makefile])
++AC_OUTPUT
+--- bzip2-1.0.4.orig/dlltest.c	2007-01-03 02:00:55 +0000
++++ bzip2-1.0.4/dlltest.c	2007-01-10 16:32:35 +0000
+@@ -7,6 +7,10 @@
+    usage: minibz2 [-d] [-{1,2,..9}] [[srcfilename] destfilename]
+ */
+ 
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
+ #define BZ_IMPORT
+ #include <stdio.h>
+ #include <stdlib.h>
+--- bzip2-1.0.4.orig/mk251.c	2007-01-03 02:00:55 +0000
++++ bzip2-1.0.4/mk251.c	2007-01-10 16:32:35 +0000
+@@ -20,6 +20,10 @@
+    ------------------------------------------------------------------ */
+ 
+ 
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
+ #include <stdio.h>
+ 
+ int main ()
+--- bzip2-1.0.4.orig/samples.sh	1970-01-01 00:00:00 +0000
++++ bzip2-1.0.4/samples.sh	2005-04-09 22:29:21 +0000
+@@ -0,0 +1,9 @@
++#!/bin/sh -ex
++
++cat words1
++./bzip2 -1  < sample1.ref > sample1.rb2 && cmp sample1.bz2 sample1.rb2 
++./bzip2 -2  < sample2.ref > sample2.rb2 && cmp sample2.bz2 sample2.rb2
++./bzip2 -3  < sample3.ref > sample3.rb2 && cmp sample3.bz2 sample3.rb2
++./bzip2 -d  < sample1.bz2 > sample1.tst && cmp sample1.tst sample1.ref
++./bzip2 -d  < sample2.bz2 > sample2.tst && cmp sample2.tst sample2.ref
++./bzip2 -ds < sample3.bz2 > sample3.tst && cmp sample3.tst sample3.ref
+--- bzip2-1.0.4.orig/spewG.c	2007-01-03 02:00:55 +0000
++++ bzip2-1.0.4/spewG.c	2007-01-10 16:32:35 +0000
+@@ -24,7 +24,9 @@
+ 	 ------------------------------------------------------------------ */
+ 
+ 
+-#define _FILE_OFFSET_BITS 64
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+--- bzip2-1.0.4.orig/unzcrash.c	2007-01-03 02:00:55 +0000
++++ bzip2-1.0.4/unzcrash.c	2007-01-10 16:32:35 +0000
+@@ -28,6 +28,10 @@
+    ------------------------------------------------------------------ */
+ 
+ 
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
+ #include <stdio.h>
+ #include <assert.h>
+ #include "bzlib.h"
