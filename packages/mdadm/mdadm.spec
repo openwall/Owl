@@ -1,16 +1,19 @@
-# $Owl: Owl/packages/mdadm/mdadm.spec,v 1.2 2007/10/07 00:48:27 solar Exp $
+# $Owl: Owl/packages/mdadm/mdadm.spec,v 1.3 2007/10/07 01:22:03 solar Exp $
 
 Summary: mdadm is used for controlling Linux md devices (aka RAID arrays).
 Name: mdadm
 Version: 2.6.3
+%define version_howto 1.1
 Release: owl1
 License: GPL
 Group: System Environment/Base
 URL: http://neil.brown.name/blog/mdadm
 # http://www.cse.unsw.edu.au/~neilb/source/mdadm/mdadm-%version.tgz (no bz2)
 Source0: ftp://ftp.kernel.org/pub/linux/utils/raid/mdadm/mdadm-%version.tar.bz2
-Source1: %name.conf
-#Source2: %name.init
+# http://unthought.net/Software-RAID.HOWTO/Software-RAID.HOWTO.txt
+Source1: Software-RAID.HOWTO-%version_howto.txt.bz2
+Source2: %name.conf
+#Source3: %name.init
 Obsoletes: mdctl, raidtools
 BuildRequires: groff
 BuildRoot: /override/%name-%version
@@ -31,6 +34,8 @@ be used to help with some common tasks).
 %define _exec_prefix %{nil}
 
 bzip2 -9fk ChangeLog
+install -pm 644 %_sourcedir/Software-RAID.HOWTO-%version_howto.txt.bz2 \
+	Software-RAID.HOWTO.txt.bz2
 
 %build
 %__make \
@@ -70,6 +75,7 @@ install -Dp -m644 %_sourcedir/%name.conf %buildroot%_sysconfdir/%name.conf
 %files
 %defattr(-,root,root)
 %doc ChangeLog.bz2 README.initramfs COPYING
+%doc Software-RAID.HOWTO.*
 %attr(0700,root,root) %_sbindir/mdadm
 %attr(0600,root,root) %config(noreplace,missingok) %_sysconfdir/%name.conf
 %_mandir/man*/md*
@@ -80,6 +86,7 @@ install -Dp -m644 %_sourcedir/%name.conf %buildroot%_sysconfdir/%name.conf
 - Changes to the package description.
 - Use .tar.bz2's off kernel.org rather than original .tgz's.
 - Corrected some comments in mdadm.conf and adjusted them for Owl specifics.
+- Added the Software-RAID HOWTO (version 1.1, June 2004).
 
 * Tue Aug 28 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.6.3-gm0
 - Initial build (missing mdadm.init).
