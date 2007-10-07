@@ -1,27 +1,28 @@
-# $Owl: Owl/packages/mdadm/mdadm.spec,v 1.1 2007/10/07 00:03:28 solar Exp $
+# $Owl: Owl/packages/mdadm/mdadm.spec,v 1.2 2007/10/07 00:48:27 solar Exp $
 
-Summary: mdadm is used for controlling Linux md devices (aka RAID arrays)
+Summary: mdadm is used for controlling Linux md devices (aka RAID arrays).
 Name: mdadm
 Version: 2.6.3
-Release: gm0
+Release: owl1
 License: GPL
-Group: Utilities/System
+Group: System Environment/Base
 URL: http://neil.brown.name/blog/mdadm
-Source0: http://www.cse.unsw.edu.au/~neilb/source/mdadm/mdadm-%version.tgz
+# http://www.cse.unsw.edu.au/~neilb/source/mdadm/mdadm-%version.tgz (no bz2)
+Source0: ftp://ftp.kernel.org/pub/linux/utils/raid/mdadm/mdadm-%version.tar.bz2
 Source1: %name.conf
 #Source2: %name.init
-#Patch0: <placeholder>
+Obsoletes: mdctl, raidtools
 BuildRequires: groff
 BuildRoot: /override/%name-%version
-Obsoletes: mdctl, raidtools
 
 %description
 mdadm is a program that can be used to create, manage, and monitor Linux
-MD (Software RAID) devices.  As such it provides similar functionality
-to the raidtools packages.  The particular differences to raidtools is
-that mdadm is a single program, and it can perform (almost) all
-functions without a configuration file (that a config file can be used
-to help with some common tasks).
+MD (Software RAID) devices.  As such it provides functionality similar
+to that of the raidtools package, which may be found on older versions
+of Owl and on some other Linux systems.  The particular differences to
+raidtools are that mdadm is a single program and it can perform (almost)
+all functions without a configuration file (yet a configuration file can
+be used to help with some common tasks).
 
 %prep
 %setup -q
@@ -33,19 +34,19 @@ bzip2 -9fk ChangeLog
 
 %build
 %__make \
-	'CXFLAGS=%optflags' \
-	'SYSCONFDIR=%_sysconfdir' \
-	'CONFFILE=%_sysconfdir/%name.conf' \
-	'CONFFILE2=/dev/null'
+	CXFLAGS='%optflags' \
+	SYSCONFDIR=%_sysconfdir \
+	CONFFILE=%_sysconfdir/%name.conf \
+	CONFFILE2=/dev/null
 
 %install
-rm -rf -- '%buildroot'
+rm -rf %buildroot
 %__make install \
-	'DESTDIR=%buildroot' \
-	'MANDIR=%_mandir' \
-	'BINDIR=%_sbindir'
+	DESTDIR=%buildroot \
+	MANDIR=%_mandir \
+	BINDIR=%_sbindir
 
-install -Dp -m644 '%_sourcedir/%name.conf' '%buildroot%_sysconfdir/%name.conf'
+install -Dp -m644 %_sourcedir/%name.conf %buildroot%_sysconfdir/%name.conf
 
 %post
 ## this block will be enabled once we have a working mdadm.init script
@@ -67,12 +68,18 @@ install -Dp -m644 '%_sourcedir/%name.conf' '%buildroot%_sysconfdir/%name.conf'
 #fi
 
 %files
-%defattr(0644,root,root,0755)
+%defattr(-,root,root)
 %doc ChangeLog.bz2 README.initramfs COPYING
 %attr(0700,root,root) %_sbindir/mdadm
 %attr(0600,root,root) %config(noreplace,missingok) %_sysconfdir/%name.conf
 %_mandir/man*/md*
 
 %changelog
+* Sun Oct 07 2007 Solar Designer <solar-at-owl.openwall.com> 2.6.3-owl1
+- Assorted changes to meet the current Owl conventions.
+- Changes to the package description.
+- Use .tar.bz2's off kernel.org rather than original .tgz's.
+- Corrected some comments in mdadm.conf and adjusted them for Owl specifics.
+
 * Tue Aug 28 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.6.3-gm0
 - Initial build (missing mdadm.init).
