@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.18 2007/10/07 10:27:54 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.19 2007/10/07 10:32:46 solar Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
@@ -12,7 +12,7 @@ Source: http://download.insecure.org/nmap/dist/%srcname.tar.bz2
 Patch0: nmap-4.11-alt-autoheader.diff
 Patch1: nmap-4.20-alt-owl-drop-priv.diff
 Patch2: nmap-4.01-alt-owl-dot-dir.diff
-Patch3: nmap-4.20-alt-fileexistsandisreadable.diff
+Patch3: nmap-4.20-alt-owl-fileexistsandisreadable.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
 BuildRequires: openssl-devel >= 0.9.7g-owl1
