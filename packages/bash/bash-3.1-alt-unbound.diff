@@ -1,0 +1,65 @@
+From: Alexey Tourbin <at at altlinux.ru>
+Date: Tue, 6 Mar 2007 15:55:28 +0300
+Subject: [PATCH] alt-unbound.patch: added missing check for unbound variables
+
+In -u mode, it is possible to bypass unbound variable check
+in certain cases of brace expansion, namely in pattern removal,
+substring expansion, and pattern substitution:
+
+$ bash -efu -c 'unset var; echo ${var#}'
+
+$ bash -efu -c 'unset var; echo ${var%}'
+
+$ bash -efu -c 'unset var; echo ${var:1:2}'
+
+$ bash -efu -c 'unset var; echo ${var/a/b}'
+
+$
+
+In the following patch, I duplicate unbound variable check from
+'case RBRACE:' of parameter_brace_expand().  With this patch,
+things now work as expected:
+
+$ bash -efu -c 'unset var; echo ${var#}'
+bash: var: unbound variable
+$ bash -efu -c 'unset var; echo ${var%}'
+bash: var: unbound variable
+$ bash -efu -c 'unset var; echo ${var:1:2}'
+bash: var: unbound variable
+$ bash -efu -c 'unset var; echo ${var/a/b}'
+bash: var: unbound variable
+$
+--- bash-3.1/subst.c~
++++ bash-3.1/subst.c
+@@ -6034,6 +6034,15 @@ parameter_brace_expand (string, indexp, quoted, quoted_dollar_atp, contains_doll
+   *indexp = sindex;
+ 
+   /* If this is a substring spec, process it and add the result. */
++  if ((want_substring || want_patsub) && var_is_set == 0 && unbound_vars_is_error)
++    {
++      err_unboundvar (name);
++      FREE (value);
++      FREE (temp);
++      free (name);
++      last_command_exit_value = EXECUTION_FAILURE;
++      return (interactive_shell ? &expand_wdesc_error : &expand_wdesc_fatal);
++    }
+   if (want_substring)
+     {
+       temp1 = parameter_brace_substring (name, temp, value, quoted);
+@@ -6093,6 +6102,15 @@ parameter_brace_expand (string, indexp, quoted, quoted_dollar_atp, contains_doll
+ 
+     case '#':	/* ${param#[#]pattern} */
+     case '%':	/* ${param%[%]pattern} */
++      if (var_is_set == 0 && unbound_vars_is_error)
++	{
++	  err_unboundvar (name);
++	  FREE (value);
++	  FREE (temp);
++	  free (name);
++	  last_command_exit_value = EXECUTION_FAILURE;
++	  return (interactive_shell ? &expand_wdesc_error : &expand_wdesc_fatal);
++	}
+       if (value == 0 || *value == '\0' || temp == 0 || *temp == '\0')
+ 	{
+ 	  FREE (value);

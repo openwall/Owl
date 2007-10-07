@@ -1,0 +1,11 @@
+--- bash/builtins/enable.def
++++ bash/builtins/enable.def
+@@ -295,7 +295,7 @@ dyn_load_builtin (list, flags, filename)
+ #if defined (_AIX)
+   handle = dlopen (filename, RTLD_NOW|RTLD_GLOBAL);
+ #else
+-  handle = dlopen (filename, RTLD_LAZY);
++  handle = dlopen (filename, RTLD_NOW);
+ #endif /* !_AIX */
+ 
+   if (handle == 0)

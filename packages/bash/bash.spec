@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.41 2007/02/25 13:23:54 ldv Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.42 2007/10/07 21:26:29 ldv Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
 %define bash_version 3.1
 %define bash_patchlevel 17
 Version: %bash_version.%bash_patchlevel
-Release: owl2
+Release: owl3
 Group: System Environment/Shells
 License: GPL
 Source0: ftp://ftp.gnu.org/gnu/bash/bash-%bash_version.tar.gz
@@ -19,12 +19,15 @@ Patch11: bash-3.1-owl-tmp.diff
 Patch12: bash-3.1-owl-vitmp.diff
 Patch13: bash-3.1-owl-defaults.diff
 Patch14: bash-3.1-alt-man.diff
+Patch15: bash-3.1-alt-unbound.diff
+Patch16: bash-3.1-alt-dlopen.diff
 Patch20: bash-3.1-rh-login.diff
 Patch21: bash-3.1-rh-ulimit.diff
 Patch22: bash-3.1-rh-setlocale.diff
 Patch23: bash-3.1-rh-read-memleak.diff
 Patch24: bash-3.1-rh-alt-requires.diff
 Patch25: bash-3.1-rh-man.diff
+Patch26: bash-3.1-rh-info-tags.diff
 Patch30: bash-3.1-deb-random.diff
 Patch31: bash-3.1-deb-doc.diff
 Patch100: readline-5.1-up-pl1.diff
@@ -46,14 +49,23 @@ incorporates useful features from the Korn shell (ksh) and the C shell
 
 Documentation for bash is contained in the bash-doc package.
 
+%package devel
+Summary: Bash loadable builtins development files
+Group: Development/Libraries
+Requires: %name = %version-%release
+
+%description devel
+GNU Bourne Again shell (bash) can dynamically load new builtin commands.
+This package contains header files necessary to compile custom builtins.
+
 %package doc
-Group: Documentation
 Summary: Documentation for the GNU Bourne Again shell (bash).
+Group: Documentation
 Obsoletes: bash2-doc
 
 %description doc
-The bash-doc package contains documentation for the GNU Bourne
-Again shell version %version.
+This package contains documentation for the GNU Bourne Again shell
+version %version.
 
 %prep
 %setup -q -a1 -n bash-%bash_version
@@ -63,12 +75,15 @@ Again shell version %version.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
+%patch16 -p1
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
 %patch23 -p1
 %patch24 -p1
 %patch25 -p1
+%patch26 -p1
 %patch30 -p1
 %patch31 -p1
 pushd lib/readline
@@ -121,6 +136,30 @@ export \
 rm -rf %buildroot
 
 %makeinstall
+
+# Install header files necessary to compile custom builtins.
+mkdir -p %buildroot%_includedir/bash
+for f in examples/loadables/*.c; do
+	%__cc -MM -DHAVE_CONFIG_H -DSHELL -Iexamples/loadables -I. -Ilib -Ibuiltins -Iinclude "$f"
+done |
+	tr -d '\:' |
+	tr -s '[:space:]' '\n' |
+	fgrep .h |
+	fgrep -v examples/loadables/ |
+	sort -u |
+	while read f; do
+		install -pm644 "$f" %buildroot%_includedir/bash/
+	done
+# Prepare sample Makefile for building custom builtins.
+cat >examples/loadables/Makefile <<'EOF'
+CC = %__cc
+CPPFLAGS = -DHAVE_CONFIG_H -I. -I%_includedir/bash
+CFLAGS = %optflags %optflags_shared
+LDFLAGS = -shared
+
+%%.so: %%.c
+	$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
+EOF
 
 mkdir -p %buildroot/bin
 mv %buildroot%_bindir/bash %buildroot/bin/
@@ -200,11 +239,23 @@ fi
 %_bindir/bashbug
 %_datadir/locale/en@*/LC_MESSAGES/bash.mo
 
+%files devel
+%defattr(-,root,root)
+%_includedir/bash
+%doc examples/loadables
+
 %files doc
 %defattr(-,root,root)
 %doc doc/*.ps* doc/*.html doc/article.txt*
 
 %changelog
+* Sun Oct 07 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.17-owl3
+- Added missing check for unbound variables (Alexey Tourbin).
+- In "enable" builtin, set RTLD_NOW flag in dlopen(3) call.
+- Imported FC fix for out of date tags (RH#150118).
+- Packaged -devel subpackage with header files necessary to compile
+custom builtins.
+
 * Wed Feb 21 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.17-owl2
 - Fixed redundant RLIMIT_LOCKS in "ulimit -a", reported by galaxy@owl.
 
