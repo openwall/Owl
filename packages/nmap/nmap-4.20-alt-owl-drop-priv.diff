@@ -93,8 +93,8 @@ diff -urpN nmap-4.20-autoheader/configure.ac nmap-4.20/configure.ac
  dnl AC_TYPE_SIGNAL
 diff -urpN nmap-4.20-autoheader/droppriv.cc nmap-4.20/droppriv.cc
 --- nmap-4.20-autoheader/droppriv.cc	1970-01-01 00:00:00 +0000
-+++ nmap-4.20/droppriv.cc	2007-10-07 09:57:19 +0000
-@@ -0,0 +1,90 @@
++++ nmap-4.20/droppriv.cc	2007-10-07 11:38:57 +0000
+@@ -0,0 +1,96 @@
 +#include "nmap.h"
 +#include "droppriv.h"
 +
@@ -129,6 +129,12 @@ diff -urpN nmap-4.20-autoheader/droppriv.cc nmap-4.20/droppriv.cc
 +# define NMAP_CHROOT_RESOLV NULL
 +#endif
 +
++const char *
++drop_priv_dir(void)
++{
++	return o.noresolve ? NMAP_CHROOT_EMPTY : NMAP_CHROOT_RESOLV;
++}
++
 +void
 +drop_priv(void)
 +{
@@ -161,7 +167,7 @@ diff -urpN nmap-4.20-autoheader/droppriv.cc nmap-4.20/droppriv.cc
 +	if (!pw->pw_uid)
 +		fatal("user \"%s\" shouldn't be root", user);
 +
-+	dir = o.noresolve ? NMAP_CHROOT_EMPTY : NMAP_CHROOT_RESOLV;
++	dir = drop_priv_dir();
 +	if (dir && (chroot(dir) || chdir("/")))
 +		fatal("chroot to \"%s\" failed", dir);
 +
@@ -187,11 +193,12 @@ diff -urpN nmap-4.20-autoheader/droppriv.cc nmap-4.20/droppriv.cc
 +#endif /* NMAP_USER */
 diff -urpN nmap-4.20-autoheader/droppriv.h nmap-4.20/droppriv.h
 --- nmap-4.20-autoheader/droppriv.h	1970-01-01 00:00:00 +0000
-+++ nmap-4.20/droppriv.h	2007-10-07 10:07:38 +0000
-@@ -0,0 +1,12 @@
++++ nmap-4.20/droppriv.h	2007-10-07 11:39:28 +0000
+@@ -0,0 +1,13 @@
 +#ifndef NMAP_DROPPRIV_H__
 +#define NMAP_DROPPRIV_H__
 +
++extern const char *drop_priv_dir(void);
 +extern void drop_priv(void);
 +extern int nmap_services_init(void);
 +extern int nmap_protocols_init(void);
@@ -203,7 +210,7 @@ diff -urpN nmap-4.20-autoheader/droppriv.h nmap-4.20/droppriv.h
 +#endif /* NMAP_DROPPRIV_H__ */
 diff -urpN nmap-4.20-autoheader/nmap.cc nmap-4.20/nmap.cc
 --- nmap-4.20-autoheader/nmap.cc	2006-10-14 06:03:54 +0000
-+++ nmap-4.20/nmap.cc	2007-10-07 11:24:23 +0000
++++ nmap-4.20/nmap.cc	2007-10-07 11:40:01 +0000
 @@ -106,6 +106,7 @@
  #include "scan_engine.h"
  #include "idle_scan.h"
@@ -212,21 +219,20 @@ diff -urpN nmap-4.20-autoheader/nmap.cc nmap-4.20/nmap.cc
  #include "NmapOps.h"
  #include "MACLookup.h"
  #include "nmap_tty.h"
-@@ -1098,9 +1099,11 @@ int nmap_main(int argc, char *argv[]) {
+@@ -1098,9 +1099,10 @@ int nmap_main(int argc, char *argv[]) {
    if (pre_host_timeout != -1) o.host_timeout = pre_host_timeout;
  
  
 -  if (o.osscan == OS_SCAN_SYS_1_ONLY)
 +  if (o.osscan == OS_SCAN_SYS_1_ONLY ||
-+      (o.osscan != OS_SCAN_SYS_2_ONLY &&
-+      (o.noresolve ? NMAP_CHROOT_EMPTY : NMAP_CHROOT_RESOLV)))
++      (o.osscan != OS_SCAN_SYS_2_ONLY && drop_priv_dir()))
      o.reference_FPs1 = parse_fingerprint_reference_file("nmap-os-fingerprints");
 -  else if (o.osscan == OS_SCAN_DEFAULT || o.osscan == OS_SCAN_SYS_2_ONLY)
 +  if (o.osscan == OS_SCAN_DEFAULT || o.osscan == OS_SCAN_SYS_2_ONLY)
      o.reference_FPs = parse_fingerprint_reference_file("nmap-os-db");
  
    o.ValidateOptions();
-@@ -1217,6 +1220,8 @@ int nmap_main(int argc, char *argv[]) {
+@@ -1217,6 +1219,8 @@ int nmap_main(int argc, char *argv[]) {
        o.sendpref = PACKET_SEND_ETH_STRONG;
    }
  
