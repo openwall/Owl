@@ -176,12 +176,6 @@ a makewhatis cron job.  Don't process cat (preformatted) pages in
 makewhatis.
 
 
-	mdadm.
-
-[PRIORITY: low]
-Replace raidtools with mdadm.
-
-
 	mtree.
 
 [PRIORITY: low]
@@ -449,4 +443,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.176 2007/08/17 00:43:58 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.177 2007/10/07 01:49:23 solar Exp $

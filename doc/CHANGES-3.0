@@ -12,6 +12,10 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2007/10/07	Packages: mdadm, raidtools;
+		Owl/build/installorder.conf
+Replaced raidtools with mdadm.
+
 2007/09/24	Package: pcre
 Updated to 7.4.
 
@@ -464,4 +468,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.98 2007/09/24 23:05:57 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.99 2007/10/07 01:49:23 solar Exp $
