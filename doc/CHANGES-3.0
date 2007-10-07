@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2007/10/07	Package: bzip2
+Updated to 1.0.4.
+
 2007/10/07	Package: nmap
 Updated to 4.20.
 
@@ -471,4 +474,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.100 2007/10/07 10:37:44 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.101 2007/10/07 22:47:15 ldv Exp $
