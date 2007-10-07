@@ -203,7 +203,7 @@ diff -urpN nmap-4.20-autoheader/droppriv.h nmap-4.20/droppriv.h
 +#endif /* NMAP_DROPPRIV_H__ */
 diff -urpN nmap-4.20-autoheader/nmap.cc nmap-4.20/nmap.cc
 --- nmap-4.20-autoheader/nmap.cc	2006-10-14 06:03:54 +0000
-+++ nmap-4.20/nmap.cc	2007-10-07 09:36:25 +0000
++++ nmap-4.20/nmap.cc	2007-10-07 11:24:23 +0000
 @@ -106,6 +106,7 @@
  #include "scan_engine.h"
  #include "idle_scan.h"
@@ -212,7 +212,21 @@ diff -urpN nmap-4.20-autoheader/nmap.cc nmap-4.20/nmap.cc
  #include "NmapOps.h"
  #include "MACLookup.h"
  #include "nmap_tty.h"
-@@ -1217,6 +1218,8 @@ int nmap_main(int argc, char *argv[]) {
+@@ -1098,9 +1099,11 @@ int nmap_main(int argc, char *argv[]) {
+   if (pre_host_timeout != -1) o.host_timeout = pre_host_timeout;
+ 
+ 
+-  if (o.osscan == OS_SCAN_SYS_1_ONLY)
++  if (o.osscan == OS_SCAN_SYS_1_ONLY ||
++      (o.osscan != OS_SCAN_SYS_2_ONLY &&
++      (o.noresolve ? NMAP_CHROOT_EMPTY : NMAP_CHROOT_RESOLV)))
+     o.reference_FPs1 = parse_fingerprint_reference_file("nmap-os-fingerprints");
+-  else if (o.osscan == OS_SCAN_DEFAULT || o.osscan == OS_SCAN_SYS_2_ONLY)
++  if (o.osscan == OS_SCAN_DEFAULT || o.osscan == OS_SCAN_SYS_2_ONLY)
+     o.reference_FPs = parse_fingerprint_reference_file("nmap-os-db");
+ 
+   o.ValidateOptions();
+@@ -1217,6 +1220,8 @@ int nmap_main(int argc, char *argv[]) {
        o.sendpref = PACKET_SEND_ETH_STRONG;
    }
  
