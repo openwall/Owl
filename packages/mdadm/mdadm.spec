@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/mdadm/mdadm.spec,v 1.3 2007/10/07 01:22:03 solar Exp $
+# $Owl: Owl/packages/mdadm/mdadm.spec,v 1.4 2007/10/07 01:40:17 solar Exp $
 
 Summary: mdadm is used for controlling Linux md devices (aka RAID arrays).
 Name: mdadm
@@ -72,6 +72,17 @@ install -Dp -m644 %_sourcedir/%name.conf %buildroot%_sysconfdir/%name.conf
 #	fi
 #fi
 
+%triggerun -- raidtools
+if [ -e /etc/raidtab ]; then
+	cat << EOF
+Warning: the raidtools package is being replaced with mdadm, so your
+/etc/raidtab will no longer be used.
+
+Install will continue in 10 seconds...
+EOF
+	sleep 10
+fi
+
 %files
 %defattr(-,root,root)
 %doc ChangeLog.bz2 README.initramfs COPYING
@@ -87,6 +98,7 @@ install -Dp -m644 %_sourcedir/%name.conf %buildroot%_sysconfdir/%name.conf
 - Use .tar.bz2's off kernel.org rather than original .tgz's.
 - Corrected some comments in mdadm.conf and adjusted them for Owl specifics.
 - Added the Software-RAID HOWTO (version 1.1, June 2004).
+- Added a trigger and warning on upgrades from raidtools with /etc/raidtab.
 
 * Tue Aug 28 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.6.3-gm0
 - Initial build (missing mdadm.init).
