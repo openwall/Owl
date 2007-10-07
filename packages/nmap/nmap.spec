@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.17 2006/06/25 12:17:54 ldv Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.18 2007/10/07 10:27:54 solar Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
-Version: 4.11
+Version: 4.20
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -10,10 +10,9 @@ URL: http://www.insecure.org/nmap/
 %define srcname nmap-%version
 Source: http://download.insecure.org/nmap/dist/%srcname.tar.bz2
 Patch0: nmap-4.11-alt-autoheader.diff
-Patch1: nmap-4.01-alt-owl-libpcap.diff
-Patch2: nmap-4.11-alt-owl-drop-priv.diff
-Patch3: nmap-4.01-alt-owl-dot-dir.diff
-Patch4: nmap-4.02-alt-fileexistsandisreadable.diff
+Patch1: nmap-4.20-alt-owl-drop-priv.diff
+Patch2: nmap-4.01-alt-owl-dot-dir.diff
+Patch3: nmap-4.20-alt-fileexistsandisreadable.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
 BuildRequires: openssl-devel >= 0.9.7g-owl1
@@ -35,7 +34,6 @@ and more.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 bzip2 -9 CHANGELOG
 
 %build
@@ -65,6 +63,9 @@ grep -q ^nmap: /etc/passwd ||
 %_datadir/nmap
 
 %changelog
+* Sun Oct 07 2007 Solar Designer <solar-at-owl.openwall.com> 4.20-owl1
+- Updated to 4.20.
+
 * Sun Jun 25 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.11-owl1
 - Updated to 4.11.
 
