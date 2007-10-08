@@ -535,7 +535,7 @@ diff -upk.orig cvs-1.11.20.orig/src/filesubr.c cvs-1.11.20/src/filesubr.c
      fd = mkstemp (fn);
  
      /* a NULL return will be interpreted by callers as an error and
-@@ -771,20 +772,17 @@ FILE *cvs_temp_file (filename)
+@@ -771,24 +772,21 @@ FILE *cvs_temp_file (filename)
  	/* Attempt to close and unlink the file since mkstemp returned
  	 * sucessfully and we believe it's been created and opened.
  	 */
@@ -551,7 +551,11 @@ diff -upk.orig cvs-1.11.20.orig/src/filesubr.c cvs-1.11.20/src/filesubr.c
      }
  
 +    save_errno = errno;
-     if (fp == NULL) free (fn);
+     if (fp == NULL)
+     {
+ 	free (fn);
+ 	fn = NULL;
+     }
 -    /* mkstemp is defined to open mode 0600 using glibc 2.0.7+ */
 -    /* FIXME - configure can probably tell us which version of glibc we are
 -     * linking to and not chmod for 2.0.7+

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/cvs/cvs.spec,v 1.32 2006/04/04 00:15:07 ldv Exp $
+# $Owl: Owl/packages/cvs/cvs.spec,v 1.33 2007/10/08 23:21:18 ldv Exp $
 
 Summary: A version control system.
 Name: cvs
-Version: 1.11.21
-Release: owl2
+Version: 1.11.22
+Release: owl1
 License: GPL
 Group: Development/Tools
 URL: http://www.nongnu.org/cvs/
@@ -35,6 +35,7 @@ Patch23: cvs-1.11.20-deb-alt-LocalKeyword-KeywordExpand.diff
 Patch24: cvs-1.11.20-alt-noreadlock.diff
 Patch25: cvs-1.11.20-alt-ssh.diff
 Patch26: cvs-1.11.20-alt-testsuit-log.diff
+Patch27: cvs-1.11.22-alt-get_cvs_password.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRequires: mktemp >= 1:1.3.1, sed >= 4.1.1, zlib-devel
@@ -113,6 +114,7 @@ unset r
 %patch24 -p1
 %patch25 -p1
 %patch26 -p1
+%patch27 -p1
 
 # Second part of the tmp handling fix
 sed -i 's|${TMPDIR}/cvs-serv|${TMPDIR:-/tmp}/cvs-serv|g' src/sanity.sh
@@ -130,7 +132,8 @@ export ac_cv_func_mkstemp=yes \
 	ac_cv_path_PS2PDF=/usr/bin/ps2pdf \
 	ac_cv_path_ROFF=/usr/bin/groff \
 	ac_cv_path_SENDMAIL=/usr/sbin/sendmail \
-	ac_cv_path_TEXI2DVI=/usr/bin/texi2dvi
+	ac_cv_path_TEXI2DVI=/usr/bin/texi2dvi \
+	ac_cv_prog_with_default_rsh=ssh
 
 autoreconf -fisv
 %configure \
@@ -182,6 +185,9 @@ fi
 %_datadir/cvs
 
 %changelog
+* Mon Oct 08 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.11.22-owl1
+- Updated to 1.11.22.
+
 * Tue Feb 07 2006 Solar Designer <solar-at-owl.openwall.com> 1.11.21-owl2
 - Fixed a NULL pointer dereference in client.c which would occur on commits
 from a tree lacking a CVS/Root file.

@@ -41,3 +41,20 @@ diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
    # This way the tester can go and see what remnants were left
    exit 1
  }
+@@ -11399,12 +11399,15 @@ EOF
+ 	    dotest_fail conflicts4-10r "$testcvs -q up" "C file1"
+ 	    dotest conflicts4-11r "cat $TESTDIR/conflicts4/client.out" \
+ "$DOTSTAR
++$DOTSTAR
++$DOTSTAR
++$DOTSTAR
+ Argument --
+ Directory .
+ $CVSROOT_DIRNAME/first-dir
+ Entry /file1/1.2/+=//
+ Modified file1
+-u=rw,g=rw,o=r
++u=rw,g=r,o=r
+ 59
+ baseline
+ ""<<<<<<< file1

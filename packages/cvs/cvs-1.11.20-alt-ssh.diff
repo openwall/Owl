@@ -10,15 +10,6 @@ diff -upk.orig cvs-1.11.20.orig/src/client.c cvs-1.11.20/src/client.c
  	    error (0, 0, "put \":server:\" at the beginning of your CVSROOT");
  	    error (1, 0, "variable.");
  	}
-@@ -4781,7 +4781,7 @@ start_rsh_server (root, to_server, from_
- 	   example in CVS_RSH or other such mechanisms to be devised,
- 	   if that is what they want (the manual already tells them
- 	   that).  */
--	cvs_rsh = "rsh";
-+	cvs_rsh = "ssh";
-     if (!cvs_server)
- 	cvs_server = "cvs";
- 
 @@ -4818,7 +4818,7 @@ start_rsh_server (root, to_server, from_
      /* Do the deed. */
      child_pid = popenRW (rsh_argv, pipes);

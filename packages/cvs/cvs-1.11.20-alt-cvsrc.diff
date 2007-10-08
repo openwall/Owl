@@ -114,10 +114,10 @@ diff -upk.orig cvs-1.11.20.orig/src/cvsrc.c cvs-1.11.20/src/cvsrc.c
      if (found)
      {
  	/* skip over command in the options line */
--	for (optstart = strtok (line + command_len, "\t \n");
-+	for (optstart = strtok (line + space_len + command_len, "\t \n");
+-	for (optstart = strtok (line + command_len, "\t \n\r");
++	for (optstart = strtok (line + space_len + command_len, "\t \n\r");
  	     optstart;
- 	     optstart = strtok (NULL, "\t \n"))
+ 	     optstart = strtok (NULL, "\t \n\r"))
  	{
 @@ -164,6 +153,39 @@ read_cvsrc (argc, argv, cmdname)
      old_argc = *argc = new_argc;
