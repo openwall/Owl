@@ -1,0 +1,19 @@
+http://bugzilla.redhat.com/show_bug.cgi?id=183703
+--- coreutils-5.97/lib/mountlist.c.df-cifs	2006-09-12 11:19:18 +0100
++++ coreutils-5.97/lib/mountlist.c	2006-09-12 11:20:28 +0100
+@@ -152,12 +152,13 @@
+ 
+ #ifndef ME_REMOTE
+ /* A file system is `remote' if its Fs_name contains a `:'
+-   or if (it is of type smbfs and its Fs_name starts with `//').  */
++   or if (it is of type smbfs or cifs and its Fs_name starts with `//').  */
+ # define ME_REMOTE(Fs_name, Fs_type)		\
+     (strchr (Fs_name, ':') != 0			\
+      || ((Fs_name)[0] == '/'			\
+ 	 && (Fs_name)[1] == '/'			\
+-	 && strcmp (Fs_type, "smbfs") == 0))
++	 && (strcmp (Fs_type, "smbfs") == 0     \
++             || strcmp (Fs_type, "cifs") == 0)))
+ #endif
+ 
+ #if MOUNTED_GETMNTINFO

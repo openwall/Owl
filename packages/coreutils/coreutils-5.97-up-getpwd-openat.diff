@@ -1,0 +1,36 @@
+2007-02-03  Jim Meyering  <jim at meyering.net>
+
+	Make pwd and readlink work also when run with an unreadable parent dir
+	on systems with openat support.
+	* lib/getcwd.c (__getcwd) [HAVE_PARTLY_WORKING_GETCWD]: Use the system
+	provided getcwd function, even when we have openat support.
+	Reported by Dmitry V. Levin in <http://bugzilla.redhat.com/227168>.
+
+Index: lib/getcwd.c
+===================================================================
+RCS file: /sources/gnulib/gnulib/lib/getcwd.c,v
+retrieving revision 1.17
+diff -u -p -r1.17 getcwd.c
+--- lib/getcwd.c	26 Jan 2007 22:16:55 -0000	1.17
++++ lib/getcwd.c	3 Feb 2007 00:07:43 -0000
+@@ -140,13 +140,18 @@ __getcwd (char *buf, size_t size)
+   size_t allocated = size;
+   size_t used;
+
+-#if HAVE_PARTLY_WORKING_GETCWD && !defined AT_FDCWD
++#if HAVE_PARTLY_WORKING_GETCWD
+   /* The system getcwd works, except it sometimes fails when it
+      shouldn't, setting errno to ERANGE, ENAMETOOLONG, or ENOENT.  If
+      AT_FDCWD is not defined, the algorithm below is O(N**2) and this
+      is much slower than the system getcwd (at least on GNU/Linux).
+      So trust the system getcwd's results unless they look
+-     suspicious.  */
++     suspicious.
++
++     Use the system getcwd even if we have openat support, since the
++     system getcwd works even when a parent is unreadable, while the
++     openat-based approach does not.  */
++
+ # undef getcwd
+   dir = getcwd (buf, size);
+   if (dir || (errno != ERANGE && !is_ENAMETOOLONG (errno) && errno != ENOENT))

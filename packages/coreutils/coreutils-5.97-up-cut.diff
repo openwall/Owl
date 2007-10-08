@@ -1,0 +1,18 @@
+2006-12-20  Jim Meyering  <jim at meyering.net>
+
+	"cut -f 2- A B" no longer triggers a double-free bug
+	* src/cut.c (cut_fields): Set file-scoped global to NULL after
+	freeing it.  This avoids a double-free (and core dump on some systems)
+	for this usage: "echo 1>a; echo 2>b; cut -f2- a b".
+	Reported by James Hunt in <http://bugzilla.redhat.com/220312>.
+
+--- coreutils-5.97/src/cut.c.orig	2007-01-10 14:49:53 +0000
++++ coreutils-5.97/src/cut.c	2007-01-10 14:58:59 +0000
+@@ -743,6 +743,7 @@
+ 	  if (len < 0)
+ 	    {
+ 	      free (field_1_buffer);
++	      field_1_buffer = NULL;
+ 	      if (ferror (stream) || feof (stream))
+ 		break;
+ 	      xalloc_die ();

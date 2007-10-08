@@ -1,0 +1,3607 @@
+--- coreutils-5.97/configure.ac.newhashes	2006-05-23 21:38:46 +0100
++++ coreutils-5.97/configure.ac	2006-06-25 23:50:01 +0100
+@@ -305,3 +305,11 @@
+   tests/wc/Makefile
+   )
+ AC_OUTPUT
++
++# This is a _HACK_, tests are added via. patch so they don't have +x perms.
++# we hand hack them in here...
++chmod +x $srcdir/tests/misc/base64
++chmod +x $srcdir/tests/misc/sha224sum
++chmod +x $srcdir/tests/misc/sha256sum
++chmod +x $srcdir/tests/misc/sha384sum
++chmod +x $srcdir/tests/misc/sha512sum
+--- coreutils-5.97/README.newhashes	2005-09-28 19:34:26 +0100
++++ coreutils-5.97/README	2006-06-25 23:50:01 +0100
+@@ -7,11 +7,12 @@
+ 
+ The programs that can be built with this package are:
+ 
+-  [ basename cat chgrp chmod chown chroot cksum comm cp csplit cut date dd
++  [ base64 basename cat chgrp chmod chown chroot cksum comm cp csplit cut date dd
+   df dir dircolors dirname du echo env expand expr factor false fmt fold
+   ginstall groups head hostid hostname id join kill link ln logname ls
+   md5sum mkdir mkfifo mknod mv nice nl nohup od paste pathchk pinky pr
+-  printenv printf ptx pwd readlink rm rmdir seq sha1sum shred sleep sort
++  printenv printf ptx pwd readlink rm rmdir seq
++  sha1sum sha224sum sha256sum sha384sum sha512sum shred sleep sort
+   split stat stty su sum sync tac tail tee test touch tr true tsort tty
+   uname unexpand uniq unlink uptime users vdir wc who whoami yes
+ 
+--- coreutils-5.97/src/Makefile.am.newhashes	2005-07-18 08:52:18 +0100
++++ coreutils-5.97/src/Makefile.am	2006-06-25 23:50:01 +0100
+@@ -24,10 +24,12 @@
+   ginstall link ln dir vdir ls mkdir \
+   mkfifo mknod mv nohup readlink rm rmdir shred stat sync touch unlink \
+   cat cksum comm csplit cut expand fmt fold head join md5sum \
+-  nl od paste pr ptx sha1sum sort split sum tac tail tr tsort unexpand uniq wc \
++  nl od paste pr ptx sha1sum sha224sum sha256sum sha384sum sha512sum \
++  sort split sum tac tail tr tsort unexpand uniq wc \
+   basename date dirname echo env expr factor false \
+   hostname id kill logname pathchk printenv printf pwd seq sleep tee \
+   test true tty whoami yes \
++  base64 \
+   $(OPTIONAL_BIN_PROGS) $(DF_PROG)
+ 
+ noinst_PROGRAMS = setuidgid
+@@ -37,7 +39,7 @@
+   chown-core.h fs.h \
+   wheel.h wheel-size.h
+ EXTRA_DIST = dcgen dircolors.hin tac-pipe.c \
+-  groups.sh wheel-gen.pl extract-magic
++  groups.sh wheel-gen.pl extract-magic # rand-isaac.c
+ CLEANFILES = $(SCRIPTS) su
+ 
+ AM_CPPFLAGS = -I.. -I$(srcdir) -I$(top_srcdir)/lib -I../lib
+@@ -169,8 +171,18 @@
+ mv_SOURCES = mv.c copy.c cp-hash.c remove.c
+ rm_SOURCES = rm.c remove.c
+ 
+-md5sum_SOURCES = md5sum.c md5.c
+-sha1sum_SOURCES = md5sum.c sha1sum.c
++md5sum_SOURCES = md5sum.c
++md5sum_CPPFLAGS = -DHASH_ALGO_MD5=1 $(AM_CPPFLAGS)
++sha1sum_SOURCES = md5sum.c
++sha1sum_CPPFLAGS = -DHASH_ALGO_SHA1=1 $(AM_CPPFLAGS)
++sha224sum_SOURCES = md5sum.c
++sha224sum_CPPFLAGS = -DHASH_ALGO_SHA224=1 $(AM_CPPFLAGS)
++sha256sum_SOURCES = md5sum.c
++sha256sum_CPPFLAGS = -DHASH_ALGO_SHA256=1 $(AM_CPPFLAGS)
++sha384sum_SOURCES = md5sum.c
++sha384sum_CPPFLAGS = -DHASH_ALGO_SHA384=1 $(AM_CPPFLAGS)
++sha512sum_SOURCES = md5sum.c
++sha512sum_CPPFLAGS = -DHASH_ALGO_SHA512=1 $(AM_CPPFLAGS)
+ 
+ editpl = sed -e 's,@''PERL''@,$(PERL),g'
+ 
+--- coreutils-5.97/src/md5sum.c.newhashes	2005-10-27 17:22:14 +0100
++++ coreutils-5.97/src/md5sum.c	2006-06-25 23:50:01 +0100
+@@ -1,4 +1,4 @@
+-/* Compute MD5 or SHA1 checksum of files or strings
++/* Compute MD5, SHA1, SHA224, SHA256, SHA384 or SHA512 checksum of files or strings
+    Copyright (C) 1995-2005 Free Software Foundation, Inc.
+ 
+    This program is free software; you can redistribute it and/or modify
+@@ -24,34 +24,85 @@
+ 
+ #include "system.h"
+ 
+-#include "md5.h"
+-#include "sha1.h"
+-#include "checksum.h"
++#if HASH_ALGO_MD5
++# include "md5.h"
++#endif
++#if HASH_ALGO_SHA1
++# include "sha1.h"
++#endif
++#if HASH_ALGO_SHA256 || HASH_ALGO_SHA224
++# include "sha256.h"
++#endif
++#if HASH_ALGO_SHA512 || HASH_ALGO_SHA384
++# include "sha512.h"
++#endif
+ #include "getline.h"
+ #include "error.h"
+ #include "quote.h"
+ #include "stdio--.h"
+ 
+ /* The official name of this program (e.g., no `g' prefix).  */
+-#define PROGRAM_NAME (algorithm == ALG_MD5 ? "md5sum" : "sha1sum")
++#if HASH_ALGO_MD5
++# define PROGRAM_NAME "md5sum"
++# define DIGEST_TYPE_STRING "MD5"
++# define DIGEST_STREAM md5_stream
++# define DIGEST_BUFFER md5_buffer
++# define DIGEST_BITS 128
++# define DIGEST_REFERENCE "RFC 1321"
++# define DIGEST_ALIGN 4
++#elif HASH_ALGO_SHA1
++# define PROGRAM_NAME "sha1sum"
++# define DIGEST_TYPE_STRING "SHA1"
++# define DIGEST_STREAM sha1_stream
++# define DIGEST_BUFFER sha1_buffer
++# define DIGEST_BITS 160
++# define DIGEST_REFERENCE "FIPS-180-1"
++# define DIGEST_ALIGN 4
++#elif HASH_ALGO_SHA256
++# define PROGRAM_NAME "sha256sum"
++# define DIGEST_TYPE_STRING "SHA256"
++# define DIGEST_STREAM sha256_stream
++# define DIGEST_BUFFER sha256_buffer
++# define DIGEST_BITS 256
++# define DIGEST_REFERENCE "FIPS-180-2"
++# define DIGEST_ALIGN 4
++#elif HASH_ALGO_SHA224
++# define PROGRAM_NAME "sha224sum"
++# define DIGEST_TYPE_STRING "SHA224"
++# define DIGEST_STREAM sha224_stream
++# define DIGEST_BUFFER sha224_buffer
++# define DIGEST_BITS 224
++# define DIGEST_REFERENCE "RFC 3874"
++# define DIGEST_ALIGN 4
++#elif HASH_ALGO_SHA512
++# define PROGRAM_NAME "sha512sum"
++# define DIGEST_TYPE_STRING "SHA512"
++# define DIGEST_STREAM sha512_stream
++# define DIGEST_BUFFER sha512_buffer
++# define DIGEST_BITS 512
++# define DIGEST_REFERENCE "FIPS-180-2"
++# define DIGEST_ALIGN 8
++#elif HASH_ALGO_SHA384
++# define PROGRAM_NAME "sha384sum"
++# define DIGEST_TYPE_STRING "SHA384"
++# define DIGEST_STREAM sha384_stream
++# define DIGEST_BUFFER sha384_buffer
++# define DIGEST_BITS 384
++# define DIGEST_REFERENCE "FIPS-180-2"
++# define DIGEST_ALIGN 8
++#else
++# error "Can't decide which hash algorithm to compile."
++#endif
+ 
+-#define AUTHORS "Ulrich Drepper", "Scott Miller"
++#define DIGEST_HEX_BYTES (DIGEST_BITS / 4)
++#define DIGEST_BIN_BYTES (DIGEST_BITS / 8)
+ 
+-
+-#define DIGEST_TYPE_STRING(Alg) ((Alg) == ALG_MD5 ? "MD5" : "SHA1")
+-#define DIGEST_STREAM(Alg) ((Alg) == ALG_MD5 ? md5_stream : sha1_stream)
+-
+-#define DIGEST_BITS(Alg) ((Alg) == ALG_MD5 ? 128 : 160)
+-#define DIGEST_HEX_BYTES(Alg) (DIGEST_BITS (Alg) / 4)
+-#define DIGEST_BIN_BYTES(Alg) (DIGEST_BITS (Alg) / 8)
+-
+-#define MAX_DIGEST_BIN_BYTES MAX (DIGEST_BIN_BYTES (ALG_MD5), \
+-				  DIGEST_BIN_BYTES (ALG_SHA1))
++#define AUTHORS "Ulrich Drepper", "Scott Miller", "David Madore"
+ 
+ /* The minimum length of a valid digest line.  This length does
+    not include any newline character at the end of a line.  */
+-#define MIN_DIGEST_LINE_LENGTH(Alg) \
+-  (DIGEST_HEX_BYTES (Alg) /* length of hexadecimal message digest */ \
++#define MIN_DIGEST_LINE_LENGTH \
++  (DIGEST_HEX_BYTES /* length of hexadecimal message digest */ \
+    + 2 /* blank and binary indicator */ \
+    + 1 /* minimum filename length */ )
+ 
+@@ -72,9 +123,6 @@
+    improperly formatted checksum line.  */
+ static bool warn = false;
+ 
+-/* Declared and set via one of the wrapper .c files.  */
+-/* int algorithm = ALG_UNSPECIFIED; */
+-
+ /* The name this program was run with.  */
+ char *program_name;
+ 
+@@ -112,8 +160,8 @@
+ \n\
+ "),
+ 	      program_name,
+-	      DIGEST_TYPE_STRING (algorithm),
+-	      DIGEST_BITS (algorithm));
++	      DIGEST_TYPE_STRING,
++	      DIGEST_BITS);
+       if (O_BINARY)
+ 	fputs (_("\
+   -b, --binary            read in binary mode (default unless reading tty stdin)\n\
+@@ -124,7 +172,7 @@
+ "), stdout);
+       printf (_("\
+   -c, --check             read %s sums from the FILEs and check them\n"),
+-	      DIGEST_TYPE_STRING (algorithm));
++	      DIGEST_TYPE_STRING);
+       if (O_BINARY)
+ 	fputs (_("\
+   -t, --text              read in text mode (default if reading tty stdin)\n\
+@@ -148,7 +196,7 @@
+ should be a former output of this program.  The default mode is to print\n\
+ a line with checksum, a character indicating type (`*' for binary, ` ' for\n\
+ text), and name for each FILE.\n"),
+-	      (algorithm == ALG_MD5 ? "RFC 1321" : "FIPS-180-1"));
++	      DIGEST_REFERENCE);
+       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+     }
+ 
+@@ -211,8 +259,8 @@
+     ++i;
+ 
+   /* Check for BSD-style checksum line. */
+-  algo_name_len = strlen (DIGEST_TYPE_STRING (algorithm));
+-  if (strncmp (s + i, DIGEST_TYPE_STRING (algorithm), algo_name_len) == 0)
++  algo_name_len = strlen (DIGEST_TYPE_STRING);
++  if (strncmp (s + i, DIGEST_TYPE_STRING, algo_name_len) == 0)
+     {
+       if (strncmp (s + i + algo_name_len, " (", 2) == 0)
+ 	{
+@@ -313,8 +361,7 @@
+   return true;
+ }
+ 
+-/* An interface to the function, DIGEST_STREAM,
+-   (either md5_stream or sha1_stream).
++/* An interface to the function, DIGEST_STREAM.
+    Operate on FILENAME (it may be "-").
+ 
+    *BINARY indicates whether the file is binary.  BINARY < 0 means it
+@@ -322,12 +369,11 @@
+    a terminal; in that case, clear *BINARY if the file was treated as
+    text because it was a terminal.
+ 
+-   Put the checksum in *BIN_RESULT.
++   Put the checksum in *BIN_RESULT, which must be properly aligned.
+    Return true if successful.  */
+ 
+ static bool
+-digest_file (const char *filename, int *binary, unsigned char *bin_result,
+-	     int (*digest_stream) (FILE *, void *))
++digest_file (const char *filename, int *binary, unsigned char *bin_result)
+ {
+   FILE *fp;
+   int err;
+@@ -355,7 +401,7 @@
+ 	}
+     }
+ 
+-  err = (*digest_stream) (fp, bin_result);
++  err = DIGEST_STREAM (fp, bin_result);
+   if (err)
+     {
+       error (0, errno, "%s", filename);
+@@ -374,13 +420,15 @@
+ }
+ 
+ static bool
+-digest_check (const char *checkfile_name, int (*digest_stream) (FILE *, void *))
++digest_check (const char *checkfile_name)
+ {
+   FILE *checkfile_stream;
+   uintmax_t n_properly_formatted_lines = 0;
+   uintmax_t n_mismatched_checksums = 0;
+   uintmax_t n_open_or_read_failures = 0;
+-  unsigned char bin_buffer[MAX_DIGEST_BIN_BYTES];
++  unsigned char bin_buffer_unaligned[DIGEST_BIN_BYTES + DIGEST_ALIGN];
++  /* Make sure bin_buffer is properly aligned. */
++  unsigned char *bin_buffer = ptr_align (bin_buffer_unaligned, DIGEST_ALIGN);
+   uintmax_t line_number;
+   char *line;
+   size_t line_chars_allocated;
+@@ -439,7 +487,7 @@
+ 		     _("%s: %" PRIuMAX
+ 		       ": improperly formatted %s checksum line"),
+ 		     checkfile_name, line_number,
+-		     DIGEST_TYPE_STRING (algorithm));
++		     DIGEST_TYPE_STRING);
+ 	    }
+ 	}
+       else
+@@ -452,7 +500,7 @@
+ 
+ 	  ++n_properly_formatted_lines;
+ 
+-	  ok = digest_file (filename, &binary, bin_buffer, digest_stream);
++	  ok = digest_file (filename, &binary, bin_buffer);
+ 
+ 	  if (!ok)
+ 	    {
+@@ -509,7 +557,7 @@
+     {
+       /* Warn if no tests are found.  */
+       error (0, 0, _("%s: no properly formatted %s checksum lines found"),
+-	     checkfile_name, DIGEST_TYPE_STRING (algorithm));
++	     checkfile_name, DIGEST_TYPE_STRING);
+     }
+   else
+     {
+@@ -547,7 +595,9 @@
+ int
+ main (int argc, char **argv)
+ {
+-  unsigned char bin_buffer[MAX_DIGEST_BIN_BYTES];
++  unsigned char bin_buffer_unaligned[DIGEST_BIN_BYTES+DIGEST_ALIGN];
++  /* Make sure bin_buffer is properly aligned. */
++  unsigned char *bin_buffer = ptr_align (bin_buffer_unaligned, DIGEST_ALIGN);
+   bool do_check = false;
+   int opt;
+   bool ok = true;
+@@ -588,8 +638,8 @@
+ 	usage (EXIT_FAILURE);
+       }
+ 
+-  min_digest_line_length = MIN_DIGEST_LINE_LENGTH (algorithm);
+-  digest_hex_bytes = DIGEST_HEX_BYTES (algorithm);
++  min_digest_line_length = MIN_DIGEST_LINE_LENGTH;
++  digest_hex_bytes = DIGEST_HEX_BYTES;
+ 
+   if (0 <= binary && do_check)
+     {
+@@ -623,13 +673,12 @@
+       char *file = argv[optind];
+ 
+       if (do_check)
+-	ok &= digest_check (file, DIGEST_STREAM (algorithm));
++	ok &= digest_check (file);
+       else
+ 	{
+ 	  int file_is_binary = binary;
+ 
+-	  if (! digest_file (file, &file_is_binary, bin_buffer,
+-			     DIGEST_STREAM (algorithm)))
++	  if (! digest_file (file, &file_is_binary, bin_buffer))
+ 	    ok = false;
+ 	  else
+ 	    {
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/src/base64.c	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,308 @@
++/* Base64 encode/decode strings or files.
++   Copyright (C) 2004, 2005, 2006 Free Software Foundation, Inc.
++
++   This file is part of Base64.
++
++   Base64 is free software; you can redistribute it and/or modify it
++   under the terms of the GNU General Public License as published by
++   the Free Software Foundation; either version 2, or (at your option)
++   any later version.
++
++   Base64 is distributed in the hope that it will be useful, but
++   WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   General Public License for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with Base64; see the file COPYING.  If not, write to the Free
++   Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
++   MA 02110-1301, USA. */
++
++/* Written by Simon Josefsson <simon@josefsson.org>.  */
++
++#include <config.h>
++
++#include <stdio.h>
++#include <getopt.h>
++#include <sys/types.h>
++
++#include "system.h"
++#include "error.h"
++#include "xstrtol.h"
++#include "quote.h"
++#include "quotearg.h"
++
++#include "base64.h"
++
++/* The official name of this program (e.g., no `g' prefix).  */
++#define PROGRAM_NAME "base64"
++
++#define AUTHOR "Simon Josefsson"
++
++/* The invocation name of this program.  */
++char *program_name;
++
++static const struct option long_options[] = {
++  {"decode", no_argument, 0, 'd'},
++  {"wrap", required_argument, 0, 'w'},
++  {"ignore-garbage", no_argument, 0, 'i'},
++  {"help", no_argument, 0, GETOPT_HELP_CHAR},
++  {"version", no_argument, 0, GETOPT_VERSION_CHAR},
++
++  {GETOPT_HELP_OPTION_DECL},
++  {GETOPT_VERSION_OPTION_DECL},
++  {NULL, 0, NULL, 0}
++};
++
++static void
++usage (int status)
++{
++  if (status != EXIT_SUCCESS)
++    fprintf (stderr, _("Try `%s --help' for more information.\n"),
++	     program_name);
++  else
++    {
++      printf (_("\
++Usage: %s [OPTION] [FILE]\n\
++Base64 encode or decode FILE, or standard input, to standard output.\n\
++\n"), program_name);
++      fputs (_("\
++  -w, --wrap=COLS       Wrap encoded lines after COLS character (default 76).\n\
++                        Use 0 to disable line wrapping.\n\
++\n\
++  -d, --decode          Decode data.\n\
++  -i, --ignore-garbage  When decoding, ignore non-alphabet characters.\n\
++\n\
++"), stdout);
++      fputs (_("\
++      --help            Display this help and exit.\n\
++      --version         Output version information and exit.\n"), stdout);
++      fputs (_("\
++\n\
++With no FILE, or when FILE is -, read standard input.\n"), stdout);
++      fputs (_("\
++\n\
++The data are encoded as described for the base64 alphabet in RFC 3548.\n\
++Decoding require compliant input by default, use --ignore-garbage to\n\
++attempt to recover from non-alphabet characters (such as newlines) in\n\
++the encoded stream.\n"), stdout);
++      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
++    }
++
++  exit (status);
++}
++
++/* Note that increasing this may decrease performance if --ignore-garbage
++   is used, because of the memmove operation below. */
++#define BLOCKSIZE 3072
++#define B64BLOCKSIZE BASE64_LENGTH (BLOCKSIZE)
++
++/* Ensure that BLOCKSIZE is a multiple of 3 and 4.  */
++#if BLOCKSIZE % 12 != 0
++# error "invalid BLOCKSIZE"
++#endif
++
++static void
++wrap_write (const char *buffer, size_t len,
++	    uintmax_t wrap_column, size_t *current_column, FILE *out)
++{
++  size_t written;
++
++  if (wrap_column == 0)
++    {
++      /* Simple write. */
++      if (fwrite (buffer, 1, len, stdout) < len)
++	error (EXIT_FAILURE, errno, _("write error"));
++    }
++  else
++    for (written = 0; written < len;)
++      {
++	uintmax_t cols_remaining = wrap_column - *current_column;
++	size_t to_write = MIN (cols_remaining, SIZE_MAX);
++	to_write = MIN (to_write, len - written);
++
++	if (to_write == 0)
++	  {
++	    if (fputs ("\n", out) < 0)
++	      error (EXIT_FAILURE, errno, _("write error"));
++	    *current_column = 0;
++	  }
++	else
++	  {
++	    if (fwrite (buffer + written, 1, to_write, stdout) < to_write)
++	      error (EXIT_FAILURE, errno, _("write error"));
++	    *current_column += to_write;
++	    written += to_write;
++	  }
++      }
++}
++
++static void
++do_encode (FILE *in, FILE *out, uintmax_t wrap_column)
++{
++  size_t current_column = 0;
++  char inbuf[BLOCKSIZE];
++  char outbuf[B64BLOCKSIZE];
++  size_t sum;
++
++  do
++    {
++      size_t n;
++
++      sum = 0;
++      do
++	{
++	  n = fread (inbuf + sum, 1, BLOCKSIZE - sum, in);
++	  sum += n;
++	}
++      while (!feof (in) && !ferror (in) && sum < BLOCKSIZE);
++
++      if (sum > 0)
++	{
++	  /* Process input one block at a time.  Note that BLOCKSIZE %
++	     3 == 0, so that no base64 pads will appear in output. */
++	  base64_encode (inbuf, sum, outbuf, BASE64_LENGTH (sum));
++
++	  wrap_write (outbuf, BASE64_LENGTH (sum), wrap_column,
++		      &current_column, out);
++	}
++    }
++  while (!feof (in) && !ferror (in) && sum == BLOCKSIZE);
++
++  /* When wrapping, terminate last line. */
++  if (wrap_column && current_column > 0 && fputs ("\n", out) < 0)
++    error (EXIT_FAILURE, errno, _("write error"));
++
++  if (ferror (in))
++    error (EXIT_FAILURE, errno, _("read error"));
++}
++
++static void
++do_decode (FILE *in, FILE *out, bool ignore_garbage)
++{
++  char inbuf[B64BLOCKSIZE];
++  char outbuf[BLOCKSIZE];
++  size_t sum;
++
++  do
++    {
++      bool ok;
++      size_t n;
++
++      sum = 0;
++      do
++	{
++	  n = fread (inbuf + sum, 1, B64BLOCKSIZE - sum, in);
++
++	  if (ignore_garbage)
++	    {
++	      size_t i;
++	      for (i = 0; n > 0 && i < n;)
++		if (isbase64 (inbuf[sum + i]) || inbuf[sum + i] == '=')
++		  i++;
++		else
++		  memmove (inbuf + sum + i, inbuf + sum + i + 1, --n - i);
++	    }
++
++	  sum += n;
++
++	  if (ferror (in))
++	    error (EXIT_FAILURE, errno, _("read error"));
++	}
++      while (sum < B64BLOCKSIZE && !feof (in));
++
++      n = BLOCKSIZE;
++      ok = base64_decode (inbuf, sum, outbuf, &n);
++
++      if (fwrite (outbuf, 1, n, stdout) < n)
++	error (EXIT_FAILURE, errno, _("write error"));
++
++      if (!ok)
++	error (EXIT_FAILURE, 0, _("invalid input"));
++    }
++  while (!feof (in));
++}
++
++int
++main (int argc, char **argv)
++{
++  int opt;
++  FILE *input_fh;
++  const char *infile;
++
++  /* True if --decode has bene given and we should decode data. */
++  bool decode = false;
++  /* True if we should ignore non-alphabetic characters. */
++  bool ignore_garbage = false;
++  /* Wrap encoded base64 data around the 76:th column, by default. */
++  uintmax_t wrap_column = 76;
++
++  initialize_main (&argc, &argv);
++  program_name = argv[0];
++  setlocale (LC_ALL, "");
++  bindtextdomain (PACKAGE, LOCALEDIR);
++  textdomain (PACKAGE);
++
++  atexit (close_stdout);
++
++  while ((opt = getopt_long (argc, argv, "dqiw:", long_options, NULL)) != -1)
++    switch (opt)
++      {
++      case 'd':
++	decode = true;
++	break;
++
++      case 'w':
++	if (xstrtoumax (optarg, NULL, 0, &wrap_column, NULL) != LONGINT_OK)
++	  error (EXIT_FAILURE, 0, _("invalid wrap size: %s"),
++		 quotearg (optarg));
++	break;
++
++      case 'i':
++	ignore_garbage = true;
++	break;
++
++	case_GETOPT_HELP_CHAR;
++
++	case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHOR);
++
++      default:
++	usage (EXIT_FAILURE);
++	break;
++      }
++
++  if (argc - optind > 1)
++    {
++      error (0, 0, _("extra operand %s"), quote (argv[optind]));
++      usage (EXIT_FAILURE);
++    }
++
++  if (optind < argc)
++    infile = argv[optind];
++  else
++    infile = "-";
++
++  if (strcmp (infile, "-") == 0)
++    input_fh = stdin;
++  else
++    {
++      input_fh = fopen (infile, "r");
++      if (input_fh == NULL)
++	error (EXIT_FAILURE, errno, "%s", infile);
++    }
++
++  if (decode)
++    do_decode (input_fh, stdout, ignore_garbage);
++  else
++    do_encode (input_fh, stdout, wrap_column);
++
++  if (fclose (input_fh) == EOF)
++    {
++      if (strcmp (infile, "-") == 0)
++	error (EXIT_FAILURE, errno, _("closing standard input"));
++      else
++	error (EXIT_FAILURE, errno, "%s", infile);
++    }
++
++  exit (EXIT_SUCCESS);
++}
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/m4/sha512.m4	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,15 @@
++# sha512.m4 serial 1
++dnl Copyright (C) 2005 Free Software Foundation, Inc.
++dnl This file is free software; the Free Software Foundation
++dnl gives unlimited permission to copy and/or distribute it,
++dnl with or without modifications, as long as this notice is preserved.
++
++AC_DEFUN([gl_SHA512],
++[
++  AC_LIBSOURCES([sha512.c, sha512.h])
++  AC_LIBOBJ([sha512])
++
++  dnl Prerequisites of lib/sha512.c.
++  AC_REQUIRE([AC_C_BIGENDIAN])
++  :
++])
+--- coreutils-5.97/m4/prereq.m4.newhashes	2005-09-22 08:00:24 +0100
++++ coreutils-5.97/m4/prereq.m4	2006-06-25 23:50:01 +0100
+@@ -134,6 +134,8 @@
+   AC_REQUIRE([gl_SAVE_CWD])
+   AC_REQUIRE([gl_SETTIME])
+   AC_REQUIRE([gl_SHA1])
++  AC_REQUIRE([gl_SHA256])
++  AC_REQUIRE([gl_SHA512])
+   AC_REQUIRE([gl_STAT_MACROS])
+   AC_REQUIRE([gl_STAT_TIME])
+   AC_REQUIRE([gl_STDIO_SAFER])
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/m4/sha256.m4	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,15 @@
++# sha256.m4 serial 1
++dnl Copyright (C) 2005 Free Software Foundation, Inc.
++dnl This file is free software; the Free Software Foundation
++dnl gives unlimited permission to copy and/or distribute it,
++dnl with or without modifications, as long as this notice is preserved.
++
++AC_DEFUN([gl_SHA256],
++[
++  AC_LIBSOURCES([sha256.c, sha256.h])
++  AC_LIBOBJ([sha256])
++
++  dnl Prerequisites of lib/sha256.c.
++  AC_REQUIRE([AC_C_BIGENDIAN])
++  :
++])
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/tests/misc/base64	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,81 @@
++#!/bin/sh
++# -*- perl -*-
++# Exercise base64.
++
++: ${PERL=perl}
++: ${srcdir=.}
++
++$PERL -e 1 > /dev/null 2>&1 || {
++  echo 1>&2 "$0: configure didn't find a usable version of Perl," \
++    "so can't run this test"
++  exit 77
++}
++
++exec $PERL -w -I$srcdir/.. -MCoreutils -- - <<\EOF
++require 5.003;
++use strict;
++
++(my $program_name = $0) =~ s|.*/||;
++
++# Turn off localisation of executable's ouput.
++@ENV{qw(LANGUAGE LANG LC_ALL)} = ('C') x 3;
++
++my $a39 = "YWFhY\nWFhYW\nFhYWF\nhYWFh\nYWFhY\nWFhYW\nFhYWF\n"
++  . "hYWFh\nYWFhY\nWFhYW\nFh";
++
++my @Tests =
++    (
++     ['empty', {IN=>''}, {OUT=>""}],
++     ['inout', {IN=>'a'}, {OUT=>"YQ==\n"}],
++     ['wrap', '--wrap 0', {IN=>'foo'}, {OUT=>'Zm9v'}],
++     ['wrap5-39', '--wrap=5', {IN=>'a' x 39}, {OUT=>"${a39}\n"}],
++     ['wrap5-40', '--wrap=5', {IN=>'a' x 40}, {OUT=>"${a39}YQ=\n=\n"}],
++     ['wrap5-41', '--wrap=5', {IN=>'a' x 41}, {OUT=>"${a39}YWE\n=\n"}],
++     ['wrap5-42', '--wrap=5', {IN=>'a' x 42}, {OUT=>"${a39}YWF\nh\n"}],
++     ['wrap5-43', '--wrap=5', {IN=>'a' x 43}, {OUT=>"${a39}YWF\nhYQ==\n"}],
++     ['wrap5-44', '--wrap=5', {IN=>'a' x 44}, {OUT=>"${a39}YWF\nhYWE=\n"}],
++     ['wrap5-45', '--wrap=5', {IN=>'a' x 45}, {OUT=>"${a39}YWF\nhYWFh\n"}],
++     ['wrap5-46', '--wrap=5', {IN=>'a' x 46}, {OUT=>"${a39}YWF\nhYWFh\nYQ==\n"}],
++     ['baddecode', '--decode', {IN=>'a'}, {OUT=>""},
++      {ERR_SUBST => 's/.*: invalid input//'}, {ERR => "\n"}, {EXIT => 1}],
++     ['baddecode2', '--decode', {IN=>'ab'}, {OUT=>"i"},
++      {ERR_SUBST => 's/.*: invalid input//'}, {ERR => "\n"}, {EXIT => 1}],
++     ['baddecode3', '--decode', {IN=>'Zzz'}, {OUT=>"g<"},
++      {ERR_SUBST => 's/.*: invalid input//'}, {ERR => "\n"}, {EXIT => 1}],
++     ['baddecode4', '--decode', {IN=>'Zz='}, {OUT=>"g"},
++      {ERR_SUBST => 's/.*: invalid input//'}, {ERR => "\n"}, {EXIT => 1}],
++     ['baddecode5', '--decode', {IN=>'Z==='}, {OUT=>""},
++      {ERR_SUBST => 's/.*: invalid input//'}, {ERR => "\n"}, {EXIT => 1}]
++    );
++
++# For each non-failing test, create a --decode test using the
++# expected output (with newlines removed) as input.
++my @new;
++foreach my $t (@Tests)
++  {
++    my $exit_val;
++    my $in;
++    my $out;
++    foreach my $e (@$t)
++      {
++        ref $e && ref $e eq 'HASH'
++	  or next;
++        defined $e->{EXIT}
++	  and $exit_val = $e->{EXIT};
++	defined $e->{IN}
++	  and $in = $e->{IN};
++	defined $e->{OUT}
++	  and ($out = $e->{OUT}) =~ tr/\n//d;
++      }
++    defined $out && ! $exit_val
++      and push @new, ["d-$t->[0]", '--decode', {IN => $out}, {OUT => $in}];
++  }
++push @Tests, @new;
++
++my $save_temps = $ENV{DEBUG};
++my $verbose = $ENV{VERBOSE};
++
++my $prog = $ENV{PROG} || die "$0: \$PROG not specified in environment\n";
++my $fail = run_tests ($program_name, $prog, \@Tests, $save_temps, $verbose);
++exit $fail;
++EOF
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/tests/misc/sha512sum	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,51 @@
++#!/bin/sh
++
++: ${PERL=perl}
++: ${srcdir=.}
++
++$PERL -e 1 > /dev/null 2>&1 || {
++  echo 1>&2 "$0: configure didn't find a usable version of Perl," \
++    "so can't run this test"
++  exit 77
++}
++
++exec $PERL -w -I$srcdir/.. -MCoreutils -- - <<\EOF
++require 5.003;
++use strict;
++
++(my $program_name = $0) =~ s|.*/||;
++
++# Turn off localisation of executable's ouput.
++@ENV{qw(LANGUAGE LANG LC_ALL)} = ('C') x 3;
++
++my $sha_degenerate = "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e";
++
++my @Tests =
++    (
++     ['s1', {IN=> {f=> ''}},
++			{OUT=>"$sha_degenerate  f\n"}],
++     ['s2', {IN=> {f=> 'a'}},
++			{OUT=>"1f40fc92da241694750979ee6cf582f2d5d7d28e18335de05abc54d0560e0f5302860c652bf08d560252aa5e74210546f369fbbbce8c12cfc7957b2652fe9a75  f\n"}],
++     ['s3', {IN=> {f=> 'abc'}},
++			{OUT=>"ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9eeee64b55d39a2192992a274fc1a836ba3c23a3feebbd454d4423643ce80e2a9ac94fa54ca49f  f\n"}],
++     ['s4',
++      {IN=> {f=> 'abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu'}},
++			{OUT=>"8e959b75dae313da8cf4f72814fc143f8f7779c6eb9f7fa17299aeadb6889018501d289e4900f7e4331b99dec4b5433ac7d329eeb6dd26545e96e55b874be909  f\n"}],
++     ['s8', {IN=> {f=> 'a' x 1000000}},
++			{OUT=>"e718483d0ce769644e2e42c7bc15b4638e1f98b13b2044285632a803afa973ebde0ff244877ea60a4cb0432ce577c31beb009c5c2c49aa2e4eadb217ad8cc09b  f\n"}],
++    );
++
++# Insert the `--text' argument for each test.
++my $t;
++foreach $t (@Tests)
++  {
++    splice @$t, 1, 0, '--text' unless @$t[1] =~ /--check/;
++  }
++
++my $save_temps = $ENV{DEBUG};
++my $verbose = $ENV{VERBOSE};
++
++my $prog = $ENV{PROG} || die "$0: \$PROG not specified in environment\n";
++my $fail = run_tests ($program_name, $prog, \@Tests, $save_temps, $verbose);
++exit $fail;
++EOF
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/tests/misc/sha256sum	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,51 @@
++#!/bin/sh
++
++: ${PERL=perl}
++: ${srcdir=.}
++
++$PERL -e 1 > /dev/null 2>&1 || {
++  echo 1>&2 "$0: configure didn't find a usable version of Perl," \
++    "so can't run this test"
++  exit 77
++}
++
++exec $PERL -w -I$srcdir/.. -MCoreutils -- - <<\EOF
++require 5.003;
++use strict;
++
++(my $program_name = $0) =~ s|.*/||;
++
++# Turn off localisation of executable's ouput.
++@ENV{qw(LANGUAGE LANG LC_ALL)} = ('C') x 3;
++
++my $sha_degenerate = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
++
++my @Tests =
++    (
++     ['s1', {IN=> {f=> ''}},
++			{OUT=>"$sha_degenerate  f\n"}],
++     ['s2', {IN=> {f=> 'a'}},
++			{OUT=>"ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb  f\n"}],
++     ['s3', {IN=> {f=> 'abc'}},
++			{OUT=>"ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad  f\n"}],
++     ['s4',
++      {IN=> {f=> 'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'}},
++			{OUT=>"248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1  f\n"}],
++     ['s8', {IN=> {f=> 'a' x 1000000}},
++			{OUT=>"cdc76e5c9914fb9281a1c7e284d73e67f1809a48a497200e046d39ccc7112cd0  f\n"}],
++    );
++
++# Insert the `--text' argument for each test.
++my $t;
++foreach $t (@Tests)
++  {
++    splice @$t, 1, 0, '--text' unless @$t[1] =~ /--check/;
++  }
++
++my $save_temps = $ENV{DEBUG};
++my $verbose = $ENV{VERBOSE};
++
++my $prog = $ENV{PROG} || die "$0: \$PROG not specified in environment\n";
++my $fail = run_tests ($program_name, $prog, \@Tests, $save_temps, $verbose);
++exit $fail;
++EOF
+--- coreutils-5.97/tests/misc/Makefile.am.newhashes	2006-06-10 08:40:00 +0100
++++ coreutils-5.97/tests/misc/Makefile.am	2006-06-25 23:51:07 +0100
+@@ -18,6 +18,7 @@
+ # will execute the test script rather than the standard utility.
+ 
+ TESTS = \
++  base64 \
+   cat-proc \
+   stat-printf \
+   stat-fmt \
+@@ -25,6 +26,10 @@
+   tac-continue \
+   close-stdout \
+   pwd-long \
++  sha224sum \
++  sha256sum \
++  sha384sum \
++  sha512sum \
+   date-sec \
+   paste-no-nl \
+   expand \
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/tests/misc/sha384sum	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,51 @@
++#!/bin/sh
++
++: ${PERL=perl}
++: ${srcdir=.}
++
++$PERL -e 1 > /dev/null 2>&1 || {
++  echo 1>&2 "$0: configure didn't find a usable version of Perl," \
++    "so can't run this test"
++  exit 77
++}
++
++exec $PERL -w -I$srcdir/.. -MCoreutils -- - <<\EOF
++require 5.003;
++use strict;
++
++(my $program_name = $0) =~ s|.*/||;
++
++# Turn off localisation of executable's ouput.
++@ENV{qw(LANGUAGE LANG LC_ALL)} = ('C') x 3;
++
++my $sha_degenerate = "38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b";
++
++my @Tests =
++    (
++     ['s1', {IN=> {f=> ''}},
++			{OUT=>"$sha_degenerate  f\n"}],
++     ['s2', {IN=> {f=> 'a'}},
++			{OUT=>"54a59b9f22b0b80880d8427e548b7c23abd873486e1f035dce9cd697e85175033caa88e6d57bc35efae0b5afd3145f31  f\n"}],
++     ['s3', {IN=> {f=> 'abc'}},
++			{OUT=>"cb00753f45a35e8bb5a03d699ac65007272c32ab0eded1631a8b605a43ff5bed8086072ba1e7cc2358baeca134c825a7  f\n"}],
++     ['s4',
++      {IN=> {f=> 'abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu'}},
++			{OUT=>"09330c33f71147e83d192fc782cd1b4753111b173b3b05d22fa08086e3b0f712fcc7c71a557e2db966c3e9fa91746039  f\n"}],
++     ['s8', {IN=> {f=> 'a' x 1000000}},
++			{OUT=>"9d0e1809716474cb086e834e310a4a1ced149e9c00f248527972cec5704c2a5b07b8b3dc38ecc4ebae97ddd87f3d8985  f\n"}],
++    );
++
++# Insert the `--text' argument for each test.
++my $t;
++foreach $t (@Tests)
++  {
++    splice @$t, 1, 0, '--text' unless @$t[1] =~ /--check/;
++  }
++
++my $save_temps = $ENV{DEBUG};
++my $verbose = $ENV{VERBOSE};
++
++my $prog = $ENV{PROG} || die "$0: \$PROG not specified in environment\n";
++my $fail = run_tests ($program_name, $prog, \@Tests, $save_temps, $verbose);
++exit $fail;
++EOF
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/tests/misc/sha224sum	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,45 @@
++#!/bin/sh
++
++: ${PERL=perl}
++: ${srcdir=.}
++
++$PERL -e 1 > /dev/null 2>&1 || {
++  echo 1>&2 "$0: configure didn't find a usable version of Perl," \
++    "so can't run this test"
++  exit 77
++}
++
++exec $PERL -w -I$srcdir/.. -MCoreutils -- - <<\EOF
++require 5.003;
++use strict;
++
++(my $program_name = $0) =~ s|.*/||;
++
++# Turn off localisation of executable's ouput.
++@ENV{qw(LANGUAGE LANG LC_ALL)} = ('C') x 3;
++
++my @Tests =
++    (
++     ['s3', {IN=> {f=> 'abc'}},
++			{OUT=>"23097d223405d8228642a477bda255b32aadbce4bda0b3f7e36c9da7  f\n"}],
++     ['s4',
++      {IN=> {f=> 'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'}},
++			{OUT=>"75388b16512776cc5dba5da1fd890150b0c6455cb4f58b1952522525  f\n"}],
++     ['s8', {IN=> {f=> 'a' x 1000000}},
++			{OUT=>"20794655980c91d8bbb4c1ea97618a4bf03f42581948b2ee4ee7ad67  f\n"}],
++    );
++
++# Insert the `--text' argument for each test.
++my $t;
++foreach $t (@Tests)
++  {
++    splice @$t, 1, 0, '--text' unless @$t[1] =~ /--check/;
++  }
++
++my $save_temps = $ENV{DEBUG};
++my $verbose = $ENV{VERBOSE};
++
++my $prog = $ENV{PROG} || die "$0: \$PROG not specified in environment\n";
++my $fail = run_tests ($program_name, $prog, \@Tests, $save_temps, $verbose);
++exit $fail;
++EOF
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/man/sha256sum.x	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,4 @@
++[NAME]
++sha256sum \- compute and check SHA256 message digest
++[DESCRIPTION]
++.\" Add any additional description here
+--- coreutils-5.97/man/Makefile.am.newhashes	2005-10-13 15:12:51 +0100
++++ coreutils-5.97/man/Makefile.am	2006-06-25 23:50:01 +0100
+@@ -1,13 +1,14 @@
+ ## Process this file with automake to produce Makefile.in -*-Makefile-*-
+ dist_man_MANS = \
+-  basename.1 cat.1 chgrp.1 chmod.1 chown.1 chroot.1 cksum.1 comm.1 \
++  base64.1 basename.1 cat.1 chgrp.1 chmod.1 chown.1 chroot.1 cksum.1 comm.1 \
+   cp.1 csplit.1 cut.1 date.1 dd.1 df.1 dir.1 dircolors.1 dirname.1 du.1 \
+   echo.1 env.1 expand.1 expr.1 factor.1 false.1 fmt.1 fold.1 groups.1 \
+   head.1 hostid.1 hostname.1 id.1 install.1 join.1 kill.1 \
+   link.1 ln.1 logname.1 \
+   ls.1 md5sum.1 mkdir.1 mkfifo.1 mknod.1 mv.1 nice.1 nl.1 nohup.1 od.1 \
+   paste.1 pathchk.1 pinky.1 pr.1 printenv.1 printf.1 ptx.1 pwd.1 readlink.1 \
+-  rm.1 rmdir.1 seq.1 sha1sum.1 shred.1 sleep.1 sort.1 split.1 stat.1 stty.1 \
++  rm.1 rmdir.1 seq.1 sha1sum.1 sha224sum.1 sha256sum.1 sha384sum.1 sha512sum.1 \
++  shred.1 sleep.1 sort.1 split.1 stat.1 stty.1 \
+   su.1 sum.1 sync.1 tac.1 tail.1 tee.1 test.1 touch.1 tr.1 true.1 tsort.1 \
+   tty.1 uname.1 unexpand.1 uniq.1 unlink.1 uptime.1 users.1 vdir.1 wc.1 \
+   who.1 whoami.1 yes.1
+@@ -20,6 +21,7 @@
+ # Depend on configure.ac to get version number changes.
+ common_dep = $(top_srcdir)/configure.ac
+ 
++base64.1:       $(common_dep)   $(srcdir)/base64.x      ../src/base64.c
+ basename.1:	$(common_dep)	$(srcdir)/basename.x	../src/basename.c
+ cat.1:		$(common_dep)	$(srcdir)/cat.x		../src/cat.c
+ chgrp.1:	$(common_dep)	$(srcdir)/chgrp.x	../src/chgrp.c
+@@ -83,6 +85,10 @@
+ rmdir.1:	$(common_dep)	$(srcdir)/rmdir.x	../src/rmdir.c
+ seq.1:		$(common_dep)	$(srcdir)/seq.x		../src/seq.c
+ sha1sum.1:	$(common_dep)	$(srcdir)/sha1sum.x	../src/md5sum.c
++sha224sum.1:    $(common_dep)   $(srcdir)/sha224sum.x   ../src/md5sum.c
++sha256sum.1:    $(common_dep)   $(srcdir)/sha256sum.x   ../src/md5sum.c
++sha384sum.1:    $(common_dep)   $(srcdir)/sha384sum.x   ../src/md5sum.c
++sha512sum.1:    $(common_dep)   $(srcdir)/sha512sum.x   ../src/md5sum.c
+ shred.1:	$(common_dep)	$(srcdir)/shred.x	../src/shred.c
+ sleep.1:	$(common_dep)	$(srcdir)/sleep.x	../src/sleep.c
+ sort.1:		$(common_dep)	$(srcdir)/sort.x	../src/sort.c
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/man/sha224sum.x	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,4 @@
++[NAME]
++sha224sum \- compute and check SHA224 message digest
++[DESCRIPTION]
++.\" Add any additional description here
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/man/sha384sum.x	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,4 @@
++[NAME]
++sha384sum \- compute and check SHA384 message digest
++[DESCRIPTION]
++.\" Add any additional description here
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/man/base64.x	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,4 @@
++[NAME]
++base64 \- base64 encode/decode data and print to standard output
++[DESCRIPTION]
++.\" Add any additional description here
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/man/sha512sum.x	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,4 @@
++[NAME]
++sha512sum \- compute and check SHA512 message digest
++[DESCRIPTION]
++.\" Add any additional description here
+--- coreutils-5.97/lib/md5.h.newhashes	2005-09-14 00:31:37 +0100
++++ coreutils-5.97/lib/md5.h	2006-06-25 23:50:01 +0100
+@@ -1,9 +1,8 @@
+ /* Declaration of functions and data types used for MD5 sum computing
+    library functions.
+-   Copyright (C) 1995-1997,1999-2005 Free Software Foundation, Inc.
+-
+-   NOTE: The canonical source of this file is maintained with the GNU C
+-   Library.  Bugs can be reported to bug-glibc@prep.ai.mit.edu.
++   Copyright (C) 1995-1997,1999,2000,2001,2004,2005,2006
++      Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
+ 
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+@@ -23,18 +22,15 @@
+ #define _MD5_H 1
+ 
+ #include <stdio.h>
++#include <stdint.h>
+ 
+-#if HAVE_INTTYPES_H
+-# include <inttypes.h>
+-#endif
+-#if HAVE_STDINT_H || _LIBC
+-# include <stdint.h>
+-#endif
++#define MD5_DIGEST_SIZE 16
++#define MD5_BLOCK_SIZE 64
+ 
+ #ifndef __GNUC_PREREQ
+ # if defined __GNUC__ && defined __GNUC_MINOR__
+-#  define __GNUC_PREREQ(maj, min) \
+-	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
++#  define __GNUC_PREREQ(maj, min)					\
++  ((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
+ # else
+ #  define __GNUC_PREREQ(maj, min) 0
+ # endif
+@@ -48,12 +44,6 @@
+ # endif
+ #endif
+ 
+-#ifndef __attribute__
+-# if ! __GNUC_PREREQ (2,8) || __STRICT_ANSI__
+-#  define __attribute__(x)
+-# endif
+-#endif
+-
+ #ifndef _LIBC
+ # define __md5_buffer md5_buffer
+ # define __md5_finish_ctx md5_finish_ctx
+@@ -64,19 +54,17 @@
+ # define __md5_stream md5_stream
+ #endif
+ 
+-typedef uint32_t md5_uint32;
+-
+ /* Structure to save state of computation between the single steps.  */
+ struct md5_ctx
+ {
+-  md5_uint32 A;
+-  md5_uint32 B;
+-  md5_uint32 C;
+-  md5_uint32 D;
+-
+-  md5_uint32 total[2];
+-  md5_uint32 buflen;
+-  char buffer[128] __attribute__ ((__aligned__ (__alignof__ (md5_uint32))));
++  uint32_t A;
++  uint32_t B;
++  uint32_t C;
++  uint32_t D;
++
++  uint32_t total[2];
++  uint32_t buflen;
++  uint32_t buffer[32];
+ };
+ 
+ /*
+@@ -107,8 +95,8 @@
+    endian byte order, so that a byte-wise output yields to the wanted
+    ASCII representation of the message digest.
+ 
+-   IMPORTANT: On some systems it is required that RESBUF be correctly
+-   aligned for a 32 bits value.  */
++   IMPORTANT: On some systems, RESBUF must be aligned to a 32-bit
++   boundary. */
+ extern void *__md5_finish_ctx (struct md5_ctx *ctx, void *resbuf) __THROW;
+ 
+ 
+@@ -116,8 +104,8 @@
+    always in little endian byte order, so that a byte-wise output yields
+    to the wanted ASCII representation of the message digest.
+ 
+-   IMPORTANT: On some systems it is required that RESBUF is correctly
+-   aligned for a 32 bits value.  */
++   IMPORTANT: On some systems, RESBUF must be aligned to a 32-bit
++   boundary. */
+ extern void *__md5_read_ctx (const struct md5_ctx *ctx, void *resbuf) __THROW;
+ 
+ 
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/lib/sha512.c	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,559 @@
++/* sha512.c - Functions to compute SHA512 and SHA384 message digest of files or
++   memory blocks according to the NIST specification FIPS-180-2.
++
++   Copyright (C) 2005, 2006 Free Software Foundation, Inc.
++
++   This program is free software; you can redistribute it and/or modify it
++   under the terms of the GNU General Public License as published by the
++   Free Software Foundation; either version 2, or (at your option) any
++   later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU General Public License for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with this program; if not, write to the Free Software Foundation,
++   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
++
++/* Written by David Madore, considerably copypasting from
++   Scott G. Miller's sha1.c
++*/
++
++#ifdef HAVE_CONFIG_H
++# include <config.h>
++#endif
++
++#include "sha512.h"
++
++#include <stddef.h>
++#include <string.h>
++
++#if USE_UNLOCKED_IO
++# include "unlocked-io.h"
++#endif
++
++#ifdef WORDS_BIGENDIAN
++# define SWAP(n) (n)
++#else
++# define SWAP(n) \
++    (((n) << 56) | (((n) & 0xff00) << 40) | (((n) & 0xff0000UL) << 24) \
++     | (((n) & 0xff000000UL) << 8) | (((n) >> 8) & 0xff000000UL) \
++     | (((n) >> 24) & 0xff0000UL) | (((n) >> 40) & 0xff00UL) | ((n) >> 56))
++#endif
++
++#define BLOCKSIZE 4096
++#if BLOCKSIZE % 128 != 0
++# error "invalid BLOCKSIZE"
++#endif
++
++/* This array contains the bytes used to pad the buffer to the next
++   128-byte boundary.  */
++static const unsigned char fillbuf[128] = { 0x80, 0 /* , 0, 0, ...  */ };
++
++
++/*
++  Takes a pointer to a 512 bit block of data (eight 64 bit ints) and
++  intializes it to the start constants of the SHA512 algorithm.  This
++  must be called before using hash in the call to sha512_hash
++*/
++void
++sha512_init_ctx (struct sha512_ctx *ctx)
++{
++  ctx->state[0] = 0x6a09e667f3bcc908ULL;
++  ctx->state[1] = 0xbb67ae8584caa73bULL;
++  ctx->state[2] = 0x3c6ef372fe94f82bULL;
++  ctx->state[3] = 0xa54ff53a5f1d36f1ULL;
++  ctx->state[4] = 0x510e527fade682d1ULL;
++  ctx->state[5] = 0x9b05688c2b3e6c1fULL;
++  ctx->state[6] = 0x1f83d9abfb41bd6bULL;
++  ctx->state[7] = 0x5be0cd19137e2179ULL;
++
++  ctx->total[0] = ctx->total[1] = 0;
++  ctx->buflen = 0;
++}
++
++void
++sha384_init_ctx (struct sha512_ctx *ctx)
++{
++  ctx->state[0] = 0xcbbb9d5dc1059ed8ULL;
++  ctx->state[1] = 0x629a292a367cd507ULL;
++  ctx->state[2] = 0x9159015a3070dd17ULL;
++  ctx->state[3] = 0x152fecd8f70e5939ULL;
++  ctx->state[4] = 0x67332667ffc00b31ULL;
++  ctx->state[5] = 0x8eb44a8768581511ULL;
++  ctx->state[6] = 0xdb0c2e0d64f98fa7ULL;
++  ctx->state[7] = 0x47b5481dbefa4fa4ULL;
++
++  ctx->total[0] = ctx->total[1] = 0;
++  ctx->buflen = 0;
++}
++
++/* Put result from CTX in first 64 bytes following RESBUF.  The result
++   must be in little endian byte order.
++
++   IMPORTANT: On some systems it is required that RESBUF is correctly
++   aligned for a 64-bit value.  */
++void *
++sha512_read_ctx (const struct sha512_ctx *ctx, void *resbuf)
++{
++  int i;
++
++  for (i = 0; i < 8; i++)
++    ((uint64_t *) resbuf)[i] = SWAP (ctx->state[i]);
++
++  return resbuf;
++}
++
++void *
++sha384_read_ctx (const struct sha512_ctx *ctx, void *resbuf)
++{
++  int i;
++
++  for (i = 0; i < 6; i++)
++    ((uint64_t *) resbuf)[i] = SWAP (ctx->state[i]);
++
++  return resbuf;
++}
++
++/* Process the remaining bytes in the internal buffer and the usual
++   prolog according to the standard and write the result to RESBUF.
++
++   IMPORTANT: On some systems it is required that RESBUF is correctly
++   aligned for a 64-bit value.  */
++static void
++sha512_conclude_ctx (struct sha512_ctx *ctx)
++{
++  /* Take yet unprocessed bytes into account.  */
++  uint64_t bytes = ctx->buflen;
++  size_t size = (bytes < 112) ? 128 / 8 : 128 * 2 / 8;
++
++  /* Now count remaining bytes.  */
++  ctx->total[0] += bytes;
++  if (ctx->total[0] < bytes)
++    ++ctx->total[1];
++
++  /* Put the 64-bit file length in *bits* at the end of the buffer.  */
++  ctx->buffer[size - 2] = SWAP ((ctx->total[1] << 3) | (ctx->total[0] >> 61));
++  ctx->buffer[size - 1] = SWAP (ctx->total[0] << 3);
++
++  memcpy (&((char *) ctx->buffer)[bytes], fillbuf, (size - 2) * 8 - bytes);
++
++  /* Process last bytes.  */
++  sha512_process_block (ctx->buffer, size * 8, ctx);
++}
++
++void *
++sha512_finish_ctx (struct sha512_ctx *ctx, void *resbuf)
++{
++  sha512_conclude_ctx (ctx);
++  return sha512_read_ctx (ctx, resbuf);
++}
++
++void *
++sha384_finish_ctx (struct sha512_ctx *ctx, void *resbuf)
++{
++  sha512_conclude_ctx (ctx);
++  return sha384_read_ctx (ctx, resbuf);
++}
++
++/* Compute SHA512 message digest for bytes read from STREAM.  The
++   resulting message digest number will be written into the 64 bytes
++   beginning at RESBLOCK.  */
++int
++sha512_stream (FILE *stream, void *resblock)
++{
++  struct sha512_ctx ctx;
++  char buffer[BLOCKSIZE + 72];
++  size_t sum;
++
++  /* Initialize the computation context.  */
++  sha512_init_ctx (&ctx);
++
++  /* Iterate over full file contents.  */
++  while (1)
++    {
++      /* We read the file in blocks of BLOCKSIZE bytes.  One call of the
++	 computation function processes the whole buffer so that with the
++	 next round of the loop another block can be read.  */
++      size_t n;
++      sum = 0;
++
++      /* Read block.  Take care for partial reads.  */
++      while (1)
++	{
++	  n = fread (buffer + sum, 1, BLOCKSIZE - sum, stream);
++
++	  sum += n;
++
++	  if (sum == BLOCKSIZE)
++	    break;
++
++	  if (n == 0)
++	    {
++	      /* Check for the error flag IFF N == 0, so that we don't
++		 exit the loop after a partial read due to e.g., EAGAIN
++		 or EWOULDBLOCK.  */
++	      if (ferror (stream))
++		return 1;
++	      goto process_partial_block;
++	    }
++
++	  /* We've read at least one byte, so ignore errors.  But always
++	     check for EOF, since feof may be true even though N > 0.
++	     Otherwise, we could end up calling fread after EOF.  */
++	  if (feof (stream))
++	    goto process_partial_block;
++	}
++
++      /* Process buffer with BLOCKSIZE bytes.  Note that
++			BLOCKSIZE % 128 == 0
++       */
++      sha512_process_block (buffer, BLOCKSIZE, &ctx);
++    }
++
++ process_partial_block:;
++
++  /* Process any remaining bytes.  */
++  if (sum > 0)
++    sha512_process_bytes (buffer, sum, &ctx);
++
++  /* Construct result in desired memory.  */
++  sha512_finish_ctx (&ctx, resblock);
++  return 0;
++}
++
++/* FIXME: Avoid code duplication */
++int
++sha384_stream (FILE *stream, void *resblock)
++{
++  struct sha512_ctx ctx;
++  char buffer[BLOCKSIZE + 72];
++  size_t sum;
++
++  /* Initialize the computation context.  */
++  sha384_init_ctx (&ctx);
++
++  /* Iterate over full file contents.  */
++  while (1)
++    {
++      /* We read the file in blocks of BLOCKSIZE bytes.  One call of the
++	 computation function processes the whole buffer so that with the
++	 next round of the loop another block can be read.  */
++      size_t n;
++      sum = 0;
++
++      /* Read block.  Take care for partial reads.  */
++      while (1)
++	{
++	  n = fread (buffer + sum, 1, BLOCKSIZE - sum, stream);
++
++	  sum += n;
++
++	  if (sum == BLOCKSIZE)
++	    break;
++
++	  if (n == 0)
++	    {
++	      /* Check for the error flag IFF N == 0, so that we don't
++		 exit the loop after a partial read due to e.g., EAGAIN
++		 or EWOULDBLOCK.  */
++	      if (ferror (stream))
++		return 1;
++	      goto process_partial_block;
++	    }
++
++	  /* We've read at least one byte, so ignore errors.  But always
++	     check for EOF, since feof may be true even though N > 0.
++	     Otherwise, we could end up calling fread after EOF.  */
++	  if (feof (stream))
++	    goto process_partial_block;
++	}
++
++      /* Process buffer with BLOCKSIZE bytes.  Note that
++			BLOCKSIZE % 128 == 0
++       */
++      sha512_process_block (buffer, BLOCKSIZE, &ctx);
++    }
++
++ process_partial_block:;
++
++  /* Process any remaining bytes.  */
++  if (sum > 0)
++    sha512_process_bytes (buffer, sum, &ctx);
++
++  /* Construct result in desired memory.  */
++  sha384_finish_ctx (&ctx, resblock);
++  return 0;
++}
++
++/* Compute SHA512 message digest for LEN bytes beginning at BUFFER.  The
++   result is always in little endian byte order, so that a byte-wise
++   output yields to the wanted ASCII representation of the message
++   digest.  */
++void *
++sha512_buffer (const char *buffer, size_t len, void *resblock)
++{
++  struct sha512_ctx ctx;
++
++  /* Initialize the computation context.  */
++  sha512_init_ctx (&ctx);
++
++  /* Process whole buffer but last len % 128 bytes.  */
++  sha512_process_bytes (buffer, len, &ctx);
++
++  /* Put result in desired memory area.  */
++  return sha512_finish_ctx (&ctx, resblock);
++}
++
++void *
++sha384_buffer (const char *buffer, size_t len, void *resblock)
++{
++  struct sha512_ctx ctx;
++
++  /* Initialize the computation context.  */
++  sha384_init_ctx (&ctx);
++
++  /* Process whole buffer but last len % 128 bytes.  */
++  sha512_process_bytes (buffer, len, &ctx);
++
++  /* Put result in desired memory area.  */
++  return sha384_finish_ctx (&ctx, resblock);
++}
++
++void
++sha512_process_bytes (const void *buffer, size_t len, struct sha512_ctx *ctx)
++{
++  /* When we already have some bits in our internal buffer concatenate
++     both inputs first.  */
++  if (ctx->buflen != 0)
++    {
++      size_t left_over = ctx->buflen;
++      size_t add = 256 - left_over > len ? len : 256 - left_over;
++
++      memcpy (&((char *) ctx->buffer)[left_over], buffer, add);
++      ctx->buflen += add;
++
++      if (ctx->buflen > 128)
++	{
++	  sha512_process_block (ctx->buffer, ctx->buflen & ~63, ctx);
++
++	  ctx->buflen &= 127;
++	  /* The regions in the following copy operation cannot overlap.  */
++	  memcpy (ctx->buffer,
++		  &((char *) ctx->buffer)[(left_over + add) & ~127],
++		  ctx->buflen);
++	}
++
++      buffer = (const char *) buffer + add;
++      len -= add;
++    }
++
++  /* Process available complete blocks.  */
++  if (len >= 128)
++    {
++#if !_STRING_ARCH_unaligned
++# define alignof(type) offsetof (struct { char c; type x; }, x)
++# define UNALIGNED_P(p) (((size_t) p) % alignof (uint64_t) != 0)
++      if (UNALIGNED_P (buffer))
++	while (len > 128)
++	  {
++	    sha512_process_block (memcpy (ctx->buffer, buffer, 128), 128, ctx);
++	    buffer = (const char *) buffer + 128;
++	    len -= 128;
++	  }
++      else
++#endif
++	{
++	  sha512_process_block (buffer, len & ~127, ctx);
++	  buffer = (const char *) buffer + (len & ~127);
++	  len &= 127;
++	}
++    }
++
++  /* Move remaining bytes in internal buffer.  */
++  if (len > 0)
++    {
++      size_t left_over = ctx->buflen;
++
++      memcpy (&((char *) ctx->buffer)[left_over], buffer, len);
++      left_over += len;
++      if (left_over >= 128)
++	{
++	  sha512_process_block (ctx->buffer, 128, ctx);
++	  left_over -= 128;
++	  memcpy (ctx->buffer, &ctx->buffer[16], left_over);
++	}
++      ctx->buflen = left_over;
++    }
++}
++
++/* --- Code below is the primary difference between sha1.c and sha512.c --- */
++
++/* SHA512 round constants */
++#define K(I) sha512_round_constants[I]
++static const uint64_t sha512_round_constants[80] = {
++ 0x428a2f98d728ae22ULL, 0x7137449123ef65cdULL, 0xb5c0fbcfec4d3b2fULL, 0xe9b5dba58189dbbcULL, 0x3956c25bf348b538ULL, 0x59f111f1b605d019ULL, 0x923f82a4af194f9bULL, 0xab1c5ed5da6d8118ULL,
++ 0xd807aa98a3030242ULL, 0x12835b0145706fbeULL, 0x243185be4ee4b28cULL, 0x550c7dc3d5ffb4e2ULL, 0x72be5d74f27b896fULL, 0x80deb1fe3b1696b1ULL, 0x9bdc06a725c71235ULL, 0xc19bf174cf692694ULL,
++ 0xe49b69c19ef14ad2ULL, 0xefbe4786384f25e3ULL, 0x0fc19dc68b8cd5b5ULL, 0x240ca1cc77ac9c65ULL, 0x2de92c6f592b0275ULL, 0x4a7484aa6ea6e483ULL, 0x5cb0a9dcbd41fbd4ULL, 0x76f988da831153b5ULL,
++ 0x983e5152ee66dfabULL, 0xa831c66d2db43210ULL, 0xb00327c898fb213fULL, 0xbf597fc7beef0ee4ULL, 0xc6e00bf33da88fc2ULL, 0xd5a79147930aa725ULL, 0x06ca6351e003826fULL, 0x142929670a0e6e70ULL,
++ 0x27b70a8546d22ffcULL, 0x2e1b21385c26c926ULL, 0x4d2c6dfc5ac42aedULL, 0x53380d139d95b3dfULL, 0x650a73548baf63deULL, 0x766a0abb3c77b2a8ULL, 0x81c2c92e47edaee6ULL, 0x92722c851482353bULL,
++ 0xa2bfe8a14cf10364ULL, 0xa81a664bbc423001ULL, 0xc24b8b70d0f89791ULL, 0xc76c51a30654be30ULL, 0xd192e819d6ef5218ULL, 0xd69906245565a910ULL, 0xf40e35855771202aULL, 0x106aa07032bbd1b8ULL,
++ 0x19a4c116b8d2d0c8ULL, 0x1e376c085141ab53ULL, 0x2748774cdf8eeb99ULL, 0x34b0bcb5e19b48a8ULL, 0x391c0cb3c5c95a63ULL, 0x4ed8aa4ae3418acbULL, 0x5b9cca4f7763e373ULL, 0x682e6ff3d6b2b8a3ULL,
++ 0x748f82ee5defb2fcULL, 0x78a5636f43172f60ULL, 0x84c87814a1f0ab72ULL, 0x8cc702081a6439ecULL, 0x90befffa23631e28ULL, 0xa4506cebde82bde9ULL, 0xbef9a3f7b2c67915ULL, 0xc67178f2e372532bULL,
++ 0xca273eceea26619cULL, 0xd186b8c721c0c207ULL, 0xeada7dd6cde0eb1eULL, 0xf57d4f7fee6ed178ULL, 0x06f067aa72176fbaULL, 0x0a637dc5a2c898a6ULL, 0x113f9804bef90daeULL, 0x1b710b35131c471bULL,
++ 0x28db77f523047d84ULL, 0x32caab7b40c72493ULL, 0x3c9ebe0a15c9bebcULL, 0x431d67c49c100d4cULL, 0x4cc5d4becb3e42b6ULL, 0x597f299cfc657e2aULL, 0x5fcb6fab3ad6faecULL, 0x6c44198c4a475817ULL,
++};
++
++/* Round functions.  */
++#define F2(A,B,C) ( ( A & B ) | ( C & ( A | B ) ) )
++#define F1(E,F,G) ( G ^ ( E & ( F ^ G ) ) )
++
++/* Process LEN bytes of BUFFER, accumulating context into CTX.
++   It is assumed that LEN % 128 == 0.
++   Most of this code comes from GnuPG's cipher/sha1.c.  */
++
++void
++sha512_process_block (const void *buffer, size_t len, struct sha512_ctx *ctx)
++{
++  const uint64_t *words = buffer;
++  size_t nwords = len / sizeof (uint64_t);
++  const uint64_t *endp = words + nwords;
++  uint64_t x[16];
++  uint64_t a = ctx->state[0];
++  uint64_t b = ctx->state[1];
++  uint64_t c = ctx->state[2];
++  uint64_t d = ctx->state[3];
++  uint64_t e = ctx->state[4];
++  uint64_t f = ctx->state[5];
++  uint64_t g = ctx->state[6];
++  uint64_t h = ctx->state[7];
++
++  /* First increment the byte count.  FIPS PUB 180-2 specifies the possible
++     length of the file up to 2^128 bits.  Here we only compute the
++     number of bytes.  Do a double word increment.  */
++  ctx->total[0] += len;
++  if (ctx->total[0] < len)
++    ++ctx->total[1];
++
++#define S0(x) (rol64(x,63)^rol64(x,56)^(x>>7))
++#define S1(x) (rol64(x,45)^rol64(x,3)^(x>>6))
++#define SS0(x) (rol64(x,36)^rol64(x,30)^rol64(x,25))
++#define SS1(x) (rol64(x,50)^rol64(x,46)^rol64(x,23))
++
++#define M(I) ( tm =   S1(x[(I-2)&0x0f]) + x[(I-7)&0x0f] \
++		    + S0(x[(I-15)&0x0f]) + x[I&0x0f]    \
++	       , x[I&0x0f] = tm )
++
++#define R(A,B,C,D,E,F,G,H,K,M)  do { t0 = SS0(A) + F2(A,B,C); \
++                                     t1 = H + SS1(E)  \
++                                      + F1(E,F,G)     \
++				      + K	      \
++				      + M;	      \
++				     D += t1;  H = t0 + t1; \
++			       } while(0)
++
++  while (words < endp)
++    {
++      uint64_t tm;
++      uint64_t t0, t1;
++      int t;
++      /* FIXME: see sha1.c for a better implementation.  */
++      for (t = 0; t < 16; t++)
++	{
++	  x[t] = SWAP (*words);
++	  words++;
++	}
++
++      R( a, b, c, d, e, f, g, h, K( 0), x[ 0] );
++      R( h, a, b, c, d, e, f, g, K( 1), x[ 1] );
++      R( g, h, a, b, c, d, e, f, K( 2), x[ 2] );
++      R( f, g, h, a, b, c, d, e, K( 3), x[ 3] );
++      R( e, f, g, h, a, b, c, d, K( 4), x[ 4] );
++      R( d, e, f, g, h, a, b, c, K( 5), x[ 5] );
++      R( c, d, e, f, g, h, a, b, K( 6), x[ 6] );
++      R( b, c, d, e, f, g, h, a, K( 7), x[ 7] );
++      R( a, b, c, d, e, f, g, h, K( 8), x[ 8] );
++      R( h, a, b, c, d, e, f, g, K( 9), x[ 9] );
++      R( g, h, a, b, c, d, e, f, K(10), x[10] );
++      R( f, g, h, a, b, c, d, e, K(11), x[11] );
++      R( e, f, g, h, a, b, c, d, K(12), x[12] );
++      R( d, e, f, g, h, a, b, c, K(13), x[13] );
++      R( c, d, e, f, g, h, a, b, K(14), x[14] );
++      R( b, c, d, e, f, g, h, a, K(15), x[15] );
++      R( a, b, c, d, e, f, g, h, K(16), M(16) );
++      R( h, a, b, c, d, e, f, g, K(17), M(17) );
++      R( g, h, a, b, c, d, e, f, K(18), M(18) );
++      R( f, g, h, a, b, c, d, e, K(19), M(19) );
++      R( e, f, g, h, a, b, c, d, K(20), M(20) );
++      R( d, e, f, g, h, a, b, c, K(21), M(21) );
++      R( c, d, e, f, g, h, a, b, K(22), M(22) );
++      R( b, c, d, e, f, g, h, a, K(23), M(23) );
++      R( a, b, c, d, e, f, g, h, K(24), M(24) );
++      R( h, a, b, c, d, e, f, g, K(25), M(25) );
++      R( g, h, a, b, c, d, e, f, K(26), M(26) );
++      R( f, g, h, a, b, c, d, e, K(27), M(27) );
++      R( e, f, g, h, a, b, c, d, K(28), M(28) );
++      R( d, e, f, g, h, a, b, c, K(29), M(29) );
++      R( c, d, e, f, g, h, a, b, K(30), M(30) );
++      R( b, c, d, e, f, g, h, a, K(31), M(31) );
++      R( a, b, c, d, e, f, g, h, K(32), M(32) );
++      R( h, a, b, c, d, e, f, g, K(33), M(33) );
++      R( g, h, a, b, c, d, e, f, K(34), M(34) );
++      R( f, g, h, a, b, c, d, e, K(35), M(35) );
++      R( e, f, g, h, a, b, c, d, K(36), M(36) );
++      R( d, e, f, g, h, a, b, c, K(37), M(37) );
++      R( c, d, e, f, g, h, a, b, K(38), M(38) );
++      R( b, c, d, e, f, g, h, a, K(39), M(39) );
++      R( a, b, c, d, e, f, g, h, K(40), M(40) );
++      R( h, a, b, c, d, e, f, g, K(41), M(41) );
++      R( g, h, a, b, c, d, e, f, K(42), M(42) );
++      R( f, g, h, a, b, c, d, e, K(43), M(43) );
++      R( e, f, g, h, a, b, c, d, K(44), M(44) );
++      R( d, e, f, g, h, a, b, c, K(45), M(45) );
++      R( c, d, e, f, g, h, a, b, K(46), M(46) );
++      R( b, c, d, e, f, g, h, a, K(47), M(47) );
++      R( a, b, c, d, e, f, g, h, K(48), M(48) );
++      R( h, a, b, c, d, e, f, g, K(49), M(49) );
++      R( g, h, a, b, c, d, e, f, K(50), M(50) );
++      R( f, g, h, a, b, c, d, e, K(51), M(51) );
++      R( e, f, g, h, a, b, c, d, K(52), M(52) );
++      R( d, e, f, g, h, a, b, c, K(53), M(53) );
++      R( c, d, e, f, g, h, a, b, K(54), M(54) );
++      R( b, c, d, e, f, g, h, a, K(55), M(55) );
++      R( a, b, c, d, e, f, g, h, K(56), M(56) );
++      R( h, a, b, c, d, e, f, g, K(57), M(57) );
++      R( g, h, a, b, c, d, e, f, K(58), M(58) );
++      R( f, g, h, a, b, c, d, e, K(59), M(59) );
++      R( e, f, g, h, a, b, c, d, K(60), M(60) );
++      R( d, e, f, g, h, a, b, c, K(61), M(61) );
++      R( c, d, e, f, g, h, a, b, K(62), M(62) );
++      R( b, c, d, e, f, g, h, a, K(63), M(63) );
++      R( a, b, c, d, e, f, g, h, K(64), M(64) );
++      R( h, a, b, c, d, e, f, g, K(65), M(65) );
++      R( g, h, a, b, c, d, e, f, K(66), M(66) );
++      R( f, g, h, a, b, c, d, e, K(67), M(67) );
++      R( e, f, g, h, a, b, c, d, K(68), M(68) );
++      R( d, e, f, g, h, a, b, c, K(69), M(69) );
++      R( c, d, e, f, g, h, a, b, K(70), M(70) );
++      R( b, c, d, e, f, g, h, a, K(71), M(71) );
++      R( a, b, c, d, e, f, g, h, K(72), M(72) );
++      R( h, a, b, c, d, e, f, g, K(73), M(73) );
++      R( g, h, a, b, c, d, e, f, K(74), M(74) );
++      R( f, g, h, a, b, c, d, e, K(75), M(75) );
++      R( e, f, g, h, a, b, c, d, K(76), M(76) );
++      R( d, e, f, g, h, a, b, c, K(77), M(77) );
++      R( c, d, e, f, g, h, a, b, K(78), M(78) );
++      R( b, c, d, e, f, g, h, a, K(79), M(79) );
++
++      a = ctx->state[0] += a;
++      b = ctx->state[1] += b;
++      c = ctx->state[2] += c;
++      d = ctx->state[3] += d;
++      e = ctx->state[4] += e;
++      f = ctx->state[5] += f;
++      g = ctx->state[6] += g;
++      h = ctx->state[7] += h;
++    }
++}
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/lib/sha256.h	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,88 @@
++/* Declarations of functions and data types used for SHA256 and SHA224 sum
++   library functions.
++   Copyright (C) 2005, 2006 Free Software Foundation, Inc.
++
++   This program is free software; you can redistribute it and/or modify it
++   under the terms of the GNU General Public License as published by the
++   Free Software Foundation; either version 2, or (at your option) any
++   later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU General Public License for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with this program; if not, write to the Free Software Foundation,
++   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
++
++#ifndef SHA256_H
++# define SHA256_H 1
++
++# include <stdio.h>
++# include <stdint.h>
++
++/* Structure to save state of computation between the single steps.  */
++struct sha256_ctx
++{
++  uint32_t state[8];
++
++  uint32_t total[2];
++  uint32_t buflen;
++  uint32_t buffer[32];
++};
++
++
++/* Initialize structure containing state of computation. */
++extern void sha256_init_ctx (struct sha256_ctx *ctx);
++extern void sha224_init_ctx (struct sha256_ctx *ctx);
++
++/* Starting with the result of former calls of this function (or the
++   initialization function update the context for the next LEN bytes
++   starting at BUFFER.
++   It is necessary that LEN is a multiple of 64!!! */
++extern void sha256_process_block (const void *buffer, size_t len,
++				  struct sha256_ctx *ctx);
++
++/* Starting with the result of former calls of this function (or the
++   initialization function update the context for the next LEN bytes
++   starting at BUFFER.
++   It is NOT required that LEN is a multiple of 64.  */
++extern void sha256_process_bytes (const void *buffer, size_t len,
++				  struct sha256_ctx *ctx);
++
++/* Process the remaining bytes in the buffer and put result from CTX
++   in first 32 (28) bytes following RESBUF.  The result is always in little
++   endian byte order, so that a byte-wise output yields to the wanted
++   ASCII representation of the message digest.
++
++   IMPORTANT: On some systems it is required that RESBUF be correctly
++   aligned for a 32 bits value.  */
++extern void *sha256_finish_ctx (struct sha256_ctx *ctx, void *resbuf);
++extern void *sha224_finish_ctx (struct sha256_ctx *ctx, void *resbuf);
++
++
++/* Put result from CTX in first 32 (28) bytes following RESBUF.  The result is
++   always in little endian byte order, so that a byte-wise output yields
++   to the wanted ASCII representation of the message digest.
++
++   IMPORTANT: On some systems it is required that RESBUF is correctly
++   aligned for a 32 bits value.  */
++extern void *sha256_read_ctx (const struct sha256_ctx *ctx, void *resbuf);
++extern void *sha224_read_ctx (const struct sha256_ctx *ctx, void *resbuf);
++
++
++/* Compute SHA256 (SHA224) message digest for bytes read from STREAM.  The
++   resulting message digest number will be written into the 32 (28) bytes
++   beginning at RESBLOCK.  */
++extern int sha256_stream (FILE *stream, void *resblock);
++extern int sha224_stream (FILE *stream, void *resblock);
++
++/* Compute SHA256 (SHA224) message digest for LEN bytes beginning at BUFFER.  The
++   result is always in little endian byte order, so that a byte-wise
++   output yields to the wanted ASCII representation of the message
++   digest.  */
++extern void *sha256_buffer (const char *buffer, size_t len, void *resblock);
++extern void *sha224_buffer (const char *buffer, size_t len, void *resblock);
++
++#endif
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/lib/base64.h	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,45 @@
++/* base64.h -- Encode binary data using printable characters.
++   Copyright (C) 2004, 2005, 2006 Free Software Foundation, Inc.
++   Written by Simon Josefsson.
++
++   This program is free software; you can redistribute it and/or modify
++   it under the terms of the GNU General Public License as published by
++   the Free Software Foundation; either version 2, or (at your option)
++   any later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU General Public License for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with this program; if not, write to the Free Software Foundation,
++   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
++
++#ifndef BASE64_H
++# define BASE64_H
++
++/* Get size_t. */
++# include <stddef.h>
++
++/* Get bool. */
++# include <stdbool.h>
++
++/* This uses that the expression (n+(k-1))/k means the smallest
++   integer >= n/k, i.e., the ceiling of n/k.  */
++# define BASE64_LENGTH(inlen) ((((inlen) + 2) / 3) * 4)
++
++extern bool isbase64 (char ch);
++
++extern void base64_encode (const char *restrict in, size_t inlen,
++			   char *restrict out, size_t outlen);
++
++extern size_t base64_encode_alloc (const char *in, size_t inlen, char **out);
++
++extern bool base64_decode (const char *restrict in, size_t inlen,
++			   char *restrict out, size_t *outlen);
++
++extern bool base64_decode_alloc (const char *in, size_t inlen,
++				 char **out, size_t *outlen);
++
++#endif /* BASE64_H */
+--- coreutils-5.97/lib/sha1.c.newhashes	2005-09-14 00:32:35 +0100
++++ coreutils-5.97/lib/sha1.c	2006-06-25 23:50:01 +0100
+@@ -1,7 +1,8 @@
+ /* sha1.c - Functions to compute SHA1 message digest of files or
+    memory blocks according to the NIST specification FIPS-180-1.
+ 
+-   Copyright (C) 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
++   Copyright (C) 2000, 2001, 2003, 2004, 2005, 2006 Free Software
++   Foundation, Inc.
+ 
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+@@ -35,9 +36,6 @@
+ # include "unlocked-io.h"
+ #endif
+ 
+-/* SWAP does an endian swap on architectures that are little-endian,
+-   as SHA1 needs some data in a big-endian form.  */
+-
+ #ifdef WORDS_BIGENDIAN
+ # define SWAP(n) (n)
+ #else
+@@ -55,11 +53,9 @@
+ static const unsigned char fillbuf[64] = { 0x80, 0 /* , 0, 0, ...  */ };
+ 
+ 
+-/*
+-  Takes a pointer to a 160 bit block of data (five 32 bit ints) and
+-  intializes it to the start constants of the SHA1 algorithm.  This
+-  must be called before using hash in the call to sha1_hash.
+-*/
++/* Take a pointer to a 160 bit block of data (five 32 bit ints) and
++   initialize it to the start constants of the SHA1 algorithm.  This
++   must be called before using hash in the call to sha1_hash.  */
+ void
+ sha1_init_ctx (struct sha1_ctx *ctx)
+ {
+@@ -77,15 +73,15 @@
+    must be in little endian byte order.
+ 
+    IMPORTANT: On some systems it is required that RESBUF is correctly
+-   aligned for a 32 bits value.  */
++   aligned for a 32-bit value.  */
+ void *
+ sha1_read_ctx (const struct sha1_ctx *ctx, void *resbuf)
+ {
+-  ((md5_uint32 *) resbuf)[0] = SWAP (ctx->A);
+-  ((md5_uint32 *) resbuf)[1] = SWAP (ctx->B);
+-  ((md5_uint32 *) resbuf)[2] = SWAP (ctx->C);
+-  ((md5_uint32 *) resbuf)[3] = SWAP (ctx->D);
+-  ((md5_uint32 *) resbuf)[4] = SWAP (ctx->E);
++  ((uint32_t *) resbuf)[0] = SWAP (ctx->A);
++  ((uint32_t *) resbuf)[1] = SWAP (ctx->B);
++  ((uint32_t *) resbuf)[2] = SWAP (ctx->C);
++  ((uint32_t *) resbuf)[3] = SWAP (ctx->D);
++  ((uint32_t *) resbuf)[4] = SWAP (ctx->E);
+ 
+   return resbuf;
+ }
+@@ -94,29 +90,27 @@
+    prolog according to the standard and write the result to RESBUF.
+ 
+    IMPORTANT: On some systems it is required that RESBUF is correctly
+-   aligned for a 32 bits value.  */
++   aligned for a 32-bit value.  */
+ void *
+ sha1_finish_ctx (struct sha1_ctx *ctx, void *resbuf)
+ {
+   /* Take yet unprocessed bytes into account.  */
+-  md5_uint32 bytes = ctx->buflen;
+-  size_t pad;
++  uint32_t bytes = ctx->buflen;
++  size_t size = (bytes < 56) ? 64 / 4 : 64 * 2 / 4;
+ 
+   /* Now count remaining bytes.  */
+   ctx->total[0] += bytes;
+   if (ctx->total[0] < bytes)
+     ++ctx->total[1];
+ 
+-  pad = bytes >= 56 ? 64 + 56 - bytes : 56 - bytes;
+-  memcpy (&ctx->buffer[bytes], fillbuf, pad);
+-
+   /* Put the 64-bit file length in *bits* at the end of the buffer.  */
+-  *(md5_uint32 *) &ctx->buffer[bytes + pad + 4] = SWAP (ctx->total[0] << 3);
+-  *(md5_uint32 *) &ctx->buffer[bytes + pad] = SWAP ((ctx->total[1] << 3) |
+-						    (ctx->total[0] >> 29));
++  ctx->buffer[size - 2] = SWAP ((ctx->total[1] << 3) | (ctx->total[0] >> 29));
++  ctx->buffer[size - 1] = SWAP (ctx->total[0] << 3);
++
++  memcpy (&((char *) ctx->buffer)[bytes], fillbuf, (size - 2) * 4 - bytes);
+ 
+   /* Process last bytes.  */
+-  sha1_process_block (ctx->buffer, bytes + pad + 8, ctx);
++  sha1_process_block (ctx->buffer, size * 4, ctx);
+ 
+   return sha1_read_ctx (ctx, resbuf);
+ }
+@@ -187,7 +181,7 @@
+   return 0;
+ }
+ 
+-/* Compute MD5 message digest for LEN bytes beginning at BUFFER.  The
++/* Compute SHA1 message digest for LEN bytes beginning at BUFFER.  The
+    result is always in little endian byte order, so that a byte-wise
+    output yields to the wanted ASCII representation of the message
+    digest.  */
+@@ -216,7 +210,7 @@
+       size_t left_over = ctx->buflen;
+       size_t add = 128 - left_over > len ? len : 128 - left_over;
+ 
+-      memcpy (&ctx->buffer[left_over], buffer, add);
++      memcpy (&((char *) ctx->buffer)[left_over], buffer, add);
+       ctx->buflen += add;
+ 
+       if (ctx->buflen > 64)
+@@ -225,7 +219,8 @@
+ 
+ 	  ctx->buflen &= 63;
+ 	  /* The regions in the following copy operation cannot overlap.  */
+-	  memcpy (ctx->buffer, &ctx->buffer[(left_over + add) & ~63],
++	  memcpy (ctx->buffer,
++		  &((char *) ctx->buffer)[(left_over + add) & ~63],
+ 		  ctx->buflen);
+ 	}
+ 
+@@ -238,7 +233,7 @@
+     {
+ #if !_STRING_ARCH_unaligned
+ # define alignof(type) offsetof (struct { char c; type x; }, x)
+-# define UNALIGNED_P(p) (((size_t) p) % alignof (md5_uint32) != 0)
++# define UNALIGNED_P(p) (((size_t) p) % alignof (uint32_t) != 0)
+       if (UNALIGNED_P (buffer))
+ 	while (len > 64)
+ 	  {
+@@ -260,13 +255,13 @@
+     {
+       size_t left_over = ctx->buflen;
+ 
+-      memcpy (&ctx->buffer[left_over], buffer, len);
++      memcpy (&((char *) ctx->buffer)[left_over], buffer, len);
+       left_over += len;
+       if (left_over >= 64)
+ 	{
+ 	  sha1_process_block (ctx->buffer, 64, ctx);
+ 	  left_over -= 64;
+-	  memcpy (ctx->buffer, &ctx->buffer[64], left_over);
++	  memcpy (ctx->buffer, &ctx->buffer[16], left_over);
+ 	}
+       ctx->buflen = left_over;
+     }
+@@ -293,15 +288,15 @@
+ void
+ sha1_process_block (const void *buffer, size_t len, struct sha1_ctx *ctx)
+ {
+-  const md5_uint32 *words = buffer;
+-  size_t nwords = len / sizeof (md5_uint32);
+-  const md5_uint32 *endp = words + nwords;
+-  md5_uint32 x[16];
+-  md5_uint32 a = ctx->A;
+-  md5_uint32 b = ctx->B;
+-  md5_uint32 c = ctx->C;
+-  md5_uint32 d = ctx->D;
+-  md5_uint32 e = ctx->E;
++  const uint32_t *words = buffer;
++  size_t nwords = len / sizeof (uint32_t);
++  const uint32_t *endp = words + nwords;
++  uint32_t x[16];
++  uint32_t a = ctx->A;
++  uint32_t b = ctx->B;
++  uint32_t c = ctx->C;
++  uint32_t d = ctx->D;
++  uint32_t e = ctx->E;
+ 
+   /* First increment the byte count.  RFC 1321 specifies the possible
+      length of the file up to 2^64 bits.  Here we only compute the
+@@ -325,7 +320,7 @@
+ 
+   while (words < endp)
+     {
+-      md5_uint32 tm;
++      uint32_t tm;
+       int t;
+       for (t = 0; t < 16; t++)
+ 	{
+--- coreutils-5.97/lib/Makefile.am.newhashes	2005-10-05 15:54:17 +0100
++++ coreutils-5.97/lib/Makefile.am	2006-06-25 23:50:01 +0100
+@@ -27,6 +27,7 @@
+ 
+ libcoreutils_a_SOURCES = \
+   allocsa.c allocsa.h \
++  base64.c base64.h \
+   euidaccess.h \
+   exit.h \
+   fprintftime.c fprintftime.h \
+--- coreutils-5.97/lib/sha1.h.newhashes	2005-09-14 00:32:15 +0100
++++ coreutils-5.97/lib/sha1.h	2006-06-25 23:50:01 +0100
+@@ -1,6 +1,6 @@
+ /* Declarations of functions and data types used for SHA1 sum
+    library functions.
+-   Copyright (C) 2000, 2001, 2003, 2005 Free Software Foundation, Inc.
++   Copyright (C) 2000, 2001, 2003, 2005, 2006 Free Software Foundation, Inc.
+ 
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+@@ -20,20 +20,20 @@
+ # define SHA1_H 1
+ 
+ # include <stdio.h>
+-# include "md5.h"
++# include <stdint.h>
+ 
+ /* Structure to save state of computation between the single steps.  */
+ struct sha1_ctx
+ {
+-  md5_uint32 A;
+-  md5_uint32 B;
+-  md5_uint32 C;
+-  md5_uint32 D;
+-  md5_uint32 E;
+-
+-  md5_uint32 total[2];
+-  md5_uint32 buflen;
+-  char buffer[128] __attribute__ ((__aligned__ (__alignof__ (md5_uint32))));
++  uint32_t A;
++  uint32_t B;
++  uint32_t C;
++  uint32_t D;
++  uint32_t E;
++
++  uint32_t total[2];
++  uint32_t buflen;
++  uint32_t buffer[32];
+ };
+ 
+ 
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/lib/sha512.h	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,90 @@
++/* Declarations of functions and data types used for SHA512 and SHA384 sum
++   library functions.
++   Copyright (C) 2005, 2006 Free Software Foundation, Inc.
++
++   This program is free software; you can redistribute it and/or modify it
++   under the terms of the GNU General Public License as published by the
++   Free Software Foundation; either version 2, or (at your option) any
++   later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU General Public License for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with this program; if not, write to the Free Software Foundation,
++   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
++
++#ifndef SHA512_H
++# define SHA512_H 1
++
++# include <stdio.h>
++# include <stdint.h>
++
++/* Structure to save state of computation between the single steps.  */
++struct sha512_ctx
++{
++  uint64_t state[8];
++
++  uint64_t total[2];
++  uint64_t buflen;
++  uint64_t buffer[32];
++};
++
++
++/* Initialize structure containing state of computation. */
++extern void sha512_init_ctx (struct sha512_ctx *ctx);
++extern void sha384_init_ctx (struct sha512_ctx *ctx);
++
++/* Starting with the result of former calls of this function (or the
++   initialization function update the context for the next LEN bytes
++   starting at BUFFER.
++   It is necessary that LEN is a multiple of 128!!! */
++extern void sha512_process_block (const void *buffer, size_t len,
++				  struct sha512_ctx *ctx);
++
++/* Starting with the result of former calls of this function (or the
++   initialization function update the context for the next LEN bytes
++   starting at BUFFER.
++   It is NOT required that LEN is a multiple of 128.  */
++extern void sha512_process_bytes (const void *buffer, size_t len,
++				  struct sha512_ctx *ctx);
++
++/* Process the remaining bytes in the buffer and put result from CTX
++   in first 64 (48) bytes following RESBUF.  The result is always in little
++   endian byte order, so that a byte-wise output yields to the wanted
++   ASCII representation of the message digest.
++
++   IMPORTANT: On some systems it is required that RESBUF be correctly
++   aligned for a 64 bits value.  */
++extern void *sha512_finish_ctx (struct sha512_ctx *ctx, void *resbuf);
++extern void *sha384_finish_ctx (struct sha512_ctx *ctx, void *resbuf);
++
++
++/* Put result from CTX in first 64 (48) bytes following RESBUF.  The result is
++   always in little endian byte order, so that a byte-wise output yields
++   to the wanted ASCII representation of the message digest.
++
++   IMPORTANT: On some systems it is required that RESBUF is correctly
++   aligned for a 32 bits value.  */
++extern void *sha512_read_ctx (const struct sha512_ctx *ctx, void *resbuf);
++extern void *sha384_read_ctx (const struct sha512_ctx *ctx, void *resbuf);
++
++
++/* Compute SHA512 (SHA384) message digest for bytes read from STREAM.  The
++   resulting message digest number will be written into the 64 (48) bytes
++   beginning at RESBLOCK.  */
++extern int sha512_stream (FILE *stream, void *resblock);
++extern int sha384_stream (FILE *stream, void *resblock);
++
++/* Compute SHA512 (SHA384) message digest for LEN bytes beginning at BUFFER.  The
++   result is always in little endian byte order, so that a byte-wise
++   output yields to the wanted ASCII representation of the message
++   digest.  */
++extern void *sha512_buffer (const char *buffer, size_t len, void *resblock);
++extern void *sha384_buffer (const char *buffer, size_t len, void *resblock);
++
++# define rol64(x,n) ( ((x) << (n)) | ((x) >> (64-(n))) )
++
++#endif
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/lib/sha256.c	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,548 @@
++/* sha256.c - Functions to compute SHA256 and SHA224 message digest of files or
++   memory blocks according to the NIST specification FIPS-180-2.
++
++   Copyright (C) 2005, 2006 Free Software Foundation, Inc.
++
++   This program is free software; you can redistribute it and/or modify it
++   under the terms of the GNU General Public License as published by the
++   Free Software Foundation; either version 2, or (at your option) any
++   later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU General Public License for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with this program; if not, write to the Free Software Foundation,
++   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
++
++/* Written by David Madore, considerably copypasting from
++   Scott G. Miller's sha1.c
++*/
++
++#ifdef HAVE_CONFIG_H
++# include <config.h>
++#endif
++
++#include "sha256.h"
++
++#include <stddef.h>
++#include <string.h>
++
++#if USE_UNLOCKED_IO
++# include "unlocked-io.h"
++#endif
++
++#ifdef WORDS_BIGENDIAN
++# define SWAP(n) (n)
++#else
++# define SWAP(n) \
++    (((n) << 24) | (((n) & 0xff00) << 8) | (((n) >> 8) & 0xff00) | ((n) >> 24))
++#endif
++
++#define BLOCKSIZE 4096
++#if BLOCKSIZE % 64 != 0
++# error "invalid BLOCKSIZE"
++#endif
++
++/* This array contains the bytes used to pad the buffer to the next
++   64-byte boundary.  */
++static const unsigned char fillbuf[64] = { 0x80, 0 /* , 0, 0, ...  */ };
++
++
++/*
++  Takes a pointer to a 256 bit block of data (eight 32 bit ints) and
++  intializes it to the start constants of the SHA256 algorithm.  This
++  must be called before using hash in the call to sha256_hash
++*/
++void
++sha256_init_ctx (struct sha256_ctx *ctx)
++{
++  ctx->state[0] = 0x6a09e667UL;
++  ctx->state[1] = 0xbb67ae85UL;
++  ctx->state[2] = 0x3c6ef372UL;
++  ctx->state[3] = 0xa54ff53aUL;
++  ctx->state[4] = 0x510e527fUL;
++  ctx->state[5] = 0x9b05688cUL;
++  ctx->state[6] = 0x1f83d9abUL;
++  ctx->state[7] = 0x5be0cd19UL;
++
++  ctx->total[0] = ctx->total[1] = 0;
++  ctx->buflen = 0;
++}
++
++void
++sha224_init_ctx (struct sha256_ctx *ctx)
++{
++  ctx->state[0] = 0xc1059ed8UL;
++  ctx->state[1] = 0x367cd507UL;
++  ctx->state[2] = 0x3070dd17UL;
++  ctx->state[3] = 0xf70e5939UL;
++  ctx->state[4] = 0xffc00b31UL;
++  ctx->state[5] = 0x68581511UL;
++  ctx->state[6] = 0x64f98fa7UL;
++  ctx->state[7] = 0xbefa4fa4UL;
++
++  ctx->total[0] = ctx->total[1] = 0;
++  ctx->buflen = 0;
++}
++
++/* Put result from CTX in first 32 bytes following RESBUF.  The result
++   must be in little endian byte order.
++
++   IMPORTANT: On some systems it is required that RESBUF is correctly
++   aligned for a 32-bit value.  */
++void *
++sha256_read_ctx (const struct sha256_ctx *ctx, void *resbuf)
++{
++  int i;
++
++  for (i = 0; i < 8; i++)
++    ((uint32_t *) resbuf)[i] = SWAP (ctx->state[i]);
++
++  return resbuf;
++}
++
++void *
++sha224_read_ctx (const struct sha256_ctx *ctx, void *resbuf)
++{
++  int i;
++
++  for (i = 0; i < 7; i++)
++    ((uint32_t *) resbuf)[i] = SWAP (ctx->state[i]);
++
++  return resbuf;
++}
++
++/* Process the remaining bytes in the internal buffer and the usual
++   prolog according to the standard and write the result to RESBUF.
++
++   IMPORTANT: On some systems it is required that RESBUF is correctly
++   aligned for a 32-bit value.  */
++static void
++sha256_conclude_ctx (struct sha256_ctx *ctx)
++{
++  /* Take yet unprocessed bytes into account.  */
++  uint32_t bytes = ctx->buflen;
++  size_t size = (bytes < 56) ? 64 / 4 : 64 * 2 / 4;
++
++  /* Now count remaining bytes.  */
++  ctx->total[0] += bytes;
++  if (ctx->total[0] < bytes)
++    ++ctx->total[1];
++
++  /* Put the 64-bit file length in *bits* at the end of the buffer.  */
++  ctx->buffer[size - 2] = SWAP ((ctx->total[1] << 3) | (ctx->total[0] >> 29));
++  ctx->buffer[size - 1] = SWAP (ctx->total[0] << 3);
++
++  memcpy (&((char *) ctx->buffer)[bytes], fillbuf, (size - 2) * 4 - bytes);
++
++  /* Process last bytes.  */
++  sha256_process_block (ctx->buffer, size * 4, ctx);
++}
++
++void *
++sha256_finish_ctx (struct sha256_ctx *ctx, void *resbuf)
++{
++  sha256_conclude_ctx (ctx);
++  return sha256_read_ctx (ctx, resbuf);
++}
++
++void *
++sha224_finish_ctx (struct sha256_ctx *ctx, void *resbuf)
++{
++  sha256_conclude_ctx (ctx);
++  return sha224_read_ctx (ctx, resbuf);
++}
++
++/* Compute SHA256 message digest for bytes read from STREAM.  The
++   resulting message digest number will be written into the 32 bytes
++   beginning at RESBLOCK.  */
++int
++sha256_stream (FILE *stream, void *resblock)
++{
++  struct sha256_ctx ctx;
++  char buffer[BLOCKSIZE + 72];
++  size_t sum;
++
++  /* Initialize the computation context.  */
++  sha256_init_ctx (&ctx);
++
++  /* Iterate over full file contents.  */
++  while (1)
++    {
++      /* We read the file in blocks of BLOCKSIZE bytes.  One call of the
++	 computation function processes the whole buffer so that with the
++	 next round of the loop another block can be read.  */
++      size_t n;
++      sum = 0;
++
++      /* Read block.  Take care for partial reads.  */
++      while (1)
++	{
++	  n = fread (buffer + sum, 1, BLOCKSIZE - sum, stream);
++
++	  sum += n;
++
++	  if (sum == BLOCKSIZE)
++	    break;
++
++	  if (n == 0)
++	    {
++	      /* Check for the error flag IFF N == 0, so that we don't
++		 exit the loop after a partial read due to e.g., EAGAIN
++		 or EWOULDBLOCK.  */
++	      if (ferror (stream))
++		return 1;
++	      goto process_partial_block;
++	    }
++
++	  /* We've read at least one byte, so ignore errors.  But always
++	     check for EOF, since feof may be true even though N > 0.
++	     Otherwise, we could end up calling fread after EOF.  */
++	  if (feof (stream))
++	    goto process_partial_block;
++	}
++
++      /* Process buffer with BLOCKSIZE bytes.  Note that
++			BLOCKSIZE % 64 == 0
++       */
++      sha256_process_block (buffer, BLOCKSIZE, &ctx);
++    }
++
++ process_partial_block:;
++
++  /* Process any remaining bytes.  */
++  if (sum > 0)
++    sha256_process_bytes (buffer, sum, &ctx);
++
++  /* Construct result in desired memory.  */
++  sha256_finish_ctx (&ctx, resblock);
++  return 0;
++}
++
++/* FIXME: Avoid code duplication */
++int
++sha224_stream (FILE *stream, void *resblock)
++{
++  struct sha256_ctx ctx;
++  char buffer[BLOCKSIZE + 72];
++  size_t sum;
++
++  /* Initialize the computation context.  */
++  sha224_init_ctx (&ctx);
++
++  /* Iterate over full file contents.  */
++  while (1)
++    {
++      /* We read the file in blocks of BLOCKSIZE bytes.  One call of the
++	 computation function processes the whole buffer so that with the
++	 next round of the loop another block can be read.  */
++      size_t n;
++      sum = 0;
++
++      /* Read block.  Take care for partial reads.  */
++      while (1)
++	{
++	  n = fread (buffer + sum, 1, BLOCKSIZE - sum, stream);
++
++	  sum += n;
++
++	  if (sum == BLOCKSIZE)
++	    break;
++
++	  if (n == 0)
++	    {
++	      /* Check for the error flag IFF N == 0, so that we don't
++		 exit the loop after a partial read due to e.g., EAGAIN
++		 or EWOULDBLOCK.  */
++	      if (ferror (stream))
++		return 1;
++	      goto process_partial_block;
++	    }
++
++	  /* We've read at least one byte, so ignore errors.  But always
++	     check for EOF, since feof may be true even though N > 0.
++	     Otherwise, we could end up calling fread after EOF.  */
++	  if (feof (stream))
++	    goto process_partial_block;
++	}
++
++      /* Process buffer with BLOCKSIZE bytes.  Note that
++			BLOCKSIZE % 64 == 0
++       */
++      sha256_process_block (buffer, BLOCKSIZE, &ctx);
++    }
++
++ process_partial_block:;
++
++  /* Process any remaining bytes.  */
++  if (sum > 0)
++    sha256_process_bytes (buffer, sum, &ctx);
++
++  /* Construct result in desired memory.  */
++  sha224_finish_ctx (&ctx, resblock);
++  return 0;
++}
++
++/* Compute SHA512 message digest for LEN bytes beginning at BUFFER.  The
++   result is always in little endian byte order, so that a byte-wise
++   output yields to the wanted ASCII representation of the message
++   digest.  */
++void *
++sha256_buffer (const char *buffer, size_t len, void *resblock)
++{
++  struct sha256_ctx ctx;
++
++  /* Initialize the computation context.  */
++  sha256_init_ctx (&ctx);
++
++  /* Process whole buffer but last len % 64 bytes.  */
++  sha256_process_bytes (buffer, len, &ctx);
++
++  /* Put result in desired memory area.  */
++  return sha256_finish_ctx (&ctx, resblock);
++}
++
++void *
++sha224_buffer (const char *buffer, size_t len, void *resblock)
++{
++  struct sha256_ctx ctx;
++
++  /* Initialize the computation context.  */
++  sha224_init_ctx (&ctx);
++
++  /* Process whole buffer but last len % 64 bytes.  */
++  sha256_process_bytes (buffer, len, &ctx);
++
++  /* Put result in desired memory area.  */
++  return sha224_finish_ctx (&ctx, resblock);
++}
++
++void
++sha256_process_bytes (const void *buffer, size_t len, struct sha256_ctx *ctx)
++{
++  /* When we already have some bits in our internal buffer concatenate
++     both inputs first.  */
++  if (ctx->buflen != 0)
++    {
++      size_t left_over = ctx->buflen;
++      size_t add = 128 - left_over > len ? len : 128 - left_over;
++
++      memcpy (&((char *) ctx->buffer)[left_over], buffer, add);
++      ctx->buflen += add;
++
++      if (ctx->buflen > 64)
++	{
++	  sha256_process_block (ctx->buffer, ctx->buflen & ~63, ctx);
++
++	  ctx->buflen &= 63;
++	  /* The regions in the following copy operation cannot overlap.  */
++	  memcpy (ctx->buffer,
++		  &((char *) ctx->buffer)[(left_over + add) & ~63],
++		  ctx->buflen);
++	}
++
++      buffer = (const char *) buffer + add;
++      len -= add;
++    }
++
++  /* Process available complete blocks.  */
++  if (len >= 64)
++    {
++#if !_STRING_ARCH_unaligned
++# define alignof(type) offsetof (struct { char c; type x; }, x)
++# define UNALIGNED_P(p) (((size_t) p) % alignof (uint32_t) != 0)
++      if (UNALIGNED_P (buffer))
++	while (len > 64)
++	  {
++	    sha256_process_block (memcpy (ctx->buffer, buffer, 64), 64, ctx);
++	    buffer = (const char *) buffer + 64;
++	    len -= 64;
++	  }
++      else
++#endif
++	{
++	  sha256_process_block (buffer, len & ~63, ctx);
++	  buffer = (const char *) buffer + (len & ~63);
++	  len &= 63;
++	}
++    }
++
++  /* Move remaining bytes in internal buffer.  */
++  if (len > 0)
++    {
++      size_t left_over = ctx->buflen;
++
++      memcpy (&((char *) ctx->buffer)[left_over], buffer, len);
++      left_over += len;
++      if (left_over >= 64)
++	{
++	  sha256_process_block (ctx->buffer, 64, ctx);
++	  left_over -= 64;
++	  memcpy (ctx->buffer, &ctx->buffer[16], left_over);
++	}
++      ctx->buflen = left_over;
++    }
++}
++
++/* --- Code below is the primary difference between sha1.c and sha256.c --- */
++
++/* SHA256 round constants */
++#define K(I) sha256_round_constants[I]
++static const uint32_t sha256_round_constants[64] = {
++  0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL,
++  0x3956c25bUL, 0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL,
++  0xd807aa98UL, 0x12835b01UL, 0x243185beUL, 0x550c7dc3UL,
++  0x72be5d74UL, 0x80deb1feUL, 0x9bdc06a7UL, 0xc19bf174UL,
++  0xe49b69c1UL, 0xefbe4786UL, 0x0fc19dc6UL, 0x240ca1ccUL,
++  0x2de92c6fUL, 0x4a7484aaUL, 0x5cb0a9dcUL, 0x76f988daUL,
++  0x983e5152UL, 0xa831c66dUL, 0xb00327c8UL, 0xbf597fc7UL,
++  0xc6e00bf3UL, 0xd5a79147UL, 0x06ca6351UL, 0x14292967UL,
++  0x27b70a85UL, 0x2e1b2138UL, 0x4d2c6dfcUL, 0x53380d13UL,
++  0x650a7354UL, 0x766a0abbUL, 0x81c2c92eUL, 0x92722c85UL,
++  0xa2bfe8a1UL, 0xa81a664bUL, 0xc24b8b70UL, 0xc76c51a3UL,
++  0xd192e819UL, 0xd6990624UL, 0xf40e3585UL, 0x106aa070UL,
++  0x19a4c116UL, 0x1e376c08UL, 0x2748774cUL, 0x34b0bcb5UL,
++  0x391c0cb3UL, 0x4ed8aa4aUL, 0x5b9cca4fUL, 0x682e6ff3UL,
++  0x748f82eeUL, 0x78a5636fUL, 0x84c87814UL, 0x8cc70208UL,
++  0x90befffaUL, 0xa4506cebUL, 0xbef9a3f7UL, 0xc67178f2UL,
++};
++
++/* Round functions.  */
++#define F2(A,B,C) ( ( A & B ) | ( C & ( A | B ) ) )
++#define F1(E,F,G) ( G ^ ( E & ( F ^ G ) ) )
++
++/* Process LEN bytes of BUFFER, accumulating context into CTX.
++   It is assumed that LEN % 64 == 0.
++   Most of this code comes from GnuPG's cipher/sha1.c.  */
++
++void
++sha256_process_block (const void *buffer, size_t len, struct sha256_ctx *ctx)
++{
++  const uint32_t *words = buffer;
++  size_t nwords = len / sizeof (uint32_t);
++  const uint32_t *endp = words + nwords;
++  uint32_t x[16];
++  uint32_t a = ctx->state[0];
++  uint32_t b = ctx->state[1];
++  uint32_t c = ctx->state[2];
++  uint32_t d = ctx->state[3];
++  uint32_t e = ctx->state[4];
++  uint32_t f = ctx->state[5];
++  uint32_t g = ctx->state[6];
++  uint32_t h = ctx->state[7];
++
++  /* First increment the byte count.  FIPS PUB 180-2 specifies the possible
++     length of the file up to 2^64 bits.  Here we only compute the
++     number of bytes.  Do a double word increment.  */
++  ctx->total[0] += len;
++  if (ctx->total[0] < len)
++    ++ctx->total[1];
++
++#define rol(x, n) (((x) << (n)) | ((x) >> (32 - (n))))
++#define S0(x) (rol(x,25)^rol(x,14)^(x>>3))
++#define S1(x) (rol(x,15)^rol(x,13)^(x>>10))
++#define SS0(x) (rol(x,30)^rol(x,19)^rol(x,10))
++#define SS1(x) (rol(x,26)^rol(x,21)^rol(x,7))
++
++#define M(I) ( tm =   S1(x[(I-2)&0x0f]) + x[(I-7)&0x0f] \
++		    + S0(x[(I-15)&0x0f]) + x[I&0x0f]    \
++	       , x[I&0x0f] = tm )
++
++#define R(A,B,C,D,E,F,G,H,K,M)  do { t0 = SS0(A) + F2(A,B,C); \
++                                     t1 = H + SS1(E)  \
++                                      + F1(E,F,G)     \
++				      + K	      \
++				      + M;	      \
++				     D += t1;  H = t0 + t1; \
++			       } while(0)
++
++  while (words < endp)
++    {
++      uint32_t tm;
++      uint32_t t0, t1;
++      int t;
++      /* FIXME: see sha1.c for a better implementation.  */
++      for (t = 0; t < 16; t++)
++	{
++	  x[t] = SWAP (*words);
++	  words++;
++	}
++
++      R( a, b, c, d, e, f, g, h, K( 0), x[ 0] );
++      R( h, a, b, c, d, e, f, g, K( 1), x[ 1] );
++      R( g, h, a, b, c, d, e, f, K( 2), x[ 2] );
++      R( f, g, h, a, b, c, d, e, K( 3), x[ 3] );
++      R( e, f, g, h, a, b, c, d, K( 4), x[ 4] );
++      R( d, e, f, g, h, a, b, c, K( 5), x[ 5] );
++      R( c, d, e, f, g, h, a, b, K( 6), x[ 6] );
++      R( b, c, d, e, f, g, h, a, K( 7), x[ 7] );
++      R( a, b, c, d, e, f, g, h, K( 8), x[ 8] );
++      R( h, a, b, c, d, e, f, g, K( 9), x[ 9] );
++      R( g, h, a, b, c, d, e, f, K(10), x[10] );
++      R( f, g, h, a, b, c, d, e, K(11), x[11] );
++      R( e, f, g, h, a, b, c, d, K(12), x[12] );
++      R( d, e, f, g, h, a, b, c, K(13), x[13] );
++      R( c, d, e, f, g, h, a, b, K(14), x[14] );
++      R( b, c, d, e, f, g, h, a, K(15), x[15] );
++      R( a, b, c, d, e, f, g, h, K(16), M(16) );
++      R( h, a, b, c, d, e, f, g, K(17), M(17) );
++      R( g, h, a, b, c, d, e, f, K(18), M(18) );
++      R( f, g, h, a, b, c, d, e, K(19), M(19) );
++      R( e, f, g, h, a, b, c, d, K(20), M(20) );
++      R( d, e, f, g, h, a, b, c, K(21), M(21) );
++      R( c, d, e, f, g, h, a, b, K(22), M(22) );
++      R( b, c, d, e, f, g, h, a, K(23), M(23) );
++      R( a, b, c, d, e, f, g, h, K(24), M(24) );
++      R( h, a, b, c, d, e, f, g, K(25), M(25) );
++      R( g, h, a, b, c, d, e, f, K(26), M(26) );
++      R( f, g, h, a, b, c, d, e, K(27), M(27) );
++      R( e, f, g, h, a, b, c, d, K(28), M(28) );
++      R( d, e, f, g, h, a, b, c, K(29), M(29) );
++      R( c, d, e, f, g, h, a, b, K(30), M(30) );
++      R( b, c, d, e, f, g, h, a, K(31), M(31) );
++      R( a, b, c, d, e, f, g, h, K(32), M(32) );
++      R( h, a, b, c, d, e, f, g, K(33), M(33) );
++      R( g, h, a, b, c, d, e, f, K(34), M(34) );
++      R( f, g, h, a, b, c, d, e, K(35), M(35) );
++      R( e, f, g, h, a, b, c, d, K(36), M(36) );
++      R( d, e, f, g, h, a, b, c, K(37), M(37) );
++      R( c, d, e, f, g, h, a, b, K(38), M(38) );
++      R( b, c, d, e, f, g, h, a, K(39), M(39) );
++      R( a, b, c, d, e, f, g, h, K(40), M(40) );
++      R( h, a, b, c, d, e, f, g, K(41), M(41) );
++      R( g, h, a, b, c, d, e, f, K(42), M(42) );
++      R( f, g, h, a, b, c, d, e, K(43), M(43) );
++      R( e, f, g, h, a, b, c, d, K(44), M(44) );
++      R( d, e, f, g, h, a, b, c, K(45), M(45) );
++      R( c, d, e, f, g, h, a, b, K(46), M(46) );
++      R( b, c, d, e, f, g, h, a, K(47), M(47) );
++      R( a, b, c, d, e, f, g, h, K(48), M(48) );
++      R( h, a, b, c, d, e, f, g, K(49), M(49) );
++      R( g, h, a, b, c, d, e, f, K(50), M(50) );
++      R( f, g, h, a, b, c, d, e, K(51), M(51) );
++      R( e, f, g, h, a, b, c, d, K(52), M(52) );
++      R( d, e, f, g, h, a, b, c, K(53), M(53) );
++      R( c, d, e, f, g, h, a, b, K(54), M(54) );
++      R( b, c, d, e, f, g, h, a, K(55), M(55) );
++      R( a, b, c, d, e, f, g, h, K(56), M(56) );
++      R( h, a, b, c, d, e, f, g, K(57), M(57) );
++      R( g, h, a, b, c, d, e, f, K(58), M(58) );
++      R( f, g, h, a, b, c, d, e, K(59), M(59) );
++      R( e, f, g, h, a, b, c, d, K(60), M(60) );
++      R( d, e, f, g, h, a, b, c, K(61), M(61) );
++      R( c, d, e, f, g, h, a, b, K(62), M(62) );
++      R( b, c, d, e, f, g, h, a, K(63), M(63) );
++
++      a = ctx->state[0] += a;
++      b = ctx->state[1] += b;
++      c = ctx->state[2] += c;
++      d = ctx->state[3] += d;
++      e = ctx->state[4] += e;
++      f = ctx->state[5] += f;
++      g = ctx->state[6] += g;
++      h = ctx->state[7] += h;
++    }
++}
+--- /dev/null	2006-06-25 18:23:54.631168500 +0100
++++ coreutils-5.97/lib/base64.c	2006-06-25 23:50:01 +0100
+@@ -0,0 +1,416 @@
++/* base64.c -- Encode binary data using printable characters.
++   Copyright (C) 1999, 2000, 2001, 2004, 2005, 2006 Free Software Foundation, Inc.
++
++   This program is free software; you can redistribute it and/or modify
++   it under the terms of the GNU General Public License as published by
++   the Free Software Foundation; either version 2, or (at your option)
++   any later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU General Public License for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with this program; if not, write to the Free Software Foundation,
++   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
++
++/* Written by Simon Josefsson.  Partially adapted from GNU MailUtils
++ * (mailbox/filter_trans.c, as of 2004-11-28).  Improved by review
++ * from Paul Eggert, Bruno Haible, and Stepan Kasal.
++ *
++ * See also RFC 3548 <http://www.ietf.org/rfc/rfc3548.txt>.
++ *
++ * Be careful with error checking.  Here is how you would typically
++ * use these functions:
++ *
++ * bool ok = base64_decode_alloc (in, inlen, &out, &outlen);
++ * if (!ok)
++ *   FAIL: input was not valid base64
++ * if (out == NULL)
++ *   FAIL: memory allocation error
++ * OK: data in OUT/OUTLEN
++ *
++ * size_t outlen = base64_encode_alloc (in, inlen, &out);
++ * if (out == NULL && outlen == 0 && inlen != 0)
++ *   FAIL: input too long
++ * if (out == NULL)
++ *   FAIL: memory allocation error
++ * OK: data in OUT/OUTLEN.
++ *
++ */
++
++#ifdef HAVE_CONFIG_H
++# include <config.h>
++#endif
++
++/* Get prototype. */
++#include "base64.h"
++
++/* Get malloc. */
++#include <stdlib.h>
++
++/* Get UCHAR_MAX. */
++#include <limits.h>
++
++/* C89 compliant way to cast 'char' to 'unsigned char'. */
++static inline unsigned char
++to_uchar (char ch)
++{
++  return ch;
++}
++
++/* Base64 encode IN array of size INLEN into OUT array of size OUTLEN.
++   If OUTLEN is less than BASE64_LENGTH(INLEN), write as many bytes as
++   possible.  If OUTLEN is larger than BASE64_LENGTH(INLEN), also zero
++   terminate the output buffer. */
++void
++base64_encode (const char *restrict in, size_t inlen,
++	       char *restrict out, size_t outlen)
++{
++  static const char b64str[64] =
++    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
++
++  while (inlen && outlen)
++    {
++      *out++ = b64str[to_uchar (in[0]) >> 2];
++      if (!--outlen)
++	break;
++      *out++ = b64str[((to_uchar (in[0]) << 4)
++		       + (--inlen ? to_uchar (in[1]) >> 4 : 0))
++		      & 0x3f];
++      if (!--outlen)
++	break;
++      *out++ =
++	(inlen
++	 ? b64str[((to_uchar (in[1]) << 2)
++		   + (--inlen ? to_uchar (in[2]) >> 6 : 0))
++		  & 0x3f]
++	 : '=');
++      if (!--outlen)
++	break;
++      *out++ = inlen ? b64str[to_uchar (in[2]) & 0x3f] : '=';
++      if (!--outlen)
++	break;
++      if (inlen)
++	inlen--;
++      if (inlen)
++	in += 3;
++    }
++
++  if (outlen)
++    *out = '\0';
++}
++
++/* Allocate a buffer and store zero terminated base64 encoded data
++   from array IN of size INLEN, returning BASE64_LENGTH(INLEN), i.e.,
++   the length of the encoded data, excluding the terminating zero.  On
++   return, the OUT variable will hold a pointer to newly allocated
++   memory that must be deallocated by the caller.  If output string
++   length would overflow, 0 is returned and OUT is set to NULL.  If
++   memory allocation fail, OUT is set to NULL, and the return value
++   indicate length of the requested memory block, i.e.,
++   BASE64_LENGTH(inlen) + 1. */
++size_t
++base64_encode_alloc (const char *in, size_t inlen, char **out)
++{
++  size_t outlen = 1 + BASE64_LENGTH (inlen);
++
++  /* Check for overflow in outlen computation.
++   *
++   * If there is no overflow, outlen >= inlen.
++   *
++   * If the operation (inlen + 2) overflows then it yields at most +1, so
++   * outlen is 0.
++   *
++   * If the multiplication overflows, we lose at least half of the
++   * correct value, so the result is < ((inlen + 2) / 3) * 2, which is
++   * less than (inlen + 2) * 0.66667, which is less than inlen as soon as
++   * (inlen > 4).
++   */
++  if (inlen > outlen)
++    {
++      *out = NULL;
++      return 0;
++    }
++
++  *out = malloc (outlen);
++  if (*out)
++    base64_encode (in, inlen, *out, outlen);
++
++  return outlen - 1;
++}
++
++/* With this approach this file works independent of the charset used
++   (think EBCDIC).  However, it does assume that the characters in the
++   Base64 alphabet (A-Za-z0-9+/) are encoded in 0..255.  POSIX
++   1003.1-2001 require that char and unsigned char are 8-bit
++   quantities, though, taking care of that problem.  But this may be a
++   potential problem on non-POSIX C99 platforms.  */
++#define B64(x)					\
++  ((x) == 'A' ? 0				\
++   : (x) == 'B' ? 1				\
++   : (x) == 'C' ? 2				\
++   : (x) == 'D' ? 3				\
++   : (x) == 'E' ? 4				\
++   : (x) == 'F' ? 5				\
++   : (x) == 'G' ? 6				\
++   : (x) == 'H' ? 7				\
++   : (x) == 'I' ? 8				\
++   : (x) == 'J' ? 9				\
++   : (x) == 'K' ? 10				\
++   : (x) == 'L' ? 11				\
++   : (x) == 'M' ? 12				\
++   : (x) == 'N' ? 13				\
++   : (x) == 'O' ? 14				\
++   : (x) == 'P' ? 15				\
++   : (x) == 'Q' ? 16				\
++   : (x) == 'R' ? 17				\
++   : (x) == 'S' ? 18				\
++   : (x) == 'T' ? 19				\
++   : (x) == 'U' ? 20				\
++   : (x) == 'V' ? 21				\
++   : (x) == 'W' ? 22				\
++   : (x) == 'X' ? 23				\
++   : (x) == 'Y' ? 24				\
++   : (x) == 'Z' ? 25				\
++   : (x) == 'a' ? 26				\
++   : (x) == 'b' ? 27				\
++   : (x) == 'c' ? 28				\
++   : (x) == 'd' ? 29				\
++   : (x) == 'e' ? 30				\
++   : (x) == 'f' ? 31				\
++   : (x) == 'g' ? 32				\
++   : (x) == 'h' ? 33				\
++   : (x) == 'i' ? 34				\
++   : (x) == 'j' ? 35				\
++   : (x) == 'k' ? 36				\
++   : (x) == 'l' ? 37				\
++   : (x) == 'm' ? 38				\
++   : (x) == 'n' ? 39				\
++   : (x) == 'o' ? 40				\
++   : (x) == 'p' ? 41				\
++   : (x) == 'q' ? 42				\
++   : (x) == 'r' ? 43				\
++   : (x) == 's' ? 44				\
++   : (x) == 't' ? 45				\
++   : (x) == 'u' ? 46				\
++   : (x) == 'v' ? 47				\
++   : (x) == 'w' ? 48				\
++   : (x) == 'x' ? 49				\
++   : (x) == 'y' ? 50				\
++   : (x) == 'z' ? 51				\
++   : (x) == '0' ? 52				\
++   : (x) == '1' ? 53				\
++   : (x) == '2' ? 54				\
++   : (x) == '3' ? 55				\
++   : (x) == '4' ? 56				\
++   : (x) == '5' ? 57				\
++   : (x) == '6' ? 58				\
++   : (x) == '7' ? 59				\
++   : (x) == '8' ? 60				\
++   : (x) == '9' ? 61				\
++   : (x) == '+' ? 62				\
++   : (x) == '/' ? 63				\
++   : -1)
++
++static const signed char b64[0x100] = {
++  B64 (0), B64 (1), B64 (2), B64 (3),
++  B64 (4), B64 (5), B64 (6), B64 (7),
++  B64 (8), B64 (9), B64 (10), B64 (11),
++  B64 (12), B64 (13), B64 (14), B64 (15),
++  B64 (16), B64 (17), B64 (18), B64 (19),
++  B64 (20), B64 (21), B64 (22), B64 (23),
++  B64 (24), B64 (25), B64 (26), B64 (27),
++  B64 (28), B64 (29), B64 (30), B64 (31),
++  B64 (32), B64 (33), B64 (34), B64 (35),
++  B64 (36), B64 (37), B64 (38), B64 (39),
++  B64 (40), B64 (41), B64 (42), B64 (43),
++  B64 (44), B64 (45), B64 (46), B64 (47),
++  B64 (48), B64 (49), B64 (50), B64 (51),
++  B64 (52), B64 (53), B64 (54), B64 (55),
++  B64 (56), B64 (57), B64 (58), B64 (59),
++  B64 (60), B64 (61), B64 (62), B64 (63),
++  B64 (64), B64 (65), B64 (66), B64 (67),
++  B64 (68), B64 (69), B64 (70), B64 (71),
++  B64 (72), B64 (73), B64 (74), B64 (75),
++  B64 (76), B64 (77), B64 (78), B64 (79),
++  B64 (80), B64 (81), B64 (82), B64 (83),
++  B64 (84), B64 (85), B64 (86), B64 (87),
++  B64 (88), B64 (89), B64 (90), B64 (91),
++  B64 (92), B64 (93), B64 (94), B64 (95),
++  B64 (96), B64 (97), B64 (98), B64 (99),
++  B64 (100), B64 (101), B64 (102), B64 (103),
++  B64 (104), B64 (105), B64 (106), B64 (107),
++  B64 (108), B64 (109), B64 (110), B64 (111),
++  B64 (112), B64 (113), B64 (114), B64 (115),
++  B64 (116), B64 (117), B64 (118), B64 (119),
++  B64 (120), B64 (121), B64 (122), B64 (123),
++  B64 (124), B64 (125), B64 (126), B64 (127),
++  B64 (128), B64 (129), B64 (130), B64 (131),
++  B64 (132), B64 (133), B64 (134), B64 (135),
++  B64 (136), B64 (137), B64 (138), B64 (139),
++  B64 (140), B64 (141), B64 (142), B64 (143),
++  B64 (144), B64 (145), B64 (146), B64 (147),
++  B64 (148), B64 (149), B64 (150), B64 (151),
++  B64 (152), B64 (153), B64 (154), B64 (155),
++  B64 (156), B64 (157), B64 (158), B64 (159),
++  B64 (160), B64 (161), B64 (162), B64 (163),
++  B64 (164), B64 (165), B64 (166), B64 (167),
++  B64 (168), B64 (169), B64 (170), B64 (171),
++  B64 (172), B64 (173), B64 (174), B64 (175),
++  B64 (176), B64 (177), B64 (178), B64 (179),
++  B64 (180), B64 (181), B64 (182), B64 (183),
++  B64 (184), B64 (185), B64 (186), B64 (187),
++  B64 (188), B64 (189), B64 (190), B64 (191),
++  B64 (192), B64 (193), B64 (194), B64 (195),
++  B64 (196), B64 (197), B64 (198), B64 (199),
++  B64 (200), B64 (201), B64 (202), B64 (203),
++  B64 (204), B64 (205), B64 (206), B64 (207),
++  B64 (208), B64 (209), B64 (210), B64 (211),
++  B64 (212), B64 (213), B64 (214), B64 (215),
++  B64 (216), B64 (217), B64 (218), B64 (219),
++  B64 (220), B64 (221), B64 (222), B64 (223),
++  B64 (224), B64 (225), B64 (226), B64 (227),
++  B64 (228), B64 (229), B64 (230), B64 (231),
++  B64 (232), B64 (233), B64 (234), B64 (235),
++  B64 (236), B64 (237), B64 (238), B64 (239),
++  B64 (240), B64 (241), B64 (242), B64 (243),
++  B64 (244), B64 (245), B64 (246), B64 (247),
++  B64 (248), B64 (249), B64 (250), B64 (251),
++  B64 (252), B64 (253), B64 (254), B64 (255)
++};
++
++#if UCHAR_MAX == 255
++# define uchar_in_range(c) true
++#else
++# define uchar_in_range(c) ((c) <= 255)
++#endif
++
++bool
++isbase64 (char ch)
++{
++  return uchar_in_range (to_uchar (ch)) && 0 <= b64[to_uchar (ch)];
++}
++
++/* Decode base64 encoded input array IN of length INLEN to output
++   array OUT that can hold *OUTLEN bytes.  Return true if decoding was
++   successful, i.e. if the input was valid base64 data, false
++   otherwise.  If *OUTLEN is too small, as many bytes as possible will
++   be written to OUT.  On return, *OUTLEN holds the length of decoded
++   bytes in OUT.  Note that as soon as any non-alphabet characters are
++   encountered, decoding is stopped and false is returned. */
++bool
++base64_decode (const char *restrict in, size_t inlen,
++	       char *restrict out, size_t *outlen)
++{
++  size_t outleft = *outlen;
++
++  while (inlen >= 2)
++    {
++      if (!isbase64 (in[0]) || !isbase64 (in[1]))
++	break;
++
++      if (outleft)
++	{
++	  *out++ = ((b64[to_uchar (in[0])] << 2)
++		    | (b64[to_uchar (in[1])] >> 4));
++	  outleft--;
++	}
++
++      if (inlen == 2)
++	break;
++
++      if (in[2] == '=')
++	{
++	  if (inlen != 4)
++	    break;
++
++	  if (in[3] != '=')
++	    break;
++
++	}
++      else
++	{
++	  if (!isbase64 (in[2]))
++	    break;
++
++	  if (outleft)
++	    {
++	      *out++ = (((b64[to_uchar (in[1])] << 4) & 0xf0)
++			| (b64[to_uchar (in[2])] >> 2));
++	      outleft--;
++	    }
++
++	  if (inlen == 3)
++	    break;
++
++	  if (in[3] == '=')
++	    {
++	      if (inlen != 4)
++		break;
++	    }
++	  else
++	    {
++	      if (!isbase64 (in[3]))
++		break;
++
++	      if (outleft)
++		{
++		  *out++ = (((b64[to_uchar (in[2])] << 6) & 0xc0)
++			    | b64[to_uchar (in[3])]);
++		  outleft--;
++		}
++	    }
++	}
++
++      in += 4;
++      inlen -= 4;
++    }
++
++  *outlen -= outleft;
++
++  if (inlen != 0)
++    return false;
++
++  return true;
++}
++
++/* Allocate an output buffer in *OUT, and decode the base64 encoded
++   data stored in IN of size INLEN to the *OUT buffer.  On return, the
++   size of the decoded data is stored in *OUTLEN.  OUTLEN may be NULL,
++   if the caller is not interested in the decoded length.  *OUT may be
++   NULL to indicate an out of memory error, in which case *OUTLEN
++   contain the size of the memory block needed.  The function return
++   true on successful decoding and memory allocation errors.  (Use the
++   *OUT and *OUTLEN parameters to differentiate between successful
++   decoding and memory error.)  The function return false if the input
++   was invalid, in which case *OUT is NULL and *OUTLEN is
++   undefined. */
++bool
++base64_decode_alloc (const char *in, size_t inlen, char **out,
++		     size_t *outlen)
++{
++  /* This may allocate a few bytes too much, depending on input,
++     but it's not worth the extra CPU time to compute the exact amount.
++     The exact amount is 3 * inlen / 4, minus 1 if the input ends
++     with "=" and minus another 1 if the input ends with "==".
++     Dividing before multiplying avoids the possibility of overflow.  */
++  size_t needlen = 3 * (inlen / 4) + 2;
++
++  *out = malloc (needlen);
++  if (!*out)
++    return true;
++
++  if (!base64_decode (in, inlen, *out, &needlen))
++    {
++      free (*out);
++      *out = NULL;
++      return false;
++    }
++
++  if (outlen)
++    *outlen = needlen;
++
++  return true;
++}
+--- coreutils-5.97/lib/md5.c.newhashes	2005-09-14 00:32:01 +0100
++++ coreutils-5.97/lib/md5.c	2006-06-25 23:50:01 +0100
+@@ -1,8 +1,8 @@
+-/* md5.c - Functions to compute MD5 message digest of files or memory blocks
++/* Functions to compute MD5 message digest of files or memory blocks.
+    according to the definition of MD5 in RFC 1321 from April 1992.
+-   Copyright (C) 1995, 1996, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
+-   NOTE: The canonical source of this file is maintained with the GNU C
+-   Library.  Bugs can be reported to bug-glibc@prep.ai.mit.edu.
++   Copyright (C) 1995,1996,1997,1999,2000,2001,2005,2006
++	Free Software Foundation, Inc.
++   This file is part of the GNU C Library.
+ 
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+@@ -27,7 +27,9 @@
+ #include "md5.h"
+ 
+ #include <stddef.h>
++#include <stdlib.h>
+ #include <string.h>
++#include <sys/types.h>
+ 
+ #if USE_UNLOCKED_IO
+ # include "unlocked-io.h"
+@@ -84,14 +86,14 @@
+    must be in little endian byte order.
+ 
+    IMPORTANT: On some systems it is required that RESBUF is correctly
+-   aligned for a 32 bits value.  */
++   aligned for a 32-bit value.  */
+ void *
+ md5_read_ctx (const struct md5_ctx *ctx, void *resbuf)
+ {
+-  ((md5_uint32 *) resbuf)[0] = SWAP (ctx->A);
+-  ((md5_uint32 *) resbuf)[1] = SWAP (ctx->B);
+-  ((md5_uint32 *) resbuf)[2] = SWAP (ctx->C);
+-  ((md5_uint32 *) resbuf)[3] = SWAP (ctx->D);
++  ((uint32_t *) resbuf)[0] = SWAP (ctx->A);
++  ((uint32_t *) resbuf)[1] = SWAP (ctx->B);
++  ((uint32_t *) resbuf)[2] = SWAP (ctx->C);
++  ((uint32_t *) resbuf)[3] = SWAP (ctx->D);
+ 
+   return resbuf;
+ }
+@@ -100,29 +102,27 @@
+    prolog according to the standard and write the result to RESBUF.
+ 
+    IMPORTANT: On some systems it is required that RESBUF is correctly
+-   aligned for a 32 bits value.  */
++   aligned for a 32-bit value.  */
+ void *
+ md5_finish_ctx (struct md5_ctx *ctx, void *resbuf)
+ {
+   /* Take yet unprocessed bytes into account.  */
+-  md5_uint32 bytes = ctx->buflen;
+-  size_t pad;
++  uint32_t bytes = ctx->buflen;
++  size_t size = (bytes < 56) ? 64 / 4 : 64 * 2 / 4;
+ 
+   /* Now count remaining bytes.  */
+   ctx->total[0] += bytes;
+   if (ctx->total[0] < bytes)
+     ++ctx->total[1];
+ 
+-  pad = bytes >= 56 ? 64 + 56 - bytes : 56 - bytes;
+-  memcpy (&ctx->buffer[bytes], fillbuf, pad);
+-
+   /* Put the 64-bit file length in *bits* at the end of the buffer.  */
+-  *(md5_uint32 *) &ctx->buffer[bytes + pad] = SWAP (ctx->total[0] << 3);
+-  *(md5_uint32 *) &ctx->buffer[bytes + pad + 4] = SWAP ((ctx->total[1] << 3) |
+-							(ctx->total[0] >> 29));
++  ctx->buffer[size - 2] = SWAP (ctx->total[0] << 3);
++  ctx->buffer[size - 1] = SWAP ((ctx->total[1] << 3) | (ctx->total[0] >> 29));
++
++  memcpy (&((char *) ctx->buffer)[bytes], fillbuf, (size - 2) * 4 - bytes);
+ 
+   /* Process last bytes.  */
+-  md5_process_block (ctx->buffer, bytes + pad + 8, ctx);
++  md5_process_block (ctx->buffer, size * 4, ctx);
+ 
+   return md5_read_ctx (ctx, resbuf);
+ }
+@@ -144,8 +144,8 @@
+   while (1)
+     {
+       /* We read the file in blocks of BLOCKSIZE bytes.  One call of the
+-	 computation function processes the whole buffer so that with the
+-	 next round of the loop another block can be read.  */
++         computation function processes the whole buffer so that with the
++         next round of the loop another block can be read.  */
+       size_t n;
+       sum = 0;
+ 
+@@ -162,8 +162,8 @@
+ 	  if (n == 0)
+ 	    {
+ 	      /* Check for the error flag IFF N == 0, so that we don't
+-		 exit the loop after a partial read due to e.g., EAGAIN
+-		 or EWOULDBLOCK.  */
++	         exit the loop after a partial read due to e.g., EAGAIN
++	         or EWOULDBLOCK.  */
+ 	      if (ferror (stream))
+ 		return 1;
+ 	      goto process_partial_block;
+@@ -177,12 +177,12 @@
+ 	}
+ 
+       /* Process buffer with BLOCKSIZE bytes.  Note that
+-			BLOCKSIZE % 64 == 0
++         BLOCKSIZE % 64 == 0
+        */
+       md5_process_block (buffer, BLOCKSIZE, &ctx);
+     }
+ 
+- process_partial_block:;
++process_partial_block:
+ 
+   /* Process any remaining bytes.  */
+   if (sum > 0)
+@@ -223,7 +223,7 @@
+       size_t left_over = ctx->buflen;
+       size_t add = 128 - left_over > len ? len : 128 - left_over;
+ 
+-      memcpy (&ctx->buffer[left_over], buffer, add);
++      memcpy (&((char *) ctx->buffer)[left_over], buffer, add);
+       ctx->buflen += add;
+ 
+       if (ctx->buflen > 64)
+@@ -232,7 +232,8 @@
+ 
+ 	  ctx->buflen &= 63;
+ 	  /* The regions in the following copy operation cannot overlap.  */
+-	  memcpy (ctx->buffer, &ctx->buffer[(left_over + add) & ~63],
++	  memcpy (ctx->buffer,
++		  &((char *) ctx->buffer)[(left_over + add) & ~63],
+ 		  ctx->buflen);
+ 	}
+ 
+@@ -245,7 +246,7 @@
+     {
+ #if !_STRING_ARCH_unaligned
+ # define alignof(type) offsetof (struct { char c; type x; }, x)
+-# define UNALIGNED_P(p) (((size_t) p) % alignof (md5_uint32) != 0)
++# define UNALIGNED_P(p) (((size_t) p) % alignof (uint32_t) != 0)
+       if (UNALIGNED_P (buffer))
+ 	while (len > 64)
+ 	  {
+@@ -267,13 +268,13 @@
+     {
+       size_t left_over = ctx->buflen;
+ 
+-      memcpy (&ctx->buffer[left_over], buffer, len);
++      memcpy (&((char *) ctx->buffer)[left_over], buffer, len);
+       left_over += len;
+       if (left_over >= 64)
+ 	{
+ 	  md5_process_block (ctx->buffer, 64, ctx);
+ 	  left_over -= 64;
+-	  memcpy (ctx->buffer, &ctx->buffer[64], left_over);
++	  memcpy (ctx->buffer, &ctx->buffer[16], left_over);
+ 	}
+       ctx->buflen = left_over;
+     }
+@@ -295,14 +296,14 @@
+ void
+ md5_process_block (const void *buffer, size_t len, struct md5_ctx *ctx)
+ {
+-  md5_uint32 correct_words[16];
+-  const md5_uint32 *words = buffer;
+-  size_t nwords = len / sizeof (md5_uint32);
+-  const md5_uint32 *endp = words + nwords;
+-  md5_uint32 A = ctx->A;
+-  md5_uint32 B = ctx->B;
+-  md5_uint32 C = ctx->C;
+-  md5_uint32 D = ctx->D;
++  uint32_t correct_words[16];
++  const uint32_t *words = buffer;
++  size_t nwords = len / sizeof (uint32_t);
++  const uint32_t *endp = words + nwords;
++  uint32_t A = ctx->A;
++  uint32_t B = ctx->B;
++  uint32_t C = ctx->C;
++  uint32_t D = ctx->D;
+ 
+   /* First increment the byte count.  RFC 1321 specifies the possible
+      length of the file up to 2^64 bits.  Here we only compute the
+@@ -315,18 +316,18 @@
+      the loop.  */
+   while (words < endp)
+     {
+-      md5_uint32 *cwp = correct_words;
+-      md5_uint32 A_save = A;
+-      md5_uint32 B_save = B;
+-      md5_uint32 C_save = C;
+-      md5_uint32 D_save = D;
++      uint32_t *cwp = correct_words;
++      uint32_t A_save = A;
++      uint32_t B_save = B;
++      uint32_t C_save = C;
++      uint32_t D_save = D;
+ 
+       /* First round: using the given function, the context and a constant
+-	 the next context is computed.  Because the algorithms processing
+-	 unit is a 32-bit word and it is determined to work on words in
+-	 little endian byte order we perhaps have to change the byte order
+-	 before the computation.  To reduce the work for the next steps
+-	 we store the swapped words in the array CORRECT_WORDS.  */
++         the next context is computed.  Because the algorithms processing
++         unit is a 32-bit word and it is determined to work on words in
++         little endian byte order we perhaps have to change the byte order
++         before the computation.  To reduce the work for the next steps
++         we store the swapped words in the array CORRECT_WORDS.  */
+ 
+ #define OP(a, b, c, d, s, T)						\
+       do								\
+@@ -339,40 +340,40 @@
+       while (0)
+ 
+       /* It is unfortunate that C does not provide an operator for
+-	 cyclic rotation.  Hope the C compiler is smart enough.  */
++         cyclic rotation.  Hope the C compiler is smart enough.  */
+ #define CYCLIC(w, s) (w = (w << s) | (w >> (32 - s)))
+ 
+       /* Before we start, one word to the strange constants.
+-	 They are defined in RFC 1321 as
++         They are defined in RFC 1321 as
+ 
+-	 T[i] = (int) (4294967296.0 * fabs (sin (i))), i=1..64
++         T[i] = (int) (4294967296.0 * fabs (sin (i))), i=1..64
+ 
+-	 Here is an equivalent invocation using Perl:
++         Here is an equivalent invocation using Perl:
+ 
+-	 perl -e 'foreach(1..64){printf "0x%08x\n", int (4294967296 * abs (sin $_))}'
++         perl -e 'foreach(1..64){printf "0x%08x\n", int (4294967296 * abs (sin $_))}'
+        */
+ 
+       /* Round 1.  */
+-      OP (A, B, C, D,  7, 0xd76aa478);
++      OP (A, B, C, D, 7, 0xd76aa478);
+       OP (D, A, B, C, 12, 0xe8c7b756);
+       OP (C, D, A, B, 17, 0x242070db);
+       OP (B, C, D, A, 22, 0xc1bdceee);
+-      OP (A, B, C, D,  7, 0xf57c0faf);
++      OP (A, B, C, D, 7, 0xf57c0faf);
+       OP (D, A, B, C, 12, 0x4787c62a);
+       OP (C, D, A, B, 17, 0xa8304613);
+       OP (B, C, D, A, 22, 0xfd469501);
+-      OP (A, B, C, D,  7, 0x698098d8);
++      OP (A, B, C, D, 7, 0x698098d8);
+       OP (D, A, B, C, 12, 0x8b44f7af);
+       OP (C, D, A, B, 17, 0xffff5bb1);
+       OP (B, C, D, A, 22, 0x895cd7be);
+-      OP (A, B, C, D,  7, 0x6b901122);
++      OP (A, B, C, D, 7, 0x6b901122);
+       OP (D, A, B, C, 12, 0xfd987193);
+       OP (C, D, A, B, 17, 0xa679438e);
+       OP (B, C, D, A, 22, 0x49b40821);
+ 
+       /* For the second to fourth round we have the possibly swapped words
+-	 in CORRECT_WORDS.  Redefine the macro to take an additional first
+-	 argument specifying the function to use.  */
++         in CORRECT_WORDS.  Redefine the macro to take an additional first
++         argument specifying the function to use.  */
+ #undef OP
+ #define OP(f, a, b, c, d, k, s, T)					\
+       do								\
+@@ -384,58 +385,58 @@
+       while (0)
+ 
+       /* Round 2.  */
+-      OP (FG, A, B, C, D,  1,  5, 0xf61e2562);
+-      OP (FG, D, A, B, C,  6,  9, 0xc040b340);
++      OP (FG, A, B, C, D, 1, 5, 0xf61e2562);
++      OP (FG, D, A, B, C, 6, 9, 0xc040b340);
+       OP (FG, C, D, A, B, 11, 14, 0x265e5a51);
+-      OP (FG, B, C, D, A,  0, 20, 0xe9b6c7aa);
+-      OP (FG, A, B, C, D,  5,  5, 0xd62f105d);
+-      OP (FG, D, A, B, C, 10,  9, 0x02441453);
++      OP (FG, B, C, D, A, 0, 20, 0xe9b6c7aa);
++      OP (FG, A, B, C, D, 5, 5, 0xd62f105d);
++      OP (FG, D, A, B, C, 10, 9, 0x02441453);
+       OP (FG, C, D, A, B, 15, 14, 0xd8a1e681);
+-      OP (FG, B, C, D, A,  4, 20, 0xe7d3fbc8);
+-      OP (FG, A, B, C, D,  9,  5, 0x21e1cde6);
+-      OP (FG, D, A, B, C, 14,  9, 0xc33707d6);
+-      OP (FG, C, D, A, B,  3, 14, 0xf4d50d87);
+-      OP (FG, B, C, D, A,  8, 20, 0x455a14ed);
+-      OP (FG, A, B, C, D, 13,  5, 0xa9e3e905);
+-      OP (FG, D, A, B, C,  2,  9, 0xfcefa3f8);
+-      OP (FG, C, D, A, B,  7, 14, 0x676f02d9);
++      OP (FG, B, C, D, A, 4, 20, 0xe7d3fbc8);
++      OP (FG, A, B, C, D, 9, 5, 0x21e1cde6);
++      OP (FG, D, A, B, C, 14, 9, 0xc33707d6);
++      OP (FG, C, D, A, B, 3, 14, 0xf4d50d87);
++      OP (FG, B, C, D, A, 8, 20, 0x455a14ed);
++      OP (FG, A, B, C, D, 13, 5, 0xa9e3e905);
++      OP (FG, D, A, B, C, 2, 9, 0xfcefa3f8);
++      OP (FG, C, D, A, B, 7, 14, 0x676f02d9);
+       OP (FG, B, C, D, A, 12, 20, 0x8d2a4c8a);
+ 
+       /* Round 3.  */
+-      OP (FH, A, B, C, D,  5,  4, 0xfffa3942);
+-      OP (FH, D, A, B, C,  8, 11, 0x8771f681);
++      OP (FH, A, B, C, D, 5, 4, 0xfffa3942);
++      OP (FH, D, A, B, C, 8, 11, 0x8771f681);
+       OP (FH, C, D, A, B, 11, 16, 0x6d9d6122);
+       OP (FH, B, C, D, A, 14, 23, 0xfde5380c);
+-      OP (FH, A, B, C, D,  1,  4, 0xa4beea44);
+-      OP (FH, D, A, B, C,  4, 11, 0x4bdecfa9);
+-      OP (FH, C, D, A, B,  7, 16, 0xf6bb4b60);
++      OP (FH, A, B, C, D, 1, 4, 0xa4beea44);
++      OP (FH, D, A, B, C, 4, 11, 0x4bdecfa9);
++      OP (FH, C, D, A, B, 7, 16, 0xf6bb4b60);
+       OP (FH, B, C, D, A, 10, 23, 0xbebfbc70);
+-      OP (FH, A, B, C, D, 13,  4, 0x289b7ec6);
+-      OP (FH, D, A, B, C,  0, 11, 0xeaa127fa);
+-      OP (FH, C, D, A, B,  3, 16, 0xd4ef3085);
+-      OP (FH, B, C, D, A,  6, 23, 0x04881d05);
+-      OP (FH, A, B, C, D,  9,  4, 0xd9d4d039);
++      OP (FH, A, B, C, D, 13, 4, 0x289b7ec6);
++      OP (FH, D, A, B, C, 0, 11, 0xeaa127fa);
++      OP (FH, C, D, A, B, 3, 16, 0xd4ef3085);
++      OP (FH, B, C, D, A, 6, 23, 0x04881d05);
++      OP (FH, A, B, C, D, 9, 4, 0xd9d4d039);
+       OP (FH, D, A, B, C, 12, 11, 0xe6db99e5);
+       OP (FH, C, D, A, B, 15, 16, 0x1fa27cf8);
+-      OP (FH, B, C, D, A,  2, 23, 0xc4ac5665);
++      OP (FH, B, C, D, A, 2, 23, 0xc4ac5665);
+ 
+       /* Round 4.  */
+-      OP (FI, A, B, C, D,  0,  6, 0xf4292244);
+-      OP (FI, D, A, B, C,  7, 10, 0x432aff97);
++      OP (FI, A, B, C, D, 0, 6, 0xf4292244);
++      OP (FI, D, A, B, C, 7, 10, 0x432aff97);
+       OP (FI, C, D, A, B, 14, 15, 0xab9423a7);
+-      OP (FI, B, C, D, A,  5, 21, 0xfc93a039);
+-      OP (FI, A, B, C, D, 12,  6, 0x655b59c3);
+-      OP (FI, D, A, B, C,  3, 10, 0x8f0ccc92);
++      OP (FI, B, C, D, A, 5, 21, 0xfc93a039);
++      OP (FI, A, B, C, D, 12, 6, 0x655b59c3);
++      OP (FI, D, A, B, C, 3, 10, 0x8f0ccc92);
+       OP (FI, C, D, A, B, 10, 15, 0xffeff47d);
+-      OP (FI, B, C, D, A,  1, 21, 0x85845dd1);
+-      OP (FI, A, B, C, D,  8,  6, 0x6fa87e4f);
++      OP (FI, B, C, D, A, 1, 21, 0x85845dd1);
++      OP (FI, A, B, C, D, 8, 6, 0x6fa87e4f);
+       OP (FI, D, A, B, C, 15, 10, 0xfe2ce6e0);
+-      OP (FI, C, D, A, B,  6, 15, 0xa3014314);
++      OP (FI, C, D, A, B, 6, 15, 0xa3014314);
+       OP (FI, B, C, D, A, 13, 21, 0x4e0811a1);
+-      OP (FI, A, B, C, D,  4,  6, 0xf7537e82);
++      OP (FI, A, B, C, D, 4, 6, 0xf7537e82);
+       OP (FI, D, A, B, C, 11, 10, 0xbd3af235);
+-      OP (FI, C, D, A, B,  2, 15, 0x2ad7d2bb);
+-      OP (FI, B, C, D, A,  9, 21, 0xeb86d391);
++      OP (FI, C, D, A, B, 2, 15, 0x2ad7d2bb);
++      OP (FI, B, C, D, A, 9, 21, 0xeb86d391);
+ 
+       /* Add the starting values of the context.  */
+       A += A_save;
+--- coreutils-5.97/AUTHORS.newhashes	2004-11-03 23:10:50 +0000
++++ coreutils-5.97/AUTHORS	2006-06-25 23:50:01 +0100
+@@ -1,6 +1,7 @@
+ Here are the names of the programs in this package,
+ each followed by the name(s) of its author(s).
+ 
++base64: Simon Josefsson
+ basename: FIXME unknown
+ cat: Torbjorn Granlund, Richard M. Stallman
+ chgrp: David MacKenzie, Jim Meyering
+@@ -39,7 +40,7 @@
+ ln: Mike Parker, David MacKenzie
+ logname: FIXME: unknown
+ ls: Richard Stallman, David MacKenzie
+-md5sum: Ulrich Drepper, Scott Miller
++md5sum: Ulrich Drepper, Scott Miller, David Madore
+ mkdir: David MacKenzie
+ mkfifo: David MacKenzie
+ mknod: David MacKenzie
+@@ -60,7 +61,11 @@
+ rm: Paul Rubin, David MacKenzie, Richard Stallman, Jim Meyering
+ rmdir: David MacKenzie
+ seq: Ulrich Drepper
+-sha1sum: Ulrich Drepper, Scott Miller
++sha1sum: Ulrich Drepper, Scott Miller, David Madore
++sha224sum: Ulrich Drepper, Scott Miller, David Madore
++sha256sum: Ulrich Drepper, Scott Miller, David Madore
++sha384sum: Ulrich Drepper, Scott Miller, David Madore
++sha512sum: Ulrich Drepper, Scott Miller, David Madore
+ shred: Colin Plumb
+ sleep: Jim Meyering, Paul Eggert
+ sort: Mike Haertel, Paul Eggert
+--- coreutils-5.97/aclocal.m4.newhashes	2006-06-10 10:02:48 +0100
++++ coreutils-5.97/aclocal.m4	2006-06-25 23:50:01 +0100
+@@ -1055,6 +1055,8 @@
+ m4_include([m4/setenv.m4])
+ m4_include([m4/settime.m4])
+ m4_include([m4/sha1.m4])
++m4_include([m4/sha256.m4])
++m4_include([m4/sha512.m4])
+ m4_include([m4/sig2str.m4])
+ m4_include([m4/signed.m4])
+ m4_include([m4/socklen.m4])

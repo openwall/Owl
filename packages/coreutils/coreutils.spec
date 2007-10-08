@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.25 2006/06/25 16:58:47 ldv Exp $
+# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.26 2007/10/08 23:27:26 ldv Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
 Version: 5.97
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 URL: http://www.gnu.org/software/%name/
@@ -15,6 +15,8 @@ Source1: exit.c
 Source2: true.1
 Source3: false.1
 
+Source4: coreutils-ru.po
+
 # shell profile settings and configuration file for colorized ls output
 Source10: colorls.sh
 Source11: colorls.csh
@@ -24,9 +26,14 @@ Source20: usleep.c
 Source21: usleep.1
 
 # CVS backports and other candidates for upstream version
-Patch0: coreutils-5.91-up-ls-usage.diff
-Patch1: coreutils-5.91-eggert-ls-time-style.diff
-Patch2: coreutils-5.91-alt-hostname.diff
+Patch0: coreutils-5.97-cvs-20060628.diff
+Patch1: coreutils-5.91-up-ls-usage.diff
+Patch2: coreutils-5.91-eggert-ls-time-style.diff
+Patch3: coreutils-5.97-up-cut.diff
+Patch4: coreutils-5.97-up-copy_internal.diff
+Patch5: coreutils-5.97-up-new-hashes.diff
+Patch6: coreutils-5.97-up-getpwd-openat.diff
+Patch7: coreutils-5.91-alt-hostname.diff
 
 # Owl/ALT specific
 Patch10: coreutils-5.92-owl-info-true-false.diff
@@ -39,6 +46,8 @@ Patch14: coreutils-5.91-alt-posix2_version.diff
 Patch20: coreutils-5.2.0-rh-install-strip.diff
 Patch21: coreutils-5.3.1-rh-owl-alt-ls-dumbterm.diff
 Patch22: coreutils-5.91-rh-alt-langinfo.diff
+Patch23: coreutils-5.97-rh-cifs.diff
+Patch24: coreutils-5.97-rh-remove_cwd_entries.diff
 
 Provides: stat = %version, fileutils = %version, textutils = %version, sh-utils = %version
 Obsoletes: stat, fileutils, textutils, sh-utils
@@ -79,13 +88,19 @@ arbitrary limits.
 
 %prep
 %setup -q
+install -pm644 %_sourcedir/coreutils-ru.po po/ru.po
 
-# ALT patches, candidates for upstream version and CVS backports
+# CVS backports and other candidates for upstream version
 %patch0 -p0
 %patch1 -p0
-%patch2 -p1
+%patch2 -p0
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p0
+%patch7 -p1
 
-# ALT specific
+# Owl/ALT specific
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -96,6 +111,8 @@ arbitrary limits.
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
+%patch23 -p1
+%patch24 -p1
 
 find -type f -name '*.orig' -delete -print
 
@@ -233,6 +250,19 @@ fi
 %doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
+* Mon Oct 08 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.97-owl2
+- Updated to stable b5_9x snapshot 20060628.
+- Fixed cut(1) double-free bug (Jim Meyering, RH#220312).
+- Fixed mv(1) error reporting (Jim Meyering, DEB#376749).
+- Added cifs to df(1) remote filesystems list (Tim Waugh, RH#183703).
+- Fixed rm(1) potential crash bug (David Shaw, RH#235401).
+- Fixed getcwd() to make pwd(1) and readlink(1) work also when run
+with an unreadable parent dir on systems with openat(2) support
+(Jim Meyering, RH#227168).
+- Backported new hashes: base64, sha224sum, sha256sum, sha384sum,
+sha512sum.
+- Updated russian translation.
+
 * Sun Jun 25 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.97-owl1
 - Updated to 5.97.
 

@@ -1,0 +1,12 @@
+http://bugzilla.redhat.com/show_bug.cgi?id=235401
+--- coreutils-5.97/src/remove.c
++++ coreutils-5.97/src/remove.c
+@@ -887,6 +887,8 @@ remove_cwd_entries (Dirstack_state *ds, char **subdir, struct stat *subdir_sb,
+ 		 quote (full_filename (".")));
+ 	  return RM_ERROR;
+ 	}
++      else
++	return RM_OK;
+     }
+ 
+   while (1)
