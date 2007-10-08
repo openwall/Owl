@@ -46,9 +46,9 @@
 +   fp = fdopen(fh, mode);
 +   if (fp == NULL) close(fh);
 +   return fp;
-+#  else
++#else
 +   return fopen(name, mode);
-+#  endif
++#endif
 +}
 +
 +
