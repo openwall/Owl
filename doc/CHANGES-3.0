@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2007/10/08	Package: cvs
+Updated to 1.11.22.
+
 2007/10/07	Package: bzip2
 Updated to 1.0.4.
 
@@ -474,4 +477,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.101 2007/10/07 22:47:15 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.102 2007/10/08 23:24:01 ldv Exp $
