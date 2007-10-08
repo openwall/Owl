@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.42 2007/10/07 21:26:29 ldv Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.43 2007/10/08 18:27:34 ldv Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
 %define bash_version 3.1
 %define bash_patchlevel 17
 Version: %bash_version.%bash_patchlevel
-Release: owl3
+Release: owl4
 Group: System Environment/Shells
 License: GPL
 Source0: ftp://ftp.gnu.org/gnu/bash/bash-%bash_version.tar.gz
@@ -47,10 +47,10 @@ interpreter that is compatible with the Bourne shell (sh).  Bash
 incorporates useful features from the Korn shell (ksh) and the C shell
 (csh).  Most sh scripts can be run by bash without modification.
 
-Documentation for bash is contained in the bash-doc package.
+Documentation and examples for bash are contained in the bash-doc package.
 
 %package devel
-Summary: Bash loadable builtins development files
+Summary: Bash loadable builtins development files.
 Group: Development/Libraries
 Requires: %name = %version-%release
 
@@ -137,6 +137,14 @@ rm -rf %buildroot
 
 %makeinstall
 
+mkdir -p %buildroot/bin
+mv %buildroot%_bindir/bash %buildroot/bin/
+ln -s bash %buildroot/bin/sh
+ln -s bash %buildroot/bin/bash2
+
+ln -s bash.1 %buildroot%_mandir/man1/sh.1
+ln -s bash.1 %buildroot%_mandir/man1/bash2.1
+
 # Install header files necessary to compile custom builtins.
 mkdir -p %buildroot%_includedir/bash
 for f in examples/loadables/*.c; do
@@ -150,8 +158,26 @@ done |
 	while read f; do
 		install -pm644 "$f" %buildroot%_includedir/bash/
 	done
+
+# Prepare documentation.
+%define docdir %_docdir/%name-%version
+mkdir -p %buildroot%docdir/{html,ps,txt}
+install -pm644 \
+	AUTHORS CHANGES COMPAT NEWS NOTES POSIX doc/{FAQ,INTRO} \
+	%buildroot%docdir/
+install -pm644 doc/*.html %buildroot%docdir/html/
+install -pm644 doc/*.ps %buildroot%docdir/ps/
+install -pm644 doc/*.txt %buildroot%docdir/txt/
+find %buildroot%docdir/{[A-Z],txt/}* -type f -size +8k -print0 |
+	xargs -r0 bzip2 -9 --
+gzip -9nf %buildroot%docdir/ps/*.ps
+cp -a examples %buildroot%docdir/
+find %buildroot%docdir/examples/ -type f -name 'Makefile*' -delete
+# We build bash with --disable-restricted option.
+find %buildroot%docdir/ -iname '*rbash*' -delete
+
 # Prepare sample Makefile for building custom builtins.
-cat >examples/loadables/Makefile <<'EOF'
+cat >%buildroot%docdir/examples/loadables/Makefile <<'EOF'
 CC = %__cc
 CPPFLAGS = -DHAVE_CONFIG_H -I. -I%_includedir/bash
 CFLAGS = %optflags %optflags_shared
@@ -161,17 +187,7 @@ LDFLAGS = -shared
 	$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
 EOF
 
-mkdir -p %buildroot/bin
-mv %buildroot%_bindir/bash %buildroot/bin/
-ln -s bash %buildroot/bin/sh
-ln -s bash %buildroot/bin/bash2
-
-ln -s bash.1 %buildroot%_mandir/man1/sh.1
-ln -s bash.1 %buildroot%_mandir/man1/bash2.1
-
 cd doc
-gzip -9nf *.{ps,txt}
-
 # Make manpages for bash builtins as per suggestion in doc/README
 sed '
 /^\.SH NAME/, /\\- bash built-in commands$/{
@@ -224,11 +240,8 @@ fi
 %files
 %defattr(-,root,root)
 %config(noreplace) /etc/skel/.b*
-%doc AUTHORS CHANGES.bz2 COMPAT NEWS.bz2 NOTES POSIX
-%doc doc/FAQ.bz2 doc/INTRO doc/article.ms
-%doc examples/bashdb/ examples/functions/ examples/misc/
-%doc examples/scripts.noah/ examples/scripts.v2/ examples/scripts/
-%doc examples/startup-files/
+%dir %docdir
+%docdir/[A-Z]*
 /bin/sh
 /bin/bash
 /bin/bash2
@@ -242,13 +255,24 @@ fi
 %files devel
 %defattr(-,root,root)
 %_includedir/bash
-%doc examples/loadables
+%dir %docdir
+%dir %docdir/examples
+%docdir/examples/loadables
 
 %files doc
 %defattr(-,root,root)
-%doc doc/*.ps* doc/*.html doc/article.txt*
+%dir %docdir
+%docdir/examples
+%exclude %docdir/examples/loadables
+%docdir/html
+%docdir/ps
+%docdir/txt
 
 %changelog
+* Mon Oct 08 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.17-owl4
+- Moved bash examples to -doc subpackage.
+- Repackaged documentation to reside in single directory inside %_docdir/.
+
 * Sun Oct 07 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.17-owl3
 - Added missing check for unbound variables (Alexey Tourbin).
 - In "enable" builtin, set RTLD_NOW flag in dlopen(3) call.
