@@ -1,0 +1,24 @@
+--- db-4.3.29/dist/aclocal/mutex.ac
++++ db-4.4.20/dist/aclocal/mutex.ac
+@@ -503,8 +503,7 @@
+ 			AH_TEMPLATE(HAVE_MUTEX_THREAD_ONLY,
+ 			    [Define to 1 to configure mutexes intra-process only.]);;
+ POSIX/pthreads/library)	LIBS="$LIBS -lpthread"
+-			LIBJSO_LIBS="$LIBJSO_LIBS -lpthread"
+-			LIBTSO_LIBS="$LIBTSO_LIBS -lpthread"
++			LIBSO_LIBS="$LIBSO_LIBS -lpthread"
+ 			ADDITIONAL_OBJS="mut_pthread${o} $ADDITIONAL_OBJS"
+ 			AC_DEFINE(HAVE_MUTEX_PTHREADS)
+ 			AH_TEMPLATE(HAVE_MUTEX_PTHREADS,
+--- db-4.3.29/dist/configure
++++ db-4.4.20/dist/configure
+@@ -31868,8 +31868,7 @@
+ 
+ ;;
+ POSIX/pthreads/library)	LIBS="$LIBS -lpthread"
+-			LIBJSO_LIBS="$LIBJSO_LIBS -lpthread"
+-			LIBTSO_LIBS="$LIBTSO_LIBS -lpthread"
++			LIBSO_LIBS="$LIBSO_LIBS -lpthread"
+ 			ADDITIONAL_OBJS="mut_pthread${o} $ADDITIONAL_OBJS"
+ 			cat >>confdefs.h <<\_ACEOF
+ #define HAVE_MUTEX_PTHREADS 1

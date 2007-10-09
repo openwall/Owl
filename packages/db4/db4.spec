@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/db4/db4.spec,v 1.19 2006/09/16 01:54:58 galaxy Exp $
+# $Owl: Owl/packages/db4/db4.spec,v 1.20 2007/10/09 00:53:26 ldv Exp $
 
 %define __soversion	4.3
 %define _libdb_a	libdb-%__soversion.a
@@ -9,7 +9,7 @@
 Summary: The Berkeley DB database library (version 4) for C.
 Name: db4
 Version: 4.3.29
-Release: owl2
+Release: owl3
 License: Sleepycat
 Group: System Environment/Libraries
 URL: http://www.sleepycat.com
@@ -17,8 +17,11 @@ Source0: ftp://ftp.sleepycat.com/releases/db-%version.tar.gz
 Source1: ftp://ftp.sleepycat.com/releases/db.1.85.tar.gz
 Patch0: db-1.85-up-fixes.diff
 Patch1: db-1.85-rh-errno.diff
-Patch2: db-4.3.29-cvs-20051006-db185.diff
-Patch3: db-4.3.29-alt-configure.diff
+# http://www.oracle.com/technology/products/berkeley-db/db/update/4.3.29/patch.4.3.29.1
+Patch2: db-4.3.29.1.diff
+Patch3: db-4.3.29-cvs-20051006-db185.diff
+Patch4: db-4.3.29-up-configure-mutex.diff
+Patch5: db-4.3.29-alt-configure.diff
 Obsoletes: db1, db1-devel
 BuildRequires: perl, libtool, ed, gcc-c++, glibc-utils
 BuildRoot: /override/%name-%version
@@ -79,8 +82,10 @@ pushd db.1.85
 %patch0 -p1
 %patch1 -p1
 popd
-%patch2 -p1
+%patch2 -p0
 %patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 # Package missing docs.
 cp -p docs/gsg/JAVA/returns.html docs/gsg/C/
@@ -202,6 +207,10 @@ chmod -R u+w %buildroot
 %endif
 
 %changelog
+* Tue Oct 09 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.3.29-owl3
+- Applied official update 4.3.29.1.
+- Backported fix for configure mutexes support from db-4.4.20.
+
 * Thu May 04 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.3.29-owl2
 - Added glibc-utils to BuildRequires due to rpcgen.
 
