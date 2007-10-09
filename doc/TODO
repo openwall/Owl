@@ -56,7 +56,11 @@ and to mtree, both of which had similar issues.
 2. Races when extracting archives: whether it will be possible for an
 attacker to place [sym]links into directories being extracted such
 that files in them would go to the wrong place, -- for example, when
-restoring user home directories from a backup, as root.
+restoring user home directories from a backup, as root.  Update:
+according to GNU tar maintainers, tar is not supposed to be used to
+extract into untrusted directory trees and, moreover, it is supposed to
+follow any symlinks pre-placed in there.  Thus, a documentation fix
+might be required instead of a code fix - this is to be discussed.
 
 
 	cvs.
@@ -443,4 +447,4 @@ Fix installworld.sh to always pick the latest version of a package when
 multiple versions are available (please refer to the appropriate XXX
 comment in the script).
 
-$Owl: Owl/doc/TODO,v 1.178 2007/10/09 18:46:41 solar Exp $
+$Owl: Owl/doc/TODO,v 1.179 2007/10/09 18:51:13 solar Exp $
