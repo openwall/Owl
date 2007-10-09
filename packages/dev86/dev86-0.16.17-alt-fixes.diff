@@ -1,0 +1,48 @@
+--- dev86-0.16.17.orig/bcc/bcc.c
++++ dev86-0.16.17/bcc/bcc.c
+@@ -32,6 +32,7 @@
+ #ifndef MSDOS
+ #include <sys/wait.h>
+ #include <signal.h>
++#include <limits.h>
+ #endif
+ #include "version.h"
+ 
+@@ -599,10 +600,7 @@
+ void
+ command_reset()
+ {
+-#ifndef MAXPATHLEN
+-#define MAXPATHLEN 1024
+-#endif
+-   char buf[MAXPATHLEN];
++   char buf[PATH_MAX];
+    char ** prefix;
+    char * saved_cmd;
+ 
+@@ -1308,15 +1306,11 @@ void reset_prefix_path()
+ 
+       for(d=s=ptr; d && *s; s=d)
+       {
+-#ifdef MAXPATHLEN
+-         char buf[MAXPATHLEN];
+-#else
+-         char buf[1024];
+-#endif
++         char buf[PATH_MAX];
+ 
+ 	 free(temp);
+          d=strchr(s, ':');
+-	 if( d ) *d='\0';
++	 if( d ) *(d++)='\0';
+ 	 temp = xalloc(strlen(progname)+strlen(s)+2);
+ 	 strcpy(temp, s);
+ 	 strcat(temp, "/");
+@@ -1329,7 +1323,6 @@ void reset_prefix_path()
+          }
+ #endif
+ 	 if( access(temp, X_OK) == 0 ) break;
+-	 d++;
+       }
+       if( s == 0 )
+       {

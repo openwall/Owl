@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/dev86/dev86.spec,v 1.24 2007/07/17 18:12:37 ldv Exp $
+# $Owl: Owl/packages/dev86/dev86.spec,v 1.25 2007/10/09 01:02:25 ldv Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
 Version: 0.16.17
-Release: owl4
+Release: owl5
 License: GPL
 Group: Development/Languages
 Source: http://www.cix.co.uk/~mayday/dev86/Dev86src-%version.tar.gz
@@ -14,6 +14,7 @@ Patch3: dev86-0.16.17-owl-Makefile.diff
 Patch4: dev86-0.16.17-owl-optflags.diff
 Patch5: dev86-0.16.17-alt-elksemu.diff
 Patch6: dev86-0.16.17-owl-tmp.diff
+Patch7: dev86-0.16.17-alt-fixes.diff
 Obsoletes: bin86
 ExclusiveArch: %ix86 x86_64
 BuildRoot: /override/%name-%version
@@ -35,6 +36,7 @@ bootstrapping code, from their sources.
 %patch5 -p1
 %endif
 %patch6 -p1
+%patch7 -p1
 
 %{expand:%%define optflags %optflags -fno-strict-aliasing -fno-builtin-exp2 -Wall}
 
@@ -101,6 +103,9 @@ mv bin86/ChangeLog ChangeLog.bin86
 %_mandir/man1/*
 
 %changelog
+* Tue Oct 09 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.16.17-owl5
+- Fixed bcc bugs discovered by upcoming toolchain update.
+
 * Tue Jul 17 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.16.17-owl4
 - Fixed bcc TMPDIR support.
 
