@@ -1,19 +1,20 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.65 2007/02/25 13:57:30 ldv Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.66 2007/10/12 22:35:24 ldv Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.7m
-Release: owl1
+Release: owl2
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
 Source: ftp://ftp.openssl.org/source/%name-%version.tar.gz
-Patch0: openssl-0.9.7g-owl-alt-issetugid.diff
-Patch1: openssl-0.9.7m-mdk-alt-owl-Makefile.diff
-Patch2: openssl-0.9.7l-rh-alt-owl-soversion.diff
-Patch3: openssl-0.9.7g-rh-mdk-ia64-asm.diff
-Patch4: openssl-0.9.7g-rh-version-engines.diff
-Patch5: openssl-0.9.7l-owl-warnings.diff
+Patch0: openssl-0.9.7m-cvs-20071004-SSL_get_shared_ciphers.diff
+Patch1: openssl-0.9.7g-owl-alt-issetugid.diff
+Patch2: openssl-0.9.7m-mdk-alt-owl-Makefile.diff
+Patch3: openssl-0.9.7l-rh-alt-owl-soversion.diff
+Patch4: openssl-0.9.7g-rh-mdk-ia64-asm.diff
+Patch5: openssl-0.9.7g-rh-version-engines.diff
+Patch6: openssl-0.9.7l-owl-warnings.diff
 Provides: SSL
 %ifnarch x86_64
 # For backwards compatibility.
@@ -95,6 +96,7 @@ This package contains some miscellaneous Perl scripts.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 bzip2 -9k CHANGES CHANGES.SSLeay
 
@@ -242,6 +244,10 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %attr(0644,root,root) %_mandir/man1/CA.pl.1*
 
 %changelog
+* Sat Oct 13 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7m-owl2
+- Backported upstream fix for off-by-one bug in the
+SSL_get_shared_ciphers function (CVE-2007-5135).
+
 * Sun Feb 25 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7m-owl1
 - Updated to 0.9.7m.
 
