@@ -1,0 +1,43 @@
+diff -u openssl/ssl/ssl_lib.c:1.110.2.19 openssl/ssl/ssl_lib.c:1.110.2.20
+--- openssl/ssl/ssl_lib.c:1.110.2.19	Thu Sep 28 15:53:51 2006
++++ openssl/ssl/ssl_lib.c	Thu Oct  4 12:01:21 2007
+@@ -1169,7 +1169,6 @@
+ char *SSL_get_shared_ciphers(const SSL *s,char *buf,int len)
+ 	{
+ 	char *p;
+-	const char *cp;
+ 	STACK_OF(SSL_CIPHER) *sk;
+ 	SSL_CIPHER *c;
+ 	int i;
+@@ -1182,20 +1181,21 @@
+ 	sk=s->session->ciphers;
+ 	for (i=0; i<sk_SSL_CIPHER_num(sk); i++)
+ 		{
+-		/* Decrement for either the ':' or a '\0' */
+-		len--;
++		int n;
++
+ 		c=sk_SSL_CIPHER_value(sk,i);
+-		for (cp=c->name; *cp; )
++		n=strlen(c->name);
++		if (n+1 > len)
+ 			{
+-			if (len-- <= 0)
+-				{
+-				*p='\0';
+-				return(buf);
+-				}
+-			else
+-				*(p++)= *(cp++);
++			if (p != buf)
++				--p;
++			*p='\0';
++			return buf;
+ 			}
++		strcpy(p,c->name);
++		p+=n;
+ 		*(p++)=':';
++		len-=n+1;
+ 		}
+ 	p[-1]='\0';
+ 	return(buf);
