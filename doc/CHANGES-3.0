@@ -12,6 +12,15 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2007/10/13	Package: openssl
+Backported upstream fix for off-by-one bug in the SSL_get_shared_ciphers
+function.  It is unclear whether the bug had any security impact.
+References:
+http://lists.openwall.net/bugtraq/2007/09/27/14
+http://lists.openwall.net/bugtraq/2007/10/01/7
+http://www.openssl.org/news/secadv_20071012.txt
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-5135
+
 2007/10/08	Package: cvs
 Updated to 1.11.22.
 
@@ -477,4 +486,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.102 2007/10/08 23:24:01 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.103 2007/10/13 03:02:40 solar Exp $
