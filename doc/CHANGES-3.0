@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2007/10/16	Package: dhcp
+Updated to 3.0.6.
+
 2007/10/13	Package: openssl
 Backported upstream fix for off-by-one bug in the SSL_get_shared_ciphers
 function.  It is unclear whether the bug had any security impact.
@@ -486,4 +489,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.103 2007/10/13 03:02:40 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.104 2007/10/16 22:49:42 ldv Exp $
