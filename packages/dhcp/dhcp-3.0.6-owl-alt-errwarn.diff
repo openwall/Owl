@@ -1,0 +1,42 @@
+--- dhcp/omapip/errwarn.c
++++ dhcp/omapip/errwarn.c
+@@ -67,7 +67,8 @@ void log_fatal (const char * fmt, ... )
+   va_end (list);
+ 
+ #ifndef DEBUG
+-  syslog (log_priority | LOG_ERR, "%s", mbuf);
++  if (*mbuf)
++	syslog (log_priority | LOG_ERR, "%s", mbuf);
+ #endif
+ 
+   /* Also log it to stderr? */
+@@ -116,7 +117,8 @@ int log_error (const char * fmt, ...)
+   va_end (list);
+ 
+ #ifndef DEBUG
+-  syslog (log_priority | LOG_ERR, "%s", mbuf);
++  if (*mbuf)
++	syslog (log_priority | LOG_ERR, "%s", mbuf);
+ #endif
+ 
+   if (log_perror) {
+@@ -143,7 +145,8 @@ int log_info (const char *fmt, ...)
+   va_end (list);
+ 
+ #ifndef DEBUG
+-  syslog (log_priority | LOG_INFO, "%s", mbuf);
++  if (*mbuf)
++	syslog (log_priority | LOG_INFO, "%s", mbuf);
+ #endif
+ 
+   if (log_perror) {
+@@ -170,7 +173,8 @@ int log_debug (const char *fmt, ...)
+   va_end (list);
+ 
+ #ifndef DEBUG
+-  syslog (log_priority | LOG_DEBUG, "%s", mbuf);
++  if (*mbuf)
++	syslog (log_priority | LOG_DEBUG, "%s", mbuf);
+ #endif
+ 
+   if (log_perror) {

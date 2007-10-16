@@ -1,0 +1,559 @@
+--- dhcp/client/dhclient.c
++++ dhcp/client/dhclient.c
+@@ -1094,7 +1094,8 @@ void dhcpoffer (packet)
+ 		return;
+ 	}
+ 
+-	sprintf (obuf, "%s from %s", name, piaddr (packet -> client_addr));
++	snprintf (obuf, sizeof(obuf),
++		"%s from %s", name, piaddr (packet -> client_addr));
+ 
+ 
+ 	/* If this lease doesn't supply the minimum required parameters,
+@@ -2650,7 +2651,7 @@ void client_envadd (struct client_state *client,
+ {
+ 	char spbuf [1024];
+ 	char *s;
+-	unsigned len, i;
++	int len;
+ 	struct string_list *val;
+ 	va_list list;
+ 
+@@ -2658,6 +2659,11 @@ void client_envadd (struct client_state *client,
+ 	len = vsnprintf (spbuf, sizeof spbuf, fmt, list);
+ 	va_end (list);
+ 
++/* Handle truncation on glibc 2.0.x or possible unexpected errors on others;
++ * avoid integer overflow in the addition below. */
++	if (len < 0 || len > 0x3fffffff)
++		return;
++
+ 	val = dmalloc (strlen (prefix) + strlen (name) + 1 /* = */ +
+ 		       len + sizeof *val, MDL);
+ 	if (!val)
+--- dhcp/common/bpf.c
++++ dhcp/common/bpf.c
+@@ -91,7 +91,7 @@ int if_register_bpf (info)
+ 	/* Open a BPF device */
+ 	for (b = 0; 1; b++) {
+ 		/* %Audit% 31 bytes max. %2004.06.17,Safe% */
+-		sprintf(filename, BPF_FORMAT, b);
++		snprintf(filename, sizeof(filename), BPF_FORMAT, b);
+ 		sock = open (filename, O_RDWR, 0);
+ 		if (sock < 0) {
+ 			if (errno == EBUSY) {
+--- dhcp/common/comapi.c
++++ dhcp/common/comapi.c
+@@ -288,7 +288,7 @@ isc_result_t dhcp_group_signal_handler (omapi_object_t *h,
+ 		/* Group objects always have to have names. */
+ 		if (!group -> name) {
+ 			char hnbuf [64];
+-			sprintf (hnbuf, "ng%08lx%08lx",
++			snprintf (hnbuf, sizeof(hnbuf), "ng%08lx%08lx",
+ 				 (unsigned long)cur_time,
+ 				 (unsigned long)group);
+ 			group -> name = dmalloc (strlen (hnbuf) + 1, MDL);
+--- dhcp/common/dns.c
++++ dhcp/common/dns.c
+@@ -533,7 +533,7 @@ isc_result_t ddns_update_a (struct data_string *ddns_fwd_name,
+ 		return ISC_R_INVALIDARG;
+ 
+ 	/* %Audit% Cannot exceed 16 bytes. %2004.06.17,Safe% */
+-	sprintf (ddns_address, "%u.%u.%u.%u",
++	snprintf (ddns_address, sizeof(ddns_address), "%u.%u.%u.%u",
+ 		  ddns_addr.iabuf[0], ddns_addr.iabuf[1],
+ 		  ddns_addr.iabuf[2], ddns_addr.iabuf[3]);
+ 
+@@ -794,7 +794,7 @@ isc_result_t ddns_remove_a (struct data_string *ddns_fwd_name,
+ 		return ISC_R_INVALIDARG;
+ 
+ 	/* %Audit% Cannot exceed 16 bytes. %2004.06.17,Safe% */
+-	sprintf (ddns_address, "%u.%u.%u.%u",
++	snprintf (ddns_address, sizeof(ddns_address), "%u.%u.%u.%u",
+ 		  ddns_addr.iabuf[0], ddns_addr.iabuf[1],
+ 		  ddns_addr.iabuf[2], ddns_addr.iabuf[3]);
+ 
+--- dhcp/common/inet.c
++++ dhcp/common/inet.c
+@@ -188,7 +188,7 @@ int addr_eq (addr1, addr2)
+ char *piaddr (addr)
+ 	struct iaddr addr;
+ {
+-	static char pbuf [4 * 16];
++	static char pbuf [4 * sizeof(addr.iabuf)];
+ 	char *s = pbuf;
+ 	int i;
+ 
+--- dhcp/common/print.c
++++ dhcp/common/print.c
+@@ -437,7 +437,7 @@ char *print_dec_1 (val)
+ 	unsigned long val;
+ {
+ 	static char vbuf [32];
+-	sprintf (vbuf, "%lu", val);
++	snprintf (vbuf, sizeof(vbuf), "%lu", val);
+ 	return vbuf;
+ }
+ 
+@@ -445,7 +445,7 @@ char *print_dec_2 (val)
+ 	unsigned long val;
+ {
+ 	static char vbuf [32];
+-	sprintf (vbuf, "%lu", val);
++	snprintf (vbuf, sizeof(vbuf), "%lu", val);
+ 	return vbuf;
+ }
+ 
+@@ -478,7 +478,7 @@ static unsigned print_subexpression (expr, buf, len)
+ 	      case expr_check:
+ 		rv = 10 + strlen (expr -> data.check -> name);
+ 		if (len > rv) {
+-			sprintf (buf, "(check %s)",
++			snprintf (buf, len, "(check %s)",
+ 				 expr -> data.check -> name);
+ 			return rv;
+ 		}
+@@ -585,7 +585,7 @@ static unsigned print_subexpression (expr, buf, len)
+ 	      case expr_host_lookup:
+ 		rv = 15 + strlen (expr -> data.host_lookup -> hostname);
+ 		if (len > rv) {
+-			sprintf (buf, "(dns-lookup %s)",
++			snprintf (buf, len, "(dns-lookup %s)",
+ 				 expr -> data.host_lookup -> hostname);
+ 			return rv;
+ 		}
+@@ -669,7 +669,7 @@ static unsigned print_subexpression (expr, buf, len)
+ 		rv = strlen (s) + 2 + (strlen (expr -> data.option -> name) +
+ 			   strlen (expr -> data.option -> universe -> name));
+ 		if (len > rv) {
+-			sprintf (buf, "(option %s.%s)",
++			snprintf (buf, len, "(option %s.%s)",
+ 				 expr -> data.option -> universe -> name,
+ 				 expr -> data.option -> name);
+ 			return rv;
+@@ -805,7 +805,7 @@ static unsigned print_subexpression (expr, buf, len)
+ 		rv = 10 + (strlen (expr -> data.option -> name) +
+ 			   strlen (expr -> data.option -> universe -> name));
+ 		if (len > rv) {
+-			sprintf (buf, "(exists %s.%s)",
++			snprintf (buf, len, "(exists %s.%s)",
+ 				 expr -> data.option -> universe -> name,
+ 				 expr -> data.option -> name);
+ 			return rv;
+@@ -815,7 +815,8 @@ static unsigned print_subexpression (expr, buf, len)
+ 	      case expr_variable_exists:
+ 		rv = 10 + strlen (expr -> data.variable);
+ 		if (len > rv) {
+-			sprintf (buf, "(defined %s)", expr -> data.variable);
++			snprintf (buf, len,
++				"(defined %s)", expr -> data.variable);
+ 			return rv;
+ 		}
+ 		break;
+@@ -823,7 +824,7 @@ static unsigned print_subexpression (expr, buf, len)
+ 	      case expr_variable_reference:
+ 		rv = strlen (expr -> data.variable);
+ 		if (len > rv) {
+-			sprintf (buf, "%s", expr -> data.variable);
++			snprintf (buf, len, "%s", expr -> data.variable);
+ 			return rv;
+ 		}
+ 		break;
+@@ -1106,7 +1107,7 @@ int token_indent_data_string (FILE *file, int col, int indent,
+ 	}
+ 
+ 	for (i = 0; i < data -> len; i++) {
+-		sprintf (obuf, "%2.2x", data -> data [i]);
++		snprintf (obuf, sizeof(obuf), "%2.2x", data -> data [i]);
+ 		col = token_print_indent (file, col, indent,
+ 					  i == 0 ? prefix : "",
+ 					  (i + 1 == data -> len
+--- dhcp/common/tree.c
++++ dhcp/common/tree.c
+@@ -738,8 +738,8 @@ int evaluate_dns_expression (result, packet, lease, client_state, in_options,
+ 				    (*result) -> r_data =
+ 					    (*result) -> r_data_ephem;
+ 				    /*%Audit% 16 bytes max. %2004.06.17,Safe%*/
+-				    sprintf ((char *)(*result) -> r_data_ephem,
+-					     "%u.%u.%u.%u",
++				    snprintf ((char *)(*result) -> r_data_ephem,
++					     16, "%u.%u.%u.%u",
+ 					     data.data [0] & 0xff,
+ 					     data.data [1] & 0xff,
+ 					     data.data [2] & 0xff,
+@@ -3428,7 +3428,7 @@ int write_expression (file, expr, col, indent, firstp)
+ 		col = write_expression (file, expr -> data.extract_int,
+ 					col, indent, 1);
+ 		col = token_print_indent (file, col, scol, "", " ", ",");
+-		sprintf (obuf, "%d", width);
++		snprintf (obuf, sizeof(obuf), "%d", width);
+ 		col = token_print_indent (file, col, scol, " ", "", obuf);
+ 		col = token_print_indent (file, col, indent, "", "", ")");
+ 		break;
+@@ -3451,7 +3451,7 @@ int write_expression (file, expr, col, indent, firstp)
+ 		col = write_expression (file, expr -> data.extract_int,
+ 					col, indent, 1);
+ 		col = token_print_indent (file, col, scol, "", " ", ",");
+-		sprintf (obuf, "%d", width);
++		snprintf (obuf, sizeof(obuf), "%d", width);
+ 		col = token_print_indent (file, col, scol, " ", "", obuf);
+ 		col = token_print_indent (file, col, indent, "", "",
+ 					  ")");
+@@ -3466,7 +3466,7 @@ int write_expression (file, expr, col, indent, firstp)
+ 		goto encode_int;
+ 
+ 	      case expr_const_int:
+-		sprintf (obuf, "%lu", expr -> data.const_int);
++		snprintf (obuf, sizeof(obuf), "%lu", expr -> data.const_int);
+ 		col = token_print_indent (file, col, indent, "", "", obuf);
+ 		break;
+ 
+@@ -3615,11 +3615,11 @@ int write_expression (file, expr, col, indent, firstp)
+ 		col = token_print_indent (file, col, indent, " ", "",
+ 					  "(");
+ 		scol = col;
+-		sprintf (obuf, "%d", expr -> data.ns_add.rrclass);
++		snprintf (obuf, sizeof(obuf), "%d", expr -> data.ns_add.rrclass);
+ 		col = token_print_indent (file, col, scol, "", "", obuf);
+ 		col = token_print_indent (file, col, scol, "", " ",
+ 					  ",");
+-		sprintf (obuf, "%d", expr -> data.ns_add.rrtype);
++		snprintf (obuf, sizeof(obuf), "%d", expr -> data.ns_add.rrtype);
+ 		col = token_print_indent (file, col, scol, "", "", obuf);
+ 		col = token_print_indent (file, col, scol, "", " ",
+ 					  ",");
+@@ -3644,11 +3644,11 @@ int write_expression (file, expr, col, indent, firstp)
+ 					  "(");
+ 	      finish_ns_small:
+ 		scol = col;
+-		sprintf (obuf, "%d", expr -> data.ns_add.rrclass);
++		snprintf (obuf, sizeof(obuf), "%d", expr -> data.ns_add.rrclass);
+ 		col = token_print_indent (file, col, scol, "", "", obuf);
+ 		col = token_print_indent (file, col, scol, "", " ",
+ 					  ",");
+-		sprintf (obuf, "%d", expr -> data.ns_add.rrtype);
++		snprintf (obuf, sizeof(obuf), "%d", expr -> data.ns_add.rrtype);
+ 		col = token_print_indent (file, col, scol, "", "", obuf);
+ 		col = token_print_indent (file, col, scol, "", " ",
+ 					  ",");
+--- dhcp/common/upf.c
++++ dhcp/common/upf.c
+@@ -80,7 +80,7 @@ int if_register_upf (info)
+ 	/* Open a UPF device */
+ 	for (b = 0; 1; b++) {
+ 		/* %Audit% Cannot exceed 36 bytes. %2004.06.17,Safe% */
+-		sprintf(filename, "/dev/pf/pfilt%d", b);
++		snprintf(filename, sizeof(filename), "/dev/pf/pfilt%d", b);
+ 
+ 		sock = open (filename, O_RDWR, 0);
+ 		if (sock < 0) {
+--- dhcp/dst/dst_support.c
++++ dhcp/dst/dst_support.c
+@@ -396,8 +396,8 @@ dst_s_build_filename(char *filename, const char *name, unsigned id,
+ 	if (filename_length < 1 + strlen(name) + 4 + 6 + 1 + strlen(suffix))
+ 		return (-1);
+ 	my_id = id;
+-	sprintf(filename, "K%s+%03d+%05d.%s", name, alg, my_id,
+-		(const char *) suffix);
++	snprintf(filename, filename_length, "K%s+%03d+%05d.%s",
++		name, alg, my_id, (const char *) suffix);
+ 	if (strrchr(filename, '/'))
+ 		return (-1);
+ 	if (strrchr(filename, '\\'))
+--- dhcp/dst/hmac_link.c
++++ dhcp/dst/hmac_link.c
+@@ -280,7 +280,7 @@ dst_hmac_md5_key_to_file_format(const DST_KEY *dkey, char *buff,
+ 	hkey = (HMAC_Key *) dkey->dk_KEY_struct;
+ 	memset(buff, 0, buff_len);	/* just in case */
+ 	/* write file header */
+-	sprintf(buff, key_file_fmt_str, KEY_FILE_FORMAT, KEY_HMAC_MD5, "HMAC");
++	snprintf(buff, buff_len, key_file_fmt_str, KEY_FILE_FORMAT, KEY_HMAC_MD5, "HMAC");
+ 
+ 	bp = (char *) strchr(buff, '\0');
+ 	b_len = buff_len - (bp - buff);
+--- dhcp/minires/res_mkupdate.c
++++ dhcp/minires/res_mkupdate.c
+@@ -1113,14 +1113,14 @@ cgetprotobynumber(int proto) {				/* Host byte order. */
+ 
+ const char *
+ res_protocolname(int num) {
+-	static char number[8];
++	static char number[2 + sizeof(num) * 3];
+ 	struct protoent *pp;
+ 
+ 	if (protolist == (struct valuelist *)0)
+ 		res_buildprotolist();
+ 	pp = cgetprotobynumber(num);
+ 	if (pp == 0)  {
+-		(void) sprintf(number, "%d", num);
++		(void) snprintf(number, sizeof(number), "%d", num);
+ 		return (number);
+ 	}
+ 	return (pp->p_name);
+@@ -1128,14 +1128,14 @@ res_protocolname(int num) {
+ 
+ const char *
+ res_servicename(u_int16_t port, const char *proto) {	/* Host byte order. */
+-	static char number[8];
++	static char number[2 + sizeof(port) * 3];
+ 	struct servent *ss;
+ 
+ 	if (servicelist == (struct valuelist *)0)
+ 		res_buildservicelist();
+ 	ss = cgetservbyport(htons(port), proto);
+ 	if (ss == 0)  {
+-		(void) sprintf(number, "%d", port);
++		(void) snprintf(number, sizeof(number), "%d", port);
+ 		return (number);
+ 	}
+ 	return (ss->s_name);
+--- dhcp/minires/res_query.c
++++ dhcp/minires/res_query.c
+@@ -375,7 +375,7 @@ res_nquerydomain(res_state statp,
+ 			RES_SET_H_ERRNO(statp, NO_RECOVERY);
+ 			return ISC_R_NOSPACE;
+ 		}
+-		sprintf(nbuf, "%s.%s", name, domain);
++		snprintf(nbuf, sizeof(nbuf), "%s.%s", name, domain);
+ 	}
+ 	return res_nquery(statp,
+ 			  longname, class, type, answer, anslen, ansret);
+--- dhcp/omapip/errwarn.c
++++ dhcp/omapip/errwarn.c
+@@ -240,7 +240,7 @@ char *strerror (err)
+ 	static char errbuf [128];
+ 
+ 	if (err < 0 || err >= sys_nerr) {
+-		sprintf (errbuf, "Error %d", err);
++		snprintf (errbuf, sizeof(errbuf), "Error %d", err);
+ 		return errbuf;
+ 	}
+ 	return sys_errlist [err];
+--- dhcp/omapip/iscprint.c
++++ dhcp/omapip/iscprint.c
+@@ -230,7 +230,7 @@ isc_print_vsnprintf(char *str, size_t size, const char *format, va_list ap) {
+ 						head = "";
+ 					tmpui = tmpi;
+ 				}
+-				sprintf(buf, "%u", tmpui);
++				snprintf(buf, sizeof(buf), "%u", tmpui);
+ 				goto printint;
+ 			case 'o':
+ 				if (q)
+@@ -239,7 +239,7 @@ isc_print_vsnprintf(char *str, size_t size, const char *format, va_list ap) {
+ 					tmpui = va_arg(ap, long int);
+ 				else
+ 					tmpui = va_arg(ap, int);
+-				sprintf(buf, alt ? "%#o"
++				snprintf(buf, sizeof(buf), alt ? "%#o"
+ 						 : "%o", tmpui);
+ 				goto printint;
+ 			case 'u':
+@@ -249,7 +249,7 @@ isc_print_vsnprintf(char *str, size_t size, const char *format, va_list ap) {
+ 					tmpui = va_arg(ap, unsigned long int);
+ 				else
+ 					tmpui = va_arg(ap, unsigned int);
+-				sprintf(buf, "%u", tmpui);
++				snprintf(buf, sizeof(buf), "%u", tmpui);
+ 				goto printint;
+ 			case 'x':
+ 				if (q)
+@@ -263,7 +263,7 @@ isc_print_vsnprintf(char *str, size_t size, const char *format, va_list ap) {
+ 					if (precision > 2)
+ 						precision -= 2;
+ 				}
+-				sprintf(buf, "%x", tmpui);
++				snprintf(buf, sizeof(buf), "%x", tmpui);
+ 				goto printint;
+ 			case 'X':
+ 				if (q)
+@@ -277,7 +277,7 @@ isc_print_vsnprintf(char *str, size_t size, const char *format, va_list ap) {
+ 					if (precision > 2)
+ 						precision -= 2;
+ 				}
+-				sprintf(buf, "%X", tmpui);
++				snprintf(buf, sizeof(buf), "%X", tmpui);
+ 				goto printint;
+ 			printint:
+ 				if (precision != 0 || width != 0) {
+@@ -403,7 +403,7 @@ isc_print_vsnprintf(char *str, size_t size, const char *format, va_list ap) {
+ 			break;
+ 		case 'p':
+ 			v = va_arg(ap, void *);
+-			sprintf(buf, "%p", v);
++			snprintf(buf, sizeof(buf), "%p", v);
+ 			length = strlen(buf);
+ 			if (precision > length)
+ 				zeropad = precision - length;
+@@ -479,7 +479,7 @@ isc_print_vsnprintf(char *str, size_t size, const char *format, va_list ap) {
+ 			 */
+ 			if (precision > 512)
+ 				precision = 512;
+-			sprintf(fmt, "%%%s%s.%lu%s%c", alt ? "#" : "",
++			snprintf(fmt, sizeof(fmt), "%%%s%s.%lu%s%c", alt ? "#" : "",
+ 				plus ? "+" : space ? " " : "",
+ 				precision, l ? "L" : "", *format);
+ 			switch (*format) {
+@@ -491,12 +491,12 @@ isc_print_vsnprintf(char *str, size_t size, const char *format, va_list ap) {
+ #ifdef HAVE_LONG_DOUBLE
+ 				if (l) {
+ 					ldbl = va_arg(ap, long double);
+-					sprintf(buf, fmt, ldbl);
++					snprintf(buf, sizeof(buf), fmt, ldbl);
+ 				} else
+ #endif
+ 				{
+ 					dbl = va_arg(ap, double);
+-					sprintf(buf, fmt, dbl);
++					snprintf(buf, sizeof(buf), fmt, dbl);
+ 				}
+ 				length = strlen(buf);
+ 				if (width > 0) {
+--- dhcp/omapip/result.c
++++ dhcp/omapip/result.c
+@@ -114,6 +114,6 @@ const char *isc_result_totext (isc_result_t result)
+ 
+ 	if (result >= ISC_R_SUCCESS && result < ISC_R_NRESULTS)
+ 		return text [result];
+-	sprintf(ebuf, "unknown error: %d", result);
++	snprintf(ebuf, sizeof(ebuf), "unknown error: %d", result);
+ 	return ebuf;
+ }
+--- dhcp/server/db.c
++++ dhcp/server/db.c
+@@ -81,7 +81,7 @@ int write_lease (lease)
+ 		if (lease -> starts != MAX_TIME) {
+ 			t = gmtime (&lease -> starts);
+ 			/* %Audit% Cannot exceed 59 bytes. %2004.06.17,Safe% */
+-			sprintf (tbuf, "%d %d/%02d/%02d %02d:%02d:%02d;",
++			snprintf (tbuf, sizeof(tbuf), "%d %d/%02d/%02d %02d:%02d:%02d;",
+ 				 t -> tm_wday, t -> tm_year + 1900,
+ 				 t -> tm_mon + 1, t -> tm_mday,
+ 				 t -> tm_hour, t -> tm_min, t -> tm_sec);
+@@ -98,7 +98,7 @@ int write_lease (lease)
+ 		if (lease -> ends != MAX_TIME) {
+ 			t = gmtime (&lease -> ends);
+ 			/* %Audit% Cannot exceed 59 bytes. %2004.06.17,Safe% */
+-			sprintf (tbuf, "%d %d/%02d/%02d %02d:%02d:%02d;",
++			snprintf (tbuf, sizeof(tbuf), "%d %d/%02d/%02d %02d:%02d:%02d;",
+ 				 t -> tm_wday, t -> tm_year + 1900,
+ 				 t -> tm_mon + 1, t -> tm_mday,
+ 				 t -> tm_hour, t -> tm_min, t -> tm_sec);
+--- dhcp/server/ddns.c
++++ dhcp/server/ddns.c
+@@ -499,7 +499,7 @@ int ddns_updates (struct packet *packet,
+ 			ddns_rev_name.data = ddns_rev_name.buffer -> data;
+ 
+ 			/* %Audit% Cannot exceed 17 bytes. %2004.06.17,Safe% */
+-			sprintf ((char *)ddns_rev_name.buffer -> data,
++			snprintf ((char *)ddns_rev_name.buffer -> data, 17,
+ 				  "%u.%u.%u.%u.",
+ 				  lease -> ip_addr . iabuf[3] & 0xff,
+ 				  lease -> ip_addr . iabuf[2] & 0xff,
+--- dhcp/server/dhcp.c
++++ dhcp/server/dhcp.c
+@@ -81,7 +81,7 @@ void dhcp (packet)
+ 			s = dhcp_type_names [packet -> packet_type - 1];
+ 		} else {
+ 			/* %Audit% Cannot exceed 28 bytes. %2004.06.17,Safe% */
+-			sprintf (typebuf, "type %d", packet -> packet_type);
++			snprintf (typebuf, sizeof(typebuf), "type %d", packet -> packet_type);
+ 			s = typebuf;
+ 		}
+ 		
+@@ -447,7 +447,7 @@ void dhcprequest (packet, ms_nulltp, ip_lease)
+ 		/* piaddr() should not return more than a 15 byte string.
+ 		 * safe.
+ 		 */
+-		sprintf (smbuf, " (%s)", piaddr (sip));
++		snprintf (smbuf, sizeof(smbuf), " (%s)", piaddr (sip));
+ 		have_server_identifier = 1;
+ 	} else
+ 		smbuf [0] = 0;
+--- dhcp/server/dhcpd.c
++++ dhcp/server/dhcpd.c
+@@ -553,7 +553,7 @@ int main (argc, argv, envp)
+ 				unlink (path_dhcpd_pid);
+ 				if ((i = open (path_dhcpd_pid,
+ 					O_WRONLY | O_CREAT, 0644)) >= 0) {
+-				    sprintf (pbuf, "%d\n", (int)getpid ());
++				    snprintf (pbuf, sizeof(pbuf), "%d\n", (int)getpid ());
+ 				    if (write (i, pbuf, strlen (pbuf)) != strlen (pbuf))
+ 					log_fatal ("Error writing pid file: %s: %m",
+ 						   path_dhcpd_pid);
+@@ -591,7 +591,7 @@ int main (argc, argv, envp)
+ 		unlink (path_dhcpd_pid);
+ 		if ((i = open (path_dhcpd_pid,
+ 			       O_WRONLY | O_CREAT, 0644)) >= 0) {
+-			sprintf (pbuf, "%d\n", (int)getpid ());
++			snprintf (pbuf, sizeof(pbuf), "%d\n", (int)getpid ());
+ 			if (write (i, pbuf, strlen (pbuf)) != strlen (pbuf))
+ 				log_fatal ("Error writing pid file: %s: %m",
+ 					   path_dhcpd_pid);
+--- dhcp/server/failover.c
++++ dhcp/server/failover.c
+@@ -3580,7 +3580,7 @@ failover_option_t *dhcp_failover_make_option (unsigned code,
+ 			val = va_arg (va, unsigned);
+ #if defined (DEBUG_FAILOVER_MESSAGES)
+ 			/* %Audit% Cannot exceed 24 bytes. %2004.06.17,Safe% */
+-			sprintf (tbuf, " %d", val);
++			snprintf (tbuf, sizeof(tbuf), " %d", val);
+ 			failover_print (obuf, obufix, obufmax, tbuf);
+ #endif
+ 			option.data [i + 4] = val;
+@@ -3600,7 +3600,7 @@ failover_option_t *dhcp_failover_make_option (unsigned code,
+ 				
+ #if defined (DEBUG_FAILOVER_MESSAGES)
+ 			/*%Audit% Cannot exceed 17 bytes.  %2004.06.17,Safe%*/
+-			sprintf (tbuf, " %u.%u.%u.%u",
++			snprintf (tbuf, sizeof(tbuf), " %u.%u.%u.%u",
+ 				  iaddr [0], iaddr [1], iaddr [2], iaddr [3]);
+ 			failover_print (obuf, obufix, obufmax, tbuf);
+ #endif
+@@ -3613,7 +3613,7 @@ failover_option_t *dhcp_failover_make_option (unsigned code,
+ 			val = va_arg (va, unsigned);
+ #if defined (DEBUG_FAILOVER_MESSAGES)
+ 			/*%Audit% Cannot exceed 24 bytes.  %2004.06.17,Safe%*/
+-			sprintf (tbuf, " %d", val);
++			snprintf (tbuf, sizeof(tbuf), " %d", val);
+ 			failover_print (obuf, obufix, obufmax, tbuf);
+ #endif
+ 			putULong (&option.data [4 + i * 4], val);
+@@ -3626,7 +3626,7 @@ failover_option_t *dhcp_failover_make_option (unsigned code,
+ #if defined (DEBUG_FAILOVER_MESSAGES)
+ 		for (i = 0; i < count; i++) {
+ 			/* 23 bytes plus nul, safe. */
+-			sprintf (tbuf, " %d", bval [i]);
++			snprintf (tbuf, sizeof(tbuf), " %d", bval [i]);
+ 			failover_print (obuf, obufix, obufmax, tbuf);
+ 		}
+ #endif
+@@ -3664,7 +3664,7 @@ failover_option_t *dhcp_failover_make_option (unsigned code,
+ #if defined (DEBUG_FAILOVER_MESSAGES)
+ 		for (i = 4; i < size; i++) {
+ 			/*%Audit% Cannot exceed 24 bytes. %2004.06.17,Safe%*/
+-			sprintf (tbuf, " %d", option.data [i]);
++			snprintf (tbuf, sizeof(tbuf), " %d", option.data [i]);
+ 			failover_print (obuf, obufix, obufmax, tbuf);
+ 		}
+ #endif
+@@ -3675,7 +3675,7 @@ failover_option_t *dhcp_failover_make_option (unsigned code,
+ 			val = va_arg (va, u_int32_t);
+ #if defined (DEBUG_FAILOVER_MESSAGES)
+ 			/*%Audit% Cannot exceed 24 bytes. %2004.06.17,Safe%*/
+-			sprintf (tbuf, " %d", val);
++			snprintf (tbuf, sizeof(tbuf), " %d", val);
+ 			failover_print (obuf, obufix, obufmax, tbuf);
+ #endif
+ 			putUShort (&option.data [4 + i * 2], val);
+--- dhcp/server/omapi.c
++++ dhcp/server/omapi.c
+@@ -1186,7 +1186,7 @@ isc_result_t dhcp_host_signal_handler (omapi_object_t *h,
+ 
+ 		if (!host -> name) {
+ 			char hnbuf [64];
+-			sprintf (hnbuf, "nh%08lx%08lx",
++			snprintf (hnbuf, sizeof(hnbuf), "nh%08lx%08lx",
+ 				 (unsigned long)cur_time, (unsigned long)host);
+ 			host -> name = dmalloc (strlen (hnbuf) + 1, MDL);
+ 			if (!host -> name)

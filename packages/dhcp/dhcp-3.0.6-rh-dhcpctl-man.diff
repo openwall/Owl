@@ -1,0 +1,21 @@
+--- dhcp/dhcpctl/dhcpctl.3
++++ dhcp/dhcpctl/dhcpctl.3
+@@ -43,7 +43,8 @@
+ .\"
+ .\"
+ .Sh SYNOPSIS
+-.Fd #include <dhcpctl/dhcpctl.h>
++.Fd #include <dhcpctl.h>
++.sp
+ .Ft dhcpctl_status
+ .Fo dhcpctl_initialize
+ .Fa void
+@@ -426,7 +427,7 @@ that most error checking has been ommitted for brevity.
+ #include <netinet/in.h>
+ 
+ #include <isc/result.h>
+-#include <dhcpctl/dhcpctl.h>
++#include <dhcpctl.h>
+ 
+ int main (int argc, char **argv) {
+ 	dhcpctl_data_string ipaddrstring = NULL;

@@ -1,0 +1,67 @@
+--- dhcp/dst/dst_api.c
++++ dhcp/dst/dst_api.c
+@@ -440,6 +440,7 @@ dst_s_write_private_key(const DST_KEY *key)
+ 		if ((nn = fwrite(encoded_block, 1, len, fp)) != len) {
+ 			EREPORT(("dst_write_private_key(): Write failure on %s %d != %d errno=%d\n",
+ 				 file, out_len, nn, errno));
++			fclose(fp);
+ 			return (-5);
+ 		}
+ 		fclose(fp);
+@@ -526,6 +527,7 @@ dst_s_read_public_key(const char *in_name, const unsigned in_id, int in_alg)
+ 	/* Locate and skip "KEY" */
+ 	if (c != 'K' && c != 'k') {
+ 		EREPORT(("\"KEY\" doesn't appear in file: %s", name));
++		fclose(fp);
+ 		return NULL;
+ 	}
+ 	while ((c = getc(fp)) != EOF)
+@@ -540,10 +542,15 @@ dst_s_read_public_key(const char *in_name, const unsigned in_id, int in_alg)
+ 	if (fscanf(fp, "%d %d %d", &flags, &proto, &alg) != 3) {
+ 		EREPORT(("dst_read_public_key(): Can not read flag/proto/alg field from %s\n"
+ 			 ,name));
++		fclose(fp);
+ 		return (NULL);
+ 	}
+ 	/* read in the key string */
+-	fgets(enckey, sizeof(enckey), fp);
++	if (!fgets(enckey, sizeof(enckey), fp)) {
++		EREPORT(("Key too short in file: %s", name));
++		fclose(fp);
++		return NULL;
++	}
+ 
+ 	/* If we aren't at end-of-file, something is wrong.  */
+ 	while ((c = getc(fp)) != EOF)
+@@ -551,6 +558,7 @@ dst_s_read_public_key(const char *in_name, const unsigned in_id, int in_alg)
+ 			break;
+ 	if (!feof(fp)) {
+ 		EREPORT(("Key too long in file: %s", name));
++		fclose(fp);
+ 		return NULL;
+ 	}
+ 	fclose(fp);
+--- dhcp/server/dhcpd.c
++++ dhcp/server/dhcpd.c
+@@ -551,7 +551,9 @@ int main (argc, argv, envp)
+ 				if ((i = open (path_dhcpd_pid,
+ 					O_WRONLY | O_CREAT, 0644)) >= 0) {
+ 				    sprintf (pbuf, "%d\n", (int)getpid ());
+-				    write (i, pbuf, strlen (pbuf));
++				    if (write (i, pbuf, strlen (pbuf)) != strlen (pbuf))
++					log_fatal ("Error writing pid file: %s: %m",
++						   path_dhcpd_pid);
+ 				    close (i);
+ 				    pidfilewritten = 1;
+ 				}
+@@ -584,7 +586,9 @@ int main (argc, argv, envp)
+ 		if ((i = open (path_dhcpd_pid,
+ 			       O_WRONLY | O_CREAT, 0644)) >= 0) {
+ 			sprintf (pbuf, "%d\n", (int)getpid ());
+-			write (i, pbuf, strlen (pbuf));
++			if (write (i, pbuf, strlen (pbuf)) != strlen (pbuf))
++				log_fatal ("Error writing pid file: %s: %m",
++					   path_dhcpd_pid);
+ 			close (i);
+ 			pidfilewritten = 1;
+ 		}

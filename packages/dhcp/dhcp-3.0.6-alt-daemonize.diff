@@ -1,0 +1,104 @@
+--- dhcp/relay/dhcrelay.c
++++ dhcp/relay/dhcrelay.c
+@@ -106,7 +106,7 @@ int main (argc, argv, envp)
+ 	int argc;
+ 	char **argv, **envp;
+ {
+-	int i;
++	int i, null_fd;
+ 	struct servent *ent;
+ 	struct server_list *sp = (struct server_list *)0;
+ 	int no_daemon = 0;
+@@ -115,14 +115,17 @@ int main (argc, argv, envp)
+ 	char *s;
+ 
+ 	/* Make sure we have stdin, stdout and stderr. */
+-	i = open ("/dev/null", O_RDWR);
+-	if (i == 0)
+-		i = open ("/dev/null", O_RDWR);
+-	if (i == 1) {
+-		i = open ("/dev/null", O_RDWR);
++	null_fd = open ("/dev/null", O_RDWR);
++	if (null_fd == 0)
++		null_fd = open ("/dev/null", O_RDWR);
++	if (null_fd == 1)
++		null_fd = open ("/dev/null", O_RDWR);
++	if (null_fd == 2) {
++		null_fd = open ("/dev/null", O_RDWR);
+ 		log_perror = 0; /* No sense logging to /dev/null. */
+-	} else if (i != -1)
+-		close (i);
++	}
++	if (null_fd < 0)
++		log_fatal ("Can't open %s: %m", "/dev/null");
+ 
+ #ifdef SYSLOG_4_2
+ 	openlog ("dhcrelay", LOG_NDELAY);
+@@ -310,9 +313,12 @@ int main (argc, argv, envp)
+ 			}	
+ 		}
+ 
+-		close (0);
+-		close (1);
+-		close (2);
++		if (dup2 (null_fd, 0) != 0 ||
++		    dup2 (null_fd, 1) != 1 ||
++		    dup2 (null_fd, 2) != 2)
++			log_fatal("Can't daemonize: %m");
++		close (null_fd);
++		null_fd = -1;
+ 		pid = setsid ();
+ 	}
+ 
+--- dhcp/server/dhcpd.c
++++ dhcp/server/dhcpd.c
+@@ -197,7 +197,7 @@ int main (argc, argv, envp)
+ 	int argc;
+ 	char **argv, **envp;
+ {
+-	int i, status;
++	int i, status, null_fd;
+ 	struct servent *ent;
+ 	char *s;
+ 	int cftest = 0;
+@@ -227,14 +227,17 @@ int main (argc, argv, envp)
+ #endif
+ 
+ 	/* Make sure we have stdin, stdout and stderr. */
+-	status = open ("/dev/null", O_RDWR);
+-	if (status == 0)
+-		status = open ("/dev/null", O_RDWR);
+-	if (status == 1) {
+-		status = open ("/dev/null", O_RDWR);
++	null_fd = open ("/dev/null", O_RDWR);
++	if (null_fd == 0)
++		null_fd = open ("/dev/null", O_RDWR);
++	if (null_fd == 1)
++		null_fd = open ("/dev/null", O_RDWR);
++	if (null_fd == 2) {
++		null_fd = open ("/dev/null", O_RDWR);
+ 		log_perror = 0; /* No sense logging to /dev/null. */
+-	} else if (status != -1)
+-		close (status);
++	}
++	if (null_fd < 0)
++		log_fatal ("Can't open %s: %m", "/dev/null");
+ 
+ 	/* Set up the client classification system. */
+ 	classification_setup ();
+@@ -571,9 +574,12 @@ int main (argc, argv, envp)
+ 
+ 	if (daemon) {
+ 		/* Become session leader and get pid... */
+-		close (0);
+-		close (1);
+-		close (2);
++		if (dup2 (null_fd, 0) != 0 ||
++		    dup2 (null_fd, 1) != 1 ||
++		    dup2 (null_fd, 2) != 2)
++			log_fatal("Can't daemonize: %m");
++		close (null_fd);
++		null_fd = -1;
+ 		pid = setsid ();
+ 	}
+ 

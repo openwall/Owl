@@ -1,0 +1,441 @@
+--- dhcp/common/Makefile.dist
++++ dhcp/common/Makefile.dist
+@@ -25,11 +25,11 @@ SEDMANPAGES = dhcp-options.man5 dhcp-eval.man5
+ SRC    = raw.c parse.c nit.c icmp.c dispatch.c conflex.c upf.c bpf.c socket.c \
+ 	 lpf.c dlpi.c packet.c tr.c ethernet.c memory.c print.c options.c \
+ 	 inet.c tree.c tables.c alloc.c fddi.c ctrace.c dns.c resolv.c \
+-	 execute.c discover.c comapi.c
++	 execute.c discover.c comapi.c droproot.c
+ OBJ    = raw.o parse.o nit.o icmp.o dispatch.o conflex.o upf.o bpf.o socket.o \
+ 	 lpf.o dlpi.o packet.o tr.o ethernet.o memory.o print.o options.o \
+ 	 inet.o tree.o tables.o alloc.o fddi.o ctrace.o dns.o resolv.o \
+-	 execute.o discover.o comapi.o
++	 execute.o discover.o comapi.o droproot.o
+ MAN    = dhcp-options.5 dhcp-eval.5
+ 
+ INCLUDES = -I$(TOP) $(BINDINC) -I$(TOP)/includes
+--- /dev/null
++++ dhcp/common/droproot.c
+@@ -0,0 +1,133 @@
++#include "dhcpd.h"
++#include <unistd.h>
++#include <time.h>
++#include <pwd.h>
++#define group real_group
++#include <grp.h>
++#undef group
++
++#include <sys/capability.h>
++#include <sys/prctl.h>
++
++static int minimized = 0;
++
++void
++dhcpd_priv_minimize(const char *server_user, const char *server_jail)
++{
++	struct passwd *pw;
++	uid_t   uid;
++	gid_t   gid;
++
++	if (!*server_user)
++		return;
++
++	if (!(pw = getpwnam(server_user)))
++		log_fatal("Failed to lower privileges: getpwnam: %s",
++			  server_user);
++
++	uid = pw->pw_uid;
++	gid = pw->pw_gid;
++
++	tzset();
++
++	if (initgroups(server_user, gid))
++		log_fatal("Failed to lower privileges: initgroups: %u: %m",
++			  (unsigned) gid);
++
++	endpwent();
++
++	if (*server_jail && (chdir(server_jail) || chroot(".")))
++		log_fatal("Failed to lower privileges: chroot: %s: %m",
++			  server_jail);
++
++	if (setgid(gid))
++		log_fatal("Failed to lower privileges: setgid: %u: %m",
++			  (unsigned) gid);
++
++	if (prctl(PR_SET_KEEPCAPS, 1))
++		log_fatal("Failed to lower privileges: prctl: %m");
++
++	cap_t   caps = cap_from_text("cap_setuid,cap_net_bind_service=ep");
++	if (!caps)
++		log_fatal("Failed to lower privileges: cap_from_text: %m");
++
++	if (cap_set_proc(caps) < 0)
++		log_fatal("Failed to lower privileges: cap_set_proc: %m");
++
++	cap_free(caps);
++
++	if (setreuid(uid, uid))
++		log_fatal("Failed to lower privileges: setreuid: %u: %m",
++			  (unsigned) uid);
++
++	caps = cap_from_text("cap_net_bind_service=ep");
++	if (!caps)
++		log_fatal("Failed to lower privileges: cap_from_text: %m");
++
++	if (cap_set_proc(caps) < 0)
++		log_fatal("Failed to lower privileges: cap_set_proc: %m");
++
++	cap_free(caps);
++	minimized = 1;
++}
++
++static void
++drop_minimized(void)
++{
++	cap_t   caps = cap_from_text("all-ep");
++	if (!caps)
++		log_fatal("Failed to lower privileges: cap_from_text: %m");
++
++	if (cap_set_proc(caps) < 0)
++		log_fatal("Failed to lower privileges: cap_set_proc: %m");
++
++	cap_free(caps);
++}
++
++static void
++drop_all(const char *server_user, const char *server_jail)
++{
++	struct passwd *pw;
++	uid_t   uid;
++	gid_t   gid;
++
++	if (!(pw = getpwnam(server_user)))
++		log_fatal("Failed to lower privileges: getpwnam: %s",
++			  server_user);
++
++	uid = pw->pw_uid;
++	gid = pw->pw_gid;
++
++	tzset();
++
++	if (initgroups(server_user, gid))
++		log_fatal("Failed to lower privileges: initgroups: %u: %m",
++			  (unsigned) gid);
++
++	endpwent();
++
++	if (*server_jail && (chdir(server_jail) || chroot(".")))
++		log_fatal("Failed to lower privileges: chroot: %s: %m",
++			  server_jail);
++
++	if (setgid(gid))
++		log_fatal("Failed to lower privileges: setgid: %u: %m",
++			  (unsigned) gid);
++
++	if (setuid(uid))
++		log_fatal("Failed to lower privileges: setuid: %u: %m",
++			  (unsigned) uid);
++}
++
++
++void
++dhcpd_priv_drop(const char *server_user, const char *server_jail)
++{
++	if (!*server_user)
++		return;
++
++	if (minimized)
++		drop_minimized();
++	else
++		drop_all(server_user, server_jail);
++}
+--- dhcp/includes/cf/linux.h
++++ dhcp/includes/cf/linux.h
+@@ -83,11 +83,11 @@ extern int h_errno;
+    directory. */
+ 
+ #ifndef _PATH_DHCPD_DB
+-#define _PATH_DHCPD_DB		"/var/state/dhcp/dhcpd.leases"
++#define _PATH_DHCPD_DB		"/state/dhcpd.leases"
+ #endif
+ 
+ #ifndef _PATH_DHCLIENT_DB
+-#define _PATH_DHCLIENT_DB	"/var/state/dhcp/dhclient.leases"
++#define _PATH_DHCLIENT_DB	"/var/lib/dhcp/dhclient/state/dhclient.leases"
+ #endif
+ 
+ /* Varargs stuff... */
+--- dhcp/includes/dhcpd.h
++++ dhcp/includes/dhcpd.h
+@@ -2638,3 +2638,6 @@ OMAPI_OBJECT_ALLOC_DECL (dhcp_failover_link, dhcp_failover_link_t,
+ #endif /* FAILOVER_PROTOCOL */
+ 
+ const char *binding_state_print (enum failover_state);
++
++extern void dhcpd_priv_minimize(const char *server_user, const char *server_jail);
++extern void dhcpd_priv_drop(const char *server_user, const char *server_jail);
+--- dhcp/relay/Makefile.dist
++++ dhcp/relay/Makefile.dist
+@@ -83,6 +83,6 @@ dhcrelay.man8:	dhcrelay.8
+ 		-e "s#RUNDIR#$(VARRUN)#" < dhcrelay.8 >dhcrelay.man8
+ 
+ dhcrelay:	dhcrelay.o $(DHCPLIB)
+-	$(CC) $(LFLAGS) -o $(PROG) dhcrelay.o $(DHCPLIB) $(LIBS)
++	$(CC) $(LFLAGS) -o $(PROG) dhcrelay.o $(DHCPLIB) $(LIBS) -lcap
+ 
+ # Dependencies (semi-automatically-generated)
+--- dhcp/relay/dhcrelay.8
++++ dhcp/relay/dhcrelay.8
+@@ -77,6 +77,14 @@ dhcrelay - Dynamic Host Configuration Protocol Relay Agent
+ |
+ .I discard
+ ]
++[
++.B -u
++.I user
++]
++[
++.B -j
++.I chroot-dir
++]
+ .I server0
+ [
+ .I ...serverN
+@@ -139,6 +147,11 @@ This can be unhelpful in a system startup script - to disable this
+ behaviour, specify the
+ .B -q
+ flag.
++.PP
++Upon startup, this version of dhcrelay will switch to a non-root
++pseudo-user and enter a chroot jail.  The default username (\fIdhcp\fR)
++and the default chroot jail directory path (\fI/var/empty\fR)
++may be overridden with the \fB-u\fR and \fB-j\fR options, respectively.
+ .SH RELAY AGENT INFORMATION OPTIONS
+ If the
+ .B -a
+@@ -239,7 +252,12 @@ has been written for Internet Systems Consortium
+ by Ted Lemon in cooperation with Vixie
+ Enterprises.  To learn more about Internet Systems Consortium,
+ see
+-.B http://www.isc.org/isc.
++.BR http://www.isc.org/isc .
+ To learn more about Vixie
+ Enterprises, see
+-.B http://www.vix.com.
++.BR http://www.vix.com .
++.PP
++This version of dhcrelay has been modified for Openwall GNU/*/Linux
++.RB ( http://www.openwall.com/Owl/ ).
++In particular, the privilege reduction functionality and the \fB-u\fR
++and \fB-j\fR options are Owl extensions.
+--- dhcp/relay/dhcrelay.c
++++ dhcp/relay/dhcrelay.c
+@@ -113,6 +113,8 @@ int main (argc, argv, envp)
+ 	int quiet = 0;
+ 	isc_result_t status;
+ 	char *s;
++	char *server_user = "dhcp";
++	char *server_jail = "/var/empty";
+ 
+ 	/* Make sure we have stdin, stdout and stderr. */
+ 	null_fd = open ("/dev/null", O_RDWR);
+@@ -188,6 +190,14 @@ int main (argc, argv, envp)
+ 			if (++i == argc)
+ 				usage ();
+ 			dhcp_max_agent_option_packet_length = atoi (argv [i]);
++		} else if (!strcmp (argv [i], "-u")) {
++			if (++i == argc)
++				usage ();
++			server_user = argv[i];
++		} else if (!strcmp (argv [i], "-j")) {
++			if (++i == argc)
++				usage ();
++			server_jail = argv[i];
+ 		} else if (!strcmp (argv [i], "-m")) {
+ 			if (++i == argc)
+ 				usage ();
+@@ -322,6 +332,8 @@ int main (argc, argv, envp)
+ 		pid = setsid ();
+ 	}
+ 
++	dhcpd_priv_drop(server_user, server_jail);
++
+ 	/* Start dispatching packets and timeouts... */
+ 	dispatch ();
+ 
+@@ -461,10 +473,11 @@ void relay (ip, packet, length, from_port, from, hfrom)
+ 
+ static void usage ()
+ {
+-	log_fatal ("Usage: dhcrelay [-p <port>] [-d] [-D] [-i %s%s%s%s",
++	log_fatal ("Usage: dhcrelay [-p <port>] [-d] [-D] [-i %s%s%s%s%s",
+ 		"interface] [-q] [-a]\n                ",
+ 		"[-c count] [-A length] ",
+ 		"[-m append|replace|forward|discard]\n",
++		"[-u user] [-j chroot-dir]\n",
+ 		"                [server1 [... serverN]]");
+ }
+ 
+--- dhcp/server/Makefile.dist
++++ dhcp/server/Makefile.dist
+@@ -103,6 +103,6 @@ dhcpd.leases.man5:	dhcpd.leases.5
+ 		-e "s#RUNDIR#$(VARRUN)#g" < dhcpd.leases.5 >dhcpd.leases.man5
+ 
+ dhcpd:	$(OBJS) $(COBJ) $(DHCPLIB)
+-	$(CC) $(LFLAGS) -o dhcpd $(OBJS) $(DHCPLIB) $(LIBS)
++	$(CC) $(LFLAGS) -o dhcpd $(OBJS) $(DHCPLIB) $(LIBS) -lcap
+ 
+ # Dependencies (semi-automatically-generated)
+--- dhcp/server/dhcpd.8
++++ dhcp/server/dhcpd.8
+@@ -74,6 +74,14 @@ dhcpd - Dynamic Host Configuration Protocol Server
+ .I trace-playback-file
+ ]
+ [
++.B -u
++.I user
++]
++[
++.B -j
++.I chroot-dir
++]
++[
+ .I if0
+ [
+ .I ...ifN
+@@ -239,6 +247,12 @@ using the \fB-lf\fR switch, so that the DHCP server doesn't wipe out
+ your existing lease file with its test data.  The DHCP server will
+ refuse to operate in playback mode unless you specify an alternate
+ lease file.
++.PP
++Upon startup, this version of the DHCP server will switch to a non-root
++pseudo-user and enter a chroot jail.  The default username (\fIdhcp\fR)
++and the default chroot jail directory path (\fI/var/lib/dhcp/dhcpd\fR)
++may be overridden with the \fB-u\fR and \fB-j\fR options, respectively.
++.PP
+ .SH CONFIGURATION
+ The syntax of the dhcpd.conf(5) file is discussed separately.   This
+ section should be used as an overview of the configuration process,
+@@ -746,3 +760,8 @@ Consortium.   Version 3 of the DHCP server was funded by Nominum, Inc.
+ Information about Internet Systems Consortium is available at
+ .B http://www.isc.org/\fR.
+ Information about Nominum can be found at \fBhttp://www.nominum.com/\fR.
++.PP
++This version of dhcpd has been modified for Openwall GNU/*/Linux
++.RB ( http://www.openwall.com/Owl/ ).
++In particular, the privilege reduction functionality and the \fB-u\fR
++and \fB-j\fR options are Owl extensions.
+--- dhcp/server/dhcpd.c
++++ dhcp/server/dhcpd.c
+@@ -225,6 +225,8 @@ int main (argc, argv, envp)
+ 	char *traceinfile = (char *)0;
+ 	char *traceoutfile = (char *)0;
+ #endif
++	char *server_user = "dhcp";
++	char *server_jail = "/var/lib/dhcp/dhcpd";
+ 
+ 	/* Make sure we have stdin, stdout and stderr. */
+ 	null_fd = open ("/dev/null", O_RDWR);
+@@ -323,6 +325,14 @@ int main (argc, argv, envp)
+ 		} else if (!strcmp (argv [i], "-q")) {
+ 			quiet = 1;
+ 			quiet_interface_discovery = 1;
++		} else if (!strcmp (argv [i], "-u")) {
++			if (++i == argc)
++				usage();
++			server_user = argv[i];
++		} else if (!strcmp (argv [i], "-j")) {
++			if (++i == argc)
++				usage();
++			server_jail = argv[i];
+ 		} else if (!strcmp (argv [i], "--version")) {
+ 			log_info ("isc-dhcpd-%s", DHCP_VERSION);
+ 			exit (0);
+@@ -502,12 +512,6 @@ int main (argc, argv, envp)
+ 
+ 	group_write_hook = group_writer;
+ 
+-	/* Start up the database... */
+-	db_startup (lftest);
+-
+-	if (lftest)
+-		exit (0);
+-
+ 	/* Discover all the network interfaces and initialize them. */
+ 	discover_interfaces (DISCOVER_SERVER);
+ 
+@@ -528,7 +532,6 @@ int main (argc, argv, envp)
+ #if defined (TRACING)
+ 	trace_seed_stash (trace_srandom, seed + cur_time);
+ #endif
+-	postdb_startup ();
+ 
+ #ifndef DEBUG
+ 	if (daemon) {
+@@ -565,6 +568,21 @@ int main (argc, argv, envp)
+ 		}
+ 	}
+ 
++	if (!pidfilewritten) {
++		unlink (path_dhcpd_pid);
++		if ((i = open (path_dhcpd_pid,
++			       O_WRONLY | O_CREAT, 0644)) >= 0) {
++			snprintf (pbuf, sizeof(pbuf), "%d\n", (int)getpid ());
++			if (write (i, pbuf, strlen (pbuf)) != strlen (pbuf))
++				log_fatal ("Error writing pid file: %s: %m",
++					   path_dhcpd_pid);
++			close (i);
++			pidfilewritten = 1;
++		}
++	}
++
++	dhcpd_priv_minimize (server_user, server_jail);
++
+ 	/* If we were requested to log to stdout on the command line,
+ 	   keep doing so; otherwise, stop. */
+ 	if (log_perror == -1)
+@@ -583,22 +601,16 @@ int main (argc, argv, envp)
+ 		pid = setsid ();
+ 	}
+ 
+-	/* If we didn't write the pid file earlier because we found a
+-	   process running the logged pid, but we made it to here,
+-	   meaning nothing is listening on the bootp port, then write
+-	   the pid file out - what's in it now is bogus anyway. */
+-	if (!pidfilewritten) {
+-		unlink (path_dhcpd_pid);
+-		if ((i = open (path_dhcpd_pid,
+-			       O_WRONLY | O_CREAT, 0644)) >= 0) {
+-			snprintf (pbuf, sizeof(pbuf), "%d\n", (int)getpid ());
+-			if (write (i, pbuf, strlen (pbuf)) != strlen (pbuf))
+-				log_fatal ("Error writing pid file: %s: %m",
+-					   path_dhcpd_pid);
+-			close (i);
+-			pidfilewritten = 1;
+-		}
+-	}
++	/* Start up the database... */
++	db_startup (lftest);
++
++	if (lftest)
++		exit (0);
++
++	postdb_startup ();
++
++	dhcpd_priv_drop (server_user, server_jail);
++
+ #endif /* !DEBUG */
+ 
+ #if defined (DEBUG_MEMORY_LEAKAGE) || defined (DEBUG_MALLOC_POOL) || \
+@@ -891,8 +903,9 @@ static void usage ()
+ 	log_info (copyright);
+ 	log_info (arr);
+ 
+-	log_fatal ("Usage: dhcpd [-p <UDP port #>] [-d] [-f]%s%s%s%s",
++	log_fatal ("Usage: dhcpd [-p <UDP port #>] [-d] [-f]%s%s%s%s%s",
+ 		   "\n             [-cf config-file] [-lf lease-file]",
++		   "\n             [-u user] [-j chroot-dir]",
+ #if defined (TRACING)
+ 		   "\n		   [-tf trace-output-file]",
+ 		   "\n		   [-play trace-input-file]",

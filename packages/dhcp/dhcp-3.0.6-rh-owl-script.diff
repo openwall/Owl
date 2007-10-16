@@ -1,6 +1,5 @@
-diff -urpN dhcp-3.0.4.orig/client/scripts/linux dhcp-3.0.4/client/scripts/linux
---- dhcp-3.0.4.orig/client/scripts/linux	2002-11-15 01:09:09.000000000 +0000
-+++ dhcp-3.0.4/client/scripts/linux	2006-09-26 15:46:36.000000000 +0000
+--- dhcp/client/scripts/linux
++++ dhcp/client/scripts/linux
 @@ -1,8 +1,6 @@
  #!/bin/bash
  # dhclient-script for Linux. Dan Halbert, March, 1997.
@@ -47,7 +46,7 @@ diff -urpN dhcp-3.0.4.orig/client/scripts/linux dhcp-3.0.4/client/scripts/linux
    fi
      
    if [ x$old_ip_address != x ] && [ x$alias_ip_address != x ] && \
-@@ -146,7 +140,10 @@ if [ x$reason = xBOUND ] || [ x$reason =
+@@ -146,7 +140,10 @@ if [ x$reason = xBOUND ] || [ x$reason = xRENEW ] || \
      ifconfig $interface:0 inet $alias_ip_address $alias_subnet_arg
      route add -host $alias_ip_address $interface:0
    fi

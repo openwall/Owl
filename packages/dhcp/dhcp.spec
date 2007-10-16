@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.48 2006/09/27 13:33:38 jmbr Exp $
+# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.49 2007/10/16 22:47:45 ldv Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
-Version: 3.0.4
+Version: 3.0.6
 Release: owl1
 License: ISC License
 Group: System Environment/Daemons
@@ -12,12 +12,21 @@ URL: http://www.isc.org/products/DHCP/
 Source0: ftp://ftp.isc.org/isc/dhcp/dhcp-%version.tar.gz
 Source1: dhcpd.init
 Source2: dhcpd.conf.sample
-Patch0: dhcp-3.0.4-owl-drop-root.diff
-Patch1: dhcp-3.0.4-rh-owl-script.diff
-Patch2: dhcp-3.0.4-owl-bound.diff
-Patch3: dhcp-3.0.4-owl-support-contact.diff
+Patch0: dhcp-3.0.6-alt-fixes.diff
+Patch1: dhcp-3.0.6-owl-alt-errwarn.diff
+Patch2: dhcp-3.0.6-alt-daemonize.diff
+Patch3: dhcp-3.0.6-alt-defaults.diff
+Patch4: dhcp-3.0.6-rh-owl-script.diff
+Patch5: dhcp-3.0.6-owl-support-contact.diff
+Patch6: dhcp-3.0.6-owl-bound.diff
+Patch7: dhcp-3.0.6-alt-Makefile.diff
+Patch8: dhcp-3.0.6-rh-dhcpctl-man.diff
+Patch9: dhcp-3.0.6-rh-memory.diff
+Patch10: dhcp-3.0.6-rh-failover-ports.diff
+Patch11: dhcp-3.0.6-rh-man.diff
+Patch12: dhcp-3.0.6-owl-alt-drop-root.diff
 PreReq: grep, shadow-utils
-BuildRequires: groff
+BuildRequires: groff, libcap-devel
 BuildRoot: /override/%name-%version
 
 %description
@@ -78,33 +87,55 @@ subnet.  The DHCP relay takes care of this for the client.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
 
-%{expand:%%define optflags %optflags -fno-strict-aliasing -Wall -Wno-unused}
+find server -type f -not -name Makefile\* -print0 |
+	xargs -r0 grep -FZl DBDIR -- |
+	xargs -r0 sed -i s,DBDIR,/var/lib/dhcp/dhcpd/state,g --
+%if %BUILD_DHCP_CLIENT
+find client -type f -not -name Makefile\* -print0 |
+	xargs -r0 grep -FZl DBDIR -- |
+	xargs -r0 sed -i s,DBDIR,/var/lib/dhcp/dhclient/state,g --
+%endif
+
+%{expand:%%define optflags %optflags -fno-strict-aliasing -Wall -Wno-unused -D_GNU_SOURCE}
 
 %ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 %{expand:%%define optflags %optflags -DPTRSIZE_64BIT}
 %endif
 
 %build
-./configure --copts "%optflags -D_GNU_SOURCE"
+./configure --copts '%optflags'
 %__make CC="%__cc" DEBUG=
 
 %install
 rm -rf %buildroot
 mkdir -p %buildroot/etc/sysconfig
 %__make install \
-	DESTDIR="%buildroot" \
-	ADMMANDIR="%_mandir/man8" \
-	FFMANDIR="%_mandir/man5" \
-	LIBMANDIR="%_mandir/man3" \
-	USRMANDIR="%_mandir/man1"
+	INSTALL='install -pm644' \
+	MANINSTALL='$(INSTALL)' \
+	DESTDIR='%buildroot' \
+	LIBDIR='%_libdir' \
+	INCDIR='%_includedir' \
+	ADMMANDIR='%_mandir/man8' \
+	FFMANDIR='%_mandir/man5' \
+	LIBMANDIR='%_mandir/man3' \
+	USRMANDIR='%_mandir/man1'
 
 cd %buildroot
 
 mkdir -p var/lib/dhcp/{dhcpd,dhclient}/state
 
 install -pD -m700 %_sourcedir/dhcpd.init .%_initrddir/dhcpd
-install -m 600 %_sourcedir/dhcpd.conf.sample etc/
+install -p -m600 %_sourcedir/dhcpd.conf.sample etc/
 
 touch var/lib/dhcp/dhcpd/state/dhcpd.leases
 touch var/lib/dhcp/dhclient/state/dhclient.leases
@@ -115,22 +146,9 @@ DHCPDARGS=
 EOF
 
 # Remove unpackaged files - development stuff
-rm .%_mandir/man3/dhcpctl.3*
-rm .%_mandir/man3/omapi.3*
-rm .%_mandir/man3/omshell.3*
-rm usr/local/include/dhcpctl.h
-rm usr/local/include/isc-dhcp/boolean.h
-rm usr/local/include/isc-dhcp/dst.h
-rm usr/local/include/isc-dhcp/int.h
-rm usr/local/include/isc-dhcp/lang.h
-rm usr/local/include/isc-dhcp/list.h
-rm usr/local/include/isc-dhcp/result.h
-rm usr/local/include/isc-dhcp/types.h
-rm usr/local/include/omapip/alloc.h
-rm usr/local/include/omapip/buffer.h
-rm usr/local/include/omapip/omapip.h
-rm usr/local/lib/libdhcpctl.a
-rm usr/local/lib/libomapi.a
+rm -r .%_includedir
+rm -r .%_libdir/lib*.a
+rm -r .%_mandir/man3
 
 %if !%BUILD_DHCP_CLIENT
 # Remove unpackaged files - the DHCP client
@@ -209,6 +227,9 @@ fi
 %_mandir/man8/dhcrelay.8*
 
 %changelog
+* Sun Oct 14 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0.6-owl1
+- Updated to 3.0.6.
+
 * Tue Sep 26 2006 Juan M. Bello Rivas <jmbr-at-owl.openwall.com> 3.0.4-owl1
 - Updated to version 3.0.4.
 
