@@ -1,0 +1,11 @@
+--- diffstat/diffstat.1
++++ diffstat/diffstat.1
+@@ -169,7 +169,7 @@ There's no easy way to determine the degree of overlap between the
+ "before" and "after" displays of modified lines.
+ .SH SEE ALSO
+ .PP
+-diff (1).
++.BR diff (1).
+ .SH AUTHOR
+ .PP
+ Thomas Dickey <dickey@invisible-island.net>.
