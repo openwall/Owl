@@ -16,7 +16,7 @@
  INCLUDES = -I$(TOP) $(BINDINC) -I$(TOP)/includes
 --- /dev/null
 +++ dhcp/common/droproot.c
-@@ -0,0 +1,133 @@
+@@ -0,0 +1,121 @@
 +#include "dhcpd.h"
 +#include <unistd.h>
 +#include <time.h>
@@ -31,55 +31,45 @@
 +static int minimized = 0;
 +
 +void
-+dhcpd_priv_minimize(const char *server_user, const char *server_jail)
++dhcpd_priv_minimize(const char *user, const char *dir)
 +{
 +	struct passwd *pw;
 +	uid_t   uid;
 +	gid_t   gid;
 +
-+	if (!*server_user)
++	if (!*user)
 +		return;
 +
-+	if (!(pw = getpwnam(server_user)))
-+		log_fatal("Failed to lower privileges: getpwnam: %s",
-+			  server_user);
++	if (!(pw = getpwnam(user)))
++		log_fatal("Failed to lower privileges: getpwnam: %s", user);
 +
 +	uid = pw->pw_uid;
 +	gid = pw->pw_gid;
 +
 +	tzset();
 +
-+	if (initgroups(server_user, gid))
-+		log_fatal("Failed to lower privileges: initgroups: %u: %m",
-+			  (unsigned) gid);
++	if (initgroups(user, gid))
++		log_fatal("Failed to lower privileges: initgroups: %s/%u: %m",
++			  user, (unsigned) gid);
 +
 +	endpwent();
 +
-+	if (*server_jail && (chdir(server_jail) || chroot(".")))
-+		log_fatal("Failed to lower privileges: chroot: %s: %m",
-+			  server_jail);
++	if (*dir && (chdir(dir) || chroot(".")))
++		log_fatal("Failed to lower privileges: chroot: %s: %m", dir);
 +
 +	if (setgid(gid))
-+		log_fatal("Failed to lower privileges: setgid: %u: %m",
-+			  (unsigned) gid);
++		log_fatal("Failed to lower privileges: setgid: %s/%u: %m",
++			  user, (unsigned) gid);
 +
 +	if (prctl(PR_SET_KEEPCAPS, 1))
 +		log_fatal("Failed to lower privileges: prctl: %m");
 +
-+	cap_t   caps = cap_from_text("cap_setuid,cap_net_bind_service=ep");
-+	if (!caps)
-+		log_fatal("Failed to lower privileges: cap_from_text: %m");
-+
-+	if (cap_set_proc(caps) < 0)
-+		log_fatal("Failed to lower privileges: cap_set_proc: %m");
-+
-+	cap_free(caps);
-+
 +	if (setreuid(uid, uid))
-+		log_fatal("Failed to lower privileges: setreuid: %u: %m",
-+			  (unsigned) uid);
++		log_fatal("Failed to lower privileges: setreuid: %s/%u: %m",
++			  user, (unsigned) uid);
 +
-+	caps = cap_from_text("cap_net_bind_service=ep");
++	cap_t   caps = cap_from_text("cap_net_bind_service=ep");
++
 +	if (!caps)
 +		log_fatal("Failed to lower privileges: cap_from_text: %m");
 +
@@ -104,51 +94,49 @@
 +}
 +
 +static void
-+drop_all(const char *server_user, const char *server_jail)
++drop_all(const char *user, const char *dir)
 +{
 +	struct passwd *pw;
 +	uid_t   uid;
 +	gid_t   gid;
 +
-+	if (!(pw = getpwnam(server_user)))
-+		log_fatal("Failed to lower privileges: getpwnam: %s",
-+			  server_user);
++	if (!(pw = getpwnam(user)))
++		log_fatal("Failed to lower privileges: getpwnam: %s", user);
 +
 +	uid = pw->pw_uid;
 +	gid = pw->pw_gid;
 +
 +	tzset();
 +
-+	if (initgroups(server_user, gid))
-+		log_fatal("Failed to lower privileges: initgroups: %u: %m",
-+			  (unsigned) gid);
++	if (initgroups(user, gid))
++		log_fatal("Failed to lower privileges: initgroups: %s/%u: %m",
++			  user, (unsigned) gid);
 +
 +	endpwent();
 +
-+	if (*server_jail && (chdir(server_jail) || chroot(".")))
-+		log_fatal("Failed to lower privileges: chroot: %s: %m",
-+			  server_jail);
++	if (*dir && (chdir(dir) || chroot(".")))
++		log_fatal("Failed to lower privileges: chroot: %s: %m", dir);
 +
 +	if (setgid(gid))
-+		log_fatal("Failed to lower privileges: setgid: %u: %m",
-+			  (unsigned) gid);
++		log_fatal("Failed to lower privileges: setgid: %s/%u: %m",
++			  user, (unsigned) gid);
 +
 +	if (setuid(uid))
-+		log_fatal("Failed to lower privileges: setuid: %u: %m",
-+			  (unsigned) uid);
++		log_fatal("Failed to lower privileges: setuid: %s/%u: %m",
++			  user, (unsigned) uid);
 +}
 +
 +
 +void
-+dhcpd_priv_drop(const char *server_user, const char *server_jail)
++dhcpd_priv_drop(const char *user, const char *dir)
 +{
-+	if (!*server_user)
++	if (!*user)
 +		return;
 +
 +	if (minimized)
 +		drop_minimized();
 +	else
-+		drop_all(server_user, server_jail);
++		drop_all(user, dir);
 +}
 --- dhcp/includes/cf/linux.h
 +++ dhcp/includes/cf/linux.h
