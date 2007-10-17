@@ -39,7 +39,7 @@ diff -urpN nmap-4.20-autoheader/Makefile.in nmap-4.20/Makefile.in
 diff -urpN nmap-4.20-autoheader/configure.ac nmap-4.20/configure.ac
 --- nmap-4.20-autoheader/configure.ac	2007-10-07 09:35:33 +0000
 +++ nmap-4.20/configure.ac	2007-10-07 09:36:25 +0000
-@@ -666,6 +666,51 @@ if test $ac_cv_ip_has_ip_sum = yes ; the
+@@ -666,6 +666,49 @@ if test $ac_cv_ip_has_ip_sum = yes ; the
          AC_DEFINE(HAVE_IP_IP_SUM, 1, [Define to 1 for ip_sum member])
  fi
  
@@ -49,11 +49,9 @@ diff -urpN nmap-4.20-autoheader/configure.ac nmap-4.20/configure.ac
 +AC_CHECK_FUNC(prctl,
 +  [AC_CHECK_FUNC(setgid,
 +    [AC_CHECK_FUNC(setgroups,
-+      [AC_CHECK_FUNC(seteuid,
-+        [AC_CHECK_FUNC(setreuid,
-+          [try_drop_priv=yes
-+	  AC_CHECK_LIB(cap, cap_from_text, , [try_drop_priv=no])]
-+	)]
++      [AC_CHECK_FUNC(setreuid,
++        [try_drop_priv=yes
++	AC_CHECK_LIB(cap, cap_from_text, , [try_drop_priv=no])]
 +      )]
 +    )]
 +  )]
@@ -94,7 +92,7 @@ diff -urpN nmap-4.20-autoheader/configure.ac nmap-4.20/configure.ac
 diff -urpN nmap-4.20-autoheader/droppriv.cc nmap-4.20/droppriv.cc
 --- nmap-4.20-autoheader/droppriv.cc	1970-01-01 00:00:00 +0000
 +++ nmap-4.20/droppriv.cc	2007-10-07 11:38:57 +0000
-@@ -0,0 +1,96 @@
+@@ -0,0 +1,93 @@
 +#include "nmap.h"
 +#include "droppriv.h"
 +
@@ -174,8 +172,8 @@ diff -urpN nmap-4.20-autoheader/droppriv.cc nmap-4.20/droppriv.cc
 +	if (setgid(pw->pw_gid) < 0)
 +		fatal("setgid failed");
 +
-+	if (seteuid(pw->pw_uid) < 0)
-+		fatal("seteuid failed");
++	if (setreuid(pw->pw_uid, pw->pw_uid) < 0)
++		fatal("setreuid failed");
 +
 +	caps = cap_from_text("cap_net_raw=ep");
 +	if (!caps)
@@ -185,9 +183,6 @@ diff -urpN nmap-4.20-autoheader/droppriv.cc nmap-4.20/droppriv.cc
 +		fatal("cap_set_proc failed");
 +
 +	cap_free(caps);
-+
-+	if (setreuid(pw->pw_uid, pw->pw_uid) < 0)
-+		fatal("setreuid failed");
 +}
 +
 +#endif /* NMAP_USER */

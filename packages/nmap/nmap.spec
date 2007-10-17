@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.19 2007/10/07 10:32:46 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.20 2007/10/17 22:31:07 ldv Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
 Version: 4.20
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/System
 URL: http://www.insecure.org/nmap/
@@ -63,6 +63,9 @@ grep -q ^nmap: /etc/passwd ||
 %_datadir/nmap
 
 %changelog
+* Wed Oct 17 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.20-owl2
+- Simplified lowering privileges algorithm.
+
 * Sun Oct 07 2007 Solar Designer <solar-at-owl.openwall.com> 4.20-owl1
 - Updated to 4.20.
 
