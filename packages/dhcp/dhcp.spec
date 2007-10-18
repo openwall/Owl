@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.49 2007/10/16 22:47:45 ldv Exp $
+# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.50 2007/10/18 17:28:33 ldv Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0.6
-Release: owl1
+Release: owl2
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
@@ -227,6 +227,9 @@ fi
 %_mandir/man8/dhcrelay.8*
 
 %changelog
+* Thu Oct 18 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0.6-owl2
+- Simplified lowering privileges algorithm.
+
 * Sun Oct 14 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0.6-owl1
 - Updated to 3.0.6.
 

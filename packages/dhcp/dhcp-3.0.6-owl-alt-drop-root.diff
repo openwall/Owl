@@ -54,7 +54,7 @@
 +
 +	endpwent();
 +
-+	if (*dir && (chdir(dir) || chroot(".")))
++	if (*dir && (chroot(dir) || chdir("/")))
 +		log_fatal("Failed to lower privileges: chroot: %s: %m", dir);
 +
 +	if (setgid(gid))
