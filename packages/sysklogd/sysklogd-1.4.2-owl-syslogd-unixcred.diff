@@ -1,6 +1,6 @@
 diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 --- sysklogd-1.4.1.orig/syslogd.c	2005-08-18 14:51:39 +0000
-+++ sysklogd-1.4.1/syslogd.c	2007-10-25 17:44:11 +0000
++++ sysklogd-1.4.1/syslogd.c	2007-10-25 17:56:16 +0000
 @@ -474,6 +474,9 @@ static char sccsid[] = "@(#)syslogd.c	5.
   *
   * Sun Nov  7 13:47:00 CET 2004: Martin Schulze <joey@infodrom.org>
@@ -298,7 +298,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  
  #ifdef __gnu_linux__
  	sigemptyset(&mask);
-@@ -1781,6 +1861,82 @@ void logmsg(pri, msg, from, flags)
+@@ -1781,6 +1861,81 @@ void logmsg(pri, msg, from, flags)
  	(void) time(&now);
  	timestamp = ctime(&now) + 4;
  
@@ -315,7 +315,6 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 +		char tag[32 + 10]; /* rfc3164 tag+brackets+pid+space+colon+0 */
 +		char *p;
 +		char *oldpid;
-+		int newlen;
 +
 +		newmsg[0] = '\0';
 +
@@ -381,7 +380,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	/* extract facility and priority level */
  	if (flags & MARK)
  		fac = LOG_NFACILITIES;
-@@ -1795,7 +1951,7 @@ void logmsg(pri, msg, from, flags)
+@@ -1795,7 +1950,7 @@ void logmsg(pri, msg, from, flags)
  
  		if (f->f_file >= 0) {
  			untty();
@@ -390,7 +389,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  			(void) close(f->f_file);
  			f->f_file = -1;
  		}
-@@ -1832,7 +1988,7 @@ void logmsg(pri, msg, from, flags)
+@@ -1832,7 +1987,7 @@ void logmsg(pri, msg, from, flags)
  		 */
  		if ((flags & MARK) == 0 && msglen == f->f_prevlen &&
  		    !strcmp(msg, f->f_prevline) &&
@@ -399,7 +398,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  			(void) strncpy(f->f_lasttime, timestamp, 15);
  			f->f_prevcount++;
  			dprintf("msg repeated %d times, %ld sec of %ld.\n",
-@@ -1845,29 +2001,33 @@ void logmsg(pri, msg, from, flags)
+@@ -1845,29 +2000,33 @@ void logmsg(pri, msg, from, flags)
  			 * in the future.
  			 */
  			if (now > REPEATTIME(f)) {
@@ -438,7 +437,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  #ifdef __gnu_linux__
  	sigprocmask(SIG_UNBLOCK, &mask, NULL);
  #else
-@@ -2298,12 +2458,16 @@ void domark()
+@@ -2298,12 +2457,16 @@ void domark()
  #ifdef SYSV
  	int lognum;
  #endif
@@ -456,7 +455,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  		MarkSeq = 0;
  	}
  
-@@ -2342,6 +2506,11 @@ void logerror(type)
+@@ -2342,6 +2505,11 @@ void logerror(type)
  	char *type;
  {
  	char buf[100];
@@ -468,7 +467,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  
  	dprintf("Called logerr, msg: %s\n", type);
  
-@@ -2350,7 +2519,7 @@ void logerror(type)
+@@ -2350,7 +2518,7 @@ void logerror(type)
  	else
  		(void) snprintf(buf, sizeof(buf), "syslogd: %s: %s", type, strerror(errno));
  	errno = 0;
@@ -477,7 +476,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	return;
  }
  
-@@ -2364,6 +2533,11 @@ void die(sig)
+@@ -2364,6 +2532,11 @@ void die(sig)
  	int lognum;
  	int i;
  	int was_initialized = Initialized;
@@ -489,7 +488,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  
  	Initialized = 0;	/* Don't log SIGCHLDs in case we
  				   receive one during exiting */
-@@ -2380,7 +2554,7 @@ void die(sig)
+@@ -2380,7 +2553,7 @@ void die(sig)
  		dprintf("syslogd: exiting on signal %d\n", sig);
  		(void) snprintf(buf, sizeof(buf), "exiting on signal %d", sig);
  		errno = 0;
@@ -498,7 +497,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	}
  
  	/* Close the UNIX sockets. */
-@@ -2434,6 +2608,11 @@ void init()
+@@ -2434,6 +2607,11 @@ void init()
  	char cline[BUFSIZ];
  #endif
  	struct servent *sp;
@@ -510,7 +509,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  
  	sp = getservbyname("syslog", "udp");
  	if (sp == NULL) {
-@@ -2640,20 +2819,20 @@ void init()
+@@ -2640,20 +2818,20 @@ void init()
  	if ( AcceptRemote )
  #ifdef DEBRELEASE
  		logmsg(LOG_SYSLOG|LOG_INFO, "syslogd " VERSION "." PATCHLEVEL "#" DEBRELEASE \
