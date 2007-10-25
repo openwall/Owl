@@ -1,6 +1,6 @@
 diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 --- sysklogd-1.4.1.orig/syslogd.c	2005-08-18 14:51:39 +0000
-+++ sysklogd-1.4.1/syslogd.c	2007-10-25 16:56:55 +0000
++++ sysklogd-1.4.1/syslogd.c	2007-10-25 17:44:11 +0000
 @@ -474,6 +474,9 @@ static char sccsid[] = "@(#)syslogd.c	5.
   *
   * Sun Nov  7 13:47:00 CET 2004: Martin Schulze <joey@infodrom.org>
@@ -311,27 +311,27 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 +	 * as '-' sign is quite common) and spaces (LPRng daemons are said
 +	 * to have space in the name).
 +	 */
-+
-+	memset(newmsg, '\0', sizeof(newmsg));
-+
 +	if (from.flags & SINFO_HAVECRED) {
 +		char tag[32 + 10]; /* rfc3164 tag+brackets+pid+space+colon+0 */
-+		char credentials[32]; /* should be enough for format string */
 +		char *p;
 +		char *oldpid;
++		int newlen;
++
++		newmsg[0] = '\0';
 +
 +		tag[0] = '\0';
 +		strncat(tag, msg, sizeof(tag) - 1);
 +
 +		if (!(oldpid = strchr(tag, '['))) {
-+			/* We do not have valid pid in tag, so skip to tag end */
++			/* We do not have valid pid in tag, skip to tag end */
 +			if ((p = strchr(tag, ':')) || (p = strchr(tag, ' '))) {
 +				*p = '\0';
 +				msg += (p + 1 - tag);
-+				while (*msg && isspace(*msg))
++				while (*msg == ' ')
 +					msg++;
 +				/* ..and add one */
-+			        sprintf(newmsg, "%s[%u]: ", tag, from.pid);
++			        snprintf(newmsg, sizeof(newmsg),
++					 "%s[%u]: ", tag, from.pid);
 +			} else {
 +				/* Yes, it is safe to call logerror() from this
 +				   part of logmsg().  Complain about tag being
@@ -347,7 +347,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 +				msg += (p + 1 - tag);
 +				if (*msg == ':')
 +					msg++;
-+				while (*msg && isspace(*msg))
++				while (*msg == ' ')
 +					msg++;
 +			} else {
 +				logerror("credentials processing failed -- "
@@ -355,25 +355,25 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 +				goto finish;
 +			}
 +			*oldpid++ = '\0';
++			/* XXX: We could use strtoul() here for full
++			   error checking. */
 +			if ((pid_t) atoi(oldpid) != from.pid) {
 +				logerror("malformed or spoofed pid detected!");
-+			        sprintf(newmsg, "%s[%s!=%u]: ", tag,
-+					oldpid, from.pid);
++			        snprintf(newmsg, sizeof(newmsg),
++					 "%s[%s!=%u]: ",
++					 tag, oldpid, from.pid);
 +			} else
-+			        sprintf(newmsg, "%s[%u]: ", tag, from.pid);
++			        snprintf(newmsg, sizeof(newmsg),
++					 "%s[%u]: ", tag, from.pid);
 +		}
-+		/* Will probably place group membership check here */
-+		if ((from.uid != 0) || (from.gid != 0)) {
-+			snprintf(credentials, sizeof(credentials),
++		/* We may place group membership check here */
++		if (from.uid != 0) {
++			int newlen = strlen(newmsg);
++			snprintf(newmsg + newlen, sizeof(newmsg) - newlen,
 +			        "(ugid=%u:%u) ", from.uid, from.gid);
-+			strcat(newmsg, credentials);
 +		}
-+		if ((strlen(newmsg) + strlen(msg)) >= MAXLINE) {
-+			logerror("line too long");
-+			goto finish;
-+		}
-+		/* Thank Cthulhu we are not compiling on OpenBSD */
-+		strcat(newmsg, msg);
++		/* XXX: Silent truncation is possible */
++		strncat(newmsg, msg, sizeof(newmsg) - 1 - strlen(newmsg));
 +		msg = newmsg;
 +		msglen = strlen(msg);
 +	}
