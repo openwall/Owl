@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/sysklogd/sysklogd.spec,v 1.24 2007/10/25 15:25:19 ark Exp $
+# $Owl: Owl/packages/sysklogd/sysklogd.spec,v 1.25 2007/10/25 17:57:35 solar Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.4.1
-Release: owl11
+Release: owl12
 License: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 URL: http://www.infodrom.org/projects/sysklogd/
