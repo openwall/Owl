@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/sysklogd/sysklogd.spec,v 1.23 2006/03/30 03:05:11 galaxy Exp $
+# $Owl: Owl/packages/sysklogd/sysklogd.spec,v 1.24 2007/10/25 15:25:19 ark Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
@@ -27,6 +27,7 @@ Patch11: sysklogd-1.4.2-caen-owl-syslogd-bind.diff
 Patch12: sysklogd-1.4.2-caen-owl-syslogd-drop-root.diff
 Patch13: sysklogd-1.4.2-alt-syslogd-chroot.diff
 Patch14: sysklogd-1.4.2-alt-syslogd-funix_dir.diff
+Patch15: sysklogd-1.4.2-owl-syslogd-unixcred.diff
 PreReq: shadow-utils, grep, fileutils, /sbin/chkconfig
 Requires: logrotate, /var/empty
 BuildRoot: /override/%name-%version
@@ -54,6 +55,7 @@ places according to a configuration file.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
 
 %build
 %__make CFLAGS="%optflags -Wall -DSYSV -D_FILE_OFFSET_BITS=64"
@@ -122,6 +124,9 @@ fi
 %_mandir/*/*
 
 %changelog
+* Wed Oct 24 2007 ArkanoiD <ark-at-owl.openwall.com> 1.4.1-owl12
+- Unix socket credentials verification
+
 * Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.4.1-owl11
 - Replaced make with %%__make.
 - Added ghost file /dev/log.
