@@ -1,5 +1,6 @@
---- sysklogd-1.4.1.orig/syslogd.c	2007-10-15 17:25:26 +0000
-+++ sysklogd-1.4.1/syslogd.c	2007-10-24 15:56:07 +0000
+diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
+--- sysklogd-1.4.1.orig/syslogd.c	2005-08-18 14:51:39 +0000
++++ sysklogd-1.4.1/syslogd.c	2007-10-25 16:56:55 +0000
 @@ -474,6 +474,9 @@ static char sccsid[] = "@(#)syslogd.c	5.
   *
   * Sun Nov  7 13:47:00 CET 2004: Martin Schulze <joey@infodrom.org>
@@ -20,11 +21,11 @@
 +#define SINFO_TIMESTAMP  0x08
 +
 +struct sourceinfo {
-+	char*	hostname;
++	char	*hostname;
 +	uid_t	uid;
 +	gid_t	gid;
 +	pid_t	pid;
-+	unsigned int flags; 
++	unsigned int flags;
 +} sinfo;
 +
  int	Debug;			/* debug flag */
@@ -44,60 +45,58 @@
  void fprintlog(register struct filed *f, char *from, int flags, char *msg);
  void endtty();
  void wallmsg(register struct filed *f, struct iovec *iov);
-@@ -824,6 +840,52 @@ static int create_unix_socket(const char
+@@ -824,6 +840,50 @@ static int create_unix_socket(const char
  static int create_inet_socket();
  #endif
  
-+
-+static ssize_t recv_withcred(int s, void *buf, size_t len, int flags, 
++static ssize_t recv_withcred(int s, void *buf, size_t len, int flags,
 +			     pid_t *pid, uid_t *uid, gid_t *gid)
 +{
-+      struct cmsghdr *cmptr;
-+      struct msghdr m;
-+      struct iovec iov;
-+      char   control[CMSG_SPACE(sizeof(struct ucred))];
-+      size_t rc;
++	struct cmsghdr *cmptr;
++	struct msghdr m;
++	struct iovec iov;
++	char   control[CMSG_SPACE(sizeof(struct ucred))];
++	size_t rc;
 +
-+      memset(&m, 0, sizeof(m));
-+      memset(control, 0, sizeof(control));
-+      iov.iov_base = (char *) buf;
-+      iov.iov_len  = len;
-+      m.msg_iov = &iov;
-+      m.msg_iovlen = 1;
-+      m.msg_control = control;
-+      m.msg_controllen = sizeof(control);
-+      if ((rc = recvmsg(s, &m, 0)) < 0)
-+         return(rc);
++	memset(&m, 0, sizeof(m));
++	memset(control, 0, sizeof(control));
++	iov.iov_base = (char *) buf;
++	iov.iov_len  = len;
++	m.msg_iov = &iov;
++	m.msg_iovlen = 1;
++	m.msg_control = control;
++	m.msg_controllen = sizeof(control);
++	if ((rc = recvmsg(s, &m, flags)) < 0)
++		return rc;
 +#ifdef SCM_CREDENTIALS
-+      if (!(m.msg_flags & MSG_CTRUNC) &&
-+          (cmptr = (m.msg_controllen >= sizeof(struct cmsghdr)) ? 
-+					CMSG_FIRSTHDR(&m) : NULL )
-+          && (cmptr->cmsg_level == SOL_SOCKET) 
-+	  && (cmptr->cmsg_type == SCM_CREDENTIALS)) {
-+         if (pid)
-+	    *pid = ((struct ucred*) CMSG_DATA(cmptr) )->pid;
-+	 if (uid)
-+	    *uid = ((struct ucred*) CMSG_DATA(cmptr) )->uid;
-+         if (gid)
-+	    *gid = ((struct ucred*) CMSG_DATA(cmptr) )->gid;
-+      } else 
++	if (!(m.msg_flags & MSG_CTRUNC) &&
++	    (cmptr = (m.msg_controllen >= sizeof(struct cmsghdr)) ?
++		CMSG_FIRSTHDR(&m) : NULL)
++	    && (cmptr->cmsg_level == SOL_SOCKET)
++	    && (cmptr->cmsg_type == SCM_CREDENTIALS)) {
++		if (pid)
++			*pid = ((struct ucred *) CMSG_DATA(cmptr))->pid;
++		if (uid)
++			*uid = ((struct ucred *) CMSG_DATA(cmptr))->uid;
++		if (gid)
++			*gid = ((struct ucred *) CMSG_DATA(cmptr))->gid;
++	} else
 +#endif
-+      {
-+         if (pid)
-+	    *pid = (pid_t) -1;
-+         if (uid)
-+	    *uid = (uid_t) -1;
-+         if (gid)
-+	    *gid = (gid_t) -1;
-+      }
-+      return(rc);
++	{
++		if (pid)
++			*pid = (pid_t) -1;
++		if (uid)
++			*uid = (uid_t) -1;
++		if (gid)
++			*gid = (gid_t) -1;
++	}
++	return rc;
 +}
-+
 +
  static int set_nonblock_flag(int desc)
  {
  	int flags = fcntl(desc, F_GETFL, 0);
-@@ -952,7 +1014,6 @@ int main(argc, argv)
+@@ -952,7 +1012,6 @@ int main(argc, argv)
  	int	fd;
  #ifdef  SYSLOG_INET
  	struct sockaddr_in frominet;
@@ -105,7 +104,7 @@
  #endif
  	pid_t ppid = getpid();
  #endif
-@@ -1293,12 +1354,21 @@ int main(argc, argv)
+@@ -1293,32 +1352,43 @@ int main(argc, argv)
  #ifdef SYSLOG_UNIXAF
  		for (i = 0; i < nfunix; i++) {
  		    if ((fd = funix[i]) != -1 && FD_ISSET(fd, &readfds)) {
@@ -115,7 +114,8 @@
 +			i = recv_withcred(fd, line, MAXLINE - 2, 0, 
 +				 	  &sinfo.pid, &sinfo.uid, &sinfo.gid);
 +
-+			if ((sinfo.pid == -1 || sinfo.gid == -1 || sinfo.uid == -1)) 
++			if (sinfo.uid == -1 || sinfo.gid == -1 ||
++			    sinfo.pid == -1) 
 +				logerror("error - credentials not provided");
 +			else
 +				sinfo.flags = SINFO_HAVECRED;
@@ -125,11 +125,19 @@
  				line[i] = line[i+1] = '\0';
 -				printchopped(LocalHostName, line, i + 2,  fd);
 +				sinfo.hostname = LocalHostName;
-+				printchopped(sinfo, line, i + 2,  fd);
++				printchopped(sinfo, line, i + 2, fd);
  			} else if (i < 0 && errno != EINTR) {
  				dprintf("UNIX socket error: %d = %s.\n", \
  					errno, strerror(errno));
-@@ -1312,13 +1382,14 @@ int main(argc, argv)
+ 				logerror("recvfrom UNIX");
+-	      	}
+-				}
+ 			}
++		    }
++		}
+ #endif
+ 
+ #ifdef SYSLOG_INET
  		if (InetInuse && AcceptRemote && FD_ISSET(inetm, &readfds)) {
  			len = sizeof(frominet);
  			memset(line, '\0', sizeof(line));
@@ -145,7 +153,7 @@
  				/*
  				 * Here we could check if the host is permitted
  				 * to send us syslog messages. We just have to
-@@ -1328,7 +1399,7 @@ int main(argc, argv)
+@@ -1328,7 +1398,7 @@ int main(argc, argv)
  				 * letters so we could match them against whatever.
  				 *  -Joey
  				 */
@@ -154,7 +162,7 @@
   					     i + 2,  finet);
  			} else if (i < 0 && errno != EINTR && errno != EAGAIN) {
  				dprintf("INET socket error: %d = %s.\n", \
-@@ -1344,11 +1415,13 @@ int main(argc, argv)
+@@ -1344,11 +1414,13 @@ int main(argc, argv)
  		if ( FD_ISSET(fileno(stdin), &readfds) ) {
  			dprintf("Message from stdin.\n");
  			memset(line, '\0', sizeof(line));
@@ -169,7 +177,7 @@
  		  	} else if (i < 0) {
  		    		if (errno != EINTR) {
  		      			logerror("stdin");
-@@ -1374,6 +1447,8 @@ static int create_unix_socket(const char
+@@ -1374,6 +1446,8 @@ static int create_unix_socket(const char
  	struct sockaddr_un sunx;
  	int fd;
  	char line[MAXLINE +1];
@@ -178,7 +186,7 @@
  
  	if (path[0] == '\0')
  		return -1;
-@@ -1396,6 +1471,7 @@ static int create_unix_socket(const char
+@@ -1396,6 +1470,7 @@ static int create_unix_socket(const char
  #endif
  		return -1;
  	}
@@ -186,7 +194,7 @@
  	return fd;
  }
  #endif
-@@ -1543,8 +1619,8 @@ void untty()
+@@ -1543,8 +1618,8 @@ void untty()
   * than one message.
   */
  
@@ -197,7 +205,7 @@
  	char *msg;
  	size_t len;
  	int fd;
-@@ -1567,7 +1643,7 @@ void printchopped(hname, msg, len, fd)
+@@ -1567,7 +1642,7 @@ void printchopped(hname, msg, len, fd)
  		if ( (strlen(msg) + strlen(tmpline)) > MAXLINE )
  		{
  			logerror("Cannot glue message parts together");
@@ -206,7 +214,7 @@
  			start = msg;
  		}
  		else
-@@ -1575,7 +1651,7 @@ void printchopped(hname, msg, len, fd)
+@@ -1575,7 +1650,7 @@ void printchopped(hname, msg, len, fd)
  			dprintf("Previous: %s\n", tmpline);
  			dprintf("Next: %s\n", msg);
  			strcat(tmpline, msg);	/* length checked above */
@@ -215,7 +223,7 @@
  			if ( (strlen(msg) + 1) == len )
  				return;
  			else
-@@ -1602,7 +1678,7 @@ void printchopped(hname, msg, len, fd)
+@@ -1602,7 +1677,7 @@ void printchopped(hname, msg, len, fd)
  
  	do {
  		end = strchr(start + 1, '\0');
@@ -224,7 +232,7 @@
  		start = end + 1;
  	} while ( *start != '\0' );
  
-@@ -1616,8 +1692,8 @@ void printchopped(hname, msg, len, fd)
+@@ -1616,8 +1691,8 @@ void printchopped(hname, msg, len, fd)
   * on the appropriate log files.
   */
  
@@ -235,7 +243,7 @@
  	char *msg;
  {
  	register char *p, *q;
-@@ -1659,7 +1735,7 @@ void printline(hname, msg)
+@@ -1659,7 +1734,7 @@ void printline(hname, msg)
  	}
  	*q = '\0';
  
@@ -244,7 +252,7 @@
  	return;
  }
  
-@@ -1677,7 +1753,11 @@ void printsys(msg)
+@@ -1677,7 +1752,11 @@ void printsys(msg)
  	char line[MAXLINE + 1];
  	int pri, flags;
  	char *lp;
@@ -256,7 +264,7 @@
  	(void) snprintf(line, sizeof(line), "vmunix: ");
  	lp = line + strlen(line);
  	for (p = msg; *p != '\0'; ) {
-@@ -1700,7 +1780,7 @@ void printsys(msg)
+@@ -1700,7 +1779,7 @@ void printsys(msg)
  		    q < &line[MAXLINE])
  			*q++ = c;
  		*q = '\0';
@@ -265,7 +273,7 @@
  	}
  	return;
  }
-@@ -1732,13 +1812,14 @@ time_t	now;
+@@ -1732,13 +1811,14 @@ time_t	now;
  void logmsg(pri, msg, from, flags)
  	int pri;
  	char *msg;
@@ -281,7 +289,7 @@
  #ifdef __gnu_linux__
  	sigset_t mask;
  #else
-@@ -1747,7 +1828,7 @@ void logmsg(pri, msg, from, flags)
+@@ -1747,7 +1827,7 @@ void logmsg(pri, msg, from, flags)
  #endif
  #endif
  
@@ -290,26 +298,25 @@
  
  #ifdef __gnu_linux__
  	sigemptyset(&mask);
-@@ -1781,6 +1862,83 @@ void logmsg(pri, msg, from, flags)
+@@ -1781,6 +1861,82 @@ void logmsg(pri, msg, from, flags)
  	(void) time(&now);
  	timestamp = ctime(&now) + 4;
  
 +	/*
 +	 * If we have credentials info, let's validate program name and pid.
-+	 * We follow rfc3164 section 4.1 and take process name (TAG) to
++	 * We follow RFC 3164 section 4.1 and take process name (TAG) to
 +	 * be 32 characters or less, terminated with ':' or '[',
-+  	 * but, unlike stated in the document, we tolerate non-alphanumeric
-+	 * characters and spaces (which restriction is probably just mistake,  
-+         * as '-' sign is quite common) LPRng daemons are said
-+	 * to have space in the name.
++	 * but, unlike stated in the document, we tolerate non-alphanumeric
++	 * characters (which restriction is probably just a mistake,
++	 * as '-' sign is quite common) and spaces (LPRng daemons are said
++	 * to have space in the name).
 +	 */
-+	
-+	memset(newmsg, '\0', sizeof(newmsg));
 +
++	memset(newmsg, '\0', sizeof(newmsg));
 +
 +	if (from.flags & SINFO_HAVECRED) {
 +		char tag[32 + 10]; /* rfc3164 tag+brackets+pid+space+colon+0 */
-+		char credentials[32]; /* should be enough for format string  */
++		char credentials[32]; /* should be enough for format string */
 +		char *p;
 +		char *oldpid;
 +
@@ -318,7 +325,7 @@
 +
 +		if (!(oldpid = strchr(tag, '['))) {
 +			/* We do not have valid pid in tag, so skip to tag end */
-+			if ((p = strchr(tag,':')) || (p = strchr(tag,' '))) {
++			if ((p = strchr(tag, ':')) || (p = strchr(tag, ' '))) {
 +				*p = '\0';
 +				msg += (p + 1 - tag);
 +				while (*msg && isspace(*msg))
@@ -327,7 +334,7 @@
 +			        sprintf(newmsg, "%s[%u]: ", tag, from.pid);
 +			} else {
 +				/* Yes, it is safe to call logerror() from this
-+				   part of logmsg(). complain about tag being
++				   part of logmsg().  Complain about tag being
 +				   invalid */
 +				logerror("credentials processing failed -- "
 +					 "received malformed message");
@@ -337,7 +344,7 @@
 +			/* As we have pid, validate it */
 +			if ((p = strchr(tag, ']'))) {
 +				*p = '\0';
-+				msg += (p +1 - tag);
++				msg += (p + 1 - tag);
 +				if (*msg == ':')
 +					msg++;
 +				while (*msg && isspace(*msg))
@@ -350,7 +357,7 @@
 +			*oldpid++ = '\0';
 +			if ((pid_t) atoi(oldpid) != from.pid) {
 +				logerror("malformed or spoofed pid detected!");
-+			        sprintf(newmsg, "%s[%s!=%u]: ", tag, 
++			        sprintf(newmsg, "%s[%s!=%u]: ", tag,
 +					oldpid, from.pid);
 +			} else
 +			        sprintf(newmsg, "%s[%u]: ", tag, from.pid);
@@ -358,7 +365,7 @@
 +		/* Will probably place group membership check here */
 +		if ((from.uid != 0) || (from.gid != 0)) {
 +			snprintf(credentials, sizeof(credentials),
-+				        "(ugid=%u:%u) ", from.uid, from.gid); 
++			        "(ugid=%u:%u) ", from.uid, from.gid);
 +			strcat(newmsg, credentials);
 +		}
 +		if ((strlen(newmsg) + strlen(msg)) >= MAXLINE) {
@@ -374,7 +381,7 @@
  	/* extract facility and priority level */
  	if (flags & MARK)
  		fac = LOG_NFACILITIES;
-@@ -1795,7 +1953,7 @@ void logmsg(pri, msg, from, flags)
+@@ -1795,7 +1951,7 @@ void logmsg(pri, msg, from, flags)
  
  		if (f->f_file >= 0) {
  			untty();
@@ -383,7 +390,7 @@
  			(void) close(f->f_file);
  			f->f_file = -1;
  		}
-@@ -1832,7 +1990,7 @@ void logmsg(pri, msg, from, flags)
+@@ -1832,7 +1988,7 @@ void logmsg(pri, msg, from, flags)
  		 */
  		if ((flags & MARK) == 0 && msglen == f->f_prevlen &&
  		    !strcmp(msg, f->f_prevline) &&
@@ -392,12 +399,12 @@
  			(void) strncpy(f->f_lasttime, timestamp, 15);
  			f->f_prevcount++;
  			dprintf("msg repeated %d times, %ld sec of %ld.\n",
-@@ -1845,29 +2003,33 @@ void logmsg(pri, msg, from, flags)
+@@ -1845,29 +2001,33 @@ void logmsg(pri, msg, from, flags)
  			 * in the future.
  			 */
  			if (now > REPEATTIME(f)) {
 -				fprintlog(f, (char *)from, flags, (char *)NULL);
-+				fprintlog(f, (char *)from.hostname, flags, 
++				fprintlog(f, (char *)from.hostname, flags,
 +					  (char *)NULL);
  				BACKOFF(f);
  			}
@@ -405,7 +412,7 @@
  			/* new line, save it */
  			if (f->f_prevcount)
 -				fprintlog(f, (char *)from, 0, (char *)NULL);
-+				fprintlog(f, (char *)from.hostname, 0, 
++				fprintlog(f, (char *)from.hostname, 0,
 +					  (char *)NULL);
  			f->f_prevpri = pri;
  			f->f_repeatcount = 0;
@@ -417,7 +424,7 @@
  				f->f_prevlen = msglen;
  				(void) strcpy(f->f_prevline, msg);
 -				fprintlog(f, (char *)from, flags, (char *)NULL);
-+				fprintlog(f, (char *)from.hostname, flags, 
++				fprintlog(f, (char *)from.hostname, flags,
 +					  (char *)NULL);
  			} else {
  				f->f_prevline[0] = 0;
@@ -431,7 +438,7 @@
  #ifdef __gnu_linux__
  	sigprocmask(SIG_UNBLOCK, &mask, NULL);
  #else
-@@ -2298,12 +2460,16 @@ void domark()
+@@ -2298,12 +2458,16 @@ void domark()
  #ifdef SYSV
  	int lognum;
  #endif
@@ -449,7 +456,7 @@
  		MarkSeq = 0;
  	}
  
-@@ -2342,6 +2508,11 @@ void logerror(type)
+@@ -2342,6 +2506,11 @@ void logerror(type)
  	char *type;
  {
  	char buf[100];
@@ -461,7 +468,7 @@
  
  	dprintf("Called logerr, msg: %s\n", type);
  
-@@ -2350,7 +2521,7 @@ void logerror(type)
+@@ -2350,7 +2519,7 @@ void logerror(type)
  	else
  		(void) snprintf(buf, sizeof(buf), "syslogd: %s: %s", type, strerror(errno));
  	errno = 0;
@@ -470,7 +477,7 @@
  	return;
  }
  
-@@ -2364,6 +2535,11 @@ void die(sig)
+@@ -2364,6 +2533,11 @@ void die(sig)
  	int lognum;
  	int i;
  	int was_initialized = Initialized;
@@ -482,7 +489,7 @@
  
  	Initialized = 0;	/* Don't log SIGCHLDs in case we
  				   receive one during exiting */
-@@ -2380,7 +2556,7 @@ void die(sig)
+@@ -2380,7 +2554,7 @@ void die(sig)
  		dprintf("syslogd: exiting on signal %d\n", sig);
  		(void) snprintf(buf, sizeof(buf), "exiting on signal %d", sig);
  		errno = 0;
@@ -491,7 +498,7 @@
  	}
  
  	/* Close the UNIX sockets. */
-@@ -2434,6 +2610,11 @@ void init()
+@@ -2434,6 +2608,11 @@ void init()
  	char cline[BUFSIZ];
  #endif
  	struct servent *sp;
@@ -503,7 +510,7 @@
  
  	sp = getservbyname("syslog", "udp");
  	if (sp == NULL) {
-@@ -2640,20 +2821,20 @@ void init()
+@@ -2640,20 +2819,20 @@ void init()
  	if ( AcceptRemote )
  #ifdef DEBRELEASE
  		logmsg(LOG_SYSLOG|LOG_INFO, "syslogd " VERSION "." PATCHLEVEL "#" DEBRELEASE \
