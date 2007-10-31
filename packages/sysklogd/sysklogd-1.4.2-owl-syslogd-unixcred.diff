@@ -1,12 +1,12 @@
 diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 --- sysklogd-1.4.1.orig/syslogd.c	2005-08-18 14:51:39 +0000
-+++ sysklogd-1.4.1/syslogd.c	2007-10-25 17:56:16 +0000
++++ sysklogd-1.4.1/syslogd.c	2007-10-31 16:24:54 +0000
 @@ -474,6 +474,9 @@ static char sccsid[] = "@(#)syslogd.c	5.
   *
   * Sun Nov  7 13:47:00 CET 2004: Martin Schulze <joey@infodrom.org>
   *	Remove trailing newline when forwarding messages.
 + *
-+ * Wed Oct 24 19:56:07 MSD 2007: ArkanoiD <ark at owl.openwall.com>
++ * Wed Oct 31 18:24:54 MSD 2007: ArkanoiD <ark at owl.openwall.com>
 + *	Enable unix socket peer credentials check
   */
  
@@ -37,11 +37,11 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  void untty(void);
 -void printchopped(const char *hname, char *msg, size_t len, int fd);
 -void printline(const char *hname, char *msg);
-+void printchopped(const struct sourceinfo, char *msg, size_t len, int fd);
-+void printline(const struct sourceinfo, char *msg);
++void printchopped(const struct sourceinfo* const, char *msg, size_t len, int fd);
++void printline(const struct sourceinfo* const, char *msg);
  void printsys(char *msg);
 -void logmsg(int pri, char *msg, const char *from, int flags);
-+void logmsg(int pri, char *msg, const struct sourceinfo, int flags);
++void logmsg(int pri, char *msg, const struct sourceinfo* const, int flags);
  void fprintlog(register struct filed *f, char *from, int flags, char *msg);
  void endtty();
  void wallmsg(register struct filed *f, struct iovec *iov);
@@ -108,7 +108,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  #ifdef SYSLOG_UNIXAF
  		for (i = 0; i < nfunix; i++) {
  		    if ((fd = funix[i]) != -1 && FD_ISSET(fd, &readfds)) {
-+			memset(&sinfo, '\0', sizeof(struct sourceinfo));
++			memset(&sinfo, '\0', sizeof(sinfo));
  			memset(line, '\0', sizeof(line));
 -			i = recv(fd, line, MAXLINE - 2, 0);
 +			i = recv_withcred(fd, line, MAXLINE - 2, 0, 
@@ -125,7 +125,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  				line[i] = line[i+1] = '\0';
 -				printchopped(LocalHostName, line, i + 2,  fd);
 +				sinfo.hostname = LocalHostName;
-+				printchopped(sinfo, line, i + 2, fd);
++				printchopped(&sinfo, line, i + 2, fd);
  			} else if (i < 0 && errno != EINTR) {
  				dprintf("UNIX socket error: %d = %s.\n", \
  					errno, strerror(errno));
@@ -141,7 +141,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  		if (InetInuse && AcceptRemote && FD_ISSET(inetm, &readfds)) {
  			len = sizeof(frominet);
  			memset(line, '\0', sizeof(line));
-+			memset(&sinfo, '\0', sizeof(struct sourceinfo));
++			memset(&sinfo, '\0', sizeof(sinfo));
  			i = recvfrom(finet, line, MAXLINE - 2, 0, \
  				     (struct sockaddr *) &frominet, &len);
  			dprintf("Message from inetd socket: #%d, host: %s\n",
@@ -158,7 +158,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  				 *  -Joey
  				 */
 -				printchopped(from, line, \
-+				printchopped(sinfo, line, \
++				printchopped(&sinfo, line, \
   					     i + 2,  finet);
  			} else if (i < 0 && errno != EINTR && errno != EAGAIN) {
  				dprintf("INET socket error: %d = %s.\n", \
@@ -166,14 +166,14 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  		if ( FD_ISSET(fileno(stdin), &readfds) ) {
  			dprintf("Message from stdin.\n");
  			memset(line, '\0', sizeof(line));
-+			memset(&sinfo, '\0', sizeof(struct sourceinfo));
++			memset(&sinfo, '\0', sizeof(sinfo));
  			line[0] = '.';
  			parts[fileno(stdin)] = (char *) 0;
  			i = read(fileno(stdin), line, MAXLINE);
  			if (i > 0) {
 -				printchopped(LocalHostName, line, i+1, fileno(stdin));
 +				sinfo.hostname = LocalHostName;
-+				printchopped(sinfo, line, i+1, fileno(stdin));
++				printchopped(&sinfo, line, i+1, fileno(stdin));
  		  	} else if (i < 0) {
  		    		if (errno != EINTR) {
  		      			logerror("stdin");
@@ -201,7 +201,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 -void printchopped(hname, msg, len, fd)
 -	const char *hname;
 +void printchopped(source, msg, len, fd)
-+	struct sourceinfo source;
++	const struct sourceinfo *const source;
  	char *msg;
  	size_t len;
  	int fd;
@@ -239,7 +239,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 -void printline(hname, msg)
 -	const char *hname;
 +void printline(source, msg)
-+	struct sourceinfo source;
++	const struct sourceinfo *const source;
  	char *msg;
  {
  	register char *p, *q;
@@ -258,8 +258,8 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	char *lp;
 +	struct sourceinfo source;
  
-+	memset(&source, '\0', sizeof(struct sourceinfo));
-+	source.flags |= SINFO_KLOG;
++	memset(&source, '\0', sizeof(source));
++	source.flags = SINFO_KLOG;
 +	source.hostname = LocalHostName;
  	(void) snprintf(line, sizeof(line), "vmunix: ");
  	lp = line + strlen(line);
@@ -269,7 +269,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  			*q++ = c;
  		*q = '\0';
 -		logmsg(pri, line, LocalHostName, flags);
-+		logmsg(pri, line, source, flags);
++		logmsg(pri, line, &source, flags);
  	}
  	return;
  }
@@ -278,7 +278,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	int pri;
  	char *msg;
 -	const char *from;
-+	const struct sourceinfo from;
++	const struct sourceinfo * const from;
  	int flags;
  {
  	register struct filed *f;
@@ -294,7 +294,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  #endif
  
 -	dprintf("logmsg: %s, flags %x, from %s, msg %s\n", textpri(pri), flags, from, msg);
-+	dprintf("logmsg: %s, flags %x, from %s, msg %s\n", textpri(pri), flags, from.hostname, msg);
++	dprintf("logmsg: %s, flags %x, from %s, msg %s\n", textpri(pri), flags, from->hostname, msg);
  
  #ifdef __gnu_linux__
  	sigemptyset(&mask);
@@ -311,7 +311,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 +	 * as '-' sign is quite common) and spaces (LPRng daemons are said
 +	 * to have space in the name).
 +	 */
-+	if (from.flags & SINFO_HAVECRED) {
++	if (from->flags & SINFO_HAVECRED) {
 +		char tag[32 + 10]; /* rfc3164 tag+brackets+pid+space+colon+0 */
 +		char *p;
 +		char *oldpid;
@@ -330,7 +330,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 +					msg++;
 +				/* ..and add one */
 +			        snprintf(newmsg, sizeof(newmsg),
-+					 "%s[%u]: ", tag, from.pid);
++					 "%s[%u]: ", tag, from->pid);
 +			} else {
 +				/* Yes, it is safe to call logerror() from this
 +				   part of logmsg().  Complain about tag being
@@ -356,20 +356,20 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 +			*oldpid++ = '\0';
 +			/* XXX: We could use strtoul() here for full
 +			   error checking. */
-+			if ((pid_t) atoi(oldpid) != from.pid) {
++			if ((pid_t) atoi(oldpid) != from->pid) {
 +				logerror("malformed or spoofed pid detected!");
 +			        snprintf(newmsg, sizeof(newmsg),
 +					 "%s[%s!=%u]: ",
-+					 tag, oldpid, from.pid);
++					 tag, oldpid, from->pid);
 +			} else
 +			        snprintf(newmsg, sizeof(newmsg),
-+					 "%s[%u]: ", tag, from.pid);
++					 "%s[%u]: ", tag, from->pid);
 +		}
 +		/* We may place group membership check here */
-+		if (from.uid != 0) {
++		if (from->uid != 0) {
 +			int newlen = strlen(newmsg);
 +			snprintf(newmsg + newlen, sizeof(newmsg) - newlen,
-+			        "(ugid=%u:%u) ", from.uid, from.gid);
++			        "(ugid=%u:%u) ", from->uid, from->gid);
 +		}
 +		/* XXX: Silent truncation is possible */
 +		strncat(newmsg, msg, sizeof(newmsg) - 1 - strlen(newmsg));
@@ -385,7 +385,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  		if (f->f_file >= 0) {
  			untty();
 -			fprintlog(f, (char *)from, flags, msg);
-+			fprintlog(f, (char *)from.hostname, flags, msg);
++			fprintlog(f, (char *)from->hostname, flags, msg);
  			(void) close(f->f_file);
  			f->f_file = -1;
  		}
@@ -394,7 +394,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  		if ((flags & MARK) == 0 && msglen == f->f_prevlen &&
  		    !strcmp(msg, f->f_prevline) &&
 -		    !strcmp(from, f->f_prevhost)) {
-+		    !strcmp(from.hostname, f->f_prevhost)) {
++		    !strcmp(from->hostname, f->f_prevhost)) {
  			(void) strncpy(f->f_lasttime, timestamp, 15);
  			f->f_prevcount++;
  			dprintf("msg repeated %d times, %ld sec of %ld.\n",
@@ -403,7 +403,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  			 */
  			if (now > REPEATTIME(f)) {
 -				fprintlog(f, (char *)from, flags, (char *)NULL);
-+				fprintlog(f, (char *)from.hostname, flags,
++				fprintlog(f, (char *)from->hostname, flags,
 +					  (char *)NULL);
  				BACKOFF(f);
  			}
@@ -411,25 +411,25 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  			/* new line, save it */
  			if (f->f_prevcount)
 -				fprintlog(f, (char *)from, 0, (char *)NULL);
-+				fprintlog(f, (char *)from.hostname, 0,
++				fprintlog(f, (char *)from->hostname, 0,
 +					  (char *)NULL);
  			f->f_prevpri = pri;
  			f->f_repeatcount = 0;
  			(void) strncpy(f->f_lasttime, timestamp, 15);
 -			(void) strncpy(f->f_prevhost, from,
-+			(void) strncpy(f->f_prevhost, from.hostname,
++			(void) strncpy(f->f_prevhost, from->hostname,
  					sizeof(f->f_prevhost));
  			if (msglen < MAXSVLINE) {
  				f->f_prevlen = msglen;
  				(void) strcpy(f->f_prevline, msg);
 -				fprintlog(f, (char *)from, flags, (char *)NULL);
-+				fprintlog(f, (char *)from.hostname, flags,
++				fprintlog(f, (char *)from->hostname, flags,
 +					  (char *)NULL);
  			} else {
  				f->f_prevline[0] = 0;
  				f->f_prevlen = 0;
 -				fprintlog(f, (char *)from, flags, msg);
-+				fprintlog(f, (char *)from.hostname, flags, msg);
++				fprintlog(f, (char *)from->hostname, flags, msg);
  			}
  		}
  	}
@@ -444,14 +444,14 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 +	struct sourceinfo source;
  
 +	memset(&source, '\0', sizeof(struct sourceinfo));
-+	source.flags |= SINFO_ISINTERNAL;
++	source.flags = SINFO_ISINTERNAL;
 +	source.hostname = LocalHostName;
  	if (MarkInterval > 0) {
  	now = time(0);
  	MarkSeq += TIMERINTVL;
  	if (MarkSeq >= MarkInterval) {
 -		logmsg(LOG_INFO, "-- MARK --", LocalHostName, ADDDATE|MARK);
-+		logmsg(LOG_INFO, "-- MARK --", source, ADDDATE|MARK);
++		logmsg(LOG_INFO, "-- MARK --", &source, ADDDATE|MARK);
  		MarkSeq = 0;
  	}
  
@@ -462,7 +462,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 +	struct sourceinfo source;
 +
 +	memset(&source, '\0', sizeof(struct sourceinfo));
-+	source.flags |= SINFO_ISINTERNAL;
++	source.flags = SINFO_ISINTERNAL;
 +	source.hostname = LocalHostName;
  
  	dprintf("Called logerr, msg: %s\n", type);
@@ -472,7 +472,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  		(void) snprintf(buf, sizeof(buf), "syslogd: %s: %s", type, strerror(errno));
  	errno = 0;
 -	logmsg(LOG_SYSLOG|LOG_ERR, buf, LocalHostName, ADDDATE);
-+	logmsg(LOG_SYSLOG|LOG_ERR, buf, source, ADDDATE);
++	logmsg(LOG_SYSLOG|LOG_ERR, buf, &source, ADDDATE);
  	return;
  }
  
@@ -483,7 +483,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 +	struct sourceinfo source;
 +
 +	memset(&source, '\0', sizeof(struct sourceinfo));
-+	source.flags |= SINFO_ISINTERNAL;
++	source.flags = SINFO_ISINTERNAL;
 +	source.hostname = LocalHostName;
  
  	Initialized = 0;	/* Don't log SIGCHLDs in case we
@@ -493,7 +493,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  		(void) snprintf(buf, sizeof(buf), "exiting on signal %d", sig);
  		errno = 0;
 -		logmsg(LOG_SYSLOG|LOG_INFO, buf, LocalHostName, ADDDATE);
-+		logmsg(LOG_SYSLOG|LOG_INFO, buf, source, ADDDATE);
++		logmsg(LOG_SYSLOG|LOG_INFO, buf, &source, ADDDATE);
  	}
  
  	/* Close the UNIX sockets. */
@@ -504,7 +504,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 +	struct sourceinfo source;
 +
 +	memset(&source, '\0', sizeof(struct sourceinfo));
-+	source.flags |= SINFO_ISINTERNAL;
++	source.flags = SINFO_ISINTERNAL;
 +	source.hostname = LocalHostName;
  
  	sp = getservbyname("syslog", "udp");
@@ -514,23 +514,23 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  #ifdef DEBRELEASE
  		logmsg(LOG_SYSLOG|LOG_INFO, "syslogd " VERSION "." PATCHLEVEL "#" DEBRELEASE \
 -		       ": restart (remote reception)." , LocalHostName, \
-+		       ": restart (remote reception)." , source, \
++		       ": restart (remote reception)." , &source, \
  		       	ADDDATE);
  #else
  		logmsg(LOG_SYSLOG|LOG_INFO, "syslogd " VERSION "." PATCHLEVEL \
 -		       ": restart (remote reception)." , LocalHostName, \
-+		       ": restart (remote reception)." , source, \
++		       ": restart (remote reception)." , &source, \
  		       	ADDDATE);
  #endif
  	else
  #ifdef DEBRELEASE
  		logmsg(LOG_SYSLOG|LOG_INFO, "syslogd " VERSION "." PATCHLEVEL "#" DEBRELEASE \
 -		       ": restart." , LocalHostName, ADDDATE);
-+		       ": restart." , source, ADDDATE);
++		       ": restart." , &source, ADDDATE);
  #else
  		logmsg(LOG_SYSLOG|LOG_INFO, "syslogd " VERSION "." PATCHLEVEL \
 -		       ": restart." , LocalHostName, ADDDATE);
-+		       ": restart." , source, ADDDATE);
++		       ": restart." , &source, ADDDATE);
  #endif
  	(void) signal(SIGHUP, sighup_handler);
  	dprintf("syslogd: restarted.\n");
