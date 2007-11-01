@@ -443,7 +443,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  #endif
 +	struct sourceinfo source;
  
-+	memset(&source, '\0', sizeof(struct sourceinfo));
++	memset(&source, '\0', sizeof(source));
 +	source.flags = SINFO_ISINTERNAL;
 +	source.hostname = LocalHostName;
  	if (MarkInterval > 0) {
@@ -461,7 +461,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	char buf[100];
 +	struct sourceinfo source;
 +
-+	memset(&source, '\0', sizeof(struct sourceinfo));
++	memset(&source, '\0', sizeof(source));
 +	source.flags = SINFO_ISINTERNAL;
 +	source.hostname = LocalHostName;
  
@@ -482,7 +482,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	int was_initialized = Initialized;
 +	struct sourceinfo source;
 +
-+	memset(&source, '\0', sizeof(struct sourceinfo));
++	memset(&source, '\0', sizeof(source));
 +	source.flags = SINFO_ISINTERNAL;
 +	source.hostname = LocalHostName;
  
@@ -503,7 +503,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	struct servent *sp;
 +	struct sourceinfo source;
 +
-+	memset(&source, '\0', sizeof(struct sourceinfo));
++	memset(&source, '\0', sizeof(source));
 +	source.flags = SINFO_ISINTERNAL;
 +	source.hostname = LocalHostName;
  
