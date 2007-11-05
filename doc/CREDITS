@@ -13,7 +13,11 @@ Owl installer:
 
 	Andrey V. Stolyarov a.k.a. Croco <croco at cvs.openwall.com>
 
-Mutt package:
+syslogd credentials passing, verification, and logging:
+
+	ArkanoiD <ark at owl.openwall.com>
+
+The initial Mutt package:
 
 	Jarno Huuskonen <jhuuskon at cvs.openwall.com>
 
@@ -40,9 +44,9 @@ Official Owl artwork:
 Virtual Unix Project has provided the initial funding for Owl.  Many
 other companies, teams, and individuals have donated money, hardware,
 and services relevant to the project.  Please refer to our donations
-web page for a full list of donations we've received so far or to make
-a donation too:
+web page for a list of donations we've received so far or to make a
+donation too:
 
 http://www.openwall.com/donations/
 
-$Owl: Owl/doc/CREDITS,v 1.17 2007/06/15 14:18:02 solar Exp $
+$Owl: Owl/doc/CREDITS,v 1.18 2007/11/05 18:42:42 solar Exp $
