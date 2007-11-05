@@ -369,7 +369,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 +		if (from->uid != 0) {
 +			int newlen = strlen(newmsg);
 +			snprintf(newmsg + newlen, sizeof(newmsg) - newlen,
-+			        "(ugid=%u:%u) ", from->uid, from->gid);
++			        "(uid=%u) ", from->uid);
 +		}
 +		/* XXX: Silent truncation is possible */
 +		strncat(newmsg, msg, sizeof(newmsg) - 1 - strlen(newmsg));
