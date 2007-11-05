@@ -15,7 +15,7 @@ Owl installer:
 
 syslogd credentials passing, verification, and logging:
 
-	ArkanoiD <ark at owl.openwall.com>
+	ArkanoiD <ark at cvs.openwall.com>
 
 The initial Mutt package:
 
@@ -49,4 +49,4 @@ donation too:
 
 http://www.openwall.com/donations/
 
-$Owl: Owl/doc/CREDITS,v 1.18 2007/11/05 18:42:42 solar Exp $
+$Owl: Owl/doc/CREDITS,v 1.19 2007/11/05 18:43:29 solar Exp $
