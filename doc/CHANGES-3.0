@@ -12,6 +12,12 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2007/10/24 -
+2007/11/05	Package: sysklogd
+Implemented logging of the sending user ID (when it's non-zero) for
+syslog messages arriving via Unix domain sockets.  This should allow for
+detection of spoofed messages.
+
 2007/10/17	Package: diffstat
 Updated to 1.45.
 
@@ -492,4 +498,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.105 2007/10/17 00:07:23 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.106 2007/11/05 18:30:45 solar Exp $
