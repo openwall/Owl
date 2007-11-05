@@ -14,8 +14,9 @@ change logs for the packages themselves.
 
 2007/10/24 -
 2007/11/05	Package: sysklogd
-Implemented logging of the sending user ID (when it's non-zero) for
-syslog messages arriving via Unix domain sockets.  This should allow for
+Implemented logging of the sending user ID (when non-zero) and of the
+sending process ID (when different from the reported one) for syslog
+messages arriving via Unix domain sockets.  This should allow for
 detection of spoofed messages.
 
 2007/10/17	Package: diffstat
@@ -498,4 +499,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.106 2007/11/05 18:30:45 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.107 2007/11/05 18:36:33 solar Exp $
