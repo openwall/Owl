@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bind/bind.spec,v 1.20 2007/10/07 21:47:51 ldv Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.21 2007/11/08 22:00:28 ldv Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -7,7 +7,7 @@
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.4
-Release: owl3
+Release: owl4
 License: BSD-style
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -42,6 +42,7 @@ Patch7: bind-9.3.1-alt-isc-config.diff
 Patch8: bind-9.3.3-alt-man.diff
 Patch9: bind-9.3.1-alt-owl-rndc-confgen.diff
 Patch10: bind-9.3.1-owl-rfc-index.diff
+Patch11: bind-9.3.4-owl-root_ns.diff
 
 Requires: %name-libs = %version-%release
 Requires: owl-startup
@@ -119,6 +120,7 @@ for building applications with ISC BIND libraries.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 install -pm644 %_sourcedir/rfc1912.txt.bz2 doc/rfc/
 find doc -type f -name '*.txt' -print0 |
@@ -344,6 +346,9 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Thu Nov 08 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.4-owl4
+- Updated L.ROOT-SERVERS.NET address.
+
 * Sun Oct 07 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.4-owl3
 - Added recursing-file directive to option.conf file, to make
 "rndc recursing" work in "control bind-debug enabled" mode, reported
