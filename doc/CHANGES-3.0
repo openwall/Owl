@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2007/11/15	Package: e2fsprogs
+Updated to 1.40.2.
+
 2007/10/24 -
 2007/11/05	Package: sysklogd
 Implemented logging of the sending user ID (when non-zero) and of the
@@ -499,4 +502,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.107 2007/11/05 18:36:33 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.108 2007/11/15 23:05:57 ldv Exp $
