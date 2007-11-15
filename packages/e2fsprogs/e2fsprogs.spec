@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.41 2007/03/27 11:46:06 galaxy Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.42 2007/11/15 23:04:00 ldv Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -12,17 +12,16 @@
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
-Version: 1.39
-Release: owl4
+Version: 1.40.2
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
-Patch0: e2fsprogs-1.39-owl-alt-fixes.diff
-Patch1: e2fsprogs-1.39-owl-tests.diff
-Patch2: e2fsprogs-1.37-owl-blkid-env.diff
-Patch3: e2fsprogs-1.39-owl-tmp.diff
-Patch4: e2fsprogs-1.39-up-20060530-sigbus.diff
-Patch5: e2fsprogs-1.39-owl-tests-no_proc.diff
+# http://repo.or.cz/w/e2fsprogs.git?a=shortlog;h=maint
+Patch0: e2fsprogs-1.40.2-cvs-20071015-maint.diff
+Patch1: e2fsprogs-1.40.2-owl-alt-maint-fixes.diff
+Patch2: e2fsprogs-1.40.2-alt-fixes.diff
+Patch3: e2fsprogs-1.40.2-owl-blkid-env.diff
 PreReq: /sbin/ldconfig
 BuildRequires: gettext, texinfo, automake, autoconf
 BuildRequires: glibc >= 0:2.2, sed >= 0:4.1
@@ -59,17 +58,7 @@ chmod -R u+w .
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
-
-# e2fsprogs can't perform its testsuite on a system without /proc, so we
-# are performing a simple check and are patching the testsuite.
-if [ ! -h /proc/self/exe ]; then
-	echo "No /proc filesystem is detected, adjusting the testsuite ..."
-%patch5 -p1
-	chmod +x tests/no_proc.sh
-fi
-
-bzip2 -9k ChangeLog RELEASE-NOTES
+bzip2 -9k RELEASE-NOTES
 
 # remove these unwanted header files just in case
 rm -r include
@@ -82,12 +71,12 @@ find -type f -print0 |
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-autoreconf -fis
 # There're currently no pre-compiled versions of these texinfo files
 # included, should uncomment if that changes.
 #rm doc/libext2fs.info
 %configure \
 	--with-cc="%__cc" \
+	--disable-e2initrd-helper \
 	--enable-elf-shlibs \
 	--enable-htree \
 	--enable-htree-clear \
@@ -109,7 +98,8 @@ autoreconf -fis
 	--enable-maintainer-mode # to build NLS files
 
 # NB: this package cannot be built using parallel tasks -- (GM)
-%__make all check
+%__make all
+%__make -k check
 
 %install
 rm -rf %buildroot
@@ -123,11 +113,8 @@ for f in %buildroot%_libdir/*.so; do
 	ln -sf ../../%_lib/"$v" "$f"
 done
 
-# this binary has no documentation and its use is under question
-rm %buildroot%_libdir/e2initrd_helper
-
 # fix permissions
-chmod 0644 %buildroot%_libdir/*.a
+chmod 644 %buildroot%_libdir/*.a
 
 # ensure that %buildroot did not get into installed files
 sed -i 's,^ET_DIR=.*$,ET_DIR=%_datadir/et,' %buildroot%_bindir/compile_et
@@ -149,7 +136,7 @@ fi
 
 %files -f %name.lang
 %defattr(-,root,root)
-%doc ChangeLog.bz2 README RELEASE-NOTES.bz2
+%doc README RELEASE-NOTES.bz2
 
 %config(noreplace) %_sysconfdir/*.conf
 
@@ -261,6 +248,10 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Thu Nov 15 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.40.2-owl1
+- Updated to post-1.40.2 snapshot 20071015 of e2fsprogs maint branch.
+- Removed the /proc workaround added in previous build.
+
 * Mon Mar 26 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.39-owl4
 - Added a fix for running tests on a system without the /proc filesystem
 mounted (e.g. chroot'ed installation).
