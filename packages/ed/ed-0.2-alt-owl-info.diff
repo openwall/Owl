@@ -1,0 +1,13 @@
+--- ed-0.2.orig/ed.texinfo	Sat Nov 19 15:38:01 1994
++++ ed-0.2/ed.texinfo	Thu Nov 30 04:22:36 2000
+@@ -7,6 +7,10 @@
+ @c %**end of header
+ 
+ @ifinfo
++@dircategory Text creation and manipulation
++@direntry
++* ed: (ed).                                     The GNU Line Editor.
++@end direntry
+ This file documents the @code{ed} command, which has the purpose of
+ editing text files.
+ 

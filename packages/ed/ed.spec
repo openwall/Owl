@@ -1,26 +1,32 @@
-# $Owl: Owl/packages/ed/ed.spec,v 1.20 2006/02/03 22:31:14 ldv Exp $
+# $Owl: Owl/packages/ed/ed.spec,v 1.21 2007/11/16 00:00:52 ldv Exp $
 
-Summary: The GNU line editor.
+Summary: The GNU line-oriented text editor.
 Name: ed
 Version: 0.2
-Release: owl23
+Release: owl24
 License: GPL
 Group: Applications/Text
-Source: ftp://ftp.gnu.org/gnu/%name-%version.tar.gz
-Patch0: ed-0.2-deb-mkfile.diff
-Patch1: ed-0.2-deb-parentheses.diff
-Patch2: ed-0.2-deb-owl-man.diff
-Patch3: ed-0.2-alt-tmp.diff
-Patch4: ed-0.2-owl-autoconf.diff
+URL: http://www.gnu.org/software/ed/
+Source: ftp://ftp.gnu.org/gnu/ed-%version.tar.gz
+Patch0: ed-0.2-alt-configure.diff
+Patch1: ed-0.2-alt-error.diff
+Patch2: ed-0.2-deb-Makefile.diff
+Patch3: ed-0.2-deb-parentheses.diff
+Patch4: ed-0.2-alt-tmp.diff
+Patch5: ed-0.2-alt-progname.diff
+Patch6: ed-0.2-deb-owl-man.diff
+Patch7: ed-0.2-alt-owl-info.diff
+Patch8: ed-0.2-alt-glibc.diff
+Patch9: ed-0.2-alt-warnings.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
 
 %description
 ed is a line-oriented text editor, used to create, display, and modify
-text files (both interactively and via shell scripts).  For most
-purposes, ed has been replaced in normal usage by full-screen editors
-such as vi and emacs.
+text files (both interactively and via shell scripts).
+For most purposes, ed has been replaced in normal usage by full-screen
+editors such as vi and emacs.
 
 %prep
 %setup -q
@@ -29,36 +35,51 @@ such as vi and emacs.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+rm getopt.h regex.h
+rm configure ed.info
+
+%{expand:%%define optflags %optflags -Wall -Dlint}
 
 %build
-chmod 755 configure
-autoconf
+autoreconf -fis
 # glibc does have sigsetjmp, it's just a macro, which confuses autoconf.
 export ac_cv_func_sigsetjmp=yes
 %configure --exec-prefix=/
 make LDFLAGS=-s
+make -k check
 
 %install
 %makeinstall bindir=%buildroot/bin mandir=%buildroot%_mandir/man1
 
 %post
-/sbin/install-info %_infodir/ed.info %_infodir/dir \
-	--entry="* ed: (ed).                                     The GNU Line Editor."
+/sbin/install-info %_infodir/ed.info %_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/ed.info %_infodir/dir \
-		--entry="* ed: (ed).                                     The GNU Line Editor."
+	/sbin/install-info --delete %_infodir/ed.info %_infodir/dir
 fi
 
 %files
 %defattr(-,root,root)
 %doc NEWS POSIX README THANKS
-/bin/*
+/bin/*ed
 %_infodir/ed.info*
-%_mandir/*/*
+%_mandir/man1/*ed.*
 
 %changelog
+* Thu Nov 15 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.2-owl24
+- Synced with ed-0.2-alt6:
+- Disabled build of code provided by glibc.
+- Fixed program_name initialization.
+- Enabled build with -Wall, fixed uncovered compilation warnings.
+- Added run of testcase after build.
+- Added URL, updated info entry.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.2-owl23
 - Corrected info files installation.
 

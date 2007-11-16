@@ -1,0 +1,10 @@
+--- ed-0.2/configure.in.orig	1994-11-19 15:38:00 +0300
++++ ed-0.2/configure.in	2005-04-07 17:25:34 +0400
+@@ -3,6 +3,7 @@
+ AC_INIT(ed.h)
+ AC_CONFIG_HEADER(config.h)
+ 
++AC_GNU_SOURCE
+ AC_PROG_LN_S
+ AC_PROG_RANLIB
+ AC_PROG_INSTALL

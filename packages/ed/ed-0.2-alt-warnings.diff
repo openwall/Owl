@@ -1,0 +1,48 @@
+--- ed-0.2/glbl.c
++++ ed-0.2/glbl.c
+@@ -78,10 +78,12 @@ exec_global (interact, gflag)
+   char *cmd = NULL;
+ 
+   if (!interact)
++  {
+     if (traditional && !strcmp (ibufp, "\n"))
+       cmd = "p\n";		/* null cmd-list == `p' */
+     else if ((cmd = get_extended_line (&n, 0)) == NULL)
+       return ERR;
++  }
+   clear_undo_stack ();
+   while ((lp = next_active_node ()) != NULL)
+     {
+--- ed-0.2/ed.h
++++ ed-0.2/ed.h
+@@ -278,7 +278,7 @@ int exec_command __P ((void));
+ long exec_global __P ((int, int));
+ int extract_addr_range __P ((void));
+ char *extract_pattern __P ((int));
+-int extract_subst_tail __P ((int *, int *));
++int extract_subst_tail __P ((int *, long *));
+ char *extract_subst_template __P ((void));
+ int filter_lines __P ((long, long, char *));
+ line_t *get_addressed_line_node __P ((long));
+--- ed-0.2/main.c
++++ ed-0.2/main.c
+@@ -544,7 +544,7 @@ exec_command ()
+ 
+   static pattern_t *pat = NULL;
+   static int sgflag = 0;
+-  static int sgnum = 0;
++  static long sgnum = 0;
+ 
+   pattern_t *tpat;
+   char *fnp;
+--- ed-0.2/sub.c
++++ ed-0.2/sub.c
+@@ -34,7 +34,7 @@ int rhbufi;			/* rhs substitution buffer
+ int
+ extract_subst_tail (flagp, np)
+      int *flagp;
+-     int *np;
++     long *np;
+ {
+   char delimiter;
+ 

@@ -1,0 +1,40 @@
+--- ed-0.2/Makefile.in.orig	2005-04-07 17:29:27 +0400
++++ ed-0.2/Makefile.in	2005-04-07 17:34:59 +0400
+@@ -54,9 +54,9 @@
+ SOURCES = buf.c glbl.c io.c main.c re.c signal.c sub.c undo.c version.c
+ OBJECTS = buf.o glbl.o io.o main.o re.o signal.o sub.o undo.o version.o
+ 
+-LIBHDRS = pathmax.h getopt.h regex.h
++LIBHDRS = pathmax.h
+ LIBSRCS = alloca.c error.c getopt.c getopt1.c regex.c xmalloc.c
+-LIBOBJS = @ALLOCA@ getopt.o getopt1.o regex.o @LIBOBJS@
++LIBOBJS = @ALLOCA@ getopt.o getopt1.o @LIBOBJS@
+ 
+ DISTFILES = $(HEADERS) $(LIBHDRS) $(LIBSRCS) $(SOURCES) ChangeLog COPYING \
+ INSTALL Makefile.in NEWS POSIX README TODO THANKS \
+@@ -68,20 +68,17 @@
+ ed: $(OBJECTS)
+ 	$(CC) $(LDFLAGS) -o ed $(OBJECTS) $(LIBS)
+ 
+-buf.o: ed.h config.h regex.h
+-ed.o: ed.h config.h regex.h
+-main.o: ed.h config.h regex.h getopt.h pathmax.h
+-re.o: ed.h config.h regex.h
+-signal.o: ed.h config.h regex.h
++buf.o: ed.h config.h
++ed.o: ed.h config.h
++main.o: ed.h config.h pathmax.h
++re.o: ed.h config.h
++signal.o: ed.h config.h
+ 
+ libed.a: $(LIBOBJS)
+ 	rm -f libed.a
+ 	$(AR) cru libed.a $(LIBOBJS)
+ 	$(RANLIB) libed.a
+ 
+-getopt.o getopt1.o: getopt.h
+-regex.o: regex.h
+-
+ check: ed
+ 	rootme=`pwd`; srcrootme=`cd $(srcdir); pwd`;\
+ 	test -r mkinstalldirs || cp $(srcdir)/mkinstalldirs .;\
