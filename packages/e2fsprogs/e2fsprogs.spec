@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.42 2007/11/15 23:04:00 ldv Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.43 2007/11/16 13:45:27 ldv Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -22,6 +22,7 @@ Patch0: e2fsprogs-1.40.2-cvs-20071015-maint.diff
 Patch1: e2fsprogs-1.40.2-owl-alt-maint-fixes.diff
 Patch2: e2fsprogs-1.40.2-alt-fixes.diff
 Patch3: e2fsprogs-1.40.2-owl-blkid-env.diff
+Patch4: e2fsprogs-1.40.2-owl-tests.diff
 PreReq: /sbin/ldconfig
 BuildRequires: gettext, texinfo, automake, autoconf
 BuildRequires: glibc >= 0:2.2, sed >= 0:4.1
@@ -58,6 +59,7 @@ chmod -R u+w .
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 bzip2 -9k RELEASE-NOTES
 
 # remove these unwanted header files just in case
