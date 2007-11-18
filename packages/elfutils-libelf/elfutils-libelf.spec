@@ -1,14 +1,14 @@
-# $Owl: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.8 2005/11/16 12:21:36 solar Exp $
+# $Owl: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.9 2007/11/18 00:50:10 ldv Exp $
 
 Summary: Library to read and write ELF files.
 Name: elfutils-libelf
-Version: 0.115
+Version: 0.131
 Release: owl1
-License: GPL
+License: GPLv2 with exceptions
 Group: System Environment/Libraries
 Source: elfutils-%version.tar.gz
-Patch0: elfutils-0.115-rh-robustify.diff
-Patch1: elfutils-0.115-rh-portability.diff
+Patch0: elfutils-0.131-rh-portability.diff
+Patch1: elfutils-0.131-rh-robustify.diff
 Obsoletes: libelf
 BuildRequires: bison >= 1.35
 BuildRequires: flex >= 2.5.4a
@@ -37,6 +37,7 @@ different sections of an ELF file.
 %setup -q -n elfutils-%version
 %patch0 -p1
 %patch1 -p1
+bzip2 -9k NEWS
 
 %build
 %configure --enable-shared
@@ -45,10 +46,12 @@ different sections of an ELF file.
 %install
 rm -rf %buildroot
 %makeinstall -C libelf
-install -p -m644 libdw/dwarf.h %buildroot%_includedir/
 
-# XXX: Remove unpackaged files (check later)
-rm %buildroot%_includedir/elfutils/elf-knowledge.h
+# package dwarf.h
+install -pm644 libdw/dwarf.h %buildroot%_includedir/
+
+# do not package elfutils-devel headers
+rm -r %buildroot%_includedir/elfutils
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -57,6 +60,7 @@ rm %buildroot%_includedir/elfutils/elf-knowledge.h
 %defattr(-,root,root)
 %_libdir/libelf-%version.so
 %_libdir/libelf*.so.*
+%doc AUTHORS COPYING EXCEPTION NEWS.bz2 THANKS
 
 %files devel
 %defattr(-,root,root)
@@ -68,6 +72,9 @@ rm %buildroot%_includedir/elfutils/elf-knowledge.h
 %_libdir/libelf.so
 
 %changelog
+* Sun Nov 18 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.131-owl1
+- Updated to 0.131.
+
 * Thu Oct 20 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.115-owl1
 - Updated to 0.115.
 - Partially imported portability patch from RH.

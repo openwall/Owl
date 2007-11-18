@@ -1,6 +1,6 @@
 --- elfutils/libelf/common.h
 +++ elfutils/libelf/common.h
-@@ -122,7 +122,7 @@ libelf_release_all (Elf *elf)
+@@ -155,7 +155,7 @@ libelf_release_all (Elf *elf)
    (Var) = (sizeof (Var) == 1						      \
  	   ? (unsigned char) (Var)					      \
  	   : (sizeof (Var) == 2						      \
@@ -9,7 +9,7 @@
  	      : (sizeof (Var) == 4					      \
  		 ? bswap_32 (Var)					      \
  		 : bswap_64 (Var))))
-@@ -131,7 +131,7 @@ libelf_release_all (Elf *elf)
+@@ -164,7 +164,7 @@ libelf_release_all (Elf *elf)
    (Dst) = (sizeof (Var) == 1						      \
  	   ? (unsigned char) (Var)					      \
  	   : (sizeof (Var) == 2						      \
@@ -20,7 +20,7 @@
  		 : bswap_64 (Var))))
 --- elfutils/src/findtextrel.c
 +++ elfutils/src/findtextrel.c
-@@ -476,7 +476,11 @@ ptrcompare (const void *p1, const void *
+@@ -488,7 +488,11 @@ ptrcompare (const void *p1, const void *
  
  
  static void
@@ -33,3 +33,30 @@
  	   GElf_Addr addr, Elf *elf, Elf_Scn *symscn, Dwarf *dw,
  	   const char *fname, bool more_than_one, void **knownsrcs)
  {
+--- elfutils/src/strings.c
++++ elfutils/src/strings.c
+@@ -51,6 +51,10 @@
+ 
+ #include <system.h>
+ 
++#ifndef MAP_POPULATE
++# define MAP_POPULATE 0
++#endif
++
+ 
+ /* Prototypes of local functions.  */
+ static int read_fd (int fd, const char *fname, off64_t fdlen);
+@@ -491,8 +495,13 @@ map_file (int fd, off64_t start_off, off
+ 		    fd, start_off);
+       if (mem != MAP_FAILED)
+ 	{
++#if !defined POSIX_MADV_SEQUENTIAL && defined MADV_SEQUENTIAL
++# define POSIX_MADV_SEQUENTIAL MADV_SEQUENTIAL
++#endif
++#ifdef POSIX_MADV_SEQUENTIAL
+ 	  /* We will go through the mapping sequentially.  */
+ 	  (void) posix_madvise (mem, map_size, POSIX_MADV_SEQUENTIAL);
++#endif
+ 	  break;
+ 	}
+       if (errno != EINVAL && errno != ENOMEM)
