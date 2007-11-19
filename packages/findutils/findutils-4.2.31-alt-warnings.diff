@@ -1,0 +1,133 @@
+--- findutils/find/find.c
++++ findutils/find/find.c
+@@ -1807,7 +1807,7 @@ complete_pending_execs(struct predicate *p)
+ static void
+ process_dir (char *pathname, char *name, int pathlen, struct stat *statp, char *parent)
+ {
+-  int subdirs_left;		/* Number of unexamined subdirs in PATHNAME. */
++  int subdirs_left = 0;		/* Number of unexamined subdirs in PATHNAME. */
+   boolean subdirs_unreliable;	/* if true, cannot use dir link count as subdir limif (if false, it may STILL be unreliable) */
+   int idx;			/* Which entry are we on? */
+   struct stat stat_buf;
+--- findutils/find/parser.c
++++ findutils/find/parser.c
+@@ -151,10 +151,6 @@ static boolean parse_quit          PARAMS((const struct parser_table*, char *arg
+ 
+ 
+ 
+-boolean parse_print             PARAMS((const struct parser_table*, char *argv[], int *arg_ptr));
+-
+-
+-
+ static boolean insert_type PARAMS((char **argv, int *arg_ptr, const struct parser_table *entry, PRED_FUNC which_pred));
+ static boolean insert_regex PARAMS((char *argv[], int *arg_ptr, const struct parser_table *entry, int regex_options));
+ static boolean insert_fprintf PARAMS((FILE *fp, const struct parser_table *entry, PRED_FUNC func, char *argv[], int *arg_ptr));
+--- findutils/lib/buildcmd.c
++++ findutils/lib/buildcmd.c
+@@ -123,7 +123,6 @@ bc_do_insert (const struct buildcmd_control *ctl,
+   static char *insertbuf;
+   char *p;
+   size_t bytes_left = ctl->arg_max - 1;    /* Bytes left on the command line.  */
+-  int need_prefix;
+ 
+   /* XXX: on systems lacking an upper limit for exec args, ctl->arg_max
+    *      may have been set to LONG_MAX (see bc_get_arg_max()).  Hence
+@@ -440,10 +439,6 @@ bc_init_controlinfo(struct buildcmd_control *ctl)
+     {
+       return BC_INIT_ENV_TOO_BIG;
+     }
+-  else
+-    {
+-      ctl->posix_arg_size_max - size_of_environment;
+-    }
+ 
+   /* need to subtract 2 on the following line - for Linux/PPC */
+   ctl->max_arg_count = (ctl->posix_arg_size_max / sizeof(char*)) - 2u;
+--- findutils/lib/regexprops.c
++++ findutils/lib/regexprops.c
+@@ -67,6 +67,8 @@ static void enum_item(const char *s)
+   literal(s);
+   newline();
+ }
++
++#if 0
+ static void table_item(const char *s)
+ {
+   directive("@item");
+@@ -81,6 +83,7 @@ static void code(const char *s)
+   content(s);
+   directive("}");
+ }
++#endif
+ 
+ static void begin_subsection(const char *name,
+ 			  const char *next,
+@@ -102,12 +105,14 @@ static void begin_subsection(const char *name,
+   newline();
+ }
+ 
++#if 0
+ static void begintable_asis()
+ {
+   newline();
+   directive("@table @asis");
+   newline();
+ }
++#endif
+ 
+ static void begintable_markup(char const *markup)
+ {
+@@ -144,7 +149,7 @@ static void newpara()
+ }
+ 
+ 
+-static int describe_regex_syntax(int options)
++static void describe_regex_syntax(int options)
+ {
+   newpara();
+   content("The character @samp{.} matches any single character");
+@@ -435,7 +440,7 @@ static int describe_regex_syntax(int options)
+ 
+ 
+ 
+-static int menu()
++static void menu()
+ {
+   int i, options;
+   const char *name;
+@@ -456,7 +461,7 @@ static int menu()
+ }
+ 
+ 
+-static int describe_all(const char *up)
++static void describe_all(const char *up)
+ {
+   const char *name, *next, *previous;
+   int options;
+--- findutils/xargs/xargs.c
++++ findutils/xargs/xargs.c
+@@ -277,7 +277,7 @@ static void usage PARAMS ((FILE * stream));
+ static char 
+ get_char_oct_or_hex_escape(const char *s)
+ {
+-  const char * p;
++  const char * p = NULL;
+   int base = 8;
+   unsigned long val;
+   char *endp;
+@@ -379,6 +379,7 @@ get_input_delimiter(const char *s)
+ 	  error(1, 0,
+ 		_("Invalid input delimiter specification %s: the delimiter must be either a single character or an escape sequence starting with \\."),
+ 		s);
++	  return '\0';
+ 	}
+     }
+ }
+@@ -406,7 +407,6 @@ main (int argc, char **argv)
+   char *default_cmd = "/bin/echo";
+   int (*read_args) PARAMS ((void)) = read_line;
+   void (*act_on_init_result)(void) = noop;
+-  int env_too_big = 0;
+   enum BC_INIT_STATUS bcstatus;
+ 
+   program_name = argv[0];
