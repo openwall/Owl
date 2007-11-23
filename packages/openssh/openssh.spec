@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.95 2006/11/09 18:05:04 ldv Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.96 2007/11/23 03:39:43 galaxy Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl20
+Release: owl21
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -92,6 +92,7 @@ PreReq: %name = %version-%release
 PreReq: /sbin/chkconfig, grep, shadow-utils, /dev/urandom
 Requires: tcp_wrappers >= 7.6-owl3.2
 Requires: owl-control >= 0.4, owl-control < 2.0
+Requires: owl-startup
 Requires: /var/empty, tcb, pam_userpass, pam_mktemp
 Obsoletes: ssh-server
 
@@ -261,6 +262,10 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Fri Nov 23 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.6.1p2-owl21
+- Added a dependency on owl-startup to openssh-server so it would be
+properly handled by RPM's dependency resolution routines.
+
 * Wed Nov 08 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl20
 - Backported upstream fix for a bug in the sshd privilege separation
 monitor that weakened its verification of successful authentication
