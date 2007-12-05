@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2007/12/05	Package: gettext
+Updated to 0.14.6.
+
 2007/11/19	Package: findutils
 Updated to 4.2.31.
 
@@ -511,4 +514,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.110 2007/11/19 20:25:36 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.111 2007/12/05 00:27:36 ldv Exp $
