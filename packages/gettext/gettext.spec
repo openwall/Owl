@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/gettext/gettext.spec,v 1.13 2006/04/06 22:35:42 ldv Exp $
+# $Owl: Owl/packages/gettext/gettext.spec,v 1.14 2007/12/05 00:26:56 ldv Exp $
 
 Summary: GNU libraries and utilities for producing multi-lingual messages.
 Name: gettext
-Version: 0.14.5
+Version: 0.14.6
 Release: owl1
 License: GPL/LGPL
 Group: Development/Tools
@@ -38,6 +38,8 @@ programs.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
 %configure --enable-shared --without-included-gettext
@@ -88,6 +90,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/*
 
 %changelog
+* Wed Dec 05 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.14.6-owl1
+- Updated to 0.14.6.
+
 * Thu Apr 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.14.5-owl1
 - Updated to 0.14.5.
 - Imported a bunch of patches from ALT's gettext-0.14.5-alt2 package.
