@@ -6,11 +6,12 @@
  lib/blkid/test_probe.in |    8 ++++----
  lib/et/com_err.texinfo  |    6 ++----
  lib/ext2fs/ismounted.c  |    6 ++----
+ lib/ss/Makefile.in      |    2 +-
  lib/ss/ss.pc.in         |    3 ++-
  misc/badblocks.c        |    2 +-
  misc/e2image.c          |    3 +--
  misc/util.c             |    4 ++--
- 12 files changed, 30 insertions(+), 31 deletions(-)
+ 13 files changed, 31 insertions(+), 32 deletions(-)
 
 diff --git a/debugfs/debugfs.c b/debugfs/debugfs.c
 index 6635471..c7f2165 100644
@@ -169,7 +170,7 @@ index def088c..7a00ffe 100644
  
  @iftex
 diff --git a/lib/ext2fs/ismounted.c b/lib/ext2fs/ismounted.c
-index 24246e0..cb563fd 100644
+index 684e91e..d6573ad 100644
 --- a/lib/ext2fs/ismounted.c
 +++ b/lib/ext2fs/ismounted.c
 @@ -251,10 +251,8 @@ static int is_swap_device(const char *file)
@@ -185,6 +186,19 @@ index 24246e0..cb563fd 100644
  		if ((cp = strchr(buf, ' ')) != NULL)
  			*cp = 0;
  		if ((cp = strchr(buf, '\t')) != NULL)
+diff --git a/lib/ss/Makefile.in b/lib/ss/Makefile.in
+index 276acc3..aa4f94b 100644
+--- a/lib/ss/Makefile.in
++++ b/lib/ss/Makefile.in
+@@ -170,7 +170,7 @@ test_ss: test_ss.o test_cmd.o $(LIBEXT2FS) $(LIBSS) $(LIBCOM_ERR)
+ 
+ check:: all test_ss
+ 	@echo "	RUN TEST test_ss"
+-	@(test_ss -f $(srcdir)/test_script >& test_out; exit 0)
++	@(LD_LIBRARY_PATH=$(LIB) DYLD_LIBRARY_PATH=$(LIB) ./test_ss -f $(srcdir)/test_script >& test_out; exit 0)
+ 	@if ! diff test_out $(srcdir)/test_script_expected > test.diff; then \
+ 		echo "Regression test for ss library failed!"; exit 1 ; fi
+ 
 diff --git a/lib/ss/ss.pc.in b/lib/ss/ss.pc.in
 index 0218fd5..ce284fc 100644
 --- a/lib/ss/ss.pc.in
@@ -210,7 +224,7 @@ index 88c5a74..29c5a5c 100644
  	    exit (1);
  	}
 diff --git a/misc/e2image.c b/misc/e2image.c
-index dd13cea..5743075 100644
+index b4836ea..d2d5503 100644
 --- a/misc/e2image.c
 +++ b/misc/e2image.c
 @@ -126,8 +126,7 @@ static void write_image_file(ext2_filsys fs, int fd)

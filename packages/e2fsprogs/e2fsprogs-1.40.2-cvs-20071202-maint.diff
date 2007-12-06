@@ -1,4 +1,4 @@
-v1.40.2-26-gf305918
+v1.40.2-33-g1113bf7
  debian/rules                     |    6 +
  e2fsck/e2fsck.c                  |    1 +
  e2fsck/e2fsck.conf.5.in          |   14 +
@@ -10,13 +10,23 @@ v1.40.2-26-gf305918
  e2fsck/super.c                   |   87 +-
  e2fsck/unix.c                    |   77 +-
  e2fsprogs.spec.in                |    1 +
+ lib/blkid/devname.c              |   22 +-
  lib/blkid/probe.c                |    5 +-
  lib/ext2fs/check_desc.c          |    2 +-
  lib/ext2fs/dblist_dir.c          |    9 +-
  lib/ext2fs/initialize.c          |   22 +-
+ lib/ext2fs/ismounted.c           |    2 +-
  lib/ext2fs/openfs.c              |    4 +
  lib/ext2fs/swapfs.c              |    2 +-
+ lib/ext2fs/unlink.c              |    4 +-
+ lib/ss/Makefile.in               |   22 +-
+ lib/ss/test_cmd.ct               |    6 +
+ lib/ss/test_script               |    8 +
+ lib/ss/test_script_expected      |   22 +
+ lib/ss/test_ss.c                 |  215 ++-
  misc/Makefile.in                 |    8 +-
+ misc/blkid.8.in                  |    2 +-
+ misc/e2image.c                   |    3 +-
  misc/fsck.c                      |   10 +
  misc/mke2fs.c                    |    2 +-
  misc/uuidgen.1.in                |    7 +-
@@ -45,7 +55,7 @@ v1.40.2-26-gf305918
  tests/r_move_itable/script       |    3 +-
  tests/r_resize_inode/script      |    3 +-
  tests/run_mke2fs                 |    4 +-
- 46 files changed, 4674 insertions(+), 395 deletions(-)
+ 56 files changed, 4865 insertions(+), 510 deletions(-)
 
 diff --git a/debian/rules b/debian/rules
 index bb3f1d3..842965e 100755
@@ -552,6 +562,54 @@ index 51b5538..2275a22 100644
  
  %install
  rm -rf $RPM_BUILD_ROOT
+diff --git a/lib/blkid/devname.c b/lib/blkid/devname.c
+index 1350076..fd64696 100644
+--- a/lib/blkid/devname.c
++++ b/lib/blkid/devname.c
+@@ -490,10 +490,11 @@ static int probe_all(blkid_cache cache, int only_if_new)
+ 
+ 		DBG(DEBUG_DEVNAME, printf("read partition name %s\n", ptname));
+ 
+-		/* Skip whole disk devs unless they have no partitions
+-		 * If we don't have a partition on this dev, also
++		/* Skip whole disk devs unless they have no partitions.
++		 * If base name of device has changed, also
+ 		 * check previous dev to see if it didn't have a partn.
+-		 * heuristic: partition name ends in a digit.
++		 * heuristic: partition name ends in a digit, & partition
++		 * names contain whole device name as substring.
+ 		 *
+ 		 * Skip extended partitions.
+ 		 * heuristic: size is 1
+@@ -502,6 +503,8 @@ static int probe_all(blkid_cache cache, int only_if_new)
+ 		 */
+ 
+ 		lens[which] = strlen(ptname);
++
++		/* ends in a digit, clearly a partition, so check */
+ 		if (isdigit(ptname[lens[which] - 1])) {
+ 			DBG(DEBUG_DEVNAME,
+ 			    printf("partition dev %s, devno 0x%04X\n",
+@@ -510,10 +513,15 @@ static int probe_all(blkid_cache cache, int only_if_new)
+ 			if (sz > 1)
+ 				probe_one(cache, ptname, devs[which], 0, 
+ 					  only_if_new);
+-			lens[which] = 0;
+-			lens[last] = 0;
+-		} else if (lens[last] && strncmp(ptnames[last], ptname,
+-						 lens[last])) {
++			lens[which] = 0;	/* mark as checked */
++		}
++
++		/*
++		 * If last was not checked because it looked like a whole-disk
++		 * dev, and the device's base name has changed,
++		 * check last as well.
++		 */
++		if (lens[last] && strncmp(ptnames[last], ptname, lens[last])) {
+ 			DBG(DEBUG_DEVNAME,
+ 			    printf("whole dev %s, devno 0x%04X\n",
+ 				   ptnames[last], (unsigned int) devs[last]));
 diff --git a/lib/blkid/probe.c b/lib/blkid/probe.c
 index 69a43b0..a188d82 100644
 --- a/lib/blkid/probe.c
@@ -653,6 +711,19 @@ index 9cc3d12..16e9eaa 100644
  	rem = ((super->s_blocks_count - super->s_first_data_block) %
  	       super->s_blocks_per_group);
  	if ((fs->group_desc_count == 1) && rem && (rem < overhead))
+diff --git a/lib/ext2fs/ismounted.c b/lib/ext2fs/ismounted.c
+index 24246e0..684e91e 100644
+--- a/lib/ext2fs/ismounted.c
++++ b/lib/ext2fs/ismounted.c
+@@ -147,7 +147,7 @@ static errcode_t check_mntent_file(const char *mtab_file, const char *file,
+ is_root:
+ #define TEST_FILE "/.ismount-test-file"		
+ 		*mount_flags |= EXT2_MF_ISROOT;
+-		fd = open(TEST_FILE, O_RDWR|O_CREAT);
++		fd = open(TEST_FILE, O_RDWR|O_CREAT, 0600);
+ 		if (fd < 0) {
+ 			if (errno == EROFS)
+ 				*mount_flags |= EXT2_MF_READONLY;
 diff --git a/lib/ext2fs/openfs.c b/lib/ext2fs/openfs.c
 index 55cc077..1ac1564 100644
 --- a/lib/ext2fs/openfs.c
@@ -688,6 +759,384 @@ index a40caa9..6576c59 100644
  	t->i_dir_acl = ext2fs_swab32(f->i_dir_acl);
  	if (!islnk || has_data_blocks ) {
  		for (i = 0; i < EXT2_N_BLOCKS; i++)
+diff --git a/lib/ext2fs/unlink.c b/lib/ext2fs/unlink.c
+index e7b2182..a48b877 100644
+--- a/lib/ext2fs/unlink.c
++++ b/lib/ext2fs/unlink.c
+@@ -31,7 +31,7 @@ struct link_struct  {
+  #pragma argsused
+ #endif
+ static int unlink_proc(struct ext2_dir_entry *dirent,
+-		     int	offset EXT2FS_ATTR((unused)),
++		     int	offset,
+ 		     int	blocksize EXT2FS_ATTR((unused)),
+ 		     char	*buf EXT2FS_ATTR((unused)),
+ 		     void	*priv_data)
+@@ -56,7 +56,7 @@ static int unlink_proc(struct ext2_dir_entry *dirent,
+ 			return 0;
+ 	}
+ 
+-	if (prev) 
++	if (offset)
+ 		prev->rec_len += dirent->rec_len;
+ 	else
+ 		dirent->inode = 0;
+diff --git a/lib/ss/Makefile.in b/lib/ss/Makefile.in
+index 40e1005..276acc3 100644
+--- a/lib/ss/Makefile.in
++++ b/lib/ss/Makefile.in
+@@ -46,8 +46,6 @@ XTRA_CFLAGS= -I$(srcdir)/../et
+ 
+ # for the library
+ 
+-LIB=	libss.a
+-
+ # with ss_err.o first, ss_err.h should get rebuilt first too.  should not
+ # be relying on this, though.
+ OBJS=	ss_err.o \
+@@ -101,6 +99,12 @@ std_rqs.c: std_rqs.ct mk_cmds
+ 	@echo "	MK_CMDS $@"
+ 	@DIR=$(srcdir) $(MK_CMDS) $(srcdir)/std_rqs.ct
+ 
++std_rqs.o: ss_err.h
++
++test_cmd.c: test_cmd.ct mk_cmds
++	@echo "	MK_CMDS $@"
++	@DIR=$(srcdir) $(MK_CMDS) $(srcdir)/test_cmd.ct
++
+ ss_err.c ss_err.h: ss_err.et
+ 	@echo "	COMPILE_ET ss_err.et"
+ 	@$(COMPILE_ET) $(srcdir)/ss_err.et
+@@ -159,9 +163,21 @@ uninstall::
+ 		$(DESTDIR)$(man1dir)/mk_cmds.1 
+ 	$(RM) -rf $(DESTDIR)$(includedir)/ss $(DESTDIR)$(datadir)/ss
+ 
++test_ss: test_ss.o test_cmd.o $(LIBEXT2FS) $(LIBSS) $(LIBCOM_ERR)
++	@echo "	LD $@"
++	@$(CC) -o $@ test_ss.o test_cmd.o $(ALL_CFLAGS) \
++		$(LIBSS) $(LIBCOM_ERR)
++
++check:: all test_ss
++	@echo "	RUN TEST test_ss"
++	@(test_ss -f $(srcdir)/test_script >& test_out; exit 0)
++	@if ! diff test_out $(srcdir)/test_script_expected > test.diff; then \
++		echo "Regression test for ss library failed!"; exit 1 ; fi
++
+ clean::
+ 	$(RM) -f ../libss.a libss.a mk_cmds ss_err.h ss_err.c std_rqs.c \
+-		*.o *~ \#* *.bak core 
++		tst_cmds.c test_ss test_out test.diff *.o *~ \#* *.bak core \
++		test_cmd.c
+ 
+ mostlyclean:: clean
+ distclean:: clean
+diff --git a/lib/ss/test_cmd.ct b/lib/ss/test_cmd.ct
+new file mode 100644
+index 0000000..fb49f78
+--- /dev/null
++++ b/lib/ss/test_cmd.ct
+@@ -0,0 +1,6 @@
++command_table test_cmds;
++
++request test_cmd, "Test command",
++	test_cmd, test;
++
++end;
+diff --git a/lib/ss/test_script b/lib/ss/test_script
+new file mode 100644
+index 0000000..8af7fdc
+--- /dev/null
++++ b/lib/ss/test_script
+@@ -0,0 +1,8 @@
++test
++test foo bar quux
++test bar quux
++quux bar
++quux
++test quux
++quit
++test foo bar
+diff --git a/lib/ss/test_script_expected b/lib/ss/test_script_expected
+new file mode 100644
+index 0000000..3f61d9a
+--- /dev/null
++++ b/lib/ss/test_script_expected
+@@ -0,0 +1,22 @@
++test_ss 1.0.  Type '?' for a list of commands.
++
++test_icount: test
++Hello, world!
++Args: 
++test_icount: test foo bar quux
++Hello, world!
++Args: 'foo', 'bar', 'quux'
++test_icount: test bar quux
++Hello, world!
++Args: 'bar', 'quux'
++test_icount: quux bar
++test_ss: Command not found quux
++test_icount: quux
++test_ss: Command not found quux
++test_icount: test quux
++Hello, world!
++Args: 'quux'
++test_icount: quit
++test_icount: test foo bar
++Hello, world!
++Args: 'foo', 'bar'
+diff --git a/lib/ss/test_ss.c b/lib/ss/test_ss.c
+index 4b67357..0b0bb58 100644
+--- a/lib/ss/test_ss.c
++++ b/lib/ss/test_ss.c
+@@ -1,42 +1,26 @@
+ /*
+- *------------------------------------------------------------------
+- *
+- * $Source$
+- * $Revision$
+- * $Date$
+- * $State$
+- * $Author$
+- * $Locker$
+- *
+- * $Log$
+- * Revision 1.13  1997/04/29 21:26:37  tytso
+- * Checkin of e2fsprogs 1.10
+- *
+- * Revision 1.1  1993/06/03  12:31:25  tytso
+- * Initial revision
+- *
+- * Revision 1.1  1991/12/21  16:41:47  eichin
+- * Initial revision
+- *
+- * Revision 1.1  1991/12/21  11:13:39  eichin
+- * Initial revision
+- *
+- * Revision 1.2  89/01/25  07:52:27  raeburn
+- * *** empty log message ***
++ * test_ss.c
+  * 
+- * Revision 1.1  88/01/23  15:50:26  raeburn
+- * Initial revision
+- *
++ * Copyright 1987, 1988 by MIT Student Information Processing Board
+  *
+- *------------------------------------------------------------------
++ * Permission to use, copy, modify, and distribute this software and
++ * its documentation for any purpose is hereby granted, provided that
++ * the names of M.I.T. and the M.I.T. S.I.P.B. not be used in
++ * advertising or publicity pertaining to distribution of the software
++ * without specific, written prior permission.  M.I.T. and the
++ * M.I.T. S.I.P.B. make no representations about the suitability of
++ * this software for any purpose.  It is provided "as is" without
++ * express or implied warranty.
++ 
+  */
+ 
+-#ifndef lint
+-static char const rcsid_test_c[] =
+-    "$Header$";
+-#endif /* lint */
+-
++#include <unistd.h>
++#include <stdlib.h>
+ #include <stdio.h>
++#ifdef HAVE_GETOPT_H
++#include <getopt.h>
++#endif
++#include <string.h>
+ #include "ss.h"
+ 
+ extern ss_request_table test_cmds;
+@@ -44,82 +28,108 @@ extern ss_request_table test_cmds;
+ #define TRUE 1
+ #define FALSE 0
+ 
+-static char def_subsystem_name[5] = "test";
+-static char version [4] = "1.0";
+-extern void ss_listen();
++static char subsystem_name[] = "test_ss";
++static char version[] = "1.0";
+ 
+-int main(argc, argv)
+-    int argc;
+-    char **argv;
++static int source_file(const char *cmd_file, int sci_idx)
+ {
+-    int code;
+-    char *argv0 = argv[0];
+-    char *initial_request = (char *)NULL;
+-    int quit = FALSE;	/* quit after processing request */
+-    int sci_idx;
+-    char *subsystem_name;
+-
+-    subsystem_name = def_subsystem_name;
++	FILE		*f;
++	char		buf[256];
++	char		*cp;
++	int		exit_status = 0;
++	int		retval;
++	int 		noecho;
+ 
+-    for (; *argv; ++argv, --argc) {
+-	printf("checking arg: %s\n", *argv);
+-	if (!strcmp(*argv, "-prompt")) {
+-	    if (argc == 1) {
+-		fprintf(stderr,
+-			"No argument supplied with -prompt\n");
+-		exit(1);
+-	    }
+-	    argc--; argv++;
+-	    subsystem_name = *argv;
++	if (strcmp(cmd_file, "-") == 0)
++		f = stdin;
++	else {
++		f = fopen(cmd_file, "r");
++		if (!f) {
++			perror(cmd_file);
++			exit(1);
++		}
+ 	}
+-	else if (!strcmp(*argv, "-request") || !strcmp(*argv, "-rq")) {
+-	    if (argc == 1) {
+-		fprintf(stderr,
+-			"No string supplied with -request.\n");
+-		exit(1);
+-	    }
+-	    argc--; argv++;
+-	    initial_request = *argv;
++	setbuf(stdout, NULL);
++	setbuf(stderr, NULL);
++	while (!feof(f)) {
++		if (fgets(buf, sizeof(buf), f) == NULL)
++			break;
++		if (buf[0] == '#')
++			continue;
++		noecho = 0;
++		if (buf[0] == '-') {
++			noecho = 1;
++			buf[0] = ' ';
++		}
++		cp = strchr(buf, '\n');
++		if (cp)
++			*cp = 0;
++		cp = strchr(buf, '\r');
++		if (cp)
++			*cp = 0;
++		if (!noecho)
++			printf("test_icount: %s\n", buf);
++		retval = ss_execute_line(sci_idx, buf);
++		if (retval) {
++			ss_perror(sci_idx, retval, buf);
++			exit_status++;
++		}
+ 	}
+-	else if (!strcmp(*argv, "-quit"))
+-	    quit = TRUE;
+-	else if (!strcmp(*argv, "-no_quit"))
+-	    quit = FALSE;
+-	else if (**argv == '-') {
+-	    fprintf(stderr, "Unknown control argument %s\n",
+-		    *argv);
+-	    fprintf(stderr,
+-	"Usage: %s [gateway] [ -prompt name ] [ -request name ] [ -quit ]\n",
+-		    argv0);
+-	    exit(1);
++	return exit_status;
++}
++
++int main(int argc, char **argv)
++{
++	int c, code;
++	char *request = (char *)NULL;
++	char		*cmd_file = 0;
++	int sci_idx;
++	int exit_status = 0;
++	const char	*usage = "Usage: test_ss [-R request] [-f cmd_file]";
++
++	while ((c = getopt (argc, argv, "wR:f:")) != EOF) {
++		switch (c) {
++		case 'R':
++			request = optarg;
++			break;
++		case 'f':
++			cmd_file = optarg;
++			break;
++		default:
++			com_err(argv[0], 0, usage);
++			exit(1);
++		}
+ 	}
+-    }
+ 
+-    sci_idx = ss_create_invocation(subsystem_name, version,
+-				   (char *)NULL, &test_cmds, &code);
+-    if (code) {
+-	ss_perror(sci_idx, code, "creating invocation");
+-	exit(1);
+-    }
++	sci_idx = ss_create_invocation(subsystem_name, version,
++				       (char *)NULL, &test_cmds, &code);
++	if (code) {
++		ss_perror(sci_idx, code, "creating invocation");
++		exit(1);
++	}
+ 
+-    (void) ss_add_request_table (sci_idx, &ss_std_requests, 1, &code);
+-    if (code) {
+-	ss_perror (sci_idx, code, "adding standard requests");
+-	exit (1);
+-    }
++	(void) ss_add_request_table (sci_idx, &ss_std_requests, 1, &code);
++	if (code) {
++		ss_perror (sci_idx, code, "adding standard requests");
++		exit (1);
++	}
+ 
+-    if (!quit)
+-	printf("test version %s.  Type '?' for a list of commands.\n\n",
++	printf("test_ss %s.  Type '?' for a list of commands.\n\n",
+ 	       version);
+ 
+-    if (initial_request != (char *)NULL) {
+-	code = ss_execute_line(sci_idx, initial_request);
+-	if (code != 0)
+-	    ss_perror(sci_idx, code, initial_request);
+-    }
+-    if (!quit || code)
+-	(void) ss_listen (sci_idx, &code);
+-    exit(0);
++	if (request) {
++		code = ss_execute_line(sci_idx, request);
++		if (code) {
++			ss_perror(sci_idx, code, request);
++			exit_status++;
++		}
++	} else if (cmd_file) {
++		exit_status = source_file(cmd_file, sci_idx);
++	} else {
++		ss_listen(sci_idx);
++	}
++
++	exit(exit_status);
+ }
+ 
+ 
+@@ -127,7 +137,12 @@ void test_cmd (argc, argv)
+     int argc;
+     char **argv;
+ {
+-    while (++argv, --argc)
+-	fputs(*argv, stdout);
++    printf("Hello, world!\n");
++    printf("Args: ");
++    while (++argv, --argc) {
++	printf("'%s'", *argv);
++	if (argc > 1)
++	    fputs(", ", stdout);
++    }
+     putchar ('\n');
+ }
 diff --git a/misc/Makefile.in b/misc/Makefile.in
 index ccad78c..db18985 100644
 --- a/misc/Makefile.in
@@ -718,6 +1167,33 @@ index ccad78c..db18985 100644
  	fi
  
  clean:
+diff --git a/misc/blkid.8.in b/misc/blkid.8.in
+index 44a833d..42ad0d7 100644
+--- a/misc/blkid.8.in
++++ b/misc/blkid.8.in
+@@ -40,7 +40,7 @@ blkid \- command\-line utility to locate/print block device attributes
+ The
+ .B blkid
+ program is the command-line interface to working with
+-.BR libuuid (3)
++.BR libblkid (3)
+ library.  It can determine the type of content (e.g. filesystem, swap) 
+ a block device holds, and also attributes (tokens, NAME=value pairs)
+ from the content metadata (e.g. LABEL or UUID fields).
+diff --git a/misc/e2image.c b/misc/e2image.c
+index dd13cea..b4836ea 100644
+--- a/misc/e2image.c
++++ b/misc/e2image.c
+@@ -440,7 +440,8 @@ static void output_meta_data_blocks(ext2_filsys fs, int fd)
+ 			}
+ 		}
+ 	}
+-	write_block(fd, zero_buf, sparse, 1, -1);
++	if (sparse)
++		write_block(fd, zero_buf, sparse-1, 1, -1);
+ 	free(zero_buf);
+ 	free(buf);
+ }
 diff --git a/misc/fsck.c b/misc/fsck.c
 index 1dcac25..108adf6 100644
 --- a/misc/fsck.c

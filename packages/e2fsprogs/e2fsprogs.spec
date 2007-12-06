@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.43 2007/11/16 13:45:27 ldv Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.44 2007/12/06 23:22:45 ldv Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -13,16 +13,17 @@
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
 Version: 1.40.2
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
 # http://repo.or.cz/w/e2fsprogs.git?a=shortlog;h=maint
-Patch0: e2fsprogs-1.40.2-cvs-20071015-maint.diff
+Patch0: e2fsprogs-1.40.2-cvs-20071202-maint.diff
 Patch1: e2fsprogs-1.40.2-owl-alt-maint-fixes.diff
 Patch2: e2fsprogs-1.40.2-alt-fixes.diff
 Patch3: e2fsprogs-1.40.2-owl-blkid-env.diff
 Patch4: e2fsprogs-1.40.2-owl-tests.diff
+Patch5: e2fsprogs-1.40.2-up-fixes.diff
 PreReq: /sbin/ldconfig
 BuildRequires: gettext, texinfo, automake, autoconf
 BuildRequires: glibc >= 0:2.2, sed >= 0:4.1
@@ -60,6 +61,7 @@ chmod -R u+w .
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 bzip2 -9k RELEASE-NOTES
 
 # remove these unwanted header files just in case
@@ -250,6 +252,10 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Thu Dec 06 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.40.2-owl2
+- Updated to post-1.40.2 snapshot 20071202 of e2fsprogs maint branch.
+- Applied upstream patch to fix integer overflows in libext2fs (CVE-2007-5497).
+
 * Thu Nov 15 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.40.2-owl1
 - Updated to post-1.40.2 snapshot 20071015 of e2fsprogs maint branch.
 - Removed the /proc workaround added in previous build.
