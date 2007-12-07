@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.44 2007/12/06 23:22:45 ldv Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.45 2007/12/07 00:43:28 ldv Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -18,7 +18,7 @@ License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
 # http://repo.or.cz/w/e2fsprogs.git?a=shortlog;h=maint
-Patch0: e2fsprogs-1.40.2-cvs-20071202-maint.diff
+Patch0: e2fsprogs-1.40.2-git-20071202-maint.diff
 Patch1: e2fsprogs-1.40.2-owl-alt-maint-fixes.diff
 Patch2: e2fsprogs-1.40.2-alt-fixes.diff
 Patch3: e2fsprogs-1.40.2-owl-blkid-env.diff
