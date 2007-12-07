@@ -12,6 +12,16 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2007/12/06	Package: e2fsprogs
+Applied upstream patch to fix integer overflows in libext2fs.
+This addresses a potential vulnerability where an untrusted filesystem
+can be corrupted in such a way that a program using libext2fs will
+allocate a buffer which is far too small.  This can lead to either a
+crash or potentially a heap-based buffer overflow.
+Thanks to Rafal Wojtczuk of McAfee Avert Labs for reporting this issue.
+Reference:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-5497
+
 2007/12/05	Package: gettext
 Updated to 0.14.6.
 
@@ -514,4 +524,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.111 2007/12/05 00:27:36 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.112 2007/12/07 00:32:55 ldv Exp $
