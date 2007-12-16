@@ -1,5 +1,5 @@
---- postfix-2.2.4/conf/postfix-files.orig	2005-03-14 13:13:16 +0000
-+++ postfix-2.2.4/conf/postfix-files	2005-06-30 12:54:25 +0000
+--- postfix/conf/postfix-files
++++ postfix/conf/postfix-files
 @@ -43,7 +43,7 @@
  #
  $config_directory:d:root:-:755:u
@@ -9,15 +9,16 @@
  $sample_directory:d:root:-:755:o
  $readme_directory:d:root:-:755
  $html_directory:d:root:-:755
-@@ -52,13 +52,15 @@ $queue_directory/bounce:d:$mail_owner:-:
+@@ -52,13 +52,16 @@ $queue_directory/bounce:d:$mail_owner:-:700:ucr
  $queue_directory/corrupt:d:$mail_owner:-:700:ucr
  $queue_directory/defer:d:$mail_owner:-:700:ucr
  $queue_directory/deferred:d:$mail_owner:-:700:ucr
++$queue_directory/dev:d:root:-:711:uc
 +$queue_directory/etc:d:root:-:711:uc
  $queue_directory/flush:d:$mail_owner:-:700:ucr
  $queue_directory/hold:d:$mail_owner:-:700:ucr
  $queue_directory/incoming:d:$mail_owner:-:700:ucr
-+$queue_directory/lib:d:root:-:711:uc
++$queue_directory/@LIB@:d:root:-:711:uc
 +$queue_directory/maildrop:d:$mail_owner:$setgid_group:1730:uc
  $queue_directory/private:d:$mail_owner:-:700:uc
 -$queue_directory/maildrop:d:$mail_owner:$setgid_group:730:uc
@@ -27,23 +28,32 @@
  $queue_directory/saved:d:$mail_owner:-:700:ucr
  $queue_directory/trace:d:$mail_owner:-:700:ucr
  $daemon_directory/anvil:f:root:-:755
-@@ -70,7 +72,6 @@ $daemon_directory/flush:f:root:-:755
- $daemon_directory/lmtp:f:root:-:755
+@@ -67,10 +70,8 @@ $daemon_directory/cleanup:f:root:-:755
+ $daemon_directory/discard:f:root:-:755
+ $daemon_directory/error:f:root:-:755
+ $daemon_directory/flush:f:root:-:755
+-#$daemon_directory/lmtp:f:root:-:755
  $daemon_directory/local:f:root:-:755
  $daemon_directory/master:f:root:-:755
 -$daemon_directory/oqmgr:f:root:-:755
  $daemon_directory/pickup:f:root:-:755
  $daemon_directory/pipe:f:root:-:755
  $daemon_directory/proxymap:f:root:-:755
-@@ -85,7 +86,6 @@ $daemon_directory/tlsmgr:f:root:-:755
+@@ -81,12 +82,10 @@ $daemon_directory/showq:f:root:-:755
+ $daemon_directory/smtp:f:root:-:755
+ $daemon_directory/smtpd:f:root:-:755
+ $daemon_directory/spawn:f:root:-:755
+-$daemon_directory/tlsmgr:f:root:-:755
  $daemon_directory/trivial-rewrite:f:root:-:755
  $daemon_directory/verify:f:root:-:755
  $daemon_directory/virtual:f:root:-:755
 -$daemon_directory/nqmgr:h:$daemon_directory/qmgr
+-$daemon_directory/lmtp:h:$daemon_directory/smtp
++$daemon_directory/lmtp:l:$daemon_directory/smtp
  $command_directory/postalias:f:root:-:755
  $command_directory/postcat:f:root:-:755
  $command_directory/postconf:f:root:-:755
-@@ -95,8 +95,8 @@ $command_directory/postlock:f:root:-:755
+@@ -96,8 +95,8 @@ $command_directory/postlock:f:root:-:755
  $command_directory/postlog:f:root:-:755
  $command_directory/postmap:f:root:-:755
  $command_directory/postsuper:f:root:-:755
@@ -54,9 +64,12 @@
  $sendmail_path:f:root:-:755
  $newaliases_path:l:$sendmail_path
  $mailq_path:l:$sendmail_path
-@@ -113,18 +113,18 @@ $config_directory/install.cf:f:root:-:64
- $config_directory/main.cf:f:root:-:644:p
+@@ -113,20 +112,21 @@ $config_directory/generics:f:root:-:644:o
+ $config_directory/header_checks:f:root:-:644:p
+ $config_directory/install.cf:f:root:-:644:o
  $config_directory/main.cf.default:f:root:-:644
++$config_directory/main.cf.params:f:root:-:644
+ $config_directory/main.cf:f:root:-:644:p
  $config_directory/makedefs.out:f:root:-:644
 -$config_directory/master.cf:f:root:-:644:p
 +$config_directory/master.cf:f:root:-:600:p
@@ -79,7 +92,7 @@
  $manpage_directory/man1/mailq.1:f:root:-:644
  $manpage_directory/man1/newaliases.1:f:root:-:644
  $manpage_directory/man1/postalias.1:f:root:-:644
-@@ -169,8 +169,6 @@ $manpage_directory/man8/flush.8:f:root:-
+@@ -172,8 +172,6 @@ $manpage_directory/man8/flush.8:f:root:-:644
  $manpage_directory/man8/lmtp.8:f:root:-:644
  $manpage_directory/man8/local.8:f:root:-:644
  $manpage_directory/man8/master.8:f:root:-:644
@@ -88,3 +101,11 @@
  $manpage_directory/man8/pickup.8:f:root:-:644
  $manpage_directory/man8/pipe.8:f:root:-:644
  $manpage_directory/man8/proxymap.8:f:root:-:644
+@@ -342,7 +340,6 @@ $html_directory/master.8.html:f:root:-:644
+ $html_directory/mysql_table.5.html:f:root:-:644
+ $html_directory/nisplus_table.5.html:f:root:-:644
+ $html_directory/newaliases.1.html:h:$html_directory/mailq.1.html:-:644
+-$html_directory/oqmgr.8.html:f:root:-:644
+ $html_directory/pcre_table.5.html:f:root:-:644
+ $html_directory/pgsql_table.5.html:f:root:-:644
+ $html_directory/pickup.8.html:f:root:-:644

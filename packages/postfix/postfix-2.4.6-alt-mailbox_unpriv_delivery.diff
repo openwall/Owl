@@ -1,7 +1,6 @@
-diff -upk.orig postfix-2.2.5.orig/proto/postconf.proto postfix-2.2.5/proto/postconf.proto
---- postfix-2.2.5.orig/proto/postconf.proto	2005-11-06 19:46:54 +0000
-+++ postfix-2.2.5/proto/postconf.proto	2005-11-06 19:47:15 +0000
-@@ -2345,6 +2345,11 @@ mailbox_command = /some/where/maildrop -
+--- postfix/proto/postconf.proto
++++ postfix/proto/postconf.proto
+@@ -2438,6 +2438,11 @@ mailbox_command = /some/where/maildrop -d "$USER"
          -f "$SENDER" "$EXTENSION"
  </pre>
  
@@ -13,10 +12,9 @@ diff -upk.orig postfix-2.2.5.orig/proto/postconf.proto postfix-2.2.5/proto/postc
  %PARAM mailbox_size_limit 51200000
  
  <p> The maximal size of any local(8) individual mailbox or maildir
-diff -upk.orig postfix-2.2.5.orig/src/global/mail_params.h postfix-2.2.5/src/global/mail_params.h
---- postfix-2.2.5.orig/src/global/mail_params.h	2005-11-06 19:46:54 +0000
-+++ postfix-2.2.5/src/global/mail_params.h	2005-11-06 19:47:15 +0000
-@@ -470,6 +470,10 @@ extern char *var_mail_spool_dir;
+--- postfix/src/global/mail_params.h
++++ postfix/src/global/mail_params.h
+@@ -486,6 +486,10 @@ extern char *var_mail_spool_dir;
  #define DEF_HOME_MAILBOX	""
  extern char *var_home_mailbox;
  
@@ -27,20 +25,9 @@ diff -upk.orig postfix-2.2.5.orig/src/global/mail_params.h postfix-2.2.5/src/glo
  #define VAR_MAILBOX_COMMAND	"mailbox_command"
  #define DEF_MAILBOX_COMMAND	""
  extern char *var_mailbox_command;
-diff -upk.orig postfix-2.2.5.orig/src/local/local.c postfix-2.2.5/src/local/local.c
---- postfix-2.2.5.orig/src/local/local.c	2005-11-06 19:46:54 +0000
-+++ postfix-2.2.5/src/local/local.c	2005-11-06 19:47:15 +0000
-@@ -374,6 +374,9 @@
- /* .IP "\fBmailbox_command (empty)\fR"
- /*	Optional external command that the \fBlocal\fR(8) delivery agent should
- /*	use for mailbox delivery.
-+/* .IP "\fBmailbox_unpriv_delivery (yes)\fR"
-+/*	If enabled, then local(8) will not apply root privileges
-+/*	for mailbox delivery.
- /* .IP "\fBhome_mailbox (empty)\fR"
- /*	Optional pathname of a mailbox file relative to a \fBlocal\fR(8) user's
- /*	home directory.
-@@ -576,6 +579,7 @@ char   *var_allow_files;
+--- postfix/src/local/local.c
++++ postfix/src/local/local.c
+@@ -616,6 +616,7 @@ char   *var_allow_commands;
  char   *var_alias_maps;
  int     var_dup_filter_limit;
  char   *var_home_mailbox;
@@ -48,18 +35,17 @@ diff -upk.orig postfix-2.2.5.orig/src/local/local.c postfix-2.2.5/src/local/loca
  char   *var_mailbox_command;
  char   *var_mailbox_cmd_maps;
  char   *var_rcpt_fdelim;
-@@ -835,6 +839,7 @@ int     main(int argc, char **argv)
- 	VAR_EXP_OWN_ALIAS, DEF_EXP_OWN_ALIAS, &var_exp_own_alias,
+@@ -886,6 +887,7 @@ int     main(int argc, char **argv)
  	VAR_STAT_HOME_DIR, DEF_STAT_HOME_DIR, &var_stat_home_dir,
  	VAR_MAILTOOL_COMPAT, DEF_MAILTOOL_COMPAT, &var_mailtool_compat,
+ 	VAR_FROZEN_DELIVERED, DEF_FROZEN_DELIVERED, &var_frozen_delivered,
 +	VAR_MAILBOX_UNPRIV_DELIVERY, DEF_MAILBOX_UNPRIV_DELIVERY, &var_mailbox_unpriv_delivery,
  	0,
      };
  
-diff -upk.orig postfix-2.2.5.orig/src/local/mailbox.c postfix-2.2.5/src/local/mailbox.c
---- postfix-2.2.5.orig/src/local/mailbox.c	2002-11-16 23:44:57 +0000
-+++ postfix-2.2.5/src/local/mailbox.c	2005-11-06 19:53:52 +0000
-@@ -146,8 +146,9 @@ static int deliver_mailbox_file(LOCAL_ST
+--- postfix/src/local/mailbox.c
++++ postfix/src/local/mailbox.c
+@@ -144,8 +144,9 @@ static int deliver_mailbox_file(LOCAL_STATE state, USER_ATTR usr_attr)
       * Laboratory, USA).
       * 
       * If delivering to the mail spool directory, and the spool directory is
@@ -71,7 +57,7 @@ diff -upk.orig postfix-2.2.5.orig/src/local/mailbox.c postfix-2.2.5/src/local/ma
       * 
       * Otherwise, use root privileges and chown the mailbox.
       */
-@@ -156,6 +157,10 @@ static int deliver_mailbox_file(LOCAL_ST
+@@ -154,6 +155,10 @@ static int deliver_mailbox_file(LOCAL_STATE state, USER_ATTR usr_attr)
  	|| (st.st_mode & S_IWOTH) != 0) {
  	spool_uid = usr_attr.uid;
  	spool_gid = usr_attr.gid;

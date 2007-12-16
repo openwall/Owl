@@ -1,0 +1,155 @@
+--- postfix/src/global/mail_params.h
++++ postfix/src/global/mail_params.h
+@@ -72,7 +72,7 @@ extern char *var_sgid_group;
+ extern gid_t var_sgid_gid;
+ 
+ #define VAR_DEFAULT_PRIVS	"default_privs"
+-#define DEF_DEFAULT_PRIVS	"nobody"
++#define DEF_DEFAULT_PRIVS	"postman"
+ extern char *var_default_privs;
+ extern uid_t var_default_uid;
+ extern gid_t var_default_gid;
+@@ -339,7 +339,7 @@ extern bool var_broken_auth_clients;
+   * Standards violation: disable VRFY.
+   */
+ #define VAR_DISABLE_VRFY_CMD	"disable_vrfy_command"
+-#define DEF_DISABLE_VRFY_CMD	0
++#define DEF_DISABLE_VRFY_CMD	1
+ extern bool var_disable_vrfy_cmd;
+ 
+  /*
+@@ -431,7 +431,7 @@ extern bool var_percent_hack;
+   */
+ #define VAR_ALIAS_MAPS		"alias_maps"
+ #ifdef HAS_NIS
+-#define DEF_ALIAS_MAPS		ALIAS_DB_MAP ", nis:mail.aliases"
++#define DEF_ALIAS_MAPS		ALIAS_DB_MAP
+ #else
+ #define DEF_ALIAS_MAPS		ALIAS_DB_MAP
+ #endif
+@@ -441,7 +441,7 @@ extern char *var_alias_maps;
+   * Local delivery: to BIFF or not to BIFF.
+   */
+ #define VAR_BIFF		"biff"
+-#define DEF_BIFF		1
++#define DEF_BIFF		0
+ extern bool var_biff;
+ 
+  /*
+@@ -1741,7 +1741,7 @@ extern int var_trigger_timeout;
+ extern char *var_mynetworks;
+ 
+ #define VAR_MYNETWORKS_STYLE	"mynetworks_style"
+-#define DEF_MYNETWORKS_STYLE	MYNETWORKS_STYLE_SUBNET
++#define DEF_MYNETWORKS_STYLE	MYNETWORKS_STYLE_HOST
+ extern char *var_mynetworks_style;
+ 
+ #define	MYNETWORKS_STYLE_CLASS	"class"
+@@ -1773,7 +1773,7 @@ extern char *var_smtpd_relay_ccerts;
+ extern char *var_client_checks;
+ 
+ #define VAR_HELO_REQUIRED	"smtpd_helo_required"
+-#define DEF_HELO_REQUIRED	0
++#define DEF_HELO_REQUIRED	1
+ extern bool var_helo_required;
+ 
+ #define VAR_HELO_CHECKS		"smtpd_helo_restrictions"
+@@ -1789,11 +1789,11 @@ extern char *var_mail_checks;
+ extern char *var_rcpt_checks;
+ 
+ #define VAR_ETRN_CHECKS		"smtpd_etrn_restrictions"
+-#define DEF_ETRN_CHECKS		""
++#define DEF_ETRN_CHECKS		PERMIT_MYNETWORKS ", " REJECT_ALL
+ extern char *var_etrn_checks;
+ 
+ #define VAR_DATA_CHECKS		"smtpd_data_restrictions"
+-#define DEF_DATA_CHECKS		""
++#define DEF_DATA_CHECKS		REJECT_UNAUTH_PIPE
+ extern char *var_data_checks;
+ 
+ #define VAR_EOD_CHECKS		"smtpd_end_of_data_restrictions"
+@@ -2115,7 +2115,7 @@ extern char *var_virt_uid_maps;
+ extern char *var_virt_gid_maps;
+ 
+ #define VAR_VIRT_MINUID			"virtual_minimum_uid"
+-#define DEF_VIRT_MINUID			100
++#define DEF_VIRT_MINUID			500
+ extern int var_virt_minimum_uid;
+ 
+ #define VAR_VIRT_MAILBOX_BASE		"virtual_mailbox_base"
+--- postfix/src/local/local.c
++++ postfix/src/local/local.c
+@@ -359,7 +359,7 @@
+ /* COMPATIBILITY CONTROLS
+ /* .ad
+ /* .fi
+-/* .IP "\fBbiff (yes)\fR"
++/* .IP "\fBbiff (no)\fR"
+ /*	Whether or not to use the local biff service.
+ /* .IP "\fBexpand_owner_alias (no)\fR"
+ /*	When delivering to an alias "aliasname" that has an "owner-aliasname"
+@@ -472,7 +472,7 @@
+ /* .IP "\fBcommand_expansion_filter (see 'postconf -d' output)\fR"
+ /*	Restrict the characters that the \fBlocal\fR(8) delivery agent allows in
+ /*	$name expansions of $mailbox_command.
+-/* .IP "\fBdefault_privs (nobody)\fR"
++/* .IP "\fBdefault_privs (postman)\fR"
+ /*	The default rights used by the \fBlocal\fR(8) delivery agent for delivery
+ /*	to external file or command.
+ /* .IP "\fBforward_expansion_filter (see 'postconf -d' output)\fR"
+--- postfix/src/smtpd/smtpd.c
++++ postfix/src/smtpd/smtpd.c
+@@ -620,7 +620,7 @@
+ /* .IP "\fBsmtpd_client_restrictions (empty)\fR"
+ /*	Optional SMTP server access restrictions in the context of a client
+ /*	SMTP connection request.
+-/* .IP "\fBsmtpd_helo_required (no)\fR"
++/* .IP "\fBsmtpd_helo_required (yes)\fR"
+ /*	Require that a remote SMTP client introduces itself at the beginning
+ /*	of an SMTP session with the HELO or EHLO command.
+ /* .IP "\fBsmtpd_helo_restrictions (empty)\fR"
+@@ -632,7 +632,7 @@
+ /* .IP "\fBsmtpd_recipient_restrictions (permit_mynetworks, reject_unauth_destination)\fR"
+ /*	The access restrictions that the Postfix SMTP server applies in
+ /*	the context of the RCPT TO command.
+-/* .IP "\fBsmtpd_etrn_restrictions (empty)\fR"
++/* .IP "\fBsmtpd_etrn_restrictions (permit_mynetworks, reject)\fR"
+ /*	Optional SMTP server access restrictions in the context of a client
+ /*	ETRN request.
+ /* .IP "\fBallow_untrusted_routing (no)\fR"
+@@ -648,7 +648,7 @@
+ /*	only domains whose primary MX hosts match the listed networks.
+ /* .PP
+ /*	Available in Postfix version 2.0 and later:
+-/* .IP "\fBsmtpd_data_restrictions (empty)\fR"
++/* .IP "\fBsmtpd_data_restrictions (reject_unauth_pipelining)\fR"
+ /*	Optional access restrictions that the Postfix SMTP server applies
+ /*	in the context of the SMTP DATA command.
+ /* .IP "\fBsmtpd_expansion_filter (see 'postconf -d' output)\fR"
+--- postfix/src/util/sys_defs.h
++++ postfix/src/util/sys_defs.h
+@@ -687,11 +687,11 @@ extern int initgroups(const char *, int);
+ #define HAS_FLOCK_LOCK
+ #define HAS_FCNTL_LOCK
+ #define INTERNAL_LOCK	MYFLOCK_STYLE_FLOCK
+-#define DEF_MAILBOX_LOCK "fcntl, dotlock"	/* RedHat >= 4.x */
++#define DEF_MAILBOX_LOCK "fcntl"	/* Owl */
+ #define HAS_FSYNC
+ #define HAS_DB
+ #define DEF_DB_TYPE	"hash"
+-#define ALIAS_DB_MAP	"hash:/etc/aliases"
++#define ALIAS_DB_MAP	"hash:/etc/postfix/aliases"
+ #define HAS_NIS
+ #define GETTIMEOFDAY(t)	gettimeofday(t,(struct timezone *) 0)
+ #define ROOT_PATH	"/bin:/usr/bin:/sbin:/usr/sbin"
+--- postfix/src/virtual/virtual.c
++++ postfix/src/virtual/virtual.c
+@@ -166,7 +166,7 @@
+ /* .IP "\fBvirtual_mailbox_maps (empty)\fR"
+ /*	Optional lookup tables with all valid addresses in the domains that
+ /*	match $virtual_mailbox_domains.
+-/* .IP "\fBvirtual_minimum_uid (100)\fR"
++/* .IP "\fBvirtual_minimum_uid (500)\fR"
+ /*	The minimum user ID value that the \fBvirtual\fR(8) delivery agent accepts
+ /*	as a result from $virtual_uid_maps table lookup.
+ /* .IP "\fBvirtual_uid_maps (empty)\fR"

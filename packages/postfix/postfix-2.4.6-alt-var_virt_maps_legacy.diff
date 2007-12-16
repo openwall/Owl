@@ -1,0 +1,10 @@
+--- postfix/src/postconf/install_table.h
++++ postfix/src/postconf/install_table.h
+@@ -1 +1,2 @@
+     VAR_CONFIG_DIR, DEF_CONFIG_DIR, &var_config_dir, 1, 0,
++    "virtual_maps", "", &var_virt_maps_legacy, 0, 0,
+--- postfix/src/postconf/install_vars.h
++++ postfix/src/postconf/install_vars.h
+@@ -1 +1,2 @@
+ char   *var_config_dir;
++char   *var_virt_maps_legacy;

@@ -1,7 +1,6 @@
-diff -upk.orig postfix-2.2.4.orig/src/local/dotforward.c postfix-2.2.4/src/local/dotforward.c
---- postfix-2.2.4.orig/src/local/dotforward.c	2002-11-16 19:59:39 +0000
-+++ postfix-2.2.4/src/local/dotforward.c	2005-02-26 22:49:30 +0000
-@@ -235,6 +235,17 @@ int     deliver_dotforward(LOCAL_STATE s
+--- postfix/src/local/dotforward.c
++++ postfix/src/local/dotforward.c
+@@ -238,6 +238,17 @@ int     deliver_dotforward(LOCAL_STATE state, USER_ATTR usr_attr, int *statusp)
  		msg_warn("file %s is world writable", STR(path));
  	    } else if ((fd = open_as(STR(path), O_RDONLY, 0, usr_attr.uid, usr_attr.gid)) < 0) {
  		msg_warn("cannot open file %s: %m", STR(path));
@@ -17,5 +16,5 @@ diff -upk.orig postfix-2.2.4.orig/src/local/dotforward.c postfix-2.2.4/src/local
 +		msg_warn("file %s is a sparse file", STR(path));
 +		close(fd);
  	    } else {
- 		close_on_exec(fd, CLOSE_ON_EXEC);
- 		addr_count = 0;
+ 
+ 		/*

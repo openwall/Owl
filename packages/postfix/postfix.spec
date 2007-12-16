@@ -1,37 +1,43 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.40 2006/09/05 20:01:30 galaxy Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.41 2007/12/16 21:40:40 ldv Exp $
 
 Summary: Postfix mail system.
 Name: postfix
-Version: 2.2.11
-Release: owl2
+Version: 2.4.6
+Release: owl1
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
 URL: http://www.postfix.org/
 Source0: ftp://ftp.porcupine.org/mirrors/postfix-release/official/%name-%version.tar.gz
 Source1: aliases
-Source2: postfix.init
-Source3: postfix.control
-Source4: postfix-master-chrootify.awk
-Source5: postfix-master-comment.awk
+Source2: main.cf
+Source3: postfix.init
+Source4: postfix.control
+Source5: postfix-master-chrootify.awk
 Source6: postfix-lorder.sh
 Source7: postfix-oclosure.sh
 Source8: postqueue.control
-Patch0: postfix-2.2.4-owl-sparse-hack.diff
-Patch1: postfix-2.2.4-mjt-var_command_maxtime.diff
-Patch2: postfix-2.2.4-alt-check-warn.diff
-Patch3: postfix-2.2.11-alt-install.diff
-Patch4: postfix-2.2.4-alt-owl-defaults.diff
-Patch5: postfix-2.2.4-alt-owl-filelist.diff
-Patch6: postfix-2.2.4-alt-post-install.diff
-Patch7: postfix-2.2.4-alt-owl-config.diff
-Patch8: postfix-2.2.4-alt-owl-shared.diff
-Patch9: postfix-2.2.4-owl-postfix-script.diff
-Patch10: postfix-2.2.5-alt-owl-local_minimum_uid.diff
-Patch11: postfix-2.2.5-alt-mailbox_unpriv_delivery.diff
-Patch12: postfix-2.2.5-deb-man.diff
+Source9: README.Owl
+Patch0: postfix-2.4.6-owl-sparse-hack.diff
+Patch1: postfix-2.4.6-mjt-var_command_maxtime.diff
+Patch2: postfix-2.4.6-alt-script.diff
+Patch3: postfix-2.4.6-owl-update-chroot.diff
+Patch4: postfix-2.4.6-alt-install.diff
+Patch5: postfix-2.4.6-alt-post-install.diff
+Patch6: postfix-2.4.6-alt-owl-filelist.diff
+Patch7: postfix-2.4.6-alt-owl-config.diff
+Patch8: postfix-2.4.6-alt-owl-local_minimum_uid.diff
+Patch9: postfix-2.4.6-alt-mailbox_unpriv_delivery.diff
+Patch10: postfix-2.4.6-alt-owl-shared.diff
+Patch11: postfix-2.4.6-alt-main.cf.params.diff
+Patch12: postfix-2.4.6-alt-var_virt_maps_legacy.diff
+Patch13: postfix-2.4.6-alt-warnings.diff
+Patch14: postfix-2.4.6-alt-postconf-E.diff
+Patch15: postfix-2.4.6-alt-owl-defaults.diff
+Patch16: postfix-2.4.6-alt-owl-doc.diff
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: owl-control >= 0.4, owl-control < 2.0
+Requires: owl-startup
 BuildRequires: db4-devel >= 4.2, pcre-devel, tinycdb-devel, sed >= 4.1.1
 Conflicts: sendmail, qmail
 Provides: MTA, smtpd, smtpdaemon
@@ -82,19 +88,24 @@ compatible enough to not upset your users.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
 
-install -p -m644 %_sourcedir/aliases conf/
+install -pm644 %_sourcedir/aliases conf/
+install -pm644 %_sourcedir/README.Owl README_FILES/
 
 # Add objs and objs-print makefile targets.
 sed -i 's/^update /&objs /' Makefile.in
-sed -i 's/^# do not edit below this line/objs: $(OBJS)\n\nobjs-print: objs\n\tls -1 $(OBJS)\n\n&/' \
+sed -i 's/^# do not edit below this line/objs: $(OBJS)\n\nobjs-print: objs\n\tls $(OBJS)\n\n&/' \
 	src/*/Makefile.in
 
-# Correct master.cf
+# Change services to run chrooted.
 awk -f %_sourcedir/postfix-master-chrootify.awk <conf/master.cf >conf/master.cf.new
 mv conf/master.cf.new conf/master.cf
-awk -f %_sourcedir/postfix-master-comment.awk <conf/master.cf >conf/master.cf.new
-mv conf/master.cf.new conf/master.cf
+
+# Comment out smtp and smtpd.
 sed -i 's,^\(smtp[[:space:]]\+inet[[:space:]]\+.*[[:space:]]\+smtpd[[:space:]]*\)$,#\1,' \
 	conf/master.cf
 
@@ -104,9 +115,12 @@ sed -i '/\(LICENSE\|makedefs\.out\|\(html\|manpage\|readme\|sample\)_directory\)
 	conf/postfix-files
 rm conf/LICENSE
 
+# Adjust arch-dependent paths.
+sed -i 's/@LIB@/%_lib/' conf/postfix-{files,script}
+
 %build
 export MAKEFLAGS="$MAKEFLAGS DEF_MAIL_VERSION=%version"
-OPT="%optflags -Wall -Wno-comment"
+OPT="%optflags -Wall -Wno-comment -Wno-missing-braces"
 CCARGS="\
  -DDEF_COMMAND_DIR=\\\"%command_directory\\\" \
  -DDEF_CONFIG_DIR=\\\"%config_directory\\\" \
@@ -121,26 +135,25 @@ CCARGS="\
  -DDEF_SAMPLE_DIR=\\\"%readme_directory\\\" \
  -DDEF_SENDMAIL_PATH=\\\"%sendmail_path\\\" \
 "
-DICT_LIBS="-ldl -ldb -lcdb `pcre-config --libs`"
-DICT_ARGS="$CCARGS -DHAS_CDB -DHAS_PCRE `pcre-config --cflags`"
+DICT_LIBS="-ldb -lcdb `pcre-config --libs`"
+DICT_ARGS="-DHAS_CDB -DHAS_PCRE `pcre-config --cflags`"
 SYSLIBS="-lnsl -lresolv"
 
 pushd src
 
 # 0. Prepare.
-%__make	-C .. \
-	tidy makefiles \
+%__make	-C .. tidy makefiles \
 	SYSLIBS="$SYSLIBS" \
 	AUXLIBS= \
-	CCARGS="$DICT_ARGS -UUSE_TLS" \
+	CCARGS="$CCARGS $DICT_ARGS -UUSE_TLS" \
 	OPT="$OPT" \
 	DEBUG= \
 	NO_IPV6=1
 
 # 1. build all static libs objects with -fPIC.
-%__make -C .. \
-	update DEBUG='-fPIC' PROG= \
-	DIRS="src/util src/global src/dns src/master src/tls"
+%__make -C .. update \
+	DEBUG='-fPIC' PROG= \
+	DIRS='src/util src/global src/dns src/tls src/xsasl src/milter src/master'
 
 # 2. separate libs objects into dict-dependent and others.
 for a in */*.a; do
@@ -227,6 +240,10 @@ env -i "LD_LIBRARY_PATH=%buildroot%_libdir" \
 chmod 700 %buildroot%daemon_directory/postqueuedir
 ln -s ../..%daemon_directory/postqueuedir/postqueue %buildroot%command_directory/
 
+# Install minimal main.cf
+mv %buildroot%config_directory/main.cf{,.dist}
+install -pm644 %_sourcedir/main.cf %buildroot%config_directory/
+
 install -pD -m700 %_sourcedir/postfix.init \
 	%buildroot/etc/rc.d/init.d/postfix
 install -pD -m700 %_sourcedir/postfix.control \
@@ -278,7 +295,10 @@ fi
 
 %post
 /sbin/ldconfig
-%config_directory/post-install upgrade-package
+%config_directory/post-install \
+	config_directory=%config_directory \
+	daemon_directory=%daemon_directory \
+	upgrade-package
 %command_directory/postalias %config_directory/aliases
 %command_directory/postfix check
 if [ $1 -ge 2 ]; then
@@ -307,10 +327,11 @@ fi
 
 %files -f postfix.files
 %defattr (-,root,root)
-%doc *README* COMPATIBILITY HISTORY.bz2 LICENSE PORTING RELEASE_NOTES
+%doc COMPATIBILITY HISTORY.bz2 LICENSE PORTING README_FILES RELEASE_NOTES
 %doc examples html
 %doc %config_directory/LICENSE
 %doc %config_directory/README_FILES
+%config %config_directory/main.cf.dist
 %config /etc/rc.d/init.d/postfix
 /etc/control.d/facilities/*
 /etc/aliases
@@ -328,6 +349,21 @@ fi
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
+* Sun Dec 16 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.4.6-owl1
+- Updated to 2.4.6.
+- Dropped aliases for pseudo-user accounts and some addresses
+suggested by RFC 2142 from default alias file.
+- Changed several default parameters values:
+biff = no
+smtpd_data_restrictions = reject_unauth_pipelining
+smtpd_etrn_restrictions = permit_mynetworks, reject
+smtpd_helo_required = yes
+- The original main.cf is now delivered as /usr/share/postfix/main.cf.dist,
+rather than cluttering /etc/postfix/main.cf with comments.
+- Packaged README.Owl file describing notable differences between
+the Owl Postfix package and the upstream source.
+- Added "status" mode to startup script.
+
 * Sun Sep 03 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:2.2.11-owl2
 - Relaxed the build dependency on db4-devel.
 

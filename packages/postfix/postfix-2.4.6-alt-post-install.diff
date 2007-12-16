@@ -1,7 +1,39 @@
-diff -upk.orig postfix-2.2.4.orig/conf/post-install postfix-2.2.4/conf/post-install
---- postfix-2.2.4.orig/conf/post-install	2005-04-15 11:52:19 +0000
-+++ postfix-2.2.4/conf/post-install	2005-06-29 17:23:26 +0000
-@@ -459,7 +459,7 @@ test -n "$create" && {
+--- postfix/conf/post-install
++++ postfix/conf/post-install
+@@ -387,29 +387,11 @@ for name in daemon_directory command_directory queue_directory mail_owner \
+     setgid_group sendmail_path newaliases_path mailq_path manpage_directory \
+     sample_directory readme_directory html_directory
+ do
+-    eval test \"\$$name\" = \"`$POSTCONF -c $config_directory -h $name`\" || {
+-	override=1
+-	break
+-    }
++    eval test \"\$$name\" = \"`$POSTCONF -c $config_directory -h $name`\" ||
++	eval \$POSTCONF -c \$config_directory -e \"\$name = \$$name\" ||
++	exit 1
+ done
+ 
+-test -n "$override" && {
+-    $POSTCONF -c $config_directory -e \
+-	"daemon_directory = $daemon_directory" \
+-	"command_directory = $command_directory" \
+-	"queue_directory = $queue_directory" \
+-	"mail_owner = $mail_owner" \
+-	"setgid_group = $setgid_group" \
+-	"sendmail_path = $sendmail_path" \
+-	"mailq_path = $mailq_path" \
+-	"newaliases_path = $newaliases_path" \
+-	"html_directory = $html_directory" \
+-	"manpage_directory = $manpage_directory" \
+-	"sample_directory = $sample_directory" \
+-	"readme_directory = $readme_directory" \
+-    || exit 1
+-}
+-
+ # Use file/directory status information in $config_directory/postfix-files.
+ 
+ test -n "$create" && {
+@@ -459,7 +441,7 @@ test -n "$create" && {
  	# Create missing directories with proper owner/group/mode settings.
  	if [ -n "$create" -a "$type" = "d" -a -n "$create_flag" -a ! -d "$path" ]
  	then
@@ -10,13 +42,14 @@ diff -upk.orig postfix-2.2.4.orig/conf/post-install postfix-2.2.4/conf/post-inst
  	    set_permission=1
  	# Update all owner/group/mode settings.
  	elif [ -n "$set_perms" ]
-@@ -471,13 +471,13 @@ test -n "$create" && {
+@@ -471,14 +453,14 @@ test -n "$create" && {
  	    set_permission=1
  	fi
  	test -n "$set_permission" && {
 -	    chown $recursive $owner $path || exit 1
 +	    chown $recursive $owner -- $path || exit 1
  	    test -z "$group" || chgrp $recursive $group $path || exit 1
+ 	    # Don't "chmod -R"; queue file status is encoded in mode bits.
  	    if [ "$type" = "d" -a -n "$recursive" ]
  	    then
 -		find $path -type d -exec chmod $mode "{}" ";"
@@ -27,7 +60,7 @@ diff -upk.orig postfix-2.2.4.orig/conf/post-install postfix-2.2.4/conf/post-inst
  	    fi || exit 1
  	}
      done
-@@ -493,7 +493,7 @@ test -n "$upgrade_conf" && {
+@@ -494,7 +476,7 @@ test -n "$upgrade_conf" && {
      grep '^relay' $config_directory/master.cf >/dev/null || {
  	echo Editing $config_directory/master.cf, adding missing entry for relay service
  	cat >>$config_directory/master.cf <<EOF || exit 1
@@ -36,7 +69,7 @@ diff -upk.orig postfix-2.2.4.orig/conf/post-install postfix-2.2.4/conf/post-inst
  EOF
      }
  
-@@ -502,7 +502,7 @@ EOF
+@@ -503,7 +485,7 @@ EOF
      grep '^flush.*flush' $config_directory/master.cf >/dev/null || {
  	echo Editing $config_directory/master.cf, adding missing entry for flush service
  	cat >>$config_directory/master.cf <<EOF || exit 1
@@ -45,7 +78,7 @@ diff -upk.orig postfix-2.2.4.orig/conf/post-install postfix-2.2.4/conf/post-inst
  EOF
      }
  
-@@ -511,7 +511,7 @@ EOF
+@@ -512,7 +494,7 @@ EOF
      grep 'trace.*bounce' $config_directory/master.cf >/dev/null || {
  	echo Editing $config_directory/master.cf, adding missing entry for trace service
  	cat >>$config_directory/master.cf <<EOF || exit 1
@@ -54,7 +87,7 @@ diff -upk.orig postfix-2.2.4.orig/conf/post-install postfix-2.2.4/conf/post-inst
  EOF
      }
  
-@@ -520,7 +520,7 @@ EOF
+@@ -521,7 +503,7 @@ EOF
      grep '^verify.*verify' $config_directory/master.cf >/dev/null || {
  	echo Editing $config_directory/master.cf, adding missing entry for verify service
  	cat >>$config_directory/master.cf <<EOF || exit 1
@@ -63,7 +96,7 @@ diff -upk.orig postfix-2.2.4.orig/conf/post-install postfix-2.2.4/conf/post-inst
  EOF
      }
  
-@@ -612,7 +612,7 @@ EOF
+@@ -604,7 +586,7 @@ EOF
      grep '^anvil.*anvil' $config_directory/master.cf >/dev/null || {
  	echo Editing $config_directory/master.cf, adding missing entry for anvil service
  	cat >>$config_directory/master.cf <<EOF || exit 1
@@ -72,7 +105,7 @@ diff -upk.orig postfix-2.2.4.orig/conf/post-install postfix-2.2.4/conf/post-inst
  EOF
      }
  
-@@ -621,7 +621,7 @@ EOF
+@@ -613,7 +595,7 @@ EOF
      grep '^scache.*scache' $config_directory/master.cf >/dev/null || {
  	echo Editing $config_directory/master.cf, adding missing entry for scache service
  	cat >>$config_directory/master.cf <<EOF || exit 1
@@ -81,7 +114,7 @@ diff -upk.orig postfix-2.2.4.orig/conf/post-install postfix-2.2.4/conf/post-inst
  EOF
      }
  
-@@ -630,7 +630,7 @@ EOF
+@@ -622,7 +604,7 @@ EOF
      grep '^discard.*discard' $config_directory/master.cf >/dev/null || {
  	echo Editing $config_directory/master.cf, adding missing entry for discard service
  	cat >>$config_directory/master.cf <<EOF || exit 1
@@ -90,12 +123,21 @@ diff -upk.orig postfix-2.2.4.orig/conf/post-install postfix-2.2.4/conf/post-inst
  EOF
      }
  
-@@ -653,7 +653,7 @@ EOF
+@@ -646,7 +628,7 @@ EOF
      grep '^tlsmgr.*tlsmgr' $config_directory/master.cf >/dev/null || {
  	echo Editing $config_directory/master.cf, adding missing entry for tlsmgr service
  	cat >>$config_directory/master.cf <<EOF || exit 1
 -tlsmgr    unix  -       -       n       1000?   1       tlsmgr
 +tlsmgr    unix  -       -       -       1000?   1       tlsmgr
+ EOF
+     }
+ 
+@@ -655,7 +637,7 @@ EOF
+     grep '^retry.*error' $config_directory/master.cf >/dev/null || {
+ 	echo Editing $config_directory/master.cf, adding missing entry for retry service
+ 	cat >>$config_directory/master.cf <<EOF || exit 1
+-retry     unix  -       -       n       -       -       error
++retry     unix  -       -       -       -       -       error
  EOF
      }
  

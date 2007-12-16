@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/postfix/postfix.init,v 1.5 2005/11/16 13:28:58 solar Exp $
+# $Owl: Owl/packages/postfix/postfix.init,v 1.6 2007/12/16 21:40:40 ldv Exp $
 #
 # postfix      This shell script takes care of starting and stopping postfix.
 #
@@ -13,6 +13,11 @@
 # config: /etc/postfix/
 # pidfile: /var/spool/postfix/pid/master.pid
 
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+OWL_STARTUP_ENABLE=1
+
 # See how we were called.
 case "$1" in
 start|stop|reload|abort|flush|check)
@@ -22,8 +27,12 @@ restart)
 	$0 stop
 	$0 start
 	;;
+status)
+	status --pidfile /var/spool/postfix/pid/master.pid \
+		--expect-user root /usr/libexec/postfix/master
+	;;
 *)
-	echo "Usage: postfix {start|stop|restart|reload|abort|flush|check}"
+	echo "Usage: postfix {start|stop|status|restart|reload|abort|flush|check}"
 	exit 1
 esac
 

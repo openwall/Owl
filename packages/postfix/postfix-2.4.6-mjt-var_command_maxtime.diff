@@ -1,0 +1,50 @@
+--- postfix/src/global/pipe_command.c
++++ postfix/src/global/pipe_command.c
+@@ -164,6 +164,12 @@
+ #include <dsn_util.h>
+ #include <dsn_buf.h>
+ 
++/*
++ * Tunable parameters. Values are taken from the config file, after
++ * prepending the service name to _name, and so on.
++ */
++int     var_command_maxtime;		/* system-wide */
++
+ /* Application-specific. */
+ 
+ struct pipe_args {
+--- postfix/src/local/local.c
++++ postfix/src/local/local.c
+@@ -615,7 +615,6 @@ char   *var_allow_commands;
+ char   *var_allow_files;
+ char   *var_alias_maps;
+ int     var_dup_filter_limit;
+-int     var_command_maxtime;
+ char   *var_home_mailbox;
+ char   *var_mailbox_command;
+ char   *var_mailbox_cmd_maps;
+--- postfix/src/pipe/pipe.c
++++ postfix/src/pipe/pipe.c
+@@ -473,7 +473,6 @@
+   * Tunable parameters. Values are taken from the config file, after
+   * prepending the service name to _name, and so on.
+   */
+-int     var_command_maxtime;		/* system-wide */
+ 
+  /*
+   * For convenience. Instead of passing around lists of parameters, bundle
+--- postfix/src/spawn/spawn.c
++++ postfix/src/spawn/spawn.c
+@@ -161,12 +161,6 @@
+ /* Application-specific. */
+ 
+  /*
+-  * Tunable parameters. Values are taken from the config file, after
+-  * prepending the service name to _name, and so on.
+-  */
+-int     var_command_maxtime;		/* system-wide */
+-
+- /*
+   * For convenience. Instead of passing around lists of parameters, bundle
+   * them up in convenient structures.
+   */

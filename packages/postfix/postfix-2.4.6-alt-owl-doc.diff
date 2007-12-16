@@ -1,0 +1,485 @@
+--- postfix/README_FILES/ETRN_README
++++ postfix/README_FILES/ETRN_README
+@@ -121,7 +121,8 @@ Notes:
+     Postfix replies with an error message.
+ 
+   * The smtpd_etrn_restrictions parameter limits what clients may execute the
+-    ETRN command. By default, any client has permission.
++    ETRN command. By default, only clients who match permit_mynetworks
++    restriction have this permission.
+ 
+ To enable "fast ETRN" for some other destination, specify:
+ 
+--- postfix/README_FILES/SMTPD_ACCESS_README
++++ postfix/README_FILES/SMTPD_ACCESS_README
+@@ -79,8 +79,8 @@ apply to all SMTP mail.
+ 
+   * Requiring that the client sends the HELO or EHLO command before sending the
+     MAIL FROM or ETRN command. This may cause problems with home-grown
+-    applications that send mail. For this reason, the requirement is disabled
+-    by default ("smtpd_helo_required = no").
++    applications that send mail. Nevertheless, the requirement is enabled
++    by default ("smtpd_helo_required = yes").
+ 
+   * Disallowing illegal syntax in MAIL FROM or RCPT TO commands. This may cause
+     problems with home-grown applications that send mail, and with ancient PC
+--- postfix/html/ETRN_README.html
++++ postfix/html/ETRN_README.html
+@@ -197,7 +197,8 @@ the "fast ETRN" service, Postfix replies with an error message.
+ </p>
+ 
+ <li> <p> The <a href="postconf.5.html#smtpd_etrn_restrictions">smtpd_etrn_restrictions</a> parameter limits what clients
+-may execute the ETRN command. By default, any client has permission.
++may execute the ETRN command. By default, only clients who match
++permit_mynetworks restriction have this permission.
+ </p>
+ 
+ </ul>
+--- postfix/html/SMTPD_ACCESS_README.html
++++ postfix/html/SMTPD_ACCESS_README.html
+@@ -124,8 +124,8 @@ receives mail, before it is stored in the <a href="QSHAPE_README.html#incoming_q
+ 
+ <li> <p> Requiring that the client sends the HELO or EHLO command
+ before sending the MAIL FROM or ETRN command. This may cause problems
+-with home-grown applications that send mail.  For this reason, the
+-requirement is disabled by default ("<a href="postconf.5.html#smtpd_helo_required">smtpd_helo_required</a> = no").
++with home-grown applications that send mail.  Nevertheless, the
++requirement is enabled by default ("<a href="postconf.5.html#smtpd_helo_required">smtpd_helo_required</a> = yes").
+ </p>
+ 
+ <li> <p> Disallowing illegal syntax in MAIL FROM or RCPT TO commands.
+--- postfix/html/local.8.html
++++ postfix/html/local.8.html
+@@ -367,7 +367,7 @@ LOCAL(8)                                                              LOCAL(8)
+        <a href="postconf.5.html"><b>postconf</b>(5)</a> for more details including examples.
+ 
+ <b>COMPATIBILITY CONTROLS</b>
+-       <b><a href="postconf.5.html#biff">biff</a> (yes)</b>
++       <b><a href="postconf.5.html#biff">biff</a> (no)</b>
+               Whether or not to use the local <a href="postconf.5.html#biff">biff</a> service.
+ 
+        <b><a href="postconf.5.html#expand_owner_alias">expand_owner_alias</a> (no)</b>
+--- postfix/html/postconf.5.html
++++ postfix/html/postconf.5.html
+@@ -1030,7 +1030,7 @@ in a table or database.
+ </DD>
+ 
+ <DT><b><a name="biff">biff</a>
+-(default: yes)</b></DT><DD>
++(default: no)</b></DT><DD>
+ 
+ <p>
+ Whether or not to use the local <a href="postconf.5.html#biff">biff</a> service.  This service sends
+@@ -1039,9 +1039,9 @@ notification with the UNIX command "<a href="postconf.5.html#biff">biff</a> y".
+ </p>
+ 
+ <p>
+-For compatibility reasons this feature is on by default.  On systems
+-with lots of interactive users, the <a href="postconf.5.html#biff">biff</a> service can be a performance
+-drain.  Specify "<a href="postconf.5.html#biff">biff</a> = no" in <a href="postconf.5.html">main.cf</a> to disable.
++This feature is off by default. On systems with lots of interactive users,
++the <a href="postconf.5.html#biff">biff</a> service can be a performance
++drain.  Specify "<a href="postconf.5.html#biff">biff</a> = yes" in <a href="postconf.5.html">main.cf</a> to enable.
+ </p>
+ 
+ 
+@@ -9475,7 +9475,7 @@ Example:
+ </DD>
+ 
+ <DT><b><a name="smtpd_data_restrictions">smtpd_data_restrictions</a>
+-(default: empty)</b></DT><DD>
++(default: reject_unauth_pipelining)</b></DT><DD>
+ 
+ <p>
+ Optional access restrictions that the Postfix SMTP server applies
+@@ -9654,7 +9654,7 @@ mail. </p>
+ </DD>
+ 
+ <DT><b><a name="smtpd_etrn_restrictions">smtpd_etrn_restrictions</a>
+-(default: empty)</b></DT><DD>
++(default: permit_mynetworks, reject)</b></DT><DD>
+ 
+ <p>
+ Optional SMTP server access restrictions in the context of a client
+@@ -9765,7 +9765,7 @@ when the limit is exceeded.
+ </DD>
+ 
+ <DT><b><a name="smtpd_helo_required">smtpd_helo_required</a>
+-(default: no)</b></DT><DD>
++(default: yes)</b></DT><DD>
+ 
+ <p>
+ Require that a remote SMTP client introduces itself at the beginning
+--- postfix/html/smtpd.8.html
++++ postfix/html/smtpd.8.html
+@@ -825,7 +825,7 @@ SMTPD(8)                                                              SMTPD(8)
+               Optional  SMTP  server  access  restrictions in the
+               context of a client SMTP connection request.
+ 
+-       <b><a href="postconf.5.html#smtpd_helo_required">smtpd_helo_required</a> (no)</b>
++       <b><a href="postconf.5.html#smtpd_helo_required">smtpd_helo_required</a> (yes)</b>
+               Require that a remote SMTP client introduces itself
+               at  the  beginning of an SMTP session with the HELO
+               or EHLO command.
+@@ -844,7 +844,7 @@ SMTPD(8)                                                              SMTPD(8)
+               server  applies  in the context of the RCPT TO com-
+               mand.
+ 
+-       <b><a href="postconf.5.html#smtpd_etrn_restrictions">smtpd_etrn_restrictions</a> (empty)</b>
++       <b><a href="postconf.5.html#smtpd_etrn_restrictions">smtpd_etrn_restrictions</a> (permit_mynetworks, reject)</b>
+               Optional SMTP server  access  restrictions  in  the
+               context of a client ETRN request.
+ 
+@@ -868,7 +868,7 @@ SMTPD(8)                                                              SMTPD(8)
+ 
+        Available in Postfix version 2.0 and later:
+ 
+-       <b><a href="postconf.5.html#smtpd_data_restrictions">smtpd_data_restrictions</a> (empty)</b>
++       <b><a href="postconf.5.html#smtpd_data_restrictions">smtpd_data_restrictions</a> (reject_unauth_pipelining)</b>
+               Optional  access restrictions that the Postfix SMTP
+               server applies in the context of the SMTP DATA com-
+               mand.
+--- postfix/man/man5/postconf.5
++++ postfix/man/man5/postconf.5
+@@ -579,14 +579,14 @@ However, this feature is expensive because it ties up a Postfix
+ SMTP client process while the \fBlocal\fR(8) delivery agent is doing its
+ work. It is more efficient (for Postfix) to list all hosted domains
+ in a table or database.
+-.SH biff (default: yes)
++.SH biff (default: no)
+ Whether or not to use the local biff service.  This service sends
+ "new mail" notifications to users who have requested new mail
+ notification with the UNIX command "biff y".
+ .PP
+-For compatibility reasons this feature is on by default.  On systems
+-with lots of interactive users, the biff service can be a performance
+-drain.  Specify "biff = no" in main.cf to disable.
++This feature is off by default.  On systems with lots of interactive
++users, the biff service can be a performance drain.
++Specify "biff = yes" in main.cf to enable.
+ .SH body_checks (default: empty)
+ Optional lookup tables for content inspection as specified in
+ the \fBbody_checks\fR(5) manual page.
+@@ -5644,7 +5644,7 @@ smtpd_client_restrictions = permit_mynetworks, reject_unknown_client_hostname
+ .fi
+ .ad
+ .ft R
+-.SH smtpd_data_restrictions (default: empty)
++.SH smtpd_data_restrictions (default: reject_unauth_pipelining)
+ Optional access restrictions that the Postfix SMTP server applies
+ in the context of the SMTP DATA command.
+ .PP
+@@ -5753,7 +5753,7 @@ With Postfix version 2.0 and earlier: the SMTP server delay before
+ sending a reject (4xx or 5xx) response, when the client has made
+ fewer than $smtpd_soft_error_limit errors without delivering
+ mail.
+-.SH smtpd_etrn_restrictions (default: empty)
++.SH smtpd_etrn_restrictions (default: permit_mynetworks, reject)
+ Optional SMTP server access restrictions in the context of a client
+ ETRN request.
+ .PP
+@@ -5809,7 +5809,7 @@ This feature is available in Postfix 2.2 and later.
+ The maximal number of errors a remote SMTP client is allowed to
+ make without delivering mail. The Postfix SMTP server disconnects
+ when the limit is exceeded.
+-.SH smtpd_helo_required (default: no)
++.SH smtpd_helo_required (default: yes)
+ Require that a remote SMTP client introduces itself at the beginning
+ of an SMTP session with the HELO or EHLO command.
+ .PP
+--- postfix/man/man8/local.8
++++ postfix/man/man8/local.8
+@@ -393,7 +393,7 @@ The text below provides only a parameter summary. See
+ .nf
+ .ad
+ .fi
+-.IP "\fBbiff (yes)\fR"
++.IP "\fBbiff (no)\fR"
+ Whether or not to use the local biff service.
+ .IP "\fBexpand_owner_alias (no)\fR"
+ When delivering to an alias "aliasname" that has an "owner-aliasname"
+--- postfix/man/man8/smtpd.8
++++ postfix/man/man8/smtpd.8
+@@ -668,7 +668,7 @@ instead of requiring an explicit ".domain.tld" pattern.
+ .IP "\fBsmtpd_client_restrictions (empty)\fR"
+ Optional SMTP server access restrictions in the context of a client
+ SMTP connection request.
+-.IP "\fBsmtpd_helo_required (no)\fR"
++.IP "\fBsmtpd_helo_required (yes)\fR"
+ Require that a remote SMTP client introduces itself at the beginning
+ of an SMTP session with the HELO or EHLO command.
+ .IP "\fBsmtpd_helo_restrictions (empty)\fR"
+@@ -680,7 +680,7 @@ context of the MAIL FROM command.
+ .IP "\fBsmtpd_recipient_restrictions (permit_mynetworks, reject_unauth_destination)\fR"
+ The access restrictions that the Postfix SMTP server applies in
+ the context of the RCPT TO command.
+-.IP "\fBsmtpd_etrn_restrictions (empty)\fR"
++.IP "\fBsmtpd_etrn_restrictions (permit_mynetworks, reject)\fR"
+ Optional SMTP server access restrictions in the context of a client
+ ETRN request.
+ .IP "\fBallow_untrusted_routing (no)\fR"
+@@ -696,7 +696,7 @@ Restrict the use of the permit_mx_backup SMTP access feature to
+ only domains whose primary MX hosts match the listed networks.
+ .PP
+ Available in Postfix version 2.0 and later:
+-.IP "\fBsmtpd_data_restrictions (empty)\fR"
++.IP "\fBsmtpd_data_restrictions (reject_unauth_pipelining)\fR"
+ Optional access restrictions that the Postfix SMTP server applies
+ in the context of the SMTP DATA command.
+ .IP "\fBsmtpd_expansion_filter (see 'postconf -d' output)\fR"
+--- postfix/proto/ADDRESS_REWRITING_README.html
++++ postfix/proto/ADDRESS_REWRITING_README.html
+@@ -1025,8 +1025,8 @@ one of the following: </p>
+ <blockquote>
+ <pre>
+ /etc/postfix/main.cf:
+-    alias_maps = hash:/etc/aliases
+-    alias_maps = dbm:/etc/aliases, nis:mail.aliases
++    alias_maps = hash:/etc/postfix/aliases
++    alias_maps = hash:/etc/postfix/aliases, nis:mail.aliases
+ </pre>
+ </blockquote>
+ 
+@@ -1037,7 +1037,8 @@ Usually it is one of the following: </p>
+ <blockquote>
+ <pre>
+ /etc/postfix/main.cf:
+-    alias_database = hash:/etc/aliases (4.4BSD, LINUX)
++    alias_database = hash:/etc/postfix/aliases (LINUX)
++    alias_database = hash:/etc/aliases (4.4BSD)
+     alias_database = dbm:/etc/aliases (4.3BSD, SYSV&lt;4)
+     alias_database = dbm:/etc/mail/aliases (SYSV4)
+ </pre>
+--- postfix/proto/BASIC_CONFIGURATION_README.html
++++ postfix/proto/BASIC_CONFIGURATION_README.html
+@@ -255,19 +255,15 @@ hostnames of the machine, including $myhostname, and localhost.$mydomain. </p>
+ <p> By default, Postfix will forward mail from clients in authorized
+ network blocks to any destination.  Authorized networks are defined
+ with the mynetworks configuration parameter. The default is to
+-authorize all clients in the IP subnetworks that the local machine
+-is attached to. </p>
+-
+-<p> IMPORTANT: If your machine is connected to a wide area network
+-then your default mynetworks setting may be too friendly. </p>
++authorize all clients from the local machine only. </p>
+ 
+ <p> Examples (specify only one of the following): </p>
+ 
+ <blockquote>
+ <pre>
+ /etc/postfix/main.cf:
+-    mynetworks_style = subnet  (default: authorize subnetworks)
+-    mynetworks_style = host    (safe: authorize local machine only)
++    mynetworks_style = subnet  (unsafe: authorize subnetworks)
++    mynetworks_style = host    (default: authorize local machine only)
+     mynetworks = 127.0.0.0/8   (safe: authorize local machine only)
+     mynetworks = 127.0.0.0/8 168.100.189.2/32 (authorize local machine) 
+ </pre>
+@@ -280,13 +276,13 @@ parameter value.
+ 
+ <ul>
+ 
+-<li> <p> Specify "mynetworks_style = host" when Postfix should
+-forward mail from only the local machine. </p>
++<li> <p> Specify "mynetworks_style = host" (the default) when
++Postfix should forward mail from only the local machine. </p>
+ 
+-<li> <p> Specify "mynetworks_style = subnet" (the default) when
+-Postfix should forward mail from SMTP clients in the same IP
+-subnetworks as the local machine.  On Linux, this works correctly
+-only with interfaces specified with the "ifconfig" command. </p>
++<li> <p> Specify "mynetworks_style = subnet" when Postfix should
++forward mail from SMTP clients in the same IP subnetworks as the
++local machine.  On Linux, this works correctly only with
++interfaces specified with the "ip" command. </p>
+ 
+ <li> <p> Specify "mynetworks_style = class" when Postfix should
+ forward mail from SMTP clients in the same IP class A/B/C networks
+@@ -373,14 +369,14 @@ for the super-user to a human person too. </p>
+ 
+ <blockquote>
+ <pre>
+-/etc/aliases:
++/etc/postfix/aliases:
+     postmaster: you
+     root: you
+ </pre>
+ </blockquote>
+ 
+ <p> Execute the command "newaliases" after changing the aliases
+-file.  Instead of /etc/aliases, your alias file may be located
++file.  Instead of /etc/postfix/aliases, your alias file may be located
+ elsewhere.  Use the command "postconf alias_maps" to find out.</p>
+ 
+ <p> The Postfix system reports problems to the postmaster alias.
+--- postfix/proto/ETRN_README.html
++++ postfix/proto/ETRN_README.html
+@@ -197,7 +197,8 @@ the "fast ETRN" service, Postfix replies with an error message.
+ </p>
+ 
+ <li> <p> The smtpd_etrn_restrictions parameter limits what clients
+-may execute the ETRN command. By default, any client has permission.
++may execute the ETRN command. By default, only clients who match
++permit_mynetworks restriction have this permission.
+ </p>
+ 
+ </ul>
+--- postfix/proto/SMTPD_ACCESS_README.html
++++ postfix/proto/SMTPD_ACCESS_README.html
+@@ -124,8 +124,8 @@ receives mail, before it is stored in the incoming queue.  </p>
+ 
+ <li> <p> Requiring that the client sends the HELO or EHLO command
+ before sending the MAIL FROM or ETRN command. This may cause problems
+-with home-grown applications that send mail.  For this reason, the
+-requirement is disabled by default ("smtpd_helo_required = no").
++with home-grown applications that send mail.  Nevertheless, the
++requirement is enabled by default ("smtpd_helo_required = yes").
+ </p>
+ 
+ <li> <p> Disallowing illegal syntax in MAIL FROM or RCPT TO commands.
+--- postfix/proto/VIRTUAL_README.html
++++ postfix/proto/VIRTUAL_README.html
+@@ -259,7 +259,7 @@ section at the top of this document.</p>
+  2     virtual_mailbox_domains = example.com ...more domains...
+  3     virtual_mailbox_base = /var/mail/vhosts
+  4     virtual_mailbox_maps = hash:/etc/postfix/vmailbox
+- 5     virtual_minimum_uid = 100
++ 5     virtual_minimum_uid = 500
+  6     virtual_uid_maps = static:5000
+  7     virtual_gid_maps = static:5000
+  8     virtual_alias_maps = hash:/etc/postfix/virtual
+--- postfix/proto/postconf.html.prolog
++++ postfix/proto/postconf.html.prolog
+@@ -24,6 +24,12 @@ subset of all the parameters that control the operation of the
+ Postfix mail system. Parameters not explicitly specified are left
+ at their default values. </p>
+ 
++<p> If some parameters that are not defined in the Postfix set appear in
++main.cf (e.g. typos in parameter name) they will not cause an error but
++also they will not be used.  So in case of typo intended parameter will
++be left at it's default value.  Configuration check procedure will print
++warning about any unknown parameters in main.cf. </p>
++
+ <p> The general format of the main.cf file is as follows: </p>
+ 
+ <ul>
+--- postfix/proto/postconf.man.prolog
++++ postfix/proto/postconf.man.prolog
+@@ -17,6 +17,12 @@ of all the parameters that control the operation of the Postfix
+ mail system. Parameters not specified in main.cf are left at their
+ default values.
+ .PP
++If some parameters that are not defined in the Postfix set appear in
++main.cf (e.g. typos in parameter name) they will not cause an error but
++also they will not be used.  So in case of typo intended parameter will
++be left at it's default value.  Configuration check procedure will print
++warning about any unknown parameters in main.cf.
++.PP
+ The general format of the main.cf file is as follows:
+ .IP \(bu
+ Each logical line has the form "parameter = value".
+--- postfix/proto/postconf.proto
++++ postfix/proto/postconf.proto
+@@ -622,7 +622,7 @@ work. It is more efficient (for Postfix) to list all hosted domains
+ in a table or database.
+ </p>
+ 
+-%PARAM biff yes
++%PARAM biff no
+ 
+ <p>
+ Whether or not to use the local biff service.  This service sends
+@@ -631,9 +631,9 @@ notification with the UNIX command "biff y".
+ </p>
+ 
+ <p>
+-For compatibility reasons this feature is on by default.  On systems
+-with lots of interactive users, the biff service can be a performance
+-drain.  Specify "biff = no" in main.cf to disable.
++This feature is off by default.  On systems with lots of interactive
++users, the biff service can be a performance drain.
++Specify "biff = yes" in main.cf to enable.
+ </p>
+ 
+ %PARAM body_checks 
+@@ -845,7 +845,7 @@ Examples:
+ 
+ <pre>
+ default_database_type = hash
+-default_database_type = dbm
++default_database_type = cdb
+ </pre>
+ 
+ %PARAM default_delivery_slot_cost 5
+@@ -933,7 +933,7 @@ which would never accumulate at least this many delivery slots
+ (subject to slot cost parameter as well) are never preempted.
+ </p>
+ 
+-%PARAM default_privs nobody
++%PARAM default_privs postman
+ 
+ <p>
+ The default rights used by the local(8) delivery agent for delivery
+@@ -1191,7 +1191,7 @@ Time units: s (seconds), m (minutes), h (hours), d (days), w (weeks).
+ The default time unit is s (seconds).
+ </p>
+ 
+-%PARAM disable_vrfy_command no
++%PARAM disable_vrfy_command yes
+ 
+ <p>
+ Disable the SMTP VRFY command. This stops some techniques used to
+@@ -4928,7 +4928,7 @@ excess of the limit specified with $smtpd_recipient_limit, before
+ the Postfix SMTP server increments the per-session error count
+ for each excess recipient.  </p>
+ 
+-%PARAM smtpd_etrn_restrictions 
++%PARAM smtpd_etrn_restrictions permit_mynetworks, reject
+ 
+ <p>
+ Optional SMTP server access restrictions in the context of a client
+@@ -5015,7 +5015,7 @@ format of message headers will also cause a disconnect.
+ This feature is available in Postfix 2.2 and later.
+ </p>
+ 
+-%PARAM smtpd_helo_required no
++%PARAM smtpd_helo_required yes
+ 
+ <p>
+ Require that a remote SMTP client introduces itself at the beginning
+@@ -7003,7 +7003,7 @@ Postfix refuses mail that is nested deeper than the specified limit.
+ This feature is available in Postfix 2.0 and later.
+ </p>
+ 
+-%PARAM mynetworks_style subnet
++%PARAM mynetworks_style host
+ 
+ <p>
+ The method to generate the default value for the mynetworks parameter.
+@@ -7018,7 +7018,7 @@ This is the list of trusted networks for relay access control etc.
+ <li><p>Specify "mynetworks_style = subnet" when Postfix
+ should "trust" SMTP clients in the same IP subnetworks as the local
+ machine.  On Linux, this works correctly only with interfaces
+-specified with the "ifconfig" command. </p>
++specified with the "ip" command. </p>
+ 
+ <li><p>Specify "mynetworks_style = class" when Postfix should
+ "trust" SMTP clients in the same IP class A/B/C networks as the
+@@ -7346,7 +7346,7 @@ cached session is still usable.  </p>
+ 
+ <p> This feature is available in Postfix 2.1 and later.  </p>
+ 
+-%PARAM smtpd_data_restrictions 
++%PARAM smtpd_data_restrictions reject_unauth_pipelining
+ 
+ <p>
+ Optional access restrictions that the Postfix SMTP server applies
+@@ -7842,7 +7842,7 @@ it will open the table directly. Before Postfix version 2.2, the
+ virtual(8) delivery agent will terminate with a fatal error.
+ </p>
+ 
+-%PARAM virtual_minimum_uid 100
++%PARAM virtual_minimum_uid 500
+ 
+ <p>
+ The minimum user ID value that the virtual(8) delivery agent accepts

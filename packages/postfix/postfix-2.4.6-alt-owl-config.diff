@@ -1,0 +1,371 @@
+--- postfix/conf/main.cf
++++ postfix/conf/main.cf
+@@ -21,46 +21,8 @@
+ #
+ #soft_bounce = no
+ 
+-# LOCAL PATHNAME INFORMATION
+-#
+-# The queue_directory specifies the location of the Postfix queue.
+-# This is also the root directory of Postfix daemons that run chrooted.
+-# See the files in examples/chroot-setup for setting up Postfix chroot
+-# environments on different UNIX systems.
+-#
+-queue_directory = /var/spool/postfix
+-
+-# The command_directory parameter specifies the location of all
+-# postXXX commands.
+-#
+-command_directory = /usr/sbin
+-
+-# The daemon_directory parameter specifies the location of all Postfix
+-# daemon programs (i.e. programs listed in the master.cf file). This
+-# directory must be owned by root.
+-#
+-daemon_directory = /usr/libexec/postfix
+-
+-# QUEUE AND PROCESS OWNERSHIP
+-#
+-# The mail_owner parameter specifies the owner of the Postfix queue
+-# and of most Postfix daemon processes.  Specify the name of a user
+-# account THAT DOES NOT SHARE ITS USER OR GROUP ID WITH OTHER ACCOUNTS
+-# AND THAT OWNS NO OTHER FILES OR PROCESSES ON THE SYSTEM.  In
+-# particular, don't specify nobody or daemon. PLEASE USE A DEDICATED
+-# USER.
+-#
+-mail_owner = postfix
+-
+-# The default_privs parameter specifies the default rights used by
+-# the local delivery agent for delivery to external file or command.
+-# These rights are used in the absence of a recipient user context.
+-# DO NOT SPECIFY A PRIVILEGED USER OR THE POSTFIX OWNER.
+-#
+-#default_privs = nobody
+-
+ # INTERNET HOST AND DOMAIN NAMES
+-# 
++#
+ # The myhostname parameter specifies the internet hostname of this
+ # mail system. The default is to use the fully-qualified domain name
+ # from gethostname(). $myhostname is used as a default value for many
+@@ -77,7 +39,7 @@ mail_owner = postfix
+ #mydomain = domain.tld
+ 
+ # SENDING MAIL
+-# 
++#
+ # The myorigin parameter specifies the domain that locally-posted
+ # mail appears to come from. The default is to append $myhostname,
+ # which is fine for small sites.  If you run a domain with multiple
+@@ -173,8 +135,8 @@ mail_owner = postfix
+ # local_recipient_maps setting if:
+ #
+ # - You define $mydestination domain recipients in files other than
+-#   /etc/passwd, /etc/aliases, or the $virtual_alias_maps files.
+-#   For example, you define $mydestination domain recipients in    
++#   /etc/passwd, /etc/postfix/aliases, or the $virtual_alias_maps files.
++#   For example, you define $mydestination domain recipients in
+ #   the $virtual_mailbox_maps files.
+ #
+ # - You redefine the local delivery agent in master.cf.
+@@ -194,7 +156,7 @@ mail_owner = postfix
+ # The right-hand side of the lookup tables is conveniently ignored.
+ # In the left-hand side, specify a bare username, an @domain.tld
+ # wild-card, or specify a user@domain.tld address.
+-# 
++#
+ #local_recipient_maps = unix:passwd.byname $alias_maps
+ #local_recipient_maps = proxy:unix:passwd.byname $alias_maps
+ #local_recipient_maps =
+@@ -222,20 +184,18 @@ unknown_local_recipient_reject_code = 550
+ # You can specify the list of "trusted" network addresses by hand
+ # or you can let Postfix do it for you (which is the default).
+ #
+-# By default (mynetworks_style = subnet), Postfix "trusts" SMTP
+-# clients in the same IP subnetworks as the local machine.
+-# On Linux, this does works correctly only with interfaces specified
+-# with the "ifconfig" command.
+-# 
++# By default (mynetworks_style = host), Postfix "trusts" SMTP
++# clients of the local machine only.
++#
+ # Specify "mynetworks_style = class" when Postfix should "trust" SMTP
+ # clients in the same IP class A/B/C networks as the local machine.
+ # Don't do this with a dialup site - it would cause Postfix to "trust"
+ # your entire provider's network.  Instead, specify an explicit
+ # mynetworks list by hand, as described below.
+-#  
+-# Specify "mynetworks_style = host" when Postfix should "trust"
+-# only the local machine.
+-# 
++#
++# Specify "mynetworks_style = subnet" when Postfix should "trust" SMTP
++# clients in the same IP subnetworks as the local machine.
++#
+ #mynetworks_style = class
+ #mynetworks_style = subnet
+ #mynetworks_style = host
+@@ -264,7 +224,7 @@ unknown_local_recipient_reject_code = 550
+ # - from "untrusted" clients to destinations that match $relay_domains or
+ #   subdomains thereof, except addresses with sender-specified routing.
+ # The default relay_domains value is $mydestination.
+-# 
++#
+ # In addition to the above, the Postfix SMTP server by default accepts mail
+ # that Postfix is final destination for:
+ # - destinations that match $inet_interfaces or $proxy_interfaces,
+@@ -272,7 +232,7 @@ unknown_local_recipient_reject_code = 550
+ # - destinations that match $virtual_alias_domains,
+ # - destinations that match $virtual_mailbox_domains.
+ # These destinations do not need to be listed in $relay_domains.
+-# 
++#
+ # Specify a list of hosts or domains, /file/name patterns or type:name
+ # lookup tables, separated by commas and/or whitespace.  Continue
+ # long lines by starting the next line with whitespace. A file name
+@@ -317,7 +277,7 @@ unknown_local_recipient_reject_code = 550
+ # The right-hand side of the lookup tables is conveniently ignored.
+ # In the left-hand side, specify an @domain.tld wild-card, or specify
+ # a user@domain.tld address.
+-# 
++#
+ #relay_recipient_maps = hash:/etc/postfix/relay_recipients
+ 
+ # INPUT RATE CONTROL
+@@ -326,15 +286,15 @@ unknown_local_recipient_reject_code = 550
+ # flow control. This feature is turned on by default, although it
+ # still needs further development (it's disabled on SCO UNIX due
+ # to an SCO bug).
+-# 
++#
+ # A Postfix process will pause for $in_flow_delay seconds before
+ # accepting a new message, when the message arrival rate exceeds the
+ # message delivery rate. With the default 100 SMTP server process
+ # limit, this limits the mail inflow to 100 messages a second more
+ # than the number of messages delivered per second.
+-# 
++#
+ # Specify 0 to disable the feature. Valid delays are 0..10.
+-# 
++#
+ #in_flow_delay = 1s
+ 
+ # ADDRESS REWRITING
+@@ -364,17 +324,17 @@ unknown_local_recipient_reject_code = 550
+ # On systems with NIS, the default is to search the local alias
+ # database, then the NIS alias database. See aliases(5) for syntax
+ # details.
+-# 
+-# If you change the alias database, run "postalias /etc/aliases" (or
++#
++# If you change the alias database, run "postalias /etc/postfix/aliases" (or
+ # wherever your system stores the mail alias file), or simply run
+ # "newaliases" to build the necessary DBM or DB file.
+ #
+ # It will take a minute or so before changes become visible.  Use
+ # "postfix reload" to eliminate the delay.
+ #
+-#alias_maps = dbm:/etc/aliases
+-#alias_maps = hash:/etc/aliases
+-#alias_maps = hash:/etc/aliases, nis:mail.aliases
++#alias_maps = cdb:/etc/postfix/aliases
++#alias_maps = hash:/etc/postfix/aliases
++#alias_maps = hash:/etc/postfix/aliases, nis:mail.aliases
+ #alias_maps = netinfo:/aliases
+ 
+ # The alias_database parameter specifies the alias database(s) that
+@@ -382,10 +342,9 @@ unknown_local_recipient_reject_code = 550
+ # configuration parameter, because alias_maps (see above) may specify
+ # tables that are not necessarily all under control by Postfix.
+ #
+-#alias_database = dbm:/etc/aliases
+-#alias_database = dbm:/etc/mail/aliases
+-#alias_database = hash:/etc/aliases
+-#alias_database = hash:/etc/aliases, hash:/opt/majordomo/aliases
++#alias_database = cdb:/etc/postfix/aliases
++#alias_database = hash:/etc/postfix/aliases
++#alias_database = hash:/etc/postfix/aliases, hash:/opt/majordomo/aliases
+ 
+ # ADDRESS EXTENSIONS (e.g., user+foo)
+ #
+@@ -407,7 +366,7 @@ unknown_local_recipient_reject_code = 550
+ #
+ #home_mailbox = Mailbox
+ #home_mailbox = Maildir/
+- 
++
+ # The mail_spool_directory parameter specifies the directory where
+ # UNIX-style mailboxes are kept. The default setting depends on the
+ # system type.
+@@ -434,8 +393,8 @@ unknown_local_recipient_reject_code = 550
+ # IF YOU USE THIS TO DELIVER MAIL SYSTEM-WIDE, YOU MUST SET UP AN
+ # ALIAS THAT FORWARDS MAIL FOR ROOT TO A REAL USER.
+ #
+-#mailbox_command = /some/where/procmail
+-#mailbox_command = /some/where/procmail -a "$EXTENSION"
++#mailbox_command = /usr/bin/procmail
++#mailbox_command = /usr/bin/procmail -a "$EXTENSION"
+ 
+ # The mailbox_transport specifies the optional transport in master.cf
+ # to use after processing aliases and .forward files. This parameter
+@@ -449,7 +408,7 @@ unknown_local_recipient_reject_code = 550
+ #
+ # NOTE: if you use this feature for accounts not in the UNIX password
+ # file, then you must update the "local_recipient_maps" setting in
+-# the main.cf file, otherwise the SMTP server will reject mail for    
++# the main.cf file, otherwise the SMTP server will reject mail for
+ # non-UNIX accounts with "User unknown in local recipient table".
+ #
+ #mailbox_transport = lmtp:unix:/file/name
+@@ -466,7 +425,7 @@ unknown_local_recipient_reject_code = 550
+ #
+ # NOTE: if you use this feature for accounts not in the UNIX password
+ # file, then you must update the "local_recipient_maps" setting in
+-# the main.cf file, otherwise the SMTP server will reject mail for    
++# the main.cf file, otherwise the SMTP server will reject mail for
+ # non-UNIX accounts with "User unknown in local recipient table".
+ #
+ #fallback_transport = lmtp:unix:/file/name
+@@ -489,15 +448,15 @@ unknown_local_recipient_reject_code = 550
+ #
+ # NOTE: if you use this feature for accounts not in the UNIX password
+ # file, then you must specify "local_recipient_maps =" (i.e. empty) in
+-# the main.cf file, otherwise the SMTP server will reject mail for    
++# the main.cf file, otherwise the SMTP server will reject mail for
+ # non-UNIX accounts with "User unknown in local recipient table".
+ #
+ #luser_relay = $user@other.host
+ #luser_relay = $local@other.host
+ #luser_relay = admin+$local
+-  
++
+ # JUNK MAIL CONTROLS
+-# 
++#
+ # The controls listed here are only a very small subset. The file
+ # SMTPD_ACCESS_README provides an overview.
+ 
+@@ -519,11 +478,11 @@ unknown_local_recipient_reject_code = 550
+ # deferred mail, so that mail can be flushed quickly with the SMTP
+ # "ETRN domain.tld" command, or by executing "sendmail -qRdomain.tld".
+ # See the ETRN_README document for a detailed description.
+-# 
++#
+ # The fast_flush_domains parameter controls what destinations are
+ # eligible for this service. By default, they are all domains that
+ # this server is willing to relay mail to.
+-# 
++#
+ #fast_flush_domains = $relay_domains
+ 
+ # SHOW SOFTWARE VERSION OR NOT
+@@ -547,99 +506,26 @@ unknown_local_recipient_reject_code = 550
+ # too many are run at the same time. With SMTP deliveries, 10
+ # simultaneous connections to the same domain could be sufficient to
+ # raise eyebrows.
+-# 
++#
+ # Each message delivery transport has its XXX_destination_concurrency_limit
+ # parameter.  The default is $default_destination_concurrency_limit for
+ # most delivery transports. For the local delivery agent the default is 2.
+-
++#
+ #local_destination_concurrency_limit = 2
+ #default_destination_concurrency_limit = 20
+ 
+-# DEBUGGING CONTROL
++# The maximal size in bytes of a message, including envelope information.
+ #
+-# The debug_peer_level parameter specifies the increment in verbose
+-# logging level when an SMTP client or server host name or address
+-# matches a pattern in the debug_peer_list parameter.
+-#
+-debug_peer_level = 2
+-
+-# The debug_peer_list parameter specifies an optional list of domain
+-# or network patterns, /file/name patterns or type:name tables. When
+-# an SMTP client or server host name or address matches a pattern,
+-# increase the verbose logging level by the amount specified in the
+-# debug_peer_level parameter.
+-#
+-#debug_peer_list = 127.0.0.1
+-#debug_peer_list = some.domain
++#message_size_limit = 10240000
+ 
+-# The debugger_command specifies the external command that is executed
+-# when a Postfix daemon program is run with the -D option.
+-#
+-# Use "command .. & sleep 5" so that the debugger can attach before
+-# the process marches on. If you use an X-based debugger, be sure to
+-# set up your XAUTHORITY environment variable before starting Postfix.
+-#
+-debugger_command =
+-	 PATH=/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin
+-	 xxgdb $daemon_directory/$process_name $process_id & sleep 5
+-
+-# If you can't use X, use this to capture the call stack when a
+-# daemon crashes. The result is in a file in the configuration
+-# directory, and is named after the process name and the process ID.
+-#
+-# debugger_command =
+-#	PATH=/bin:/usr/bin:/usr/local/bin; export PATH; (echo cont;
+-#	echo where) | gdb $daemon_directory/$process_name $process_id 2>&1
+-#	>$config_directory/$process_name.$process_id.log & sleep 5
++# The maximal size of any local(8) individual mailbox or maildir file,
++# or zero (no limit).  In fact, this limits the size of any file that
++# is written to upon local delivery, including files written by external
++# commands that are executed by the local(8) delivery agent.
+ #
+-# Another possibility is to run gdb under a detached screen session.
+-# To attach to the screen sesssion, su root and run "screen -r
+-# <id_string>" where <id_string> uniquely matches one of the detached
+-# sessions (from "screen -list").
++# This limit must not be smaller than the message size limit.
+ #
+-# debugger_command =
+-#	PATH=/bin:/usr/bin:/sbin:/usr/sbin; export PATH; screen
+-#	-dmS $process_name gdb $daemon_directory/$process_name
+-#	$process_id & sleep 1
++#mailbox_size_limit = 51200000
+ 
+ # INSTALL-TIME CONFIGURATION INFORMATION
+ #
+-# The following parameters are used when installing a new Postfix version.
+-# 
+-# sendmail_path: The full pathname of the Postfix sendmail command.
+-# This is the Sendmail-compatible mail posting interface.
+-# 
+-sendmail_path =
+-
+-# newaliases_path: The full pathname of the Postfix newaliases command.
+-# This is the Sendmail-compatible command to build alias databases.
+-#
+-newaliases_path =
+-
+-# mailq_path: The full pathname of the Postfix mailq command.  This
+-# is the Sendmail-compatible mail queue listing command.
+-# 
+-mailq_path =
+-
+-# setgid_group: The group for mail submission and queue management
+-# commands.  This must be a group name with a numerical group ID that
+-# is not shared with other accounts, not even with the Postfix account.
+-#
+-setgid_group =
+-
+-# html_directory: The location of the Postfix HTML documentation.
+-#
+-html_directory =
+-
+-# manpage_directory: The location of the Postfix on-line manual pages.
+-#
+-manpage_directory =
+-
+-# sample_directory: The location of the Postfix sample configuration files.
+-# This parameter is obsolete as of Postfix 2.1.
+-#
+-sample_directory =
+-
+-# readme_directory: The location of the Postfix README files.
+-#
+-readme_directory =

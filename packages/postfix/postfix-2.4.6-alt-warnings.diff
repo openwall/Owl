@@ -1,0 +1,160 @@
+--- postfix/src/cleanup/cleanup_message.c
++++ postfix/src/cleanup/cleanup_message.c
+@@ -117,19 +117,6 @@ static void cleanup_fold_header(CLEANUP_STATE *state, VSTRING *header_buf)
+     cleanup_out_header(state, header_buf);
+ }
+ 
+-/* cleanup_extract_internal - save unquoted copy of extracted address */
+-
+-static char *cleanup_extract_internal(VSTRING *buffer, TOK822 *addr)
+-{
+-
+-    /*
+-     * A little routine to stash away a copy of an address that we extracted
+-     * from a message header line.
+-     */
+-    tok822_internalize(buffer, addr->head, TOK822_STR_DEFL);
+-    return (mystrdup(vstring_str(buffer)));
+-}
+-
+ /* cleanup_rewrite_sender - sender address rewriting */
+ 
+ static void cleanup_rewrite_sender(CLEANUP_STATE *state, HEADER_OPTS *hdr_opts,
+--- postfix/src/global/dict_mysql.c
++++ postfix/src/global/dict_mysql.c
+@@ -291,7 +291,6 @@ static const char *dict_mysql_lookup(DICT *dict, const char *name)
+ {
+     const char *myname = "dict_mysql_lookup";
+     DICT_MYSQL *dict_mysql = (DICT_MYSQL *)dict;
+-    PLMYSQL *pldb = dict_mysql->pldb;
+     MYSQL_RES *query_res;
+     MYSQL_ROW row;
+     static VSTRING *result;
+@@ -588,7 +587,6 @@ static void mysql_parse_config(DICT_MYSQL *dict_mysql, const char *mysqlcf)
+     const char *myname = "mysqlname_parse";
+     CFG_PARSER *p;
+     VSTRING *buf;
+-    int     i;
+     char   *hosts;
+     
+     p = dict_mysql->parser = cfg_parser_alloc(mysqlcf);
+@@ -743,7 +741,6 @@ static HOST *host_init(const char *hostname)
+ 
+ static void dict_mysql_close(DICT *dict)
+ {
+-    int     i;
+     DICT_MYSQL *dict_mysql = (DICT_MYSQL *) dict;
+ 
+     plmysql_dealloc(dict_mysql->pldb);
+--- postfix/src/smtp/smtp_connect.c
++++ postfix/src/smtp/smtp_connect.c
+@@ -665,7 +665,9 @@ static void smtp_connect_remote(SMTP_STATE *state, const char *nexthop,
+     char   *dest;
+     char  **cpp;
+     int     non_fallback_sites;
++#ifdef USE_TLS
+     int     retry_plain = 0;
++#endif
+     DSN_BUF *why = state->why;
+ 
+     /*
+--- postfix/src/smtp/smtp_proto.c
++++ postfix/src/smtp/smtp_proto.c
+@@ -236,7 +236,9 @@ char   *xfer_request[SMTP_STATE_LAST] = {
+      && (session->features & SMTP_FEATURE_8BITMIME) == 0 \
+      && strcmp(request->encoding, MAIL_ATTR_ENC_7BIT) != 0)
+ 
++#ifdef USE_TLS
+ static int smtp_start_tls(SMTP_STATE *);
++#endif
+ 
+ /* smtp_helo - perform initial handshake with SMTP server */
+ 
+--- postfix/src/smtpd/smtpd.c
++++ postfix/src/smtpd/smtpd.c
+@@ -1153,7 +1153,9 @@ int     smtpd_input_transp_mask;
+ static void helo_reset(SMTPD_STATE *);
+ static void mail_reset(SMTPD_STATE *);
+ static void rcpt_reset(SMTPD_STATE *);
++#ifdef USE_TLS
+ static void tls_reset(SMTPD_STATE *);
++#endif
+ static void chat_reset(SMTPD_STATE *, int);
+ 
+  /*
+@@ -2396,6 +2398,8 @@ static void rcpt_reset(SMTPD_STATE *state)
+     state->rcpt_overshoot = 0;
+ }
+ 
++#if defined(USE_TLS) || defined(USE_SASL_AUTH)
++
+ /* comment_sanitize - clean up comment string */
+ 
+ static void comment_sanitize(VSTRING *comment_string)
+@@ -2428,6 +2432,8 @@ static void comment_sanitize(VSTRING *comment_string)
+ 	VSTRING_ADDCH(comment_string, ')');
+ }
+ 
++#endif
++
+ /* data_cmd - process DATA command */
+ 
+ static int data_cmd(SMTPD_STATE *state, int argc, SMTPD_TOKEN *unused_argv)
+@@ -3791,7 +3797,9 @@ static void smtpd_proto(SMTPD_STATE *state)
+     int     argc;
+     SMTPD_TOKEN *argv;
+     SMTPD_CMD *cmdp;
++#ifdef USE_TLS
+     int     tls_rate;
++#endif
+     const char *ehlo_words;
+     const char *err;
+     int     status;
+--- postfix/src/util/dict_cdb.c
++++ postfix/src/util/dict_cdb.c
+@@ -360,8 +360,8 @@ static DICT *dict_cdbm_open(const char *path, int dict_flags)
+     }
+ 
+ #ifndef NO_FTRUNCATE
+-    if (st0.st_size)
+-	ftruncate(fd, 0);
++    if (st0.st_size && ftruncate(fd, 0) < 0)
++	msg_fatal("truncate %s: %m", tmp_path);
+ #endif
+ 
+     dict_cdbm = (DICT_CDBM *) dict_alloc(DICT_TYPE_CDB, path,
+--- postfix/src/util/events.c
++++ postfix/src/util/events.c
+@@ -575,7 +575,9 @@ static void event_extend(int fd)
+     int     new_slots = (event_fdslots > fd / 2 ?
+ 			 2 * old_slots : fd + EVENT_ALLOC_INCR);
+     EVENT_FDTABLE *fdp;
++#ifdef EVENT_REG_UPD_HANDLE
+     int     err;
++#endif
+ 
+     if (msg_verbose > 2)
+ 	msg_info("%s: fd %d", myname, fd);
+--- postfix/src/util/inet_addr_local.c
++++ postfix/src/util/inet_addr_local.c
+@@ -449,7 +449,6 @@ static int ial_siocgif(INET_ADDR_LIST *addr_list,
+ static int ial_procnet_ifinet6(INET_ADDR_LIST *addr_list,
+ 			               INET_ADDR_LIST *mask_list)
+ {
+-    const char *myname = "inet_addr_local[procnet_ifinet6]";
+     FILE   *fp;
+     char    buf[BUFSIZ];
+     unsigned plen;
+--- postfix/src/util/stream_send_fd.c
++++ postfix/src/util/stream_send_fd.c
+@@ -54,9 +54,9 @@
+ 
+ int     stream_send_fd(int fd, int sendfd)
+ {
++#ifdef STREAM_CONNECTIONS
+     const char *myname = "stream_send_fd";
+ 
+-#ifdef STREAM_CONNECTIONS
+     if (ioctl(fd, I_SENDFD, sendfd) < 0)
+ 	msg_fatal("%s: send file descriptor %d: %m", myname, sendfd);
+     return (0);

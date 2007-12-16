@@ -1,0 +1,61 @@
+--- postfix/src/postconf/postconf.c
++++ postfix/src/postconf/postconf.c
+@@ -824,11 +824,11 @@ static void print_str_fn_2(int mode, CONFIG_STR_FN_TABLE *csft)
+ 
+ /* print_raw - print raw string parameter */
+ 
+-static void print_raw(int mode, CONFIG_RAW_TABLE * rst)
++static void print_raw(int mode, CONFIG_RAW_TABLE * rst, int explicit)
+ {
+     const char *value;
+ 
+-    if (mode & SHOW_EVAL)
++    if (explicit && (mode & SHOW_EVAL))
+ 	msg_warn("parameter %s expands at run-time", rst->name);
+     mode &= ~SHOW_EVAL;
+ 
+@@ -851,7 +851,7 @@ static void print_raw(int mode, CONFIG_RAW_TABLE * rst)
+ 
+ /* print_parameter - show specific parameter */
+ 
+-static void print_parameter(int mode, char *ptr)
++static void print_parameter(int mode, char *ptr, int explicit)
+ {
+ 
+ #define INSIDE(p,t) (ptr >= (char *) t && ptr < ((char *) t) + sizeof(t))
+@@ -872,7 +872,7 @@ static void print_parameter(int mode, char *ptr)
+     if (INSIDE(ptr, str_fn_table_2))
+ 	print_str_fn_2(mode, (CONFIG_STR_FN_TABLE *) ptr);
+     if (INSIDE(ptr, raw_table))
+-	print_raw(mode, (CONFIG_RAW_TABLE *) ptr);
++	print_raw(mode, (CONFIG_RAW_TABLE *) ptr, explicit);
+     if (msg_verbose)
+ 	vstream_fflush(VSTREAM_OUT);
+ }
+@@ -943,7 +943,7 @@ static void show_parameters(int mode, char **names)
+ 	list = htable_list(param_table);
+ 	qsort((char *) list, param_table->used, sizeof(*list), comp_names);
+ 	for (ht = list; *ht; ht++)
+-	    print_parameter(mode, ht[0]->value);
++	    print_parameter(mode, ht[0]->value, 0);
+ 	myfree((char *) list);
+ 	return;
+     }
+@@ -955,7 +955,7 @@ static void show_parameters(int mode, char **names)
+ 	if ((value = htable_find(param_table, *namep)) == 0) {
+ 	    msg_warn("%s: unknown parameter", *namep);
+ 	} else {
+-	    print_parameter(mode, value);
++	    print_parameter(mode, value, 1);
+ 	}
+     }
+ }
+@@ -1031,7 +1031,7 @@ int     main(int argc, char **argv)
+ 	     * must not evaluate to the empty string when relay_domains is
+ 	     * left at its default setting of $mydestination.
+ 	     */
+-#if 0
++#if 1
+ 	case 'E':
+ 	    cmd_mode |= SHOW_EVAL;
+ 	    break;

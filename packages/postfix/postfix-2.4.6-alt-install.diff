@@ -1,6 +1,6 @@
---- postfix-2.2.11/postfix-install.orig	2005-02-02 21:39:36 +0000
-+++ postfix-2.2.11/postfix-install	2006-08-03 20:31:59 +0000
-@@ -602,7 +602,17 @@ do
+--- postfix/postfix-install
++++ postfix/postfix-install
+@@ -605,7 +605,17 @@ do
      # Skip over files that must be preserved.
  
      case $flags in
@@ -19,7 +19,7 @@
  	    eval echo "Skipping $install_root$path..."
  	    continue
  	 };;
-@@ -626,7 +636,12 @@ do
+@@ -629,7 +639,12 @@ do
  	[$]*) eval group=$group;;
  	   -) group=;;
  	esac;;
@@ -33,7 +33,7 @@
  	[1-7]755) mode=755;;
  	esac
  	owner=
-@@ -638,7 +653,11 @@ do
+@@ -641,7 +656,11 @@ do
  
       # Create/update directory.
  
@@ -46,7 +46,7 @@
  	test "$path" = "${install_root}no" -o -d $path || {
  	    mkdir -p $path || exit 1
  	    test -z "$owner" || chown $owner $path || exit 1
-@@ -649,7 +668,15 @@ do
+@@ -652,7 +671,15 @@ do
  
       # Create/update regular file.
  
@@ -63,7 +63,7 @@
  	case $prefix in
  	'$daemon_directory')
  	    compare_or_replace $mode "$owner" "$group" libexec/$file \
-@@ -703,25 +730,36 @@ do
+@@ -716,25 +743,36 @@ do
  
      done
  

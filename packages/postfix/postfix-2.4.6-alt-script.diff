@@ -1,7 +1,6 @@
-diff -upk.orig postfix-2.2.4.orig/conf/postfix-script postfix-2.2.4/conf/postfix-script
---- postfix-2.2.4.orig/conf/postfix-script	2005-02-04 01:05:21 +0000
-+++ postfix-2.2.4/conf/postfix-script	2005-06-23 12:34:29 +0000
-@@ -214,11 +214,11 @@ check-warn)
+--- postfix/conf/postfix-script
++++ postfix/conf/postfix-script
+@@ -223,11 +223,11 @@ check-warn)
  		-exec $WARN not owned by $mail_owner: {} \;
  
  	find $queue_directory/public $queue_directory/maildrop \
@@ -15,7 +14,7 @@ diff -upk.orig postfix-2.2.4.orig/conf/postfix-script postfix-2.2.4/conf/postfix
  	    -prune ! -perm -02111 \
  	    -exec $WARN not set-gid or not owner+group+world executable: {} \;
  
-@@ -239,10 +239,15 @@ check-warn)
+@@ -248,10 +248,15 @@ check-warn)
  	do
  		test -d $dir && find $dir -type f -print | while read path
  		do
@@ -24,10 +23,10 @@ diff -upk.orig postfix-2.2.4.orig/conf/postfix-script postfix-2.2.4/conf/postfix
 -				$WARN $queue_directory/$path and /$path differ
 -			}
 +			if [ -e "/$path" ]; then
-+				cmp -s "$path" "/$path" || 
++				cmp -s "$path" "/$path" ||
 +				    $WARN "$queue_directory/$path and /$path differ"
 +			elif [ -e "/usr/$path" ]; then
-+				cmp -s "$path" "/usr/$path" || 
++				cmp -s "$path" "/usr/$path" ||
 +				    $WARN "$queue_directory/$path and /usr/$path differ"
 +			else
 +				$WARN "$queue_directory/$path has no original source"

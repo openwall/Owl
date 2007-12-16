@@ -1,12 +1,12 @@
---- postfix-2.2.4/conf/postfix-script.orig	2005-02-04 01:05:21 +0000
-+++ postfix-2.2.4/conf/postfix-script	2005-06-30 12:57:11 +0000
-@@ -184,6 +184,17 @@ check-fatal)
+--- postfix/conf/postfix-script
++++ postfix/conf/postfix-script
+@@ -193,6 +193,17 @@ check-fatal)
  		exit 1
  	}
  
 +	# Update the chroot jail
 +	for src in /etc/{hosts,localtime,services,{host,nsswitch,resolv}.conf} \
-+	    /lib/libnss_dns.so.2; do
++	    /@LIB@/libnss_dns.so.2; do
 +		test -e "$src" || continue
 +		dst="${queue_directory}${src}"
 +		cmp -s "$src" "$dst" && continue
