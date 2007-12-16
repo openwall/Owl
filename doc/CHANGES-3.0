@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2007/12/16	Package: postfix
+Updated to 2.4.6.
+
 2007/12/06	Package: e2fsprogs
 Applied upstream patch to fix integer overflows in libext2fs.
 This addresses a potential vulnerability where an untrusted filesystem
@@ -524,4 +527,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.113 2007/12/07 00:48:24 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.114 2007/12/16 21:42:21 ldv Exp $
