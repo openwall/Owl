@@ -1,15 +1,15 @@
-$Owl: Owl/packages/postfix/README.Owl,v 1.1 2007/12/16 21:40:38 ldv Exp $
+$Owl: Owl/packages/postfix/README.Owl,v 1.2 2007/12/17 17:06:56 solar Exp $
 
 There are some notable differences between the Owl Postfix package
 and the upstream source:
 
-+ All services (except local, pipe, proxymap and virtual) are configured
++ All services (except local, pipe, proxymap, and virtual) are configured
   by default to run chrooted.
 + The smtpd service is disabled by default, use control(8) utility
   to switch between enabled and disabled states.
 + The upstream main.cf is delivered as /usr/share/postfix/main.cf.dist,
   rather than cluttering /etc/postfix/main.cf with comments.
-+ Following parameters have different default values:
++ The following parameters have different default values:
   biff = no
   default_privs = postman
   disable_vrfy_command = yes
