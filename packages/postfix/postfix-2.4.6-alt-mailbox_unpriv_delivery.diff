@@ -1,6 +1,6 @@
 --- postfix/proto/postconf.proto
 +++ postfix/proto/postconf.proto
-@@ -2438,6 +2438,11 @@ mailbox_command = /some/where/maildrop -d "$USER"
+@@ -2436,6 +2436,11 @@ mailbox_command = /some/where/maildrop -d "$USER"
          -f "$SENDER" "$EXTENSION"
  </pre>
  
@@ -27,7 +27,17 @@
  extern char *var_mailbox_command;
 --- postfix/src/local/local.c
 +++ postfix/src/local/local.c
-@@ -616,6 +616,7 @@ char   *var_allow_commands;
+@@ -405,6 +405,9 @@
+ /* .IP "\fBmailbox_command (empty)\fR"
+ /*	Optional external command that the \fBlocal\fR(8) delivery agent should
+ /*	use for mailbox delivery.
++/* .IP "\fBmailbox_unpriv_delivery (yes)\fR"
++/*	If enabled, then local(8) will not apply root privileges
++/*	for mailbox delivery.
+ /* .IP "\fBhome_mailbox (empty)\fR"
+ /*	Optional pathname of a mailbox file relative to a \fBlocal\fR(8) user's
+ /*	home directory.
+@@ -616,6 +619,7 @@ char   *var_allow_commands;
  char   *var_alias_maps;
  int     var_dup_filter_limit;
  char   *var_home_mailbox;
@@ -35,7 +45,7 @@
  char   *var_mailbox_command;
  char   *var_mailbox_cmd_maps;
  char   *var_rcpt_fdelim;
-@@ -886,6 +887,7 @@ int     main(int argc, char **argv)
+@@ -886,6 +890,7 @@ int     main(int argc, char **argv)
  	VAR_STAT_HOME_DIR, DEF_STAT_HOME_DIR, &var_stat_home_dir,
  	VAR_MAILTOOL_COMPAT, DEF_MAILTOOL_COMPAT, &var_mailtool_compat,
  	VAR_FROZEN_DELIVERED, DEF_FROZEN_DELIVERED, &var_frozen_delivered,

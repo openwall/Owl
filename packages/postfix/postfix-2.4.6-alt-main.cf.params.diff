@@ -24,7 +24,7 @@
  #
  # Parse JCL
  #
-@@ -287,6 +298,7 @@ check-warn)
+@@ -281,6 +292,7 @@ check-warn)
  		$WARN Replace one by a symbolic link to the other
  	    }
  	}

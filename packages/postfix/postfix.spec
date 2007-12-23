@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.41 2007/12/16 21:40:40 ldv Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.42 2007/12/23 00:41:46 ldv Exp $
 
 Summary: Postfix mail system.
 Name: postfix
 Version: 2.4.6
-Release: owl1
+Release: owl2
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
@@ -93,7 +93,6 @@ compatible enough to not upset your users.
 %patch15 -p1
 %patch16 -p1
 
-install -pm644 %_sourcedir/aliases conf/
 install -pm644 %_sourcedir/README.Owl README_FILES/
 
 # Add objs and objs-print makefile targets.
@@ -117,6 +116,11 @@ rm conf/LICENSE
 
 # Adjust arch-dependent paths.
 sed -i 's/@LIB@/%_lib/' conf/postfix-{files,script}
+
+# Fix build with upcoming util-linux-ng.
+sed -i 's/col -bx |/LANG=en_US &/' proto/Makefile.in
+
+bzip2 -9fk HISTORY
 
 %build
 export MAKEFLAGS="$MAKEFLAGS DEF_MAIL_VERSION=%version"
@@ -214,12 +218,16 @@ done
 
 popd # src
 
-%__make manpages
+for d in proto man html; do
+	%__make -C $d -f Makefile.in clobber README=
+done
+%__make manpages README=
+
+# The alias file is clobbered during build, install it now.
+install -pm644 %_sourcedir/aliases conf/
 
 mkdir -p libexec/postqueuedir
 mv bin/postqueue libexec/postqueuedir/
-
-bzip2 -9fk HISTORY
 
 %install
 rm -rf %buildroot
@@ -349,6 +357,9 @@ fi
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
+* Sun Dec 23 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.4.6-owl2
+- Fixed build of documentation.
+
 * Sun Dec 16 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.4.6-owl1
 - Updated to 2.4.6.
 - Dropped aliases for pseudo-user accounts and some addresses

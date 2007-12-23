@@ -8,7 +8,7 @@
  char   *var_verify_service;
  char   *var_trace_service;
  int     var_db_create_buf;
-@@ -596,7 +599,8 @@ void    mail_params_init()
+@@ -598,7 +599,8 @@ void    mail_params_init()
      check_sgid_group();
      check_overlap();
  #ifdef HAS_DB

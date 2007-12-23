@@ -429,7 +429,7 @@
  
  <p>
  Disable the SMTP VRFY command. This stops some techniques used to
-@@ -4928,7 +4928,7 @@ excess of the limit specified with $smtpd_recipient_limit, before
+@@ -4937,7 +4937,7 @@ excess of the limit specified with $smtpd_recipient_limit, before
  the Postfix SMTP server increments the per-session error count
  for each excess recipient.  </p>
  
@@ -438,7 +438,7 @@
  
  <p>
  Optional SMTP server access restrictions in the context of a client
-@@ -5015,7 +5015,7 @@ format of message headers will also cause a disconnect.
+@@ -5024,7 +5024,7 @@ format of message headers will also cause a disconnect.
  This feature is available in Postfix 2.2 and later.
  </p>
  
@@ -447,7 +447,7 @@
  
  <p>
  Require that a remote SMTP client introduces itself at the beginning
-@@ -7003,7 +7003,7 @@ Postfix refuses mail that is nested deeper than the specified limit.
+@@ -7012,7 +7012,7 @@ Postfix refuses mail that is nested deeper than the specified limit.
  This feature is available in Postfix 2.0 and later.
  </p>
  
@@ -456,7 +456,7 @@
  
  <p>
  The method to generate the default value for the mynetworks parameter.
-@@ -7018,7 +7018,7 @@ This is the list of trusted networks for relay access control etc.
+@@ -7027,7 +7027,7 @@ This is the list of trusted networks for relay access control etc.
  <li><p>Specify "mynetworks_style = subnet" when Postfix
  should "trust" SMTP clients in the same IP subnetworks as the local
  machine.  On Linux, this works correctly only with interfaces
@@ -465,7 +465,7 @@
  
  <li><p>Specify "mynetworks_style = class" when Postfix should
  "trust" SMTP clients in the same IP class A/B/C networks as the
-@@ -7346,7 +7346,7 @@ cached session is still usable.  </p>
+@@ -7355,7 +7355,7 @@ cached session is still usable.  </p>
  
  <p> This feature is available in Postfix 2.1 and later.  </p>
  
@@ -474,7 +474,7 @@
  
  <p>
  Optional access restrictions that the Postfix SMTP server applies
-@@ -7842,7 +7842,7 @@ it will open the table directly. Before Postfix version 2.2, the
+@@ -7851,7 +7851,7 @@ it will open the table directly. Before Postfix version 2.2, the
  virtual(8) delivery agent will terminate with a fatal error.
  </p>
  
