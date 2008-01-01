@@ -6,12 +6,11 @@
  lib/blkid/test_probe.in |    8 ++++----
  lib/et/com_err.texinfo  |    6 ++----
  lib/ext2fs/ismounted.c  |    6 ++----
- lib/ss/Makefile.in      |    2 +-
  lib/ss/ss.pc.in         |    3 ++-
  misc/badblocks.c        |    2 +-
  misc/e2image.c          |    3 +--
  misc/util.c             |    4 ++--
- 13 files changed, 31 insertions(+), 32 deletions(-)
+ 12 files changed, 30 insertions(+), 31 deletions(-)
 
 diff --git a/debugfs/debugfs.c b/debugfs/debugfs.c
 index 6635471..c7f2165 100644
@@ -48,7 +47,7 @@ index 6635471..c7f2165 100644
  		buf[strlen (buf) - 1] = '\0';
  	if (!buf[0])
 diff --git a/doc/libext2fs.texinfo b/doc/libext2fs.texinfo
-index 1277c3a..82661d0 100644
+index 70c7237..613ecdb 100644
 --- a/doc/libext2fs.texinfo
 +++ b/doc/libext2fs.texinfo
 @@ -7,11 +7,9 @@
@@ -90,7 +89,7 @@ index 510aa84..ff51782 100644
 +Libs: -L${libdir} -lblkid
 +Libs.private: @DEVMAPPER_PC_LIBS@
 diff --git a/lib/blkid/probe.c b/lib/blkid/probe.c
-index a188d82..615cc38 100644
+index 4c72a56..c571c06 100644
 --- a/lib/blkid/probe.c
 +++ b/lib/blkid/probe.c
 @@ -121,7 +121,7 @@ static int check_mdraid(int fd, unsigned char *ret_uuid)
@@ -111,7 +110,7 @@ index a188d82..615cc38 100644
  
  static unsigned char *search_fat_label(struct vfat_dir_entry *dir, int count)
  {
-@@ -582,10 +582,11 @@ static int probe_luks(struct blkid_probe *probe,
+@@ -584,10 +584,11 @@ static int probe_luks(struct blkid_probe *probe,
  		       struct blkid_magic *id __BLKID_ATTR((unused)),
  		       unsigned char *buf)
  {
@@ -186,19 +185,6 @@ index 684e91e..d6573ad 100644
  		if ((cp = strchr(buf, ' ')) != NULL)
  			*cp = 0;
  		if ((cp = strchr(buf, '\t')) != NULL)
-diff --git a/lib/ss/Makefile.in b/lib/ss/Makefile.in
-index 276acc3..aa4f94b 100644
---- a/lib/ss/Makefile.in
-+++ b/lib/ss/Makefile.in
-@@ -170,7 +170,7 @@ test_ss: test_ss.o test_cmd.o $(LIBEXT2FS) $(LIBSS) $(LIBCOM_ERR)
- 
- check:: all test_ss
- 	@echo "	RUN TEST test_ss"
--	@(test_ss -f $(srcdir)/test_script >& test_out; exit 0)
-+	@(LD_LIBRARY_PATH=$(LIB) DYLD_LIBRARY_PATH=$(LIB) ./test_ss -f $(srcdir)/test_script >& test_out; exit 0)
- 	@if ! diff test_out $(srcdir)/test_script_expected > test.diff; then \
- 		echo "Regression test for ss library failed!"; exit 1 ; fi
- 
 diff --git a/lib/ss/ss.pc.in b/lib/ss/ss.pc.in
 index 0218fd5..ce284fc 100644
 --- a/lib/ss/ss.pc.in

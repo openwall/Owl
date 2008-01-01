@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.45 2007/12/07 00:43:28 ldv Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.46 2008/01/01 23:44:12 ldv Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -12,18 +12,17 @@
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
-Version: 1.40.2
-Release: owl2
+Version: 1.40.4
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
 # http://repo.or.cz/w/e2fsprogs.git?a=shortlog;h=maint
-Patch0: e2fsprogs-1.40.2-git-20071202-maint.diff
-Patch1: e2fsprogs-1.40.2-owl-alt-maint-fixes.diff
-Patch2: e2fsprogs-1.40.2-alt-fixes.diff
+#Patch0: e2fsprogs-1.40.4-git-20071229-maint.diff
+Patch1: e2fsprogs-1.40.4-owl-alt-maint-fixes.diff
+Patch2: e2fsprogs-1.40.4-alt-fixes.diff
 Patch3: e2fsprogs-1.40.2-owl-blkid-env.diff
 Patch4: e2fsprogs-1.40.2-owl-tests.diff
-Patch5: e2fsprogs-1.40.2-up-fixes.diff
 PreReq: /sbin/ldconfig
 BuildRequires: gettext, texinfo, automake, autoconf
 BuildRequires: glibc >= 0:2.2, sed >= 0:4.1
@@ -56,12 +55,11 @@ develop second extended (ext2) filesystem-specific programs.
 %prep
 %setup -q
 chmod -R u+w .
-%patch0 -p1
+#patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
 bzip2 -9k RELEASE-NOTES
 
 # remove these unwanted header files just in case
@@ -81,6 +79,8 @@ find -type f -print0 |
 %configure \
 	--with-cc="%__cc" \
 	--disable-e2initrd-helper \
+	--disable-tls \
+	--disable-uuidd \
 	--enable-elf-shlibs \
 	--enable-htree \
 	--enable-htree-clear \
@@ -252,6 +252,9 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Tue Jan 01 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.40.4-owl1
+- Updated to 1.40.4.
+
 * Thu Dec 06 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.40.2-owl2
 - Updated to post-1.40.2 snapshot 20071202 of e2fsprogs maint branch.
 - Applied upstream patch to fix integer overflows in libext2fs (CVE-2007-5497).
