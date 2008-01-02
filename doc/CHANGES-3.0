@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2008/01/01	Package: gnupg
+Updated to 1.4.8.
+
 2008/01/01	Package: e2fsprogs
 Updated to 1.40.4.
 
@@ -530,4 +533,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.115 2008/01/01 23:44:43 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.116 2008/01/02 00:10:26 ldv Exp $
