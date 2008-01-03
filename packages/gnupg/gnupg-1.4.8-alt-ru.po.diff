@@ -1,126 +1,126 @@
---- gnupg-1.4.3/po/ru.po.orig	2006-06-11 21:38:46 +0000
-+++ gnupg-1.4.3/po/ru.po	2006-06-11 21:47:10 +0000
-@@ -31,14 +31,14 @@ msgid "no entropy gathering module detec
+--- gnupg-1.4.8/po/ru.po
++++ gnupg-1.4.8/po/ru.po
+@@ -31,14 +31,14 @@ msgid "no entropy gathering module detected\n"
  msgstr "не найден модуль накопления энтропии\n"
  
- #: cipher/random.c:403
+ #: cipher/random.c:401
 -#, fuzzy, c-format
 +#, c-format
  msgid "can't lock `%s': %s\n"
 -msgstr "невозможно заблокировать `%s'\n"
 +msgstr "невозможно заблокировать `%s': %s\n"
  
- #: cipher/random.c:408
+ #: cipher/random.c:406
 -#, fuzzy, c-format
 +#, c-format
  msgid "waiting for lock on `%s'...\n"
 -msgstr "сохранение секретного ключа в `%s'\n"
 +msgstr "ожидание блокировки `%s'...\n"
  
- #: cipher/random.c:448 g10/card-util.c:678 g10/card-util.c:747
- #: g10/dearmor.c:61 g10/dearmor.c:110 g10/encode.c:184 g10/encode.c:488
-@@ -278,12 +278,12 @@ msgstr "ключ сгенерирова�
+ #: cipher/random.c:446 g10/card-util.c:676 g10/card-util.c:745
+ #: g10/dearmor.c:59 g10/dearmor.c:108 g10/encode.c:182 g10/encode.c:472
+@@ -278,12 +278,12 @@ msgstr "ключ сгенерирован (%d секунд)\n"
  
- #: g10/app-openpgp.c:1961
+ #: g10/app-openpgp.c:1959
  msgid "invalid structure of OpenPGP card (DO 0x93)\n"
 -msgstr "недопутимая структура OpenPGP карты (DO 0x93)\n"
 +msgstr "недопустимая структура OpenPGP карты (DO 0x93)\n"
  
- #: g10/app-openpgp.c:2087
+ #: g10/app-openpgp.c:2085
 -#, fuzzy, c-format
 +#, c-format
  msgid "card does not support digest algorithm %s\n"
 -msgstr "%s подпись, хэш-функция %s\n"
 +msgstr "карта не поддерживает хэш-функцию %s\n"
  
- #: g10/app-openpgp.c:2134
+ #: g10/app-openpgp.c:2132
  #, c-format
-@@ -444,7 +444,7 @@ msgstr "Фамилия владельц�
+@@ -449,7 +449,7 @@ msgstr "Фамилия владельца карты:"
  
- #: g10/card-util.c:542
+ #: g10/card-util.c:540
  msgid "Cardholder's given name: "
 -msgstr "Имя влдаельца карты:"
 +msgstr "Имя владельца карты:"
  
- #: g10/card-util.c:560
+ #: g10/card-util.c:558
  #, c-format
-@@ -630,9 +630,8 @@ msgid "change a CA fingerprint"
+@@ -635,9 +635,8 @@ msgid "change a CA fingerprint"
  msgstr "сменить отпечаток CA"
  
- #: g10/card-util.c:1334
+ #: g10/card-util.c:1332
 -#, fuzzy
  msgid "toggle the signature force PIN flag"
 -msgstr "переключение флага force PIN"
 +msgstr "переключение флага signature force PIN"
  
- #: g10/card-util.c:1335
+ #: g10/card-util.c:1333
  msgid "generate new keys"
-@@ -643,9 +642,8 @@ msgid "menu to change or unblock the PIN
+@@ -648,9 +647,8 @@ msgid "menu to change or unblock the PIN"
  msgstr "меню изменения или разблокировки PIN"
  
- #: g10/card-util.c:1337
+ #: g10/card-util.c:1335
 -#, fuzzy
  msgid "verify the PIN and list all data"
 -msgstr "проверить PIN  и показать все данные"
 +msgstr "проверить PIN и вывести перечень всех данных"
  
- #: g10/card-util.c:1457 g10/keyedit.c:1623
+ #: g10/card-util.c:1455 g10/keyedit.c:1619
  msgid "Command> "
-@@ -790,7 +788,7 @@ msgstr "ВНИМАНИЕ: `%s' пуст�
+@@ -805,7 +803,7 @@ msgstr "ВНИМАНИЕ: `%s' пустой файл\n"
  
- #: g10/encode.c:470
+ #: g10/encode.c:454
  msgid "you can only encrypt to RSA keys of 2048 bits or less in --pgp2 mode\n"
 -msgstr "в режиме --pgp2 ключ RSA для ширования должен быть не более 2048 бит\n"
 +msgstr "в режиме --pgp2 ключ RSA для шифрования должен быть не более 2048 бит\n"
  
- #: g10/encode.c:494
+ #: g10/encode.c:478
  #, c-format
-@@ -1671,7 +1669,7 @@ msgstr "--encrypt [filename]"
+@@ -1691,7 +1689,7 @@ msgstr "--encrypt [filename]"
  
- #: g10/gpg.c:3166
+ #: g10/gpg.c:3384
  msgid "--symmetric --encrypt [filename]"
 -msgstr "--symmetric --encrypt [имяфайла]"
 +msgstr "--symmetric --encrypt [имя файла]"
  
- #: g10/gpg.c:3168
+ #: g10/gpg.c:3386
  msgid "you cannot use --symmetric --encrypt with --s2k-mode 0\n"
-@@ -1692,7 +1690,7 @@ msgstr "--sign --encrypt [filename]"
+@@ -1712,7 +1710,7 @@ msgstr "--sign --encrypt [filename]"
  
- #: g10/gpg.c:3217
+ #: g10/gpg.c:3435
  msgid "--symmetric --sign --encrypt [filename]"
 -msgstr "--symmetric --sign --encrypt [имяфайла]"
 +msgstr "--symmetric --sign --encrypt [имя файла]"
  
- #: g10/gpg.c:3219
+ #: g10/gpg.c:3437
  msgid "you cannot use --symmetric --sign --encrypt with --s2k-mode 0\n"
-@@ -1821,7 +1819,7 @@ msgstr "нет секретного по
- #: g10/getkey.c:2598
+@@ -1841,7 +1839,7 @@ msgstr "нет секретного подключа для открытого �
+ #: g10/getkey.c:2620
  #, c-format
  msgid "using subkey %s instead of primary key %s\n"
 -msgstr "использую подклключ %s вместо главного ключа %s\n"
 +msgstr "использую подключ %s вместо главного ключа %s\n"
  
- #: g10/getkey.c:2645
+ #: g10/getkey.c:2667
  #, c-format
-@@ -1842,7 +1840,7 @@ msgstr "при несоответств�
+@@ -1862,7 +1860,7 @@ msgstr "при несоответствии отметки времени - то
  
- #: g10/gpgv.c:78
+ #: g10/gpgv.c:75
  msgid "|FD|write status info to this FD"
 -msgstr "|FD|выводить инфромацию в файл с дескриптором FD"
 +msgstr "|FD|выводить информацию в файл с дескриптором FD"
  
- #: g10/gpgv.c:102
+ #: g10/gpgv.c:99
  msgid "Usage: gpgv [options] [files] (-h for help)"
-@@ -1881,7 +1879,7 @@ msgstr ""
- #: g10/helptext.c:62
+@@ -1901,7 +1899,7 @@ msgstr ""
+ #: g10/helptext.c:60
  msgid "If you want to use this untrusted key anyway, answer \"yes\"."
  msgstr ""
 -"Если Вы хотите использовать данный недоверяемый ключ - ответьте \"yes\"."
 +"Если Вы хотите использовать данный недоверенный ключ - ответьте \"yes\"."
  
- #: g10/helptext.c:66
+ #: g10/helptext.c:64
  msgid ""
-@@ -2450,7 +2448,7 @@ msgstr "ключ %s: \"%s\" %d подп�
+@@ -2475,7 +2473,7 @@ msgstr "ключ %s: \"%s\" %d подпись очищена\n"
  #: g10/import.c:931
  #, c-format
  msgid "key %s: \"%s\" %d signatures cleaned\n"
@@ -129,71 +129,71 @@
  
  #: g10/import.c:934
  #, c-format
-@@ -2561,7 +2559,7 @@ msgstr "ключ %s: неправиль�
- #: g10/import.c:1468
+@@ -2586,7 +2584,7 @@ msgstr "ключ %s: неправильный отзыв подключа\n"
+ #: g10/import.c:1486
  #, c-format
  msgid "key %s: removed multiple subkey revocation\n"
 -msgstr "ключ %s: удалена многожественность подключей отзыва\n"
 +msgstr "ключ %s: удалена множественность подключей отзыва\n"
  
- #: g10/import.c:1510
+ #: g10/import.c:1528
  #, c-format
-@@ -3554,7 +3552,7 @@ msgstr "пропуск v3 самопод
+@@ -3609,7 +3607,7 @@ msgstr "пропуск v3 самоподписи на User ID \"%s\"\n"
  
- #: g10/keyedit.c:4031
+ #: g10/keyedit.c:4058
  msgid "Enter your preferred keyserver URL: "
 -msgstr "Введите URL предпочтаемого сервера ключей: "
 +msgstr "Введите URL предпочитаемого сервера ключей: "
  
- #: g10/keyedit.c:4111
+ #: g10/keyedit.c:4138
  msgid "Are you sure you want to replace it? (y/N) "
-@@ -4222,7 +4220,7 @@ msgstr "%lu ключей закешир�
- #: g10/keyring.c:1434
+@@ -4287,7 +4285,7 @@ msgstr "%lu ключей закешировано за это время (%lu п
+ #: g10/keyring.c:1432
  #, c-format
  msgid "%lu keys cached (%lu signatures)\n"
 -msgstr "%lu ключей закешированно (%lu подписей)\n"
 +msgstr "%lu ключей закешировано (%lu подписей)\n"
  
- #: g10/keyring.c:1505
+ #: g10/keyring.c:1503
  #, c-format
-@@ -4420,7 +4418,7 @@ msgstr "сеансовый ключ за
- #: g10/mainproc.c:301
+@@ -4485,7 +4483,7 @@ msgstr "сеансовый ключ зашифрован %s \n"
+ #: g10/mainproc.c:304
  #, c-format
  msgid "passphrase generated with unknown digest algorithm %d\n"
 -msgstr "пароль создан с незнакомой хеш-фкнкцией %d\n"
 +msgstr "пароль создан с незнакомой хеш-функцией %d\n"
  
- #: g10/mainproc.c:382
+ #: g10/mainproc.c:385
  #, c-format
-@@ -5026,11 +5024,11 @@ msgstr "Все равно использ
+@@ -5104,11 +5102,11 @@ msgstr "Все равно использовать данный ключ? (y/N)"
  
- #: g10/pkclist.c:502
+ #: g10/pkclist.c:503
  msgid "WARNING: Using untrusted key!\n"
 -msgstr "ВНИМАНИЕ: Использование недоверяемого ключа!\n"
 +msgstr "ВНИМАНИЕ: Использование недоверенного ключа!\n"
  
- #: g10/pkclist.c:509
+ #: g10/pkclist.c:510
  msgid "WARNING: this key might be revoked (revocation key not present)\n"
 -msgstr "ВНИМАНИЕ: возможно данный ключ отозван (ключ отзыва отсутвтует)\n"
 +msgstr "ВНИМАНИЕ: возможно данный ключ отозван (ключ отзыва отсутствует)\n"
  
- #: g10/pkclist.c:518
+ #: g10/pkclist.c:519
  msgid "WARNING: This key has been revoked by its designated revoker!\n"
-@@ -5270,11 +5268,11 @@ msgstr "секретный ключ \"%s
- #: g10/revoke.c:500
+@@ -5348,11 +5346,11 @@ msgstr "секретный ключ \"%s\" не найден: %s\n"
+ #: g10/revoke.c:498
  #, c-format
  msgid "no corresponding public key: %s\n"
 -msgstr "нет соотвествующего открытого ключа: %s\n"
 +msgstr "нет соответствующего открытого ключа: %s\n"
  
- #: g10/revoke.c:511
+ #: g10/revoke.c:509
  msgid "public key does not match secret key!\n"
 -msgstr "открытый ключ не соотвествует секретному!\n"
 +msgstr "открытый ключ не соответствует секретному!\n"
  
- #: g10/revoke.c:518
+ #: g10/revoke.c:516
  msgid "Create a revocation certificate for this key? (y/N) "
-@@ -5302,7 +5300,7 @@ msgstr ""
+@@ -5380,7 +5378,7 @@ msgstr ""
  "\n"
  "Поместите его в скрытое место;  если посторонний получит доступ\n"
  "к данному сертификату, он может использовать его, чтобы сделать\n"
@@ -202,39 +202,30 @@
  "сертификат и спрятать подальше,  на случай если Ваш основной\n"
  "носитель будет повреждён, но будьте осторожны: система печати\n"
  "Вашей машины может сохранить данные и сделать их доступными для других!\n"
-@@ -5367,7 +5365,7 @@ msgstr "ВНИМАНИЕ: обнаруж
- #: g10/seckey-cert.c:366
+@@ -5445,7 +5443,7 @@ msgstr "ВНИМАНИЕ: обнаружен слабый ключ - смени�
+ #: g10/seckey-cert.c:364
  msgid "generating the deprecated 16-bit checksum for secret key protection\n"
  msgstr ""
 -"создание нерекомендуемой 16-битной контрольной суммы для защиты ключа\n"
 +"создание не рекомендуемой 16-битной контрольной суммы для защиты ключа\n"
  
- #: g10/seskey.c:54
+ #: g10/seskey.c:51
  msgid "weak key created - retrying\n"
-@@ -5458,7 +5456,7 @@ msgstr "ключ %s: нет подклю
- 
- #: g10/sign.c:85
- msgid "can't put notation data into v3 (PGP 2.x style) signatures\n"
--msgstr "невозможно добавить примечение в v3 (PGP 2.x стиля) подпись\n"
-+msgstr "невозможно добавить примечание в v3 (PGP 2.x стиля) подпись\n"
- 
- #: g10/sign.c:93
- msgid "can't put notation data into v3 (PGP 2.x style) key signatures\n"
-@@ -5881,7 +5879,7 @@ msgstr "проверка таблицы 
- #: g10/trustdb.c:2095
+@@ -5939,7 +5937,7 @@ msgstr "проверка таблицы доверий\n"
+ #: g10/trustdb.c:2168
  #, c-format
  msgid "%d keys processed (%d validity counts cleared)\n"
 -msgstr "%d ключей обработано (%d дейсвующих записей очищено)\n"
 +msgstr "%d ключей обработано (%d действующих записей очищено)\n"
  
- #: g10/trustdb.c:2160
+ #: g10/trustdb.c:2233
  msgid "no ultimately trusted keys found\n"
-@@ -6082,7 +6080,7 @@ msgstr "ошибка удаления ф
+@@ -6140,7 +6138,7 @@ msgstr "ошибка удаления файла"
  
- #: util/errors.c:93
+ #: util/errors.c:91
  msgid "unexpected data"
 -msgstr "неожидавшиеся данные"
 +msgstr "неожиданные данные"
  
- #: util/errors.c:94
+ #: util/errors.c:92
  msgid "timestamp conflict"

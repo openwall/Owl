@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.31.2.6 2007/03/06 01:03:13 ldv Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.31.2.7 2008/01/03 23:59:05 ldv Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.4.7
+Version: 1.4.8
 Release: owl0.2.0.1
 License: GPL
 Group: Applications/Cryptography
@@ -10,7 +10,7 @@ URL: http://www.gnupg.org
 Source0: ftp://ftp.gnupg.org/gcrypt/gnupg/%name-%version.tar.bz2
 Source1: gpgsplit.1
 Source2: lspgpot.1
-Patch0: gnupg-1.4.3-alt-ru.po.diff
+Patch0: gnupg-1.4.8-alt-ru.po.diff
 Patch1: gnupg-1.4.3-alt-always-trust.diff
 Patch2: gnupg-1.4.2-alt-cp1251.diff
 Patch3: gnupg-1.4.2-fw-secret-key-checks.diff
@@ -96,6 +96,9 @@ fi
 %exclude %_datadir/gnupg/faq.html
 
 %changelog
+* Fri Jan 04 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.8-owl0.2.0.1
+- Updated to 1.4.8.
+
 * Tue Mar 06 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.7-owl0.2.0.1
 - Updated to 1.4.7.  This includes a fix for an unsigned data injection
 vulnerability (CVE-2007-1263):
