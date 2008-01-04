@@ -1,0 +1,10 @@
+--- hdparm-7.7/Makefile
++++ hdparm-7.7/Makefile
+@@ -28,7 +28,6 @@ all: hdparm
+ 
+ hdparm: hdparm.h $(OBJS)
+ 	$(CC) $(LDFLAGS) -o hdparm $(OBJS)
+-	strip hdparm
+  
+ install: all hdparm.8
+ 	if [ ! -z $(DESTDIR) ]; then $(INSTALL_DIR) $(DESTDIR) ; fi

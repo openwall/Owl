@@ -1,26 +1,24 @@
-# $Owl: Owl/packages/hdparm/hdparm.spec,v 1.20 2006/06/12 23:01:11 ldv Exp $
+# $Owl: Owl/packages/hdparm/hdparm.spec,v 1.21 2008/01/04 00:42:32 ldv Exp $
 
 Summary: An utility for displaying and/or setting hard disk parameters.
 Name: hdparm
-Version: 6.6
+Version: 7.7
 Release: owl1
-License: BSD
+License: BSD-style
 Group: Applications/System
 URL: http://sourceforge.net/projects/hdparm/
 Source: http://prdownloads.sourceforge.net/hdparm/hdparm-%version.tar.gz
-Patch0: hdparm-6.3-owl-warnings.diff
-Patch1: hdparm-5.8-rh-help.diff
-Patch2: hdparm-6.6-deb-identify.diff
+Patch: hdparm-7.7-owl-Makefile.diff
 BuildRoot: /override/%name-%version
 
 %description
-hdparm - get/set hard disk parameters for IDE drives.
+hdparm utility provides a command line interface to various hard disk
+ioctls supported by the Linux SATA/PATA/SAS "libata" subsystem and the
+older IDE driver subsystem.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
+%patch -p1
 
 %build
 CFLAGS="%optflags" %__make CC="%__cc" LDFLAGS=
@@ -32,11 +30,14 @@ install -pD -m644 hdparm.8 %buildroot%_mandir/man8/hdparm.8
 
 %files
 %defattr(-,root,root)
-%doc hdparm.lsm Changelog README.acoustic
+%doc hdparm.lsm Changelog LICENSE.TXT README.acoustic
 /sbin/hdparm
 %_mandir/man8/hdparm.8*
 
 %changelog
+* Fri Jan 04 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 7.7-owl1
+- Updated to 7.7.
+
 * Mon Jun 12 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.6-owl1
 - Updated to 6.6.
 - Corrected build to keep upstream compiler options.
