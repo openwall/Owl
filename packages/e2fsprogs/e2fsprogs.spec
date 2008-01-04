@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.34 2006/02/03 22:09:35 ldv Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.34.2.1 2008/01/04 00:10:54 ldv Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -12,18 +12,20 @@
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
-Version: 1.37
-Release: owl3
+Version: 1.40.4
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
-Patch0: e2fsprogs-1.37-owl-fixes.diff
-Patch1: e2fsprogs-1.37-owl-tests.diff
-Patch2: e2fsprogs-1.37-owl-blkid-env.diff
-Patch3: e2fsprogs-1.37-owl-messages.diff
+# http://repo.or.cz/w/e2fsprogs.git?a=shortlog;h=maint
+#Patch0: e2fsprogs-1.40.4-git-20071229-maint.diff
+Patch1: e2fsprogs-1.40.4-owl-alt-maint-fixes.diff
+Patch2: e2fsprogs-1.40.4-alt-fixes.diff
+Patch3: e2fsprogs-1.40.2-owl-blkid-env.diff
+Patch4: e2fsprogs-1.40.2-owl-tests.diff
 PreReq: /sbin/ldconfig
 BuildRequires: gettext, texinfo, automake, autoconf
-BuildRequires: glibc >= 0:2.2
+BuildRequires: glibc >= 0:2.2, sed >= 0:4.1
 %if !%USE_PKGCONFIG
 BuildRequires: rpm-build >= 0:4
 %endif
@@ -53,11 +55,20 @@ develop second extended (ext2) filesystem-specific programs.
 %prep
 %setup -q
 chmod -R u+w .
-%patch0 -p1
+#patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-bzip2 -9k ChangeLog RELEASE-NOTES
+%patch4 -p1
+bzip2 -9k RELEASE-NOTES
+
+# remove these unwanted header files just in case
+rm -r include
+
+# add noreturn attribute to usage functions
+find -type f -print0 |
+	xargs -r0 grep -lZ '^static void usage' -- |
+	xargs -r0 sed -i 's/^static void usage/__attribute__((noreturn)) &/' --
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -67,6 +78,9 @@ bzip2 -9k ChangeLog RELEASE-NOTES
 #rm doc/libext2fs.info
 %configure \
 	--with-cc="%__cc" \
+	--disable-e2initrd-helper \
+	--disable-tls \
+	--disable-uuidd \
 	--enable-elf-shlibs \
 	--enable-htree \
 	--enable-htree-clear \
@@ -88,20 +102,28 @@ bzip2 -9k ChangeLog RELEASE-NOTES
 	--enable-maintainer-mode # to build NLS files
 
 # NB: this package cannot be built using parallel tasks -- (GM)
-%__make all check
+%__make all
+%__make -k check
 
 %install
 rm -rf %buildroot
 %__make install install-libs DESTDIR="%buildroot" LDCONFIG= \
 	root_sbindir=/sbin root_libdir=/%_lib
 
-/sbin/ldconfig -N -n %buildroot%_libdir
-
-# this binary has no documentation and its use is under question
-rm %buildroot%_libdir/e2initrd_helper
+# make symlinks relative
+for f in %buildroot%_libdir/*.so; do
+	v="$(readlink -v "$f")"
+	v="${v##*/}"
+	ln -sf ../../%_lib/"$v" "$f"
+done
 
 # fix permissions
-chmod 0644 %buildroot%_libdir/*.a
+chmod 644 %buildroot%_libdir/*.a
+
+# ensure that %buildroot did not get into installed files
+sed -i 's,^ET_DIR=.*$,ET_DIR=%_datadir/et,' %buildroot%_bindir/compile_et
+sed -i 's,^SS_DIR=.*$,SS_DIR=%_datadir/ss,' %buildroot%_bindir/mk_cmds
+! fgrep -rl %buildroot %buildroot/
 
 %find_lang %name
 
@@ -118,7 +140,9 @@ fi
 
 %files -f %name.lang
 %defattr(-,root,root)
-%doc ChangeLog.bz2 README RELEASE-NOTES.bz2
+%doc README RELEASE-NOTES.bz2
+
+%config(noreplace) %_sysconfdir/*.conf
 
 /sbin/badblocks
 /sbin/blkid
@@ -153,7 +177,7 @@ fi
 %_mandir/man1/chattr.1*
 %_mandir/man1/lsattr.1*
 %_mandir/man1/uuidgen.1*
-
+%_mandir/man5/*
 %_mandir/man8/badblocks.8*
 %_mandir/man8/blkid.8*
 %_mandir/man8/debugfs.8*
@@ -228,6 +252,39 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Tue Jan 01 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.40.4-owl1
+- Updated to 1.40.4.
+
+* Thu Dec 06 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.40.2-owl2
+- Updated to post-1.40.2 snapshot 20071202 of e2fsprogs maint branch.
+- Applied upstream patch to fix integer overflows in libext2fs (CVE-2007-5497).
+
+* Thu Nov 15 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.40.2-owl1
+- Updated to post-1.40.2 snapshot 20071015 of e2fsprogs maint branch.
+- Removed the /proc workaround added in previous build.
+
+* Mon Mar 26 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.39-owl4
+- Added a fix for running tests on a system without the /proc filesystem
+mounted (e.g. chroot'ed installation).
+A side effect of the above patch is that resize2fs honours the -f
+option now and the tool doesn't abort if it cannot determine whether a
+requested filesystem is mounted or not.  IMHO, this is not an issue
+since -f is dangerous anyway and only experiencied users should use this
+option.
+
+* Sun Oct 29 2006 Alexandr D. Kanevskiy <kad-at-owl.openwall.com> 1.39-owl3
+- Patch from upstream Mercurial repository:
+Changeset 1953: Fix SIGBUS through unaligned access to FAT superblocks.
+
+* Fri Jun 16 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.39-owl2
+- Fixed temporary file handling issues during the build process.
+
+* Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.39-owl1
+- Updated to 1.39.
+
+* Sun Mar 12 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.37-owl4
+- Made %_libdir/*.so symlinks relative.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.37-owl3
 - Compressed ChangeLog and RELEASE-NOTES files.
 - Corrected info files installation.

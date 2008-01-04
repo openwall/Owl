@@ -1,0 +1,11 @@
+--- e2fsprogs-1.40.2/lib/blkid/cache.c
++++ e2fsprogs-1.40.2/lib/blkid/cache.c
+@@ -81,7 +81,7 @@ int blkid_get_cache(blkid_cache *ret_cache, const char *filename)
+ 
+ #ifdef CONFIG_BLKID_DEBUG
+ 	if (!(blkid_debug_mask & DEBUG_INIT)) {
+-		char *dstr = getenv("BLKID_DEBUG");
++		char *dstr = safe_getenv("BLKID_DEBUG");
+ 
+ 		if (dstr)
+ 			blkid_debug_mask = strtoul(dstr, 0, 0);
