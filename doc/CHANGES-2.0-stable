@@ -9,6 +9,14 @@ only the stable branch which has these changes.
 2008/01/04	Package: gnupg
 Updated to 1.4.8.
 
+(2008/01/01)
+2008/01/04	Package: e2fsprogs
+Updated to 1.40.4.  This release fixes multiple integer overflows
+in libext2fs which allow user-assisted remote attacks via a crafted
+filesystem image.
+Reference:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-5497
+
 (2007/10/07 - 2007/11/08)
 2007/11/08	Package: bind
 Updated L.ROOT-SERVERS.NET address.
@@ -324,4 +332,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.47 2008/01/04 00:01:08 ldv Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.48 2008/01/04 00:16:43 ldv Exp $
