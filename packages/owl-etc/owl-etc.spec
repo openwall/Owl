@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.68 2006/03/30 04:18:02 galaxy Exp $
+# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.69 2008/01/08 22:10:12 ldv Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
 Version: 0.31
-Release: owl2
+Release: owl3
 License: public domain
 Group: System Environment/Base
 Source0: passwd
@@ -162,11 +162,14 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %ghost /var/log/lastlog
 %ghost /etc/*-
 %attr(0644,root,root) %config(noreplace,missingok) %ghost /etc/hosts
-%attr(0644,root,root) %config(noreplace,missingok) %ghost /etc/mtab
+%attr(0644,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/mtab
 %attr(0644,root,root) %config(noreplace) %ghost /etc/resolv.conf
 %dir %attr(755,root,root) /etc/sysconfig
 
 %changelog
+* Tue Jan 08 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.31-owl3
+- Removed %%ghost attribute from /etc/mtab file.
+
 * Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.31-owl2
 - A minor change to include ghost files (/etc/hosts, /etc/mtab, and
 /etc/resolv.conf).
