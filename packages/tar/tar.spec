@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.36 2008/01/14 18:29:08 grg Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.37 2008/01/14 22:18:04 grg Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -101,6 +101,9 @@ fi
 %doc AUTHORS NEWS THANKS
 
 %changelog
+* Tue Jan 14 2008 Grigoriy Strokin <grg-at-owl.openwall.com> 1.18-owl2
+- Added a new option: --ignore-device-id.
+
 * Fri Aug 17 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.18-owl1
 - Updated to 1.18.
 - Fixed crash bug in list and extract modes.

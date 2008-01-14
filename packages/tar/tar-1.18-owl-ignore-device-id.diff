@@ -63,7 +63,7 @@ Add --ignore-device-id option
    /* FIXME: Work out a better algorytm */
 -  return (directory->device_number + directory->inode_number) % n_buckets;
 +  /* --ignore-device-id will only work if device_number is not used here! */
-+  return ((ignore_device_id_option?0:directory->device_number) + directory->inode_number) % n_buckets;
++  return ((ignore_device_id_option ? 0 : directory->device_number) + directory->inode_number) % n_buckets;
  }
  
  /* Compare two directories for equality of their device and inode numbers. */
