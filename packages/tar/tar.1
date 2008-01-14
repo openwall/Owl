@@ -78,6 +78,9 @@ tar \- The GNU version of the tar archiving utility
 .BR --help
 ]
 [
+.BR --ignore-device-id
+]
+[
 .BR -i ", " --ignore-zeros
 ]
 [
@@ -406,6 +409,9 @@ don't dump symlinks; dump the files they point to
 .TP
 .BR --help
 like this manpage, but not as cool
+.TP
+.BR --ignore-device-id
+ignore device ids when doing incremental backups
 .TP
 .BR -i ", " --ignore-zeros
 ignore blocks of zeros in archive (normally mean EOF)

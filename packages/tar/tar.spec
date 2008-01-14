@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.35 2007/08/18 23:06:29 solar Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.36 2008/01/14 18:29:08 grg Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.18
-Release: owl1
+Release: owl2
 License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
@@ -19,6 +19,7 @@ Patch6: tar-1.18-deb-lone-zero-block-warning.diff
 Patch7: tar-1.18-rh-sys_truncate.diff
 Patch8: tar-1.18-owl-warnings.diff
 Patch9: tar-1.18-owl-fchown-fchmod.diff
+Patch10: tar-1.18-owl-ignore-device-id.diff
 PreReq: /sbin/install-info, grep
 BuildRequires: automake, autoconf, cvs, gettext, texinfo
 BuildRequires: rpm-build >= 0:4, sed >= 4.0.9
@@ -45,6 +46,7 @@ backups.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
