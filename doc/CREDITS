@@ -17,6 +17,10 @@ syslogd credentials passing, verification, and logging:
 
 	ArkanoiD <ark at cvs.openwall.com>
 
+Addition of the --ignore-device-id option to tar:
+
+	Grigoriy Strokin <grg at cvs.openwall.com>
+
 The initial Mutt package:
 
 	Jarno Huuskonen <jhuuskon at cvs.openwall.com>
@@ -49,4 +53,4 @@ donation too:
 
 http://www.openwall.com/donations/
 
-$Owl: Owl/doc/CREDITS,v 1.19 2007/11/05 18:43:29 solar Exp $
+$Owl: Owl/doc/CREDITS,v 1.20 2008/01/16 02:05:25 solar Exp $
