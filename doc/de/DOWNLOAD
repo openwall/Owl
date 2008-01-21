@@ -13,14 +13,13 @@ ftp://ftp1.msk.ru.openwall.com/pub/Owl/	(Moskau, Russland)
 ftp://ftp2.msk.ru.openwall.com/pub/Owl/	(Moskau, Russland)
 ftp://ftp.spb.ru.openwall.com/pub/Owl/	(St. Petersburg, Russland)
 ftp://ftp.cz.openwall.com/pub/Owl/	(Tschechien)
-ftp://ftp.ua.openwall.com/pub/Owl/	(NUR in der Ukraine)
+ftp://ftp.ua.openwall.com/pub/Owl/	(Ukraine)
 ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Österreich)
 	http://gd.tuwien.ac.at/opsys/linux/Owl/
 	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
 ftp://ftp.ibiblio.org/pub/linux/distributions/openwall/Owl/	(USA)
 	http://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/
-ftp://ftp.mirrorgeek.com/openwall/Owl/	(USA)
-	http://www.mirrorgeek.com/openwall/Owl/
+http://www.mirrorgeek.com/openwall/Owl/	(USA)
 ftp://ftp.wiretapped.net/pub/Owl/	(Australien)
 
 Für jedes Release von Owl gibt es ein eigenes Unterverzeichnis mit dem
@@ -76,4 +75,4 @@ Wir bieten zudem auch ein CVSweb-Interface an:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/de/DOWNLOAD,v 1.29.2.1 2007/06/15 14:50:30 solar Exp $
+$Owl: Owl/doc/de/DOWNLOAD,v 1.29.2.2 2008/01/21 13:34:55 solar Exp $
