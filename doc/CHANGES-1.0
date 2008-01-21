@@ -869,8 +869,6 @@ Alpha.  Owl is now able to rebuild all of its packages on an Alpha
 without causing a single unaligned trap.
 References:
 http://bugs.debian.org/43401
-http://www.alphalinux.org/archives/debian-alpha/February2000/0183.html
-http://www.alphalinux.org/archives/debian-alpha/February2000/0197.html
 http://gcc.gnu.org/ml/gcc/1999-07n/msg00968.html
 http://gcc.gnu.org/ml/gcc/1999-07n/msg01041.html
 
@@ -991,4 +989,4 @@ we've released.  Thus, this isn't a security update.
 2001/05/15	Owl/doc/fr/*
 New files: French translations of the documentation, from Denis Ducamp.
 
-$Owl: Owl/doc/CHANGES-1.0,v 1.9 2007/06/15 14:13:36 solar Exp $
+$Owl: Owl/doc/CHANGES-1.0,v 1.10 2008/01/21 13:31:13 solar Exp $
