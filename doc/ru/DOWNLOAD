@@ -18,8 +18,7 @@ ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Австрия)
 ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Германия)
 ftp://ftp.ibiblio.org/pub/linux/distributions/openwall/Owl/	(США)
 	http://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/
-ftp://ftp.mirrorgeek.com/openwall/Owl/	(США)
-	http://www.mirrorgeek.com/openwall/Owl/
+http://www.mirrorgeek.com/openwall/Owl/	(США)
 ftp://ftp.wiretapped.net/pub/Owl/	(Австралия)
 
 Каждому релизу или ветке Owl соответствует отдельный каталог со
@@ -69,4 +68,4 @@ CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
 
 Интерфейс CVSweb доступен по адресу http://cvsweb.openwall.com
 
-$Owl: Owl/doc/ru/DOWNLOAD,v 1.25 2007/06/15 14:49:29 solar Exp $
+$Owl: Owl/doc/ru/DOWNLOAD,v 1.26 2008/01/21 13:28:49 solar Exp $

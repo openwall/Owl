@@ -17,8 +17,7 @@ ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Autriche)
 ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Allemagne)
 ftp://ftp.ibiblio.org/pub/linux/distributions/openwall/Owl/	(USA)
 	http://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/
-ftp://ftp.mirrorgeek.com/openwall/Owl/	(USA)
-	http://www.mirrorgeek.com/openwall/Owl/
+http://www.mirrorgeek.com/openwall/Owl/	(USA)
 ftp://ftp.wiretapped.net/pub/Owl/	(Australie)
 
 Il y a un sous-répertoire pour chaque version ou branche Owl, avec les
@@ -66,4 +65,4 @@ utiliser la compression avec chaque méthode d'accès au serveur CVS anonyme,
 typiquement en spécifiant l'option -z3 à CVS et/ou "Compression yes" dans le
 fichier de configuration du client SSH.
 
-$Owl: Owl/doc/fr/DOWNLOAD,v 1.21 2007/06/15 14:49:29 solar Exp $
+$Owl: Owl/doc/fr/DOWNLOAD,v 1.22 2008/01/21 13:28:49 solar Exp $
