@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.51 2006/09/05 20:01:13 galaxy Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.52 2008/02/12 20:43:35 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 0.99.4.0
-Release: owl2
+Release: owl3
 %define rh_version 0.80-1
 License: GPL or BSD
 Group: System Environment/Base
@@ -265,6 +265,11 @@ find %buildroot%docdir/ -type f -size +4k \( -iname changelog -or -name \*.txt -
 %docdir/[hpst]*
 
 %changelog
+* Tue Feb 12 2008 Solar Designer <solar-at-owl.openwall.com> 0.99.4.0-owl3
+- In system-auth, reduced the default value for the N2 parameter to
+pam_passwdqc's min=... option (the minimum length for passphrases) from
+12 to 11.
+
 * Sun Sep 03 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.99.4.0-owl2
 - Relaxed the build dependency on db4-devel.
 
