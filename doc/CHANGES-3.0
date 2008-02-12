@@ -12,6 +12,14 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2008/02/12	Packages: pam_passwdqc, pam
+Applied numerous minor changes to pam_passwdqc and its default settings,
+including replacing its set of separator characters (used for randomly
+generated "passphrases") with some of those defined by RFC 3986 as being
+safe within "userinfo" part of URLs without encoding, reducing the
+default minimum length for passphrases from 12 to 11, and corrections to
+the documentation.
+
 2008/01/15	Package: tar
 Added a new option: --ignore-device-id, to be used when creating
 incremental dumps off filesystems with volatile device numbers, such as
@@ -541,4 +549,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.119 2008/01/16 02:01:48 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.120 2008/02/12 21:01:21 solar Exp $
