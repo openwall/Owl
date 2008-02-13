@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/pcre/pcre.spec,v 1.8 2007/09/24 23:03:35 ldv Exp $
+# $Owl: Owl/packages/pcre/pcre.spec,v 1.9 2008/02/13 21:42:45 ldv Exp $
 
 Summary: Perl-compatible regular expression library.
 Name: pcre
-Version: 7.4
+Version: 7.6
 Release: owl1
 License: BSD-style
 Group: System Environment/Libraries
@@ -105,6 +105,9 @@ rm -r %buildroot%docdir/{README,html,*.txt}
 %docdir/*.c
 
 %changelog
+* Wed Feb 13 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 7.6-owl1
+- Updated to 7.6.
+
 * Mon Sep 24 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 7.4-owl1
 - Updated to 7.4.
 
