@@ -6,7 +6,7 @@ only the stable branch which has these changes.
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
 (2006/02/20)
-2008/04/16	Package: sed
+2008/03/16	Package: sed
 Updated to 4.1.5.
 
 (2008/01/01)
@@ -336,4 +336,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.50 2008/03/17 00:00:25 ldv Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.51 2008/03/17 00:16:09 solar Exp $
