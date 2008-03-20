@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/bzip2/bzip2.spec,v 1.29 2007/10/07 22:46:41 ldv Exp $
+# $Owl: Owl/packages/bzip2/bzip2.spec,v 1.30 2008/03/20 03:51:19 ldv Exp $
 
 Summary: An extremely powerful file compression utility.
 Name: bzip2
-Version: 1.0.4
+Version: 1.0.5
 Release: owl1
 License: BSD-style
 Group: Applications/File
@@ -107,6 +107,9 @@ fi
 %_infodir/bzip2.*
 
 %changelog
+* Thu Mar 20 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.5-owl1
+- Updated to 1.0.5 (fixes CVE-2008-1372).
+
 * Sun Oct 07 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.4-owl1
 - Updated to 1.0.4, synced with ALT's bzip2-1.0.4-alt3.
 - Restricted list of global symbols exported by the library to those
