@@ -12,6 +12,13 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2008/03/20	Package: bzip2
+Updated to 1.0.5.  This release fixes a potential buffer over-read bug,
+which allowed user-assisted remote attackers to cause a crash in libbz2
+via a crafted file.
+Reference:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-1372
+
 2008/02/13	Package: pcre
 Updated to 7.6.
 
@@ -552,4 +559,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.121 2008/02/13 21:43:52 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.122 2008/03/20 04:01:38 ldv Exp $
