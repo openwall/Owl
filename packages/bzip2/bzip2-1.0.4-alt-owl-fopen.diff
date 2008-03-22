@@ -1,18 +1,29 @@
-diff -urp bzip2-1.0.3.orig/bzip2recover.c bzip2-1.0.3/bzip2recover.c
---- bzip2-1.0.3.orig/bzip2recover.c	Tue Feb 15 16:20:57 2005
-+++ bzip2-1.0.3/bzip2recover.c	Thu May  5 22:21:08 2005
-@@ -56,6 +56,8 @@
+--- bzip2/bzip2recover.c
++++ bzip2/bzip2recover.c
+@@ -20,10 +20,20 @@
+ /* This program is a complete hack and should be rewritten properly.
+ 	 It isn't very complicated. */
+ 
++#define BZ_UNIX      1
++#if defined(_WIN32) && !defined(__CYGWIN__)
++# undef  BZ_UNIX
++# define BZ_UNIX 0
++#endif
++
+ #include <stdio.h>
  #include <errno.h>
  #include <stdlib.h>
  #include <string.h>
-+#include <unistd.h>
-+#include <fcntl.h>
++#if BZ_UNIX
++# include <unistd.h>
++# include <fcntl.h>
++#endif
  
  
  /* This program records bit locations in the file to be recovered.
-@@ -301,6 +303,24 @@ Bool endsInBz2 ( Char* name )
-        name[n-1] == '2');
+@@ -270,6 +280,33 @@ static Bool endsInBz2 ( Char* name )
  }
+ 
  
 +/*---------------------------------------------*/
 +/* Open an output file safely with O_EXCL and good permissions.
@@ -22,20 +33,29 @@ diff -urp bzip2-1.0.3.orig/bzip2recover.c bzip2-1.0.3/bzip2recover.c
 +   the interim permissions required (rw-------).
 +
 +   For non-Unix platforms, if we are not worrying about
-+   security issues, simple this simply behaves like fopen.
++   security issues, this simply behaves like fopen.
 +*/
-+static FILE* fopen_output_safely ( Char* name, const char* mode )
++static
++FILE* fopen_output_safely ( Char* name, const char* mode )
 +{
-+   int fh = open(name, O_WRONLY|O_CREAT|O_EXCL, S_IWUSR|S_IRUSR);
++#if BZ_UNIX
++   FILE* fp;
++   int fh;
++   fh = open(name, O_WRONLY|O_CREAT|O_EXCL, S_IWUSR|S_IRUSR);
 +   if (fh == -1) return NULL;
-+   FILE* fp = fdopen(fh, mode);
++   fp = fdopen(fh, mode);
 +   if (fp == NULL) close(fh);
 +   return fp;
++#else
++   return fopen(name, mode);
++#endif
 +}
- 
++
++
  /*---------------------------------------------------*/
  /*---                                             ---*/
-@@ -518,7 +538,7 @@ Int32 main ( Int32 argc, Char** argv )
+ /*---------------------------------------------------*/
+@@ -486,7 +523,7 @@ Int32 main ( Int32 argc, Char** argv )
           fprintf ( stderr, "   writing block %d to `%s' ...\n",
                             wrBlock+1, outFileName );
  

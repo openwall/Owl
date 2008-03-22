@@ -1,0 +1,29 @@
+--- bzip2-1.0.4.orig/Makefile.am	2005-04-09 22:29:21 +0000
++++ bzip2-1.0.4/Makefile.am	2007-01-10 16:35:20 +0000
+@@ -21,7 +21,11 @@ libbz2_la_SOURCES = \
+ 	compress.c \
+ 	decompress.c \
+ 	bzlib.c
+-libbz2_la_LDFLAGS = -version-info 1:4:0
++libbz2_la_LDFLAGS = -version-info 1:4:0 -Wl,--version-script=libbz2.map
++libbz2_la_DEPENDENCIES = libbz2.map
++
++libbz2.map: libbz2.map.sh
++	sh $^ >$@
+ 
+ check-local: samples.sh bzip2
+ 	./samples.sh
+--- bzip2-1.0.4.orig/libbz2.map.sh	1970-01-01 00:00:00 +0000
++++ bzip2-1.0.4/libbz2.map.sh	2005-04-09 22:29:21 +0000
+@@ -0,0 +1,11 @@
++#!/bin/sh
++
++cat <<__EOF__
++
++{
++  global:
++$(sed -ne 's/^BZ_EXTERN .*BZ_API(\([^)]\+\)).*/    \1;/pg' bzlib.h)
++  local:
++    *;
++};
++__EOF__

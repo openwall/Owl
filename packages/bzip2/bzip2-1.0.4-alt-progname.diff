@@ -1,6 +1,6 @@
---- bzip2-1.0.3/bzip2.c.orig	2005-04-10 00:28:59 +0400
-+++ bzip2-1.0.3/bzip2.c	2005-04-10 00:30:56 +0400
-@@ -300,8 +300,7 @@ Int32   longestFileName;
+--- bzip2-1.0.4.orig/bzip2.c	2007-01-10 22:05:04 +0000
++++ bzip2-1.0.4/bzip2.c	2007-01-10 22:06:38 +0000
+@@ -209,8 +209,7 @@ Int32   longestFileName;
  Char    inName [FILE_NAME_LEN];
  Char    outName[FILE_NAME_LEN];
  Char    tmpName[FILE_NAME_LEN];
@@ -10,16 +10,7 @@
  FILE    *outputHandleJustInCase;
  Int32   workFactor;
  
-@@ -1692,7 +1691,7 @@ void license ( void )
- 
- /*---------------------------------------------*/
- static 
--void usage ( Char *fullProgName )
-+void usage ( const char *fullProgName )
- {
-    fprintf (
-       stderr,
-@@ -1845,7 +1844,6 @@
+@@ -1795,7 +1794,6 @@ void addFlagsFromEnvVar ( Cell** argList
  IntNative main ( IntNative argc, Char *argv[] )
  {
     Int32  i, j;
@@ -27,9 +18,9 @@
     Cell   *argList;
     Cell   *aa;
     Bool   decode;
-@@ -1884,10 +1882,7 @@ IntNative main ( IntNative argc, Char *a
-    copyFileName ( inName,  "(none)" );
-    copyFileName ( outName, "(none)" );
+@@ -1834,10 +1832,7 @@ IntNative main ( IntNative argc, Char *a
+    copyFileName ( inName,  (Char*)"(none)" );
+    copyFileName ( outName, (Char*)"(none)" );
  
 -   copyFileName ( progNameReally, argv[0] );
 -   progName = &progNameReally[0];
@@ -39,9 +30,9 @@
  
  
     /*-- Copy flags from env var BZIP2, and 
---- bzip2-1.0.3/bzip2recover.c.orig	2005-04-10 00:31:41 +0400
-+++ bzip2-1.0.3/bzip2recover.c	2005-04-10 00:37:47 +0400
-@@ -99,7 +99,7 @@ typedef  unsigned char  Bool;
+--- bzip2-1.0.4.orig/bzip2recover.c	2007-01-10 22:05:04 +0000
++++ bzip2-1.0.4/bzip2recover.c	2007-01-10 22:06:38 +0000
+@@ -67,7 +67,7 @@ typedef  unsigned char  Bool;
  
  Char inFileName[BZ_MAX_FILENAME];
  Char outFileName[BZ_MAX_FILENAME];
@@ -50,7 +41,7 @@
  
  MaybeUInt64 bytesOut = 0;
  MaybeUInt64 bytesIn  = 0;
-@@ -367,7 +367,7 @@ Int32 main ( Int32 argc, Char** argv )
+@@ -333,7 +333,7 @@ Int32 main ( Int32 argc, Char** argv )
     UInt32      buffHi, buffLo, blockCRC;
     Char*       p;
  
