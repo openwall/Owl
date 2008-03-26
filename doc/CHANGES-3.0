@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2008/03/26	Package: gnupg
+Updated to 1.4.9.
+
 2008/03/20	Package: findutils
 Updated to 4.2.33.
 
@@ -562,4 +565,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.123 2008/03/20 04:46:37 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.124 2008/03/26 21:44:29 ldv Exp $
