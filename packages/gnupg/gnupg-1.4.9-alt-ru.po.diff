@@ -1,5 +1,5 @@
---- gnupg-1.4.8/po/ru.po
-+++ gnupg-1.4.8/po/ru.po
+--- gnupg-1.4.9/po/ru.po
++++ gnupg-1.4.9/po/ru.po
 @@ -31,14 +31,14 @@ msgid "no entropy gathering module detected\n"
  msgstr "не найден модуль накопления энтропии\n"
  
@@ -17,7 +17,7 @@
 -msgstr "сохранение секретного ключа в `%s'\n"
 +msgstr "ожидание блокировки `%s'...\n"
  
- #: cipher/random.c:446 g10/card-util.c:676 g10/card-util.c:745
+ #: cipher/random.c:446 g10/card-util.c:681 g10/card-util.c:750
  #: g10/dearmor.c:59 g10/dearmor.c:108 g10/encode.c:182 g10/encode.c:472
 @@ -278,12 +278,12 @@ msgstr "ключ сгенерирован (%d секунд)\n"
  
@@ -37,34 +37,34 @@
  #, c-format
 @@ -449,7 +449,7 @@ msgstr "Фамилия владельца карты:"
  
- #: g10/card-util.c:540
+ #: g10/card-util.c:545
  msgid "Cardholder's given name: "
 -msgstr "Имя влдаельца карты:"
 +msgstr "Имя владельца карты:"
  
- #: g10/card-util.c:558
+ #: g10/card-util.c:563
  #, c-format
 @@ -635,9 +635,8 @@ msgid "change a CA fingerprint"
  msgstr "сменить отпечаток CA"
  
- #: g10/card-util.c:1332
+ #: g10/card-util.c:1337
 -#, fuzzy
  msgid "toggle the signature force PIN flag"
 -msgstr "переключение флага force PIN"
 +msgstr "переключение флага signature force PIN"
  
- #: g10/card-util.c:1333
+ #: g10/card-util.c:1338
  msgid "generate new keys"
 @@ -648,9 +647,8 @@ msgid "menu to change or unblock the PIN"
  msgstr "меню изменения или разблокировки PIN"
  
- #: g10/card-util.c:1335
+ #: g10/card-util.c:1340
 -#, fuzzy
  msgid "verify the PIN and list all data"
 -msgstr "проверить PIN  и показать все данные"
 +msgstr "проверить PIN и вывести перечень всех данных"
  
- #: g10/card-util.c:1455 g10/keyedit.c:1619
+ #: g10/card-util.c:1460 g10/keyedit.c:1619
  msgid "Command> "
 @@ -805,7 +803,7 @@ msgstr "ВНИМАНИЕ: `%s' пустой файл\n"
  
@@ -77,23 +77,23 @@
  #, c-format
 @@ -1691,7 +1689,7 @@ msgstr "--encrypt [filename]"
  
- #: g10/gpg.c:3384
+ #: g10/gpg.c:3406
  msgid "--symmetric --encrypt [filename]"
 -msgstr "--symmetric --encrypt [имяфайла]"
 +msgstr "--symmetric --encrypt [имя файла]"
  
- #: g10/gpg.c:3386
+ #: g10/gpg.c:3408
  msgid "you cannot use --symmetric --encrypt with --s2k-mode 0\n"
 @@ -1712,7 +1710,7 @@ msgstr "--sign --encrypt [filename]"
  
- #: g10/gpg.c:3435
+ #: g10/gpg.c:3457
  msgid "--symmetric --sign --encrypt [filename]"
 -msgstr "--symmetric --sign --encrypt [имяфайла]"
 +msgstr "--symmetric --sign --encrypt [имя файла]"
  
- #: g10/gpg.c:3437
+ #: g10/gpg.c:3459
  msgid "you cannot use --symmetric --sign --encrypt with --s2k-mode 0\n"
-@@ -1841,7 +1839,7 @@ msgstr "нет секретного подключа для открытого �
+@@ -1841,7 +1839,7 @@ msgstr "нет секретного подключа для открытого 
  #: g10/getkey.c:2620
  #, c-format
  msgid "using subkey %s instead of primary key %s\n"
@@ -202,7 +202,7 @@
  "сертификат и спрятать подальше,  на случай если Ваш основной\n"
  "носитель будет повреждён, но будьте осторожны: система печати\n"
  "Вашей машины может сохранить данные и сделать их доступными для других!\n"
-@@ -5445,7 +5443,7 @@ msgstr "ВНИМАНИЕ: обнаружен слабый ключ - смени�
+@@ -5445,7 +5443,7 @@ msgstr "ВНИМАНИЕ: обнаружен слабый ключ - смени
  #: g10/seckey-cert.c:364
  msgid "generating the deprecated 16-bit checksum for secret key protection\n"
  msgstr ""
