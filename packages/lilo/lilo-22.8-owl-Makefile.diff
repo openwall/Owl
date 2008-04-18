@@ -1,0 +1,142 @@
+--- lilo-22.8/Makefile.orig	2007-02-19 17:15:10 +0000
++++ lilo-22.8/Makefile	2008-04-17 11:51:05 +0000
+@@ -116,7 +116,7 @@
+ NASM=nasm
+ G=`cat foo1 foo2 | grep version | cut -d " " -f 3`
+ 
+-CFLAGS=$(OPT) -Wall -g $(PCONFIG)
++CFLAGS=$(OPT) $(PCONFIG)
+ LDFLAGS=#-Xlinker -qmagic
+ LIBS=$(DEVMAPPER)
+ 
+@@ -165,10 +165,11 @@
+ #
+ # everything needed to run, just short of installation
+ #
+-all:	lilo bootsect.b diag1.img # OBSOLETE:  $(BOOTS) edit dparam.com activate
++all:	lilo bootsect.b
++extras:	diag1.img # OBSOLETE:  $(BOOTS) edit dparam.com activate
+ 	if [ -x /usr/bin/bcc -o -x /usr/local/bin/bcc ]; then \
+-		make diagnostic; \
+-		make dosexe; fi
++		$(MAKE) diagnostic; \
++		$(MAKE) dosexe; fi
+ 
+ #
+ # everything above plus the statically linked version
+@@ -179,7 +180,7 @@
+ # documentation files
+ #
+ docs:
+-	make -C doc all
++	$(MAKE) -C doc all
+ 
+ #
+ # if you have the 'bcc' compiler, then you can make the diagnostics, too
+@@ -202,13 +203,13 @@
+ 	@echo before you proceed from this point.
+ 	@echo "Press <Enter> to continue, <^C> to abort ..."
+ 	@read
+-	@make floppy1
++	@$(MAKE) floppy1
+ 	@echo Done.
+ 	@echo
+ 	@echo Remove the floppy from the drive.  Label it "\"1.6\""
+ 	@echo "Press <Enter> to continue, <^C> to abort ..."
+ 	@read
+-	@make floppy2
++	@$(MAKE) floppy2
+ 	@echo Done.
+ 	@echo
+ 	@echo Remove the floppy from the drive.  Label it "\"2.4\""
+@@ -226,12 +227,12 @@
+ floppy2:	test.img disk.b
+ 	@echo
+ 	@echo Creating Diagnostic Floppy 2.4
+-	@make -C diagnose check; make -C diagnose floppy
++	@$(MAKE) -C diagnose check floppy
+ 
+ diagnostic:	test.img diag2.img diag3.img
+ dosexe:		test.img lilo.com
+ 
+-#	if [ -x /usr/bin/bcc -o -x /usr/local/bin/bcc ]; then make diagnostic; \
++#	if [ -x /usr/bin/bcc -o -x /usr/local/bin/bcc ]; then $(MAKE) diagnostic; \
+ #	else echo "You don't seem to have the 'bcc' compiler from the 'dev86' package."; \
+ #		exit 1; fi
+ 
+@@ -254,10 +255,10 @@
+ 		dd if=$*.img of=$*.b bs=32 skip=1
+ 
+ activate:	activate.c
+-		$(CC) -Wall -s -O -o activate activate.c $(LDFLAGS)
++		$(CC) $(CFLAGS) -o activate activate.c $(LDFLAGS)
+ 
+ edit:		$(EDIT)
+-		$(CC) -Wall -s -O -DSTANDALONE -o edit $(EDIT) $(LDFLAGS)
++		$(CC) $(CFLAGS) -DSTANDALONE -o edit $(EDIT) $(LDFLAGS)
+ 
+ loader.i:	mkloader first.b second.b third.b bitmap.b mbr.b \
+ 			chain.b os2_d.b mbr2.b
+@@ -321,10 +322,10 @@
+ pseudo3.b:	pseudo3.s
+ 
+ diagnose/test4.com: 	diagnose/test4.c
+-	make -C diagnose all
++	$(MAKE) -C diagnose all
+ 
+ diagnose/test5.com:	diagnose/test5.c
+-	make -C diagnose all
++	$(MAKE) -C diagnose all
+ 
+ diag1.img:	disk.com pseudo1.b
+ 	cat pseudo1.b disk.com >diag1.img
+@@ -336,7 +337,7 @@
+ 	cat pseudo3.b diagnose/test5.com >diag3.img
+ 
+ dos/lilo.com:
+-	make -C dos -e CFLAGS="$(PCONFIG)" lilo.com
++	$(MAKE) -C dos -e CFLAGS="$(PCONFIG)" lilo.com
+ 
+ lilo.com:	dos/lilo.com
+ 	cp -uf $< $@
+@@ -452,8 +453,6 @@
+ 	  rm -f $$ROOT$(BOOT_DIR)/boot.b; fi
+ 	cp mkrescue $$ROOT$(SBIN_DIR)
+ 	cp lilo $$ROOT$(SBIN_DIR)
+-	strip $$ROOT$(SBIN_DIR)/lilo
+-	cp keytab-lilo.pl $$ROOT$(USRSBIN_DIR)
+ 	cp manPages/lilo.8 $$ROOT$(MAN_DIR)/man8
+ 	cp manPages/mkrescue.8 $$ROOT$(MAN_DIR)/man8
+ 	cp manPages/lilo.conf.5 $$ROOT$(MAN_DIR)/man5
+@@ -479,23 +478,23 @@
+ tidy:
+ 		rm -f core $(LIS) *.shs *.crc $(TMP)*
+ 		rm -rf sbin boot usr
+-		make -C diagnose tidy
+-		make -C dos tidy
+-		make -C doc tidy
++		$(MAKE) -C diagnose tidy
++		$(MAKE) -C dos tidy
++		$(MAKE) -C doc tidy
+ 		if [ -x lilo ]; then strip lilo; fi
+ 		if [ -x lilo.static ]; then strip lilo.static; fi
+ 
+ clean:		tidy
+ 		rm -f *.o *.s *.i *.img *.b tmp_make version
+ 		rm -f lilo lilo.static activate edit mkloader
+-		make -C diagnose clean
+-		make -C dos clean
++		$(MAKE) -C diagnose clean
++		$(MAKE) -C dos clean
+ 
+ spotless:	clean
+ 		rm -f *~ */*~ *.b *.com lilo*tar.gz
+-		make -C diagnose spotless
+-		make -C dos spotless
+-		make -C doc clean
++		$(MAKE) -C diagnose spotless
++		$(MAKE) -C dos spotless
++		$(MAKE) -C doc clean
+ 
+ ### Dependencies
+ activate.o: activate.c

@@ -1,7 +1,7 @@
-diff -urp lilo-22.7.1.orig/cfg.c lilo-22.7.1/cfg.c
---- lilo-22.7.1.orig/cfg.c	2005-09-09 21:09:17 +0000
-+++ lilo-22.7.1/cfg.c	2005-10-21 12:43:03 +0000
-@@ -260,7 +260,7 @@ int cfg_open(char *name)
+diff -puNr lilo-22.8.orig/cfg.c lilo-22.8/cfg.c
+--- lilo-22.8.orig/cfg.c	2006-12-17 03:28:50 +0000
++++ lilo-22.8/cfg.c	2008-04-18 22:36:52 +0000
+@@ -264,7 +264,7 @@ int cfg_open(char *name)
  }
  
  
@@ -10,10 +10,9 @@ diff -urp lilo-22.7.1.orig/cfg.c lilo-22.7.1/cfg.c
  {
      va_list ap;
  
-Only in lilo-22.7.1: cfg.c.orig
-diff -urp lilo-22.7.1.orig/cfg.h lilo-22.7.1/cfg.h
---- lilo-22.7.1.orig/cfg.h	2004-08-21 18:12:04 +0000
-+++ lilo-22.7.1/cfg.h	2005-06-13 13:27:08 +0000
+diff -puNr lilo-22.8.orig/cfg.h lilo-22.8/cfg.h
+--- lilo-22.8.orig/cfg.h	2004-08-21 18:12:04 +0000
++++ lilo-22.8/cfg.h	2008-04-18 22:35:01 +0000
 @@ -38,7 +38,7 @@ int cfg_open(char *name);
  /* Opens the configuration file. Returns the file descriptor of the open
     file. */
@@ -23,9 +22,9 @@ diff -urp lilo-22.7.1.orig/cfg.h lilo-22.7.1/cfg.h
  
  /* Signals an error while parsing the configuration file and terminates the
     program. */
-diff -urp lilo-22.7.1.orig/common.c lilo-22.7.1/common.c
---- lilo-22.7.1.orig/common.c	2005-09-09 21:14:08 +0000
-+++ lilo-22.7.1/common.c	2005-10-21 12:45:39 +0000
+diff -puNr lilo-22.8.orig/common.c lilo-22.8/common.c
+--- lilo-22.8.orig/common.c	2005-10-03 23:13:06 +0000
++++ lilo-22.8/common.c	2008-04-18 22:38:36 +0000
 @@ -39,7 +39,7 @@ unsigned int prt_map[PRTMAP_SIZE+1];
  int curr_prt_map;
  #endif /* !__MSDOS__ */
@@ -44,10 +43,10 @@ diff -urp lilo-22.7.1.orig/common.c lilo-22.7.1/common.c
  {
      va_list ap;
  
-diff -urp lilo-22.7.1.orig/common.h lilo-22.7.1/common.h
---- lilo-22.7.1.orig/common.h	2005-09-09 21:08:11 +0000
-+++ lilo-22.7.1/common.h	2005-10-21 12:43:03 +0000
-@@ -394,11 +394,11 @@ extern char *identify;	/* in identify.c 
+diff -puNr lilo-22.8.orig/common.h lilo-22.8/common.h
+--- lilo-22.8.orig/common.h	2006-12-17 00:57:06 +0000
++++ lilo-22.8/common.h	2008-04-18 22:38:22 +0000
+@@ -396,11 +396,11 @@ extern int dm_major_nr;
  #define comma (cc(First)|cc(Second)|cc(Third)|cc(Bitmap)|cc(Chain)|cc(Mbr)|cc(Mbr2))
  
  
@@ -61,11 +60,10 @@ diff -urp lilo-22.7.1.orig/common.h lilo-22.7.1/common.h
  /* fprintf an error message and then exit. */
  
  
-Only in lilo-22.7.1: common.h.orig
-diff -urp lilo-22.7.1.orig/device.c lilo-22.7.1/device.c
---- lilo-22.7.1.orig/device.c	2005-09-01 17:25:35 +0000
-+++ lilo-22.7.1/device.c	2005-10-21 12:43:03 +0000
-@@ -626,7 +626,7 @@ unsigned int register_bios(int bios, int
+diff -puNr lilo-22.8.orig/device.c lilo-22.8/device.c
+--- lilo-22.8.orig/device.c	2006-12-17 03:24:35 +0000
++++ lilo-22.8/device.c	2008-04-18 22:40:12 +0000
+@@ -633,7 +633,7 @@ unsigned int register_bios(int bios, int
  
  		*(int*)&buff.sector[PART_TABLE_OFFSET-6] = serial;
  		if (*(short*)&buff.sector[PART_TABLE_OFFSET - 2] == 0)
@@ -74,36 +72,13 @@ diff -urp lilo-22.7.1.orig/device.c lilo-22.7.1/device.c
  		if (verbose)
  		    printf("Assigning new Volume ID to (%04X) '%s'  ID = %08X\n",
  		    			device, dev.name, (int)serial);
-diff -urp lilo-22.7.1.orig/geometry.c lilo-22.7.1/geometry.c
---- lilo-22.7.1.orig/geometry.c	2005-09-17 21:24:56 +0000
-+++ lilo-22.7.1/geometry.c	2005-10-21 12:43:03 +0000
-@@ -468,7 +468,7 @@ void evms_bmap(struct evms_get_bmap_t *e
-         char evms_blk[] = "/dev/evms/block_device";
-         struct evms_version_t evms_ver;
- 
--        // Open the EVMS device
-+        /* Open the EVMS device */
-         if (evms_fd != -1)
-             close(evms_fd);
- 
-@@ -476,11 +476,11 @@ void evms_bmap(struct evms_get_bmap_t *e
-         if (evms_fd < 0)
-             die("Can't open EVMS block device %s.\n", evms_blk);
- 
--        // Get EVMS ioctl version number.
-+        /* Get EVMS ioctl version number. */
-         if (ioctl(evms_fd, EVMS_GET_IOCTL_VERSION, &evms_ver) < 0)
-             die("EVMS_GET_IOCTL_VERSION failed on %s.\n", evms_blk);
- 
--        // Check that the ioctl version is >= 7.1.0
-+        /* Check that the ioctl version is >= 7.1.0 */
-         if (evms_ver.major < 7 ||
-             (evms_ver.major == 7 && evms_ver.minor < 1))
-             die("EVMS ioctl version %d.%d.%d does not support booting.\n",
-@@ -668,9 +668,9 @@ void geo_query_dev(GEOMETRY *geo,int dev
- 	    if (max_partno[major] == 7)   goto MASK7;
+diff -puNr lilo-22.8.orig/geometry.c lilo-22.8/geometry.c
+--- lilo-22.8.orig/geometry.c	2006-12-17 03:46:17 +0000
++++ lilo-22.8/geometry.c	2008-04-18 22:42:31 +0000
+@@ -772,9 +772,9 @@ void geo_query_dev(GEOMETRY *geo,int dev
  	    
- 	    if (MAJOR(device)>=120 && MAJOR(device)<=127)
+ 	    if ((MAJOR(device)>=120 && MAJOR(device)<=127)  ||
+ 	        (MAJOR(device)>=240 && MAJOR(device)<=254) )
 -		die("Linux experimental device 0x04x needs to be defined.\n"
 +		die("Linux experimental device %#04x needs to be defined.\n"
  		    "Check 'man lilo.conf' under 'disk=' and 'max-partitions='", device);
@@ -112,7 +87,7 @@ diff -urp lilo-22.7.1.orig/geometry.c lilo-22.7.1/geometry.c
      }
      if (get_all) dev_close(&dev);
      if (verbose>=5) printf("exit geo_query_dev\n");
-@@ -996,7 +996,7 @@ int pass;
+@@ -1258,7 +1258,7 @@ int pass;
  } /* end of geo_get */
  
  
@@ -121,11 +96,10 @@ diff -urp lilo-22.7.1.orig/geometry.c lilo-22.7.1/geometry.c
  {
      char *here;
      int user_dev,block_size;
-Only in lilo-22.7.1: geometry.c.orig
-diff -urp lilo-22.7.1.orig/geometry.h lilo-22.7.1/geometry.h
---- lilo-22.7.1.orig/geometry.h	2005-09-17 20:57:23 +0000
-+++ lilo-22.7.1/geometry.h	2005-10-21 12:43:03 +0000
-@@ -130,7 +130,7 @@ void geo_get(GEOMETRY *geo,int device,in
+diff -puNr lilo-22.8.orig/geometry.h lilo-22.8/geometry.h
+--- lilo-22.8.orig/geometry.h	2006-12-17 02:25:25 +0000
++++ lilo-22.8/geometry.h	2008-04-18 22:43:11 +0000
+@@ -131,7 +131,7 @@ void geo_get(GEOMETRY *geo,int device,in
     is retrieved and the other geometry information is undefined. */
  
  
@@ -134,11 +108,10 @@ diff -urp lilo-22.7.1.orig/geometry.h lilo-22.7.1/geometry.h
  /* Opens the specified file or block device, obtains the necessary geometry
     information and returns the file descriptor. If the name contains a BIOS
     device specification (xxx:yyy), it is removed and stored in the geometry
-Only in lilo-22.7.1: geometry.h.orig
-diff -urp lilo-22.7.1.orig/partition.c lilo-22.7.1/partition.c
---- lilo-22.7.1.orig/partition.c	2005-09-03 23:58:34 +0000
-+++ lilo-22.7.1/partition.c	2005-10-21 12:43:03 +0000
-@@ -379,7 +379,7 @@ static void add_rule(unsigned char bios,
+diff -puNr lilo-22.8.orig/partition.c lilo-22.8/partition.c
+--- lilo-22.8.orig/partition.c	2005-10-06 22:36:00 +0000
++++ lilo-22.8/partition.c	2008-04-18 22:44:32 +0000
+@@ -380,7 +380,7 @@ static void add_rule(unsigned char bios,
      int i;
  
      if (curr_prt_map == PRTMAP_SIZE)
@@ -147,7 +120,7 @@ diff -urp lilo-22.7.1.orig/partition.c lilo-22.7.1/partition.c
      if (verbose >= 3)
  	printf("  Adding rule: disk 0x%02x, offset 0x%x, 0x%02x -> 0x%02x\n",
  	    bios,PART_TABLE_OFFSET+offset,expect,set);
-@@ -392,7 +392,7 @@ static void add_rule(unsigned char bios,
+@@ -393,7 +393,7 @@ static void add_rule(unsigned char bios,
  	  (prt_map[i] >> 24) == expect)
  	    die("Redundant rule: disk 0x%02x, offset 0x%x: 0x%02x -> 0x%02x "
  	      "-> 0x%02x",bios,PART_TABLE_OFFSET+offset,
