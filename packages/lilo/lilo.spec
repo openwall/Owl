@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/lilo/lilo.spec,v 1.24 2008/04/18 23:34:42 galaxy Exp $
+# $Owl: Owl/packages/lilo/lilo.spec,v 1.25 2008/04/19 00:31:30 solar Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
 Version: 22.8
-Release: owl0
+Release: owl1
 License: MIT
 Group: System Environment/Base
 URL: http://lilo.go.dyndns.org/pub/linux/lilo/
@@ -13,8 +13,8 @@ Source0: ftp://sunsite.unc.edu/pub/Linux/system/boot/lilo/%name-%version.src.tar
 Source1: keytab-lilo.c
 Patch0: lilo-22.8-owl-Makefile.diff
 Patch1: lilo-22.8-alt-owl-fixes.diff
-Patch3: lilo-22.7.1-owl-tmp.diff
-Patch4: lilo-22.7-deb-owl-man.diff
+Patch2: lilo-22.7.1-owl-tmp.diff
+Patch3: lilo-22.7-deb-owl-man.diff
 BuildRequires: coreutils, dev86
 ExclusiveArch: %ix86 x86_64
 BuildRoot: /override/%name-%version
@@ -29,8 +29,8 @@ can also boot other operating systems.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 %patch3 -p1
-%patch4 -p1
 bzip2 -9k CHANGES README
 
 %{expand: %%define optflags %optflags -Wall -Wno-long-long -pedantic}
@@ -83,7 +83,7 @@ rm %buildroot/boot/mbr.b
 %post
 echo -n 'Checking whether LILO was installed ... '
 if /sbin/lilo -q >/dev/null; then
-	echo 'installed'
+	echo 'yes'
 	echo -n '+ testing whether we can update the bootloader ... '
 	if ! /sbin/lilo -t >/dev/null; then
 		cat << EOF >&2
@@ -117,13 +117,13 @@ fi
 %_mandir/*/*
 
 %changelog
-* Thu Apr 17 2008 (GalaxyMaster) <galaxy-at-owl.openwall.com> 22.8-owl0
+* Thu Apr 17 2008 (GalaxyMaster) <galaxy-at-owl.openwall.com> 22.8-owl1
 - Updated to 22.8.
 - Re-generated the Makefile patch (replaced all 'make' with '$(MAKE)',
-  disabled installation of keytab-lilo.pl.
+disabled installation of keytab-lilo.pl).
 - Enhanced the %%post script, enabled verbosity during the boot loader
-  installation (this should help to troubleshoot automatic upgrades if
-  there are some issues).
+installation (this should help to troubleshoot automatic upgrades if
+there are some issues).
 - Enforced attributes in the %%files section.
 - Re-generated the alt-owl-fixes patch.
 - Dropped the owl-no-fs patch (it was accepted upstream).
