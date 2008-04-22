@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/lilo/lilo.spec,v 1.28 2008/04/22 08:12:46 solar Exp $
+# $Owl: Owl/packages/lilo/lilo.spec,v 1.29 2008/04/22 08:14:22 solar Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 
@@ -76,7 +76,7 @@ image=/boot/vmlinuz
 EOF
 
 # Touch the ghost
-touch %_sysconfdir/lilo.conf
+touch %buildroot%_sysconfdir/lilo.conf
 
 # Remove unpackaged files
 %if %BUILD_EXTERNAL_SUPPORT
