@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/lilo/lilo.spec,v 1.26 2008/04/22 08:03:26 solar Exp $
+# $Owl: Owl/packages/lilo/lilo.spec,v 1.27 2008/04/22 08:08:01 solar Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 
@@ -38,9 +38,9 @@ bzip2 -9k CHANGES README
 %build
 # XXX: Do we need the DOS version of LILO and its diagnostic disk? -- (GM)
 %__make lilo \
-	CFG_DIR="%_sysconfdir" \
-	BOOT_DIR="/boot" \
-	CC="%__cc" OPT="%optflags -Wall" \
+	CFG_DIR=%_sysconfdir \
+	BOOT_DIR=/boot \
+	CC=%__cc OPT="%optflags -Wall" \
 	CONFIG="-DBDATA -DDSECS=3 -DEVMS -DIGNORECASE -DLVM -DNOKEYBOARD \
 		-DONE_SHOT -DPASS160 -DREISERFS -DREWRITE_TABLE -DSOLO_CHAIN \
 		-DVERSION -DVIRTUAL -DMDPRAID -DDEVMAPPER -DNO_FS"
@@ -53,10 +53,10 @@ mkdir -p %buildroot/usr/bin
 mkdir -p %buildroot%_mandir
 %__make install \
 	ROOT=%buildroot \
-	CFG_DIR="%_sysconfdir" \
-	BOOT_DIR="/boot" \
-	SBIN_DIR="/sbin" \
-	USRSBIN_DIR="%_sbindir" \
+	CFG_DIR=%_sysconfdir \
+	BOOT_DIR=/boot \
+	SBIN_DIR=/sbin \
+	USRSBIN_DIR=%_sbindir \
 	MAN_DIR=%_mandir
 
 install -m 755 keytab-lilo %buildroot%_bindir/
