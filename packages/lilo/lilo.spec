@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/lilo/lilo.spec,v 1.25 2008/04/19 00:31:30 solar Exp $
+# $Owl: Owl/packages/lilo/lilo.spec,v 1.26 2008/04/22 08:03:26 solar Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 
@@ -61,18 +61,18 @@ mkdir -p %buildroot%_mandir
 
 install -m 755 keytab-lilo %buildroot%_bindir/
 
-# create a dummy lilo.conf file
+# Create a sample lilo.conf file
 mkdir -p -m755 %buildroot%_sysconfdir
-cat << EOF > %buildroot%_sysconfdir/lilo.conf
-#prompt
-#timeout=50
-#boot=/dev/sda
-#root=/dev/sda2
-#read-only
-#lba32
-#
-#image=/boot/vmlinuz
-#	label=linux
+cat << EOF > %buildroot%_sysconfdir/lilo.conf.sample
+prompt
+timeout=50
+boot=/dev/sda
+root=/dev/sda2
+read-only
+lba32
+
+image=/boot/vmlinuz
+	label=linux
 EOF
 
 # Remove unpackaged files
@@ -82,15 +82,14 @@ rm %buildroot/boot/mbr.b
 
 %post
 echo -n 'Checking whether LILO was installed ... '
-if /sbin/lilo -q >/dev/null; then
+if [ -f %_sysconfdir/lilo.conf ] && /sbin/lilo -q >/dev/null; then
 	echo 'yes'
 	echo -n '+ testing whether we can update the bootloader ... '
 	if ! /sbin/lilo -t >/dev/null; then
-		cat << EOF >&2
+		cat << EOF
 
 WARNING: there are some issues during running 'lilo -t', hence this script
-         WILL NOT update the current bootloader, do it manually!
-
+WILL NOT update the current bootloader, do it manually!
 EOF
 	else
 		echo 'seems we can, updating:'
@@ -101,19 +100,20 @@ else
 fi
 
 %files
-%defattr(0644,root,root,0755)
+%defattr(-,root,root)
 %doc README.bz2 README.bitmaps README.common.problems README.raid1
 %doc CHANGES.bz2 COPYING INCOMPAT QuickInst
 %doc doc
-%config(noreplace) %_sysconfdir/lilo.conf
-%attr(0755,root,root) %_bindir/keytab-lilo
+%doc %_sysconfdir/lilo.conf.sample
+%attr(600,root,root) %verify(not md5 mtime size) %ghost %_sysconfdir/lilo.conf
+%attr(755,root,root) %_bindir/keytab-lilo
 %if %BUILD_EXTERNAL_SUPPORT
 /boot/boot*
 /boot/chain.b
 /boot/os2_d.b
 %endif
-%attr(0700,root,root) /sbin/lilo
-%attr(0700,root,root) /sbin/mkrescue
+%attr(700,root,root) /sbin/lilo
+%attr(700,root,root) /sbin/mkrescue
 %_mandir/*/*
 
 %changelog
