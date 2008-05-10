@@ -1,6 +1,5 @@
-diff -upk.orig cvs-1.11.20.orig/Makefile.am cvs-1.11.20/Makefile.am
---- cvs-1.11.20.orig/Makefile.am	2004-11-11 22:30:36 +0000
-+++ cvs-1.11.20/Makefile.am	2005-09-29 12:15:57 +0000
+--- cvs-1.11.23/Makefile.am
++++ cvs-1.11.23/Makefile.am
 @@ -17,10 +17,9 @@
  ## Subdirectories to run make in for the primary targets.
  # Unix source subdirs, where we'll want to run lint and etags:
@@ -14,10 +13,9 @@ diff -upk.orig cvs-1.11.20.orig/Makefile.am cvs-1.11.20/Makefile.am
  
  EXTRA_DIST = \
  	.cvsignore \
-diff -upk.orig cvs-1.11.20.orig/configure.in cvs-1.11.20/configure.in
---- cvs-1.11.20.orig/configure.in	2005-04-18 16:32:40 +0000
-+++ cvs-1.11.20/configure.in	2005-09-29 12:15:57 +0000
-@@ -1023,8 +1023,6 @@ AC_CONFIG_FILES(contrib/rcslock, [chmod 
+--- cvs-1.11.23/configure.in
++++ cvs-1.11.23/configure.in
+@@ -1135,8 +1135,6 @@ AC_CONFIG_FILES(contrib/rcslock, [chmod +x contrib/rcslock])
  AC_CONFIG_FILES(contrib/sccs2rcs, [chmod +x contrib/sccs2rcs])
  AC_CONFIG_FILES(doc/mkman:doc/mkman.pl, [chmod +x doc/mkman])
  AC_CONFIG_FILES(src/cvsbug, [chmod +x src/cvsbug])
@@ -26,7 +24,7 @@ diff -upk.orig cvs-1.11.20.orig/configure.in cvs-1.11.20/configure.in
  
  dnl the bulk files
  AC_CONFIG_FILES([Makefile \
-@@ -1032,16 +1030,11 @@ AC_CONFIG_FILES([Makefile \
+@@ -1144,16 +1142,11 @@ AC_CONFIG_FILES([Makefile \
  	  cvs.spec \
  	  diff/Makefile \
  	  doc/Makefile \
@@ -44,9 +42,8 @@ diff -upk.orig cvs-1.11.20.orig/configure.in cvs-1.11.20/configure.in
  
  dnl and we're done
  AC_OUTPUT
-diff -upk.orig cvs-1.11.20.orig/lib/Makefile.am cvs-1.11.20/lib/Makefile.am
---- cvs-1.11.20.orig/lib/Makefile.am	2005-04-15 18:28:27 +0000
-+++ cvs-1.11.20/lib/Makefile.am	2005-09-29 12:15:57 +0000
+--- cvs-1.11.23/lib/Makefile.am
++++ cvs-1.11.23/lib/Makefile.am
 @@ -46,21 +46,16 @@ libcvs_a_SOURCES = \
  	argmatch.c \
  	getdate.y \
@@ -69,9 +66,8 @@ diff -upk.orig cvs-1.11.20.orig/lib/Makefile.am cvs-1.11.20/lib/Makefile.am
  	savecwd.h \
  	system.h \
  	wait.h \
-diff -upk.orig cvs-1.11.20.orig/src/Makefile.am cvs-1.11.20/src/Makefile.am
---- cvs-1.11.20.orig/src/Makefile.am	2005-01-31 22:07:35 +0000
-+++ cvs-1.11.20/src/Makefile.am	2005-09-29 12:15:57 +0000
+--- cvs-1.11.23/src/Makefile.am
++++ cvs-1.11.23/src/Makefile.am
 @@ -24,7 +24,7 @@ SHELL = /bin/sh
  # try and remove naming ocnflicts and fix Automake to allow particular includes
  # to be attached only to particular object files.  Short term fix is either or.
@@ -90,9 +86,8 @@ diff -upk.orig cvs-1.11.20.orig/src/Makefile.am cvs-1.11.20/src/Makefile.am
  
  # extra clean targets
  # wish this could be distclean-hdr-local but it's not part of automake
-diff -upk.orig cvs-1.11.20.orig/src/zlib.c cvs-1.11.20/src/zlib.c
---- cvs-1.11.20.orig/src/zlib.c	2004-03-19 19:18:57 +0000
-+++ cvs-1.11.20/src/zlib.c	2005-09-29 12:15:57 +0000
+--- cvs-1.11.23/src/zlib.c
++++ cvs-1.11.23/src/zlib.c
 @@ -22,7 +22,7 @@
  
  #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)

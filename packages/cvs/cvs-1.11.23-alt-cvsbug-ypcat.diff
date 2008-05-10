@@ -1,6 +1,5 @@
-diff -upk.orig cvs-1.11.20.orig/src/cvsbug.in cvs-1.11.20/src/cvsbug.in
---- cvs-1.11.20.orig/src/cvsbug.in	2005-09-28 23:27:55 +0000
-+++ cvs-1.11.20/src/cvsbug.in	2005-09-28 23:28:13 +0000
+--- cvs-1.11.23/src/cvsbug.in
++++ cvs-1.11.23/src/cvsbug.in
 @@ -103,10 +103,11 @@ if [ -n "$NAME" ]; then
  elif [ -f $HOME/.fullname ]; then
    ORIGINATOR="`sed -e '1q' $HOME/.fullname`"

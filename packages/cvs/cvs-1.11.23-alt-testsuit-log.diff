@@ -1,7 +1,6 @@
-diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
---- cvs-1.11.20.orig/src/sanity.sh	2005-09-29 14:35:34 +0000
-+++ cvs-1.11.20/src/sanity.sh	2005-09-29 14:36:01 +0000
-@@ -280,20 +280,25 @@ fi
+--- cvs-1.11.23/src/sanity.sh
++++ cvs-1.11.23/src/sanity.sh
+@@ -290,20 +290,25 @@ fi
  #
  CVS="${testcvs} -Q"
  
@@ -32,7 +31,7 @@ diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
  
  # Workaround any X11Forwarding by ssh. Otherwise this text:
  #   Warning: No xauth data; using fake authentication data for X11 forwarding.
-@@ -787,7 +792,7 @@ warn ()
+@@ -863,7 +868,7 @@ localonly ()
  fail ()
  {
    echo "FAIL: $1" | tee -a ${LOGFILE}
@@ -41,7 +40,7 @@ diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
    # This way the tester can go and see what remnants were left
    exit 1
  }
-@@ -11399,12 +11399,15 @@ EOF
+@@ -11759,6 +11764,9 @@ EOF
  	    dotest_fail conflicts4-10r "$testcvs -q up" "C file1"
  	    dotest conflicts4-11r "cat $TESTDIR/conflicts4/client.out" \
  "$DOTSTAR
@@ -51,10 +50,3 @@ diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
  Argument --
  Directory .
  $CVSROOT_DIRNAME/first-dir
- Entry /file1/1.2/+=//
- Modified file1
--u=rw,g=rw,o=r
-+u=rw,g=r,o=r
- 59
- baseline
- ""<<<<<<< file1

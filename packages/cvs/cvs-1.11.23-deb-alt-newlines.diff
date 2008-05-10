@@ -1,7 +1,6 @@
-diff -upk.orig cvs-1.11.20.orig/src/logmsg.c cvs-1.11.20/src/logmsg.c
---- cvs-1.11.20.orig/src/logmsg.c	2005-09-29 13:33:46 +0000
-+++ cvs-1.11.20/src/logmsg.c	2005-09-29 13:34:02 +0000
-@@ -229,6 +229,8 @@ do_editor (dir, messagep, repository, ch
+--- cvs-1.11.23/src/logmsg.c
++++ cvs-1.11.23/src/logmsg.c
+@@ -226,6 +226,8 @@ do_editor (dir, messagep, repository, changes)
  	if ((*messagep)[0] == '\0' ||
  	    (*messagep)[strlen (*messagep) - 1] != '\n')
  	    (void) fprintf (fp, "\n");
@@ -10,7 +9,7 @@ diff -upk.orig cvs-1.11.20.orig/src/logmsg.c cvs-1.11.20/src/logmsg.c
      }
  
      if (repository != NULL)
-@@ -374,7 +376,11 @@ do_editor (dir, messagep, repository, ch
+@@ -367,7 +369,11 @@ do_editor (dir, messagep, repository, changes)
  	*messagep = NULL;
      }
  
@@ -23,10 +22,9 @@ diff -upk.orig cvs-1.11.20.orig/src/logmsg.c cvs-1.11.20/src/logmsg.c
      {
  	for (;;)
  	{
-diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
---- cvs-1.11.20.orig/src/sanity.sh	2005-09-29 13:33:46 +0000
-+++ cvs-1.11.20/src/sanity.sh	2005-09-29 13:34:02 +0000
-@@ -14909,6 +14909,7 @@ description:
+--- cvs-1.11.23/src/sanity.sh
++++ cvs-1.11.23/src/sanity.sh
+@@ -15538,6 +15538,7 @@ description:
  revision 1\.1
  date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
  branches:  1\.1\.2;
@@ -34,7 +32,7 @@ diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
  xCVS: ----------------------------------------------------------------------
  xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
  xCVS:
-@@ -14920,6 +14921,7 @@ xCVS: ----------------------------------
+@@ -15549,6 +15550,7 @@ xCVS: ----------------------------------------------------------------------
  ----------------------------
  revision 1\.1\.2\.1
  date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
@@ -42,7 +40,7 @@ diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
  xCVS: ----------------------------------------------------------------------
  xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
  xCVS:
-@@ -14947,6 +14949,7 @@ description:
+@@ -15576,6 +15578,7 @@ description:
  revision 1\.1
  date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
  branches:  1\.1\.2;
@@ -50,7 +48,7 @@ diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
  xCVS: ----------------------------------------------------------------------
  xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
  xCVS:
-@@ -14958,6 +14961,7 @@ xCVS: ----------------------------------
+@@ -15587,6 +15590,7 @@ xCVS: ----------------------------------------------------------------------
  ----------------------------
  revision 1\.1\.2\.1
  date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
@@ -58,7 +56,7 @@ diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
  xCVS: ----------------------------------------------------------------------
  xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
  xCVS:
-@@ -14979,6 +14983,7 @@ description:
+@@ -15608,6 +15612,7 @@ description:
  revision 1\.1
  date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
  branches:  1\.1\.2;
@@ -66,7 +64,7 @@ diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
  xCVS: ----------------------------------------------------------------------
  xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
  xCVS:
-@@ -14990,6 +14995,7 @@ xCVS: ----------------------------------
+@@ -15619,6 +15624,7 @@ xCVS: ----------------------------------------------------------------------
  ----------------------------
  revision 1\.1\.2\.1
  date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0

@@ -1,0 +1,29 @@
+--- cvs-1.11.23/doc/cvs.texinfo
++++ cvs-1.11.23/doc/cvs.texinfo
+@@ -2251,14 +2251,15 @@ There is no need to edit @file{inetd.conf} or start a
+ There are three access methods that you use in @code{CVSROOT}
+ for rsh or ssh.  @code{:server:} specifies an internal rsh
+ client, which is supported only by some @sc{cvs} ports.
++This is not supported on most Unix-style systems, including GNU/Linux.
+ @code{:extssh:} specifies an external ssh program. By
+ default this is @code{ssh} (unless otherwise specified
+ by the @file{--with-ssh} flag to configure) but you may set the
+ @code{CVS_SSH} environment variable to invoke another
+ program or wrapper script.
+ @code{:ext:} specifies an external rsh program.  By
+-default this is @code{rsh} (unless otherwise specified
+-by the @file{--with-rsh} flag to configure) but you may set the
++default this is @code{ssh} (as specified by the
++@file{--with-rsh} flag to configure) but you may set the
+ @code{CVS_RSH} environment variable to invoke another
+ program which can access the remote server (for
+ example, @code{remsh} on HP-UX 9 because @code{rsh} is
+@@ -12263,7 +12264,7 @@ U first-dir/sdir/sfile
+ @item @var{mname} [ options ] @var{dir} [ @var{files}@dots{} ]
+ In the simplest case, this form of module definition
+ reduces to @samp{@var{mname} @var{dir}}.  This defines
+-all the files in directory @var{dir} as module mname.
++all the files in directory @var{dir} as module @var{mname}.
+ @var{dir} is a relative path (from @code{$CVSROOT}) to a
+ directory of source in the source repository.  In this
+ case, on checkout, a single directory called

@@ -1,7 +1,6 @@
-diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
---- cvs-1.11.20.orig/src/server.c	2005-09-29 13:38:51 +0000
-+++ cvs-1.11.20/src/server.c	2005-09-29 13:39:11 +0000
-@@ -5442,23 +5442,19 @@ error 0 %s: no such system user\n", user
+--- cvs-1.11.23/src/server.c
++++ cvs-1.11.23/src/server.c
+@@ -5509,23 +5509,19 @@ error 0 %s: no such system user\n", username);
  #endif
  
  #if HAVE_PUTENV

@@ -1,6 +1,5 @@
-diff -upk.orig cvs-1.11.20.orig/src/cvsrc.c cvs-1.11.20/src/cvsrc.c
---- cvs-1.11.20.orig/src/cvsrc.c	2005-09-29 13:35:01 +0000
-+++ cvs-1.11.20/src/cvsrc.c	2005-09-29 13:35:16 +0000
+--- cvs-1.11.23/src/cvsrc.c
++++ cvs-1.11.23/src/cvsrc.c
 @@ -17,6 +17,12 @@
  #include "cvs.h"
  #include "getline.h"
@@ -14,9 +13,9 @@ diff -upk.orig cvs-1.11.20.orig/src/cvsrc.c cvs-1.11.20/src/cvsrc.c
  /* this file is to be found in the user's home directory */
  
  #ifndef	CVSRC_FILENAME
-@@ -28,17 +34,16 @@ char cvsrc[] = CVSRC_FILENAME;
+@@ -26,17 +32,16 @@ char cvsrc[] = CVSRC_FILENAME;
  
- extern char *strtok ();
+ #define	GROW	10
  
 -/* Read cvsrc, processing options matching CMDNAME ("cvs" for global
 -   options, and update *ARGC and *ARGV accordingly.  */
@@ -37,7 +36,7 @@ diff -upk.orig cvs-1.11.20.orig/src/cvsrc.c cvs-1.11.20/src/cvsrc.c
      FILE *cvsrcfile;
  
      char *line;
-@@ -47,6 +52,7 @@ read_cvsrc (argc, argv, cmdname)
+@@ -45,6 +50,7 @@ read_cvsrc (argc, argv, cmdname)
  
      char *optstart;
  
@@ -45,7 +44,7 @@ diff -upk.orig cvs-1.11.20.orig/src/cvsrc.c cvs-1.11.20/src/cvsrc.c
      int command_len;
      int found = 0;
  
-@@ -63,47 +69,30 @@ read_cvsrc (argc, argv, cmdname)
+@@ -61,47 +67,30 @@ read_cvsrc (argc, argv, cmdname)
      static int old_argc = 0;
      static char **old_argv = NULL;
  
@@ -101,7 +100,7 @@ diff -upk.orig cvs-1.11.20.orig/src/cvsrc.c cvs-1.11.20/src/cvsrc.c
  	{
  	    found = 1;
  	    break;
-@@ -111,7 +100,7 @@ read_cvsrc (argc, argv, cmdname)
+@@ -109,7 +98,7 @@ read_cvsrc (argc, argv, cmdname)
      }
  
      if (line_length < 0 && !feof (cvsrcfile))
@@ -110,7 +109,7 @@ diff -upk.orig cvs-1.11.20.orig/src/cvsrc.c cvs-1.11.20/src/cvsrc.c
  
      fclose (cvsrcfile);
  
-@@ -125,7 +114,7 @@ read_cvsrc (argc, argv, cmdname)
+@@ -123,7 +112,7 @@ read_cvsrc (argc, argv, cmdname)
      if (found)
      {
  	/* skip over command in the options line */
@@ -119,7 +118,7 @@ diff -upk.orig cvs-1.11.20.orig/src/cvsrc.c cvs-1.11.20/src/cvsrc.c
  	     optstart;
  	     optstart = strtok (NULL, "\t \n\r"))
  	{
-@@ -164,6 +153,39 @@ read_cvsrc (argc, argv, cmdname)
+@@ -162,6 +151,39 @@ read_cvsrc (argc, argv, cmdname)
      old_argc = *argc = new_argc;
      old_argv = *argv = new_argv;
  

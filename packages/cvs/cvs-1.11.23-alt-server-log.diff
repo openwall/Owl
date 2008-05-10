@@ -1,7 +1,6 @@
-diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
---- cvs-1.11.20.orig/src/server.c	2005-09-29 13:39:48 +0000
-+++ cvs-1.11.20/src/server.c	2005-09-29 13:40:08 +0000
-@@ -56,6 +56,11 @@ int cvs_gssapi_encrypt;
+--- cvs-1.11.23/src/server.c
++++ cvs-1.11.23/src/server.c
+@@ -62,6 +62,11 @@ int cvs_gssapi_encrypt;
  
  #if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_KERBEROS) || defined (HAVE_GSSAPI)
  #include <sys/socket.h>
@@ -13,7 +12,7 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  #endif
  
  #ifdef HAVE_SYSLOG_H
-@@ -66,7 +71,6 @@ int cvs_gssapi_encrypt;
+@@ -72,7 +77,6 @@ int cvs_gssapi_encrypt;
  #endif
  
  #ifdef HAVE_KERBEROS
@@ -21,7 +20,7 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  # include <krb.h>
  # ifndef HAVE_KRB_GET_ERR_TEXT
  #   define krb_get_err_text(status) krb_err_txt[status]
-@@ -5350,12 +5354,9 @@ error 0 %s: no such system user\n", user
+@@ -5417,12 +5421,9 @@ error 0 %s: no such system user\n", username);
      if (pw->pw_uid == 0)
      {
  #ifdef HAVE_SYSLOG_H
@@ -36,7 +35,7 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  #endif
          printf("error 0: root not allowed\n");
          error_exit ();
-@@ -5508,6 +5509,10 @@ check_repository_password (username, pas
+@@ -5576,6 +5577,10 @@ check_repository_password (username, password, repository, host_user_ptr)
      fp = CVS_FOPEN (filename, "r");
      if (fp == NULL)
      {
@@ -47,7 +46,7 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  	if (!existence_error (errno))
  	    error (0, errno, "cannot open %s", filename);
  	free (filename);
-@@ -5526,9 +5531,21 @@ check_repository_password (username, pas
+@@ -5594,9 +5599,21 @@ check_repository_password (username, password, repository, host_user_ptr)
  	}
      }
      if (ferror (fp))
@@ -69,7 +68,7 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  
      /* If found_it, then linebuf contains the information we need. */
      if (found_it)
-@@ -5597,6 +5614,11 @@ check_repository_password (username, pas
+@@ -5665,6 +5682,11 @@ check_repository_password (username, password, repository, host_user_ptr)
  	    || ((strcmp (found_password, crypt (password, found_password))
  		 == 0)))
  	{
@@ -81,7 +80,7 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  	    /* Give host_user_ptr permanent storage. */
  	    *host_user_ptr = xstrdup (host_user_tmp);
  	    retval = 1;
-@@ -5604,9 +5626,9 @@ check_repository_password (username, pas
+@@ -5672,9 +5694,9 @@ check_repository_password (username, password, repository, host_user_ptr)
  	else
  	{
  #ifdef LOG_AUTHPRIV
@@ -94,7 +93,7 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  #endif
  	    *host_user_ptr = NULL;
  	    retval	 = 2;
-@@ -5614,6 +5636,11 @@ check_repository_password (username, pas
+@@ -5682,6 +5704,11 @@ check_repository_password (username, password, repository, host_user_ptr)
      }
      else     /* Didn't find this user, so deny access. */
      {
@@ -106,7 +105,7 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  	*host_user_ptr = NULL;
  	retval = 0;
      }
-@@ -5663,6 +5690,10 @@ check_password (username, password, repo
+@@ -5731,6 +5758,10 @@ check_password (username, password, repository)
  	   letting you in if it won't say why, and I am not convinced
  	   that the potential information disclosure to an attacker
  	   outweighs this.  */
@@ -117,7 +116,7 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  	printf ("error 0 no such user %s in CVSROOT/passwd\n", username);
  
  	error_exit ();
-@@ -5689,6 +5720,10 @@ check_password (username, password, repo
+@@ -5757,6 +5788,10 @@ check_password (username, password, repository)
  
      if (found_passwd == NULL)
      {
@@ -128,7 +127,7 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  	printf ("E Fatal error, aborting.\n\
  error 0 %s: no such user\n", username);
  
-@@ -5716,14 +5751,17 @@ error 0 %s: no such user\n", username);
+@@ -5784,14 +5819,17 @@ error 0 %s: no such user\n", username);
  	if (strcmp (found_passwd, crypt (password, found_passwd)) == 0)
  	{
  	    host_user = xstrdup (username);
@@ -148,7 +147,7 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  #endif
  	}
  	goto handle_return;
-@@ -5734,24 +5772,33 @@ error 0 %s: no such user\n", username);
+@@ -5802,24 +5840,33 @@ error 0 %s: no such user\n", username);
  	/* user exists and has no system password, but we got
  	   one as parameter */
  	host_user = xstrdup (username);
@@ -186,7 +185,7 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  
      return host_user;
  }
-@@ -5760,6 +5807,29 @@ handle_return:
+@@ -5828,6 +5875,29 @@ handle_return:
  
  #if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
  
@@ -216,7 +215,7 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  /* Read username and password from client (i.e., stdin).
     If correct, then switch to run as that user and send an ACK to the
     client via stdout, else send NACK and die. */
-@@ -5823,6 +5893,11 @@ pserver_authenticate_connection ()
+@@ -5891,6 +5961,11 @@ pserver_authenticate_connection ()
       * big deal.
       */
  
@@ -228,7 +227,7 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  #ifdef SO_KEEPALIVE
      /* Set SO_KEEPALIVE on the socket, so that we don't hang forever
         if the client dies while we are waiting for input.  */
-@@ -5843,7 +5918,12 @@ pserver_authenticate_connection ()
+@@ -5911,7 +5986,12 @@ pserver_authenticate_connection ()
      if (getline_safe (&tmp, &tmp_allocated, stdin, PATH_MAX) < 0)
  	{
  #ifdef HAVE_SYSLOG_H
@@ -242,7 +241,7 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  #endif
  	    error (1, 0, "bad auth protocol start: EOF");
  	}
-@@ -5863,7 +5943,13 @@ pserver_authenticate_connection ()
+@@ -5931,7 +6011,13 @@ pserver_authenticate_connection ()
  #endif
      }
      else
@@ -256,7 +255,7 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  
  #ifndef AUTH_SERVER_SUPPORT
  
-@@ -5896,13 +5982,20 @@ pserver_authenticate_connection ()
+@@ -5964,13 +6050,20 @@ pserver_authenticate_connection ()
  		"END VERIFICATION REQUEST\n" : "END AUTH REQUEST\n")
  	!= 0)
      {
@@ -278,7 +277,7 @@ diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
  #endif
  	goto i_hate_you;
      }
-@@ -5920,7 +6013,8 @@ pserver_authenticate_connection ()
+@@ -5988,7 +6081,8 @@ pserver_authenticate_connection ()
      if (host_user == NULL)
      {
  #ifdef HAVE_SYSLOG_H

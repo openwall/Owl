@@ -1,7 +1,6 @@
-diff -upk.orig cvs-1.11.20.orig/src/rcs.c cvs-1.11.20/src/rcs.c
---- cvs-1.11.20.orig/src/rcs.c	2005-09-29 12:54:45 +0000
-+++ cvs-1.11.20/src/rcs.c	2005-09-29 12:55:06 +0000
-@@ -2544,13 +2544,25 @@ RCS_magicrev (rcs, rev)
+--- cvs-1.11.23/src/rcs.c
++++ cvs-1.11.23/src/rcs.c
+@@ -2517,13 +2517,25 @@ RCS_magicrev (rcs, rev)
      char *rev;
  {
      int rev_num;

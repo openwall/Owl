@@ -1,7 +1,6 @@
-diff -upk.orig cvs-1.11.20.orig/src/client.c cvs-1.11.20/src/client.c
---- cvs-1.11.20.orig/src/client.c	2005-09-29 14:22:45 +0000
-+++ cvs-1.11.20/src/client.c	2005-09-29 14:23:02 +0000
-@@ -3650,7 +3650,7 @@ get_port_number (envname, portname, defa
+--- cvs-1.11.23/src/client.c
++++ cvs-1.11.23/src/client.c
+@@ -3631,7 +3631,7 @@ get_port_number (envname, portname, defaultport)
  	if (port <= 0)
  	{
  	    error (0, 0, "%s must be a positive integer!  If you", envname);
@@ -10,7 +9,7 @@ diff -upk.orig cvs-1.11.20.orig/src/client.c cvs-1.11.20/src/client.c
  	    error (0, 0, "put \":server:\" at the beginning of your CVSROOT");
  	    error (1, 0, "variable.");
  	}
-@@ -4818,7 +4818,7 @@ start_rsh_server (root, to_server, from_
+@@ -4785,7 +4785,7 @@ start_rsh_server (root, to_server, from_server)
      /* Do the deed. */
      child_pid = popenRW (rsh_argv, pipes);
      if (child_pid < 0)
@@ -19,17 +18,8 @@ diff -upk.orig cvs-1.11.20.orig/src/client.c cvs-1.11.20/src/client.c
  
      /* Give caller the file descriptors in a form it can deal with. */
      make_bufs_from_fds (pipes[0], pipes[1], child_pid, to_server, from_server, 0);
-@@ -4842,7 +4842,7 @@ start_rsh_server (root, to_server, from_
-     int child_pid;
- 
-     if (!cvs_rsh)
--	cvs_rsh = "rsh";
-+	cvs_rsh = "ssh";
-     if (!cvs_server)
- 	cvs_server = "cvs";
- 
-@@ -4889,7 +4889,7 @@ start_rsh_server (root, to_server, from_
- 	child_pid = piped_child (argv, &tofd, &fromfd);
+@@ -4861,7 +4861,7 @@ start_rsh_server (root, to_server, from_server)
+ 	child_pid = piped_child (argv, &tofd, &fromfd, 1);
  
  	if (child_pid < 0)
 -	    error (1, errno, "cannot start server via rsh");

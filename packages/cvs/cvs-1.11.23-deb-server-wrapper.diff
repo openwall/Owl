@@ -1,6 +1,5 @@
-diff -upk.orig cvs-1.11.20.orig/src/wrapper.c cvs-1.11.20/src/wrapper.c
---- cvs-1.11.20.orig/src/wrapper.c	2004-06-23 01:51:07 +0000
-+++ cvs-1.11.20/src/wrapper.c	2005-09-29 13:27:46 +0000
+--- cvs-1.11.23/src/wrapper.c
++++ cvs-1.11.23/src/wrapper.c
 @@ -86,7 +86,7 @@ void wrap_setup()
         move this to a per-connection data structure, or better yet
         think about a cleaner solution.  */
@@ -10,7 +9,7 @@ diff -upk.orig cvs-1.11.20.orig/src/wrapper.c cvs-1.11.20/src/wrapper.c
  
      if (wrap_setup_already_done != 0)
          return;
-@@ -113,6 +113,10 @@ void wrap_setup()
+@@ -111,6 +111,10 @@ void wrap_setup()
  	free (file);
      }
  
@@ -21,7 +20,7 @@ diff -upk.orig cvs-1.11.20.orig/src/wrapper.c cvs-1.11.20/src/wrapper.c
      /* Then add entries found in home dir, (if user has one) and file
         exists.  */
      homedir = get_homedir ();
-@@ -121,6 +125,8 @@ void wrap_setup()
+@@ -119,6 +123,8 @@ void wrap_setup()
         hand it might be obnoxious to complain when CVS will function
         just fine without .cvswrappers (and many users won't even know what
         .cvswrappers is).  */
@@ -30,7 +29,7 @@ diff -upk.orig cvs-1.11.20.orig/src/wrapper.c cvs-1.11.20/src/wrapper.c
      if (homedir != NULL)
      {
  	char *file = strcat_filename_onto_homedir (homedir, CVSDOTWRAPPER);
-@@ -365,6 +371,12 @@ wrap_add (line, isTemp)
+@@ -364,6 +370,12 @@ wrap_add (line, isTemp)
      if (!line || line[0] == '#')
  	return;
  

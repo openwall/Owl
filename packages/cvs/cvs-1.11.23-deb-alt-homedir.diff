@@ -1,7 +1,6 @@
-diff -upk.orig cvs-1.11.21.orig/src/filesubr.c cvs-1.11.21/src/filesubr.c
---- cvs-1.11.21.orig/src/filesubr.c	2005-09-30 15:46:58 +0000
-+++ cvs-1.11.21/src/filesubr.c	2005-09-30 15:48:02 +0000
-@@ -981,6 +981,11 @@ last_component (path)
+--- cvs-1.11.23/src/filesubr.c
++++ cvs-1.11.23/src/filesubr.c
+@@ -997,6 +997,11 @@ last_component (path)
     The workaround is to put -f in inetd.conf which means that
     get_homedir won't get called until after the switch in user ID.
  
@@ -13,7 +12,7 @@ diff -upk.orig cvs-1.11.21.orig/src/filesubr.c cvs-1.11.21/src/filesubr.c
     The whole concept of a "home directory" on the server is pretty
     iffy, although I suppose some people probably are relying on it for
     .cvsrc and such, in the cases where it works.  */
-@@ -988,15 +993,24 @@ char *
+@@ -1004,15 +1009,24 @@ char *
  get_homedir ()
  {
      static char *home = NULL;

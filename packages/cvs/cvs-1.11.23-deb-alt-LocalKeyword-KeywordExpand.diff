@@ -1,7 +1,6 @@
-diff -upk.orig cvs-1.11.20.orig/doc/cvs.texinfo cvs-1.11.20/doc/cvs.texinfo
---- cvs-1.11.20.orig/doc/cvs.texinfo	2005-09-29 16:41:00 +0000
-+++ cvs-1.11.20/doc/cvs.texinfo	2005-09-29 16:41:17 +0000
-@@ -6781,11 +6781,12 @@ with strings of the form
+--- cvs-1.11.23/doc/cvs.texinfo
++++ cvs-1.11.23/doc/cvs.texinfo
+@@ -6845,11 +6845,12 @@ with strings of the form
  a new revision of the file.
  
  @menu
@@ -19,7 +18,7 @@ diff -upk.orig cvs-1.11.20.orig/doc/cvs.texinfo cvs-1.11.20/doc/cvs.texinfo
  @end menu
  
  @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@@ -6806,6 +6807,23 @@ This is a list of the keywords:
+@@ -6870,6 +6871,23 @@ This is a list of the keywords:
  @item $@splitrcskeyword{Author}$
  The login name of the user who checked in the revision.
  
@@ -43,7 +42,7 @@ diff -upk.orig cvs-1.11.20.orig/doc/cvs.texinfo cvs-1.11.20/doc/cvs.texinfo
  @cindex Date keyword
  @item $@splitrcskeyword{Date}$
  The date and time (UTC) the revision was checked in.
-@@ -6883,6 +6901,55 @@ The full pathname of the RCS file.
+@@ -6947,6 +6965,55 @@ The full pathname of the RCS file.
  The state assigned to the revision.  States can be
  assigned with @code{cvs admin -s}---see @ref{admin options}.
  
@@ -99,7 +98,7 @@ diff -upk.orig cvs-1.11.20.orig/doc/cvs.texinfo cvs-1.11.20/doc/cvs.texinfo
  @end table
  
  @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@@ -6966,6 +7033,14 @@ contains @samp{$@@asis@{@}Author$} whene
+@@ -7030,6 +7097,14 @@ contains @samp{$@@asis@{@}Author$} whenever the text
  and @code{troff} you can embed the null-character
  @code{\&} inside the keyword for a similar effect.
  
@@ -114,7 +113,7 @@ diff -upk.orig cvs-1.11.20.orig/doc/cvs.texinfo cvs-1.11.20/doc/cvs.texinfo
  @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  @node Substitution modes
  @section Substitution modes
-@@ -7056,6 +7131,99 @@ handle an export containing binary files
+@@ -7122,6 +7197,99 @@ handle an export containing binary files correctly.
  @end table
  
  @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -214,7 +213,7 @@ diff -upk.orig cvs-1.11.20.orig/doc/cvs.texinfo cvs-1.11.20/doc/cvs.texinfo
  @node Log keyword
  @section Problems with the $@splitrcskeyword{Log}$ keyword.
  
-@@ -13540,6 +13708,20 @@ pserver users must exist in @file{CVSROO
+@@ -13832,6 +14000,20 @@ pserver users must exist in @file{CVSROOT/passwd}.
  The default is @samp{yes}.  For more on pserver, see
  @ref{Password authenticated}.
  
@@ -235,12 +234,11 @@ diff -upk.orig cvs-1.11.20.orig/doc/cvs.texinfo cvs-1.11.20/doc/cvs.texinfo
  @ignore
  @cindex PreservePermissions, in CVSROOT/config
  @item PreservePermissions=@var{value}
-diff -upk.orig cvs-1.11.20.orig/src/mkmodules.c cvs-1.11.20/src/mkmodules.c
---- cvs-1.11.20.orig/src/mkmodules.c	2005-09-29 16:41:00 +0000
-+++ cvs-1.11.20/src/mkmodules.c	2005-09-29 16:41:17 +0000
-@@ -310,6 +310,14 @@ static const char *const config_contents
-     "# Set this to \"no\" if pserver shouldn't check system users/passwords\n",
-     "#SystemAuth=no\n",
+--- cvs-1.11.23/src/mkmodules.c
++++ cvs-1.11.23/src/mkmodules.c
+@@ -321,6 +321,14 @@ static const char *const config_contents[] = {
+     "# primary CVS repository.\n",
+     "#IgnoreUnknownConfigKeys=no\n",
      "\n",
 +    "# Set `LocalKeyword' to specify a local alias for a standard keyword.\n",
 +    "#LocalKeyword=MYCVS=CVSHeader\n",
@@ -253,10 +251,9 @@ diff -upk.orig cvs-1.11.20.orig/src/mkmodules.c cvs-1.11.20/src/mkmodules.c
      "# Put CVS lock files in this directory rather than directly in the repository.\n",
      "#LockDir=/var/lock/cvs\n",
      "\n",
-diff -upk.orig cvs-1.11.20.orig/src/parseinfo.c cvs-1.11.20/src/parseinfo.c
---- cvs-1.11.20.orig/src/parseinfo.c	2005-03-16 22:01:21 +0000
-+++ cvs-1.11.20/src/parseinfo.c	2005-09-29 16:41:17 +0000
-@@ -357,6 +357,10 @@ parse_config (cvsroot)
+--- cvs-1.11.23/src/parseinfo.c
++++ cvs-1.11.23/src/parseinfo.c
+@@ -360,6 +360,10 @@ parse_config (cvsroot)
  		goto error_return;
  	    }
  	}
@@ -267,10 +264,9 @@ diff -upk.orig cvs-1.11.20.orig/src/parseinfo.c cvs-1.11.20/src/parseinfo.c
  	else if (strcmp (line, "PreservePermissions") == 0)
  	{
  	    if (strcmp (p, "no") == 0)
-diff -upk.orig cvs-1.11.20.orig/src/rcs.c cvs-1.11.20/src/rcs.c
---- cvs-1.11.20.orig/src/rcs.c	2005-09-29 16:41:00 +0000
-+++ cvs-1.11.20/src/rcs.c	2005-09-29 16:41:58 +0000
-@@ -140,6 +140,8 @@ static char *rcs_lockfilename PROTO ((co
+--- cvs-1.11.23/src/rcs.c
++++ cvs-1.11.23/src/rcs.c
+@@ -149,6 +149,8 @@ static char *rcs_lockfilename PROTO ((const char *));
     evaluates its arguments multiple times.  */
  #define STREQ(a, b) (*(char *)(a) == *(char *)(b) && strcmp ((a), (b)) == 0)
  
@@ -279,7 +275,7 @@ diff -upk.orig cvs-1.11.20.orig/src/rcs.c cvs-1.11.20/src/rcs.c
  /*
   * We don't want to use isspace() from the C library because:
   *
-@@ -3544,27 +3546,31 @@ struct rcs_keyword
+@@ -3521,27 +3523,31 @@ struct rcs_keyword
  {
      const char *string;
      size_t len;
@@ -324,7 +320,7 @@ diff -upk.orig cvs-1.11.20.orig/src/rcs.c cvs-1.11.20/src/rcs.c
      KEYWORD_HEADER,
      KEYWORD_ID,
      KEYWORD_LOCKER,
-@@ -3573,8 +3579,10 @@ enum keyword
+@@ -3550,8 +3556,10 @@ enum keyword
      KEYWORD_RCSFILE,
      KEYWORD_REVISION,
      KEYWORD_SOURCE,
@@ -336,7 +332,7 @@ diff -upk.orig cvs-1.11.20.orig/src/rcs.c cvs-1.11.20/src/rcs.c
  
  /* Convert an RCS date string into a readable string.  This is like
     the RCS date2str function.  */
-@@ -3757,7 +3765,8 @@ expand_keywords (rcs, ver, name, log, lo
+@@ -3734,7 +3742,8 @@ expand_keywords (rcs, ver, name, log, loglen, expand, buf, len, retbuf, retlen)
  	slen = s - srch;
  	for (keyword = keywords; keyword->string != NULL; keyword++)
  	{
@@ -346,7 +342,7 @@ diff -upk.orig cvs-1.11.20.orig/src/rcs.c cvs-1.11.20/src/rcs.c
  		&& strncmp (keyword->string, srch, slen) == 0)
  	    {
  		break;
-@@ -3804,15 +3813,25 @@ expand_keywords (rcs, ver, name, log, lo
+@@ -3781,15 +3790,25 @@ expand_keywords (rcs, ver, name, log, loglen, expand, buf, len, retbuf, retlen)
  		free_value = 1;
  		break;
  
@@ -373,7 +369,7 @@ diff -upk.orig cvs-1.11.20.orig/src/rcs.c cvs-1.11.20/src/rcs.c
  		    else
  			path = last_component (rcs->path);
  		    path = escape_keyword_value (path, &free_path);
-@@ -3835,6 +3854,8 @@ expand_keywords (rcs, ver, name, log, lo
+@@ -3812,6 +3831,8 @@ expand_keywords (rcs, ver, name, log, loglen, expand, buf, len, retbuf, retlen)
  			 * and we can discard the const.
  			 */
  			free ((char *)path);
@@ -382,7 +378,7 @@ diff -upk.orig cvs-1.11.20.orig/src/rcs.c cvs-1.11.20/src/rcs.c
  		    free (date);
  		    free_value = 1;
  		}
-@@ -8746,3 +8767,118 @@ make_file_label (path, rev, rcs)
+@@ -8960,3 +8981,118 @@ make_file_label (path, rev, rcs)
      }
      return label;
  }
@@ -501,10 +497,9 @@ diff -upk.orig cvs-1.11.20.orig/src/rcs.c cvs-1.11.20/src/rcs.c
 +    }
 +    return CVSname;
 +}
-diff -upk.orig cvs-1.11.20.orig/src/rcs.h cvs-1.11.20/src/rcs.h
---- cvs-1.11.20.orig/src/rcs.h	2005-01-31 22:20:17 +0000
-+++ cvs-1.11.20/src/rcs.h	2005-09-29 16:41:17 +0000
-@@ -247,6 +247,8 @@ void RCS_rewrite PROTO ((RCSNode *, Delt
+--- cvs-1.11.23/src/rcs.h
++++ cvs-1.11.23/src/rcs.h
+@@ -247,6 +247,8 @@ void RCS_rewrite PROTO ((RCSNode *, Deltatext *, char *));
  void RCS_abandon PROTO ((RCSNode *));
  int rcs_change_text PROTO ((const char *, char *, size_t, const char *,
  			    size_t, char **, size_t *));
@@ -513,18 +508,17 @@ diff -upk.orig cvs-1.11.20.orig/src/rcs.h cvs-1.11.20/src/rcs.h
  void RCS_deltas PROTO ((RCSNode *, FILE *, struct rcsbuffer *, const char *,
  			enum rcs_delta_op, char **, size_t *,
  			char **, size_t *));
-diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
---- cvs-1.11.20.orig/src/sanity.sh	2005-09-29 16:41:00 +0000
-+++ cvs-1.11.20/src/sanity.sh	2005-09-29 16:49:33 +0000
-@@ -1078,6 +1078,7 @@ if test x"$*" = x; then
+--- cvs-1.11.23/src/sanity.sh
++++ cvs-1.11.23/src/sanity.sh
+@@ -1163,6 +1163,7 @@ if test x"$*" = x; then
  	tests="${tests} join-rm"
- 	tests="${tests} new newb conflicts conflicts2 conflicts3"
+ 	tests="${tests} new newb conflicts conflicts2 conflicts3 conflicts4"
  	tests="${tests} clean"
 +	tests="${tests} keywordexpand"
  	# Checking out various places (modules, checkout -d, &c)
  	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
  	tests="${tests} modules7 mkmodules co-d"
-@@ -11273,6 +11274,169 @@ fish"
+@@ -11896,6 +11897,169 @@ fish"
  	  rm -rf ${CVSROOT_DIRNAME}/first-dir
  	  ;;
  

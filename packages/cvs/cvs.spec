@@ -1,41 +1,40 @@
-# $Owl: Owl/packages/cvs/cvs.spec,v 1.33 2007/10/08 23:21:18 ldv Exp $
+# $Owl: Owl/packages/cvs/cvs.spec,v 1.34 2008/05/10 16:38:14 ldv Exp $
 
 Summary: A version control system.
 Name: cvs
-Version: 1.11.22
+Version: 1.11.23
 Release: owl1
 License: GPL
 Group: Development/Tools
 URL: http://www.nongnu.org/cvs/
 Source: ftp://ftp.gnu.org/non-gnu/cvs/source/stable/%version/cvs-%version.tar.bz2
-Patch0: cvs-1.11.20-alt-remove-unused.diff
-Patch1: cvs-1.11.21-owl-fixes.diff
-Patch2: cvs-1.11.20-owl-info.diff
-Patch3: cvs-1.11.21-alt-errno.diff
-Patch4: cvs-1.11.20-owl-vitmp.diff
-Patch5: cvs-1.11.20-owl-no-world-writables.diff
-Patch6: cvs-1.11.20-alt-mdk-owl-canonicalize.diff
-Patch7: cvs-1.11.20-alt-cvsbug-ypcat.diff
-Patch8: cvs-1.11.20-owl-alt-tmp.diff
-Patch9: cvs-1.11.20-deb-alt-doc.diff
-Patch10: cvs-1.11.20-bsd-deb-local_branch_num.diff
-Patch11: cvs-1.11.20-deb-normalize_cvsroot.diff
-Patch12: cvs-1.11.20-deb-expand_keywords-alphanumeric.diff
-Patch13: cvs-1.11.20-deb-server-wrapper.diff
-Patch14: cvs-1.11.20-deb-fast-edit.diff
-Patch15: cvs-1.11.20-alt-password_entry_operation.diff
-Patch16: cvs-1.11.21-deb-alt-homedir.diff
-Patch17: cvs-1.11.20-deb-alt-newlines.diff
-Patch18: cvs-1.11.20-alt-cvsrc.diff
-Patch19: cvs-1.11.20-alt-tagloginfo.diff
-Patch20: cvs-1.11.20-alt-xasprintf.diff
-Patch21: cvs-1.11.20-alt-env.diff
-Patch22: cvs-1.11.20-alt-server-log.diff
-Patch23: cvs-1.11.20-deb-alt-LocalKeyword-KeywordExpand.diff
-Patch24: cvs-1.11.20-alt-noreadlock.diff
-Patch25: cvs-1.11.20-alt-ssh.diff
-Patch26: cvs-1.11.20-alt-testsuit-log.diff
-Patch27: cvs-1.11.22-alt-get_cvs_password.diff
+Patch0: cvs-1.11.23-alt-remove-unused.diff
+Patch1: cvs-1.11.23-owl-fixes.diff
+Patch2: cvs-1.11.23-owl-info.diff
+Patch3: cvs-1.11.23-alt-errno.diff
+Patch4: cvs-1.11.23-owl-vitmp.diff
+Patch5: cvs-1.11.23-owl-no-world-writables.diff
+Patch6: cvs-1.11.23-alt-mdk-owl-canonicalize.diff
+Patch7: cvs-1.11.23-alt-cvsbug-ypcat.diff
+Patch8: cvs-1.11.23-owl-alt-tmp.diff
+Patch9: cvs-1.11.23-deb-alt-doc.diff
+Patch10: cvs-1.11.23-bsd-deb-local_branch_num.diff
+Patch11: cvs-1.11.23-deb-normalize_cvsroot.diff
+Patch12: cvs-1.11.23-deb-expand_keywords-alphanumeric.diff
+Patch13: cvs-1.11.23-deb-server-wrapper.diff
+Patch14: cvs-1.11.23-deb-fast-edit.diff
+Patch15: cvs-1.11.23-alt-password_entry_operation.diff
+Patch16: cvs-1.11.23-deb-alt-homedir.diff
+Patch17: cvs-1.11.23-deb-alt-newlines.diff
+Patch18: cvs-1.11.23-alt-cvsrc.diff
+Patch19: cvs-1.11.23-alt-tagloginfo.diff
+Patch20: cvs-1.11.23-alt-xasprintf.diff
+Patch21: cvs-1.11.23-alt-env.diff
+Patch22: cvs-1.11.23-alt-server-log.diff
+Patch23: cvs-1.11.23-deb-alt-LocalKeyword-KeywordExpand.diff
+Patch24: cvs-1.11.23-alt-noreadlock.diff
+Patch25: cvs-1.11.23-alt-ssh.diff
+Patch26: cvs-1.11.23-alt-testsuit-log.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRequires: mktemp >= 1:1.3.1, sed >= 4.1.1, zlib-devel
@@ -114,7 +113,8 @@ unset r
 %patch24 -p1
 %patch25 -p1
 %patch26 -p1
-%patch27 -p1
+
+sed -i 's/AC_PREREQ(2\.6.*)/AC_PREREQ(2\.59)/' configure.in
 
 # Second part of the tmp handling fix
 sed -i 's|${TMPDIR}/cvs-serv|${TMPDIR:-/tmp}/cvs-serv|g' src/sanity.sh
@@ -133,14 +133,17 @@ export ac_cv_func_mkstemp=yes \
 	ac_cv_path_ROFF=/usr/bin/groff \
 	ac_cv_path_SENDMAIL=/usr/sbin/sendmail \
 	ac_cv_path_TEXI2DVI=/usr/bin/texi2dvi \
-	ac_cv_prog_with_default_rsh=ssh
+	ac_cv_prog_with_default_rsh=ssh \
+	ac_cv_prog_with_default_ssh=ssh
 
 autoreconf -fisv
 %configure \
 	--without-krb4 \
 	--without-gssapi \
 	--with-tmpdir=/tmp \
-	--with-editor=/bin/vitmp
+	--with-editor=/bin/vitmp \
+	--with-rsh=ssh \
+	--with-ssh=ssh
 
 %__make LDFLAGS=-s
 bzip2 -9 FAQ NEWS
@@ -185,6 +188,9 @@ fi
 %_datadir/cvs
 
 %changelog
+* Sat May 10 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.11.23-owl1
+- Updated to 1.11.23.
+
 * Mon Oct 08 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.11.22-owl1
 - Updated to 1.11.22.
 

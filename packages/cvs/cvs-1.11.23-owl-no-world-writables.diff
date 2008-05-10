@@ -1,7 +1,6 @@
-diff -upk.orig cvs-1.11.20.orig/src/mkmodules.c cvs-1.11.20/src/mkmodules.c
---- cvs-1.11.20.orig/src/mkmodules.c	2005-03-17 16:32:05 +0000
-+++ cvs-1.11.20/src/mkmodules.c	2005-09-28 23:12:46 +0000
-@@ -742,10 +742,6 @@ rename_dbmfile (temp)
+--- cvs-1.11.23/src/mkmodules.c
++++ cvs-1.11.23/src/mkmodules.c
+@@ -754,10 +754,6 @@ rename_dbmfile (temp)
      (void) sprintf (newpag, "%s.pag", temp);
      (void) sprintf (newdb, "%s.db", temp);
  
@@ -12,7 +11,7 @@ diff -upk.orig cvs-1.11.20.orig/src/mkmodules.c cvs-1.11.20/src/mkmodules.c
      /* don't mess with me */
      SIG_beginCrSect ();
  
-@@ -966,11 +962,6 @@ init (argc, argv)
+@@ -1024,11 +1020,6 @@ init (argc, argv)
  	fp = open_file (info, "w");
  	if (fclose (fp) < 0)
  	    error (1, errno, "cannot close %s", info);
@@ -24,7 +23,7 @@ diff -upk.orig cvs-1.11.20.orig/src/mkmodules.c cvs-1.11.20/src/mkmodules.c
      }
  
      /* Make an empty val-tags file to prevent problems creating it later.  */
-@@ -984,11 +975,6 @@ init (argc, argv)
+@@ -1042,11 +1033,6 @@ init (argc, argv)
  	fp = open_file (info, "w");
  	if (fclose (fp) < 0)
  	    error (1, errno, "cannot close %s", info);

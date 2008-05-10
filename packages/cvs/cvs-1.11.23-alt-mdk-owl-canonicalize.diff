@@ -1,7 +1,6 @@
-diff -upk.orig cvs-1.11.20.orig/src/root.c cvs-1.11.20/src/root.c
---- cvs-1.11.20.orig/src/root.c	2005-03-16 22:01:21 +0000
-+++ cvs-1.11.20/src/root.c	2005-09-28 23:24:43 +0000
-@@ -614,6 +614,14 @@ parse_cvsroot (root_in)
+--- cvs-1.11.23/src/root.c
++++ cvs-1.11.23/src/root.c
+@@ -615,6 +615,14 @@ parse_cvsroot (root_in)
  	    error (0, 0, "when using local access method.");
  	    goto error_exit;
  	}
@@ -16,7 +15,7 @@ diff -upk.orig cvs-1.11.20.orig/src/root.c cvs-1.11.20/src/root.c
  	no_port = 1;
  	/* no_password already set */
  #endif /* CLIENT_SUPPORT */
-@@ -790,7 +798,7 @@ local_cvsroot (dir)
+@@ -792,7 +800,7 @@ local_cvsroot (dir)
  
      newroot->original = xstrdup(dir);
      newroot->method = local_method;
@@ -25,10 +24,9 @@ diff -upk.orig cvs-1.11.20.orig/src/root.c cvs-1.11.20/src/root.c
      /* Here and parse_cvsroot() should be the only places this needs to be
       * called on a CVSROOT now.  cvsroot->original is saved for error messages
       * and, otherwise, we want no trailing slashes.
-diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
---- cvs-1.11.20.orig/src/sanity.sh	2005-09-28 23:23:57 +0000
-+++ cvs-1.11.20/src/sanity.sh	2005-09-28 23:24:43 +0000
-@@ -28481,7 +28481,7 @@ EOF
+--- cvs-1.11.23/src/sanity.sh
++++ cvs-1.11.23/src/sanity.sh
+@@ -29477,7 +29477,7 @@ EOF
  	  # possible security holes are plugged.
  	  if $remote; then
  	    dotest server2-1 "${testcvs} server" \
@@ -37,10 +35,9 @@ diff -upk.orig cvs-1.11.20.orig/src/sanity.sh cvs-1.11.20/src/sanity.sh
  error  " <<EOF
  Root ${CVSROOT_DIRNAME}
  Directory .
-diff -upk.orig cvs-1.11.20.orig/src/server.c cvs-1.11.20/src/server.c
---- cvs-1.11.20.orig/src/server.c	2005-03-16 19:16:01 +0000
-+++ cvs-1.11.20/src/server.c	2005-09-28 23:24:43 +0000
-@@ -1155,6 +1155,39 @@ serve_directory (arg)
+--- cvs-1.11.23/src/server.c
++++ cvs-1.11.23/src/server.c
+@@ -1178,6 +1178,39 @@ serve_directory (arg)
      status = buf_read_line (buf_from_net, &repos, (int *) NULL);
      if (status == 0)
      {

@@ -1,6 +1,5 @@
-diff -upk.orig cvs-1.11.20.orig/src/logmsg.c cvs-1.11.20/src/logmsg.c
---- cvs-1.11.20.orig/src/logmsg.c	2005-09-29 13:28:49 +0000
-+++ cvs-1.11.20/src/logmsg.c	2005-09-29 13:29:56 +0000
+--- cvs-1.11.23/src/logmsg.c
++++ cvs-1.11.23/src/logmsg.c
 @@ -16,6 +16,9 @@
  #include "cvs.h"
  #include "getline.h"
@@ -11,15 +10,15 @@ diff -upk.orig cvs-1.11.20.orig/src/logmsg.c cvs-1.11.20/src/logmsg.c
  static int find_type PROTO((Node * p, void *closure));
  static int fmt_proc PROTO((Node * p, void *closure));
  static int logfile_write PROTO((const char *repository, const char *filter,
-@@ -199,6 +202,7 @@ do_editor (dir, messagep, repository, ch
+@@ -199,6 +202,7 @@ do_editor (dir, messagep, repository, changes)
      size_t line_chars_allocated;
      char *fname;
      struct stat pre_stbuf, post_stbuf;
 +    struct utimbuf pre_utbuf;
      int retcode = 0;
  
- #ifdef CLIENT_SUPPORT
-@@ -287,6 +291,13 @@ do_editor (dir, messagep, repository, ch
+     assert (!current_parsed_root->isremote != !repository);
+@@ -285,6 +289,13 @@ do_editor (dir, messagep, repository, changes)
      if ( CVS_STAT (fname, &pre_stbuf) == -1)
  	pre_stbuf.st_mtime = 0;
  

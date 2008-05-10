@@ -1,7 +1,6 @@
-diff -upk.orig cvs-1.11.20.orig/src/rcs.c cvs-1.11.20/src/rcs.c
---- cvs-1.11.20.orig/src/rcs.c	2005-09-29 12:58:22 +0000
-+++ cvs-1.11.20/src/rcs.c	2005-09-29 12:58:39 +0000
-@@ -3737,13 +3737,18 @@ expand_keywords (rcs, ver, name, log, lo
+--- cvs-1.11.23/src/rcs.c
++++ cvs-1.11.23/src/rcs.c
+@@ -3714,13 +3714,18 @@ expand_keywords (rcs, ver, name, log, loglen, expand, buf, len, retbuf, retlen)
  	srch_len -= (srch_next + 1) - srch;
  	srch = srch_next + 1;
  
