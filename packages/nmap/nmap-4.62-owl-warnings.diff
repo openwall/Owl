@@ -1,0 +1,13 @@
+--- nmap-4.62/tcpip.cc.orig	2008-05-14 21:38:21 +0000
++++ nmap-4.62/tcpip.cc	2008-05-14 21:53:37 +0000
+@@ -2926,8 +2926,8 @@ struct sys_route *getsysroutes(int *howm
+     ifaces = getinterfaces(&numifaces);
+     /* First let us try Linux-style /proc/net/route */
+     routefp = fopen("/proc/net/route", "r");
+-    if (routefp) {
+-      (void) fgets(buf, sizeof(buf), routefp); /* Kill the first line (column headers) */
++    /* Kill the first line (column headers) */
++    if (routefp && fgets(buf, sizeof(buf), routefp)) {
+       while(fgets(buf,sizeof(buf), routefp)) {
+ 	p = strtok(buf, " \t\n");
+ 	if (!p) {

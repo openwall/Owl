@@ -1,0 +1,21 @@
+--- nmap-4.62/Makefile.in.orig	2008-04-28 17:53:32 +0000
++++ nmap-4.62/Makefile.in	2008-05-14 08:18:05 +0000
+@@ -178,7 +178,7 @@
+ # Use strip -x to avoid stripping dynamically loaded NSE functions. See
+ # http://seclists.org/nmap-dev/2007/q4/0272.html.
+ 	$(STRIP) -x $(DESTDIR)$(bindir)/nmap
+-	$(INSTALL) -c -m 644 docs/$(TARGET).1 docs/zenmap.1 $(DESTDIR)$(mandir)/man1/
++	$(INSTALL) -c -m 644 docs/$(TARGET).1 $(DESTDIR)$(mandir)/man1/
+ 	$(INSTALL) -c -m 644 docs/nmap.xsl $(DESTDIR)$(nmapdatadir)/
+ 	$(INSTALL) -c -m 644 docs/nmap.dtd $(DESTDIR)$(nmapdatadir)/
+ 	$(INSTALL) -c -m 644 nmap-services $(DESTDIR)$(nmapdatadir)/
+@@ -210,7 +210,9 @@
+ 	cd $(ZENMAPDIR) && $(PYTHON) setup.py build $(if $(DESTDIR),--executable "$(DEFAULT_PYTHON_PATH)")
+ 
+ install-zenmap: $(ZENMAPDIR)/setup.py
++	$(SHTOOL) mkdir -f -p -m 755 $(DESTDIR)$(bindir) $(DESTDIR)$(mandir)/man1
+ 	cd $(ZENMAPDIR) && $(PYTHON) setup.py install --prefix "$(prefix)" $(if $(DESTDIR),--root "$(DESTDIR)")
++	$(INSTALL) -c -m 644 docs/zenmap.1 $(DESTDIR)$(mandir)/man1/
+ # Create a symlink from nmapfe to zenmap if nmapfe doesn't exist or is
+ # already a link.
+ 	if [ ! -e $(DESTDIR)$(bindir)/nmapfe -o -L $(DESTDIR)$(bindir)/nmapfe ]; then \

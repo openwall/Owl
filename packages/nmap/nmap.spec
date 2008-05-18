@@ -1,19 +1,21 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.21 2007/10/18 23:34:33 ldv Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.22 2008/05/18 20:14:52 mci Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
-Version: 4.20
-Release: owl3
+Version: 4.62
+Release: owl1
 License: GPL
 Group: Applications/System
-URL: http://www.insecure.org/nmap/
+URL: http://nmap.org/
 %define srcname nmap-%version
 Source: http://download.insecure.org/nmap/dist/%srcname.tar.bz2
-Patch0: nmap-4.11-alt-autoheader.diff
-Patch1: nmap-4.20-alt-owl-drop-priv.diff
-Patch2: nmap-4.01-alt-owl-dot-dir.diff
-Patch3: nmap-4.20-alt-owl-fileexistsandisreadable.diff
-Patch4: nmap-4.20-owl-osscan.diff
+Patch0: nmap-4.62-owl-nse_ldflags.diff
+Patch1: nmap-4.62-alt-owl-autoheader.diff
+Patch2: nmap-4.62-owl-warnings.diff
+Patch3: nmap-4.62-alt-owl-drop-priv.diff
+Patch4: nmap-4.62-alt-owl-dot-dir.diff
+Patch5: nmap-4.62-alt-owl-fileexistsandisreadable.diff
+Patch6: nmap-4.62-svn-20080505-Makefile.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
 BuildRequires: openssl-devel >= 0.9.7g-owl1
@@ -36,6 +38,8 @@ and more.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%patch6 -p1
 bzip2 -9 CHANGELOG
 
 %build
@@ -43,7 +47,8 @@ aclocal
 autoheader
 autoconf
 %configure \
-	--without-nmapfe \
+	--without-zenmap \
+	--without-liblua \
 	--with-user=nmap \
 	--with-chroot-empty=/var/empty
 %__make
@@ -65,6 +70,10 @@ grep -q ^nmap: /etc/passwd ||
 %_datadir/nmap
 
 %changelog
+* Sun May 18 2008 Michail Litvak <mci-at-owl.openwall.com> 4.62-owl1
+- Updated to 4.62.
+- Updated patches.
+
 * Fri Oct 19 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.20-owl3
 - Use 1st generation OS detection system by default.
 

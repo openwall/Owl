@@ -1,0 +1,349 @@
+--- nmap-4.62/tcpip.cc.orig	2008-05-14 22:28:28 +0000
++++ nmap-4.62/tcpip.cc	2008-05-14 22:29:01 +0000
+@@ -105,6 +105,7 @@
+ #include "portreasons.h"
+ #include <dnet.h>
+ #include "tcpip.h"
++#include "droppriv.h"
+ #include "NmapOps.h"
+ #include "Target.h"
+ #include "utils.h"
+@@ -2511,6 +2512,14 @@ void set_pcap_filter(const char *device,
+   pcap_freecode(&fcode);
+ }
+ 
++static FILE *routefp;
++
++void routethrough_init(void)
++{
++  if (!routefp)
++     routefp = fopen("/proc/net/route", "r");
++}
++
+ /* The 'dev' passed in must be at least 32 bytes long */
+ int ipaddr2devname( char *dev, const struct in_addr *addr ) {
+ struct interface_info *mydevs;
+@@ -2908,7 +2917,6 @@ struct sys_route *getsysroutes(int *howm
+   int route_capacity = 128;
+   static struct sys_route *routes = NULL;
+   static int numroutes = 0;
+-  FILE *routefp;
+   char buf[1024];
+   char iface[16];
+   char *p, *endptr;
+@@ -2925,7 +2933,7 @@ struct sys_route *getsysroutes(int *howm
+     routes = (struct sys_route *) safe_zalloc(route_capacity * sizeof(struct sys_route));
+     ifaces = getinterfaces(&numifaces);
+     /* First let us try Linux-style /proc/net/route */
+-    routefp = fopen("/proc/net/route", "r");
++    routethrough_init();
+     /* Kill the first line (column headers) */
+     if (routefp && fgets(buf, sizeof(buf), routefp)) {
+       while(fgets(buf,sizeof(buf), routefp)) {
+@@ -3008,6 +3016,8 @@ struct sys_route *getsysroutes(int *howm
+ 	  routes = (struct sys_route *) safe_realloc(routes, route_capacity * sizeof(struct sys_route));
+ 	}
+       }
++      fclose(routefp);
++      routefp = NULL;
+     } else {
+       struct dnet_collector_route_nfo dcrn;
+       dcrn.routes = routes;
+--- nmap-4.62/MACLookup.cc.orig	2008-03-31 23:05:53 +0000
++++ nmap-4.62/MACLookup.cc	2008-05-12 20:26:58 +0000
+@@ -107,6 +107,7 @@
+ #include "nmap.h"
+ #include "nmap_error.h"
+ #include "charpool.h"
++#include "droppriv.h"
+ 
+ extern NmapOps o;
+ 
+@@ -132,7 +133,7 @@ static inline int MACTableHash(int prefi
+   return prefix % table_capacity;
+ }
+ 
+-static void mac_prefix_init() {
++void mac_prefix_init() {
+   static int initialized = 0;
+   if (initialized) return;
+   initialized = 1;
+--- nmap-4.62/Makefile.in.orig	2008-04-28 17:53:32 +0000
++++ nmap-4.62/Makefile.in	2008-05-12 19:16:01 +0000
+@@ -65,11 +65,11 @@
+ NSESTDLIB=nsestdlib
+ endif
+ 
+-export SRCS = main.cc nmap.cc targets.cc tcpip.cc nmap_error.cc utils.cc idle_scan.cc osscan.cc osscan2.cc output.cc scan_engine.cc timing.cc charpool.cc services.cc protocols.cc nmap_rpc.cc portlist.cc NmapOps.cc TargetGroup.cc Target.cc FingerPrintResults.cc service_scan.cc NmapOutputTable.cc MACLookup.cc nmap_tty.cc nmap_dns.cc traceroute.cc portreasons.cc $(NSE_SRC) @COMPAT_SRCS@
++export SRCS = main.cc nmap.cc targets.cc tcpip.cc nmap_error.cc utils.cc idle_scan.cc osscan.cc osscan2.cc output.cc scan_engine.cc timing.cc charpool.cc services.cc protocols.cc nmap_rpc.cc portlist.cc NmapOps.cc TargetGroup.cc Target.cc FingerPrintResults.cc service_scan.cc NmapOutputTable.cc MACLookup.cc nmap_tty.cc nmap_dns.cc traceroute.cc portreasons.cc droppriv.cc $(NSE_SRC) @COMPAT_SRCS@
+ 
+-export HDRS = charpool.h FingerPrintResults.h global_structures.h idle_scan.h MACLookup.h nmap_amigaos.h nmap_dns.h nmap_error.h nmap.h NmapOps.h NmapOutputTable.h nmap_rpc.h nmap_tty.h nmap_winconfig.h osscan.h osscan2.h output.h portlist.h protocols.h scan_engine.h service_scan.h services.h TargetGroup.h Target.h targets.h tcpip.h timing.h utils.h traceroute.h portreasons.h $(NSE_HDRS)
++export HDRS = charpool.h FingerPrintResults.h global_structures.h idle_scan.h MACLookup.h nmap_amigaos.h nmap_dns.h nmap_error.h nmap.h NmapOps.h NmapOutputTable.h nmap_rpc.h nmap_tty.h nmap_winconfig.h osscan.h osscan2.h output.h portlist.h protocols.h scan_engine.h service_scan.h services.h TargetGroup.h Target.h targets.h tcpip.h timing.h utils.h traceroute.h portreasons.h droppriv.h $(NSE_HDRS)
+ 
+-OBJS = main.o nmap.o targets.o tcpip.o nmap_error.o utils.o idle_scan.o osscan.o osscan2.o output.o scan_engine.o timing.o charpool.o services.o protocols.o nmap_rpc.o portlist.o NmapOps.o TargetGroup.o Target.o FingerPrintResults.o service_scan.o NmapOutputTable.o MACLookup.o nmap_tty.o nmap_dns.o  traceroute.o portreasons.o $(NSE_OBJS) @COMPAT_OBJS@
++OBJS = main.o nmap.o targets.o tcpip.o nmap_error.o utils.o idle_scan.o osscan.o osscan2.o output.o scan_engine.o timing.o charpool.o services.o protocols.o nmap_rpc.o portlist.o NmapOps.o TargetGroup.o Target.o FingerPrintResults.o service_scan.o NmapOutputTable.o MACLookup.o nmap_tty.o nmap_dns.o  traceroute.o portreasons.o droppriv.o $(NSE_OBJS) @COMPAT_OBJS@
+ 
+ # %.o : %.cc -- nope this is a GNU extension
+ .cc.o:
+--- nmap-4.62/configure.ac.orig	2008-04-28 17:53:32 +0000
++++ nmap-4.62/configure.ac	2008-05-12 19:20:11 +0000
+@@ -648,6 +648,50 @@
+         AC_DEFINE(HAVE_IP_IP_SUM)
+ fi
+ 
++try_drop_priv=no
++AC_CHECK_HEADERS(grp.h sys/capability.h sys/prctl.h)
++AC_CHECK_FUNC(chroot)
++AC_CHECK_FUNC(prctl,
++  [AC_CHECK_FUNC(setgid,
++    [AC_CHECK_FUNC(setgroups,
++      [AC_CHECK_FUNC(setreuid,
++        [try_drop_priv=yes
++	AC_CHECK_LIB(cap, cap_from_text, , [try_drop_priv=no])]
++      )]
++    )]
++  )]
++)
++
++AC_ARG_WITH(user,
++  [  --with-user=USERNAME    Lower root privileges by switching to user USERNAME])
++AC_MSG_CHECKING([whether to lower root privileges by default])
++if test -z "$with_user" -o "$try_drop_priv" = "no"; then
++       AC_MSG_RESULT(no)
++else
++       AC_DEFINE_UNQUOTED(NMAP_USER, "$withval", [Define user to switch during lowering privileges])
++       AC_MSG_RESULT(to \"$withval\")
++fi
++
++AC_ARG_WITH(chroot-empty,
++  [  --with-chroot-empty=DIRECTORY When lowering privileges and -n option is given, chroot to empty DIRECTORY])
++AC_MSG_CHECKING([whether to chroot when -n option is given])
++if test -z "$with_chroot_empty" -o "$try_drop_priv" = "no" -o "$ac_cv_func_chroot" = no; then
++       AC_MSG_RESULT(no)
++else
++       AC_DEFINE_UNQUOTED(NMAP_CHROOT_EMPTY, "$withval", [Define directory to chroot during lowering privileges if -n option is given])
++       AC_MSG_RESULT(to \"$withval\")
++fi
++
++AC_ARG_WITH(chroot-resolv,
++  [  --with-chroot-resolv=DIRECTORY When lowering privileges and -n option is not given, chroot to resolver DIRECTORY])
++AC_MSG_CHECKING([whether to chroot when -n option is not given])
++if test -z "$with_chroot_resolv" -o "$try_drop_priv" = "no" -o "$ac_cv_func_chroot" = no; then
++       AC_MSG_RESULT(no)
++else
++       AC_DEFINE_UNQUOTED(NMAP_CHROOT_RESOLV, "$withval", [Define directory to chroot during lowering privileges if -n option is not given])
++       AC_MSG_RESULT(to \"$withval\")
++fi
++
+ dnl Checks for library functions.
+ AC_CHECK_FUNCS(strerror)
+ RECVFROM_ARG6_TYPE
+--- nmap-4.62/nmap.cc.orig	2008-04-24 03:23:01 +0000
++++ nmap-4.62/nmap.cc	2008-05-12 20:25:47 +0000
+@@ -105,6 +105,7 @@
+ #include "scan_engine.h"
+ #include "idle_scan.h"
+ #include "timing.h"
++#include "droppriv.h"
+ #include "NmapOps.h"
+ #include "MACLookup.h"
+ #include "traceroute.h"
+@@ -1361,6 +1362,8 @@ int nmap_main(int argc, char *argv[]) {
+       o.sendpref = PACKET_SEND_ETH_STRONG;
+   }
+ 
++  drop_priv();
++
+   /* By now, we've got our port lists.  Give the user a warning if no 
+    * ports are specified for the type of scan being requested.  Other things
+    * (such as OS ident scan) might break cause no ports were specified,  but
+--- nmap-4.62/nmap_dns.cc.orig	2008-04-09 02:11:20 +0000
++++ nmap-4.62/nmap_dns.cc	2008-05-12 19:07:16 +0000
+@@ -164,6 +164,7 @@
+ #include <algorithm>
+ 
+ #include "nmap.h"
++#include "droppriv.h"
+ #include "NmapOps.h"
+ #include "nmap_dns.h"
+ #include "nsock.h"
+@@ -1074,7 +1075,7 @@ const char *lookup_cached_host(u32 ip) {
+   return tmp;
+ }
+ 
+-static void etchosts_init(void) {
++void etchosts_init(void) {
+   static int initialized = 0;
+   if (initialized) return;
+   initialized = 1;
+--- nmap-4.62/nmap_rpc.cc.orig	2008-02-28 18:52:06 +0000
++++ nmap-4.62/nmap_rpc.cc	2008-05-12 19:07:16 +0000
+@@ -103,6 +103,7 @@
+ 
+ 
+ #include "nmap_rpc.h"
++#include "droppriv.h"
+ #include "NmapOps.h"
+ #include "Target.h"
+ #include "charpool.h"
+@@ -122,7 +123,7 @@ static unsigned long rpc_xid_base = (uns
+ static size_t tcp_readlen=0; /* used in get_rpc_results but can be reset in 
+ 			    send_rpc_query */
+ 
+-static void rpc_services_init() {
++void rpc_services_init() {
+   static int services_initialized = 0;
+   if (services_initialized) return;
+   services_initialized = 1;
+--- nmap-4.62/protocols.cc.orig	2008-02-28 18:52:06 +0000
++++ nmap-4.62/protocols.cc	2008-05-12 20:32:26 +0000
+@@ -100,6 +100,7 @@
+ /* $Id: protocols.cc 6858 2008-02-28 18:52:06Z fyodor $ */
+ 
+ #include "protocols.h"
++#include "droppriv.h"
+ #include "NmapOps.h"
+ #include "services.h"
+ #include "charpool.h"
+@@ -111,7 +112,7 @@ static int numipprots = 0;
+ static struct protocol_list *protocol_table[PROTOCOL_TABLE_SIZE];
+ static int protocols_initialized = 0;
+ 
+-static int nmap_protocols_init() {
++int nmap_protocols_init() {
+   if (protocols_initialized) return 0;
+ 
+   char filename[512];
+--- nmap-4.62/services.cc.orig	2008-02-28 18:52:06 +0000
++++ nmap-4.62/services.cc	2008-05-12 20:33:13 +0000
+@@ -100,6 +100,7 @@
+ /* $Id: services.cc 6858 2008-02-28 18:52:06Z fyodor $ */
+ 
+ #include "services.h"
++#include "droppriv.h"
+ #include "NmapOps.h"
+ #include "charpool.h"
+ #include "nmap_error.h"
+@@ -113,7 +114,7 @@ static struct service_list *sorted_servi
+ static int services_initialized = 0;
+ static int ratio_format = 0; // 0 = /etc/services no-ratio format. 1 = new nmap format
+ 
+-static int nmap_services_init() {
++int nmap_services_init() {
+   if (services_initialized) return 0;
+ 
+   char filename[512];
+--- nmap-4.62/droppriv.cc.orig	2008-05-14 22:28:34 +0000
++++ nmap-4.62/droppriv.cc	2008-05-12 22:10:40 +0000
+@@ -0,0 +1,95 @@
++#include "nmap.h"
++#include "service_scan.h"
++#include "utils.h"
++#include "droppriv.h"
++
++#ifndef NMAP_USER
++
++void drop_priv(void) {}
++
++#else
++
++#if HAVE_GRP_H
++# include <grp.h>
++#endif
++#if HAVE_SYS_CAPABILITY_H
++# include <sys/capability.h>
++#endif
++#if HAVE_SYS_PRCTL_H
++# include <sys/prctl.h>
++#endif
++
++#include "NmapOps.h"
++extern NmapOps o;		/* option structure */
++
++#ifndef NMAP_CHROOT_EMPTY
++# ifdef NMAP_CHROOT_RESOLV
++#  define NMAP_CHROOT_EMPTY NMAP_CHROOT_RESOLV
++# else
++#  define NMAP_CHROOT_EMPTY NULL
++# endif
++#endif
++
++#ifndef NMAP_CHROOT_RESOLV
++# define NMAP_CHROOT_RESOLV NULL
++#endif
++
++const char *
++drop_priv_dir(void)
++{
++	return o.noresolve ? NMAP_CHROOT_EMPTY : NMAP_CHROOT_RESOLV;
++}
++
++void
++drop_priv(void)
++{
++	const char *user = NMAP_USER;
++	const char *dir;
++	struct passwd *pw;
++	cap_t   caps;
++
++	if (geteuid())
++		return;
++
++	nmap_services_init();
++	nmap_protocols_init();
++	rpc_services_init();
++	AllProbes::service_scan_init();
++	routethrough_init();
++	mac_prefix_init();
++	if (!o.noresolve) etchosts_init();
++
++	if (setgroups(0, 0) < 0)
++		fatal("setgroups failed");
++
++	if (prctl(PR_SET_KEEPCAPS, 1))
++		fatal("prctl PR_SET_KEEPCAPS failed");
++
++	if (!(pw = getpwnam(user)))
++		fatal("lookup of user \"%s\" failed", user);
++	endpwent();
++
++	if (!pw->pw_uid)
++		fatal("user \"%s\" shouldn't be root", user);
++
++	dir = drop_priv_dir();
++	if (dir && (chroot(dir) || chdir("/")))
++		fatal("chroot to \"%s\" failed", dir);
++
++	if (setgid(pw->pw_gid) < 0)
++		fatal("setgid failed");
++
++	if (setreuid(pw->pw_uid, pw->pw_uid) < 0)
++		fatal("setreuid failed");
++
++	caps = cap_from_text("cap_net_raw=ep");
++	if (!caps)
++		fatal("cap_from_text failed");
++
++	if (cap_set_proc(caps) < 0)
++		fatal("cap_set_proc failed");
++
++	cap_free(caps);
++}
++
++#endif /* NMAP_USER */
+--- nmap-4.62/droppriv.h.orig	2008-05-14 22:28:34 +0000
++++ nmap-4.62/droppriv.h	2007-10-07 11:39:28 +0000
+@@ -0,0 +1,13 @@
++#ifndef NMAP_DROPPRIV_H__
++#define NMAP_DROPPRIV_H__
++
++extern const char *drop_priv_dir(void);
++extern void drop_priv(void);
++extern int nmap_services_init(void);
++extern int nmap_protocols_init(void);
++extern void rpc_services_init(void);
++extern void routethrough_init(void);
++extern void mac_prefix_init(void);
++extern void etchosts_init(void);
++
++#endif /* NMAP_DROPPRIV_H__ */

@@ -1,0 +1,29 @@
+--- nmap-4.62/nmap.cc.orig	2008-04-24 03:23:01 +0000
++++ nmap-4.62/nmap.cc	2008-05-12 13:44:52 +0000
+@@ -2646,8 +2646,6 @@ int nmap_fetchfile(char *filename_return
+   int res;
+   int foundsomething = 0;
+   struct passwd *pw;
+-  char dot_buffer[512];
+-  static int warningcount = 0;
+   std::map<std::string, std::string>::iterator iter;
+ 
+   /* First, check the map of requested data file names. If there's an entry for
+@@ -2739,6 +2737,9 @@ int nmap_fetchfile(char *filename_return
+     }
+   }
+ 
++#ifdef ENABLE_DOT_DIR_OPEN
++  char dot_buffer[512];
++  static int warningcount = 0;
+   if (foundsomething && (*filename_returned != '.')) {    
+     res = Snprintf(dot_buffer, sizeof(dot_buffer), "./%s", file);
+     if (res > 0 && res < bufferlen) {
+@@ -2759,6 +2760,7 @@ int nmap_fetchfile(char *filename_return
+       foundsomething = fileexistsandisreadable(filename_returned);
+     }
+   }
++#endif /* ENABLE_DOT_DIR_OPEN */
+ 
+   if (!foundsomething) {
+     filename_returned[0] = '\0';
