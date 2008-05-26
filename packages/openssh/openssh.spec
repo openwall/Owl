@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.98 2008/05/26 09:44:39 solar Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.99 2008/05/26 14:38:12 ldv Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl22
+Release: owl23
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -113,6 +113,25 @@ patented algorithms to separate libraries (OpenSSL).
 
 This package contains the secure shell daemon, sshd, which allows SSH
 clients to connect to your host.
+
+%package blacklist
+Summary: The blacklist file for OpenSSH server.
+Group: System Environment/Daemons
+PreReq: %name-server = %version-%release
+
+%description blacklist
+SSH (Secure Shell) is a program for logging into a remote machine and for
+executing commands on a remote machine.  It is intended to replace
+rlogin and rsh, and provide secure encrypted communications between
+two untrusted hosts over an insecure network.  X11 connections and
+arbitrary TCP/IP ports can also be forwarded over the secure channel.
+
+OpenSSH is OpenBSD's rework of the last free version of SSH, bringing it
+up to date in terms of security and features, as well as removing all
+patented algorithms to separate libraries (OpenSSL).
+
+This package contains the blacklist file for secure shell daemon, sshd,
+which is used by sshd to verify public keys.
 
 %prep
 %setup -q
@@ -266,7 +285,6 @@ fi
 %attr(0644,root,root) %_mandir/man5/sshd_config.5*
 %attr(0644,root,root) %_mandir/man8/sshd.8*
 %attr(0644,root,root) %_mandir/man8/sftp-server.8*
-%attr(0644,root,root) /etc/ssh/blacklist
 %attr(0600,root,root) %config(noreplace) %verify(not size md5 mtime) /etc/ssh/sshd_config
 %attr(0600,root,root) %config(noreplace) %ghost /etc/ssh/ssh_host*key
 %attr(0644,root,root) %config(noreplace) %ghost /etc/ssh/ssh_host*key.pub
@@ -274,7 +292,13 @@ fi
 %attr(0700,root,root) %config /etc/rc.d/init.d/sshd
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
+%files blacklist
+%attr(0644,root,root) /etc/ssh/blacklist
+
 %changelog
+* Mon May 26 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl23
+- Moved blacklist file to separate subpackage.
+
 * Sun May 25 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl22
 - Implemented support for RSA/DSA key blacklisting in sshd based on partial
 fingerprints.
