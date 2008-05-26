@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.97 2008/05/26 01:00:51 ldv Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.98 2008/05/26 09:44:39 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -13,9 +13,9 @@ Source2: sshd.init
 Source3: ssh_config
 Source4: sshd_config
 Source5: sftp.control
-# made from ftp://ftp.debian.org/debian/pool/main/w/openssh-blacklist/openssh-blacklist_0.3.tar.gz
-# using "cat [DR]SA-{1024,2048}.[bl]e{32,64} |./blacklist-encode 6" command
-Source6: blacklist
+# Made from ftp://ftp.debian.org/debian/pool/main/o/openssh-blacklist/openssh-blacklist_0.3.tar.gz
+# with "cat [DR]SA-{1024,2048}.[bl]e{32,64} | ./blacklist-encode 6"
+Source10: openssh-blacklist-0.3-1.bin.bz2
 Patch0: openssh-3.6.1p1-owl-warnings.diff
 Patch1: openssh-3.6.1p1-owl-hide-unknown.diff
 Patch2: openssh-3.6.1p2-owl-always-auth.diff
@@ -43,7 +43,7 @@ Patch23: openssh-3.6.1p2-cvs-20060916-deattack.diff
 Patch24: openssh-3.6.1p2-cvs-20060919-packet_enable_delayed_compress.diff
 Patch25: openssh-3.6.1p2-rh-sftp-memleaks.diff
 Patch26: openssh-3.6.1p2-cvs-20061108-monitor.diff
-Patch27: openssh-3.6.1p2-owl-deb-blacklist.diff
+Patch27: openssh-3.6.1p2-owl-blacklist.diff
 PreReq: openssl >= 0.9.7, openssl < 0.9.8
 Requires: pam >= 0:0.80-owl2
 Obsoletes: ssh
@@ -175,10 +175,16 @@ install -m 600 %_sourcedir/sshd.pam %buildroot/etc/pam.d/sshd
 install -m 700 %_sourcedir/sshd.init %buildroot/etc/rc.d/init.d/sshd
 install -m 644 %_sourcedir/ssh_config %buildroot/etc/ssh/
 install -m 600 %_sourcedir/sshd_config %buildroot/etc/ssh/
-install -m 644 %_sourcedir/blacklist %buildroot/etc/ssh/
 mkdir -p %buildroot/etc/control.d/facilities
 install -m 700 %_sourcedir/sftp.control \
 	%buildroot/etc/control.d/facilities/sftp
+{
+	bzcat %SOURCE10 || touch failed
+} > %buildroot/etc/ssh/blacklist
+test ! -e failed
+test -s %buildroot/etc/ssh/blacklist
+touch -r %SOURCE10 %buildroot/etc/ssh/blacklist
+chmod 644 %buildroot/etc/ssh/blacklist
 
 rm %buildroot%_datadir/Ssh.bin
 
@@ -270,7 +276,8 @@ fi
 
 %changelog
 * Sun May 25 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl22
-- Implemented support for RSA/DSA key blacklisting based on partial fingerprints.
+- Implemented support for RSA/DSA key blacklisting in sshd based on partial
+fingerprints.
 
 * Fri Nov 23 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.6.1p2-owl21
 - Added a dependency on owl-startup to openssh-server so it would be
