@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.96 2007/11/23 03:39:43 galaxy Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.97 2008/05/26 01:00:51 ldv Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl21
+Release: owl22
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -13,6 +13,9 @@ Source2: sshd.init
 Source3: ssh_config
 Source4: sshd_config
 Source5: sftp.control
+# made from ftp://ftp.debian.org/debian/pool/main/w/openssh-blacklist/openssh-blacklist_0.3.tar.gz
+# using "cat [DR]SA-{1024,2048}.[bl]e{32,64} |./blacklist-encode 6" command
+Source6: blacklist
 Patch0: openssh-3.6.1p1-owl-warnings.diff
 Patch1: openssh-3.6.1p1-owl-hide-unknown.diff
 Patch2: openssh-3.6.1p2-owl-always-auth.diff
@@ -40,6 +43,7 @@ Patch23: openssh-3.6.1p2-cvs-20060916-deattack.diff
 Patch24: openssh-3.6.1p2-cvs-20060919-packet_enable_delayed_compress.diff
 Patch25: openssh-3.6.1p2-rh-sftp-memleaks.diff
 Patch26: openssh-3.6.1p2-cvs-20061108-monitor.diff
+Patch27: openssh-3.6.1p2-owl-deb-blacklist.diff
 PreReq: openssl >= 0.9.7, openssl < 0.9.8
 Requires: pam >= 0:0.80-owl2
 Obsoletes: ssh
@@ -140,6 +144,7 @@ rm -r autom4te.cache
 %patch24 -p0
 %patch25 -p1
 %patch26 -p1
+%patch27 -p1
 bzip2 -9k ChangeLog
 
 %{expand:%%define _sysconfdir %_sysconfdir/ssh}
@@ -170,6 +175,7 @@ install -m 600 %_sourcedir/sshd.pam %buildroot/etc/pam.d/sshd
 install -m 700 %_sourcedir/sshd.init %buildroot/etc/rc.d/init.d/sshd
 install -m 644 %_sourcedir/ssh_config %buildroot/etc/ssh/
 install -m 600 %_sourcedir/sshd_config %buildroot/etc/ssh/
+install -m 644 %_sourcedir/blacklist %buildroot/etc/ssh/
 mkdir -p %buildroot/etc/control.d/facilities
 install -m 700 %_sourcedir/sftp.control \
 	%buildroot/etc/control.d/facilities/sftp
@@ -254,6 +260,7 @@ fi
 %attr(0644,root,root) %_mandir/man5/sshd_config.5*
 %attr(0644,root,root) %_mandir/man8/sshd.8*
 %attr(0644,root,root) %_mandir/man8/sftp-server.8*
+%attr(0644,root,root) /etc/ssh/blacklist
 %attr(0600,root,root) %config(noreplace) %verify(not size md5 mtime) /etc/ssh/sshd_config
 %attr(0600,root,root) %config(noreplace) %ghost /etc/ssh/ssh_host*key
 %attr(0644,root,root) %config(noreplace) %ghost /etc/ssh/ssh_host*key.pub
@@ -262,6 +269,9 @@ fi
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
 %changelog
+* Sun May 25 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl22
+- Implemented support for RSA/DSA key blacklisting based on partial fingerprints.
+
 * Fri Nov 23 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.6.1p2-owl21
 - Added a dependency on owl-startup to openssh-server so it would be
 properly handled by RPM's dependency resolution routines.
