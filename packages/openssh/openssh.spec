@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.89.2.2 2006/11/09 22:00:59 ldv Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.89.2.3 2008/05/30 23:24:22 ldv Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl20
+Release: owl23
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -13,6 +13,9 @@ Source2: sshd.init
 Source3: ssh_config
 Source4: sshd_config
 Source5: sftp.control
+# Made from ftp://ftp.debian.org/debian/pool/main/o/openssh-blacklist/openssh-blacklist_0.3.tar.gz
+# with "cat [DR]SA-{1024,2048}.[bl]e{32,64} | ./blacklist-encode 6"
+Source10: openssh-blacklist-0.3-1.bin.bz2
 Patch0: openssh-3.6.1p1-owl-warnings.diff
 Patch1: openssh-3.6.1p1-owl-hide-unknown.diff
 Patch2: openssh-3.6.1p2-owl-always-auth.diff
@@ -40,6 +43,7 @@ Patch23: openssh-3.6.1p2-cvs-20060916-deattack.diff
 Patch24: openssh-3.6.1p2-cvs-20060919-packet_enable_delayed_compress.diff
 Patch25: openssh-3.6.1p2-rh-sftp-memleaks.diff
 Patch26: openssh-3.6.1p2-cvs-20061108-monitor.diff
+Patch27: openssh-3.6.1p2-owl-blacklist.diff
 PreReq: openssl >= 0.9.7, openssl < 0.9.8
 Requires: pam >= 0:0.80-owl2
 Obsoletes: ssh
@@ -92,6 +96,7 @@ PreReq: %name = %version-%release
 PreReq: /sbin/chkconfig, grep, shadow-utils, /dev/urandom
 Requires: tcp_wrappers >= 7.6-owl3.2
 Requires: owl-control >= 0.4, owl-control < 2.0
+Requires: owl-startup
 Requires: /var/empty, tcb, pam_userpass, pam_mktemp
 Obsoletes: ssh-server
 
@@ -108,6 +113,25 @@ patented algorithms to separate libraries (OpenSSL).
 
 This package contains the secure shell daemon, sshd, which allows SSH
 clients to connect to your host.
+
+%package blacklist
+Summary: The blacklist file for OpenSSH server.
+Group: System Environment/Daemons
+PreReq: %name-server = %version-%release
+
+%description blacklist
+SSH (Secure Shell) is a program for logging into a remote machine and for
+executing commands on a remote machine.  It is intended to replace
+rlogin and rsh, and provide secure encrypted communications between
+two untrusted hosts over an insecure network.  X11 connections and
+arbitrary TCP/IP ports can also be forwarded over the secure channel.
+
+OpenSSH is OpenBSD's rework of the last free version of SSH, bringing it
+up to date in terms of security and features, as well as removing all
+patented algorithms to separate libraries (OpenSSL).
+
+This package contains the blacklist file for secure shell daemon, sshd,
+which is used by sshd to verify public keys.
 
 %prep
 %setup -q
@@ -139,6 +163,7 @@ rm -r autom4te.cache
 %patch24 -p0
 %patch25 -p1
 %patch26 -p1
+%patch27 -p1
 bzip2 -9k ChangeLog
 
 %{expand:%%define _sysconfdir %_sysconfdir/ssh}
@@ -172,6 +197,13 @@ install -m 600 %_sourcedir/sshd_config %buildroot/etc/ssh/
 mkdir -p %buildroot/etc/control.d/facilities
 install -m 700 %_sourcedir/sftp.control \
 	%buildroot/etc/control.d/facilities/sftp
+{
+	bzcat %SOURCE10 || touch failed
+} > %buildroot/etc/ssh/blacklist
+test ! -e failed
+test -s %buildroot/etc/ssh/blacklist
+touch -r %SOURCE10 %buildroot/etc/ssh/blacklist
+chmod 644 %buildroot/etc/ssh/blacklist
 
 rm %buildroot%_datadir/Ssh.bin
 
@@ -260,7 +292,21 @@ fi
 %attr(0700,root,root) %config /etc/rc.d/init.d/sshd
 %attr(0700,root,root) /etc/control.d/facilities/sftp
 
+%files blacklist
+%attr(0644,root,root) /etc/ssh/blacklist
+
 %changelog
+* Mon May 26 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl23
+- Moved blacklist file to separate subpackage.
+
+* Sun May 25 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl22
+- Implemented support for RSA/DSA key blacklisting in sshd based on partial
+fingerprints.
+
+* Fri Nov 23 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.6.1p2-owl21
+- Added a dependency on owl-startup to openssh-server so it would be
+properly handled by RPM's dependency resolution routines.
+
 * Wed Nov 08 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl20
 - Backported upstream fix for a bug in the sshd privilege separation
 monitor that weakened its verification of successful authentication

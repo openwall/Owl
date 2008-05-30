@@ -5,6 +5,20 @@ only the stable branch which has these changes.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+(2008/05/27)
+2008/05/30	Package: openssh
+Implemented support for RSA/DSA key blacklisting in sshd based on
+partial fingerprints, added a subpackage with blacklisted 48-bit partial
+fingerprints for 1024-bit and 2048-bit RSA and 1024-bit DSA keys as
+generated on vulnerable Debian, Ubuntu, and derived systems for PID range
+1 to 32767.  Due to the encoding scheme used, the blacklist file size is
+just 1.3 MB, which corresponds to less than 4.5 bytes per fingerprint.
+References:
+http://www.debian.org/security/2008/dsa-1571
+http://www.ubuntu.com/usn/usn-612-1
+http://metasploit.com/users/hdm/tools/debian-openssl/
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-0166
+
 (2008/03/26)
 2008/03/26	Package: gnupg
 Updated to 1.4.9.
@@ -348,4 +362,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.53 2008/03/27 00:14:54 ldv Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.54 2008/05/30 23:32:31 ldv Exp $
