@@ -183,7 +183,7 @@ when answering resolver questions or sending NOTIFY messages to slave
 name servers.  The weakness used to make it easier for remote attackers
 to guess the next query id and perform DNS cache poisoning.
 References:
-http://www.trusteer.com/docs/bind9dns.html
+http://www.trusteer.com/bind9dns
 http://marc.info/?l=bind-announce&m=118531674631565
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-2926
 
@@ -588,4 +588,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.129 2008/05/27 13:41:00 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.130 2008/05/31 15:45:23 solar Exp $
