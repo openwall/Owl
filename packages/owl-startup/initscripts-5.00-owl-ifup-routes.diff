@@ -1,0 +1,16 @@
+diff -uNr initscripts-5.00.orig/sysconfig/network-scripts/ifup-routes initscripts-5.00/sysconfig/network-scripts/ifup-routes
+--- initscripts-5.00.orig/sysconfig/network-scripts/ifup-routes	2000-02-02 16:29:06 +0000
++++ initscripts-5.00/sysconfig/network-scripts/ifup-routes	2008-06-07 12:06:21 +0000
+@@ -12,10 +12,10 @@
+ fi
+ 
+ #note the trailing space in the grep gets rid of aliases
+-grep "^$1 " /etc/sysconfig/static-routes | while read device args; do
++grep "^$1[[:space:]]" /etc/sysconfig/static-routes | while read device args; do
+ 	/sbin/route add -$args $device
+ done
+-grep "^any " /etc/sysconfig/static-routes | while read ignore type net netmask mask bogus dev ; do
++grep "^any[[:space:]]" /etc/sysconfig/static-routes | while read ignore type net netmask mask bogus dev ; do
+ 	if [ "$dev" = "$device" ]; then
+ 		/sbin/route add -$type $net $netmask $mask $dev
+ 	fi

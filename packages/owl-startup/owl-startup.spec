@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.72 2007/01/05 19:28:32 galaxy Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.73 2008/06/07 12:13:53 galaxy Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
 Version: 0.32
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -19,6 +19,7 @@ Source9: sysctl.conf
 Patch0: initscripts-5.00-owl-dhclient.diff
 Patch1: initscripts-5.00-owl-network-typo.diff
 Patch2: initscripts-5.00-owl-NETWORKING.diff
+Patch3: initscripts-5.00-owl-ifup-routes.diff
 PreReq: /sbin/chkconfig
 Requires: SysVinit, msulogin, /sbin/start-stop-daemon
 Requires: bash >= 2.0, sh-utils
@@ -166,6 +167,10 @@ fi
 %doc redhat
 
 %changelog
+* Sat Jun 07 2008 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.32-owl2
+- Enhanced ifup-routes to allow any white space character after the
+interface name in static-routes.
+
 * Fri Jan 05 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.32-owl1
 - Added the default shell for the --user option of daemon() in
 /etc/rc.d/init.d/functions.
