@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.73 2008/06/07 12:13:53 galaxy Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.74 2008/06/08 11:36:29 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.32
-Release: owl2
+Version: 0.33
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -167,7 +167,7 @@ fi
 %doc redhat
 
 %changelog
-* Sat Jun 07 2008 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.32-owl2
+* Sat Jun 07 2008 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.33-owl1
 - Enhanced ifup-routes to allow any white space character after the
 interface name in static-routes.
 
