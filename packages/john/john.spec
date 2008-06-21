@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.97 2008/06/21 14:54:08 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.98 2008/06/21 15:31:26 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -89,6 +89,8 @@ install -m 644 -p run/mailer doc/
 - Converted the code in x86-64.S to use %rip-relative addressing because
 "32-bit absolute addressing is not supported for x86-64" on Mac OS X,
 as well as to reduce code size (by 1348 bytes).
+- Added DumbForce and KnownForce external mode samples to the default
+john.conf.
 
 * Wed Sep 13 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.2.1-owl1
 - Corrected the error message reported when "Extra = ..." contains characters
