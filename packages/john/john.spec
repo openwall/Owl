@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.96 2006/09/13 00:07:56 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.97 2008/06/21 14:54:08 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.2.1
+Version: 1.7.2.2
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -85,6 +85,11 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sat Jun 21 2008 Solar Designer <solar-at-owl.openwall.com> 1.7.2.2-owl1
+- Converted the code in x86-64.S to use %rip-relative addressing because
+"32-bit absolute addressing is not supported for x86-64" on Mac OS X,
+as well as to reduce code size (by 1348 bytes).
+
 * Wed Sep 13 2006 Solar Designer <solar-at-owl.openwall.com> 1.7.2.1-owl1
 - Corrected the error message reported when "Extra = ..." contains characters
 that are outside of the compile-time specified range (thanks to Radim Horak
