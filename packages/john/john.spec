@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.98 2008/06/21 15:31:26 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.99 2008/06/22 02:26:37 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.2.2
+Version: 1.7.2.3
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -85,6 +85,11 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sun Jun 22 2008 Solar Designer <solar-at-owl.openwall.com> 1.7.2.3-owl1
+- Two Blowfish-based crypt(3) hashes may now be computed in parallel for much
+better performance on modern multi-issue CPUs with a sufficient number of
+registers (e.g., x86-64, RISC).
+
 * Sat Jun 21 2008 Solar Designer <solar-at-owl.openwall.com> 1.7.2.2-owl1
 - Converted the code in x86-64.S to use %rip-relative addressing because
 "32-bit absolute addressing is not supported for x86-64" on Mac OS X,
