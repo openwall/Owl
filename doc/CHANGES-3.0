@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2008/06/29	Package: vsftpd
+Updated to 2.0.6.
+
 2008/05/27	Package: openssh
 Implemented support for RSA/DSA key blacklisting in sshd based on
 partial fingerprints, added a subpackage with blacklisted 48-bit partial
@@ -589,4 +592,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.131 2008/05/31 16:13:07 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.132 2008/06/28 23:00:36 solar Exp $
