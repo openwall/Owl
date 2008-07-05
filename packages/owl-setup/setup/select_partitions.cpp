@@ -282,7 +282,7 @@ void select_and_mount_partitions(OwlInstallInterface *the_iface)
             "\n"
             "You might want to return to main menu\n"
             "and create some, or specify your\n"
-            "choosen partitions manually using the\n"
+            "chosen partitions manually using the\n"
             "``uNlisted'' option");
     }
     for(;;) {
