@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.85 2007/07/29 22:53:39 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.86 2008/07/05 10:35:13 croco Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 1.1.11
+Version: 1.1.12
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -34,6 +34,13 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
+* Sat Jul 05 2008 Croco <croco-at-owl.openwall.com> 1.1.12-owl1
+- fixed the old bug with broken layout of progress indicator text
+  in the ncurses interface
+- made the 'Select and mount partitions' menu item in the settle program
+  to be always availabe, with a warning in case there are no Linux
+  partitions
+
 * Mon Jul 30 2007 Croco <croco-at-owl.openwall.com> 1.1.11-owl1
 - fixed the bug with ugly contents of /etc/sysconfig/network for the
   case when no gateway is defined

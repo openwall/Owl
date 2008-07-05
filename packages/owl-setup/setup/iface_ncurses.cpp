@@ -434,8 +434,8 @@ void NcursesIfaceProgressBar::Draw()
 void NcursesIfaceProgressBar::SetCurrent(int c)
 {
     if(!the_slider) return;
-    setCDKSlider((CDKSLIDER*)the_slider, 0, total, c, FALSE);
-    drawCDKSlider((CDKSLIDER*)the_slider, FALSE);
+    setCDKSlider((CDKSLIDER*)the_slider, 0, total, c, TRUE);
+    drawCDKSlider((CDKSLIDER*)the_slider, TRUE);
 }
 
 void NcursesIfaceProgressBar::Erase()

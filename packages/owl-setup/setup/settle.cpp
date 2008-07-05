@@ -83,7 +83,7 @@ int main(int argc, char **argv)
         { "f", "Repartition your hard drive",
             always_true, linux_partition_exists },
         { "m", "Select & mount install partitions",
-            linux_partition_exists, owl_dir_mounted  },
+            /* linux_partition_exists */ always_true, owl_dir_mounted  },
         { "s", "Activate swap space", always_true, active_swap_exists },
         { "i", "Install packages", owl_dir_mounted, packages_installed },
         { "l", "Configure localization (i18n)",

@@ -274,10 +274,23 @@ static void enumerate_available_partitions(ScriptVector &res)
 
 void select_and_mount_partitions(OwlInstallInterface *the_iface)
 {
+    if(!linux_partition_exists()) {
+        // no linux partitions found
+        the_iface->Message(
+            "No Linux partitions (of type 83)\n"
+            "could be found.\n"
+            "\n"
+            "You might want to return to main menu\n"
+            "and create some, or specify your\n"
+            "choosen partitions manually using the\n"
+            "``uNlisted'' option");
+    }
     for(;;) {
         if(!owl_dir_mounted()) { // we need the root partition
             ScriptVector parts;
             enumerate_linux_partitions(parts);
+
+
             IfaceSingleChoice *pm = the_iface->CreateSingleChoice();
             pm->SetCaption("Select your root partition");
 
