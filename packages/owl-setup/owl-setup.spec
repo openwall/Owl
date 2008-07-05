@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.86 2008/07/05 10:35:13 croco Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.87 2008/07/05 20:10:16 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -38,7 +38,7 @@ rm -rf %buildroot
 - fixed the old bug with broken layout of progress indicator text
   in the ncurses interface
 - made the 'Select and mount partitions' menu item in the settle program
-  to be always availabe, with a warning in case there are no Linux
+  to be always available, with a warning in case there are no Linux
   partitions
 
 * Mon Jul 30 2007 Croco <croco-at-owl.openwall.com> 1.1.11-owl1
