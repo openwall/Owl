@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.41 2007/05/31 21:57:36 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.42 2008/07/05 20:17:42 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 1.2
+Version: 1.3
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -29,7 +29,7 @@ cd %buildroot
 touch .Owl-CD-ROM
 install -m 700 %_sourcedir/rc.ramdisk etc/rc.d/
 install -m 755 %_sourcedir/welcome-cdrom.sh etc/profile.d/
-install -m 600 %_sourcedir/lilo.conf etc/
+install -m 600 %_sourcedir/lilo.conf etc/lilo.conf.bootcd
 install -m 700 %_sourcedir/floppy-update.sh boot/
 install -m 600 %_sourcedir/message boot/
 %ifarch x86_64
@@ -81,7 +81,7 @@ fi
 /.Owl-CD-ROM
 %config /etc/rc.d/rc.ramdisk
 %config /etc/profile.d/welcome-cdrom.sh
-%config /etc/lilo.conf
+%config /etc/lilo.conf.bootcd
 %config /boot/.config
 /boot/floppy-update.sh
 /boot/message
@@ -90,6 +90,10 @@ fi
 %dir /owl
 
 %changelog
+* Sat Jul 05 2008 Solar Designer <solar-at-owl.openwall.com> 1.3-owl1
+- Install lilo.conf as lilo.conf.bootcd to not conflict with the ghost
+from our updated lilo package.
+
 * Fri Jun 01 2007 Solar Designer <solar-at-owl.openwall.com> 1.2-owl1
 - In dot-config for plain x86, enabled more IDE chipset drivers (ALI15X3,
 PDC202XX_OLD, PDC202XX_NEW, SVWKS, SIS5513, VIA82CXXX), RAID controller
