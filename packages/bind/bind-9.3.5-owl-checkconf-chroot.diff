@@ -1,15 +1,15 @@
---- bind-9.3.2/bin/check/named-checkconf.8.orig	2005-10-13 02:33:41 +0000
-+++ bind-9.3.2/bin/check/named-checkconf.8	2006-03-30 13:40:31 +0000
-@@ -41,6 +41,7 @@ checks the syntax, but not the semantics
- chroot to
+--- bind-9.3.5/bin/check/named-checkconf.8
++++ bind-9.3.5/bin/check/named-checkconf.8
+@@ -45,6 +45,7 @@ checks the syntax, but not the semantics, of a named configuration file.
+ Chroot to
  \fIdirectory\fR
  so that include directives in the configuration file are processed as if run by a similarly chrooted named.
-+By default, \fBnamed\-checkconf\fR \fBchroot()\fR's to \fI@ROOT@\fR.
- .TP 3n
++By default, \fBnamed\-checkconf\fR will \fBchroot()\fR to \fI@ROOT@\fR.
+ .RE
+ .PP
  \-v
- Print the version of the
---- bind-9.3.2/bin/check/named-checkconf.c.orig	2005-03-03 06:33:38 +0000
-+++ bind-9.3.2/bin/check/named-checkconf.c	2006-03-30 13:38:51 +0000
+--- bind-9.3.5/bin/check/named-checkconf.c
++++ bind-9.3.5/bin/check/named-checkconf.c
 @@ -208,6 +208,7 @@ main(int argc, char **argv) {
  	int exit_status = 0;
  	isc_entropy_t *ectx = NULL;

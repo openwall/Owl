@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bind/bind.spec,v 1.21 2007/11/08 22:00:28 ldv Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.22 2008/07/08 23:49:26 ldv Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -6,8 +6,8 @@
 
 Summary: ISC BIND - DNS server.
 Name: bind
-Version: 9.3.4
-Release: owl4
+Version: 9.3.5
+Release: owl1
 License: BSD-style
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -31,18 +31,16 @@ Source15: bind.localdomain
 Source16: bind.127.in-addr.arpa
 Source17: bind.empty
 
-Patch0: bind-9.3.1-owl-warnings.diff
-Patch1: bind-9.3.1-openbsd-owl-pidfile.diff
-Patch2: bind-9.3.2-openbsd-owl-chroot-defaults.diff
-Patch3: bind-9.3.1-alt-owl-chroot.diff
-Patch4: bind-9.3.3-owl-checkconf-chroot.diff
-Patch5: bind-9.3.1-rh-owl-bsdcompat.diff
-Patch6: bind-9.3.1-rh-h_errno.diff
-Patch7: bind-9.3.1-alt-isc-config.diff
-Patch8: bind-9.3.3-alt-man.diff
-Patch9: bind-9.3.1-alt-owl-rndc-confgen.diff
-Patch10: bind-9.3.1-owl-rfc-index.diff
-Patch11: bind-9.3.4-owl-root_ns.diff
+Patch0: bind-9.3.5-owl-warnings.diff
+Patch1: bind-9.3.5-openbsd-owl-pidfile.diff
+Patch2: bind-9.3.5-openbsd-owl-chroot-defaults.diff
+Patch3: bind-9.3.5-alt-owl-chroot.diff
+Patch4: bind-9.3.5-owl-checkconf-chroot.diff
+Patch5: bind-9.3.5-rh-h_errno.diff
+Patch6: bind-9.3.1-alt-isc-config.diff
+Patch7: bind-9.3.5-alt-man.diff
+Patch8: bind-9.3.1-alt-owl-rndc-confgen.diff
+Patch9: bind-9.3.1-owl-rfc-index.diff
 
 Requires: %name-libs = %version-%release
 Requires: owl-startup
@@ -119,8 +117,6 @@ for building applications with ISC BIND libraries.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
-%patch10 -p1
-%patch11 -p1
 
 install -pm644 %_sourcedir/rfc1912.txt.bz2 doc/rfc/
 find doc -type f -name '*.txt' -print0 |
@@ -346,6 +342,10 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Tue Jul 08 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.5-owl1
+- Updated to 9.3.5-P1.  This release additionally randomizes UDP query
+ports to improve forgery resilience (VU#800113/CVE-2008-1447).
+
 * Thu Nov 08 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.4-owl4
 - Updated L.ROOT-SERVERS.NET address.
 

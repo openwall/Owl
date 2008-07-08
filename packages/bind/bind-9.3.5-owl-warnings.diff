@@ -1,0 +1,72 @@
+--- bind-9.3.5/lib/isc/Makefile.in
++++ bind-9.3.5/lib/isc/Makefile.in
+@@ -57,7 +57,7 @@ OBJS =		@ISC_EXTRA_OBJS@ \
+ 		mem.@O@ mutexblock.@O@ netaddr.@O@ netscope.@O@ ondestroy.@O@ \
+ 		parseint.@O@ quota.@O@ random.@O@ \
+ 		ratelimiter.@O@ region.@O@ result.@O@ rwlock.@O@ \
+-		serial.@O@ sha1.@O@ sockaddr.@O@ string.@O@ strtoul.@O@ \
++		serial.@O@ sha1.@O@ sockaddr.@O@ string.@O@ \
+ 		symtab.@O@ task.@O@ taskpool.@O@ timer.@O@ version.@O@ \
+ 		${UNIXOBJS} ${NLSOBJS} ${THREADOBJS}
+ 
+@@ -70,7 +70,7 @@ SRCS =		@ISC_EXTRA_SRCS@ \
+ 		md5.c mem.c mutexblock.c netaddr.c netscope.c ondestroy.c \
+ 		parseint.c quota.c random.c \
+ 		ratelimiter.c result.c rwlock.c \
+-		serial.c sha1.c sockaddr.c string.c strtoul.c symtab.c \
++		serial.c sha1.c sockaddr.c string.c symtab.c \
+ 		task.c taskpool.c timer.c version.c
+ 
+ LIBS =		@LIBS@
+--- bind-9.3.5/lib/isc/unix/net.c
++++ bind-9.3.5/lib/isc/unix/net.c
+@@ -41,10 +41,10 @@ const struct in6_addr isc_net_in6addrloop = IN6ADDR_LOOPBACK_INIT;
+ 
+ # if defined(WANT_IPV6)
+ static isc_once_t 	once_ipv6only = ISC_ONCE_INIT;
+-# endif
+ 
+-# if defined(ISC_PLATFORM_HAVEIN6PKTINFO)
++#  if defined(ISC_PLATFORM_HAVEIN6PKTINFO)
+ static isc_once_t 	once_ipv6pktinfo = ISC_ONCE_INIT;
++#  endif
+ # endif
+ #endif /* ISC_PLATFORM_HAVEIPV6 */
+ 
+@@ -244,7 +244,6 @@ initialize_ipv6only(void) {
+ 	RUNTIME_CHECK(isc_once_do(&once_ipv6only,
+ 				  try_ipv6only) == ISC_R_SUCCESS);
+ }
+-#endif /* WANT_IPV6 */
+ 
+ #ifdef ISC_PLATFORM_HAVEIN6PKTINFO
+ static void
+@@ -299,6 +298,7 @@ initialize_ipv6pktinfo(void) {
+ 	RUNTIME_CHECK(isc_once_do(&once_ipv6pktinfo,
+ 				  try_ipv6pktinfo) == ISC_R_SUCCESS);
+ }
++#endif /* WANT_IPV6 */
+ #endif /* ISC_PLATFORM_HAVEIN6PKTINFO */
+ #endif /* ISC_PLATFORM_HAVEIPV6 */
+ 
+--- bind-9.3.5/lib/lwres/Makefile.in
++++ bind-9.3.5/lib/lwres/Makefile.in
+@@ -35,16 +35,14 @@ OBJS =		context.@O@ gai_strerror.@O@ getaddrinfo.@O@ gethost.@O@ \
+ 		getipnode.@O@ getnameinfo.@O@ getrrset.@O@ herror.@O@ \
+ 		lwbuffer.@O@ lwconfig.@O@ lwpacket.@O@ lwresutil.@O@ \
+ 		lwres_gabn.@O@ lwres_gnba.@O@ lwres_grbn.@O@ lwres_noop.@O@ \
+-		lwinetaton.@O@ lwinetpton.@O@ lwinetntop.@O@ print.@O@ \
+-		strtoul.@O@
++		lwinetaton.@O@ lwinetpton.@O@ lwinetntop.@O@
+ 
+ # Alphabetically
+ SRCS =		context.c gai_strerror.c getaddrinfo.c gethost.c \
+ 		getipnode.c getnameinfo.c getrrset.c herror.c \
+ 		lwbuffer.c lwconfig.c lwpacket.c lwresutil.c \
+ 		lwres_gabn.c lwres_gnba.c lwres_grbn.c lwres_noop.c \
+-		lwinetaton.c lwinetpton.c lwinetntop.c print.c \
+-		strtoul.c
++		lwinetaton.c lwinetpton.c lwinetntop.c
+ 
+ LIBS =		@LIBS@
+ 

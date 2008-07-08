@@ -1,0 +1,24 @@
+--- bind-9.3.5/lib/bind/irs/irs_data.c
++++ bind-9.3.5/lib/bind/irs/irs_data.c
+@@ -231,9 +231,7 @@ __h_errno(void) {
+ 
+ void
+ __h_errno_set(struct __res_state *res, int err) {
+-
+-
+-#if (__GLIBC__ > 2 || __GLIBC__ == 2 &&  __GLIBC_MINOR__ >= 3)
++#if 0
+ 	res->res_h_errno = err;
+ #else
+ 	h_errno = res->res_h_errno = err;
+--- bind-9.3.5/lib/bind/resolv/res_query.c
++++ bind-9.3.5/lib/bind/resolv/res_query.c
+@@ -192,6 +192,8 @@ again:
+ 		}
+ 		return (-1);
+ 	}
++	if( n > 0 )
++		RES_SET_H_ERRNO(statp,0);
+ 	return (n);
+ }
+ 
