@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.99 2008/06/22 02:26:37 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.100 2008/07/08 01:00:53 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.2.3
+Version: 1.7.2.4
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -85,6 +85,10 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Tue Jul 08 2008 Solar Designer <solar-at-owl.openwall.com> 1.7.2.4-owl1
+- Many updates to x86*.S and Makefile associated with addition of
+solaris-x86-* targets (beyond plain x86, which was already supported).
+
 * Sun Jun 22 2008 Solar Designer <solar-at-owl.openwall.com> 1.7.2.3-owl1
 - Two Blowfish-based crypt(3) hashes may now be computed in parallel for much
 better performance on modern multi-issue CPUs with a sufficient number of
