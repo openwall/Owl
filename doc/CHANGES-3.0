@@ -12,10 +12,18 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2006/09/13 -
+2008/07/10	Package: john
+Many updates to John the Ripper have been made, bringing it to version
+1.7.3.  Most notably, two Blowfish-based crypt(3) hashes may now be
+computed in parallel for much better performance on x86-64 CPUs.  Also,
+"DumbForce" and "KnownForce" external mode samples have been added to
+the default john.conf.
+
 2008/07/08	Package: bind
 SECURITY FIX	Severity: medium, remote, active
-Updated to 9.3.5-P1, which additionally randomizes UDP query
-ports to improve resilience to DNS cache poisoning attacks.
+Updated to 9.3.5-P1, which additionally randomizes UDP query ports to
+improve resilience to DNS cache poisoning attacks.
 References:
 http://www.isc.org/sw/bind/forgery-resilience.php
 http://www.kb.cert.org/vuls/id/800113
@@ -601,4 +609,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.133 2008/07/09 00:11:15 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.134 2008/07/10 04:25:47 solar Exp $
