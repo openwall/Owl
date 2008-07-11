@@ -1,7 +1,6 @@
-diff -upk.orig bind-9.3.1.orig/bin/named/include/named/globals.h bind-9.3.1/bin/named/include/named/globals.h
---- bind-9.3.1.orig/bin/named/include/named/globals.h	2004-03-08 04:04:20 +0000
-+++ bind-9.3.1/bin/named/include/named/globals.h	2005-09-22 15:53:57 +0000
-@@ -108,6 +108,8 @@ EXTERN const char *		ns_g_defaultpidfile
+--- bind-9.3.5/bin/named/include/named/globals.h
++++ bind-9.3.5/bin/named/include/named/globals.h
+@@ -108,6 +108,8 @@ EXTERN const char *		ns_g_defaultpidfile 	INIT(NS_LOCALSTATEDIR
  							     "/run/named.pid");
  EXTERN const char *		lwresd_g_defaultpidfile INIT(NS_LOCALSTATEDIR
  							    "/run/lwresd.pid");
@@ -10,10 +9,9 @@ diff -upk.orig bind-9.3.1.orig/bin/named/include/named/globals.h bind-9.3.1/bin/
  EXTERN const char *		ns_g_username		INIT(NULL);
  
  EXTERN int			ns_g_listen		INIT(3);
-diff -upk.orig bind-9.3.1.orig/bin/named/main.c bind-9.3.1/bin/named/main.c
---- bind-9.3.1.orig/bin/named/main.c	2004-10-25 00:42:54 +0000
-+++ bind-9.3.1/bin/named/main.c	2005-09-22 15:53:57 +0000
-@@ -240,7 +240,7 @@ usage(void) {
+--- bind-9.3.5/bin/named/main.c
++++ bind-9.3.5/bin/named/main.c
+@@ -239,7 +239,7 @@ usage(void) {
  		"usage: named [-4|-6] [-c conffile] [-d debuglevel] "
  		"[-f|-g] [-n number_of_cpus]\n"
  		"             [-p port] [-s] [-t chrootdir] [-u username]\n"
@@ -22,7 +20,7 @@ diff -upk.orig bind-9.3.1.orig/bin/named/main.c bind-9.3.1/bin/named/main.c
  }
  
  static void
-@@ -388,9 +388,8 @@ parse_command_line(int argc, char *argv[
+@@ -387,9 +387,8 @@ parse_command_line(int argc, char *argv[]) {
  			ns_g_foreground = ISC_TRUE;
  			ns_g_logstderr = ISC_TRUE;
  			break;
@@ -33,9 +31,9 @@ diff -upk.orig bind-9.3.1.orig/bin/named/main.c bind-9.3.1/bin/named/main.c
  			break;
  		case 'l':
  			ns_g_lwresdonly = ISC_TRUE;
-@@ -541,6 +540,12 @@ static void
- setup(void) {
- 	isc_result_t result;
+@@ -543,6 +542,12 @@ setup(void) {
+ 	char *instance = NULL;
+ #endif
  
 +        /*
 +	 * Write pidfile before chroot if specified on the command line
@@ -46,10 +44,9 @@ diff -upk.orig bind-9.3.1.orig/bin/named/main.c bind-9.3.1/bin/named/main.c
  	/*
  	 * Get the user and group information before changing the root
  	 * directory, so the administrator does not need to keep a copy
-diff -upk.orig bind-9.3.1.orig/bin/named/server.c bind-9.3.1/bin/named/server.c
---- bind-9.3.1.orig/bin/named/server.c	2004-11-10 22:13:56 +0000
-+++ bind-9.3.1/bin/named/server.c	2005-09-22 15:53:57 +0000
-@@ -2639,16 +2639,20 @@ load_configuration(const char *filename,
+--- bind-9.3.5/bin/named/server.c
++++ bind-9.3.5/bin/named/server.c
+@@ -2671,16 +2671,20 @@ load_configuration(const char *filename, ns_server_t *server,
  		}
  	}
  
@@ -76,12 +73,11 @@ diff -upk.orig bind-9.3.1.orig/bin/named/server.c bind-9.3.1/bin/named/server.c
 -		ns_os_writepidfile(ns_g_defaultpidfile, first_time);
 +			ns_os_writepidfile(ns_g_defaultpidfile, first_time);
 +	}
- 	
+ 
  	obj = NULL;
  	if (options != NULL &&
-diff -upk.orig bind-9.3.1.orig/bin/named/unix/include/named/os.h bind-9.3.1/bin/named/unix/include/named/os.h
---- bind-9.3.1.orig/bin/named/unix/include/named/os.h	2004-09-29 06:36:44 +0000
-+++ bind-9.3.1/bin/named/unix/include/named/os.h	2005-09-22 15:53:57 +0000
+--- bind-9.3.5/bin/named/unix/include/named/os.h
++++ bind-9.3.5/bin/named/unix/include/named/os.h
 @@ -47,6 +47,9 @@ void
  ns_os_minprivs(void);
  
@@ -92,11 +88,10 @@ diff -upk.orig bind-9.3.1.orig/bin/named/unix/include/named/os.h bind-9.3.1/bin/
  ns_os_writepidfile(const char *filename, isc_boolean_t first_time);
  
  void
-diff -upk.orig bind-9.3.1.orig/bin/named/unix/os.c bind-9.3.1/bin/named/unix/os.c
---- bind-9.3.1.orig/bin/named/unix/os.c	2004-10-07 02:34:20 +0000
-+++ bind-9.3.1/bin/named/unix/os.c	2005-09-22 15:54:24 +0000
-@@ -48,6 +48,8 @@
- #include <named/os.h>
+--- bind-9.3.5/bin/named/unix/os.c
++++ bind-9.3.5/bin/named/unix/os.c
+@@ -51,6 +51,8 @@
+ #endif
  
  static char *pidfile = NULL;
 +static int pidfilefd = -1;
@@ -104,7 +99,7 @@ diff -upk.orig bind-9.3.1.orig/bin/named/unix/os.c bind-9.3.1/bin/named/unix/os.
  static int devnullfd = -1;
  
  #ifndef ISC_FACILITY
-@@ -537,32 +539,26 @@ cleanup_pidfile(void) {
+@@ -558,32 +560,26 @@ cleanup_pidfile(void) {
  	pidfile = NULL;
  }
  
@@ -141,7 +136,7 @@ diff -upk.orig bind-9.3.1.orig/bin/named/unix/os.c bind-9.3.1/bin/named/unix/os.
  	}
  	/* This is safe. */
  	strcpy(pidfile, filename);
-@@ -573,15 +569,46 @@ ns_os_writepidfile(const char *filename,
+@@ -594,15 +590,46 @@ ns_os_writepidfile(const char *filename, isc_boolean_t first_time) {
  		(*report)("couldn't open pid file '%s': %s", filename, strbuf);
  		free(pidfile);
  		pidfile = NULL;
@@ -190,7 +185,7 @@ diff -upk.orig bind-9.3.1.orig/bin/named/unix/os.c bind-9.3.1/bin/named/unix/os.
  		return;
  	}
  #ifdef HAVE_LINUXTHREADS
-@@ -592,22 +619,23 @@ ns_os_writepidfile(const char *filename,
+@@ -613,22 +640,23 @@ ns_os_writepidfile(const char *filename, isc_boolean_t first_time) {
  	if (fprintf(lockfile, "%ld\n", (long)pid) < 0) {
  		(*report)("fprintf() to pid file '%s' failed", filename);
  		(void)fclose(lockfile);

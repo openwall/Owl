@@ -1,6 +1,6 @@
---- bind-9.3.2/bin/named/include/named/globals.h.orig	2006-03-30 13:25:46 +0000
-+++ bind-9.3.2/bin/named/include/named/globals.h	2006-03-30 13:25:46 +0000
-@@ -100,7 +100,7 @@ EXTERN isc_resourcevalue_t	ns_g_initopen
+--- bind-9.3.5/bin/named/include/named/globals.h
++++ bind-9.3.5/bin/named/include/named/globals.h
+@@ -100,7 +100,7 @@ EXTERN isc_resourcevalue_t	ns_g_initopenfiles	INIT(0);
   * Misc.
   */
  EXTERN isc_boolean_t		ns_g_coreok		INIT(ISC_TRUE);
@@ -9,7 +9,7 @@
  EXTERN isc_boolean_t		ns_g_foreground		INIT(ISC_FALSE);
  EXTERN isc_boolean_t		ns_g_logstderr		INIT(ISC_FALSE);
  
-@@ -110,7 +110,7 @@ EXTERN const char *		lwresd_g_defaultpid
+@@ -110,7 +110,7 @@ EXTERN const char *		lwresd_g_defaultpidfile INIT(NS_LOCALSTATEDIR
  							    "/run/lwresd.pid");
  EXTERN const char *		ns_g_pidfile		INIT(NS_LOCALSTATEDIR
  							    "/run/named.pid");
@@ -18,9 +18,9 @@
  
  EXTERN int			ns_g_listen		INIT(3);
  
---- bind-9.3.2/bin/named/named.8.orig	2005-10-13 02:33:46 +0000
-+++ bind-9.3.2/bin/named/named.8	2006-03-30 13:32:13 +0000
-@@ -38,7 +38,7 @@ is a Domain Name System (DNS) server, pa
+--- bind-9.3.5/bin/named/named.8
++++ bind-9.3.5/bin/named/named.8
+@@ -41,7 +41,7 @@ is a Domain Name System (DNS) server, part of the BIND 9 distribution from ISC.
  .PP
  When invoked without arguments,
  \fBnamed\fR
@@ -28,8 +28,8 @@
 +will \fBchroot()\fR to \fI@ROOT@\fR, read the default configuration file
  \fI/etc/named.conf\fR, read any initial data, and listen for queries.
  .SH "OPTIONS"
- .TP
-@@ -60,7 +60,7 @@ are mutually exclusive.
+ .PP
+@@ -68,7 +68,7 @@ are mutually exclusive.
  Use
  \fIconfig\-file\fR
  as the configuration file instead of the default,
@@ -38,7 +38,7 @@
  \fBdirectory\fR
  option in the configuration file,
  \fIconfig\-file\fR
-@@ -104,6 +104,7 @@ This option is mainly of interest to BIN
+@@ -135,6 +135,7 @@ This option is mainly of interest to BIND 9 developers and may be removed or cha
  to
  \fIdirectory\fR
  after processing the command line arguments, but before reading the configuration file.
@@ -46,7 +46,7 @@
  .RS
  .B "Warning:"
  This option should be used in conjunction with the
-@@ -118,6 +119,7 @@ is defined allows a process with root pr
+@@ -151,6 +152,7 @@ is defined allows a process with root privileges to escape a chroot jail.
  to
  \fIuser\fR
  after completing privileged operations, such as creating sockets that listen on privileged ports.
