@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.108 2006/05/30 23:31:28 ldv Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.109 2008/07/16 23:08:21 ldv Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -227,7 +227,7 @@ compatibility package with necessary binaries of old libdb libraries.
 
 # Owl
 echo "Applying crypt_blowfish patch:"
-patch -p1 -s < crypt_blowfish-%crypt_bf_version/glibc-2.3.2-crypt.diff
+patch -p1 -s < crypt_blowfish-%crypt_bf_version/glibc-2.3.6-crypt.diff
 mv crypt/{crypt.h,gnu-crypt.h}
 mv crypt_blowfish-%crypt_bf_version/*.[chS] crypt/
 install -pm644 %_sourcedir/crypt_freesec.[ch] crypt/
