@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.101 2008/07/10 04:15:51 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.102 2008/07/18 01:54:28 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.3
+Version: 1.7.3.1
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -85,6 +85,10 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Fri Jul 18 2008 Solar Designer <solar-at-owl.openwall.com> 1.7.3.1-owl1
+- Corrected the x86 assembly files for building on Mac OS X.
+- Merged in some generic changes from JtR Pro.
+
 * Thu Jul 10 2008 Solar Designer <solar-at-owl.openwall.com> 1.7.3-owl1
 - Disabled BF_X2 on RISC architectures for now.
 - Documentation updates to refer to LM hashes in a non-confusing way.
