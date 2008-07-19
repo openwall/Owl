@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.109 2008/07/16 23:08:21 ldv Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.110 2008/07/19 12:20:05 ldv Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -10,8 +10,8 @@
 Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
-%define crypt_bf_version 1.0.2
-Release: owl6
+%define crypt_bf_version 1.0.3
+Release: owl7
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
@@ -482,6 +482,10 @@ fi
 %endif
 
 %changelog
+* Thu Jul 17 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.6-owl7
+- Made crypt_blowfish buildable by modern gcc compilers by moving
+fcrypt weak alias definition from crypt-entry.c to wrapper.c file.
+
 * Sat May 27 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.6-owl6
 - Backported configure fix: compile source test files with -fPIC for -shared.
 - Backported linuxthreads x86-64 asm syntax corrections.
