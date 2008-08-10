@@ -1,0 +1,18 @@
+--- postfix-2.4.8/src/util/safe_open.c
++++ postfix-2.4.8/src/util/safe_open.c
+@@ -149,6 +149,7 @@ static VSTREAM *safe_open_exist(const char *path, int flags,
+ 	vstring_sprintf(why, "file status changed unexpectedly: %m");
+ 	errno = EPERM;
+     } else if (S_ISLNK(lstat_st.st_mode)) {
++#ifdef ENABLE_SOLARIS_SYMLINK_HACK
+ 	if (lstat_st.st_uid == 0) {
+ 	    VSTRING *parent_buf = vstring_alloc(100);
+ 	    const char *parent_path = sane_dirname(parent_buf, path);
+@@ -162,6 +163,7 @@ static VSTREAM *safe_open_exist(const char *path, int flags,
+ 	    if (parent_ok)
+ 		return (fp);
+ 	}
++#endif
+ 	vstring_sprintf(why, "file is a symbolic link");
+ 	errno = EPERM;
+     } else if (fstat_st->st_dev != lstat_st.st_dev

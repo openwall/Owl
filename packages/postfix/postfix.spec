@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.42 2007/12/23 00:41:46 ldv Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.43 2008/08/10 18:27:48 ldv Exp $
 
 Summary: Postfix mail system.
 Name: postfix
-Version: 2.4.6
-Release: owl2
+Version: 2.4.8
+Release: owl1
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
@@ -35,6 +35,7 @@ Patch13: postfix-2.4.6-alt-warnings.diff
 Patch14: postfix-2.4.6-alt-postconf-E.diff
 Patch15: postfix-2.4.6-alt-owl-defaults.diff
 Patch16: postfix-2.4.6-alt-owl-doc.diff
+Patch17: postfix-2.4.8-owl-safe_open.diff
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: owl-startup
@@ -92,6 +93,7 @@ compatible enough to not upset your users.
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
 
 install -pm644 %_sourcedir/README.Owl README_FILES/
 
@@ -357,6 +359,9 @@ fi
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
+* Sun Aug 10 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.4.8-owl1
+- Updated to 2.4.8.
+
 * Sun Dec 23 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.4.6-owl2
 - Fixed build of documentation.
 
