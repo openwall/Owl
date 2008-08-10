@@ -1,0 +1,261 @@
+ bind-9.3.5/lib/isc/unix/socket.c |  152 ++++++++++++++++++++++++++++++--------------
+ 1 files changed, 104 insertions(+), 48 deletions(-)
+
+--- bind-9.3.5/lib/isc/unix/socket.c
++++ bind-9.3.5/lib/isc/unix/socket.c
+@@ -88,6 +88,8 @@
+ #ifdef __APPLE__
+ #define _DARWIN_UNLIMITED_SELECT
+ #endif	/* __APPLE__ */
++#else
++#define ISC_SOCKET_FDSETSIZE FD_SETSIZE
+ #endif
+ 
+ /*%
+@@ -218,7 +220,6 @@ struct isc_socketmgr {
+ 	unsigned int		magic;
+ 	isc_mem_t	       *mctx;
+ 	isc_mutex_t		lock;
+-	int			fd_bufsize;
+ 	int			fdsize;
+ 	/* Locked by manager lock. */
+ 	ISC_LIST(isc_socket_t)	socklist;
+@@ -273,6 +274,7 @@ static void build_msghdr_send(isc_socket_t *, isc_socketevent_t *,
+ static void build_msghdr_recv(isc_socket_t *, isc_socketevent_t *,
+ 			      struct msghdr *, struct iovec *, size_t *);
+ static void cleanup_fdsets(isc_socketmgr_t *, isc_mem_t *);
++static isc_result_t expand_fdsets(isc_socketmgr_t *, int, isc_mem_t *);
+ static isc_result_t create_fdsets(isc_socketmgr_t *, isc_mem_t *);
+ 
+ #define SELECT_POKE_SHUTDOWN		(-1)
+@@ -1509,7 +1511,8 @@ isc_socket_create(isc_socketmgr_t *manager, int pf, isc_sockettype_t type,
+ 	}
+ #endif
+ 
+-	if (sock->fd >= (int)manager->fdsize) {
++	if (sock->fd >= (int)manager->fdsize &&
++	    expand_fdsets(manager, sock->fd, NULL) != ISC_R_SUCCESS) {
+ 		(void)close(sock->fd);
+ 		isc_log_iwrite(isc_lctx, ISC_LOGCATEGORY_GENERAL,
+ 			       ISC_LOGMODULE_SOCKET, ISC_LOG_ERROR,
+@@ -2041,7 +2044,8 @@ internal_accept(isc_task_t *me, isc_event_t *ev) {
+ 					 sock->pf);
+ 			(void)close(fd);
+ 			goto soft_error;
+-		} else if (fd >= (int)manager->fdsize) {
++		} else if (fd >= (int)manager->fdsize &&
++			   expand_fdsets(manager, fd, NULL) != ISC_R_SUCCESS) {
+ 			isc_log_iwrite(isc_lctx, ISC_LOGCATEGORY_GENERAL,
+ 				       ISC_LOGMODULE_SOCKET, ISC_LOG_ERROR,
+ 				       isc_msgcat, ISC_MSGSET_SOCKET,
+@@ -2343,9 +2347,9 @@ watcher(void *uap) {
+ 	while (!done) {
+ 		do {
+ 			memcpy(manager->read_fds_copy, manager->read_fds,
+-			       manager->fd_bufsize);
++			       howmany(manager->fdsize, NFDBITS) * sizeof(fd_mask));
+ 			memcpy(manager->write_fds_copy, manager->write_fds,
+-			       manager->fd_bufsize);
++			       howmany(manager->fdsize, NFDBITS) * sizeof(fd_mask));
+ 			maxfd = manager->maxfd + 1;
+ 
+ 			UNLOCK(&manager->lock);
+@@ -2433,62 +2437,115 @@ isc__socketmgr_setreserved(isc_socketmgr_t *manager, isc_uint32_t reserved) {
+ 	manager->reserved = reserved;
+ }
+ 
+-/*
+- * Initialize fdsets in socketmgr structure.
+- */
+-static isc_result_t
+-create_fdsets(isc_socketmgr_t *manager, isc_mem_t *mctx) {
+-#if ISC_SOCKET_FDSETSIZE > FD_SETSIZE
+-	manager->fdsize = ISC_SOCKET_FDSETSIZE;
+-	manager->fd_bufsize = howmany(ISC_SOCKET_FDSETSIZE, NFDBITS) *
+-		sizeof(fd_mask);
+-#else
+-	manager->fdsize = FD_SETSIZE;
+-	manager->fd_bufsize = sizeof(fd_set);
+-#endif
++static void *
++realloc_mem(isc_mem_t *mctx, void *ptr, size_t oldsize, size_t newsize) {
++	void *ret;
+ 
+-	manager->fds = NULL;
+-	manager->fdstate = NULL;
+-	manager->read_fds = NULL;
+-	manager->read_fds_copy = NULL;
+-	manager->write_fds = NULL;
+-	manager->write_fds_copy = NULL;
++	if ((ret = isc_mem_get(mctx, newsize))) {
++		memset(ret, 0, newsize);
++		if (ptr) {
++			memcpy(ret, ptr, oldsize);
++			isc_mem_put(mctx, ptr, oldsize);
++		}
++	}
++	return ret;
++}
++
++static isc_result_t
++expand_fdsets(isc_socketmgr_t *manager, int maxfd, isc_mem_t *mctx) {
++	int new_size = manager->fdsize;
++	size_t bufsize, new_bufsize;
++	isc_socket_t **new_fds = NULL;
++	int *new_fdstate = NULL;
++	fd_set *new_read_fds = NULL;
++	fd_set *new_read_fds_copy = NULL;
++	fd_set *new_write_fds = NULL;
++	fd_set *new_write_fds_copy = NULL;
++
++	if (mctx == NULL)
++		mctx = manager->mctx;
+ 
+-	manager->fds = isc_mem_get(mctx,
+-				   manager->fdsize * sizeof(manager->fds[0]));
+-	if (manager->fds == NULL)
++	do {
++		new_size += ISC_SOCKET_FDSETSIZE;
++	} while (new_size <= maxfd);
++	bufsize = howmany(manager->fdsize, NFDBITS) * sizeof(fd_mask);
++	new_bufsize = howmany(new_size, NFDBITS) * sizeof(fd_mask);
++
++	if (!(new_fds = realloc_mem(mctx, manager->fds,
++			    manager->fdsize * sizeof(manager->fds[0]),
++			    new_size * sizeof(manager->fds[0]))))
+ 		goto fail;
+ 
+-	manager->fdstate = isc_mem_get(mctx, manager->fdsize *
+-				       sizeof(manager->fdstate[0]));
+-	if (manager->fdstate == NULL)
++	if (!(new_fdstate = realloc_mem(mctx, manager->fdstate,
++			    manager->fdsize * sizeof(manager->fdstate[0]),
++			    new_size * sizeof(manager->fdstate[0]))))
+ 		goto fail;
+ 
+-	manager->read_fds = isc_mem_get(mctx, manager->fd_bufsize);
+-	if (manager->read_fds == NULL)
++	if (!(new_read_fds = realloc_mem(mctx, manager->read_fds,
++				 bufsize, new_bufsize)))
+ 		goto fail;
+-	manager->read_fds_copy = isc_mem_get(mctx, manager->fd_bufsize);
+-	if (manager->read_fds_copy == NULL)
++
++	if (!(new_read_fds_copy = realloc_mem(mctx, manager->read_fds_copy,
++				      bufsize, new_bufsize)))
+ 		goto fail;
+-	manager->write_fds = isc_mem_get(mctx, manager->fd_bufsize);
+-	if (manager->write_fds == NULL)
++
++	if (!(new_write_fds = realloc_mem(mctx, manager->write_fds,
++				  bufsize, new_bufsize)))
+ 		goto fail;
+-	manager->write_fds_copy = isc_mem_get(mctx, manager->fd_bufsize);
+-	if (manager->write_fds_copy == NULL)
++
++	if (!(new_write_fds_copy = realloc_mem(mctx, manager->write_fds_copy,
++				       bufsize, new_bufsize)))
+ 		goto fail;
+ 
++	manager->fds = new_fds;
++	manager->fdstate = new_fdstate;
++	manager->read_fds = new_read_fds;
++	manager->read_fds_copy = new_read_fds_copy;
++	manager->write_fds = new_write_fds;
++	manager->write_fds_copy = new_write_fds_copy;
++	manager->fdsize = new_size;
+ 	return (ISC_R_SUCCESS);
+ 
+   fail:
+-	cleanup_fdsets(manager, mctx);
++	if (new_write_fds)
++		isc_mem_put(mctx, new_write_fds, new_bufsize);
++	if (new_read_fds_copy)
++		isc_mem_put(mctx, new_read_fds_copy, new_bufsize);
++	if (new_read_fds)
++		isc_mem_put(mctx, new_read_fds, new_bufsize);
++	if (new_fdstate)
++		isc_mem_put(mctx, new_fdstate, sizeof(manager->fdstate[0]) * new_size);
++	if (new_fds)
++		isc_mem_put(mctx, new_fds, sizeof(manager->fds[0]) * new_size);
+ 	return (ISC_R_NOMEMORY);
+ }
+ 
+ /*
++ * Initialize fdsets in socketmgr structure.
++ */
++static isc_result_t
++create_fdsets(isc_socketmgr_t *manager, isc_mem_t *mctx) {
++	manager->fdsize = 0;
++	manager->fds = NULL;
++	manager->fdstate = NULL;
++	manager->read_fds = NULL;
++	manager->read_fds_copy = NULL;
++	manager->write_fds = NULL;
++	manager->write_fds_copy = NULL;
++
++	isc_result_t rc = expand_fdsets(manager, 0, mctx);
++	if (rc != ISC_R_SUCCESS)
++		cleanup_fdsets(manager, mctx);
++	return (rc);
++}
++
++/*
+  * Clean up fdsets in socketmgr structure.
+  */
+ static void
+ cleanup_fdsets(isc_socketmgr_t *manager, isc_mem_t *mctx) {
++	size_t size = howmany(manager->fdsize, NFDBITS) * sizeof(fd_mask);
++
+ 	if (manager->fds != NULL) {
+ 		isc_mem_put(mctx, manager->fds,
+ 			    manager->fdsize * sizeof(manager->fds[0]));
+@@ -2498,13 +2555,13 @@ cleanup_fdsets(isc_socketmgr_t *manager, isc_mem_t *mctx) {
+ 			    manager->fdsize * sizeof(manager->fdstate[0]));
+ 	}
+ 	if (manager->read_fds != NULL)
+-		isc_mem_put(mctx, manager->read_fds, manager->fd_bufsize);
++		isc_mem_put(mctx, manager->read_fds, size);
+ 	if (manager->read_fds_copy != NULL)
+-		isc_mem_put(mctx, manager->read_fds_copy, manager->fd_bufsize);
++		isc_mem_put(mctx, manager->read_fds_copy, size);
+ 	if (manager->write_fds != NULL)
+-		isc_mem_put(mctx, manager->write_fds, manager->fd_bufsize);
++		isc_mem_put(mctx, manager->write_fds, size);
+ 	if (manager->write_fds_copy != NULL)
+-		isc_mem_put(mctx, manager->write_fds_copy, manager->fd_bufsize);
++		isc_mem_put(mctx, manager->write_fds_copy, size);
+ }
+ 
+ /*
+@@ -2534,7 +2591,6 @@ isc_socketmgr_create(isc_mem_t *mctx, isc_socketmgr_t **managerp) {
+ 
+ 	result = create_fdsets(manager, mctx);
+ 	if (result != ISC_R_SUCCESS) {
+-		cleanup_fdsets(manager, mctx);
+ 		isc_mem_put(mctx, manager, sizeof(*manager));
+ 		return (result);
+ 	}
+@@ -2593,8 +2649,8 @@ isc_socketmgr_create(isc_mem_t *mctx, isc_socketmgr_t **managerp) {
+ 	/*
+ 	 * Set up initial state for the select loop
+ 	 */
+-	memset(manager->read_fds, 0, manager->fd_bufsize);
+-	memset(manager->write_fds, 0, manager->fd_bufsize);
++	memset(manager->read_fds, 0, howmany(manager->fdsize, NFDBITS) * sizeof(fd_mask));
++	memset(manager->write_fds, 0, howmany(manager->fdsize, NFDBITS) * sizeof(fd_mask));
+ #ifdef ISC_PLATFORM_USETHREADS
+ 	FD_SET(manager->pipe_fds[0], manager->read_fds);
+ 	manager->maxfd = manager->pipe_fds[0];
+@@ -3747,9 +3803,9 @@ isc__socketmgr_getfdsets(fd_set **readset, fd_set **writeset, int *maxfd) {
+ 	else {
+ 		/* Prepare duplicates of fd_sets, as select() will modify */
+ 		memcpy(socketmgr->read_fds_copy, socketmgr->read_fds,
+-		       socketmgr->fd_bufsize);
++		       howmany(socketmgr->fdsize, NFDBITS) * sizeof(fd_mask));
+ 		memcpy(socketmgr->write_fds_copy, socketmgr->write_fds,
+-		       socketmgr->fd_bufsize);
++		       howmany(socketmgr->fdsize, NFDBITS) * sizeof(fd_mask));
+ 		*readset = socketmgr->read_fds_copy;
+ 		*writeset = socketmgr->write_fds_copy;
+ 		*maxfd = socketmgr->maxfd + 1;

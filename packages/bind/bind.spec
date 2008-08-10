@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bind/bind.spec,v 1.15.2.5 2008/07/11 12:50:56 ldv Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.15.2.6 2008/08/10 17:53:20 ldv Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -7,12 +7,12 @@
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.5
-Release: owl1
+Release: owl2
 License: BSD-style
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
 
-Source0: ftp://ftp.isc.org/isc/bind9/%version/bind-%version-P1.tar.gz
+Source0: ftp://ftp.isc.org/isc/bind9/%version/bind-%version-P2.tar.gz
 Source1: rfc1912.txt.bz2
 Source2: bind-debug.control
 Source3: bind-slave.control
@@ -41,6 +41,7 @@ Patch6: bind-9.3.1-alt-isc-config.diff
 Patch7: bind-9.3.5-alt-man.diff
 Patch8: bind-9.3.1-alt-owl-rndc-confgen.diff
 Patch9: bind-9.3.1-owl-rfc-index.diff
+Patch10: bind-9.3.5-openbsd-owl-expand_fdsets.diff
 
 Requires: %name-libs = %version-%release
 Requires: owl-startup
@@ -106,7 +107,7 @@ for building applications with ISC BIND libraries.
 %endif
 
 %prep
-%setup -q -n bind-%version-P1
+%setup -q -n bind-%version-P2
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -117,6 +118,7 @@ for building applications with ISC BIND libraries.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 install -pm644 %_sourcedir/rfc1912.txt.bz2 doc/rfc/
 find doc -type f -name '*.txt' -print0 |
@@ -342,6 +344,10 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Sun Aug 10 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.5-owl2
+- Updated to 9.3.5-P2.
+- Implemented automatic fdsets expansion to overcome FD_SETSIZE limit.
+
 * Tue Jul 08 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.5-owl1
 - Updated to 9.3.5-P1.  This release additionally randomizes UDP query
 ports to improve forgery resilience (VU#800113/CVE-2008-1447).
