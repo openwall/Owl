@@ -13,8 +13,8 @@ change logs for the packages themselves.
 	Changes made between Owl 2.0 and Owl-current.
 
 2008/08/10	Package: bind
-Updated to 9.3.5-P2, implemented support for more than 1024 simultaneous
-recursive queries.
+Updated to 9.3.5-P2, added an OpenBSD-derived patch to implement
+support for more than 1024 simultaneous recursive queries.
 
 2006/09/13 -
 2008/07/10	Package: john
@@ -613,4 +613,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.135 2008/08/10 16:02:56 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.136 2008/08/10 17:09:13 ldv Exp $
