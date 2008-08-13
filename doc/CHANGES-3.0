@@ -24,8 +24,8 @@ some other e-mail address), as well as to other system special accounts;
 - there's no potential attack vector to get group "mail" privileges on
 Owl with no third-party software added - no single program is installed
 SGID "mail";
-- the mail spool directory is only writable by root and group mail (not
-world-writable), yet it has the sticky bit set (mode 1771), which
+- the mail spool directory is only writable by root and group "mail"
+(not world-writable), yet it has the sticky bit set (mode 1771), which
 prevents the attack for already-existing mailboxes;
 - "useradd -m", which must be used to create a user account with a home
 directory, also pre-creates the mailbox;
@@ -633,4 +633,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.137 2008/08/13 02:33:56 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.138 2008/08/13 03:02:15 solar Exp $
