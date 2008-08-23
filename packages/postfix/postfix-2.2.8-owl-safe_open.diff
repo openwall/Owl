@@ -1,0 +1,13 @@
+--- postfix-2.2.8/src/util/safe_open.c.orig	2003-06-21 14:08:55 +0000
++++ postfix-2.2.8/src/util/safe_open.c	2008-08-23 21:19:43 +0000
+@@ -143,8 +143,10 @@ static VSTREAM *safe_open_exist(const ch
+ 	vstring_sprintf(why, "file status changed unexpectedly: %m");
+ 	errno = EPERM;
+     } else if (S_ISLNK(lstat_st.st_mode)) {
++#ifdef ENABLE_SOLARIS_SYMLINK_HACK
+ 	if (lstat_st.st_uid == 0)
+ 	    return (fp);
++#endif
+ 	vstring_sprintf(why, "file is a symbolic link");
+ 	errno = EPERM;
+     } else if (fstat_st->st_dev != lstat_st.st_dev
