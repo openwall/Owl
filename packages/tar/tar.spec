@@ -1,25 +1,16 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.37 2008/01/14 22:18:04 grg Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.38 2008/11/01 13:21:23 croco Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
-Version: 1.18
-Release: owl2
+Version: 1.20
+Release: owl1
 License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
 Source0: ftp://ftp.gnu.org/gnu/tar/tar-%version.tar.bz2
 Source1: tar.1
-Patch0: paxlib-cvs-20070817-safer_name_suffix-alloca.diff
-Patch1: gnulib-up-version.diff
-Patch2: tar-1.18-alt-parse_opt-Iy.diff
-Patch3: tar-1.18-owl-info.diff
-Patch4: tar-1.18-alt-contains_dot_dot.diff
-Patch5: tar-1.18-mdk-optimize-ignored.diff
-Patch6: tar-1.18-deb-lone-zero-block-warning.diff
-Patch7: tar-1.18-rh-sys_truncate.diff
-Patch8: tar-1.18-owl-warnings.diff
-Patch9: tar-1.18-owl-fchown-fchmod.diff
-Patch10: tar-1.18-owl-ignore-device-id.diff
+Patch0: tar-1.20-alt.diff
+Patch1: tar-1.20-owl-ignore-device-id.diff
 PreReq: /sbin/install-info, grep
 BuildRequires: automake, autoconf, cvs, gettext, texinfo
 BuildRequires: rpm-build >= 0:4, sed >= 4.0.9
@@ -36,17 +27,8 @@ backups.
 
 %prep
 %setup -q
-%patch0 -p0
+%patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -101,6 +83,10 @@ fi
 %doc AUTHORS NEWS THANKS
 
 %changelog
+* Tue Oct 28 2008 Andrey V. Stolyarov <croco-at-openwall.com> 1.20-owl1
+- Took the fresh GNU 1.20, applied patches made by AltLinux team,
+  added the --ignore-device-id option as an alias to --no-check-device
+
 * Tue Jan 14 2008 Grigoriy Strokin <grg-at-owl.openwall.com> 1.18-owl2
 - Added a new option: --ignore-device-id.
 

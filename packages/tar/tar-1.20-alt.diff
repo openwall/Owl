@@ -1,0 +1,367 @@
+Changes by AltLinux team
+
+
+--- tar-1.20/doc/tar.texi	2008-04-14 12:03:12.000000000 +0000
++++ tar-1.20-alt/doc/tar.texi	2008-10-30 14:55:15.000000000 +0000
+@@ -53,7 +53,7 @@ supports it in developing GNU and promot
+ 
+ @dircategory Archiving
+ @direntry
+-* Tar: (tar).                   Making tape (or disk) archives.
++* Tar: (tar).                                   Making tape (or disk) archives.
+ @end direntry
+ 
+ @dircategory Individual utilities
+diff -Nurp tar-1.20/lib/rtapelib.c tar-1.20-alt/lib/rtapelib.c
+--- tar-1.20/lib/rtapelib.c	2007-08-12 07:57:15.000000000 +0000
++++ tar-1.20-alt/lib/rtapelib.c	2008-10-30 14:55:15.000000000 +0000
+@@ -488,12 +488,14 @@ rmt_open__ (const char *file_name, int o
+ 	/* Child.  */
+ 
+ 	close (STDIN_FILENO);
+-	dup (to_remote[remote_pipe_number][PREAD]);
++	if (dup (to_remote[remote_pipe_number][PREAD]) != STDIN_FILENO)
++	  error (EXIT_ON_EXEC_ERROR, errno, _("Cannot dup"));
+ 	close (to_remote[remote_pipe_number][PREAD]);
+ 	close (to_remote[remote_pipe_number][PWRITE]);
+ 
+ 	close (STDOUT_FILENO);
+-	dup (from_remote[remote_pipe_number][PWRITE]);
++	if (dup (from_remote[remote_pipe_number][PWRITE]) != STDOUT_FILENO)
++	  error (EXIT_ON_EXEC_ERROR, errno, _("Cannot dup"));
+ 	close (from_remote[remote_pipe_number][PREAD]);
+ 	close (from_remote[remote_pipe_number][PWRITE]);
+ 
+diff -Nurp tar-1.20/src/create.c tar-1.20-alt/src/create.c
+--- tar-1.20/src/create.c	2008-04-14 12:03:12.000000000 +0000
++++ tar-1.20-alt/src/create.c	2008-10-30 14:55:15.000000000 +0000
+@@ -1548,6 +1548,17 @@ dump_file0 (struct tar_stat_info *st, co
+   if (is_avoided_name (p))
+     return;
+ 
++  if (S_ISSOCK (st->stat.st_mode))
++    {
++      WARN ((0, 0, _("%s: socket ignored"), quotearg_colon (p)));
++      return;
++    }
++  else if (S_ISDOOR (st->stat.st_mode))
++    {
++      WARN ((0, 0, _("%s: door ignored"), quotearg_colon (p)));
++      return;
++    }
++
+   is_dir = S_ISDIR (st->stat.st_mode) != 0;
+ 
+   if (!is_dir && dump_hard_link (st))
+@@ -1734,16 +1745,6 @@ dump_file0 (struct tar_stat_info *st, co
+     type = BLKTYPE;
+   else if (S_ISFIFO (st->stat.st_mode))
+     type = FIFOTYPE;
+-  else if (S_ISSOCK (st->stat.st_mode))
+-    {
+-      WARN ((0, 0, _("%s: socket ignored"), quotearg_colon (p)));
+-      return;
+-    }
+-  else if (S_ISDOOR (st->stat.st_mode))
+-    {
+-      WARN ((0, 0, _("%s: door ignored"), quotearg_colon (p)));
+-      return;
+-    }
+   else
+     {
+       unknown_file_error (p);
+diff -Nurp tar-1.20/src/extract.c tar-1.20-alt/src/extract.c
+--- tar-1.20/src/extract.c	2007-08-26 08:56:55.000000000 +0000
++++ tar-1.20-alt/src/extract.c	2008-10-30 14:55:15.000000000 +0000
+@@ -130,6 +130,33 @@ extr_init (void)
+     }
+ }
+ 
++static int
++fstat_or_stat (int fd, const char *name, struct stat *st)
++{
++  if (fd != -1)
++    return fstat (fd, st);
++  else
++    return stat (name, st);
++}
++
++static int
++fchown_or_chown (int fd, const char *name, uid_t uid, uid_t gid)
++{
++  if (fd != -1)
++    return fchown (fd, uid, gid);
++  else
++    return chown (name, uid, gid);
++}
++
++static int
++fchmod_or_chmod (int fd, const char *name, mode_t mode)
++{
++  if (fd != -1)
++    return fchmod (fd, mode);
++  else
++    return chmod(name, mode);
++}
++
+ /* If restoring permissions, restore the mode for FILE_NAME from
+    information given in *STAT_INFO (where *CUR_INFO gives
+    the current status if CUR_INFO is nonzero); otherwise invert the
+@@ -137,7 +164,7 @@ extr_init (void)
+    PERMSTATUS specifies the status of the file's permissions.
+    TYPEFLAG specifies the type of the file.  */
+ static void
+-set_mode (char const *file_name,
++set_mode (int fd, char const *file_name,
+ 	  struct stat const *stat_info,
+ 	  struct stat const *cur_info,
+ 	  mode_t invert_permissions, enum permstatus permstatus,
+@@ -176,7 +203,7 @@ set_mode (char const *file_name,
+       struct stat st;
+       if (! cur_info)
+ 	{
+-	  if (stat (file_name, &st) != 0)
++	  if (fstat_or_stat (fd, file_name, &st) != 0)
+ 	    {
+ 	      stat_error (file_name);
+ 	      return;
+@@ -186,7 +213,7 @@ set_mode (char const *file_name,
+       mode = cur_info->st_mode ^ invert_permissions;
+     }
+ 
+-  if (chmod (file_name, mode) != 0)
++  if (fchmod_or_chmod (fd, file_name, mode) != 0)
+     chmod_error_details (file_name, mode);
+ }
+ 
+@@ -233,7 +260,7 @@ check_time (char const *file_name, struc
+    punt for the rest.  Sigh!  */
+ 
+ static void
+-set_stat (char const *file_name,
++set_stat (int fd, char const *file_name,
+ 	  struct tar_stat_info const *st,
+ 	  struct stat const *cur_info,
+ 	  mode_t invert_permissions, enum permstatus permstatus,
+@@ -259,7 +286,7 @@ set_stat (char const *file_name,
+ 	    ts[0] = start_time;
+ 	  ts[1] = st->mtime;
+ 
+-	  if (utimens (file_name, ts) != 0)
++	  if (gl_futimens (fd, file_name, ts) != 0)
+ 	    utime_error (file_name);
+ 	  else
+ 	    {
+@@ -292,7 +319,8 @@ set_stat (char const *file_name,
+ 	}
+       else
+ 	{
+-	  chown_result = chown (file_name, st->stat.st_uid, st->stat.st_gid);
++	  chown_result = fchown_or_chown (fd, file_name, st->stat.st_uid,
++					  st->stat.st_gid);
+ 	}
+ 
+       if (chown_result == 0)
+@@ -310,7 +338,7 @@ set_stat (char const *file_name,
+     }
+ 
+   if (typeflag != SYMTYPE)
+-    set_mode (file_name, &st->stat, cur_info,
++    set_mode (fd, file_name, &st->stat, cur_info,
+ 	      invert_permissions, permstatus, typeflag);
+ }
+ 
+@@ -599,7 +627,7 @@ apply_nonancestor_delayed_set_stat (char
+ 	  sb.stat.st_gid = data->gid;
+ 	  sb.atime = data->atime;
+ 	  sb.mtime = data->mtime;
+-	  set_stat (data->file_name, &sb, cur_info,
++	  set_stat (-1, data->file_name, &sb, cur_info,
+ 		    data->invert_permissions, data->permstatus, DIRTYPE);
+ 	}
+ 
+@@ -650,7 +678,7 @@ extract_dir (char *file_name, int typefl
+ 	      || old_files_option == OVERWRITE_OLD_FILES))
+ 	{
+ 	  struct stat st;
+-	  if (stat (file_name, &st) == 0)
++	  if (lstat (file_name, &st) == 0)
+ 	    {
+ 	      if (interdir_made)
+ 		{
+@@ -814,6 +842,12 @@ extract_file (char *file_name, int typef
+ 
+   mv_end ();
+ 
++  if (!to_stdout_option && !to_command_option)
++    set_stat (fd, file_name, &current_stat_info, NULL, invert_permissions,
++	      (old_files_option == OVERWRITE_OLD_FILES ?
++	       UNKNOWN_PERMSTATUS : ARCHIVED_PERMSTATUS),
++	      typeflag);
++
+   /* If writing to stdout, don't try to do anything to the filename;
+      it doesn't exist, or we don't want to touch it anyway.  */
+ 
+@@ -826,11 +860,6 @@ extract_file (char *file_name, int typef
+ 
+   if (to_command_option)
+     sys_wait_command ();
+-  else
+-    set_stat (file_name, &current_stat_info, NULL, invert_permissions,
+-	      (old_files_option == OVERWRITE_OLD_FILES ?
+-	       UNKNOWN_PERMSTATUS : ARCHIVED_PERMSTATUS),
+-	      typeflag);
+ 
+   return status;
+ }
+@@ -986,7 +1015,7 @@ extract_symlink (char *file_name, int ty
+       break;
+ 
+   if (status == 0)
+-    set_stat (file_name, &current_stat_info, NULL, 0, 0, SYMTYPE);
++    set_stat (-1, file_name, &current_stat_info, NULL, 0, 0, SYMTYPE);
+   else
+     symlink_error (current_stat_info.link_name, file_name);
+   return status;
+@@ -1021,7 +1050,7 @@ extract_node (char *file_name, int typef
+   if (status != 0)
+     mknod_error (file_name);
+   else
+-    set_stat (file_name, &current_stat_info, NULL, invert_permissions,
++    set_stat (-1, file_name, &current_stat_info, NULL, invert_permissions,
+ 	      ARCHIVED_PERMSTATUS, typeflag);
+   return status;
+ }
+@@ -1042,7 +1071,7 @@ extract_fifo (char *file_name, int typef
+       break;
+ 
+   if (status == 0)
+-    set_stat (file_name, &current_stat_info, NULL, invert_permissions,
++    set_stat (-1, file_name, &current_stat_info, NULL, invert_permissions,
+ 	      ARCHIVED_PERMSTATUS, typeflag);
+   else
+     mkfifo_error (file_name);
+@@ -1291,7 +1320,7 @@ apply_delayed_links (void)
+ 		  struct tar_stat_info st1;
+ 		  st1.stat.st_uid = ds->uid;
+ 		  st1.stat.st_gid = ds->gid;
+-		  set_stat (source, &st1, NULL, 0, 0, SYMTYPE);
++		  set_stat (-1, source, &st1, NULL, 0, 0, SYMTYPE);
+ 		  valid_source = source;
+ 		}
+ 	    }
+diff -Nurp tar-1.20/src/list.c tar-1.20-alt/src/list.c
+--- tar-1.20/src/list.c	2007-10-29 17:53:06.000000000 +0000
++++ tar-1.20-alt/src/list.c	2008-10-30 14:55:15.000000000 +0000
+@@ -136,6 +136,14 @@ read_and (void (*do_something) (void))
+ 
+ 	  if (!ignore_zeros_option)
+ 	    {
++
++	      /*
++	       * According to POSIX tar specs, this is wrong, but on the web
++	       * there are some tar specs that can trigger this, and some tar
++	       * implementations create tars according to that spec.  For now,
++	       * let's not be pedantic about issuing the warning.
++	       */
++#if 0
+ 	      char buf[UINTMAX_STRSIZE_BOUND];
+ 
+ 	      status = read_header (false);
+@@ -143,6 +151,7 @@ read_and (void (*do_something) (void))
+ 		break;
+ 	      WARN ((0, 0, _("A lone zero block at %s"),
+ 		     STRINGIFY_BIGINT (current_block_ordinal (), buf)));
++#endif
+ 	      break;
+ 	    }
+ 	  status = prev_status;
+diff -Nurp tar-1.20/src/system.c tar-1.20-alt/src/system.c
+--- tar-1.20/src/system.c	2008-04-14 12:03:13.000000000 +0000
++++ tar-1.20-alt/src/system.c	2008-10-30 14:55:15.000000000 +0000
+@@ -249,7 +249,25 @@ int
+ sys_truncate (int fd)
+ {
+   off_t pos = lseek (fd, (off_t) 0, SEEK_CUR);
+-  return pos < 0 ? -1 : ftruncate (fd, pos);
++
++  if (pos < 0)
++    return -1;
++
++  if (ftruncate (fd, pos) && errno == EPERM) {
++    /*
++     * ftruncate may fail to grow the size of a file with some OS and
++     * filesystem combinations.  Linux and vfat/fat is one example.
++     * If this is the case do a write to grow the file to the desired length.
++     */
++    struct stat st;
++
++    if (fstat (fd, &st) ||
++        st.st_size >= pos ||
++        lseek (fd, pos - 1, SEEK_SET) == (off_t)-1 ||
++        write (fd, "\0", 1) != 1)
++      return -1;
++  }
++  return 0;
+ }
+ 
+ /* Return nonzero if NAME is the name of a regular file, or if the file
+diff -Nurp tar-1.20/src/tar.c tar-1.20-alt/src/tar.c
+--- tar-1.20/src/tar.c	2008-04-14 12:03:13.000000000 +0000
++++ tar-1.20-alt/src/tar.c	2008-10-30 14:55:15.000000000 +0000
+@@ -1336,10 +1336,10 @@ parse_opt (int key, char *arg, struct ar
+       break;
+ 
+     case 'I':
+-      USAGE_ERROR ((0, 0,
+-		    _("Warning: the -I option is not supported;"
+-		      " perhaps you meant -j or -T?")));
+-      break;
++    case 'y':
++      WARN ((0, 0, _("Warning: option '%c' is deprecated!"
++		     " Next time use -j instead."), key));
++      /* Fall through to using bzip2. */
+ 
+     case 'j':
+       set_use_compress_program_option ("bzip2");
+diff -Nurp tar-1.20/tests/genfile.c tar-1.20-alt/tests/genfile.c
+--- tar-1.20/tests/genfile.c	2008-02-18 08:23:24.000000000 +0000
++++ tar-1.20-alt/tests/genfile.c	2008-10-30 14:55:15.000000000 +0000
+@@ -480,7 +480,8 @@ mkhole (int fd, off_t displ)
+ {
+   if (lseek (fd, displ, SEEK_CUR) == -1)
+     error (EXIT_FAILURE, errno, "lseek");
+-  ftruncate (fd, lseek (fd, 0, SEEK_CUR));
++  if (ftruncate (fd, lseek (fd, 0, SEEK_CUR)))
++    error (EXIT_FAILURE, errno, "ftruncate");
+ }
+ 
+ static void
+@@ -678,13 +679,15 @@ exec_checkpoint (struct action *p)
+ 	    error (0, errno, _("cannot open `%s'"), p->name);
+ 	    break;
+ 	  }
+-	ftruncate (fd, p->size);
++	if (ftruncate (fd, p->size))
++	  error (0, errno, _("cannot truncate `%s'"), p->name);
+ 	close (fd);
+       }
+       break;
+ 
+     case OPT_EXEC:
+-      system (p->name);
++      if (system (p->name) == -1)
++	error (0, errno, _("cannot execute `%s'"), p->name);
+       break;
+ 
+     default:
+@@ -743,7 +746,8 @@ exec_command (void)
+   signal (SIGCHLD, SIG_DFL);
+ #endif
+ 
+-  pipe (fd);
++  if (pipe (fd))
++    error (EXIT_FAILURE, errno, "pipe");
+ 
+   pid = fork ();
+   if (pid == -1)

@@ -1,0 +1,28 @@
+Adding the --ignore-device-id alias 
+
+--- tar-1.20-alt/doc/tar.texi	2008-10-30 14:55:15.000000000 +0000
++++ tar-1.20-owl/doc/tar.texi	2008-10-30 19:25:56.000000000 +0000
+@@ -2849,6 +2849,11 @@ Do not check device numbers when creatin
+ for incremental archiving.  @xref{device numbers}, for
+ a detailed description. 
+ 
++@opsummary{ignore-device-id}
++@item --ignore-device-id
++Same as --no-check-device, introduced by Openwall GNU/*/Linux for
++backwards compatibility.
++
+ @opsummary{no-delay-directory-restore}
+ @item --no-delay-directory-restore
+ 
+diff -Nurp tar-1.20-alt/src/tar.c tar-1.20-owl/src/tar.c
+--- tar-1.20-alt/src/tar.c	2008-10-30 14:55:15.000000000 +0000
++++ tar-1.20-owl/src/tar.c	2008-10-30 20:50:35.000000000 +0000
+@@ -416,6 +416,8 @@ static struct argp_option options[] = {
+   {"no-check-device", NO_CHECK_DEVICE_OPTION, NULL, 0,
+    N_("do not check device numbers when creating incremental archives"),
+    GRID+1 },
++  {"ignore-device-id", NO_CHECK_DEVICE_OPTION, NULL, OPTION_ALIAS,
++   NULL, GRID+1 },
+   {"check-device", CHECK_DEVICE_OPTION, NULL, 0,
+    N_("check device numbers when creating incremental archives (default)"),
+    GRID+1 },
