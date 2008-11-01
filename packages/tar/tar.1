@@ -1,4 +1,4 @@
-.TH TAR 1 "Jul 2007" "GNU" "tar"
+.TH TAR 1 "Nov 2008" "GNU" "tar"
 .SH NAME
 tar \- The GNU version of the tar archiving utility
 .SH SYNOPSIS
@@ -46,6 +46,9 @@ tar \- The GNU version of the tar archiving utility
 ]
 [
 .BR -C ", " --directory " DIR"
+]
+[
+.BR --check-device
 ]
 [
 .BR --checkpoint
@@ -127,6 +130,9 @@ tar \- The GNU version of the tar archiving utility
 ]
 [
 .BR --no-anchored
+]
+[
+.BR --no-check-device
 ]
 [
 .BR --no-ignore-case
@@ -376,6 +382,10 @@ block the output of compression program for tapes
 .BR -C ", " --directory " DIR"
 change to directory DIR
 .TP
+.BR --check-device
+Check device numbers when creating a list of modified files for
+incremental archiving (default)
+.TP
 .BR --checkpoint
 print directory names while reading the archive
 .TP
@@ -411,7 +421,8 @@ don't dump symlinks; dump the files they point to
 like this manpage, but not as cool
 .TP
 .BR --ignore-device-id
-ignore device ids when doing incremental backups
+The same as \fI--no-check-device\fR;
+introduced by Openwall GNU/*/Linux for backwards compatibility
 .TP
 .BR -i ", " --ignore-zeros
 ignore blocks of zeros in archive (normally mean EOF)
@@ -462,6 +473,10 @@ like \fI--newer\fR, but only store files that were modified since DATE
 .TP
 .BR --no-anchored
 match any subsequenceof the name's components with \fI--exclude\fR
+.TP
+.BR --no-check-device
+Do not check device numbers when creating a list of modified files
+for incremental archiving.
 .TP
 .BR --no-ignore-case
 use case-sensitive matching with \fI--exclude\fR
@@ -630,6 +645,7 @@ filter the archive through PROG (which must accept -d)
 specify drive and density
 .SH BUGS
 The GNU folks, in general, abhor man pages and create info documents instead.
-The maintainer of \fBtar\fR falls into this category.  Thus, this man page may
-not be complete nor current.  This man page was first taken from Debian
-GNU/Linux and has since been lovingly updated by Gentoo developers.
+The maintainer of \fBtar\fR falls into this category.  Thus, this man page may 
+not be complete nor current.  This man page was first taken from Debian 
+GNU/Linux and has since been lovingly updated by Gentoo developers.  It is
+also edited a bit by Openwall GNU/*/Linux team.
