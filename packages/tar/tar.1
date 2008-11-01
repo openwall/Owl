@@ -284,14 +284,14 @@ tar \- The GNU version of the tar archiving utility
 
 (1) tar-1.14 uses --strip-path, tar-1.14.90+ uses --strip-components
 .SH DESCRIPTION
-This manual page documents the GNU version of \fBtar\fR, an archiving 
-program designed to store and extract files from an archive file known 
-as a \fItarfile\fR.  A \fItarfile\fR may be made on a tape drive, 
-however, it is also common to write a \fItarfile\fR to a normal file.  
-The first argument to \fBtar\fR must be one of the options \fBAcdrtux\fR, 
-followed by any optional functions.  The final arguments to \fBtar\fR 
-are the names of the files or directories which should be archived.  The 
-use of a directory name always implies that the subdirectories below 
+This manual page documents the GNU version of \fBtar\fR, an archiving
+program designed to store and extract files from an archive file known
+as a \fItarfile\fR.  A \fItarfile\fR may be made on a tape drive,
+however, it is also common to write a \fItarfile\fR to a normal file.
+The first argument to \fBtar\fR must be one of the options \fBAcdrtux\fR,
+followed by any optional functions.  The final arguments to \fBtar\fR
+are the names of the files or directories which should be archived.  The
+use of a directory name always implies that the subdirectories below
 should be included in the archive.
 .SH EXAMPLES
 .TP
@@ -367,7 +367,7 @@ block size of Nx512 bytes (default N=20)
 reblock as we read (for reading 4.2BSD pipes)
 .TP
 .BR --backup " BACKUP-TYPE"
-backup files instead of deleting them using BACKUP-TYPE simple or 
+backup files instead of deleting them using BACKUP-TYPE simple or
 numbered
 .TP
 .BR --block-compress
@@ -438,7 +438,7 @@ begin at file F in the archive
 do not overwrite files which are newer than the archive
 .TP
 .BR -l ", " --check-links
-warn if number of hard links to the file on the filesystem mismatch the 
+warn if number of hard links to the file on the filesystem mismatch the
 number of links recorded in the archive
 .TP
 .BR -L ", " --tape-length " N"
@@ -485,18 +485,18 @@ wildcards do not match slashes (/) with \fI--exclude\fR
 always use numbers for user/group names
 .TP
 .BR -o ", " --old-archive ", " --portability
-like \fI--format=v7\fR; \fI-o\fR exhibits this behavior when creating an 
+like \fI--format=v7\fR; \fI-o\fR exhibits this behavior when creating an
 archive (deprecated behavior)
 .TP
 .BR -o ", " --no-same-owner
-do not attempt to restore ownership when extracting; \fI-o\fR exhibits 
+do not attempt to restore ownership when extracting; \fI-o\fR exhibits
 this behavior when extracting an archive
 .TP
 .BR -O ", " --to-stdout
 extract files to standard output
 .TP
 .BR --occurrence " NUM"
-process only NUM occurrences of each named file; used with 
+process only NUM occurrences of each named file; used with
 \fI--delete\fR, \fI--diff\fR, \fI--extract\fR, or \fI--list\fR
 .TP
 .BR --one-file-system
@@ -518,7 +518,7 @@ extract all protection information
 don't strip leading `/'s from file names
 .TP
 .BR --pax-option " KEYWORD-LIST"
-used only with POSIX.1-2001 archives to modify the way \fBtar\fR handles 
+used only with POSIX.1-2001 archives to modify the way \fBtar\fR handles
 extended header keywords
 .TP
 .BR --posix
@@ -555,7 +555,7 @@ list of names to extract is sorted to match archive
 handle sparse files efficiently
 .TP
 .BR --same-owner
-create extracted files with the same ownership 
+create extracted files with the same ownership
 .TP
 .BR --show-defaults
 display the default options used by \fBtar\fR
@@ -596,7 +596,7 @@ create archive with volume name NAME
 print \fBtar\fR program version number
 .TP
 .BR --volno-file " FILE"
-keep track of which volume of a multi-volume archive its working in 
+keep track of which volume of a multi-volume archive its working in
 FILE; used with \fI--multi-volume\fR
 .TP
 .BR -w ", " --interactive ", " --confirmation
@@ -630,6 +630,6 @@ filter the archive through PROG (which must accept -d)
 specify drive and density
 .SH BUGS
 The GNU folks, in general, abhor man pages and create info documents instead.
-The maintainer of \fBtar\fR falls into this category.  Thus, this man page may 
-not be complete nor current.  This man page was first taken from Debian 
+The maintainer of \fBtar\fR falls into this category.  Thus, this man page may
+not be complete nor current.  This man page was first taken from Debian
 GNU/Linux and has since been lovingly updated by Gentoo developers.
