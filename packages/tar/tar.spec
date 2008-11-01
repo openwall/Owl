@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.39 2008/11/01 16:49:17 solar Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.40 2008/11/01 18:55:51 croco Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -11,6 +11,7 @@ Source0: ftp://ftp.gnu.org/gnu/tar/tar-%version.tar.bz2
 Source1: tar.1
 Patch0: tar-1.20-alt.diff
 Patch1: tar-1.20-owl-ignore-device-id.diff
+Patch2: tar-1.20-owl-warnings.diff
 PreReq: /sbin/install-info, grep
 BuildRequires: automake, autoconf, cvs, gettext, texinfo
 BuildRequires: rpm-build >= 0:4, sed >= 4.0.9
@@ -29,6 +30,7 @@ backups.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -83,6 +85,10 @@ fi
 %doc AUTHORS NEWS THANKS
 
 %changelog
+* Sat Nov 01 2008 Andrey V. Stolyarov <croco-at-owl.openwall.com> 1.20-owl2
+- Fixed two warnings
+- Updated the manual page
+
 * Tue Oct 28 2008 Andrey V. Stolyarov <croco-at-owl.openwall.com> 1.20-owl1
 - Took the fresh GNU tar 1.20, applied patches made by ALT Linux team,
 added the --ignore-device-id option as an alias to --no-check-device.

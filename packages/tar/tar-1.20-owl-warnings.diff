@@ -1,0 +1,68 @@
+2008-11-01 by Andrey V Stolyarov <croco-at-openwall.com>
+
+	Fixing compiler warnings
+
+
+--- _T/src/common.h	2008-11-01 17:17:44.000000000 +0300
++++ tar-1.20-owl/src/common.h	2008-11-01 19:01:11.000000000 +0300
+@@ -492,8 +492,6 @@ void delete_archive_members (void);
+ typedef struct dumpdir *dumpdir_t;
+ typedef struct dumpdir_iter *dumpdir_iter_t;
+ 
+-dumpdir_t dumpdir_create0 (const char *contents, const char *cmask);
+-dumpdir_t dumpdir_create (const char *contents);
+ void dumpdir_free (dumpdir_t);
+ char *dumpdir_locate (dumpdir_t dump, const char *name);
+ char *dumpdir_next (dumpdir_iter_t itr);
+diff -Nurp _T/src/incremen.c tar-1.20-owl/src/incremen.c
+--- _T/src/incremen.c	2008-11-01 17:17:44.000000000 +0300
++++ tar-1.20-owl/src/incremen.c	2008-11-01 19:01:11.000000000 +0300
+@@ -75,12 +75,12 @@ struct directory
+     char name[1];		/* file name of directory */
+   };
+ 
+-struct dumpdir *
+-dumpdir_create0 (const char *contents, const char *cmask)
++static struct dumpdir *
++dumpdir_create0 (char *contents, const char *cmask)
+ {
+   struct dumpdir *dump;
+   size_t i, total, ctsize, len;
+-  const char *p;
++  char *p;
+   
+   for (i = 0, total = 0, ctsize = 1, p = contents; *p; total++, p += len)
+     {
+@@ -105,8 +105,8 @@ dumpdir_create0 (const char *contents, c
+   return dump;
+ }
+ 
+-struct dumpdir *
+-dumpdir_create (const char *contents)
++static struct dumpdir *
++dumpdir_create (char *contents)
+ {
+   return dumpdir_create0 (contents, "YND");
+ }
+@@ -266,7 +266,7 @@ make_directory (const char *name)
+ static struct directory *
+ note_directory (char const *name, struct timespec mtime,
+ 		dev_t dev, ino_t ino, bool nfs, bool found,
+-		const char *contents)
++		char *contents)
+ {
+   struct directory *directory = make_directory (name);
+ 
+diff -Nurp _T/src/xheader.c tar-1.20-owl/src/xheader.c
+--- _T/src/xheader.c	2008-11-01 17:17:44.000000000 +0300
++++ tar-1.20-owl/src/xheader.c	2008-11-01 19:01:11.000000000 +0300
+@@ -237,7 +237,8 @@ xheader_format_name (struct tar_stat_inf
+   char *dir = NULL;
+   char *base = NULL;
+   char pidbuf[UINTMAX_STRSIZE_BOUND];
+-  char const *pptr;
++  char const *pptr = NULL; /* only used for %p; the initial value is to
++                              make the compiler happy */
+   char nbuf[UINTMAX_STRSIZE_BOUND];
+   char const *nptr = NULL;
+ 
