@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.40 2008/11/01 18:55:51 croco Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.41 2008/11/13 23:22:15 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.20
-Release: owl1
+Release: owl2
 License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
@@ -12,6 +12,7 @@ Source1: tar.1
 Patch0: tar-1.20-alt.diff
 Patch1: tar-1.20-owl-ignore-device-id.diff
 Patch2: tar-1.20-owl-warnings.diff
+Patch3: tar-1.20-owl-error-handling.diff
 PreReq: /sbin/install-info, grep
 BuildRequires: automake, autoconf, cvs, gettext, texinfo
 BuildRequires: rpm-build >= 0:4, sed >= 4.0.9
@@ -31,6 +32,7 @@ backups.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -85,13 +87,15 @@ fi
 %doc AUTHORS NEWS THANKS
 
 %changelog
-* Sat Nov 01 2008 Andrey V. Stolyarov <croco-at-owl.openwall.com> 1.20-owl2
-- Fixed two warnings
-- Updated the manual page
+* Fri Nov 14 2008 Solar Designer <solar-at-owl.openwall.com> 1.20-owl2
+- When creating archives, consistently don't treat disappearing directory
+entries as a fatal error.
 
-* Tue Oct 28 2008 Andrey V. Stolyarov <croco-at-owl.openwall.com> 1.20-owl1
+* Sat Nov 01 2008 Andrey V. Stolyarov <croco-at-owl.openwall.com> 1.20-owl1
 - Took the fresh GNU tar 1.20, applied patches made by ALT Linux team,
 added the --ignore-device-id option as an alias to --no-check-device.
+- Fixed two warnings
+- Updated the manual page
 
 * Tue Jan 14 2008 Grigoriy Strokin <grg-at-owl.openwall.com> 1.18-owl2
 - Added a new option: --ignore-device-id.

@@ -1,0 +1,55 @@
+diff -urpN tar-1.20.orig/src/create.c tar-1.20/src/create.c
+--- tar-1.20.orig/src/create.c	2008-04-14 12:03:12 +0000
++++ tar-1.20/src/create.c	2008-11-13 22:30:40 +0000
+@@ -1499,7 +1499,11 @@ dump_file0 (struct tar_stat_info *st, co
+ 
+   if (deref_stat (dereference_option, p, &st->stat) != 0)
+     {
+-      stat_diag (p);
++      if (!top_level && errno == ENOENT)
++	WARN ((0, 0, _("%s: File removed before we read it"),
++	       quotearg_colon (p)));
++      else
++	stat_diag (p);
+       return;
+     }
+   st->archive_file_size = original_size = st->stat.st_size;
+@@ -1700,7 +1704,11 @@ dump_file0 (struct tar_stat_info *st, co
+       size = readlink (p, buffer, linklen + 1);
+       if (size < 0)
+ 	{
+-	  readlink_diag (p);
++	  if (!top_level && errno == ENOENT)
++	    WARN ((0, 0, _("%s: File removed before we read it"),
++		   quotearg_colon (p)));
++	  else
++	    readlink_diag (p);
+ 	  return;
+ 	}
+       buffer[size] = '\0';
+diff -urpN tar-1.20.orig/src/incremen.c tar-1.20/src/incremen.c
+--- tar-1.20.orig/src/incremen.c	2008-04-14 12:03:13 +0000
++++ tar-1.20/src/incremen.c	2008-11-13 23:14:27 +0000
+@@ -639,7 +639,8 @@ scan_directory (char *dir, dev_t device)
+ 	    {
+ 	      if (deref_stat (dereference_option, name_buffer, &stat_data))
+ 		{
+-		  stat_diag (name_buffer);
++		  if (errno != ENOENT)
++		    stat_diag (name_buffer);
+ 		  *entry = 'N';
+ 		  continue;
+ 		}
+diff -urpN tar-1.20.orig/src/names.c tar-1.20/src/names.c
+--- tar-1.20.orig/src/names.c	2008-02-20 14:16:51 +0000
++++ tar-1.20/src/names.c	2008-11-13 23:12:56 +0000
+@@ -822,7 +822,8 @@ collect_and_sort_names (void)
+ 
+       if (deref_stat (dereference_option, name->name, &statbuf) != 0)
+ 	{
+-	  stat_diag (name->name);
++	  if (errno != ENOENT)
++	    stat_diag (name->name);
+ 	  continue;
+ 	}
+       if (S_ISDIR (statbuf.st_mode))
