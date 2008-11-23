@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.41 2008/11/13 23:22:15 solar Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.42 2008/11/23 13:45:32 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.20
-Release: owl2
+Release: owl3
 License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
@@ -87,6 +87,13 @@ fi
 %doc AUTHORS NEWS THANKS
 
 %changelog
+* Sun Nov 23 2008 Solar Designer <solar-at-owl.openwall.com> 1.20-owl3
+- Further improvements to the error handling patch:
+When creating incremental archives, don't wrongly tell the dump_file()
+function that we are at the top level.
+When a file shrinks while being archived, only set the exit status to
+TAREXIT_DIFFERS if no other non-zero exit status was previously specified.
+
 * Fri Nov 14 2008 Solar Designer <solar-at-owl.openwall.com> 1.20-owl2
 - When creating archives, consistently don't treat disappearing directory
 entries as a fatal error.

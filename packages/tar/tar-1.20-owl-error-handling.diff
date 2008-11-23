@@ -1,6 +1,24 @@
 diff -urpN tar-1.20.orig/src/create.c tar-1.20/src/create.c
 --- tar-1.20.orig/src/create.c	2008-04-14 12:03:12 +0000
-+++ tar-1.20/src/create.c	2008-11-13 22:30:40 +0000
++++ tar-1.20/src/create.c	2008-11-23 13:31:33 +0000
+@@ -1078,7 +1078,7 @@ dump_regular_file (int fd, struct tar_st
+ 			   size_left),
+ 		 quotearg_colon (st->orig_file_name),
+ 		 STRINGIFY_BIGINT (size_left, buf)));
+-	  if (! ignore_failed_read_option) 
++	  if (! ignore_failed_read_option && exit_status == TAREXIT_SUCCESS) 
+ 	    exit_status = TAREXIT_DIFFERS;
+ 	  pad_archive (size_left - (bufsize - count));
+ 	  return dump_status_short;
+@@ -1315,7 +1315,7 @@ create_archive (void)
+ 			  buffer = xrealloc (buffer, buffer_size);
+  			}
+ 		      strcpy (buffer + plen, q + 1);
+-		      dump_file (buffer, -1, (dev_t) 0);
++		      dump_file (buffer, 0, (dev_t) 0);
+ 		    }
+ 		  q += qlen + 1;
+ 		}
 @@ -1499,7 +1499,11 @@ dump_file0 (struct tar_stat_info *st, co
  
    if (deref_stat (dereference_option, p, &st->stat) != 0)
