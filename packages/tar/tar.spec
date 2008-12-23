@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.42 2008/11/23 13:45:32 solar Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.43 2008/12/23 05:09:01 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.20
-Release: owl3
+Release: owl4
 License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
@@ -87,6 +87,12 @@ fi
 %doc AUTHORS NEWS THANKS
 
 %changelog
+* Tue Dec 23 2008 Solar Designer <solar-at-owl.openwall.com> 1.20-owl4
+- A further change to the error handling patch: when creating incremental
+archives, validate the filenames passed as input to tar in
+collect_and_sort_names(), but have the first call to dump_file() assume that
+we're not at the top level, as explained in a newly added lengthy comment.
+
 * Sun Nov 23 2008 Solar Designer <solar-at-owl.openwall.com> 1.20-owl3
 - Further improvements to the error handling patch:
 When creating incremental archives, don't wrongly tell the dump_file()
