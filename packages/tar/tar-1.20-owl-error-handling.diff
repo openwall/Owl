@@ -1,6 +1,6 @@
 diff -urpN tar-1.20.orig/src/create.c tar-1.20/src/create.c
 --- tar-1.20.orig/src/create.c	2008-04-14 12:03:12 +0000
-+++ tar-1.20/src/create.c	2008-12-23 04:53:33 +0000
++++ tar-1.20/src/create.c	2008-12-23 12:18:20 +0000
 @@ -1078,7 +1078,7 @@ dump_regular_file (int fd, struct tar_st
  			   size_left),
  		 quotearg_colon (st->orig_file_name),
@@ -53,7 +53,17 @@ diff -urpN tar-1.20.orig/src/create.c tar-1.20/src/create.c
        return;
      }
    st->archive_file_size = original_size = st->stat.st_size;
-@@ -1700,7 +1714,11 @@ dump_file0 (struct tar_stat_info *st, co
+@@ -1643,7 +1657,8 @@ dump_file0 (struct tar_stat_info *st, co
+ 	       : fstat (fd, &final_stat))
+ 	      != 0)
+ 	    {
+-	      stat_diag (p);
++	      if (errno != ENOENT)
++		stat_diag (p);
+ 	      ok = false;
+ 	    }
+ 	}
+@@ -1700,7 +1715,11 @@ dump_file0 (struct tar_stat_info *st, co
        size = readlink (p, buffer, linklen + 1);
        if (size < 0)
  	{
@@ -68,8 +78,30 @@ diff -urpN tar-1.20.orig/src/create.c tar-1.20/src/create.c
        buffer[size] = '\0';
 diff -urpN tar-1.20.orig/src/incremen.c tar-1.20/src/incremen.c
 --- tar-1.20.orig/src/incremen.c	2008-04-14 12:03:13 +0000
-+++ tar-1.20/src/incremen.c	2008-11-13 23:14:27 +0000
-@@ -639,7 +639,8 @@ scan_directory (char *dir, dev_t device)
++++ tar-1.20/src/incremen.c	2008-12-23 12:10:22 +0000
+@@ -347,7 +347,10 @@ update_parent_directory (const char *nam
+     {
+       struct stat st;
+       if (deref_stat (dereference_option, p, &st) != 0)
+-	stat_diag (name);
++	{
++	  if (errno != ENOENT)
++	    stat_diag (name);
++	}
+       else
+ 	directory->mtime = get_stat_mtime (&st);
+     }
+@@ -597,7 +600,8 @@ scan_directory (char *dir, dev_t device)
+ 
+   if (deref_stat (dereference_option, name_buffer, &stat_data))
+     {
+-      stat_diag (name_buffer);
++      if (errno != ENOENT)
++	stat_diag (name_buffer);
+       /* FIXME: used to be
+            children = CHANGED_CHILDREN;
+ 	 but changed to: */
+@@ -639,7 +643,8 @@ scan_directory (char *dir, dev_t device)
  	    {
  	      if (deref_stat (dereference_option, name_buffer, &stat_data))
  		{
