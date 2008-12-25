@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-startup/functions,v 1.14 2008/12/25 01:39:59 galaxy Exp $
+# $Owl: Owl/packages/owl-startup/functions,v 1.15 2008/12/25 01:42:34 galaxy Exp $
 #
 # Functions defined in this file are used by many /etc/rc.d/init.d scripts;
 # they offer some limited Red Hat compatibility.
@@ -70,6 +70,7 @@ function daemon()
 
 # We need the absolute pathname.
 	WHICH="`absolute "$1"`" || return 1
+	WHICH="`readlink -e "$WHICH"`" || return 1
 	BASENAME="`basename "$1"`" || return 1
 
 # Announce the action.
