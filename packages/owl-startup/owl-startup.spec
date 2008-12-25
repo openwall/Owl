@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.74 2008/06/08 11:36:29 solar Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.75 2008/12/25 01:47:54 galaxy Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.33
+Version: 0.34
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -167,6 +167,12 @@ fi
 %doc redhat
 
 %changelog
+* Wed Dec 25 2008 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.34-owl1
+- Added /usr/local/bin and /usr/local/sbin to PATH in functions.
+- Enhanced our "which" emulation to return more relevant results.
+- Enhanced daemon() in functions to dereference symlinks before trying
+to execute the supplied binary or script.
+
 * Sat Jun 07 2008 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.33-owl1
 - Enhanced ifup-routes to allow any white space character after the
 interface name in static-routes.
