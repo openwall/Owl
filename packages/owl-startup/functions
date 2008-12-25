@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-startup/functions,v 1.12 2007/01/05 19:27:14 galaxy Exp $
+# $Owl: Owl/packages/owl-startup/functions,v 1.13 2008/12/25 01:36:20 galaxy Exp $
 #
 # Functions defined in this file are used by many /etc/rc.d/init.d scripts;
 # they offer some limited Red Hat compatibility.
@@ -13,7 +13,7 @@ OWL_STARTUP_ENABLE=0
 BOOTUP=verbose
 
 # The scripts may be run manually so we have to set this here.
-PATH=/bin:/sbin:/usr/bin:/usr/sbin
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 
 # Emulate which(1) internally to bash.
 function absolute()
