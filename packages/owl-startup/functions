@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-startup/functions,v 1.13 2008/12/25 01:36:20 galaxy Exp $
+# $Owl: Owl/packages/owl-startup/functions,v 1.14 2008/12/25 01:39:59 galaxy Exp $
 #
 # Functions defined in this file are used by many /etc/rc.d/init.d scripts;
 # they offer some limited Red Hat compatibility.
@@ -20,7 +20,7 @@ function absolute()
 {
 	local WHICH
 
-	WHICH="`type -p "$1"`" || return 1
+	WHICH="`type -afp "$1"`" || return 1
 	test "$WHICH" != "${WHICH##/}" || return 1
 
 	echo "$WHICH"
