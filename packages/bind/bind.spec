@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bind/bind.spec,v 1.23 2008/08/10 12:34:11 ldv Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.24 2009/01/09 00:30:56 ldv Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -7,7 +7,7 @@
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.5
-Release: owl2
+Release: owl3
 License: BSD-style
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -42,6 +42,7 @@ Patch7: bind-9.3.5-alt-man.diff
 Patch8: bind-9.3.1-alt-owl-rndc-confgen.diff
 Patch9: bind-9.3.1-owl-rfc-index.diff
 Patch10: bind-9.3.5-openbsd-owl-expand_fdsets.diff
+Patch11: bind-9.3.5-owl-CVE-2008-5077.diff
 
 Requires: %name-libs = %version-%release
 Requires: owl-startup
@@ -119,6 +120,7 @@ for building applications with ISC BIND libraries.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 install -pm644 %_sourcedir/rfc1912.txt.bz2 doc/rfc/
 find doc -type f -name '*.txt' -print0 |
@@ -344,6 +346,10 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Thu Jan 08 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.5-owl3
+- Backported upstream fixes of incorrect checks for malformed
+DSA signatures (CVE-2008-5077).
+
 * Sun Aug 10 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.5-owl2
 - Updated to 9.3.5-P2.
 - Implemented automatic fdsets expansion to overcome FD_SETSIZE limit.
