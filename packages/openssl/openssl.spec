@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.52.2.4 2007/10/12 22:36:30 ldv Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.52.2.5 2009/01/21 04:59:41 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.7g
-Release: owl3.2.0.3
+Release: owl3.2.0.4
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -23,6 +23,7 @@ Patch11: openssl-0.9.7g-up-suse-CVE-2006-2940.diff
 Patch12: openssl-0.9.7g-google-CVE-2006-3738.diff
 Patch13: openssl-0.9.7g-google-CVE-2006-4343.diff
 Patch14: openssl-0.9.7m-cvs-20071004-SSL_get_shared_ciphers.diff
+Patch15: openssl-0.9.7g-owl-CVE-2008-5077.diff
 Provides: SSL
 # For backwards compatibility.
 Provides: libcrypto.so.4, libssl.so.4
@@ -87,6 +88,7 @@ libraries and header files required when developing applications.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
 
 bzip2 -9k CHANGES CHANGES.SSLeay
 
@@ -219,6 +221,11 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %attr(0644,root,root) %_mandir/man3/*
 
 %changelog
+* Wed Jan 21 2009 Solar Designer <solar-at-owl.openwall.com> 0.9.7g-owl3.2.0.4
+- Added Dmitry V. Levin's backport of OpenSSL upstream fixes of
+incorrect checks for malformed signatures (CVE-2008-5077) to 0.9.7m,
+with the patch re-generated for 0.9.7g.
+
 * Sat Oct 13 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7g-owl3.2.0.3
 - Backported upstream fix for off-by-one bug in the
 SSL_get_shared_ciphers function (CVE-2007-5135).
