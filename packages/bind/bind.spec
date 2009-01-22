@@ -1,13 +1,13 @@
-# $Owl: Owl/packages/bind/bind.spec,v 1.24 2009/01/09 00:30:56 ldv Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.25 2009/01/22 14:16:47 ldv Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
-%{?!BUILD_OPENSSL: %define BUILD_OPENSSL 1}
+%{?!BUILD_OPENSSL: %define BUILD_OPENSSL 0}
 
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.5
-Release: owl3
+Release: owl4
 License: BSD-style
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -346,6 +346,9 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Mon Jan 12 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.5-owl4
+- Built without openssl by default, thus disabled DNSSEC support.
+
 * Thu Jan 08 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.5-owl3
 - Backported upstream fixes of incorrect checks for malformed
 DSA signatures (CVE-2008-5077).
