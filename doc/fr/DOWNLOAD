@@ -10,12 +10,13 @@ Owl peut être téléchargé depuis les miroirs officiels suivants :
 ftp://ftp1.ru.openwall.com/pub/Owl/	(Russie)
 ftp://ftp2.ru.openwall.com/pub/Owl/	(Russie)
 ftp://ftp.cz.openwall.com/pub/Owl/	(République Tchèque)
+ftp://ftp.fr.openwall.com/pub/Owl/	(France)
 ftp://ftp.ua.openwall.com/pub/Owl/	(Ukraine)
 ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Autriche)
 	http://gd.tuwien.ac.at/opsys/linux/Owl/
 	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
 ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Allemagne)
-ftp://ftp.ibiblio.org/pub/linux/distributions/openwall/Owl/	(USA)
+ftp://ftp.ibiblio.org/pub/linux/distributions/openwall/Owl/	(États-Unis)
 	http://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/
 ftp://ftp.wiretapped.net/pub/Owl/	(Australie)
 
@@ -64,4 +65,4 @@ utiliser la compression avec chaque méthode d'accès au serveur CVS anonyme,
 typiquement en spécifiant l'option -z3 à CVS et/ou "Compression yes" dans le
 fichier de configuration du client SSH.
 
-$Owl: Owl/doc/fr/DOWNLOAD,v 1.23 2008/04/12 13:34:19 solar Exp $
+$Owl: Owl/doc/fr/DOWNLOAD,v 1.24 2009/02/06 17:24:39 solar Exp $
