@@ -12,6 +12,11 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/02/06	Package: bind
+Dropped DNSSEC support, which is not useful on the Internet at large
+yet.  Those who wish to experiment with DNSSEC at their own risk may
+set BUILD_OPENSSL to 1 and rebuild the package.
+
 2009/01/08	Packages: openssl, bind
 SECURITY FIX	Severity: medium, remote, passive
 Backported upstream fixes for multiple OpenSSL signature verification
@@ -645,4 +650,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.141 2009/01/09 00:42:46 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.142 2009/02/06 17:11:50 solar Exp $
