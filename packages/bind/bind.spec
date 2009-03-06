@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bind/bind.spec,v 1.25 2009/01/22 14:16:47 ldv Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.26 2009/03/06 18:13:47 solar Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -7,7 +7,7 @@
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.5
-Release: owl4
+Release: owl5
 License: BSD-style
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -346,6 +346,10 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Fri Mar 06 2009 Solar Designer <solar-at-owl.openwall.com> 9.3.5-owl5
+- Dropped the root-delegation-only directive from options.conf, made minor
+updates to comments in that file.
+
 * Mon Jan 12 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.5-owl4
 - Built without openssl by default, thus disabled DNSSEC support.
 
