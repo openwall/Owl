@@ -12,6 +12,14 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/03/06	Package: bind
+Dropped the root-delegation-only directive from the default named
+configuration because the list of TLDs that are not delegation-only was
+incomplete and wouldn't be maintained/updated on all installs, causing
+some DNS lookups of valid records to fail.
+Reference:
+http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=217829
+
 2009/02/06	Package: bind
 Dropped DNSSEC support, which is not useful on the Internet at large
 yet.  Those who wish to experiment with DNSSEC at their own risk may
@@ -650,4 +658,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.142 2009/02/06 17:11:50 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.143 2009/03/06 18:43:39 solar Exp $
