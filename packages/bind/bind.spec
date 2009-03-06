@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bind/bind.spec,v 1.15.2.7 2009/01/21 05:06:30 solar Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.15.2.8 2009/03/06 18:53:06 solar Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -7,7 +7,7 @@
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.5
-Release: owl3
+Release: owl3.2.0.1
 License: BSD-style
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -346,6 +346,10 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Fri Mar 06 2009 Solar Designer <solar-at-owl.openwall.com> 9.3.5-owl3.2.0.1
+- Dropped the root-delegation-only directive from options.conf, made minor
+updates to comments in that file.
+
 * Thu Jan 08 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.5-owl3
 - Backported upstream fixes of incorrect checks for malformed
 DSA signatures (CVE-2008-5077).
