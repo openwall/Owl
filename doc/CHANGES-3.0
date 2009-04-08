@@ -12,6 +12,15 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/04/08	Package: tcb
+In the new version 1.0.3 of the tcb package, child processes spawned by
+pam_tcb will now always use _exit(2) rather than exit(3) to avoid
+triggering side effects.  When changing passwords, pam_tcb will now
+fsync(2) the temporary file prior to renaming it over the actual shadow
+file, as needed on filesystems with not entirely atomic rename(2) (XFS).
+Thanks to Pascal Terjan of Mandriva and to Ermanno Scaglione for
+reporting these two issues, respectively.
+
 2009/03/06	Package: bind
 Dropped the root-delegation-only directive from the default named
 configuration because the list of TLDs that are not delegation-only was
@@ -658,4 +667,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.143 2009/03/06 18:43:39 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.144 2009/04/08 19:49:34 solar Exp $
