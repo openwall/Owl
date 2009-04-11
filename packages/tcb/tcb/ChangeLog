@@ -1,3 +1,39 @@
+2009-04-03  Dmitry V. Levin  <ldv at owl.openwall.com>
+
+	* tcb.spec: 1.0.3.
+
+2009-04-02  Dmitry V. Levin  <ldv at owl.openwall.com>
+
+	* LICENSE: Update copyright for 2009 year.
+
+	* pam_tcb/pam_unix_passwd.c (update_file): Call fflush(3) and
+	fsync(2).
+	Reported by Ermanno Scaglione <erm67 at yahoo.it>.
+
+	* pam_tcb/support.c (_unix_fork, unix_run_helper_binary): Replace
+	all calls to exit(3) in child processes with calls to _exit(2).
+	Reported by Pascal Terjan <pterjan at mandriva.com>.
+
+2006-10-31  Dmitry V. Levin  <ldv at owl.openwall.com>
+
+	* tcb.spec: 1.0.2.
+
+	* pam_tcb/pam_unix_auth.c (pam_sm_authenticate): Free retval_data
+	pointer on error path.
+	* pam_tcb/support.c (user_in_nisdb): Free userinfo string.
+	* progs/tcb_chkpwd.c (zeroise): New function, zeroises string.
+	(unix_verify_password): Free stored_hash string, zeroise hash
+	strings.
+	Reported by Alexander Kanevskiy.
+
+2006-05-06  Dmitry V. Levin  <ldv at owl.openwall.com>
+
+	* tcb.spec: 1.0.1.
+	* LICENSE: Updated copyright for 2006 year.
+
+	* pam_tcb/pam_unix_sess.c (pam_sm_open_session): Fail with
+	PAM_SESSION_ERR for unknown users.
+
 
 2005-12-28  Dmitry V. Levin  <ldv at owl.openwall.com>
 
