@@ -20,7 +20,6 @@ ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Österreich)
 	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
 ftp://ftp.ibiblio.org/pub/linux/distributions/openwall/Owl/	(USA)
 	http://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/
-ftp://ftp.wiretapped.net/pub/Owl/	(Australien)
 
 Für jedes Release von Owl gibt es ein eigenes Unterverzeichnis mit dem
 folgenden Inhalt:
@@ -75,4 +74,4 @@ Wir bieten zudem auch ein CVSweb-Interface an:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/de/DOWNLOAD,v 1.35 2009/02/06 17:24:39 solar Exp $
+$Owl: Owl/doc/de/DOWNLOAD,v 1.36 2009/04/11 21:20:44 solar Exp $

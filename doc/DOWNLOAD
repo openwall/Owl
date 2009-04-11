@@ -19,7 +19,6 @@ ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Austria)
 	http://gd.tuwien.ac.at/opsys/linux/Owl/
 	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
 ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Germany)
-ftp://ftp.wiretapped.net/pub/Owl/	(Australia)
 
 There's a subdirectory for each Owl release or branch, with the
 following contents:
@@ -76,4 +75,4 @@ Finally, the CVSweb interface is provided at:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/DOWNLOAD,v 1.40 2009/02/06 17:24:39 solar Exp $
+$Owl: Owl/doc/DOWNLOAD,v 1.41 2009/04/11 21:20:44 solar Exp $
