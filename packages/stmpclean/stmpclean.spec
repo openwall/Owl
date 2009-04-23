@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/stmpclean/stmpclean.spec,v 1.14 2005/11/16 13:31:52 solar Exp $
+# $Owl: Owl/packages/stmpclean/stmpclean.spec,v 1.15 2009/04/23 08:11:54 solar Exp $
 
 Summary: A safe temporary directory cleaner.
 Name: stmpclean
@@ -6,8 +6,8 @@ Version: 0.3
 Release: owl4
 License: BSD
 Group: System Environment/Base
-URL: http://www.internet2.edu/~shalunov/stmpclean/
-Source0: http://www.internet2.edu/~shalunov/stmpclean/%name-%version.tar.gz
+URL: http://shlang.com/stmpclean/
+Source0: http://shlang.com/stmpclean/%name-%version.tar.gz
 Source1: stmpclean.cron
 Patch0: stmpclean-0.3-owl-fixes.diff
 PreReq: /etc/cron.daily
