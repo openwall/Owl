@@ -1,6 +1,6 @@
---- e2fsprogs-1.40.2/lib/blkid/cache.c
-+++ e2fsprogs-1.40.2/lib/blkid/cache.c
-@@ -81,7 +81,7 @@ int blkid_get_cache(blkid_cache *ret_cache, const char *filename)
+--- e2fsprogs-1.41.5/lib/blkid/cache.c.orig	2009-03-09 00:37:12.000000000 +0000
++++ e2fsprogs-1.41.5/lib/blkid/cache.c	2009-04-29 21:10:35.000000000 +0000
+@@ -81,7 +81,7 @@
  
  #ifdef CONFIG_BLKID_DEBUG
  	if (!(blkid_debug_mask & DEBUG_INIT)) {

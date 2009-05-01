@@ -1,6 +1,6 @@
---- e2fsprogs-1.40.2/lib/ext2fs/tst_bitops.c
-+++ e2fsprogs-1.40.2/lib/ext2fs/tst_bitops.c
-@@ -102,8 +102,8 @@ int main(int argc, char **argv)
+--- e2fsprogs-1.41.5/lib/ext2fs/tst_bitops.c.orig	2009-02-28 03:56:41.000000000 +0000
++++ e2fsprogs-1.41.5/lib/ext2fs/tst_bitops.c	2009-04-29 21:21:00.000000000 +0000
+@@ -102,8 +102,8 @@
  	/* Do bigarray test */
  	bigarray = malloc(1 << 29);
  	if (!bigarray) {

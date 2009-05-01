@@ -1,0 +1,94 @@
+--- e2fsprogs-1.41.5/debugfs/set_fields.c.orig	2009-03-23 12:11:30.000000000 +0000
++++ e2fsprogs-1.41.5/debugfs/set_fields.c	2009-04-29 21:27:14.000000000 +0000
+@@ -10,6 +10,7 @@
+  */
+ 
+ #define _XOPEN_SOURCE 600 /* for inclusion of strptime() and strtoull */
++#define _BSD_SOURCE /* for inclusion of strcasecmp() */
+ 
+ #ifdef HAVE_STRTOULL
+ #define STRTOULL strtoull
+--- e2fsprogs-1.41.5/debugfs/util.c.orig	2009-02-28 03:56:41.000000000 +0000
++++ e2fsprogs-1.41.5/debugfs/util.c	2009-04-29 21:30:36.000000000 +0000
+@@ -6,7 +6,14 @@
+  *
+  */
+ 
+-#define _XOPEN_SOURCE 600 /* needed for strptime */
++#ifdef HAVE_STRPTIME
++# ifndef _XOPEN_SOURCE
++#  define _XOPEN_SOURCE 600 /* needed for strptime() */
++# endif
++#endif
++#ifndef _BSD_SOURCE
++# define _BSD_SOURCE /* needed for ffs() */
++#endif
+ 
+ #include <stdio.h>
+ #include <unistd.h>
+--- e2fsprogs-1.41.5/misc/uuidd.c.orig	2009-04-15 16:59:57.000000000 +0000
++++ e2fsprogs-1.41.5/misc/uuidd.c	2009-04-29 21:24:28.000000000 +0000
+@@ -11,6 +11,10 @@
+ 
+ #define _GNU_SOURCE /* for setres[ug]id() */
+ 
++#if defined(HAVE_SETRESUID) && !defined(_GNU_SOURCE)
++#define _GNU_SOURCE 1 /* for setresuid() prototype */
++#endif
++
+ #include <stdio.h>
+ #ifdef HAVE_STDLIB_H
+ #include <stdlib.h>
+--- e2fsprogs-1.41.5/lib/blkid/dev.c.orig	2009-03-09 00:37:12.000000000 +0000
++++ e2fsprogs-1.41.5/lib/blkid/dev.c	2009-04-29 21:24:28.000000000 +0000
+@@ -189,7 +189,7 @@
+ extern int optind;
+ #endif
+ 
+-void usage(char *prog)
++static void usage(char *prog)
+ {
+ 	fprintf(stderr, "Usage: %s [-f blkid_file] [-m debug_mask]\n", prog);
+ 	fprintf(stderr, "\tList all devices and exit\n");
+--- e2fsprogs-1.41.5/lib/blkid/devno.c.orig	2009-03-09 00:37:12.000000000 +0000
++++ e2fsprogs-1.41.5/lib/blkid/devno.c	2009-04-29 21:24:28.000000000 +0000
+@@ -106,9 +106,7 @@
+ 		if (dirlen + strlen(dp->d_name) >= sizeof(path))
+ 			continue;
+ 
+-		if (dp->d_name[0] == '.' &&
+-		    ((dp->d_name[1] == 0) ||
+-		     ((dp->d_name[1] == '.') && (dp->d_name[2] == 0))))
++		if (dp->d_name[0] == '.')
+ 			continue;
+ 
+ 		sprintf(path, "%s/%s", dirname, dp->d_name);
+--- e2fsprogs-1.41.5/lib/blkid/tag.c.orig	2009-03-09 00:37:12.000000000 +0000
++++ e2fsprogs-1.41.5/lib/blkid/tag.c	2009-04-29 21:24:28.000000000 +0000
+@@ -389,7 +389,7 @@
+ extern int optind;
+ #endif
+ 
+-void usage(char *prog)
++static void usage(char *prog)
+ {
+ 	fprintf(stderr, "Usage: %s [-f blkid_file] [-m debug_mask] device "
+ 		"[type value]\n",
+--- e2fsprogs-1.41.5/lib/uuid/gen_uuid.c.orig	2009-04-15 17:12:25.000000000 +0000
++++ e2fsprogs-1.41.5/lib/uuid/gen_uuid.c	2009-04-29 21:24:28.000000000 +0000
+@@ -415,6 +415,7 @@
+ 	return 0;
+ }
+ 
++#ifdef USE_UUIDD
+ static ssize_t read_all(int fd, char *buf, size_t count)
+ {
+ 	ssize_t ret;
+@@ -434,6 +435,7 @@
+ 	}
+ 	return c;
+ }
++#endif
+ 
+ /*
+  * Close all file descriptors

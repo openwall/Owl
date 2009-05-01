@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.46 2008/01/01 23:44:12 ldv Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.47 2009/05/01 20:08:12 mci Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -12,17 +12,16 @@
 
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
-Version: 1.40.4
+Version: 1.41.5
 Release: owl1
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
 # http://repo.or.cz/w/e2fsprogs.git?a=shortlog;h=maint
 #Patch0: e2fsprogs-1.40.4-git-20071229-maint.diff
-Patch1: e2fsprogs-1.40.4-owl-alt-maint-fixes.diff
-Patch2: e2fsprogs-1.40.4-alt-fixes.diff
-Patch3: e2fsprogs-1.40.2-owl-blkid-env.diff
-Patch4: e2fsprogs-1.40.2-owl-tests.diff
+Patch1: e2fsprogs-1.41.5-alt-fixes.diff
+Patch2: e2fsprogs-1.41.5-owl-blkid-env.diff
+Patch3: e2fsprogs-1.41.5-owl-tests.diff
 PreReq: /sbin/ldconfig
 BuildRequires: gettext, texinfo, automake, autoconf
 BuildRequires: glibc >= 0:2.2, sed >= 0:4.1
@@ -59,7 +58,6 @@ chmod -R u+w .
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 bzip2 -9k RELEASE-NOTES
 
 # remove these unwanted header files just in case
@@ -155,12 +153,17 @@ fi
 /sbin/fsck
 /sbin/fsck.ext2
 /sbin/fsck.ext3
+/sbin/fsck.ext4
+/sbin/fsck.ext4dev
 /sbin/logsave
 /sbin/mke2fs
 /sbin/mkfs.ext2
 /sbin/mkfs.ext3
+/sbin/mkfs.ext4
+/sbin/mkfs.ext4dev
 /sbin/resize2fs
 /sbin/tune2fs
+/sbin/e2undo
 %_sbindir/filefrag
 %_sbindir/mklost+found
 
@@ -185,15 +188,20 @@ fi
 %_mandir/man8/e2fsck.8*
 %_mandir/man8/e2image.8*
 %_mandir/man8/e2label.8*
+%_mandir/man8/e2undo.8*
 %_mandir/man8/filefrag.8*
 %_mandir/man8/findfs.8*
 %_mandir/man8/fsck.8*
 %_mandir/man8/fsck.ext2.8*
 %_mandir/man8/fsck.ext3.8*
+%_mandir/man8/fsck.ext4.8*
+%_mandir/man8/fsck.ext4dev.8*
 %_mandir/man8/logsave.8*
 %_mandir/man8/mke2fs.8*
 %_mandir/man8/mkfs.ext2.8*
 %_mandir/man8/mkfs.ext3.8*
+%_mandir/man8/mkfs.ext4.8*
+%_mandir/man8/mkfs.ext4dev.8*
 %_mandir/man8/mklost+found.8*
 %_mandir/man8/resize2fs.8*
 %_mandir/man8/tune2fs.8*
@@ -252,6 +260,10 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Thu Apr 30 2009 Michail Litvak <mci-at-owl.openwall.com> 1.41.5-owl1
+- Updated to 1.41.5.
+- Dropped -owl-alt-maint-fixes patch (fixed in upstream).
+
 * Tue Jan 01 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.40.4-owl1
 - Updated to 1.40.4.
 
