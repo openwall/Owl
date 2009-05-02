@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2008/05/02	Package: e2fsprogs
+Updated to 1.41.5.
+
 2009/04/08	Package: tcb
 In the new version 1.0.3 of the tcb package, child processes spawned by
 pam_tcb will now always use _exit(2) rather than exit(3) to avoid
@@ -667,4 +670,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.144 2009/04/08 19:49:34 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.145 2009/05/02 12:07:05 solar Exp $
