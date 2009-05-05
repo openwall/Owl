@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.47 2009/05/01 20:08:12 mci Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.48 2009/05/05 19:13:28 mci Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -13,7 +13,7 @@
 Summary: Utilities for managing the second extended (ext2) filesystem.
 Name: e2fsprogs
 Version: 1.41.5
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
@@ -22,6 +22,7 @@ Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
 Patch1: e2fsprogs-1.41.5-alt-fixes.diff
 Patch2: e2fsprogs-1.41.5-owl-blkid-env.diff
 Patch3: e2fsprogs-1.41.5-owl-tests.diff
+Patch4: e2fsprogs-1.41.5-owl-warnings.diff
 PreReq: /sbin/ldconfig
 BuildRequires: gettext, texinfo, automake, autoconf
 BuildRequires: glibc >= 0:2.2, sed >= 0:4.1
@@ -58,6 +59,7 @@ chmod -R u+w .
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 bzip2 -9k RELEASE-NOTES
 
 # remove these unwanted header files just in case
@@ -260,6 +262,9 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Thu May 05 2009 Michail Litvak <mci-at-owl.openwall.com> 1.41.5-owl2
+- Fixed compiler warnings.
+
 * Thu Apr 30 2009 Michail Litvak <mci-at-owl.openwall.com> 1.41.5-owl1
 - Updated to 1.41.5.
 - Dropped -owl-alt-maint-fixes patch (fixed in upstream).

@@ -1,0 +1,229 @@
+--- e2fsprogs-1.41.5/debugfs/htree.c.orig	2009-04-22 18:33:32 +0000
++++ e2fsprogs-1.41.5/debugfs/htree.c	2009-05-05 18:06:57 +0000
+@@ -23,6 +23,8 @@ extern char *optarg;
+ #endif
+ 
+ #include "debugfs.h"
++#include "e2p/e2p.h"
++#include "uuid/uuid.h"
+ 
+ static FILE *pager;
+ 
+@@ -303,7 +305,7 @@ void do_dx_hash(int argc, char *argv[])
+ 				hash_version = atoi(optarg);
+ 			break;
+ 		case 's':
+-			if (uuid_parse(optarg, hash_seed)) {
++			if (uuid_parse(optarg, (unsigned char*) hash_seed)) {
+ 				fprintf(stderr, "Invalid UUID format: %s\n",
+ 					optarg);
+ 				return;
+--- e2fsprogs-1.41.5/debugfs/debugfs.c.orig	2009-03-23 12:09:26 +0000
++++ e2fsprogs-1.41.5/debugfs/debugfs.c	2009-05-05 18:06:57 +0000
+@@ -1851,7 +1851,7 @@ static int find_supp_feature(__u32 *supp
+ 
+ void do_supported_features(int argc, char *argv[])
+ {
+-        int	i, j, ret;
++        int	ret;
+ 	__u32	supp[3] = { EXT2_LIB_FEATURE_COMPAT_SUPP,
+ 			    EXT2_LIB_FEATURE_INCOMPAT_SUPP,
+ 			    EXT2_LIB_FEATURE_RO_COMPAT_SUPP };
+--- e2fsprogs-1.41.5/debugfs/ncheck.c.orig	2009-02-27 17:27:02 +0000
++++ e2fsprogs-1.41.5/debugfs/ncheck.c	2009-05-05 18:06:57 +0000
+@@ -34,8 +34,6 @@ static int ncheck_proc(struct ext2_dir_e
+ {
+ 	struct inode_walk_struct *iw = (struct inode_walk_struct *) private;
+ 	int	i;
+-	char	*pathname;
+-	errcode_t	retval;
+ 
+ 	iw->position++;
+ 	if (iw->position <= 2)
+--- e2fsprogs-1.41.5/misc/tune2fs.c.orig	2009-04-22 18:23:33 +0000
++++ e2fsprogs-1.41.5/misc/tune2fs.c	2009-05-05 18:06:57 +0000
+@@ -975,7 +975,7 @@ static int get_move_bitmaps(ext2_filsys 
+ 	blk_t j, needed_blocks = 0;
+ 	blk_t i_bmap, b_bmap;
+ 	blk_t start_blk, end_blk;
+-	int num, k;
++	int num;
+ 
+ 	for (i = 0; i < fs->group_desc_count; i++) {
+ 		b_bmap = fs->group_desc[i].bg_block_bitmap;
+--- e2fsprogs-1.41.5/misc/blkid.c.orig	2009-03-09 00:37:12 +0000
++++ e2fsprogs-1.41.5/misc/blkid.c	2009-05-05 18:06:57 +0000
+@@ -170,7 +170,6 @@ static void pretty_print_dev(blkid_dev d
+ 	blkid_tag_iterate	iter;
+ 	const char		*type, *value, *devname;
+ 	const char		*uuid = "", *fs_type = "", *label = "";
+-	char			*cp;
+ 	int			len, mount_flags;
+ 	char			mtpt[80];
+ 	errcode_t		retval;
+--- e2fsprogs-1.41.5/misc/mke2fs.c.orig	2009-04-18 14:38:50 +0000
++++ e2fsprogs-1.41.5/misc/mke2fs.c	2009-05-05 18:06:57 +0000
+@@ -19,7 +19,7 @@
+ #define _XOPEN_SOURCE 600 /* for inclusion of PATH_MAX in Solaris */
+ 
+ #include <stdio.h>
+-#include <string.h>
++#include <strings.h>
+ #include <fcntl.h>
+ #include <ctype.h>
+ #include <time.h>
+--- e2fsprogs-1.41.5/lib/blkid/probe.c.orig	2009-03-09 00:37:12 +0000
++++ e2fsprogs-1.41.5/lib/blkid/probe.c	2009-05-05 18:06:57 +0000
+@@ -249,7 +249,7 @@ static int linux_version_code()
+ {
+ #ifdef __linux__
+ 	struct utsname	ut;
+-	static		version_code = -1;
++	static		int version_code = -1;
+ 	int		major, minor, rev;
+ 	char		*endptr;
+ 	const char 	*cp;
+--- e2fsprogs-1.41.5/lib/ext2fs/tst_csum.c.orig	2009-02-28 03:56:41 +0000
++++ e2fsprogs-1.41.5/lib/ext2fs/tst_csum.c	2009-05-05 18:11:53 +0000
+@@ -13,6 +13,7 @@
+ #include <sys/types.h>
+ #endif
+ 
++#include "ext2fs/ext2fs.h"
+ #include "ext2fs/ext2_fs.h"
+ #include "ext2fs/ext2fs.h"
+ #include "ext2fs/crc16.h"
+--- e2fsprogs-1.41.5/lib/ext2fs/csum.c.orig	2009-02-28 03:56:41 +0000
++++ e2fsprogs-1.41.5/lib/ext2fs/csum.c	2009-05-05 18:06:57 +0000
+@@ -22,13 +22,7 @@
+ #define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
+ #endif
+ 
+-#ifdef DEBUG
+-#define STATIC
+-#else
+-#define STATIC static
+-#endif
+-
+-STATIC __u16 ext2fs_group_desc_csum(ext2_filsys fs, dgrp_t group)
++__u16 ext2fs_group_desc_csum(ext2_filsys fs, dgrp_t group)
+ {
+ 	__u16 crc = 0;
+ 	struct ext2_group_desc *desc;
+--- e2fsprogs-1.41.5/lib/ext2fs/ext2fs.h.orig	2009-02-28 03:56:41 +0000
++++ e2fsprogs-1.41.5/lib/ext2fs/ext2fs.h	2009-05-05 18:06:57 +0000
+@@ -741,6 +741,7 @@
+ extern void ext2fs_group_desc_csum_set(ext2_filsys fs, dgrp_t group);
+ extern int ext2fs_group_desc_csum_verify(ext2_filsys fs, dgrp_t group);
+ extern errcode_t ext2fs_set_gdt_csum(ext2_filsys fs);
++extern __u16 ext2fs_group_desc_csum(ext2_filsys fs, dgrp_t group);
+ 
+ /* dblist.c */
+ 
+--- e2fsprogs-1.41.5/lib/uuid/gen_uuid.c.orig	2009-04-15 17:12:25 +0000
++++ e2fsprogs-1.41.5/lib/uuid/gen_uuid.c	2009-05-05 18:06:57 +0000
+@@ -38,6 +38,10 @@
+  */
+ #define _SVID_SOURCE
+ 
++#ifndef _BSD_SOURCE
++# define _BSD_SOURCE /* needed for ftruncate() */
++#endif
++
+ #ifdef _WIN32
+ #define _WIN32_WINNT 0x0500
+ #include <windows.h>
+@@ -438,6 +442,7 @@ static ssize_t read_all(int fd, char *bu
+ /*
+  * Close all file descriptors
+  */
++#if defined(USE_UUIDD)
+ static void close_all_fds(void)
+ {
+ 	int i, max;
+@@ -458,7 +463,7 @@ static void close_all_fds(void)
+ 	for (i=0; i < max; i++)
+ 		close(i);
+ }
+-
++#endif
+ 
+ /*
+  * Try using the uuidd daemon to generate the UUID
+--- e2fsprogs-1.41.5/resize/main.c.orig	2009-04-22 18:29:36 +0000
++++ e2fsprogs-1.41.5/resize/main.c	2009-05-05 18:06:57 +0000
+@@ -106,7 +106,7 @@ static void determine_fs_stride(ext2_fil
+ 
+ 	if (fs->stride)
+ 		return;
+-	num = 0; sum = 0;
++	num = 0; sum = 0; prev_has_sb = 0;
+ 	for (group = 0; group < fs->group_desc_count; group++) {
+ 		has_sb = ext2fs_bg_has_super(fs, group);
+ 		if (group == 0 || has_sb != prev_has_sb)
+--- e2fsprogs-1.41.5/e2fsck/ea_refcount.c.orig	2009-02-27 17:27:02 +0000
++++ e2fsprogs-1.41.5/e2fsck/ea_refcount.c	2009-05-05 18:06:57 +0000
+@@ -402,7 +402,7 @@ int main(int argc, char **argv)
+ 			retval = ea_refcount_create(size, &refcount);
+ 			if (retval) {
+ 				com_err("ea_refcount_create",
+-					retval, "");
++					retval, "size: %d", size);
+ 				exit(1);
+ 			} else
+ 				printf("Creating refcount with size %d\n",
+@@ -417,15 +417,18 @@ int main(int argc, char **argv)
+ 			blk = (blk_t) bcode_program[i++];
+ 			arg = bcode_program[i++];
+ 			retval = ea_refcount_store(refcount, blk, arg);
+-			printf("Storing blk %u with value %d\n", blk, arg);
+-			if (retval)
+-				com_err("ea_refcount_store", retval, "");
++			if (retval) {
++				com_err("ea_refcount_store", retval,
++					"blk %u with value %d", blk, arg);
++			} else
++				printf("Storing blk %u with value %d\n",
++				       blk, arg);
+ 			break;
+ 		case BCODE_FETCH:
+ 			blk = (blk_t) bcode_program[i++];
+ 			retval = ea_refcount_fetch(refcount, blk, &arg);
+ 			if (retval)
+-				com_err("ea_refcount_fetch", retval, "");
++				com_err("ea_refcount_fetch", retval, "blk %u", blk);
+ 			else
+ 				printf("bcode_fetch(%u) returns %d\n",
+ 				       blk, arg);
+@@ -436,7 +439,7 @@ int main(int argc, char **argv)
+ 							   &arg);
+ 			if (retval)
+ 				com_err("ea_refcount_increment", retval,
+-					"");
++					"while incrementing blk %u", blk);
+ 			else
+ 				printf("bcode_increment(%u) returns %d\n",
+ 				       blk, arg);
+@@ -456,7 +459,7 @@ int main(int argc, char **argv)
+ 			retval = ea_refcount_validate(refcount, stderr);
+ 			if (retval)
+ 				com_err("ea_refcount_validate",
+-					retval, "");
++					retval, "Refcount validation FAILED.");
+ 			else
+ 				printf("Refcount validation OK.\n");
+ 			break;
+--- e2fsprogs-1.41.5/e2fsck/region.c.orig	2009-02-27 17:27:02 +0000
++++ e2fsprogs-1.41.5/e2fsck/region.c	2009-05-05 18:06:57 +0000
+@@ -170,9 +170,9 @@ void region_print(region_t region, FILE 
+ 
+ int main(int argc, char **argv)
+ {
+-	region_t	r;
++	region_t	r = NULL;
+ 	int		pc = 0, ret;
+-	region_addr_t	start, end, len;
++	region_addr_t	start, end;
+ 
+ 
+ 	while (1) {
