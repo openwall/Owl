@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.1 2009/05/06 13:35:30 solar Exp $
+# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.2 2009/05/06 14:17:57 solar Exp $
 
 Summary: A collection of command-line CD/DVD recording utilities.
 Name: cdrkit
@@ -18,6 +18,7 @@ Source10: README-cmakeless
 #Provides: mkisofs
 #Obsoletes: mkisofs
 BuildRequires: zlib-devel, bzip2-devel, libmagic-devel, libcap-devel
+BuildRequires: glibc >= 0:2.3, sed >= 0:4.1
 ExclusiveArch: %ix86
 BuildRoot: /override/%name-%version
 
@@ -32,6 +33,7 @@ an independent project.
 
 %prep
 %setup -q
+sed -ni '/^require v5\.8\.1;$/!p' 3rd-party/dirsplit/dirsplit
 
 %build
 mkdir build
