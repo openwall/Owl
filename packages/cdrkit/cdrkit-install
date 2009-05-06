@@ -1,0 +1,33 @@
+#!/bin/sh
+set -ex
+mkdir -p $DESTDIR/{bin,sbin,share/man/man{1,5}}
+install -pm 755 icedax/cdda2ogg $DESTDIR/bin/cdda2ogg
+install -pm 755 icedax/readmult $DESTDIR/bin/readmult
+install -pm 755 build/genisoimage/devdump $DESTDIR/bin/devdump
+install -pm 755 build/genisoimage/isoinfo $DESTDIR/bin/isoinfo
+install -pm 755 icedax/pitchplay $DESTDIR/bin/pitchplay
+install -pm 755 build/genisoimage/isodump $DESTDIR/bin/isodump
+install -pm 755 build/genisoimage/genisoimage $DESTDIR/bin/genisoimage
+install -pm 755 build/wodim/wodim $DESTDIR/bin/wodim
+install -pm 755 build/icedax/icedax $DESTDIR/bin/icedax
+install -pm 755 3rd-party/dirsplit/dirsplit $DESTDIR/bin/dirsplit
+install -pm 755 build/genisoimage/isodebug $DESTDIR/bin/isodebug
+install -pm 755 build/genisoimage/isovfy $DESTDIR/bin/isovfy
+install -pm 755 build/readom/readom $DESTDIR/bin/readom
+install -pm 644 genisoimage/genisoimage.1 $DESTDIR/share/man/man1/genisoimage.1
+install -pm 644 genisoimage/diag/isodump.1 $DESTDIR/share/man/man1/isodump.1
+install -pm 644 genisoimage/diag/isodebug.1 $DESTDIR/share/man/man1/isodebug.1
+install -pm 644 icedax/icedax.1 $DESTDIR/share/man/man1/icedax.1
+install -pm 644 3rd-party/dirsplit/dirsplit.1 $DESTDIR/share/man/man1/dirsplit.1
+install -pm 644 icedax/cdda2ogg.1 $DESTDIR/share/man/man1/cdda2ogg.1
+install -pm 644 genisoimage/diag/isoinfo.1 $DESTDIR/share/man/man1/isoinfo.1
+install -pm 644 genisoimage/diag/devdump.1 $DESTDIR/share/man/man1/devdump.1
+install -pm 644 icedax/readmult.1 $DESTDIR/share/man/man1/readmult.1
+install -pm 644 icedax/pitchplay.1 $DESTDIR/share/man/man1/pitchplay.1
+install -pm 644 icedax/list_audio_tracks.1 $DESTDIR/share/man/man1/list_audio_tracks.1
+install -pm 644 readom/readom.1 $DESTDIR/share/man/man1/readom.1
+install -pm 644 wodim/wodim.1 $DESTDIR/share/man/man1/wodim.1
+install -pm 644 genisoimage/diag/isovfy.1 $DESTDIR/share/man/man1/isovfy.1
+install -pm 644 genisoimage/genisoimagerc.5 $DESTDIR/share/man/man5/genisoimagerc.5
+install -pm 755 build/netscsid/netscsid $DESTDIR/sbin/netscsid
+ln -s cdda2ogg $DESTDIR/bin/cdda2mp3
