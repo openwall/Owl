@@ -9,20 +9,18 @@ cd cdrkit-1.1.9
 
 PATH=~/cmake/bin:$PATH strace -o ../strace.log -fFvs 999 -e execve make PREFIX=~/cdrkit CFLAGS=-O0
 
-Process the strace log with:
+Process the build directories and the strace log with:
 
 cat > ../cdrkit-build << EOF
-#!/bin/sh
 set -ex
 SRCDIR=\`pwd\`
 EOF
-find build -type d \( -name '*.dir' -o -name diag -o -name stdio \) | sed 's/^/mkdir -p /' | fgrep -v cmTryCompileExec >> ../cdrkit-build
-egrep -v 'cmTryCompileExec|CMakeCCompilerId' ../strace.log | sed -e "s,`pwd`,\$SRCDIR,g" -ne '\!^[0-9]\+ \+execve("/usr/bin/\(gcc\|ar\)", \["/usr/bin/\(gcc\|ar\)", ! { s/^[^,]*, //; s,/usr/bin/gcc,$CC,; s,/usr/bin/ar,$AR,; s/-O0/$CFLAGS/; s/[",]//g; s/^\[\([^]]\+\)\].* PWD=\([^ ]\+\) .*$/cd \2; \1/p; }' >> ../cdrkit-build
-chmod +x ../cdrkit-build
+find build -type d \( -name '*.dir' -o -name diag -o -name stdio \) | LC_COLLATE=C sort -r | sed -nr '/cmTryCompileExec/d; s/^/mkdir -p /; G; /^(.*)\n\1/d; P; s/\n[^\n]*$//; h' >> ../cdrkit-build
+sed -e '/cmTryCompileExec\|CMakeCCompilerId/d' -e "s,`pwd`,\$SRCDIR,g" -nre '\!^[0-9]+ +execve\("/usr/bin/(gcc|ar)", \["/usr/bin/(gcc|ar)", ! { s/^[^,]*, //; s,/usr/bin/gcc,$CC,; s,/usr/bin/ar,$AR,; s/-O0/$CFLAGS/; s/[",]//g; s/^\[([^]]+)\].* PWD=([^ ]+) .*$/cd \2; \1/; G; /^([^;]*; )[^\n]*\n\1/ { s/^[^;]*; ([^\n]*)\n.*$/\1/p; d; }; P; s/\n[^\n]*$//; h }' < ../strace.log >> ../cdrkit-build
 
 This captures the current directory paths left over by the shell in $PWD
 of processes other than the shell.  Luckily, this is good enough for us.
-This "-v" option to strace is crucial for this to work.
+The "-v" option to strace is crucial for this to work.
 
 From the cmake-enabled build, save two files:
 
@@ -41,20 +39,15 @@ Find the installed files:
 
 exec 3> ../cdrkit-files
 pushd ~/cdrkit
-find . -type f -printf '%P %m\n' >&3
+find . -type f -printf '%P %m\n' | LC_COLLATE=C sort >&3
 popd
 exec 3<&-
 
 Find the same files in the build tree, creating an install script:
 
-cat > ../cdrkit-install << EOF
-#!/bin/sh
-set -ex
-mkdir -p \$DESTDIR/{bin,sbin,share/man/man{1,5}}
-EOF
-while read f m; do echo "install -pm $m `find . -type f -name $(basename $f) -printf '%P\n' | head -1` \$DESTDIR/$f"; done < ../cdrkit-files >> ../cdrkit-install
-echo 'ln -s cdda2ogg $DESTDIR/bin/cdda2mp3' >> ../cdrkit-install
-chmod +x ../cdrkit-install
+echo 'set -ex' > ../cdrkit-install
+sed -n 's,^bin,$BINDIR,p; s,^sbin,$SBINDIR,p; s,^share/man,$MANDIR,p' < ../cdrkit-files | while read f m; do echo "install -pDm $m `find . -type f -name $(basename $f) -printf '%P\n' | head -1` \$DESTDIR$f"; done >> ../cdrkit-install
+echo 'ln -s cdda2ogg $DESTDIR$BINDIR/cdda2mp3' >> ../cdrkit-install
 
 That's all - the scripts are ready.  Now to test them:
 
@@ -65,8 +58,8 @@ cd cdrkit-1.1.9
 
 mkdir build
 cp -av ../cdrkit-h/*.h build/
-CC=gcc AR=ar CFLAGS='-O2 -fomit-frame-pointer' ../cdrkit-build
+CC=gcc AR=ar CFLAGS='-O2 -fomit-frame-pointer' sh ../cdrkit-build
 mkdir ../cdrkit-myinst
-DESTDIR=../cdrkit-myinst ../cdrkit-install
+DESTDIR=../cdrkit-myinst BINDIR=/usr/bin SBINDIR=/usr/sbin MANDIR=/usr/share/man sh ../cdrkit-install
 
-$Owl: Owl/packages/cdrkit/README-cmakeless,v 1.1 2009/05/06 13:35:30 solar Exp $
+$Owl: Owl/packages/cdrkit/README-cmakeless,v 1.2 2009/05/06 20:58:53 solar Exp $
