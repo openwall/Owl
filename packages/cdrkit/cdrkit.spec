@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.3 2009/05/06 16:36:07 solar Exp $
+# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.4 2009/05/06 21:16:10 solar Exp $
 
 Summary: A collection of command-line CD/DVD recording utilities.
 Name: cdrkit
@@ -33,16 +33,18 @@ an independent project.
 
 %prep
 %setup -q
-sed -ni '/^require v5\.8\.1;$/!p' 3rd-party/dirsplit/dirsplit
+sed -i '/^require v5\.8\.1;$/d' 3rd-party/dirsplit/dirsplit
 
 %build
 mkdir build
 cp -v %_sourcedir/{align,xconfig}.h build/
-CC=%__cc AR=%__ar CFLAGS='%optflags -Wall -Wno-unused' sh %_sourcedir/cdrkit-build
+CC=%__cc AR=%__ar CFLAGS='%optflags -Wall -Wno-unused' \
+	sh %_sourcedir/cdrkit-build
 
 %install
 rm -rf %buildroot
-DESTDIR=%buildroot/usr sh %_sourcedir/cdrkit-install
+DESTDIR=%buildroot BINDIR=%_bindir SBINDIR=%_sbindir MANDIR=%_mandir \
+	sh %_sourcedir/cdrkit-install
 
 %files
 %defattr(-,root,root)
