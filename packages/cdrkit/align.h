@@ -10,6 +10,7 @@
 #include <utypes.h>
 #endif
 
+#ifdef __i386__
 #define ALIGN_SHORT 2
 #define ALIGN_INT 4
 #define ALIGN_LONG 4
@@ -34,6 +35,34 @@
 #define ALIGN_FMASK 3
 #define ALIGN_DMASK 7
 #define ALIGN_PMASK 3
+#elif defined(__x86_64__)
+#define ALIGN_SHORT 2
+#define ALIGN_INT 4
+#define ALIGN_LONG 8
+#define ALIGN_LLONG 8
+#define ALIGN_FLOAT 4
+#define ALIGN_DOUBLE 8
+#define ALIGN_PTR 8
+
+#define SIZE_SHORT 2
+#define SIZE_INT 4
+#define SIZE_LONG 8
+#define SIZE_LLONG 8
+#define SIZE_FLOAT 4
+#define SIZE_DOUBLE 8
+#define SIZE_PTR 8
+
+
+#define ALIGN_SMASK 1
+#define ALIGN_IMASK 3
+#define ALIGN_LMASK 7
+#define ALIGN_LLMASK 7
+#define ALIGN_FMASK 3
+#define ALIGN_DMASK 7
+#define ALIGN_PMASK 7
+#else
+#error "Unsupported architecture"
+#endif
 
 
 /*

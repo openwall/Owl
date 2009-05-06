@@ -240,6 +240,7 @@
 /*
  * Types/Keywords
  */
+#ifdef __i386__
 #define SIZEOF_CHAR 1
 #define SIZEOF_SHORT_INT  2
 #define SIZEOF_INT  4
@@ -252,6 +253,22 @@
 #define SIZEOF_UNSIGNED_LONG_INT  4
 #define SIZEOF_UNSIGNED_LONG_LONG 8
 #define SIZEOF_UNSIGNED_CHAR_P 4
+#elif defined(__x86_64__)
+#define SIZEOF_CHAR 1
+#define SIZEOF_SHORT_INT  2
+#define SIZEOF_INT  4
+#define SIZEOF_LONG_INT 8
+#define SIZEOF_LONG_LONG 8
+#define SIZEOF_CHAR_P 8
+#define SIZEOF_UNSIGNED_CHAR 1
+#define SIZEOF_UNSIGNED_SHORT_INT 2
+#define SIZEOF_UNSIGNED_INT 4
+#define SIZEOF_UNSIGNED_LONG_INT  8
+#define SIZEOF_UNSIGNED_LONG_LONG 8
+#define SIZEOF_UNSIGNED_CHAR_P 8
+#else
+#error "Unsupported architecture"
+#endif
 
 #define HAVE_LONGLONG 1		/* Compiler defines long long type */
 
@@ -260,7 +277,13 @@
  * Critical on some of Debian architectures (EB) */
 /* #define VA_LIST_IS_ARRAY 1		*/
 
+#ifdef __i386__
 /* #undef VA_LIST_IS_ARRAY */
+#elif defined(__x86_64__)
+#define VA_LIST_IS_ARRAY
+#else
+#error "Unsupported architecture"
+#endif
 
 #define GETGROUPS_T gid_t
 #define GID_T		GETGROUPS_T
