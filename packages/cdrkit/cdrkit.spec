@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.5 2009/05/09 00:18:21 solar Exp $
+# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.6 2009/05/09 05:34:24 solar Exp $
 
 %{?!BUILD_NETSCSID:	%define BUILD_NETSCSID 0}
 
 Summary: A collection of command-line CD/DVD recording utilities.
 Name: cdrkit
 Version: 1.1.9
-Release: owl1
+Release: owl2
 License: GPLv2
 Group: Applications/System
 URL: http://cdrkit.org
@@ -19,6 +19,10 @@ Source4: xconfig.h
 Source10: README-cmakeless
 Patch0: cdrkit-1.1.9-owl-fixes.diff
 Patch1: cdrkit-1.1.9-owl-tmp.diff
+Patch2: cdrkit-1.1.9-owl-doc.diff
+Patch3: cdrkit-1.1.9-owl-rcfile.diff
+Patch4: cdrkit-1.1.9-owl-privacy.diff
+Patch5: cdrkit-1.1.9-rh-bound.diff
 Provides: cdrecord = 9:2.01-12, dvdrecord = 0:0.1.5.1
 Obsoletes: cdrecord, dvdrecord
 Provides: mkisofs = 9:2.01-12
@@ -43,6 +47,10 @@ an independent project.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 sed -i '/^require v5\.8\.1;$/d' 3rd-party/dirsplit/dirsplit
 sed -i '1s,/usr/local,/usr,' doc/icedax/tracknames.pl
 chmod -x doc/icedax/tracknames.pl
@@ -96,6 +104,11 @@ ln -s wodim.1 man1/dvdrecord.1
 %_mandir/man?/*
 
 %changelog
+* Sat May 09 2009 Solar Designer <solar-at-owl.openwall.com> 1.1.9-owl2
+- Ported the patches found in our mkisofs package (to be removed) to
+genisoimage.
+- Added security warnings to the documentation (man pages, README.suidroot).
+
 * Fri May 08 2009 Solar Designer <solar-at-owl.openwall.com> 1.1.9-owl1
 - Disabled building/packaging of netscsid by default (this program, if
 used, may pose a significant security risk, yet most Owl users won't
