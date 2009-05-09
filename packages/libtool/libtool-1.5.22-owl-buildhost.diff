@@ -1,0 +1,132 @@
+diff -ur libtool-1.5.22.orig/acinclude.m4 libtool-1.5.22/acinclude.m4
+--- libtool-1.5.22.orig/acinclude.m4	2005-12-18 22:13:42 +0000
++++ libtool-1.5.22/acinclude.m4	2009-05-09 05:52:12 +0000
+@@ -4245,7 +4245,7 @@
+ # ### BEGIN LIBTOOL CONFIG],
+ [# ### BEGIN LIBTOOL TAG CONFIG: $tagname])
+ 
+-# Libtool was configured on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
++# Libtool was configured as follows:
+ 
+ # Shell to use when invoking shell scripts.
+ SHELL=$lt_SHELL
+diff -ur libtool-1.5.22.orig/configure libtool-1.5.22/configure
+--- libtool-1.5.22.orig/configure	2005-12-18 22:13:49 +0000
++++ libtool-1.5.22/configure	2009-05-09 05:52:59 +0000
+@@ -10898,7 +10898,7 @@
+ 
+ # ### BEGIN LIBTOOL CONFIG
+ 
+-# Libtool was configured on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
++# Libtool was configured as follows:
+ 
+ # Shell to use when invoking shell scripts.
+ SHELL=$lt_SHELL
+@@ -13938,7 +13938,7 @@
+   cat <<__EOF__ >> "$cfgfile"
+ # ### BEGIN LIBTOOL TAG CONFIG: $tagname
+ 
+-# Libtool was configured on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
++# Libtool was configured as follows:
+ 
+ # Shell to use when invoking shell scripts.
+ SHELL=$lt_SHELL
+@@ -16529,7 +16529,7 @@
+   cat <<__EOF__ >> "$cfgfile"
+ # ### BEGIN LIBTOOL TAG CONFIG: $tagname
+ 
+-# Libtool was configured on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
++# Libtool was configured as follows:
+ 
+ # Shell to use when invoking shell scripts.
+ SHELL=$lt_SHELL
+@@ -19131,7 +19131,7 @@
+   cat <<__EOF__ >> "$cfgfile"
+ # ### BEGIN LIBTOOL TAG CONFIG: $tagname
+ 
+-# Libtool was configured on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
++# Libtool was configured as follows:
+ 
+ # Shell to use when invoking shell scripts.
+ SHELL=$lt_SHELL
+@@ -19611,7 +19611,7 @@
+   cat <<__EOF__ >> "$cfgfile"
+ # ### BEGIN LIBTOOL TAG CONFIG: $tagname
+ 
+-# Libtool was configured on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
++# Libtool was configured as follows:
+ 
+ # Shell to use when invoking shell scripts.
+ SHELL=$lt_SHELL
+diff -ur libtool-1.5.22.orig/libltdl/acinclude.m4 libtool-1.5.22/libltdl/acinclude.m4
+--- libtool-1.5.22.orig/libltdl/acinclude.m4	2005-12-18 22:13:49 +0000
++++ libtool-1.5.22/libltdl/acinclude.m4	2009-05-09 05:57:01 +0000
+@@ -4245,7 +4245,7 @@
+ # ### BEGIN LIBTOOL CONFIG],
+ [# ### BEGIN LIBTOOL TAG CONFIG: $tagname])
+ 
+-# Libtool was configured on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
++# Libtool was configured as follows:
+ 
+ # Shell to use when invoking shell scripts.
+ SHELL=$lt_SHELL
+diff -ur libtool-1.5.22.orig/libltdl/configure libtool-1.5.22/libltdl/configure
+--- libtool-1.5.22.orig/libltdl/configure	2005-12-18 22:13:59 +0000
++++ libtool-1.5.22/libltdl/configure	2009-05-09 05:57:21 +0000
+@@ -10771,7 +10771,7 @@
+ 
+ # ### BEGIN LIBTOOL CONFIG
+ 
+-# Libtool was configured on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
++# Libtool was configured as follows:
+ 
+ # Shell to use when invoking shell scripts.
+ SHELL=$lt_SHELL
+@@ -13811,7 +13811,7 @@
+   cat <<__EOF__ >> "$cfgfile"
+ # ### BEGIN LIBTOOL TAG CONFIG: $tagname
+ 
+-# Libtool was configured on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
++# Libtool was configured as follows:
+ 
+ # Shell to use when invoking shell scripts.
+ SHELL=$lt_SHELL
+@@ -16402,7 +16402,7 @@
+   cat <<__EOF__ >> "$cfgfile"
+ # ### BEGIN LIBTOOL TAG CONFIG: $tagname
+ 
+-# Libtool was configured on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
++# Libtool was configured as follows:
+ 
+ # Shell to use when invoking shell scripts.
+ SHELL=$lt_SHELL
+@@ -19004,7 +19004,7 @@
+   cat <<__EOF__ >> "$cfgfile"
+ # ### BEGIN LIBTOOL TAG CONFIG: $tagname
+ 
+-# Libtool was configured on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
++# Libtool was configured as follows:
+ 
+ # Shell to use when invoking shell scripts.
+ SHELL=$lt_SHELL
+@@ -19484,7 +19484,7 @@
+   cat <<__EOF__ >> "$cfgfile"
+ # ### BEGIN LIBTOOL TAG CONFIG: $tagname
+ 
+-# Libtool was configured on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
++# Libtool was configured as follows:
+ 
+ # Shell to use when invoking shell scripts.
+ SHELL=$lt_SHELL
+diff -ur libtool-1.5.22.orig/libtool.m4 libtool-1.5.22/libtool.m4
+--- libtool-1.5.22.orig/libtool.m4	2005-12-18 21:53:17 +0000
++++ libtool-1.5.22/libtool.m4	2009-05-09 05:51:25 +0000
+@@ -4245,7 +4245,7 @@
+ # ### BEGIN LIBTOOL CONFIG],
+ [# ### BEGIN LIBTOOL TAG CONFIG: $tagname])
+ 
+-# Libtool was configured on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
++# Libtool was configured as follows:
+ 
+ # Shell to use when invoking shell scripts.
+ SHELL=$lt_SHELL
