@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/db4/db4.spec,v 1.20 2007/10/09 00:53:26 ldv Exp $
+# $Owl: Owl/packages/db4/db4.spec,v 1.21 2009/05/09 06:15:25 solar Exp $
 
 %define __soversion	4.3
 %define _libdb_a	libdb-%__soversion.a
@@ -9,7 +9,7 @@
 Summary: The Berkeley DB database library (version 4) for C.
 Name: db4
 Version: 4.3.29
-Release: owl3
+Release: owl4
 License: Sleepycat
 Group: System Environment/Libraries
 URL: http://www.sleepycat.com
@@ -57,9 +57,19 @@ Obsoletes: db2-devel, db3-devel
 %description devel
 The Berkeley Database (Berkeley DB) is a programmatic toolkit that
 provides embedded database support for both traditional and
-client/server applications.  This package contains the header files,
-libraries, and documentation for building programs which use the
-Berkeley DB.
+client/server applications.  This package contains the header files
+and libraries for building programs which use the Berkeley DB.
+
+%package doc
+Summary: Development documentation for the Berkeley DB (version 4) library.
+Group: Documentation
+Requires: db4 = %version-%release
+
+%description doc
+The Berkeley Database (Berkeley DB) is a programmatic toolkit that
+provides embedded database support for both traditional and
+client/server applications.  This package contains the documentation
+for building programs which use the Berkeley DB.
 
 %ifnarch x86_64
 %package compat-fake
@@ -193,8 +203,6 @@ chmod -R u+w %buildroot
 
 %files devel
 %defattr(-,root,root)
-%dir %docdir
-%docdir/[a-tv-z]*
 %_libdir/libdb.so
 %_libdir/libdb_cxx.so
 %_libdir/%_libdb_a
@@ -202,11 +210,19 @@ chmod -R u+w %buildroot
 %_includedir/%name
 %_includedir/*.h
 
+%files doc
+%defattr(-,root,root)
+%dir %docdir
+%docdir/[a-tv-z]*
+
 %ifnarch x86_64
 %files compat-fake
 %endif
 
 %changelog
+* Sat May 09 2009 Solar Designer <solar-at-owl.openwall.com> 4.3.29-owl4
+- Moved the documentation from db4-devel to db4-doc (a new subpackage).
+
 * Tue Oct 09 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.3.29-owl3
 - Applied official update 4.3.29.1.
 - Backported fix for configure mutexes support from db-4.4.20.
