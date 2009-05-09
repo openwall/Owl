@@ -1,14 +1,13 @@
-# $Owl: Owl/packages/hdparm/hdparm.spec,v 1.21 2008/01/04 00:42:32 ldv Exp $
+# $Owl: Owl/packages/hdparm/hdparm.spec,v 1.22 2009/05/09 13:51:04 mci Exp $
 
 Summary: An utility for displaying and/or setting hard disk parameters.
 Name: hdparm
-Version: 7.7
+Version: 9.15
 Release: owl1
 License: BSD-style
 Group: Applications/System
 URL: http://sourceforge.net/projects/hdparm/
 Source: http://prdownloads.sourceforge.net/hdparm/hdparm-%version.tar.gz
-Patch: hdparm-7.7-owl-Makefile.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -18,10 +17,9 @@ older IDE driver subsystem.
 
 %prep
 %setup -q
-%patch -p1
 
 %build
-CFLAGS="%optflags" %__make CC="%__cc" LDFLAGS=
+CFLAGS='%optflags' %__make CC=%__cc LDFLAGS= STRIP=echo
 
 %install
 rm -rf %buildroot
@@ -30,11 +28,14 @@ install -pD -m644 hdparm.8 %buildroot%_mandir/man8/hdparm.8
 
 %files
 %defattr(-,root,root)
-%doc hdparm.lsm Changelog LICENSE.TXT README.acoustic
+%doc hdparm.lsm Changelog LICENSE.TXT README.acoustic TODO
 /sbin/hdparm
 %_mandir/man8/hdparm.8*
 
 %changelog
+* Sat May 09 2009 Michail Litvak <mci-at-owl.openwall.com> 9.15-owl1
+- Updated to 9.15.
+
 * Fri Jan 04 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 7.7-owl1
 - Updated to 7.7.
 
