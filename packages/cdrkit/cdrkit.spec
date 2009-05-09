@@ -1,9 +1,11 @@
-# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.4 2009/05/06 21:16:10 solar Exp $
+# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.5 2009/05/09 00:18:21 solar Exp $
+
+%{?!BUILD_NETSCSID:	%define BUILD_NETSCSID 0}
 
 Summary: A collection of command-line CD/DVD recording utilities.
 Name: cdrkit
 Version: 1.1.9
-Release: owl0
+Release: owl1
 License: GPLv2
 Group: Applications/System
 URL: http://cdrkit.org
@@ -15,8 +17,14 @@ Source4: xconfig.h
 # README-cmakeless is unused by this package.
 # It is specified here such that it gets included into the .src.rpm file.
 Source10: README-cmakeless
-#Provides: mkisofs
-#Obsoletes: mkisofs
+Patch0: cdrkit-1.1.9-owl-fixes.diff
+Patch1: cdrkit-1.1.9-owl-tmp.diff
+Provides: cdrecord = 9:2.01-12, dvdrecord = 0:0.1.5.1
+Obsoletes: cdrecord, dvdrecord
+Provides: mkisofs = 9:2.01-12
+Obsoletes: mkisofs
+Provides: cdda2wav = 9:2.01-12
+Obsoletes: cdda2wav
 BuildRequires: zlib-devel, bzip2-devel, libmagic-devel, libcap-devel
 BuildRequires: glibc >= 0:2.3, sed >= 0:4.1
 ExclusiveArch: %ix86 x86_64
@@ -33,25 +41,73 @@ an independent project.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
 sed -i '/^require v5\.8\.1;$/d' 3rd-party/dirsplit/dirsplit
+sed -i '1s,/usr/local,/usr,' doc/icedax/tracknames.pl
+chmod -x doc/icedax/tracknames.pl
 
-%build
+# Make sure we don't use or package any files with references to /tmp, except
+# for those that have been patched by this point.  If a new reference to /tmp
+# is introduced into a build-critical file in a new version, we'd rather have
+# the build fail such that we're notified and can make a determination.
+find . -type f -print0 |
+	xargs -r0 grep -FlZ -- /tmp |
+	xargs -r0 rm -vf --
+
+cp -v %_sourcedir/cdrkit-{build,install} .
+%if !%BUILD_NETSCSID
+sed -i '/netscsid/d' cdrkit-{build,install}
+find . -type f -name '*netscsid*' -print -delete
+%endif
+
 mkdir build
 cp -v %_sourcedir/{align,xconfig}.h build/
-CC=%__cc AR=%__ar CFLAGS='%optflags -Wall -Wno-unused' \
-	sh %_sourcedir/cdrkit-build
+
+%build
+CC=%__cc AR=%__ar CFLAGS='%optflags -fno-strict-aliasing -Wall -Wno-unused' \
+	sh cdrkit-build
 
 %install
 rm -rf %buildroot
 DESTDIR=%buildroot BINDIR=%_bindir SBINDIR=%_sbindir MANDIR=%_mandir \
-	sh %_sourcedir/cdrkit-install
+	sh cdrkit-install
+cd %buildroot%_bindir
+ln -s genisoimage mkisofs
+ln -s genisoimage mkhybrid
+ln -s icedax cdda2wav
+ln -s wodim cdrecord
+ln -s wodim dvdrecord
+cd %buildroot%_mandir
+ln -s genisoimage.1 man1/mkisofs.1
+ln -s genisoimage.1 man1/mkhybrid.1
+ln -s icedax.1 man1/cdda2wav.1
+ln -s wodim.1 man1/cdrecord.1
+ln -s wodim.1 man1/dvdrecord.1
 
 %files
 %defattr(-,root,root)
+%doc ABOUT COPYING FAQ FORK
+%doc doc/READMEs doc/genisoimage doc/icedax doc/wodim
 %_bindir/*
-%_sbindir/*
+%if %BUILD_NETSCSID
+%_sbindir/netscsid
+%endif
 %_mandir/man?/*
 
 %changelog
+* Fri May 08 2009 Solar Designer <solar-at-owl.openwall.com> 1.1.9-owl1
+- Disabled building/packaging of netscsid by default (this program, if
+used, may pose a significant security risk, yet most Owl users won't
+need it, so we'd rather exclude it and thus not be responsible for it).
+- Patched some issues in C source files as pointed out by gcc warnings
+and FIXME comments.
+- Patched out some unimportant references to /tmp, made this spec file
+remove any remaining files with references to /tmp.
+- Added symlinks and Obsoletes/Provides tags to replace our mkisofs
+package and for compatibility with the Fedora package.
+- Package some documentation files (a further review may be needed).
+
 * Wed May 06 2009 Solar Designer <solar-at-owl.openwall.com> 1.1.9-owl0
-- Initial cmake-less packaging of cdrkit for Openwall GNU/*/Linux.
+- Initial cmake-less packaging of cdrkit for Openwall GNU/*/Linux
+(not released).
