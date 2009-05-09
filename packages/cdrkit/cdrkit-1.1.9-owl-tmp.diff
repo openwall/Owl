@@ -1,0 +1,70 @@
+diff -urpN cdrkit-1.1.9-owl-fixes/START cdrkit-1.1.9/START
+--- cdrkit-1.1.9-owl-fixes/START	2006-11-21 18:48:37 +0000
++++ cdrkit-1.1.9/START	2009-05-08 22:53:34 +0000
+@@ -1,2 +1,2 @@
+-build/mkisofs/mkisofs -r -J -o /tmp/cd.iso . 
+-build/wodim/wodim -dummy -v speed=24 dev=/dev/cdrw /tmp/cd.iso
++build/mkisofs/mkisofs -r -J -o ../cd.iso .
++build/wodim/wodim -dummy -v speed=24 dev=/dev/cdrw ../cd.iso
+diff -urpN cdrkit-1.1.9-owl-fixes/doc/genisoimage/README.prep_boot cdrkit-1.1.9/doc/genisoimage/README.prep_boot
+--- cdrkit-1.1.9-owl-fixes/doc/genisoimage/README.prep_boot	2006-08-22 10:41:30 +0000
++++ cdrkit-1.1.9/doc/genisoimage/README.prep_boot	2009-05-08 22:52:34 +0000
+@@ -14,10 +14,10 @@ The '-B' or '-prep-boot' flags are used 
+ to use. The path must be relative to the root of the CD filesytem,
+ NOT from the current directory.
+ 
+-For example: to make an image of /tmp/cd and use the image file
+-/tmp/cd/zImage, (with rock ridge extensions) use:
++For example: to make an image of /root/cd and use the image file
++/root/cd/zImage, (with rock ridge extensions) use:
+ 
+-mkhybrid -r -B zImage /tmp/cd -o cd.img
++mkhybrid -r -B zImage /root/cd -o cd.img
+ 
+ Since there are four entries for bootable 'partitions', I have
+ allowed up to 4 different images to be used. This might be 
+@@ -27,7 +27,7 @@ machines on the same CD.
+ The first image will be in the first partition entry, so if one
+ uses:
+ 
+-mkhybrid -r -B zImage1 -B zImage2 -B zImage3 -B zImage4 /tmp/cd
++mkhybrid -r -B zImage1 -B zImage2 -B zImage3 -B zImage4 /root/cd
+ 
+ This will result in 4 bootable images. To boot off the first image
+ from PPCbug, use 'pboot 0 41' from the ppcbug> prompt.
+diff -urpN cdrkit-1.1.9-owl-fixes/genisoimage/genisoimage.c cdrkit-1.1.9/genisoimage/genisoimage.c
+--- cdrkit-1.1.9-owl-fixes/genisoimage/genisoimage.c	2008-05-25 22:12:37 +0000
++++ cdrkit-1.1.9/genisoimage/genisoimage.c	2009-05-08 22:49:07 +0000
+@@ -3070,7 +3070,7 @@ if (check_session == 0)
+ 		/*
+ 		 * We would like a syntax like:
+ 		 *
+-		 *	/tmp=/usr/tmp/xxx
++		 *	/foodir=/path/to/bardir
+ 		 *
+ 		 * where the user can specify a place to graft each component
+ 		 * of the tree.  To do this, we may have to create directories
+diff -urpN cdrkit-1.1.9-owl-fixes/netscsid/netscsid.c cdrkit-1.1.9/netscsid/netscsid.c
+--- cdrkit-1.1.9-owl-fixes/netscsid/netscsid.c	2006-12-08 13:38:43 +0000
++++ cdrkit-1.1.9/netscsid/netscsid.c	2009-05-08 22:45:08 +0000
+@@ -155,7 +155,7 @@ main(int argc, char *argv[])
+ 	debug_name=cfg_get("DEBUG");
+ #ifdef	FORCE_DEBUG
+ 	if (debug_name == NULL && argc <= 0)
+-		debug_name = "/tmp/RSCSI";
++		debug_name = "debug-RSCSI";
+ #endif
+ #ifdef	NONONO
+ 	/*
+diff -urpN cdrkit-1.1.9-owl-fixes/wodim/fifo.c cdrkit-1.1.9/wodim/fifo.c
+--- cdrkit-1.1.9-owl-fixes/wodim/fifo.c	2007-01-28 23:52:11 +0000
++++ cdrkit-1.1.9/wodim/fifo.c	2009-05-08 22:54:23 +0000
+@@ -251,7 +251,7 @@ init_fifo(long fs)
+ 
+ #ifdef	XDEBUG
+ 	if (debug)
+-		ef = fopen("/tmp/ef", "w");
++		ef = fopen("debug-ef", "w");
+ #endif
+ }
+ 
