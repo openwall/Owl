@@ -1,0 +1,35 @@
+diff -urp cdrkit-1.1.9.orig/genisoimage/write.c cdrkit-1.1.9/genisoimage/write.c
+--- cdrkit-1.1.9.orig/genisoimage/write.c	2008-02-27 08:54:08 +0000
++++ cdrkit-1.1.9/genisoimage/write.c	2009-05-09 05:21:17 +0000
+@@ -2061,6 +2061,11 @@ vers_write(FILE *outfile)
+ 
+ 	/* Now write the version descriptor. */
+ 	memset(vers, 0, sizeof (vers));
++
++	/* Per default: keep privacy. Blackout the version and arguments. */
++	if (!getenv("ISODEBUG"))
++		goto write_vers;
++
+ 	strcpy(vers, "MKI ");
+ 
+ 	cp = vers;
+@@ -2090,14 +2095,11 @@ vers_write(FILE *outfile)
+ 	}
+ 
+ 	cp[SECTOR_SIZE - 1] = '\0';
+- 	/* Per default: keep privacy. Blackout the version and arguments. */
+-	if(getenv("ISODEBUG")) {
+-		jtwrite(vers, SECTOR_SIZE, 1, 0, TRUE);
+-		xfwrite(vers, SECTOR_SIZE, 1, outfile, 0, TRUE);
+-	} else {
+-		jtwrite(calloc(SECTOR_SIZE, 1), SECTOR_SIZE, 1, 0, TRUE);
+-		xfwrite(calloc(SECTOR_SIZE, 1), SECTOR_SIZE, 1, outfile, 0, TRUE);
+-	}
++
++write_vers:
++	jtwrite(vers, SECTOR_SIZE, 1, 0, TRUE);
++	xfwrite(vers, SECTOR_SIZE, 1, outfile, 0, TRUE);
++
+     last_extent_written += 1;
+ 	return (0);
+ }
