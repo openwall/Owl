@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.43 2008/08/10 18:27:48 ldv Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.44 2009/05/09 07:07:03 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
 Version: 2.4.8
-Release: owl1
+Release: owl2
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
@@ -36,6 +36,7 @@ Patch14: postfix-2.4.6-alt-postconf-E.diff
 Patch15: postfix-2.4.6-alt-owl-defaults.diff
 Patch16: postfix-2.4.6-alt-owl-doc.diff
 Patch17: postfix-2.4.8-owl-safe_open.diff
+Patch18: postfix-2.4.8-owl-postalias-no-hostname.diff
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: owl-startup
@@ -94,6 +95,7 @@ compatible enough to not upset your users.
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
+%patch18 -p1
 
 install -pm644 %_sourcedir/README.Owl README_FILES/
 
@@ -359,6 +361,11 @@ fi
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
+* Sat May 09 2009 Solar Designer <solar-at-owl.openwall.com> 1:2.4.8-owl2
+- Re-introduced the postalias hack originally implemented with
+postfix-19991231-pl13-owl-postalias-no-hostname.diff not to leak the
+install host's name.
+
 * Sun Aug 10 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.4.8-owl1
 - Updated to 2.4.8.
 
