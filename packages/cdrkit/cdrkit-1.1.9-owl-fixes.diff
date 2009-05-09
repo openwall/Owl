@@ -1,0 +1,272 @@
+diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/dump.c cdrkit-1.1.9/genisoimage/diag/dump.c
+--- cdrkit-1.1.9.orig/genisoimage/diag/dump.c	2008-02-26 07:59:05 +0000
++++ cdrkit-1.1.9/genisoimage/diag/dump.c	2009-05-08 22:02:55 +0000
+@@ -368,7 +368,8 @@ main(int argc, char *argv[])
+ 	do {
+ 		if (file_addr < (off_t)0) file_addr = (off_t)0;
+ 		showblock(1);
+-		read(STDIN_FILENO, &c, 1); /* FIXME: check return value */
++		if (read(STDIN_FILENO, &c, 1) != 1)
++			break; /* same as 'q' */
+ 		if (c == 'a')
+ 			file_addr -= PAGE;
+ 		if (c == 'b')
+@@ -376,12 +377,15 @@ main(int argc, char *argv[])
+ 		if (c == 'g') {
+ 			crsr2(20, 1);
+ 			printf("Enter new starting block (in hex):");
++			/* FIXME: check input syntax (which is not as trivial
++			 * as merely checking return value from the existing
++			 * scanf() calls, because there may be extra input). */
+ 			if (sizeof (file_addr) > sizeof (long)) {
+-				Llong	ll;
++				Llong	ll = 0;
+ 				scanf("%llx", &ll); /* FIXME: check return value */
+ 				file_addr = (off_t)ll;
+ 			} else {
+-				long	l;
++				long	l = 0;
+ 				scanf("%lx", &l); /* FIXME: check return value */
+ 				file_addr = (off_t)l;
+ 			}
+@@ -392,8 +396,10 @@ main(int argc, char *argv[])
+ 		if (c == 'f') {
+ 			crsr2(20, 1);
+ 			printf("Enter new search string:");
+-			fgets((char *)search, sizeof (search), stdin); /* FIXME: check return value */
+-			while (search[strlen((char *)search)-1] == '\n')
++			if (!fgets((char *)search, sizeof (search), stdin))
++				break;
++			while (search[0] &&
++			    search[strlen((char *)search)-1] == '\n')
+ 				search[strlen((char *)search)-1] = 0;
+ 			crsr2(20, 1);
+ 			printf("                                     ");
+diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/isodump.c cdrkit-1.1.9/genisoimage/diag/isodump.c
+--- cdrkit-1.1.9.orig/genisoimage/diag/isodump.c	2008-02-26 07:59:05 +0000
++++ cdrkit-1.1.9/genisoimage/diag/isodump.c	2009-05-08 22:03:58 +0000
+@@ -655,7 +655,8 @@ main(int argc, char *argv[])
+ 		if (file_addr < 0)
+ 			file_addr = (off_t)0;
+ 		showblock(1);
+-		read(STDIN_FILENO, &c, 1); /* FIXME: check return value */
++		if (read(STDIN_FILENO, &c, 1) != 1)
++			break; /* same as 'q' */
+ 		if (c == 'a')
+ 			file_addr -= blocksize;
+ 		if (c == 'b')
+@@ -663,12 +664,15 @@ main(int argc, char *argv[])
+ 		if (c == 'g') {
+ 			crsr2(20, 1);
+ 			printf("Enter new starting block (in hex):");
++			/* FIXME: check input syntax (which is not as trivial
++			 * as merely checking return value from the existing
++			 * scanf() calls, because there may be extra input). */
+ 			if (sizeof (file_addr) > sizeof (long)) {
+-				Llong	ll;
++				Llong	ll = 0;
+ 				scanf("%llx", &ll); /* FIXME: check return value */
+ 				file_addr = (off_t)ll;
+ 			} else {
+-				long	l;
++				long	l = 0;
+ 				scanf("%lx", &l); /* FIXME: check return value */
+ 				file_addr = (off_t)l;
+ 			}
+@@ -679,8 +683,10 @@ main(int argc, char *argv[])
+ 		if (c == 'f') {
+ 			crsr2(20, 1);
+ 			printf("Enter new search string:");
+-			fgets((char *)search, sizeof (search), stdin); /* FIXME: check return value */
+-			while (search[strlen((char *)search)-1] == '\n')
++			if (!fgets((char *)search, sizeof (search), stdin))
++				break;
++			while (search[0] &&
++			    search[strlen((char *)search)-1] == '\n')
+ 				search[strlen((char *)search)-1] = 0;
+ 			crsr2(20, 1);
+ 			printf("                                     ");
+diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/isoinfo.c cdrkit-1.1.9/genisoimage/diag/isoinfo.c
+--- cdrkit-1.1.9.orig/genisoimage/diag/isoinfo.c	2008-02-26 07:59:05 +0000
++++ cdrkit-1.1.9/genisoimage/diag/isoinfo.c	2009-05-08 22:28:03 +0000
+@@ -645,13 +645,16 @@ extract_file(struct iso_directory_record
+ 		readsecs(extent - sector_offset, buff, ISO_BLOCKS(sizeof (buff)));
+ 		tlen = (len > sizeof (buff) ? sizeof (buff) : len);
+ #else
++#error "FIXME: need return value checks"
+ 		lseek(fileno(infile), ((off_t)(extent - sector_offset)) << 11, SEEK_SET);
+ 		tlen = (len > sizeof (buff) ? sizeof (buff) : len);
+ 		read(fileno(infile), buff, tlen);
+ #endif
+ 		len -= tlen;
+ 		extent++;
+-		write(STDOUT_FILENO, buff, tlen); /* FIXME: check return value */
++		/* FIXME: handle partial writes better */
++		if (write(STDOUT_FILENO, buff, tlen) != tlen)
++			break;
+ 	}
+ }
+ 
+diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/isovfy.c cdrkit-1.1.9/genisoimage/diag/isovfy.c
+--- cdrkit-1.1.9.orig/genisoimage/diag/isovfy.c	2008-02-26 07:59:05 +0000
++++ cdrkit-1.1.9/genisoimage/diag/isovfy.c	2009-05-08 21:39:26 +0000
+@@ -140,8 +140,10 @@ static int	isonum_733(unsigned char * p)
+ static int	parse_rr(unsigned char * pnt, int len, int cont_flag);
+ static int	dump_rr(struct iso_directory_record * idr);
+ static void	check_tree(off_t file_addr, int file_size, off_t parent_addr);
++#ifdef DEBUG_check_path_tables
+ static void	check_path_tables(int typel_extent, int typem_extent, 
+ 										int path_table_size);
++#endif
+ static void	usage(int excode);
+ 
+ static int
+@@ -575,6 +577,7 @@ struct path_table_info {
+ 	unsigned short	parent;
+ };
+ 
++#ifdef DEBUG_check_path_tables
+ static void
+ check_path_tables(int typel_extent, int typem_extent, int path_table_size)
+ {
+@@ -650,6 +653,7 @@ check_path_tables(int typel_extent, int 
+ 		printf("%4.4d %4.4d %8.8x %s\n", count++, idx, extent, name);
+ 	}
+ }
++#endif
+ 
+ static void
+ usage(int excode)
+@@ -781,7 +785,7 @@ main(int argc, char *argv[])
+ 	path_table_size = isonum_733(ipd.path_table_size);
+ 
+ 	/* Enable this to get the dump of the path tables */
+-#if 0
++#ifdef DEBUG_check_path_tables
+ 	check_path_tables(typel_extent, typem_extent, path_table_size);
+ #endif
+ 
+diff -urpN cdrkit-1.1.9.orig/genisoimage/eltorito.c cdrkit-1.1.9/genisoimage/eltorito.c
+--- cdrkit-1.1.9.orig/genisoimage/eltorito.c	2008-02-26 07:59:05 +0000
++++ cdrkit-1.1.9/genisoimage/eltorito.c	2009-05-08 22:32:07 +0000
+@@ -607,10 +607,10 @@ fill_boot_desc(struct eltorito_defaultbo
+ 			"Error opening boot image file '%s' for update.\n",
+ 							de->whole_name);
+ #else
++			perror("open");
+ 			fprintf(stderr,
+ 			"Error opening boot image file '%s' for update.\n",
+ 							de->whole_name);
+-			perror("");
+ 			exit(1);
+ #endif
+ 		}
+@@ -652,7 +652,19 @@ fill_boot_desc(struct eltorito_defaultbo
+ #endif
+ 		}
+ 		/* End of file, set position to byte 8 */
+-		lseek(bootimage, (off_t)8, SEEK_SET);
++		if (lseek(bootimage, (off_t)8, SEEK_SET) == (off_t)-1) {
++#ifdef	USE_LIBSCHILY
++			comerr(
++			"Failed to lseek() in image file '%s'.\n",
++							de->whole_name);
++#else
++			perror("lseek");
++			fprintf(stderr,
++			"Failed to lseek() in image file '%s'.\n",
++							de->whole_name);
++			exit(1);
++#endif
++		}
+ 		memset(&bi_table, 0, sizeof (bi_table));
+ 		/* Is it always safe to assume PVD is at session_start+16? */
+ 		set_731(bi_table.bi_pvd, session_start + 16);
+@@ -660,7 +672,20 @@ fill_boot_desc(struct eltorito_defaultbo
+ 		set_731(bi_table.bi_length, de->size);
+ 		set_731(bi_table.bi_csum, bi_checksum);
+ 
+-		write(bootimage, &bi_table, sizeof (bi_table)); /* FIXME: check return value */
++		/* FIXME: handle partial writes better */
++		if (write(bootimage, &bi_table, sizeof (bi_table)) !=
++		    sizeof (bi_table)) {
++#ifdef	USE_LIBSCHILY
++			comerrno(EX_BAD,
++			"Failed to write into image file '%s'.\n",
++						de->whole_name);
++#else
++			fprintf(stderr,
++			"Failed to write into image file '%s'.\n",
++						de->whole_name);
++			exit(1);
++#endif
++		}
+ 		close(bootimage);
+ 	}
+ }/* fill_boot_desc(... */
+diff -urpN cdrkit-1.1.9.orig/genisoimage/jte.c cdrkit-1.1.9/genisoimage/jte.c
+--- cdrkit-1.1.9.orig/genisoimage/jte.c	2008-05-25 20:46:17 +0000
++++ cdrkit-1.1.9/genisoimage/jte.c	2009-05-08 21:28:32 +0000
+@@ -36,6 +36,8 @@
+ #include "vms.h"
+ #endif
+ 
++#include "md5.h"
++
+ /* Different types used in building our state list below */
+ #define JTET_FILE_MATCH 1
+ #define JTET_NOMATCH    2
+@@ -691,9 +693,9 @@ static void write_compressed_chunk(unsig
+ 		if (!uncomp_buf)
+ 		{
+ #ifdef	USE_LIBSCHILY
+-            comerr("failed to allocate %d bytes for template compression buffer\n", uncomp_size);
++            comerr("failed to allocate %lu bytes for template compression buffer\n", uncomp_size);
+ #else
+-            fprintf(stderr, "failed to allocate %d bytes for template compression buffer\n", uncomp_size);
++            fprintf(stderr, "failed to allocate %lu bytes for template compression buffer\n", uncomp_size);
+             exit(1);
+ #endif
+ 		}
+diff -urpN cdrkit-1.1.9.orig/icedax/toc.c cdrkit-1.1.9/icedax/toc.c
+--- cdrkit-1.1.9.orig/icedax/toc.c	2008-02-26 07:59:05 +0000
++++ cdrkit-1.1.9/icedax/toc.c	2009-05-08 22:18:11 +0000
+@@ -1071,7 +1071,8 @@ static int handle_userchoice(char *p, un
+ 	/* get user response. */
+ 	do {
+ 		fprintf(stderr, "please choose one (0-%u): ", nr);
+-		scanf("%u", &user_choice); /* FIXME: check return value */
++		if (scanf("%u", &user_choice) != 1)
++			user_choice = nr;
+ 	} while (user_choice > nr);
+ 
+ 	if (user_choice == nr)
+diff -urpN cdrkit-1.1.9.orig/wodim/isosize.c cdrkit-1.1.9/wodim/isosize.c
+--- cdrkit-1.1.9.orig/wodim/isosize.c	2008-02-26 07:59:05 +0000
++++ cdrkit-1.1.9/wodim/isosize.c	2009-05-08 22:24:58 +0000
+@@ -63,19 +63,22 @@ isosize(int f)
+ 	if (!S_ISREG(mode) && !S_ISBLK(mode) && !S_ISCHR(mode))
+ 		return ((Llong)-1);
+ 
+-	if (lseek(f, (off_t)(16L * 2048L), SEEK_SET) == -1)
++	if (lseek(f, (off_t)(16L * 2048L), SEEK_SET) == (off_t)-1)
+ 		return ((Llong)-1);
+ 
+ 	vp = (struct iso9660_pr_voldesc *) &vd;
+ 
+ 	do {
+-		read(f, &vd, sizeof (vd)); /* FIXME: check return value */
++		/* FIXME: handle partial reads better */
++		if (read(f, &vd, sizeof (vd)) != sizeof (vd))
++			return ((Llong)-1);
+ 		if (GET_UBYTE(vd.vd_type) == VD_PRIMARY)
+ 			break;
+ 
+ 	} while (GET_UBYTE(vd.vd_type) != VD_TERM);
+ 
+-	lseek(f, (off_t)0L, SEEK_SET);
++	if (lseek(f, (off_t)0L, SEEK_SET) == (off_t)-1)
++		return ((Llong)-1);
+ 
+ 	if (GET_UBYTE(vd.vd_type) != VD_PRIMARY)
+ 		return (-1L);
