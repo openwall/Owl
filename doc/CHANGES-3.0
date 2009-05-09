@@ -12,6 +12,13 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/05/06 -
+2009/05/08	Package: cdrkit;
+		Owl/build/installorder.conf
+New package: cdrkit is a suite of programs for recording CDs and DVDs,
+blanking CD-RW media, creating ISO-9660 filesystem images, extracting
+audio CD data, and more.
+
 2009/05/02	Package: e2fsprogs
 Updated to 1.41.5.
 
@@ -670,4 +677,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.146 2009/05/02 12:08:59 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.147 2009/05/09 01:03:37 solar Exp $
