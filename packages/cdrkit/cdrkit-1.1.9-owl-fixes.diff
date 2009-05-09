@@ -221,10 +221,10 @@ diff -urpN cdrkit-1.1.9.orig/genisoimage/jte.c cdrkit-1.1.9/genisoimage/jte.c
  		{
  #ifdef	USE_LIBSCHILY
 -            comerr("failed to allocate %d bytes for template compression buffer\n", uncomp_size);
-+            comerr("failed to allocate %lu bytes for template compression buffer\n", uncomp_size);
++            comerr("failed to allocate %lu bytes for template compression buffer\n", (unsigned long)uncomp_size);
  #else
 -            fprintf(stderr, "failed to allocate %d bytes for template compression buffer\n", uncomp_size);
-+            fprintf(stderr, "failed to allocate %lu bytes for template compression buffer\n", uncomp_size);
++            fprintf(stderr, "failed to allocate %lu bytes for template compression buffer\n", (unsigned long)uncomp_size);
              exit(1);
  #endif
  		}
