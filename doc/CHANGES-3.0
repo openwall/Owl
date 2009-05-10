@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/05/09	Package: hdparm
+Updated to 9.15.
+
 2009/05/06 -
 2009/05/09	Packages: cdrkit, mkisofs;
 		Owl/build/installorder.conf
@@ -678,4 +681,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.148 2009/05/09 06:24:34 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.149 2009/05/10 16:24:38 solar Exp $
