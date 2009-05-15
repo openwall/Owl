@@ -1,0 +1,11 @@
+--- libnids-1.23/src/libnids.3.orig	2006-05-04 16:30:32.000000000 +0000
++++ libnids-1.23/src/libnids.3	2009-05-14 20:07:07.000000000 +0000
+@@ -55,7 +55,7 @@
+ int
+ \fBnids_getfd\fR(void);
+ 
+-int
++void
+ \fBnids_register_chksum_ctl\fR(struct nids_chksum_ctl *, int);
+ 
+ void

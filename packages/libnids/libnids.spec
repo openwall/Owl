@@ -1,14 +1,15 @@
-# $Owl: Owl/packages/libnids/libnids.spec,v 1.19 2005/12/23 01:29:03 solar Exp $
+# $Owl: Owl/packages/libnids/libnids.spec,v 1.20 2009/05/15 04:39:45 mci Exp $
 
 Summary: NIDS E-component.
 Name: libnids
-Version: 1.20
+Version: 1.23
 Release: owl1
 Epoch: 1
 License: GPL
 Group: System Environment/Libraries
 URL: http://libnids.sourceforge.net
 Source: %name-%version.tar.gz
+Patch0: libnids-1.23-deb-man.diff
 PreReq: /sbin/ldconfig
 BuildRequires: libpcap-devel, libnet-devel >= 1:1.1
 BuildRoot: /override/%name-%version
@@ -30,9 +31,10 @@ building applications which use libnids, as well as documentation on libnids.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
-%configure --enable-shared
+%configure --disable-libglib --enable-shared
 %__make
 
 %install
@@ -55,6 +57,10 @@ rm -rf %buildroot
 %_libdir/libnids.a
 
 %changelog
+* Thu May 14 2009 Michail Litvak <mci-at-owl.openwall.com> 1:1.23-owl1
+- Updated to 1.23.
+- Added patch from Debian with small man page fix.
+
 * Fri Dec 23 2005 Solar Designer <solar-at-owl.openwall.com> 1:1.20-owl1
 - Updated to 1.20.
 
