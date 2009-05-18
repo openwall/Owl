@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.6 2009/05/09 05:34:24 solar Exp $
+# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.7 2009/05/18 01:39:45 solar Exp $
 
 %{?!BUILD_NETSCSID:	%define BUILD_NETSCSID 0}
 
 Summary: A collection of command-line CD/DVD recording utilities.
 Name: cdrkit
 Version: 1.1.9
-Release: owl2
+Release: owl3
 License: GPLv2
 Group: Applications/System
 URL: http://cdrkit.org
@@ -14,15 +14,17 @@ Source1: cdrkit-build
 Source2: cdrkit-install
 Source3: align.h
 Source4: xconfig.h
+Source10: README.ATAPI.setup
 # README-cmakeless is unused by this package.
 # It is specified here such that it gets included into the .src.rpm file.
-Source10: README-cmakeless
+Source99: README-cmakeless
 Patch0: cdrkit-1.1.9-owl-fixes.diff
 Patch1: cdrkit-1.1.9-owl-tmp.diff
 Patch2: cdrkit-1.1.9-owl-doc.diff
 Patch3: cdrkit-1.1.9-owl-rcfile.diff
 Patch4: cdrkit-1.1.9-owl-privacy.diff
 Patch5: cdrkit-1.1.9-rh-bound.diff
+Patch6: cdrkit-1.1.9-owl-messages.diff
 Provides: cdrecord = 9:2.01-12, dvdrecord = 0:0.1.5.1
 Obsoletes: cdrecord, dvdrecord
 Provides: mkisofs = 9:2.01-12
@@ -51,6 +53,7 @@ an independent project.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 sed -i '/^require v5\.8\.1;$/d' 3rd-party/dirsplit/dirsplit
 sed -i '1s,/usr/local,/usr,' doc/icedax/tracknames.pl
 chmod -x doc/icedax/tracknames.pl
@@ -71,6 +74,8 @@ find . -type f -name '*netscsid*' -print -delete
 
 mkdir build
 cp -v %_sourcedir/{align,xconfig}.h build/
+
+install -p %_sourcedir/README.ATAPI.setup doc/READMEs/
 
 %build
 CC=%__cc AR=%__ar CFLAGS='%optflags -fno-strict-aliasing -Wall -Wno-unused' \
@@ -104,6 +109,11 @@ ln -s wodim.1 man1/dvdrecord.1
 %_mandir/man?/*
 
 %changelog
+* Mon May 18 2009 Solar Designer <solar-at-owl.openwall.com> 1.1.9-owl3
+- Patched some confusing/erroneous messages from wodim(1).
+- Replaced README.ATAPI.setup with a version more useful on Owl (loosely
+based on the original file found in the included cdrkit documentation).
+
 * Sat May 09 2009 Solar Designer <solar-at-owl.openwall.com> 1.1.9-owl2
 - Ported the patches found in our mkisofs package (to be removed) to
 genisoimage.
