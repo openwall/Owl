@@ -1,0 +1,123 @@
+How to setup an IDE ATAPI CD-RW/DVD+-RW recorder
+================================================
+
+The first section of this guide should be applicable to most installs with
+Linux kernel 2.6.x.  For installs with kernel 2.4.x continue reading below.
+
+
+Kernel 2.6.x
+============
+
+If you have just one CD writer in your computer, CD-writing should work almost
+out of the box.  There should be a symbolic link /dev/cdrw that points to your
+actual CD writer device (e.g., to /dev/hdc).  If the link is not present (such
+as when the system is not using udev/devfs and the link hasn't been created)
+or if you want to use a different device as the default, you can configure the
+device in /etc/wodim.conf:
+
+	CDR_DEVICE=/dev/hdd
+
+The above would configure the default device to be /dev/hdd, i.e. the slave
+device on the secondary IDE channel.
+
+You can always override this default setting with wodim's "dev" option:
+
+	wodim dev=/dev/hdc ...
+
+
+Kernel 2.4.x (for 2.6.x see above)
+==================================
+
+Where we start:
+	Linux kernel 2.4.x
+	One IDE ATAPI CD-RW or DVD-RW drive
+
+1. Make sure your kernel is compiled with the CONFIG_BLK_DEV_IDESCSI,
+CONFIG_SCSI, CONFIG_BLK_DEV_SR, and CONFIG_CHR_DEV_SG options.  If not, make
+and install a new kernel build or compile the above features as kernel
+modules (and load them before you run "wodim").
+
+2. Try "dmesg | grep hd.:" or "grep hd.: /var/run/dmesg.boot" to find out
+where your CD/DVD writer device is connected to (its /dev/hd? name).
+
+3. In your bootloader configuration file, such as /etc/lilo.conf, find or add
+a line where you can append additional kernel parameters.  This is "append="
+in lilo.conf.  If your CD/DVD writer is on /dev/hdc, append "hdc=ide-scsi".
+The line should look like:
+
+	append="hdc=ide-scsi"
+
+This defines what IDE ATAPI devices should be mapped to the SCSI layer.
+
+Save the file, reinstall the bootloader (run "/sbin/lilo").
+
+4. If you needed to make any changes to your kernel build and/or to the
+bootloader above, reboot the system.  While booting back up, you should see
+lines like these:
+
+SCSI subsystem driver Revision: 1.00
+scsi0 : SCSI host adapter emulation for IDE ATAPI devices
+  Vendor: _NEC      Model: DVD_RW ND-2500A   Rev: 1.0B
+  Type:   CD-ROM                             ANSI SCSI revision: 02
+Attached scsi CD-ROM sr0 at scsi0, channel 0, id 0, lun 0
+sr0: scsi3-mmc drive: 40x/40x writer cd/rw xa/form2 cdda tray
+
+Your old IDE ATAPI device virtually doesn't exist any longer, you cannot refer
+to its /dev/hd? name.  Use the SCSI equivalent instead, /dev/scd0 or /dev/sr0.
+
+5. Setup the proper device file names (links):
+
+"wodim" needs /dev/sr* devices, whereas your system might provide /dev/scd*
+ones only (these are alternate names for the same things).  Thus, you might
+need to create this link:
+
+	ln /dev/scd0 /dev/sr0
+
+(it must be a hard link, not a symlink, for "wodim" to work).
+
+Now setup symlinks making this your default CD device:
+
+	ln -s scd0 /dev/cdrom
+	ln -s scd0 /dev/cdrw
+
+Check the new "SCSI" settings:
+
+	wodim -scanbus
+
+This might print something like:
+
+scsibus0:
+        0,0,0     0) '_NEC    ' 'DVD_RW ND-2500A ' '1.0B' Removable CD-ROM
+        0,1,0     1) *
+        0,2,0     2) *
+        0,3,0     3) *
+        0,4,0     4) *
+        0,5,0     5) *
+        0,6,0     6) *
+        0,7,0     7) *
+
+Setup wodim's environment - create and/or edit /etc/wodim.conf:
+
+CDR_DEVICE=cdrw
+CDR_FIFOSIZE=16M
+cdrw=ATAPI:0,0
+
+6. It's done!  Insert a CD or DVD disc and try "wodim -v -toc".  To write your
+first disc, start with:
+
+	genisoimage -vrJ /directory/to/be/written | wodim -v -dummy -
+
+When you're ready to start burning for real, repeat the command removing the
+"-dummy" option.  In case you want to experiment with a CD-RW, DVD-RW, or
+DVD+RW disc, which might have been in use, add a blanking option:
+
+	genisoimage -vrJ /directory/to/be/written | wodim -v blank=fast -
+
+Please refer to the genisoimage(1) and wodim(1) manual pages for details.
+
+7. If you wish to allow non-root users to write CDs/DVDs, you may, at your own
+risk, give them permission to do so (and likely much more than that...)
+Please refer to README.suidroot to get informed of the approach and of the
+security risk.
+
+$Owl: Owl/packages/cdrkit/README.ATAPI.setup,v 1.1 2009/05/18 01:39:06 solar Exp $
