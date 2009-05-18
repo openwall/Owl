@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.7 2009/05/18 01:39:45 solar Exp $
+# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.8 2009/05/18 01:50:32 solar Exp $
 
 %{?!BUILD_NETSCSID:	%define BUILD_NETSCSID 0}
 
@@ -75,7 +75,7 @@ find . -type f -name '*netscsid*' -print -delete
 mkdir build
 cp -v %_sourcedir/{align,xconfig}.h build/
 
-install -p %_sourcedir/README.ATAPI.setup doc/READMEs/
+install -pm 644 %_sourcedir/README.ATAPI.setup doc/READMEs/
 
 %build
 CC=%__cc AR=%__ar CFLAGS='%optflags -fno-strict-aliasing -Wall -Wno-unused' \
