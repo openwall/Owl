@@ -1,0 +1,51 @@
+diff -urp cdrkit-1.1.9.orig/libusal/scsi-linux-ata.c cdrkit-1.1.9/libusal/scsi-linux-ata.c
+--- cdrkit-1.1.9.orig/libusal/scsi-linux-ata.c	2008-02-25 11:14:07 +0000
++++ cdrkit-1.1.9/libusal/scsi-linux-ata.c	2009-05-18 00:08:24 +0000
+@@ -172,7 +172,7 @@ static int
+ usalo_ahelp(SCSI *usalp, FILE *f)
+ {
+ 	__usal_help(f, "ATA", "ATA Packet specific SCSI transport",
+-		"ATAPI:", "bus,target,lun", "ATAPI:1,2,0", TRUE, FALSE);
++		"ATAPI:", "bus,target,lun", "ATAPI:0,0,0", TRUE, FALSE);
+ 	return (0);
+ }
+ 
+@@ -189,12 +189,14 @@ usalo_aopen(SCSI *usalp, char *device)
+ 	register int	l;
+ 		int	nopen = 0;
+ 
++#if 0
+ 	if (usalp->overbose)
+ 		fprintf(stderr, "Warning: Using ATA Packet interface.\n");
+ 	if (usalp->overbose) {
+ 		fprintf(stderr, "Warning: The related Linux kernel interface code seems to be unmaintained.\n");
+ 		fprintf(stderr, "Warning: There is absolutely NO DMA, operations thus are slow.\n");
+ 	}
++#endif
+ 
+ 	log(("\n<<<<<<<<<<<<<<<<  LOGGING ON >>>>>>>>>>>>>>>>>\n"));
+ 	if (bus >= MAX_SCHILLY_HOSTS || target >= MAX_TGT || lun >= MAX_LUN) {
+diff -urp cdrkit-1.1.9.orig/libusal/scsi-linux-sg.c cdrkit-1.1.9/libusal/scsi-linux-sg.c
+--- cdrkit-1.1.9.orig/libusal/scsi-linux-sg.c	2008-02-26 08:02:13 +0000
++++ cdrkit-1.1.9/libusal/scsi-linux-sg.c	2009-05-18 00:09:30 +0000
+@@ -364,7 +364,7 @@ usalo_help(SCSI *usalp, FILE *f)
+ 	usalo_ahelp(usalp, f);
+ #endif
+ 	__usal_help(f, "ATA", "ATA Packet specific SCSI transport using sg interface",
+-		"ATA:", "bus,target,lun", "1,2,0", TRUE, FALSE);
++		"ATA:", "bus,target,lun", "0,0,0", TRUE, FALSE);
+ 	return (0);
+ }
+ 
+diff -urp cdrkit-1.1.9.orig/wodim/wodim.c cdrkit-1.1.9/wodim/wodim.c
+--- cdrkit-1.1.9.orig/wodim/wodim.c	2008-02-26 07:59:05 +0000
++++ cdrkit-1.1.9/wodim/wodim.c	2009-05-18 00:04:58 +0000
+@@ -424,7 +424,7 @@ int main(int argc, char *argv[])
+ 
+ 	if(!usalp)
+ 	{
+-		errmsg("\nCannot open SCSI driver!\n"
++		errmsgno(EX_BAD, "Cannot open SCSI driver!\n"
+ 				"For possible targets try 'wodim --devices' or 'wodim -scanbus'.\n"
+ 				"For possible transport specifiers try 'wodim dev=help'.\n"
+ 				"For IDE/ATAPI devices configuration, see the file README.ATAPI.setup from\n"
