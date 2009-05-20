@@ -1,14 +1,13 @@
---- nmap-4.62/nmap.cc.orig	2008-04-24 03:23:01 +0000
-+++ nmap-4.62/nmap.cc	2008-05-13 19:31:18 +0000
-@@ -2628,11 +2628,14 @@ int fileexistsandisreadable(char *pathna
-
+--- nmap-4.76/nmap.cc.orig	2008-09-10 18:32:35.000000000 +0000
++++ nmap-4.76/nmap.cc	2009-05-18 14:03:03.000000000 +0000
+@@ -2692,10 +2692,13 @@
+ 
    struct stat st;
-
+ 
 -  if (stat(pathname_buf, &st) == -1)
 -    status = 0;
 -  else if (access(pathname_buf, R_OK) != -1)
 -    status = S_ISDIR(st.st_mode) ? 2 : 1;
--
 +  if (access(pathname_buf, R_OK) == 0 && stat(pathname_buf, &st) == 0) {
 +      if (S_ISREG(st.st_mode)) {
 +      	status = 1;
@@ -16,7 +15,6 @@
 +	status = 2;
 +      }
 +  }
-+
+ 
    free(pathname_buf);
    return status;
- }

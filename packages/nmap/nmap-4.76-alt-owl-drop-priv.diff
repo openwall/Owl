@@ -1,5 +1,5 @@
---- nmap-4.62/tcpip.cc.orig	2008-05-14 22:28:28 +0000
-+++ nmap-4.62/tcpip.cc	2008-05-14 22:29:01 +0000
+--- nmap-4.76/tcpip.cc.orig	2009-05-18 19:23:27.000000000 +0000
++++ nmap-4.76/tcpip.cc	2009-05-18 19:47:38.000000000 +0000
 @@ -105,6 +105,7 @@
  #include "portreasons.h"
  #include <dnet.h>
@@ -8,7 +8,7 @@
  #include "NmapOps.h"
  #include "Target.h"
  #include "utils.h"
-@@ -2511,6 +2512,14 @@ void set_pcap_filter(const char *device,
+@@ -2674,6 +2675,14 @@
    pcap_freecode(&fcode);
  }
  
@@ -20,10 +20,10 @@
 +     routefp = fopen("/proc/net/route", "r");
 +}
 +
- /* The 'dev' passed in must be at least 32 bytes long */
- int ipaddr2devname( char *dev, const struct in_addr *addr ) {
- struct interface_info *mydevs;
-@@ -2908,7 +2917,6 @@ struct sys_route *getsysroutes(int *howm
+ /* The 'dev' passed in must be at least 32 bytes long. Returns 0 on success. */
+ int ipaddr2devname(char *dev, const struct in_addr *addr) {
+   struct interface_info *ifaces;
+@@ -3050,7 +3059,6 @@
    int route_capacity = 128;
    static struct sys_route *routes = NULL;
    static int numroutes = 0;
@@ -31,7 +31,7 @@
    char buf[1024];
    char iface[16];
    char *p, *endptr;
-@@ -2925,7 +2933,7 @@ struct sys_route *getsysroutes(int *howm
+@@ -3067,7 +3075,7 @@
      routes = (struct sys_route *) safe_zalloc(route_capacity * sizeof(struct sys_route));
      ifaces = getinterfaces(&numifaces);
      /* First let us try Linux-style /proc/net/route */
@@ -40,7 +40,7 @@
      /* Kill the first line (column headers) */
      if (routefp && fgets(buf, sizeof(buf), routefp)) {
        while(fgets(buf,sizeof(buf), routefp)) {
-@@ -3008,6 +3016,8 @@ struct sys_route *getsysroutes(int *howm
+@@ -3150,6 +3158,8 @@
  	  routes = (struct sys_route *) safe_realloc(routes, route_capacity * sizeof(struct sys_route));
  	}
        }
@@ -49,8 +49,8 @@
      } else {
        struct dnet_collector_route_nfo dcrn;
        dcrn.routes = routes;
---- nmap-4.62/MACLookup.cc.orig	2008-03-31 23:05:53 +0000
-+++ nmap-4.62/MACLookup.cc	2008-05-12 20:26:58 +0000
+--- nmap-4.76/MACLookup.cc.orig	2008-05-22 20:45:32.000000000 +0000
++++ nmap-4.76/MACLookup.cc	2009-05-18 14:06:28.000000000 +0000
 @@ -107,6 +107,7 @@
  #include "nmap.h"
  #include "nmap_error.h"
@@ -59,7 +59,7 @@
  
  extern NmapOps o;
  
-@@ -132,7 +133,7 @@ static inline int MACTableHash(int prefi
+@@ -132,7 +133,7 @@
    return prefix % table_capacity;
  }
  
@@ -68,10 +68,10 @@
    static int initialized = 0;
    if (initialized) return;
    initialized = 1;
---- nmap-4.62/Makefile.in.orig	2008-04-28 17:53:32 +0000
-+++ nmap-4.62/Makefile.in	2008-05-12 19:16:01 +0000
-@@ -65,11 +65,11 @@
- NSESTDLIB=nsestdlib
+--- nmap-4.76/Makefile.in.orig	2008-09-05 05:32:06.000000000 +0000
++++ nmap-4.76/Makefile.in	2009-05-18 14:06:28.000000000 +0000
+@@ -64,11 +64,11 @@
+ NSE_OBJS=nse_main.o nse_nsock.o nse_init.o nse_fs.o nse_nmaplib.o nse_debug.o nse_pcrelib.o nse_binlib.o nse_hash.o nse_bit.o
  endif
  
 -export SRCS = main.cc nmap.cc targets.cc tcpip.cc nmap_error.cc utils.cc idle_scan.cc osscan.cc osscan2.cc output.cc scan_engine.cc timing.cc charpool.cc services.cc protocols.cc nmap_rpc.cc portlist.cc NmapOps.cc TargetGroup.cc Target.cc FingerPrintResults.cc service_scan.cc NmapOutputTable.cc MACLookup.cc nmap_tty.cc nmap_dns.cc traceroute.cc portreasons.cc $(NSE_SRC) @COMPAT_SRCS@
@@ -85,10 +85,10 @@
  
  # %.o : %.cc -- nope this is a GNU extension
  .cc.o:
---- nmap-4.62/configure.ac.orig	2008-04-28 17:53:32 +0000
-+++ nmap-4.62/configure.ac	2008-05-12 19:20:11 +0000
-@@ -648,6 +648,50 @@
-         AC_DEFINE(HAVE_IP_IP_SUM)
+--- nmap-4.76/configure.ac.orig	2009-05-18 19:37:51.000000000 +0000
++++ nmap-4.76/configure.ac	2009-05-18 19:44:25.000000000 +0000
+@@ -702,6 +702,50 @@
+         AC_DEFINE(HAVE_IP_IP_SUM, 1, [Define to 1 for ip_sum member])
  fi
  
 +try_drop_priv=no
@@ -138,8 +138,8 @@
  dnl Checks for library functions.
  AC_CHECK_FUNCS(strerror)
  RECVFROM_ARG6_TYPE
---- nmap-4.62/nmap.cc.orig	2008-04-24 03:23:01 +0000
-+++ nmap-4.62/nmap.cc	2008-05-12 20:25:47 +0000
+--- nmap-4.76/nmap.cc.orig	2008-09-10 18:32:35.000000000 +0000
++++ nmap-4.76/nmap.cc	2009-05-18 14:06:28.000000000 +0000
 @@ -105,6 +105,7 @@
  #include "scan_engine.h"
  #include "idle_scan.h"
@@ -148,7 +148,7 @@
  #include "NmapOps.h"
  #include "MACLookup.h"
  #include "traceroute.h"
-@@ -1361,6 +1362,8 @@ int nmap_main(int argc, char *argv[]) {
+@@ -1410,6 +1411,8 @@
        o.sendpref = PACKET_SEND_ETH_STRONG;
    }
  
@@ -157,8 +157,8 @@
    /* By now, we've got our port lists.  Give the user a warning if no 
     * ports are specified for the type of scan being requested.  Other things
     * (such as OS ident scan) might break cause no ports were specified,  but
---- nmap-4.62/nmap_dns.cc.orig	2008-04-09 02:11:20 +0000
-+++ nmap-4.62/nmap_dns.cc	2008-05-12 19:07:16 +0000
+--- nmap-4.76/nmap_dns.cc.orig	2008-08-21 09:24:35.000000000 +0000
++++ nmap-4.76/nmap_dns.cc	2009-05-18 14:06:28.000000000 +0000
 @@ -164,6 +164,7 @@
  #include <algorithm>
  
@@ -167,7 +167,7 @@
  #include "NmapOps.h"
  #include "nmap_dns.h"
  #include "nsock.h"
-@@ -1074,7 +1075,7 @@ const char *lookup_cached_host(u32 ip) {
+@@ -1084,7 +1085,7 @@
    return tmp;
  }
  
@@ -176,8 +176,8 @@
    static int initialized = 0;
    if (initialized) return;
    initialized = 1;
---- nmap-4.62/nmap_rpc.cc.orig	2008-02-28 18:52:06 +0000
-+++ nmap-4.62/nmap_rpc.cc	2008-05-12 19:07:16 +0000
+--- nmap-4.76/nmap_rpc.cc.orig	2008-05-22 20:45:32.000000000 +0000
++++ nmap-4.76/nmap_rpc.cc	2009-05-18 14:06:28.000000000 +0000
 @@ -103,6 +103,7 @@
  
  
@@ -186,7 +186,7 @@
  #include "NmapOps.h"
  #include "Target.h"
  #include "charpool.h"
-@@ -122,7 +123,7 @@ static unsigned long rpc_xid_base = (uns
+@@ -122,7 +123,7 @@
  static size_t tcp_readlen=0; /* used in get_rpc_results but can be reset in 
  			    send_rpc_query */
  
@@ -195,17 +195,17 @@
    static int services_initialized = 0;
    if (services_initialized) return;
    services_initialized = 1;
---- nmap-4.62/protocols.cc.orig	2008-02-28 18:52:06 +0000
-+++ nmap-4.62/protocols.cc	2008-05-12 20:32:26 +0000
+--- nmap-4.76/protocols.cc.orig	2008-05-22 20:45:32.000000000 +0000
++++ nmap-4.76/protocols.cc	2009-05-18 14:06:28.000000000 +0000
 @@ -100,6 +100,7 @@
- /* $Id: protocols.cc 6858 2008-02-28 18:52:06Z fyodor $ */
+ /* $Id: protocols.cc 7640 2008-05-22 20:45:32Z fyodor $ */
  
  #include "protocols.h"
 +#include "droppriv.h"
  #include "NmapOps.h"
  #include "services.h"
  #include "charpool.h"
-@@ -111,7 +112,7 @@ static int numipprots = 0;
+@@ -111,7 +112,7 @@
  static struct protocol_list *protocol_table[PROTOCOL_TABLE_SIZE];
  static int protocols_initialized = 0;
  
@@ -214,17 +214,17 @@
    if (protocols_initialized) return 0;
  
    char filename[512];
---- nmap-4.62/services.cc.orig	2008-02-28 18:52:06 +0000
-+++ nmap-4.62/services.cc	2008-05-12 20:33:13 +0000
-@@ -100,6 +100,7 @@
- /* $Id: services.cc 6858 2008-02-28 18:52:06Z fyodor $ */
+--- nmap-4.76/services.cc.orig	2008-09-05 02:06:29.000000000 +0000
++++ nmap-4.76/services.cc	2009-05-18 14:06:28.000000000 +0000
+@@ -103,6 +103,7 @@
+ #include <map>
  
  #include "services.h"
 +#include "droppriv.h"
  #include "NmapOps.h"
  #include "charpool.h"
  #include "nmap_error.h"
-@@ -113,7 +114,7 @@ static struct service_list *sorted_servi
+@@ -145,7 +146,7 @@
  static int services_initialized = 0;
  static int ratio_format = 0; // 0 = /etc/services no-ratio format. 1 = new nmap format
  
@@ -233,8 +233,8 @@
    if (services_initialized) return 0;
  
    char filename[512];
---- nmap-4.62/droppriv.cc.orig	2008-05-14 22:28:34 +0000
-+++ nmap-4.62/droppriv.cc	2008-05-12 22:10:40 +0000
+--- /dev/null	2006-10-31 21:10:30.000000000 +0000
++++ nmap-4.76/droppriv.cc	2008-05-12 22:10:40.000000000 +0000
 @@ -0,0 +1,95 @@
 +#include "nmap.h"
 +#include "service_scan.h"
@@ -331,8 +331,8 @@
 +}
 +
 +#endif /* NMAP_USER */
---- nmap-4.62/droppriv.h.orig	2008-05-14 22:28:34 +0000
-+++ nmap-4.62/droppriv.h	2007-10-07 11:39:28 +0000
+--- /dev/null	2006-10-31 21:10:30.000000000 +0000
++++ nmap-4.76/droppriv.h	2007-10-07 11:39:28.000000000 +0000
 @@ -0,0 +1,13 @@
 +#ifndef NMAP_DROPPRIV_H__
 +#define NMAP_DROPPRIV_H__

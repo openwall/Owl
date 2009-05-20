@@ -1,21 +1,21 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.22 2008/05/18 20:14:52 mci Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.23 2009/05/20 19:42:57 mci Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
-Version: 4.62
+Version: 4.76
 Release: owl1
 License: GPL
 Group: Applications/System
 URL: http://nmap.org/
 %define srcname nmap-%version
 Source: http://download.insecure.org/nmap/dist/%srcname.tar.bz2
-Patch0: nmap-4.62-owl-nse_ldflags.diff
-Patch1: nmap-4.62-alt-owl-autoheader.diff
-Patch2: nmap-4.62-owl-warnings.diff
-Patch3: nmap-4.62-alt-owl-drop-priv.diff
-Patch4: nmap-4.62-alt-owl-dot-dir.diff
-Patch5: nmap-4.62-alt-owl-fileexistsandisreadable.diff
-Patch6: nmap-4.62-svn-20080505-Makefile.diff
+Patch0: nmap-4.76-owl-nse_ldflags.diff
+Patch1: nmap-4.76-alt-owl-autoheader.diff
+Patch2: nmap-4.76-owl-warnings.diff
+Patch3: nmap-4.76-alt-owl-drop-priv.diff
+Patch4: nmap-4.76-alt-owl-dot-dir.diff
+Patch5: nmap-4.76-alt-owl-fileexistsandisreadable.diff
+Patch6: nmap-4.76-owl-include.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
 BuildRequires: openssl-devel >= 0.9.7g-owl1
@@ -51,6 +51,7 @@ autoconf
 	--without-liblua \
 	--with-user=nmap \
 	--with-chroot-empty=/var/empty
+touch makefile.dep
 %__make
 
 %install
@@ -70,6 +71,10 @@ grep -q ^nmap: /etc/passwd ||
 %_datadir/nmap
 
 %changelog
+* Mon May 18 2009 Michail Litvak <mci-at-owl.openwall.com> 4.76-owl1
+- Updated to 4.76.
+- Updated patches.
+
 * Sun May 18 2008 Michail Litvak <mci-at-owl.openwall.com> 4.62-owl1
 - Updated to 4.62.
 - Updated patches.
