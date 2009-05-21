@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.23 2009/05/20 19:42:57 mci Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.24 2009/05/21 21:12:32 solar Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
@@ -6,9 +6,10 @@ Version: 4.76
 Release: owl1
 License: GPL
 Group: Applications/System
-URL: http://nmap.org/
+URL: http://nmap.org
 %define srcname nmap-%version
-Source: http://download.insecure.org/nmap/dist/%srcname.tar.bz2
+Source: http://nmap.org/dist/%srcname.tar.bz2
+# GnuPG signature: http://nmap.org/dist/sigs/%srcname.tar.bz2.gpg.txt
 Patch0: nmap-4.76-owl-nse_ldflags.diff
 Patch1: nmap-4.76-alt-owl-autoheader.diff
 Patch2: nmap-4.76-owl-warnings.diff
