@@ -12,6 +12,14 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/05/06 -
+2009/05/22	Packages: cdrkit, mkisofs, owl-dev;
+		Owl/build/installorder.conf
+New package: cdrkit is a suite of programs for recording CDs and DVDs,
+blanking CD-RW media, creating ISO-9660 filesystem images, extracting
+audio CD data, and more.  This obsoletes our mkisofs source package,
+which was directly based on cdrtools (of which cdrkit is a fork).
+
 2009/05/21	Package: nmap
 Updated to 4.76.
 
@@ -20,14 +28,6 @@ Updated to 1.23.
 
 2009/05/09	Package: hdparm
 Updated to 9.15.
-
-2009/05/06 -
-2009/05/09	Packages: cdrkit, mkisofs;
-		Owl/build/installorder.conf
-New package: cdrkit is a suite of programs for recording CDs and DVDs,
-blanking CD-RW media, creating ISO-9660 filesystem images, extracting
-audio CD data, and more.  This obsoletes our mkisofs source package,
-which was directly based on cdrtools (of which cdrkit is a fork).
 
 2009/05/02	Package: e2fsprogs
 Updated to 1.41.5.
@@ -687,4 +687,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.151 2009/05/21 21:03:02 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.152 2009/05/21 22:08:33 solar Exp $
