@@ -1,11 +1,11 @@
 diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
---- MAKEDEV-2.5.2.orig/MAKEDEV	Wed Mar  1 22:16:37 2000
-+++ MAKEDEV-2.5.2/MAKEDEV	Tue Apr 18 18:44:10 2006
+--- MAKEDEV-2.5.2.orig/MAKEDEV	2000-03-01 22:16:37 +0000
++++ MAKEDEV-2.5.2/MAKEDEV	2009-05-21 20:27:49 +0000
 @@ -1,6 +1,11 @@
  #!/bin/bash -
  
 -RCSID='$Id: MAKEDEV 2.3 1997/09/29 19:03:13 johnsonm Exp $'
-+VERSION='MAKEDEV 2.5.2-0.11-owl1'
++VERSION='MAKEDEV 2.5.2-0.12-owl1'
 +
 +# This version of MAKEDEV is based on work of many people.  The script was
 +# initially written by Nick Holloway, and then maintained by Michael K.
@@ -168,13 +168,13 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
 +				;;
 +			tts/%d)
 +				device=ttyS
-+				;;
-+			cua/%d)
-+				device=cua
  				;;
 -			*)
 -				eval "major_$device=$major"
 -				devices="$devices $device"
++			cua/%d)
++				device=cua
++				;;
 +			pts/%d)
 +				device=pts
 +				;;
@@ -492,7 +492,15 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		for part in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
  		do
  			makedev md$part b $major $part $disk
-@@ -919,15 +1065,15 @@
+@@ -816,6 +962,7 @@
+ 		major=`Major sr 11` || continue
+ 		unit=`suffix $arg scd`
+ 		makedev scd$unit b $major $unit $cdrom
++		makedev sr$unit b $major $unit $cdrom
+ 		;;
+ 	sonycd)
+ 		major=`Major cdu31a` || continue
+@@ -919,15 +1066,15 @@
  		minor=0
  		until [ $minor -gt 63 ]
  		do
@@ -512,7 +520,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  			minor=`math $minor + 1`
  		done
  		symlink video video0
-@@ -937,13 +1083,13 @@
+@@ -937,13 +1084,13 @@
  		minor=0
  		until [ $minor -gt 1 ]
  		do
@@ -529,7 +537,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		;;
  	i2c)
  		major=`Major i2c 89` || continue
-@@ -968,16 +1114,16 @@
+@@ -968,16 +1115,16 @@
  		makedev srnd1 c 110 1 $private
  		;;
  	fgrab)
@@ -551,7 +559,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		done
  		;;
  	sg)
-@@ -1003,7 +1149,7 @@
+@@ -1003,7 +1150,7 @@
  		;;
  	fd)
  		# not really devices, we use the /proc filesystem
@@ -560,7 +568,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		symlink stdin  fd/0
  		symlink stdout fd/1
  		symlink stderr fd/2
-@@ -1036,15 +1182,31 @@
+@@ -1036,15 +1183,31 @@
  		;;
  	apm)
  		major=`Major apm_bios` || continue
@@ -571,10 +579,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		major=`Major dcf` || continue
 -		makedev $arg c $major 0 $system
 +		makedev $arg c $major 0 $private
- 		;;
--	helloworld)
--		major=`Major hw` || continue
--		makedev helloworld c $major 0 $public
++		;;
 +	usb)
 +		major=`Major usb 180`
 +		if [ "$opt_d" ]; then
@@ -587,7 +592,10 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
 +			makedev usb/lp$i    c $major $i $printer
 +			makedev usb/mouse$i c $major `math $i + 16` $mouse
 +		done
-+		;;
+ 		;;
+-	helloworld)
+-		major=`Major hw` || continue
+-		makedev helloworld c $major 0 $public
 +	fb)
 +		major=`Major fb 29`
 +		for i in 0 1 2 3 # up to 7
@@ -597,7 +605,7 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		;;
  	update)
  		if [ ! "$devices" ]
-@@ -1080,8 +1242,8 @@
+@@ -1080,8 +1243,8 @@
  			exec 3<&-
  		fi
  		create="$create "`cvt $devs`
@@ -608,3 +616,31 @@ diff -ur MAKEDEV-2.5.2.orig/MAKEDEV MAKEDEV-2.5.2/MAKEDEV
  		[ "$opt_n" ] && continue
  		for device in $devices
  		do
+diff -ur MAKEDEV-2.5.2.orig/MAKEDEV.man MAKEDEV-2.5.2/MAKEDEV.man
+--- MAKEDEV-2.5.2.orig/MAKEDEV.man	1999-03-26 00:29:05 +0000
++++ MAKEDEV-2.5.2/MAKEDEV.man	2009-05-21 20:41:11 +0000
+@@ -1,5 +1,4 @@
+-.\" $Id: MAKEDEV.man,v 2.2 1995/05/21 17:55:30 alfie Exp $
+-.TH MAKEDEV 8 "14th August 1994" Linux "Linux Programmer's Manual"
++.TH MAKEDEV 8 "" Linux
+ .SH NAME
+ MAKEDEV \- create devices
+ .SH SYNOPSIS
+@@ -389,7 +388,13 @@
+ that is no longer the case.  To see what network devices are known by the
+ kernel, look at /proc/net/dev.
+ .SH "SEE ALSO"
+-Linux Allocated Devices, maintained by H.\ Peter Anvin,
+-<Peter.Anvin@linux.org>.
+-.SH AUTHOR
+-Nick Holloway, <Nick.Hollowa
++Linux Allocated Devices, available at:
++.PP
++http://www.lanana.org/docs/device-list/
++.PP
++and also as Documentation/devices.txt in the Linux kernel source tree.
++.SH AUTHORS
++This MAKEDEV script was initially written by Nick Holloway,
++and then maintained by Michael K. Johnson
++and later by Nalin Dahyabhai of Red Hat.
++Finally, it has been modified for Owl.

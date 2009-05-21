@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.23 2006/04/19 04:31:16 solar Exp $
+# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.24 2009/05/21 21:01:34 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
-Version: 0.11
+Version: 0.12
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -39,7 +39,7 @@ cd %buildroot/dev
 ./MAKEDEV --touch generic
 
 # Restrict the permissions as we don't set the correct groups, yet
-find %buildroot/dev ! -type d -size 0 -print0 | xargs -0 chmod go-rwx
+find %buildroot/dev ! -type d -size 0 -print0 | xargs -0 chmod go-rwx --
 
 # Build the filelist
 cd $RPM_BUILD_DIR/MAKEDEV-2.5.2
@@ -67,6 +67,11 @@ echo "Creating device files"
 %files -f filelist
 
 %changelog
+* Fri May 22 2009 Solar Designer <solar-at-owl.openwall.com> 0.12-owl1
+- Create /dev/sr* devices (needed for cdrkit), not just /dev/scd*.
+- Minor updates to the MAKEDEV(8) man page (to the reference to "Linux
+Allocated Devices" and to the AUTHORS section).
+
 * Tue Apr 18 2006 Gremlin from Kremlin <gremlin-at-owl.openwall.com> 0.11-owl1
 - /dev/cciss/cXdYpZ for HP CCISS RAID
 
