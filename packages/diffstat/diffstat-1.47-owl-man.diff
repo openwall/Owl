@@ -1,0 +1,11 @@
+--- diffstat-1.47/diffstat.1.orig	2008-08-07 00:32:56.000000000 +0000
++++ diffstat-1.47/diffstat.1	2009-05-23 19:37:42.000000000 +0000
+@@ -192,7 +192,7 @@
+ to approximate modified lines for the \fB-m\fP option.
+ .SH SEE ALSO
+ .PP
+-diff (1).
++.BR diff (1).
+ .SH AUTHOR
+ .PP
+ Thomas Dickey <dickey@invisible-island.net>.

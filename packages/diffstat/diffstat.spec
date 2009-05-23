@@ -1,14 +1,14 @@
-# $Owl: Owl/packages/diffstat/diffstat.spec,v 1.12 2007/10/17 00:06:15 ldv Exp $
+# $Owl: Owl/packages/diffstat/diffstat.spec,v 1.13 2009/05/23 20:23:05 mci Exp $
 
 Summary: A utility which provides statistics based on the output of diff.
 Name: diffstat
-Version: 1.45
+Version: 1.47
 Release: owl1
 Group: Development/Tools
 License: distributable
 URL: http://invisible-island.net/diffstat/
 Source: ftp://dickey.his.com/diffstat/%name-%version.tgz
-Patch: diffstat-1.45-owl-man.diff
+Patch: diffstat-1.47-owl-man.diff
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
 
@@ -37,6 +37,9 @@ rm -rf %buildroot
 %_mandir/man1/*
 
 %changelog
+* Sat May 23 2009 Michail Litvak <mci-at-owl.openwall.com> 1.47-owl1
+- Updated to 1.47.
+
 * Wed Oct 17 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.45-owl1
 - Updated to 1.45.
 
