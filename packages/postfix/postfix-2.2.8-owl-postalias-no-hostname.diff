@@ -1,0 +1,14 @@
+diff -ur postfix-2.2.8.orig/src/postalias/postalias.c postfix-2.2.8/src/postalias/postalias.c
+--- postfix-2.2.8.orig/src/postalias/postalias.c	2005-03-13 23:24:45 +0000
++++ postfix-2.2.8/src/postalias/postalias.c	2009-05-23 04:46:29 +0000
+@@ -386,8 +386,10 @@
+     vstring_sprintf(value_buffer, "%010ld", (long) time((time_t *) 0));
+ #if (defined(HAS_NIS) || defined(HAS_NISPLUS))
+     mkmap_append(mkmap, "YP_LAST_MODIFIED", STR(value_buffer));
++#if 0
+     mkmap_append(mkmap, "YP_MASTER_NAME", var_myhostname);
+ #endif
++#endif
+ 
+     /*
+      * Close the alias database, and release the lock.

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.36.2.1 2008/08/23 21:25:20 solar Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.36.2.2 2009/05/23 04:58:16 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
 Version: 2.2.8
-Release: owl2
+Release: owl3
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
@@ -31,6 +31,7 @@ Patch10: postfix-2.2.5-alt-owl-local_minimum_uid.diff
 Patch11: postfix-2.2.5-alt-mailbox_unpriv_delivery.diff
 Patch12: postfix-2.2.5-deb-man.diff
 Patch13: postfix-2.2.8-owl-safe_open.diff
+Patch14: postfix-2.2.8-owl-postalias-no-hostname.diff
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: owl-control >= 0.4, owl-control < 2.0
 BuildRequires: db4-devel >= 4.2.52, pcre-devel, tinycdb-devel, sed >= 4.1.1
@@ -84,6 +85,7 @@ compatible enough to not upset your users.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
+%patch14 -p1
 
 install -p -m644 %_sourcedir/aliases conf/
 
@@ -330,6 +332,11 @@ fi
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
+* Sat May 23 2009 Solar Designer <solar-at-owl.openwall.com> 1:2.2.8-owl3
+- Re-introduced the postalias hack originally implemented with
+postfix-19991231-pl13-owl-postalias-no-hostname.diff not to leak the
+install host's name.
+
 * Sun Aug 24 2008 Solar Designer <solar-at-owl.openwall.com> 1:2.2.8-owl2
 - Disabled the Solaris symlink hack that allowed local mail deliveries
 through "root-owned" symlinks.
