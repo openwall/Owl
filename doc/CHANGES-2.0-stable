@@ -2,8 +2,16 @@ This file lists all changes made between Owl 2.0 and its corresponding
 stable branch.  Please note that the release itself remains fixed; it's
 only the stable branch which has these changes.
 
+The dates shown in braces indicate when an equivalent change went into
+Owl-current, where applicable.
+
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
+
+(2009/05/09)
+2009/05/23	Package: postfix
+Introduced a patch to prevent leaking of the install host's name into
+the aliases.db file.
 
 (2009/04/08)
 2009/04/11	Package: tcb
@@ -428,4 +436,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.63 2009/04/11 16:54:29 ldv Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.64 2009/05/23 05:20:06 solar Exp $
