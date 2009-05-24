@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/patchutils/patchutils.spec,v 1.8 2006/06/06 20:12:20 ldv Exp $
+# $Owl: Owl/packages/patchutils/patchutils.spec,v 1.9 2009/05/24 20:46:16 mci Exp $
 
 Summary: Patchutils is a small collection of programs that operate on patch files.
 Name: patchutils
-Version: 0.2.31
+Version: 0.3.1
 Release: owl1
 License: GPL
 Group: Applications/Text
@@ -52,6 +52,9 @@ rm -rf %buildroot
 %_mandir/*/*
 
 %changelog
+* Sun May 24 2009 Michail Litvak <mci-at-owl.openwall.com> 0.3.1-owl1
+- Updated to 0.3.1.
+
 * Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.2.31-owl1
 - Updated to 0.2.31.
 
