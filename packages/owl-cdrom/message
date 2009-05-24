@@ -1,1 +1,8 @@
-Please choose the controller for your CD-ROM device.
+Please select the controller for your CD-ROM drive that you're booting from.
+
+For IDE, select the channel and whether the drive is set to master or slave.
+For SATA, SCSI, or USB, select "non-ide".
+
+To boot an arbitrary Linux userland along with this CD's kernel (such as to
+rescue an installed system), select "custom" and type " root=/dev/..."
+(without the quotes and replacing the dots with your root filesystem device).
