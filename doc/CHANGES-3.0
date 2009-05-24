@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/05/24	Package: diffstat
+Updated to 1.47.
+
 2009/05/06 -
 2009/05/22	Packages: cdrkit, mkisofs, owl-dev;
 		Owl/build/installorder.conf
@@ -687,4 +690,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.152 2009/05/21 22:08:33 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.153 2009/05/24 02:43:12 solar Exp $
