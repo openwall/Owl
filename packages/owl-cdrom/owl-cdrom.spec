@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.43 2009/05/24 15:13:53 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.44 2009/05/24 16:14:46 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -97,6 +97,10 @@ recording), UDF filesystem support (read-only), more SATA and NIC drivers,
 CONFIG_HARDEN_VM86 and CONFIG_HARDEN_PAGE0 (as introduced with recent
 -ow patches).
 - Partially sync'ed dot-config-x86_64 to the plain x86 dot-config.
+- Use tmpfs instead of a fixed-size RAM disk filesystem.
+- When copying files to /ram, order them by inode number to hopefully
+reduce the number and/or distance of CD drive seeks (suggested by
+Willy Tarreau).
 
 * Sat Jul 05 2008 Solar Designer <solar-at-owl.openwall.com> 1.3-owl1
 - Install lilo.conf as lilo.conf.bootcd to not conflict with the ghost

@@ -1,16 +1,15 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-cdrom/rc.ramdisk,v 1.6 2005/11/16 13:21:54 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/rc.ramdisk,v 1.7 2009/05/24 16:14:46 solar Exp $
 
-echo "Setting up a RAM disk"
+echo "Setting up a filesystem in RAM"
 
-/sbin/mke2fs -q -i 1024 -b 1024 -m 0 /dev/ram0
-mount -n /dev/ram0 /ram
+mount -nt tmpfs -omode=755 tmpfs /ram
 
-tar cf - -C /rom \
-    --exclude ./var/lib \
-    --exclude ./etc/termcap \
-    --exclude ./world \
-    . |
+find /rom -printf "%i %P\n" | sort -n | cut -f2 -d' ' | tar cf - -C /rom \
+    --exclude var/lib \
+    --exclude etc/termcap \
+    --exclude world \
+    --files-from - |
 	tar xf - -C /ram
 
 ln -s /rom/var/lib /ram/var/
@@ -26,4 +25,4 @@ fi
 
 # Enter /ram into mtab.
 > /etc/mtab
-mount -f /dev/ram0 /ram
+mount -t tmpfs -f tmpfs /ram
