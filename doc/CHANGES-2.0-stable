@@ -8,6 +8,12 @@ Owl-current, where applicable.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+(2009/05/24)
+2009/05/24	kernel
+SECURITY FIX	Severity: none to high, local, active
+Updated to Linux 2.4.37.1-ow1.  Linux 2.4.37.1, compared to 2.4.35-ow2,
+adds numerous security-relevant fixes to various kernel subsystems.
+
 (2009/05/09)
 2009/05/23	Package: postfix
 Introduced a patch to prevent leaking of the install host's name into
@@ -436,4 +442,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.64 2009/05/23 05:20:06 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.65 2009/05/24 17:29:36 solar Exp $
