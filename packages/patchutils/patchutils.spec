@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/patchutils/patchutils.spec,v 1.9 2009/05/24 20:46:16 mci Exp $
+# $Owl: Owl/packages/patchutils/patchutils.spec,v 1.10 2009/05/25 13:19:24 solar Exp $
 
 Summary: Patchutils is a small collection of programs that operate on patch files.
 Name: patchutils
@@ -8,6 +8,7 @@ License: GPL
 Group: Applications/Text
 URL: http://cyberelk.net/tim/patchutils/
 Source: http://cyberelk.net/tim/data/patchutils/stable/patchutils-%version.tar.bz2
+# Signature: http://cyberelk.net/tim/data/patchutils/stable/patchutils-%version.tar.bz2.sig
 Patch0: patchutils-0.2.30-owl-tmp.diff
 PreReq: /sbin/install-info
 Requires: mktemp >= 1:1.3.1
