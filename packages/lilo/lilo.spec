@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/lilo/lilo.spec,v 1.29 2008/04/22 08:14:22 solar Exp $
+# $Owl: Owl/packages/lilo/lilo.spec,v 1.30 2009/05/27 14:51:44 solar Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
 Version: 22.8
-Release: owl1
+Release: owl2
 License: MIT
 Group: System Environment/Base
 URL: http://lilo.go.dyndns.org/pub/linux/lilo/
@@ -64,14 +64,16 @@ install -m 755 keytab-lilo %buildroot%_bindir/
 # Create a sample lilo.conf file
 mkdir -p -m755 %buildroot%_sysconfdir
 cat << EOF > %buildroot%_sysconfdir/lilo.conf.sample
-prompt
-timeout=50
 boot=/dev/sda
 root=/dev/sda2
 read-only
 lba32
+prompt
+timeout=50
+menu-title="Openwall GNU/*/Linux boot menu"
+menu-scheme=kw:Wb:kw:kw
 
-image=/boot/vmlinuz
+image=/boot/bzImage
 	label=linux
 EOF
 
@@ -120,6 +122,9 @@ fi
 %_mandir/*/*
 
 %changelog
+* Wed May 27 2009 Solar Designer <solar-at-owl.openwall.com> 22.8-owl2
+- Added menu-title and menu-scheme settings to the sample lilo.conf.
+
 * Thu Apr 17 2008 (GalaxyMaster) <galaxy-at-owl.openwall.com> 22.8-owl1
 - Updated to 22.8.
 - Re-generated the Makefile patch (replaced all 'make' with '$(MAKE)',
