@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.45 2009/05/24 16:55:19 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.46 2009/05/27 14:47:20 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 1.4
+Version: 1.5
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -90,6 +90,9 @@ fi
 %dir /owl
 
 %changelog
+* Wed May 27 2009 Solar Designer <solar-at-owl.openwall.com> 1.5-owl1
+- Added menu-title and menu-scheme settings to lilo.conf.
+
 * Sun May 24 2009 Solar Designer <solar-at-owl.openwall.com> 1.4-owl1
 - Updated to Linux 2.4.37.1-ow1.
 - In dot-config* files enabled SCSI generic support (as needed for CD/DVD
