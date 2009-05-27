@@ -57,7 +57,7 @@ static void swapoff_all(OwlInstallInterface *the_iface)
     enumerate_active_swaps(v);
     for(int i=0; i<v.Length(); i++) {
         the_iface->ExecWindow("Executing swapoff...");
-        ExecAndWait s_off(the_config->SwapoffPath().c_str(), v[i].c_str(), 0);
+        ExecAndWait s_off(the_config->SwapoffPath().c_str(), v[i].c_str(), (const char *)0);
         the_iface->CloseExecWindow();
         if(!s_off.Success())
             the_iface->Message(ScriptVariable("swapoff failed for ") + v[i]);
@@ -89,13 +89,13 @@ static void swapon(OwlInstallInterface *the_iface, ScriptVariable& part)
                                     " will be destroyed.  Continue?");
         if(!confirm) return;
         the_iface->ExecWindow("Executing mkswap...");
-        ExecAndWait mks(the_config->MkswapPath().c_str(), part.c_str(), 0);
+        ExecAndWait mks(the_config->MkswapPath().c_str(), part.c_str(), (const char *)0);
         the_iface->CloseExecWindow();
         if(!mks.Success())
             the_iface->Message(ScriptVariable("mkswap failed for ") + part);
     }
     the_iface->ExecWindow("Executing swapon...");
-    ExecAndWait s_on(the_config->SwaponPath().c_str(), part.c_str(), 0);
+    ExecAndWait s_on(the_config->SwaponPath().c_str(), part.c_str(), (const char *)0);
     the_iface->CloseExecWindow();
     if(!s_on.Success())
         the_iface->Message(ScriptVariable("swapon failed for ") + part);

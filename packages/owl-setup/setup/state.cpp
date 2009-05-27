@@ -27,7 +27,7 @@ bool always_false()
 bool linux_partition_exists()
 {
     bool ret = false;
-    ExecResultParse fdisk(the_config->FdiskPath().c_str(), "-l", 0);
+    ExecResultParse fdisk(the_config->FdiskPath().c_str(), "-l", (const char *)0);
 
     ScriptVector v;
     while(fdisk.ReadLine(v,7)) {
@@ -97,7 +97,7 @@ void enumerate_owl_dirs3(ScriptVector &dirs,
 static void enumerate_partitions(ScriptVector &parts, const char *t)
 {
     parts.Clear();
-    ExecResultParse fdisk(the_config->FdiskPath().c_str(), "-l", 0);
+    ExecResultParse fdisk(the_config->FdiskPath().c_str(), "-l", (const char *)0);
     ScriptVector v;
     while(fdisk.ReadLine(v,7)) {
         if(v[0][0]!='/') continue;
@@ -251,7 +251,7 @@ bool minimal_install_ready()
 
 ScriptVariable get_runlevel()
 {
-    ExecResultParse runlevel("/sbin/runlevel", 0);
+    ExecResultParse runlevel("/sbin/runlevel", (const char *)0);
     ScriptVector v;
     runlevel.ReadLine(v, 3);
     return v[1] == "" ? ScriptVariable("unknown") : v[1];

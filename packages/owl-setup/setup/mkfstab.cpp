@@ -114,7 +114,7 @@ static void edit_fstab(OwlInstallInterface *the_iface)
     the_iface->ExecWindow("Launching an editor on your /etc/fstab");
 #if 0
     ExecAndWait editor(the_config->EditorPath().c_str(),
-                       the_config->FstabFile().c_str(), 0);
+                       the_config->FstabFile().c_str(), (const char *)0);
 #endif
     ScriptVector ed_cmdline;
     the_config->EditorCmdline(ed_cmdline);

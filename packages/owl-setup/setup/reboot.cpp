@@ -28,17 +28,17 @@ void reboot_it(OwlInstallInterface *the_iface)
        runlevel == "4" || runlevel == "5")
     {
         the_iface->ExecWindow("Invoking /sbin/shutdown -r now");
-        ExecAndWait shut("/sbin/shutdown", "-r", "now", 0);
+        ExecAndWait shut("/sbin/shutdown", "-r", "now", (const char *)0);
         the_iface->CloseExecWindow();
         r = shut.Success();
     } else {
         the_iface->ExecWindow("Doesn't seem to be multiuser, "
                           "preparing for a hard reboot");
-        ExecAndWait(the_config->UmountPath().c_str(), "-far", 0);
+        ExecAndWait(the_config->UmountPath().c_str(), "-far", (const char *)0);
         ExecAndWait(the_config->MountPath().c_str(),
-                           "-no", "remount,ro", "/", 0);
+                           "-no", "remount,ro", "/", (const char *)0);
         the_iface->Notice("Invoking /sbin/reboot -df");
-        ExecAndWait shut("/sbin/reboot", "-df", 0);
+        ExecAndWait shut("/sbin/reboot", "-df", (const char *)0);
         the_iface->CloseExecWindow();
         r = shut.Success();
     }

@@ -52,7 +52,8 @@ void select_timezone(OwlInstallInterface *the_iface)
         the_iface->ExecWindow("Copying zone file");
         ExecAndWait cp(the_config->CpPath().c_str(),
                        path.c_str(),
-                       the_config->ZoneinfoFile().c_str(), 0);
+                       the_config->ZoneinfoFile().c_str(),
+                       (const char *)0);
         the_iface->CloseExecWindow();
         chmod(path.c_str(), 0644);
         if(cp.Success()) {

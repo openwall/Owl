@@ -50,7 +50,7 @@ static void mount_at(OwlInstallInterface *the_iface,
     bool format_success = true;
     if(choice == "ext2" || choice == "ext3") {
         the_iface->ExecWindow("Executing mkfs...");
-        ExecAndWait e(the_config->MkfsPath(choice).c_str(), part.c_str(), 0);
+        ExecAndWait e(the_config->MkfsPath(choice).c_str(), part.c_str(), (const char *)0);
         the_iface->CloseExecWindow();
         format_success = e.Success();
     }
@@ -85,7 +85,7 @@ static void mount_at(OwlInstallInterface *the_iface,
     sync();
     the_iface->ExecWindow("Executing mount...");
     ExecAndWait mnt(the_config->MountPath().c_str(),
-                    part.c_str(), mp.c_str(), 0);
+                    part.c_str(), mp.c_str(), (const char *)0);
     the_iface->CloseExecWindow();
 
     if(!mnt.Success()) {
@@ -133,7 +133,7 @@ static void use_tmpfs(OwlInstallInterface *the_iface)
     sync();
     the_iface->ExecWindow("Executing mount...");
     ExecAndWait mnt(the_config->MountPath().c_str(),
-                    "tmpfs", "-t", "tmpfs", mp.c_str(), 0);
+                    "tmpfs", "-t", "tmpfs", mp.c_str(), (const char *)0);
     the_iface->CloseExecWindow();
 
     if(!mnt.Success()) {
@@ -199,7 +199,7 @@ void unmount_all(OwlInstallInterface *the_iface)
     for(int i=0; i<dirs.Length(); i++) {
         ScriptVariable mp(the_config->OwlRoot());
         mp += dirs[i];
-        ExecAndWait umnt(the_config->UmountPath().c_str(), mp.c_str(), 0);
+        ExecAndWait umnt(the_config->UmountPath().c_str(), mp.c_str(), (const char *)0);
         if(!umnt.Success()) {
             the_iface->CloseExecWindow();
             the_iface->Message(ScriptVariable("umount failed for ") + mp);

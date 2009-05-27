@@ -17,7 +17,7 @@ void repartition_hard_drive(OwlInstallInterface *the_iface,
     {
         ScriptVariable defval;
 #if 0
-        ExecResultParse fdisk(the_config->FdiskPath().c_str(), "-l", 0);
+        ExecResultParse fdisk(the_config->FdiskPath().c_str(), "-l", (const char *)0);
         ScriptVector v;
         while(fdisk.ReadLine(v, 1)) {
             if(v[0].Range(0,5).Get()=="Disk ") {
@@ -76,7 +76,7 @@ void repartition_hard_drive(OwlInstallInterface *the_iface,
         }
 
         the_iface->ExecWindow(msg);
-        ExecAndWait(fds.c_str(), (ScriptVariable("/dev/")+choice).c_str(), 0);
+        ExecAndWait(fds.c_str(), (ScriptVariable("/dev/")+choice).c_str(), (const char *)0);
         the_iface->CloseExecWindow();
     }
     delete dm;

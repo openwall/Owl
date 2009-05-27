@@ -77,7 +77,7 @@ void install_kernel_headers(OwlInstallInterface *the_iface)
                    the_config->KernelHeadersTarget();
     unsetenv("BASH_ENV");
     ExecAndWait cp(the_config->SuPath().c_str(), "-c",
-                   commd.c_str(), "sources", 0);
+                   commd.c_str(), "sources", (const char *)0);
     the_iface->CloseExecWindow(true);
 #else  ////////////////////////////////
     IfaceProgressCanceller *canceller =
@@ -92,7 +92,7 @@ void install_kernel_headers(OwlInstallInterface *the_iface)
                    the_config->KernelHeadersTarget();
     unsetenv("BASH_ENV");
     //ExecResultParse cp(the_config->SuPath().c_str(), "-c",
-    //                   commd.c_str(), "sources", 0);
+    //                   commd.c_str(), "sources", (const char *)0);
     int fd[2];
     pipe(fd);
     int cp_pid = fork();

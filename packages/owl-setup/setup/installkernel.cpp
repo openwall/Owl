@@ -42,10 +42,10 @@ void install_kernel_and_lilo(OwlInstallInterface *the_iface)
     the_iface->ExecWindow("Copying files...");
     ExecAndWait(the_config->CpPath().c_str(),
                 the_config->DefaultKernel().c_str(),
-                the_config->TargetKernel().c_str(), 0);
+                the_config->TargetKernel().c_str(), (const char *)0);
     ExecAndWait(the_config->CpPath().c_str(),
                 the_config->DefaultKernelMap().c_str(),
-                the_config->TargetKernelMap().c_str(), 0);
+                the_config->TargetKernelMap().c_str(), (const char *)0);
     the_iface->CloseExecWindow();
 
     FILE* f = fopen(the_config->LiloconfFile().c_str(), "w");
@@ -66,7 +66,7 @@ void install_kernel_and_lilo(OwlInstallInterface *the_iface)
                           the_config->LiloPath() +
                           " within " + the_config->OwlRoot());
     ChrootExecWait lilo(the_config->OwlRoot().c_str(),
-                        the_config->LiloPath().c_str(), 0);
+                        the_config->LiloPath().c_str(), (const char *)0);
     the_iface->CloseExecWindow();
     if(!lilo.Success())
         the_iface->Message("Warning: LILO failed");

@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.87 2008/07/05 20:10:16 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.88 2009/05/27 14:15:55 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 1.1.12
+Version: 1.1.13
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -34,6 +34,11 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
+* Wed May 27 2009 Solar Designer <solar-at-owl.openwall.com> 1.1.13-owl1
+- In calls to variadic functions expecting (const char *) arguments terminated
+with a null pointer, use (const char *)0 rather than just 0 to indicate the end
+of the argument list.
+
 * Sat Jul 05 2008 Croco <croco-at-owl.openwall.com> 1.1.12-owl1
 - fixed the old bug with broken layout of progress indicator text
   in the ncurses interface

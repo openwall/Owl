@@ -328,7 +328,7 @@ static void request_and_load_keys(OwlInstallInterface *the_iface,
                               the_config->LoadkeysPath() + " " +
                               the_info->GetKeyboard());
         ExecAndWait lk(the_config->LoadkeysPath().c_str(),
-                       the_info->GetKeyboard().c_str(), 0);
+                       the_info->GetKeyboard().c_str(), (const char *)0);
         if(lk.Success()) {
             the_iface->CloseExecWindow(false);
             the_iface->Message("Seems to be successful");
@@ -605,7 +605,7 @@ static void request_and_load_console(OwlInstallInterface *the_iface,
 
 static void scan_locales(ScriptVector &res)
 {
-    ExecResultParse loca(the_config->LocalePath().c_str(), "-a", 0);
+    ExecResultParse loca(the_config->LocalePath().c_str(), "-a", (const char *)0);
     res.Clear();
     ScriptVariable v;
     while(loca.ReadLine(v)) {
@@ -626,7 +626,7 @@ static void scan_lc_vars(ScriptVector &res)
        page.
     */
 #if 0
-    ExecResultParse loc(the_config->LocalePath().c_str(), 0);
+    ExecResultParse loc(the_config->LocalePath().c_str(), (const char *)0);
     res.Clear();
     ScriptVector v;
     while(loc.ReadLine(v, 2, "=")) {
