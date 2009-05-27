@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/texinfo/texinfo.spec,v 1.28 2006/11/06 22:56:45 ldv Exp $
+# $Owl: Owl/packages/texinfo/texinfo.spec,v 1.29 2009/05/27 16:19:11 ldv Exp $
 
 %define BUILD_TEST 1
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
 Version: 4.8
-Release: owl4
+Release: owl5
 License: GPL
 Group: Applications/Publishing
 Source0: ftp://ftp.gnu.org/gnu/texinfo/texinfo-%version.tar.bz2
@@ -17,12 +17,10 @@ Patch3: texinfo-4.2-rh-owl-data_size-fix.diff
 Patch4: texinfo-4.8-deb-fixes.diff
 Patch5: texinfo-4.8-owl-info.diff
 Patch6: texinfo-4.8-rh-bound.diff
-PreReq: /sbin/install-info
+PreReq: /sbin/install-info, gzip
 Prefix: %_prefix
 Requires: mktemp >= 1:1.3.1
 BuildRoot: /override/%name-%version
-
-#%%define __spec_install_post %_prefix/lib/rpm/brp-strip \; %_prefix/lib/rpm/brp-strip-comment-note
 
 %description
 Texinfo is a documentation system that can produce both online
@@ -71,8 +69,9 @@ export LC_ALL=C
 
 cd %buildroot
 mv .%_infodir/dir ./etc/info-dir
-ln -s ../../../etc/info-dir %buildroot%_infodir/dir
+ln -s ../../../etc/info-dir .%_infodir/dir
 mv .%_bindir/install-info sbin/
+gzip -9 .%_infodir/*info*
 
 %post
 /sbin/install-info %_infodir/texinfo %_infodir/dir
@@ -122,6 +121,9 @@ fi
 %_mandir/man5/info.5*
 
 %changelog
+* Wed May 27 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.8-owl5
+- Compressed all texinfo files.
+
 * Sat Oct 28 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.8-owl4
 - Fixed potential heap buffer overflow in texindex (CVE-2006-4810),
 patch from Miloslav Trmac.
