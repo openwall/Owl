@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.53 2006/04/04 00:28:35 ldv Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.54 2009/05/27 10:49:09 ldv Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -38,7 +38,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: 3.4.5
-Release: owl2
+Release: owl3
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -377,6 +377,9 @@ cd obj-%_target_platform
 	--with-gxx-include-dir=%_includedir/c++/%version \
 %endif # BUILD_GXX
 %endif # USE_VERSION_SPECIFIC_LIBS
+%if BUILD_GXX
+	--disable-libstdcxx-pch \
+%endif # BUILD_GXX
 	--disable-checking \
 	--enable-nls \
 	--enable-c-mbchar \
@@ -785,6 +788,9 @@ fi
 %endif
 
 %changelog
+* Wed May 27 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:3.4.5-owl3
+- Disabled unused libstdc++ precompiled header files.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:3.4.5-owl2
 - Dropped old ChangeLog files, compressed the remaining ChangeLog files.
 
