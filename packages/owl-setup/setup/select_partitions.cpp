@@ -121,7 +121,7 @@ static void use_tmpfs(OwlInstallInterface *the_iface)
     ScriptVector mpv(mp, "/", "");
     FileStat thedir(mp.c_str());
     if(!thedir.IsDir()) {
-        int res = mkdir(mp.c_str(), 0777);
+        int res = mkdir(mp.c_str(), 0755);
         if(res == -1) {
             the_iface->Message(ScriptVariable(0,
                 "Failed to create directory: %s: %s",
