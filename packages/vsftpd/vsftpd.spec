@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.24 2009/05/27 10:09:26 mci Exp $
+# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.25 2009/05/27 10:17:16 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
@@ -8,6 +8,7 @@ License: GPL
 Group: System Environment/Daemons
 URL: http://vsftpd.beasts.org
 Source0: ftp://vsftpd.beasts.org/users/cevans/vsftpd-%version.tar.gz
+# Signature: ftp://vsftpd.beasts.org/users/cevans/vsftpd-%version.tar.gz.asc
 Source1: vsftpd.eps.gz
 Source2: vsftpd.pam
 Source3: vsftpd.xinetd
