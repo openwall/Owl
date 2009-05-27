@@ -1,11 +1,11 @@
 --- pcre/pcretest.c
 +++ pcre/pcretest.c
-@@ -764,7 +764,7 @@ options, followed by a set of test data, terminated by an empty line. */
+@@ -818,7 +818,7 @@ options, followed by a set of test data, terminated by an empty line. */
  int main(int argc, char **argv)
  {
  FILE *infile = stdin;
 -int options = 0;
 +long int options = 0;
  int study_options = 0;
+ int default_find_match_limit = FALSE;
  int op = 1;
- int timeit = 0;

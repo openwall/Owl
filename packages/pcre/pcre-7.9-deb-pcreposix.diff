@@ -1,6 +1,6 @@
 --- pcre/pcreposix.h
 +++ pcre/pcreposix.h
-@@ -129,14 +129,19 @@ file. */
+@@ -131,14 +131,19 @@ file. */
  
  /* The functions */
  
