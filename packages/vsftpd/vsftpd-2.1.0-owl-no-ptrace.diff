@@ -1,0 +1,11 @@
+--- vsftpd-2.1.0/ptracesandbox.c.orig	2009-05-26 20:33:29.000000000 +0000
++++ vsftpd-2.1.0/ptracesandbox.c	2009-05-26 20:35:52.000000000 +0000
+@@ -14,7 +14,7 @@
+ 
+ #include "ptracesandbox.h"
+ 
+-#if defined(__linux__) && defined(__i386__)
++#if 0
+ 
+ #include <sys/mman.h>
+ #include <sys/prctl.h>
