@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.88 2009/05/27 14:15:55 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.89 2009/05/27 14:42:34 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -38,6 +38,7 @@ rm -rf %buildroot
 - In calls to variadic functions expecting (const char *) arguments terminated
 with a null pointer, use (const char *)0 rather than just 0 to indicate the end
 of the argument list.
+- Generate a more verbose default lilo.conf file (including some branding).
 
 * Sat Jul 05 2008 Croco <croco-at-owl.openwall.com> 1.1.12-owl1
 - fixed the old bug with broken layout of progress indicator text

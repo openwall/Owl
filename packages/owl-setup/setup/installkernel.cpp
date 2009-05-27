@@ -55,10 +55,18 @@ void install_kernel_and_lilo(OwlInstallInterface *the_iface)
         return;
     }
     fprintf(f,
-            "boot=%s\n\nimage=%s\n\tlabel=%s\n\tread-only\n\troot=%s\n",
+            "boot=%s\n"
+            "root=%s\n"
+            "read-only\n"
+            "lba32\n"
+            "prompt\n"
+            "timeout=50\n"
+            "menu-title=\"Openwall GNU/*/Linux boot menu\"\n"
+            "menu-scheme=kw:Wb:kw:kw\n"
+            "\n"
+            "image=/boot/bzImage\n"
+            "\tlabel=linux\n",
             boot_dev.c_str(),
-            "/boot/bzImage",
-            "Linux",
             root_dev.c_str());
     fclose(f);
 
