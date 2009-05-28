@@ -9,5 +9,6 @@ service ftp
 	wait		= no
 	rlimit_as	= 16M
 	server		= /usr/sbin/vsftpd
+	server_args	= -o listen=NO
 	disable         = yes
 }

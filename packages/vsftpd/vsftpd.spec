@@ -1,22 +1,24 @@
-# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.27 2009/05/27 10:50:54 solar Exp $
+# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.28 2009/05/28 21:03:27 mci Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
 Version: 2.1.1
-Release: owl0.1
+Release: owl1
 License: GPL
 Group: System Environment/Daemons
 URL: http://vsftpd.beasts.org
-Source0: ftp://vsftpd.beasts.org/users/cevans/vsftpd-%{version}pre1.tar.gz
-# Signature: ftp://vsftpd.beasts.org/users/cevans/vsftpd-%{version}pre1.tar.gz.asc
+Source0: ftp://vsftpd.beasts.org/users/cevans/vsftpd-%version.tar.gz
+# Signature: ftp://vsftpd.beasts.org/users/cevans/vsftpd-%version.tar.gz.asc
 Source1: vsftpd.eps.gz
 Source2: vsftpd.pam
 Source3: vsftpd.xinetd
 Source4: vsftpd.logrotate
 Patch0: vsftpd-2.1.0-owl-warnings.diff
-Patch1: vsftpd-2.1.0-owl-pam_userpass.diff
-Patch2: vsftpd-2.1.0-owl-alt-defaults.diff
-Patch3: vsftpd-2.1.0-alt-owl-man.diff
+Patch1: vsftpd-2.1.1-owl-fixes.diff
+Patch2: vsftpd-2.1.0-owl-pam_userpass.diff
+Patch3: vsftpd-2.1.0-owl-alt-defaults.diff
+Patch4: vsftpd-2.1.0-alt-owl-man.diff
+Patch5: vsftpd-2.1.1-owl-cmdline-options.diff 
 Requires: logrotate, pam >= 0:0.80-owl2, pam_userpass, tcb, xinetd, /var/empty
 Provides: ftpserver
 BuildRequires: pam-devel, pam_userpass-devel, libcap-devel
@@ -34,6 +36,8 @@ program has been carefully designed to be resilient to attack.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
+%patch5 -p1
 install -p -m 644 %_sourcedir/vsftpd.eps.gz .
 bzip2 -9 Changelog
 
@@ -82,6 +86,12 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %_mandir/man8/vsftpd.8*
 
 %changelog
+* Thu May 28 2009 Michail Litvak <mci-at-owl.openwall.com> 2.1.1-owl1
+- Updated to 2.1.1.
+- Added a patch to support the new option "-o", which can be used to
+  specify configuration settings via the command line.
+- Changed the xinetd config file to enable the inetd mode explicitly.
+
 * Wed May 27 2009 Michail Litvak <mci-at-owl.openwall.com> 2.1.1-owl0.1
 - Updated to 2.1.1pre1.
 

@@ -1,0 +1,130 @@
+--- vsftpd-2.1.1/main.c.orig	2009-05-21 20:36:28.000000000 +0000
++++ vsftpd-2.1.1/main.c	2009-05-28 20:31:27.000000000 +0000
+@@ -68,26 +68,45 @@
+   };
+   int config_specified = 0;
+   const char* p_config_name = VSFTP_DEFAULT_CONFIG;
++  int options_specified = 0;
++  const char* p_options = "";
++
+   tunables_load_defaults();
+-  /* Zero or one argument supported. If one argument is passed, it is the
+-   * path to the config file
++  /* We can have up to two arguments.
++   * If one argument is passed, it is the path to the config file.
++   * If we have two arguments - this is -o and options list.
+    */
+-  if (argc > 2)
++  if (argc > 3)
+   {
+-    die("vsftpd: too many arguments (I take an optional config file only)");
++    die("vsftpd: too many arguments. Usage: vsftpd [  [-v | -o options] | [config_file] ]");
+   }
+   else if (argc == 0)
+   {
+     die("vsftpd: missing argv[0]");
+   }
+-  if (argc == 2)
++  if (argc >= 2)
+   {
+     if (!vsf_sysutil_strcmp(argv[1], "-v"))
+     {
+       vsf_exit("vsftpd: version " VSF_VERSION "\n");
+     }
+-    p_config_name = argv[1];
+-    config_specified = 1;
++    if (!vsf_sysutil_strcmp(argv[1], "-o"))
++    {
++       if (argc == 3)
++       {
++       	 p_options = argv[2];
++         options_specified = 1;
++       } 
++       else 
++       {
++          die("vsftpd: -o argument required");
++       }
++    }
++    else
++    {
++      p_config_name = argv[1];
++      config_specified = 1;
++    }
+   }
+   /* This might need to open /dev/zero on systems lacking MAP_ANON. Needs
+    * to be done early (i.e. before config file parse, which may use
+@@ -108,6 +127,29 @@
+     }
+     vsf_sysutil_free(p_statbuf);
+   }
++
++  /* Parse options string */
++  if (options_specified)
++  {
++    struct mystr s_opt_str = INIT_MYSTR;
++    struct mystr s_end_opt_str = INIT_MYSTR;
++    struct mystr s_opt_value = INIT_MYSTR;
++
++    str_alloc_text(&s_opt_str, p_options);
++    str_split_char(&s_opt_str, &s_end_opt_str, ',');
++    while(!str_isempty(&s_opt_str))
++    {
++      str_split_char(&s_opt_str, &s_opt_value, '=');
++      handle_config_setting(&s_opt_str, &s_opt_value, 1);
++
++      str_copy(&s_opt_str, &s_end_opt_str);
++      str_split_char(&s_opt_str, &s_end_opt_str, ',');
++    }
++    str_free(&s_opt_str);
++    str_free(&s_end_opt_str);
++    str_free(&s_opt_value);
++  }
++
+   /* Resolve pasv_address if required */
+   if (tunable_pasv_address && tunable_pasv_addr_resolve)
+   {
+--- vsftpd-2.1.1/parseconf.c.orig	2009-05-27 15:36:45.000000000 +0000
++++ vsftpd-2.1.1/parseconf.c	2009-05-28 20:07:35.000000000 +0000
+@@ -18,11 +18,6 @@
+ 
+ static const char* s_p_saved_filename;
+ 
+-/* File local functions */
+-static void handle_config_setting(struct mystr* p_setting_str,
+-                                  struct mystr* p_value_str,
+-                                  int errs_fatal);
+-
+ /* Tables mapping setting names to runtime variables */
+ /* Boolean settings */
+ static struct parseconf_bool_setting
+@@ -250,7 +245,7 @@
+   str_free(&config_value_str);
+ }
+ 
+-static void
++void
+ handle_config_setting(struct mystr* p_setting_str, struct mystr* p_value_str,
+                       int errs_fatal)
+ {
+--- vsftpd-2.1.1/parseconf.h.orig	2008-02-02 01:30:39.000000000 +0000
++++ vsftpd-2.1.1/parseconf.h	2009-05-28 04:31:42.000000000 +0000
+@@ -1,6 +1,8 @@
+ #ifndef VSF_PARSECONF_H
+ #define VSF_PARSECONF_H
+ 
++#include "str.h"
++
+ /* vsf_parseconf_load_file()
+  * PURPOSE
+  * Parse the given file as a vsftpd config file. If the file cannot be
+@@ -17,5 +19,10 @@
+  */
+ void vsf_parseconf_load_file(const char* p_filename, int errs_fatal);
+ 
++void handle_config_setting(struct mystr* p_setting_str,
++                                  struct mystr* p_value_str,
++				  int errs_fatal);
++
++
+ #endif /* VSF_PARSECONF_H */
+ 
