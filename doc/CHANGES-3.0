@@ -12,11 +12,14 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/05/27 -
+2009/05/29	Package: vsftpd
+Updated to 2.1.1, keeping the default at listen=NO (overriding
+upstream's change of default).  Added the new option "-o", which can be
+used to specify configuration settings via the command line.
+
 2009/05/27	Package: pcre
 Updated to 7.9.
-
-2009/05/27	Package: vsftpd
-Updated to 2.1.1pre1.
 
 2009/05/25	Package: patchutils
 Updated to 0.3.1.
@@ -707,4 +710,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.159 2009/05/27 19:20:03 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.160 2009/05/29 11:50:22 solar Exp $
