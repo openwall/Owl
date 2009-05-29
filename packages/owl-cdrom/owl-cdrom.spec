@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.46 2009/05/27 14:47:20 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.47 2009/05/29 13:36:15 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 1.5
+Version: 1.6
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -90,6 +90,11 @@ fi
 %dir /owl
 
 %changelog
+* Fri May 29 2009 Solar Designer <solar-at-owl.openwall.com> 1.6-owl1
+- Disabled the USB EHCI driver in dot-config*, because it resulted in a lockup
+on boot at least on Samsung Q45 laptops.
+- Switched to the non-alternative USB UHCI driver.
+
 * Wed May 27 2009 Solar Designer <solar-at-owl.openwall.com> 1.5-owl1
 - Added menu-title and menu-scheme settings to lilo.conf.
 

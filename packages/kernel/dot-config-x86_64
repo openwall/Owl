@@ -846,8 +846,9 @@ CONFIG_USB=y
 #
 # USB Host Controller Drivers
 #
-CONFIG_USB_EHCI_HCD=y
-CONFIG_USB_UHCI_ALT=y
+# CONFIG_USB_EHCI_HCD is not set
+CONFIG_USB_UHCI=y
+# CONFIG_USB_UHCI_ALT is not set
 CONFIG_USB_OHCI=y
 
 #
