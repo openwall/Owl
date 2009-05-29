@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.28 2009/05/28 21:03:27 mci Exp $
+# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.29 2009/05/29 11:33:17 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
 Version: 2.1.1
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Daemons
 URL: http://vsftpd.beasts.org
@@ -16,9 +16,9 @@ Source4: vsftpd.logrotate
 Patch0: vsftpd-2.1.0-owl-warnings.diff
 Patch1: vsftpd-2.1.1-owl-fixes.diff
 Patch2: vsftpd-2.1.0-owl-pam_userpass.diff
-Patch3: vsftpd-2.1.0-owl-alt-defaults.diff
+Patch3: vsftpd-2.1.1-owl-alt-defaults.diff
 Patch4: vsftpd-2.1.0-alt-owl-man.diff
-Patch5: vsftpd-2.1.1-owl-cmdline-options.diff 
+Patch5: vsftpd-2.1.1-owl-cmdline-options.diff
 Requires: logrotate, pam >= 0:0.80-owl2, pam_userpass, tcb, xinetd, /var/empty
 Provides: ftpserver
 BuildRequires: pam-devel, pam_userpass-devel, libcap-devel
@@ -73,9 +73,11 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %doc README.security REWARD SECURITY/
 %doc BENCHMARKS SPEED TUNING
 %doc BUGS TODO
+%doc REFS
 %doc EXAMPLE/
 %doc Changelog.bz2
 %doc vsftpd.eps.gz
+# Not included on purpose: AUDIT INSTALL README.ssl SIZE
 /usr/sbin/vsftpd
 %config(noreplace) /etc/vsftpd.conf
 %config(noreplace) /etc/pam.d/vsftpd
@@ -86,10 +88,19 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %_mandir/man8/vsftpd.8*
 
 %changelog
+* Fri May 29 2009 Solar Designer <solar-at-owl.openwall.com> 2.1.1-owl2
+- Re-worked the command-line options patch, allowing to specify multiple
+"-o" options (like it can be done with ssh/sshd) and multiple config files,
+and documenting this enhanced command-line syntax in the man page.
+- Reverted the listen=... default to NO (same as in 2.0.6-owl1; the
+previous two revisions of our package were never made public), overriding
+upstream's change of default.
+- Package the REFS documentation file (references to relevant RFCs).
+
 * Thu May 28 2009 Michail Litvak <mci-at-owl.openwall.com> 2.1.1-owl1
 - Updated to 2.1.1.
 - Added a patch to support the new option "-o", which can be used to
-  specify configuration settings via the command line.
+specify configuration settings via the command line.
 - Changed the xinetd config file to enable the inetd mode explicitly.
 
 * Wed May 27 2009 Michail Litvak <mci-at-owl.openwall.com> 2.1.1-owl0.1
