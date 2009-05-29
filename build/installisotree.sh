@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installisotree.sh,v 1.6 2009/05/27 10:34:57 solar Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.7 2009/05/29 14:35:52 solar Exp $
 
 set -e
 
@@ -58,10 +58,14 @@ log "Installing kernel"
 cd "$ROOT/boot"
 install -pm644 -oroot -groot "$HOME"/kernel-work/boot/* .
 chroot "$ROOT" sh -c 'cd /boot && ./floppy-update.sh'
+rm bzImage
+ln -s floppy/boot/bzImage
+mkdir -m700 floppy
 
 log "Updating config files"
 cd "$ROOT/etc"
 sed -i 's|^\(/dev/cdrom[[:space:]]*\).*|\1/\t\t\tiso9660\tro\t\t\t0 0|' fstab
+echo -e '/boot/floppy.image /boot/floppy\t\text2\tloop,ro\t\t\t0 0' >> fstab
 sed -i 's|^\(~~:S:wait:\).*|\1/bin/bash --login|' inittab
 
 log "Installing kernel source"
