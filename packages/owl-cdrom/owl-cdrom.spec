@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.47 2009/05/29 13:36:15 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.48 2009/05/29 14:44:31 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -33,9 +33,9 @@ install -m 600 %_sourcedir/lilo.conf etc/lilo.conf.bootcd
 install -m 700 %_sourcedir/floppy-update.sh boot/
 install -m 600 %_sourcedir/message boot/
 %ifarch x86_64
-install -m 644 %_sourcedir/dot-config-x86_64 boot/.config
+install -m 644 %_sourcedir/dot-config-x86_64 boot/config
 %else
-install -m 644 %_sourcedir/dot-config boot/.config
+install -m 644 %_sourcedir/dot-config boot/config
 %endif
 ln -s ../rom/{dev,etc,home,root,tmp,var,world} ram/
 
@@ -82,7 +82,7 @@ fi
 %config /etc/rc.d/rc.ramdisk
 %config /etc/profile.d/welcome-cdrom.sh
 %config /etc/lilo.conf.bootcd
-%config /boot/.config
+%config /boot/config
 /boot/floppy-update.sh
 /boot/message
 %dir /rom
@@ -94,6 +94,8 @@ fi
 - Disabled the USB EHCI driver in dot-config*, because it resulted in a lockup
 on boot at least on Samsung Q45 laptops.
 - Switched to the non-alternative USB UHCI driver.
+- Install the kernel config file as /boot/config, not /boot/.config, to make it
+more visible.
 
 * Wed May 27 2009 Solar Designer <solar-at-owl.openwall.com> 1.5-owl1
 - Added menu-title and menu-scheme settings to lilo.conf.
