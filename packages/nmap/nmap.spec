@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.24 2009/05/21 21:12:32 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.25 2009/05/29 13:51:55 solar Exp $
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
@@ -8,8 +8,13 @@ License: GPL
 Group: Applications/System
 URL: http://nmap.org
 %define srcname nmap-%version
-Source: http://nmap.org/dist/%srcname.tar.bz2
-# GnuPG signature: http://nmap.org/dist/sigs/%srcname.tar.bz2.gpg.txt
+Source: %srcname-stripped-for-owl-1.tar.bz2
+# The following subdirectories have been removed from the above tarball:
+# mswin32 macosx zenmap libpcap libpcre
+# and a README-stripped file has been added.
+# The size reduced from 5.8 MB to 1.7 MB.
+# Source: http://nmap.org/dist/%srcname.tar.bz2
+# Signature: http://nmap.org/dist/sigs/%srcname.tar.bz2.asc
 Patch0: nmap-4.76-owl-nse_ldflags.diff
 Patch1: nmap-4.76-alt-owl-autoheader.diff
 Patch2: nmap-4.76-owl-warnings.diff
