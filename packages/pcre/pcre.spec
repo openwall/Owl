@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/pcre/pcre.spec,v 1.11 2009/05/27 17:22:50 ldv Exp $
+# $Owl: Owl/packages/pcre/pcre.spec,v 1.12 2009/05/29 15:13:10 solar Exp $
 
 %{?!BUILD_CPP: %define BUILD_CPP 0}
 
@@ -43,6 +43,7 @@ approximately with Perl 5.8.
 
 This package contains PCRE development libraries and header files.
 
+%if %BUILD_CPP
 %package -n libpcrecpp
 Summary: Perl-compatible regular expressions C++ wrapper shared library.
 Group: System Environment/Libraries
@@ -68,6 +69,7 @@ just a few differences.  The current implementation of PCRE corresponds
 approximately with Perl 5.8.
 
 This package contains PCRE C++ wrapper development library and header files.
+%endif
 
 %prep
 %setup -q
