@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/libnet/libnet.spec,v 1.19 2006/04/04 00:21:38 ldv Exp $
+# $Owl: Owl/packages/libnet/libnet.spec,v 1.20 2009/05/29 14:17:48 solar Exp $
 
 Summary: A library for portable packet creation and injection.
 Name: libnet
@@ -9,7 +9,14 @@ Epoch: 1
 License: BSD
 Group: System Environment/Libraries
 URL: http://www.packetfactory.net/libnet/
-Source: http://www.packetfactory.net/libnet/dist/%name-%version%extra.tar.gz
+Source: %name-%version%extra-stripped-for-owl-1.tar.bz2
+# The following subdirectories and files have been removed from the tarball:
+# win32 include/win32 sample/win32 src/libnet_link_win32.c src/.libs
+# and files matching the shell pattern .#* anywhere in the tree, as well as
+# CVS directories anywhere in the tree,
+# and a README-stripped file has been added.
+# The size reduced from 1.1 MB to 300 KB.
+# Source: http://www.packetfactory.net/libnet/dist/%name-%version%extra.tar.gz
 Patch0: libnet-1.0.2a-owl-alpha-targets.diff
 PreReq: /sbin/ldconfig
 BuildRequires: libpcap-devel, autoconf
