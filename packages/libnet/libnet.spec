@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/libnet/libnet.spec,v 1.20 2009/05/29 14:17:48 solar Exp $
+# $Owl: Owl/packages/libnet/libnet.spec,v 1.21 2009/05/29 14:23:42 solar Exp $
 
 Summary: A library for portable packet creation and injection.
 Name: libnet
@@ -42,7 +42,8 @@ building applications which use libnet, as well as documentation on libnet.
 %prep
 %setup -q -n libnet
 %patch0 -p1
-rm -r doc/{CVS,man,libnet.doxygen.conf}
+rm -rf doc/CVS # Remove this directory if present, but don't complain if not
+rm -r doc/{man,libnet.doxygen.conf}
 bzip2 -9 doc/CHANGELOG
 
 %build
