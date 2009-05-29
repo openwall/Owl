@@ -1,15 +1,18 @@
---- vsftpd-2.1.0/tunables.c.orig	2008-12-18 01:42:45.000000000 +0000
-+++ vsftpd-2.1.0/tunables.c	2009-05-25 14:48:39.000000000 +0000
-@@ -173,7 +173,7 @@
+diff -urp vsftpd-2.1.1.orig/tunables.c vsftpd-2.1.1/tunables.c
+--- vsftpd-2.1.1.orig/tunables.c	2009-05-27 15:33:58 +0000
++++ vsftpd-2.1.1/tunables.c	2009-05-29 07:55:14 +0000
+@@ -174,8 +174,8 @@ tunables_load_defaults()
    tunable_userlist_deny = 1;
    tunable_use_localtime = 0;
    tunable_check_shell = 1;
 -  tunable_hide_ids = 0;
+-  tunable_listen = 1;
 +  tunable_hide_ids = 1;
-   tunable_listen = 1;
++  tunable_listen = 0;
    tunable_port_promiscuous = 0;
    tunable_passwd_chroot_enable = 0;
-@@ -242,19 +242,19 @@
+   tunable_no_anon_password = 0;
+@@ -244,19 +244,19 @@ tunables_load_defaults()
    /* -rw------- */
    tunable_chown_upload_mode = 0600;
  
@@ -36,7 +39,7 @@
    install_str_setting(0, &tunable_anon_root);
    install_str_setting(0, &tunable_local_root);
    install_str_setting(0, &tunable_banner_file);
-@@ -267,7 +267,7 @@
+@@ -269,7 +269,7 @@ tunables_load_defaults()
    install_str_setting(0, &tunable_hide_file);
    install_str_setting(0, &tunable_deny_file);
    install_str_setting(0, &tunable_user_sub_token);
@@ -45,8 +48,9 @@
                        &tunable_email_password_file);
    install_str_setting("/usr/share/ssl/certs/vsftpd.pem",
                        &tunable_rsa_cert_file);
---- vsftpd-2.1.0/vsftpd.conf.orig	2008-12-17 20:31:40.000000000 +0000
-+++ vsftpd-2.1.0/vsftpd.conf	2009-05-25 19:10:58.000000000 +0000
+diff -urp vsftpd-2.1.1.orig/vsftpd.conf vsftpd-2.1.1/vsftpd.conf
+--- vsftpd-2.1.1.orig/vsftpd.conf	2008-12-17 20:31:40 +0000
++++ vsftpd-2.1.1/vsftpd.conf	2009-05-29 07:59:07 +0000
 @@ -1,18 +1,16 @@
 -# Example config file /etc/vsftpd.conf
 +# The configuration file for vsftpd.
@@ -72,7 +76,7 @@
  #
  # Uncomment this to enable any form of FTP write command.
  #write_enable=YES
-@@ -37,9 +35,20 @@
+@@ -37,9 +35,20 @@ dirmessage_enable=YES
  # Activate logging of uploads/downloads.
  xferlog_enable=YES
  #
@@ -93,7 +97,7 @@
  # If you want, you can arrange for uploaded anonymous files to be owned by
  # a different user. Note! Using "root" for uploaded files is not
  # recommended!
-@@ -62,7 +71,7 @@
+@@ -62,7 +71,7 @@ connect_from_port_20=YES
  #
  # It is recommended that you define on your system a unique user which the
  # ftp server can use as a totally isolated and unprivileged user.
@@ -102,7 +106,7 @@
  #
  # Enable this and the server will recognise asynchronous ABOR requests. Not
  # recommended for security (the code is non-trivial). Not enabling it,
-@@ -77,8 +86,8 @@
+@@ -77,8 +86,8 @@ connect_from_port_20=YES
  # predicted this attack and has always been safe, reporting the size of the
  # raw file.
  # ASCII mangling is a horrible feature of the protocol.
@@ -113,7 +117,7 @@
  #
  # You may fully customise the login banner string:
  #ftpd_banner=Welcome to blah FTP service.
-@@ -87,14 +96,17 @@
+@@ -87,14 +96,17 @@ connect_from_port_20=YES
  # useful for combatting certain DoS attacks.
  #deny_email_enable=YES
  # (default follows)
@@ -133,11 +137,15 @@
  #
  # You may activate the "-R" option to the builtin ls. This is disabled by
  # default to avoid remote users being able to cause excessive I/O on large
-@@ -105,9 +117,19 @@
+@@ -104,10 +116,22 @@ connect_from_port_20=YES
+ #
  # When "listen" directive is enabled, vsftpd runs in standalone mode and
  # listens on IPv4 sockets. This directive cannot be used in conjunction
- # with the listen_ipv6 directive.
+-# with the listen_ipv6 directive.
 -listen=YES
++# with the listen_ipv6 directive. Beware: the default for this option has
++# been changing between vsftpd versions, so it is preferable to always
++# specify it explicitly.
 +listen=NO
  #
  # This directive enables listening on IPv6 sockets. To listen on IPv4 and IPv6
@@ -154,9 +162,10 @@
 +# local time zone. The default is to display GMT. The times returned by the
 +# MDTM FTP command are also affected by this option.
 +#use_localtime=YES
---- vsftpd-2.1.0/vsftpd.conf.5.orig	2008-12-18 01:44:21.000000000 +0000
-+++ vsftpd-2.1.0/vsftpd.conf.5	2009-05-25 14:28:43.000000000 +0000
-@@ -138,7 +138,7 @@
+diff -urp vsftpd-2.1.1.orig/vsftpd.conf.5 vsftpd-2.1.1/vsftpd.conf.5
+--- vsftpd-2.1.1.orig/vsftpd.conf.5	2009-05-22 03:24:30 +0000
++++ vsftpd-2.1.1/vsftpd.conf.5	2009-05-29 08:00:26 +0000
+@@ -138,7 +138,7 @@ chroot() jail in their home directory up
  different if chroot_local_user is set to YES. In this case, the list becomes
  a list of users which are NOT to be placed in a chroot() jail.
  By default, the file containing this list is
@@ -165,7 +174,7 @@
  .BR chroot_list_file
  setting.
  
-@@ -177,7 +177,7 @@
+@@ -177,7 +177,7 @@ Default: NO
  .B deny_email_enable
  If activated, you may provide a list of anonymous password e-mail responses
  which cause login to be denied. By default, the file containing this list is
@@ -174,7 +183,7 @@
  .BR banned_email_file
  setting.
  
-@@ -205,7 +205,7 @@
+@@ -205,7 +205,7 @@ Default: YES
  If enabled, two log files are generated in parallel, going by default to
  .BR /var/log/xferlog
  and
@@ -183,7 +192,7 @@
  The former is a wu-ftpd style transfer log, parseable by standard tools. The
  latter is vsftpd's own style log.
  
-@@ -262,7 +262,7 @@
+@@ -262,7 +262,7 @@ Default: NO
  If enabled, all user and group information in directory listings will be
  displayed as "ftp".
  
@@ -192,7 +201,21 @@
  .TP
  .B implicit_ssl
  If enabled, an SSL handshake is the first thing expect on all connections
-@@ -430,7 +430,7 @@
+@@ -275,9 +275,11 @@ Default: NO
+ If enabled, vsftpd will run in standalone mode. This means that vsftpd must
+ not be run from an inetd of some kind. Instead, the vsftpd executable is
+ run once directly. vsftpd itself will then take care of listening for and
+-handling incoming connections.
++handling incoming connections. Beware: the default for this option has been
++changing between vsftpd versions, so it is preferable to always specify it
++explicitly.
+ 
+-Default: YES
++Default: NO
+ .TP
+ .B listen_ipv6
+ Like the listen parameter, except vsftpd will listen on an IPv6 socket instead
+@@ -433,7 +435,7 @@ anonymous logins are prevented unless th
  file specified by the
  .BR email_password_file
  setting. The file format is one password per line, no extra whitespace. The
@@ -201,7 +224,7 @@
  
  Default: NO
  .TP
-@@ -514,7 +514,7 @@
+@@ -517,7 +519,7 @@ the client is able to check the integrit
  Default: NO
  .TP
  .B syslog_enable
@@ -210,7 +233,7 @@
  goes to the system log instead. Logging is done under the FTPD facility.
  
  Default: NO
-@@ -600,7 +600,7 @@
+@@ -603,7 +605,7 @@ Default: NO
  .TP
  .B xferlog_enable
  If enabled, a log file will be maintained detailling uploads and downloads.
@@ -219,7 +242,7 @@
  may be overridden using the configuration setting
  .BR vsftpd_log_file .
  
-@@ -761,7 +761,7 @@
+@@ -764,7 +766,7 @@ passwords which are not permitted. This 
  .BR deny_email_enable
  is enabled.
  
@@ -228,7 +251,7 @@
  .TP
  .B banner_file
  This option is the name of a file containing text to display when someone
-@@ -798,7 +798,7 @@
+@@ -801,7 +803,7 @@ is enabled. If the option
  is enabled, then the list file becomes a list of users to NOT place in a
  chroot() jail.
  
@@ -237,7 +260,7 @@
  .TP
  .B cmds_allowed
  This options specifies a comma separated list of allowed FTP commands (post
-@@ -859,7 +859,7 @@
+@@ -862,7 +864,7 @@ This option can be used to provide an al
  .BR secure_email_list_enable
  setting.
  
@@ -246,7 +269,7 @@
  .TP
  .B ftp_username
  This is the name of the user we use for handling anonymous FTP. The home
-@@ -930,12 +930,12 @@
+@@ -933,12 +935,12 @@ totally unprivileged. Note that this sho
  than nobody. The user nobody tends to be used for rather a lot of important
  things on most machines.
  
@@ -261,7 +284,7 @@
  .TP
  .B pasv_address
  Use this option to override the IP address that vsftpd will advertise in
-@@ -964,7 +964,7 @@
+@@ -967,7 +969,7 @@ This option should be the name of a dire
  directory should not be writable by the ftp user. This directory is used
  as a secure chroot() jail at times vsftpd does not require filesystem access.
  
@@ -270,7 +293,7 @@
  .TP
  .B ssl_ciphers
  This option can be used to select which SSL ciphers vsftpd will allow for
-@@ -982,10 +982,10 @@
+@@ -985,10 +987,10 @@ the manual page, on a per-user basis. Us
  with an example. If you set
  .BR user_config_dir
  to be
@@ -283,7 +306,7 @@
  for the duration of the session. The format of this file is as detailed in
  this manual page! PLEASE NOTE that not all settings are effective on a
  per-user basis. For example, many settings only prior to the user's session
-@@ -1021,7 +1021,7 @@
+@@ -1024,7 +1026,7 @@ This option is the name of the file load
  .BR userlist_enable
  option is active.
  
@@ -292,7 +315,7 @@
  .TP
  .B vsftpd_log_file
  This option is the name of the file to which we write the vsftpd style
-@@ -1035,7 +1035,7 @@
+@@ -1038,7 +1040,7 @@ One further complication - if you have s
  .BR syslog_enable ,
  then this file is not written and output is sent to the system log instead.
  
