@@ -12,7 +12,8 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
-2009/06/10	Package: pciutils
+2009/06/10	Package: pciutils;
+		Owl/build/installorder.conf
 New package: pciutils contains utilities for inspecting and setting up
 devices connected to the PCI bus.
 
@@ -714,4 +715,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.161 2009/06/10 10:20:45 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.162 2009/06/10 15:20:53 solar Exp $
