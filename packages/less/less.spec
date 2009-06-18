@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/less/less.spec,v 1.17 2006/04/04 01:02:00 ldv Exp $
+# $Owl: Owl/packages/less/less.spec,v 1.18 2009/06/18 21:48:37 solar Exp $
 
 Summary: A text file browser similar to more, but better.
 Name: less
@@ -6,8 +6,8 @@ Version: 358
 Release: owl7
 License: GPL
 Group: Applications/Text
-URL: http://www.flash.net/~marknu/less/
-Source0: ftp://ftp.gnu.org/gnu/less/%name-%version.tar.gz
+URL: http://www.greenwoodsoftware.com/less/
+Source0: http://www.greenwoodsoftware.com/less/%name-%version.tar.gz
 Source1: lesspipe.sh
 Source2: less.sh
 Source3: less.csh
