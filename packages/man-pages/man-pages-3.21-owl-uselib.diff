@@ -1,0 +1,12 @@
+--- man-pages-3.21/man2/uselib.2.orig	2009-04-15 16:05:36.000000000 +0000
++++ man-pages-3.21/man2/uselib.2	2009-06-23 12:52:23.000000000 +0000
+@@ -45,6 +45,9 @@
+ in the library itself.
+ The library can have any recognized
+ binary format.
++.sp
++\fBuselib\fP is only used for loading a.out libraries and thus is
++obsolete on most architectures.
+ .SH "RETURN VALUE"
+ On success, zero is returned.
+ On error, \-1 is returned, and

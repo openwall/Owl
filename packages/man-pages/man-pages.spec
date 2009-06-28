@@ -1,26 +1,29 @@
-# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.22 2006/03/30 02:36:25 galaxy Exp $
+# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.23 2009/06/28 17:54:59 mci Exp $
+
+%define posix_version 2003
+%define posix_release a
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
-Version: 2.16
-Release: owl2
+Version: 3.21
+Release: owl1
 License: distributable
 Group: Documentation
-Source0: ftp://ftp.win.tue.nl/pub/linux-local/manpages/man-pages-%version.tar.gz
-Source1: rpcgen.1
-Source2: getent.1
-Source3: iconv.1
-Source4: locale.1
-Source5: localedef.1
-Source6: sprof.1
-Source7: ld-linux.so.8
-Source8: ldconfig.8
-Source9: rpcinfo.8
-Patch0: man-pages-2.16-deb-owl-misc.diff
-Patch1: man-pages-2.16-rh-owl-roff-fixes.diff
-Patch2: man-pages-2.16-rh-misc.diff
-Patch3: man-pages-2.16-owl-cc-ld.so.diff
-Patch4: man-pages-2.16-owl-uselib.diff
+Source0: http://www.kernel.org/pub/linux/docs/manpages/man-pages-%version.tar.bz2
+# Signature: http://www.kernel.org/pub/linux/docs/manpages/man-pages-%version.tar.bz2.sign
+Source1: http://www.kernel.org/pub/linux/docs/man-pages/man-pages-posix/man-pages-posix-%posix_version-%posix_release.tar.bz2
+# Signature: http://www.kernel.org/pub/linux/docs/man-pages/man-pages-posix/man-pages-posix-%posix_version-%posix_release.tar.bz2.sign
+Source2: rpcgen.1
+Source3: getent.1
+Source4: iconv.1
+Source5: locale.1
+Source6: localedef.1
+Source7: sprof.1
+Source8: rpcinfo.8
+Patch0: man-pages-3.21-deb-owl-misc.diff
+Patch1: man-pages-3.21-rh-owl-roff-fixes.diff
+Patch2: man-pages-3.21-owl-cc.diff
+Patch3: man-pages-3.21-owl-uselib.diff
 AutoReqProv: false
 BuildArchitectures: noarch
 BuildRoot: /override/%name-%version
@@ -57,7 +60,10 @@ the following sections:
 	3p: POSIX functions
 
 %prep
-%setup -q
+%setup -q -a 1
+
+mv  man-pages-posix-%{posix_version}-%{posix_release}/* ./
+rmdir man-pages-posix-%{posix_version}-%{posix_release}
 
 cp %_sourcedir/rpcgen.1 man1/
 cp %_sourcedir/getent.1 man1/
@@ -66,29 +72,28 @@ cp %_sourcedir/locale.1 man1/
 cp %_sourcedir/localedef.1 man1/
 cp %_sourcedir/sprof.1 man1/
 
-cp %_sourcedir/ld-linux.so.8 man8/
-cp %_sourcedir/ldconfig.8 man8/
 cp %_sourcedir/rpcinfo.8 man8/
 
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 
 %build
-rm man1/README
 
-# These are parts of fileutils
-rm man1/{chgrp,chmod,chown,cp,dd,df,dircolors,du,install}.1
-rm man1/{ln,ls,mkdir,mkfifo,mknod,mv,rm,rmdir,touch}.1
-rm man1/{dir,vdir}.1
+# Part of modutils
+rm man2/create_module.2
+rm man2/delete_module.2
+rm man2/get_kernel_syms.2
+rm man2/init_module.2
+rm man2/query_module.2
 
 # Part of quota
 rm man2/quotactl.2
 
 # Part of glibc (crypt_blowfish)
 rm man3/crypt.3
+rm man3/crypt_r.3
 
 # Part of bind-utils
 rm man5/resolver.5
@@ -120,7 +125,7 @@ done
 
 %files
 %defattr(0644,root,root,0755)
-%doc README HOWTOHELP man-pages-%version.Announce
+%doc README man-pages-%version.Announce
 %_mandir/man?/*
 
 %files posix
@@ -130,6 +135,10 @@ done
 %_mandir/man?p/*
 
 %changelog
+* Thu Jun 23 2009 Michail Litvak <mci-at-owl.openwall.com> 3.21-owl1
+- 3.21
+- Updated patches.
+
 * Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.16-owl2
 - Added the ?p sections to the POSIX man-pages filelist.
 

@@ -1,0 +1,11 @@
+--- man-pages-3.21/man3/stdio.3.orig	2009-04-15 16:05:47.000000000 +0000
++++ man-pages-3.21/man3/stdio.3	2009-06-23 12:44:42.000000000 +0000
+@@ -130,7 +130,7 @@
+ library is a part of the library
+ .B libc
+ and routines are automatically loaded as needed by the compilers
+-.BR cc (1)
++.BR gcc (1)
+ and
+ .BR pc (1).
+ The

@@ -1,0 +1,48 @@
+--- man-pages-3.21/man7/mdoc.samples.7.orig	2009-04-15 16:05:53.000000000 +0000
++++ man-pages-3.21/man7/mdoc.samples.7	2009-06-23 13:06:23.000000000 +0000
+@@ -1662,10 +1662,10 @@
+ will generate the following text:
+ .Pp
+ .\" fake chapter 3 to avoid error message from Rv
+-.ds cH 3
++.ds section 3
+ .Rv -std atexit
+ .\" and back to 7 again
+-.ds cH 7
++.ds section 7
+ .Pp
+ The
+ .Fl std
+@@ -2425,6 +2425,7 @@
+ .It Fl bullet
+ .It Fl item
+ .It Fl enum
++.El
+ These three are the simplest types of lists.
+ Once the
+ .Ql ".Bl"
+@@ -2474,11 +2475,13 @@
+ Bullet two here.
+ .El
+ .Pp
++.Bl -ohang -compact
+ .It Fl tag
+ .It Fl diag
+ .It Fl hang
+ .It Fl ohang
+ .It Fl inset
++.El
+ These list-types collect arguments specified with the
+ .Ql \&.It
+ macro and create a label which may be
+--- man-pages-3.21/man7/regex.7.orig	2009-04-15 16:05:54.000000000 +0000
++++ man-pages-3.21/man7/regex.7	2009-06-23 13:07:06.000000000 +0000
+@@ -31,7 +31,7 @@
+ .\" 	appear not to be in the glibc implementation of regcomp
+ .\"
+ .ie t .ds dg \(dg
+-.el .ds dg (!)
++.el .ds dg (*)
+ .TH REGEX 7 2009-01-12 "" "Linux Programmer's Manual"
+ .SH NAME
+ regex \- POSIX.2 regular expressions
