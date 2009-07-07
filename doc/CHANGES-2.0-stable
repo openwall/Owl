@@ -8,6 +8,19 @@ Owl-current, where applicable.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+(2009/07/07)
+2009/07/07	Package: openssh
+SECURITY FIX	Severity: none to high, remote, active
+Backported upstream fix for a syslog call inside a signal handler.  The
+security impact this issue might have had was not fully evaluated.  On
+Debian systems, the reported impact was processes getting stuck on locks
+inside glibc.  On Owl, no problems were ever reported, yet the call was
+unsafe, with the worst-case impact being arbitrary code execution
+(depending on processing inside glibc).
+References:
+http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=498678
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-4109
+
 (2009/05/24)
 2009/05/24	kernel
 SECURITY FIX	Severity: none to high, local, active
@@ -442,4 +455,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.65 2009/05/24 17:29:36 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.66 2009/07/07 17:52:44 solar Exp $
