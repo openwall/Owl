@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.89.2.3 2008/05/30 23:24:22 ldv Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.89.2.4 2009/07/07 17:50:39 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl23
+Release: owl24
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -296,6 +296,9 @@ fi
 %attr(0644,root,root) /etc/ssh/blacklist
 
 %changelog
+* Tue Jul 07 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl24
+- Backported upstream fix for syslog inside signal handler (CVE-2008-4109).
+
 * Mon May 26 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl23
 - Moved blacklist file to separate subpackage.
 
