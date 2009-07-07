@@ -9,6 +9,10 @@ Owl-current, where applicable.
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
 (2009/07/07)
+2009/07/07	kernel
+Updated to Linux 2.4.37.2-ow1.
+
+(2009/07/07)
 2009/07/07	Package: openssh
 SECURITY FIX	Severity: none to high, remote, active
 Backported upstream fix for a syslog call inside a signal handler.  The
@@ -455,4 +459,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.66 2009/07/07 17:52:44 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.67 2009/07/07 18:14:15 solar Exp $
