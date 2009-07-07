@@ -1,10 +1,13 @@
-make signal handler termination path shorter; risky code pointed out by
+(djm) Make signal handler termination path shorter; risky code pointed out by
 mark dowd; ok djm markus
 CVE-2006-5051
+(djm) Disable sigdie() for platforms that cannot safely syslog inside
+a signal handler (basically all of them, excepting OpenBSD); ok dtucker@
+CVE-2008-4109
 
 --- openssh-3.6.1p2.orig/log.c
 +++ openssh-3.6.1p2/log.c
-@@ -124,6 +124,18 @@ error(const char *fmt,...)
+@@ -124,6 +124,19 @@ error(const char *fmt,...)
  	va_end(args);
  }
  
@@ -13,12 +16,13 @@ CVE-2006-5051
 +{
 +	va_list args;
 +
++#ifdef DO_LOG_SAFE_IN_SIGHAND
 +	va_start(args, fmt);
 +	do_log(SYSLOG_LEVEL_FATAL, fmt, args);
 +	va_end(args);
++#endif
 +	_exit(1);
 +}
-+
 +
  /* Log this message (information that usually should go to the log). */
  
