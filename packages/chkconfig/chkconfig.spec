@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/chkconfig/chkconfig.spec,v 1.21 2009/07/07 21:31:55 mci Exp $
+# $Owl: Owl/packages/chkconfig/chkconfig.spec,v 1.22 2009/07/08 00:48:05 solar Exp $
 
 %define BUILD_NTSYSV 0
 %define INSTALL_ALTERNATIVES 1
@@ -9,7 +9,7 @@ Version: 1.3.38
 Release: owl1
 License: GPL
 Group: System Environment/Base
-Source: %name-%version.tar.bz2
+Source: https://fedorahosted.org/releases/c/h/chkconfig/%name-%version.tar.bz2
 Patch0: chkconfig-1.3.38-owl-fixes.diff
 Patch1: chkconfig-1.3.38-owl-no-ntsysv.diff
 BuildRequires: gettext, glibc >= 0:2.2
