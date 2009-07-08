@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/logrotate/logrotate.spec,v 1.12 2005/11/16 13:11:15 solar Exp $
+# $Owl: Owl/packages/logrotate/logrotate.spec,v 1.13 2009/07/08 00:53:05 solar Exp $
 
 Summary: Rotates, compresses, removes and mails system log files.
 Name: logrotate
@@ -6,6 +6,9 @@ Version: 3.6.2
 Release: owl2
 License: GPL
 Group: System Environment/Base
+URL: https://fedorahosted.org/logrotate/
+# https://fedorahosted.org/releases/l/o/logrotate/
+# http://svn.fedorahosted.org/svn/logrotate/
 Source: logrotate-%version.tar.bz2
 Patch0: logrotate-3.6.2-owl-commands-paths.diff
 Patch1: logrotate-3.6.2-owl-man.diff
