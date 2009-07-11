@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.44 2009/05/09 07:07:03 solar Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.45 2009/07/11 04:06:18 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
-Version: 2.4.8
-Release: owl2
+Version: 2.4.11
+Release: owl1
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
@@ -361,6 +361,9 @@ fi
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
+* Sat Jul 11 2009 Solar Designer <solar-at-owl.openwall.com> 1:2.4.11-owl1
+- Updated to 2.4.11.
+
 * Sat May 09 2009 Solar Designer <solar-at-owl.openwall.com> 1:2.4.8-owl2
 - Re-introduced the postalias hack originally implemented with
 postfix-19991231-pl13-owl-postalias-no-hostname.diff not to leak the
