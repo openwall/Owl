@@ -43,25 +43,16 @@
  	fclose(fp);
 --- dhcp/server/dhcpd.c
 +++ dhcp/server/dhcpd.c
-@@ -551,7 +551,9 @@ int main (argc, argv, envp)
- 				if ((i = open (path_dhcpd_pid,
- 					O_WRONLY | O_CREAT, 0644)) >= 0) {
- 				    sprintf (pbuf, "%d\n", (int)getpid ());
--				    write (i, pbuf, strlen (pbuf));
-+				    if (write (i, pbuf, strlen (pbuf)) != strlen (pbuf))
-+					log_fatal ("Error writing pid file: %s: %m",
-+						   path_dhcpd_pid);
- 				    close (i);
- 				    pidfilewritten = 1;
- 				}
-@@ -584,7 +586,9 @@ int main (argc, argv, envp)
- 		if ((i = open (path_dhcpd_pid,
- 			       O_WRONLY | O_CREAT, 0644)) >= 0) {
- 			sprintf (pbuf, "%d\n", (int)getpid ());
--			write (i, pbuf, strlen (pbuf));
-+			if (write (i, pbuf, strlen (pbuf)) != strlen (pbuf))
-+				log_fatal ("Error writing pid file: %s: %m",
-+					   path_dhcpd_pid);
- 			close (i);
- 			pidfilewritten = 1;
- 		}
+@@ -555,8 +555,10 @@ int main (argc, argv, envp)
+ 
+         /* Write new pid file. */
+         if ((i = open(path_dhcpd_pid, O_WRONLY|O_CREAT|O_TRUNC, 0644)) >= 0) {
+-                sprintf(pbuf, "%d\n", (int) getpid());
+-                write(i, pbuf, strlen(pbuf));
++                snprintf(pbuf, sizeof(pbuf), "%d\n", (int) getpid());
++                if (write(i, pbuf, strlen(pbuf)) != strlen(pbuf))
++			log_fatal("Error writing pid file: %s: %m",
++				  path_dhcpd_pid);
+                 close(i);
+         } else {
+                 log_error("Can't create PID file %s: %m.", path_dhcpd_pid);

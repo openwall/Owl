@@ -470,26 +470,6 @@
  		have_server_identifier = 1;
  	} else
  		smbuf [0] = 0;
---- dhcp/server/dhcpd.c
-+++ dhcp/server/dhcpd.c
-@@ -553,7 +553,7 @@ int main (argc, argv, envp)
- 				unlink (path_dhcpd_pid);
- 				if ((i = open (path_dhcpd_pid,
- 					O_WRONLY | O_CREAT, 0644)) >= 0) {
--				    sprintf (pbuf, "%d\n", (int)getpid ());
-+				    snprintf (pbuf, sizeof(pbuf), "%d\n", (int)getpid ());
- 				    if (write (i, pbuf, strlen (pbuf)) != strlen (pbuf))
- 					log_fatal ("Error writing pid file: %s: %m",
- 						   path_dhcpd_pid);
-@@ -591,7 +591,7 @@ int main (argc, argv, envp)
- 		unlink (path_dhcpd_pid);
- 		if ((i = open (path_dhcpd_pid,
- 			       O_WRONLY | O_CREAT, 0644)) >= 0) {
--			sprintf (pbuf, "%d\n", (int)getpid ());
-+			snprintf (pbuf, sizeof(pbuf), "%d\n", (int)getpid ());
- 			if (write (i, pbuf, strlen (pbuf)) != strlen (pbuf))
- 				log_fatal ("Error writing pid file: %s: %m",
- 					   path_dhcpd_pid);
 --- dhcp/server/failover.c
 +++ dhcp/server/failover.c
 @@ -3580,7 +3580,7 @@ failover_option_t *dhcp_failover_make_option (unsigned code,

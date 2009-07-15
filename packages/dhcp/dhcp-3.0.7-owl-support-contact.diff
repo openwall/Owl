@@ -2,8 +2,8 @@
 +++ dhcp/README
 @@ -1,6 +1,7 @@
  	       Internet Systems Consortium DHCP Distribution
- 	                      Version 3.0.6
- 		              June 29, 2007
+ 	                      Version 3.0.7
+ 		               May 14, 2008
 +	       (with modifications for Openwall GNU/*/Linux)
  
  			       README FILE

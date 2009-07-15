@@ -1,30 +1,32 @@
-# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.50 2007/10/18 17:28:33 ldv Exp $
+# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.51 2009/07/15 13:51:12 ldv Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
-Version: 3.0.6
-Release: owl2
+Version: 3.0.7
+Release: owl1
 License: ISC License
 Group: System Environment/Daemons
 URL: http://www.isc.org/products/DHCP/
 Source0: ftp://ftp.isc.org/isc/dhcp/dhcp-%version.tar.gz
 Source1: dhcpd.init
 Source2: dhcpd.conf.sample
-Patch0: dhcp-3.0.6-alt-fixes.diff
+Patch0: dhcp-3.0.7-alt-owl-fixes.diff
 Patch1: dhcp-3.0.6-owl-alt-errwarn.diff
 Patch2: dhcp-3.0.6-alt-daemonize.diff
 Patch3: dhcp-3.0.6-alt-defaults.diff
 Patch4: dhcp-3.0.6-rh-owl-script.diff
-Patch5: dhcp-3.0.6-owl-support-contact.diff
+Patch5: dhcp-3.0.7-owl-support-contact.diff
 Patch6: dhcp-3.0.6-owl-bound.diff
 Patch7: dhcp-3.0.6-alt-Makefile.diff
 Patch8: dhcp-3.0.6-rh-dhcpctl-man.diff
 Patch9: dhcp-3.0.6-rh-memory.diff
 Patch10: dhcp-3.0.6-rh-failover-ports.diff
 Patch11: dhcp-3.0.6-rh-man.diff
-Patch12: dhcp-3.0.6-owl-alt-drop-root.diff
+Patch12: dhcp-3.0.7-owl-alt-drop-root.diff
+Patch13: dhcp-3.0.7-alt-format.diff
+Patch14: dhcp-3.0.7-up-dhclient-bound.diff
 PreReq: grep, shadow-utils
 BuildRequires: groff, libcap-devel
 BuildRoot: /override/%name-%version
@@ -96,6 +98,8 @@ subnet.  The DHCP relay takes care of this for the client.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
+%patch14 -p1
 
 find server -type f -not -name Makefile\* -print0 |
 	xargs -r0 grep -FZl DBDIR -- |
@@ -227,6 +231,9 @@ fi
 %_mandir/man8/dhcrelay.8*
 
 %changelog
+* Wed Jul 15 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0.7-owl1
+- Updated to 3.0.7.
+
 * Thu Oct 18 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0.6-owl2
 - Simplified lowering privileges algorithm.
 

@@ -1,0 +1,102 @@
+--- dhcp/client/dhclient.c
++++ dhcp/client/dhclient.c
+@@ -262,9 +262,9 @@ int main (argc, argv, envp)
+ 
+ 	if (!quiet) {
+ 		log_info ("%s %s", message, DHCP_VERSION);
+-		log_info (copyright);
+-		log_info (arr);
+-		log_info (url);
++		log_info ("%s", copyright);
++		log_info ("%s", arr);
++		log_info ("%s", url);
+ 		log_info ("%s", "");
+ 	} else
+ 		log_perror = 0;
+@@ -470,9 +470,9 @@ int main (argc, argv, envp)
+ static void usage ()
+ {
+ 	log_info ("%s %s", message, DHCP_VERSION);
+-	log_info (copyright);
+-	log_info (arr);
+-	log_info (url);
++	log_info ("%s", copyright);
++	log_info ("%s", arr);
++	log_info ("%s", url);
+ 
+ 	log_error ("Usage: dhclient [-1dqr] [-nw] [-p <port>] %s",
+ 		   "[-s server]");
+--- dhcp/common/print.c
++++ dhcp/common/print.c
+@@ -311,7 +311,7 @@ void dump_raw (buf, len)
+ 			lbuf[54]=' ';
+ 			lbuf[55]=' ';
+ 			lbuf[73]='\0';
+-			log_info (lbuf);
++			log_info ("%s", lbuf);
+ 		  }
+ 		  memset(lbuf, ' ', 79);
+ 		  lbuf [79] = 0;
+@@ -335,7 +335,7 @@ void dump_raw (buf, len)
+ 	lbuf[54]=' ';
+ 	lbuf[55]=' ';
+ 	lbuf[73]='\0';
+-	log_info (lbuf);
++	log_info ("%s", lbuf);
+ }
+ 
+ void hash_dump (table)
+--- dhcp/relay/dhcrelay.c
++++ dhcp/relay/dhcrelay.c
+@@ -252,9 +252,9 @@ int main (argc, argv, envp)
+ 
+ 	if (!quiet) {
+ 		log_info ("%s %s", message, DHCP_VERSION);
+-		log_info (copyright);
+-		log_info (arr);
+-		log_info (url);
++		log_info ("%s", copyright);
++		log_info ("%s", arr);
++		log_info ("%s", url);
+ 	} else {
+ 		quiet = 0;
+ 		log_perror = 0;
+--- dhcp/server/dhcpd.c
++++ dhcp/server/dhcpd.c
+@@ -379,9 +379,9 @@ int main (argc, argv, envp)
+ 
+ 	if (!quiet) {
+ 		log_info ("%s %s", message, DHCP_VERSION);
+-		log_info (copyright);
+-		log_info (arr);
+-		log_info (url);
++		log_info ("%s", copyright);
++		log_info ("%s", arr);
++		log_info ("%s", url);
+ 	} else {
+ 		quiet = 0;
+ 		log_perror = 0;
+@@ -825,9 +825,9 @@ void postconf_initialization (int quiet)
+ 					log_perror = 0;
+ 					log_info ("%s %s",
+ 						  message, DHCP_VERSION);
+-					log_info (copyright);
+-					log_info (arr);
+-					log_info (url);
++					log_info ("%s", copyright);
++					log_info ("%s", arr);
++					log_info ("%s", url);
+ 					log_perror = tmp;
+ 				}
+ 			} else
+@@ -899,8 +899,8 @@ void postdb_startup (void)
+ static void usage ()
+ {
+ 	log_info ("%s %s", message, DHCP_VERSION);
+-	log_info (copyright);
+-	log_info (arr);
++	log_info ("%s", copyright);
++	log_info ("%s", arr);
+ 
+ 	log_fatal ("Usage: dhcpd [-p <UDP port #>] [-d] [-f]%s%s%s%s%s",
+ 		   "\n             [-cf config-file] [-lf lease-file]",

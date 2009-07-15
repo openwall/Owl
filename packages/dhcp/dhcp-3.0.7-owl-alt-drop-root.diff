@@ -156,7 +156,7 @@
  /* Varargs stuff... */
 --- dhcp/includes/dhcpd.h
 +++ dhcp/includes/dhcpd.h
-@@ -2638,3 +2638,6 @@ OMAPI_OBJECT_ALLOC_DECL (dhcp_failover_link, dhcp_failover_link_t,
+@@ -2643,3 +2643,6 @@ OMAPI_OBJECT_ALLOC_DECL (dhcp_failover_link, dhcp_failover_link_t,
  #endif /* FAILOVER_PROTOCOL */
  
  const char *binding_state_print (enum failover_state);
@@ -316,7 +316,7 @@
 +and \fB-j\fR options are Owl extensions.
 --- dhcp/server/dhcpd.c
 +++ dhcp/server/dhcpd.c
-@@ -225,6 +225,8 @@ int main (argc, argv, envp)
+@@ -224,6 +224,8 @@ int main (argc, argv, envp)
  	char *traceinfile = (char *)0;
  	char *traceoutfile = (char *)0;
  #endif
@@ -325,7 +325,7 @@
  
  	/* Make sure we have stdin, stdout and stderr. */
  	null_fd = open ("/dev/null", O_RDWR);
-@@ -323,6 +325,14 @@ int main (argc, argv, envp)
+@@ -322,6 +324,14 @@ int main (argc, argv, envp)
  		} else if (!strcmp (argv [i], "-q")) {
  			quiet = 1;
  			quiet_interface_discovery = 1;
@@ -340,7 +340,7 @@
  		} else if (!strcmp (argv [i], "--version")) {
  			log_info ("isc-dhcpd-%s", DHCP_VERSION);
  			exit (0);
-@@ -502,12 +512,6 @@ int main (argc, argv, envp)
+@@ -501,12 +511,6 @@ int main (argc, argv, envp)
  
  	group_write_hook = group_writer;
  
@@ -353,7 +353,7 @@
  	/* Discover all the network interfaces and initialize them. */
  	discover_interfaces (DISCOVER_SERVER);
  
-@@ -528,7 +532,6 @@ int main (argc, argv, envp)
+@@ -527,7 +531,6 @@ int main (argc, argv, envp)
  #if defined (TRACING)
  	trace_seed_stash (trace_srandom, seed + cur_time);
  #endif
@@ -361,48 +361,20 @@
  
  #ifndef DEBUG
  	if (daemon) {
-@@ -565,6 +568,21 @@ int main (argc, argv, envp)
- 		}
- 	}
+@@ -568,6 +571,8 @@ int main (argc, argv, envp)
+         }
  
-+	if (!pidfilewritten) {
-+		unlink (path_dhcpd_pid);
-+		if ((i = open (path_dhcpd_pid,
-+			       O_WRONLY | O_CREAT, 0644)) >= 0) {
-+			snprintf (pbuf, sizeof(pbuf), "%d\n", (int)getpid ());
-+			if (write (i, pbuf, strlen (pbuf)) != strlen (pbuf))
-+				log_fatal ("Error writing pid file: %s: %m",
-+					   path_dhcpd_pid);
-+			close (i);
-+			pidfilewritten = 1;
-+		}
-+	}
-+
+ 
 +	dhcpd_priv_minimize (server_user, server_jail);
 +
  	/* If we were requested to log to stdout on the command line,
  	   keep doing so; otherwise, stop. */
  	if (log_perror == -1)
-@@ -583,22 +601,16 @@ int main (argc, argv, envp)
+@@ -585,6 +590,17 @@ int main (argc, argv, envp)
+ 		null_fd = -1;
  		pid = setsid ();
  	}
- 
--	/* If we didn't write the pid file earlier because we found a
--	   process running the logged pid, but we made it to here,
--	   meaning nothing is listening on the bootp port, then write
--	   the pid file out - what's in it now is bogus anyway. */
--	if (!pidfilewritten) {
--		unlink (path_dhcpd_pid);
--		if ((i = open (path_dhcpd_pid,
--			       O_WRONLY | O_CREAT, 0644)) >= 0) {
--			snprintf (pbuf, sizeof(pbuf), "%d\n", (int)getpid ());
--			if (write (i, pbuf, strlen (pbuf)) != strlen (pbuf))
--				log_fatal ("Error writing pid file: %s: %m",
--					   path_dhcpd_pid);
--			close (i);
--			pidfilewritten = 1;
--		}
--	}
++
 +	/* Start up the database... */
 +	db_startup (lftest);
 +
@@ -416,7 +388,7 @@
  #endif /* !DEBUG */
  
  #if defined (DEBUG_MEMORY_LEAKAGE) || defined (DEBUG_MALLOC_POOL) || \
-@@ -891,8 +903,9 @@ static void usage ()
+@@ -873,8 +889,9 @@ static void usage ()
  	log_info (copyright);
  	log_info (arr);
  
