@@ -13,11 +13,14 @@ change logs for the packages themselves.
 	Changes made between Owl 2.0 and Owl-current.
 
 2009/07/15	Package: dhcp
-SECURITY FIX	Severity: none to medium, remote, active
-Updated to 3.0.7.  Fixed DHCP server premature termination bug when
+SECURITY FIX	Severity: none to low, remote, active
+Updated to 3.0.7.  Fixed the DHCP server premature termination bug when
 receiving certain well-formed DHCP requests, provided that the server
 configuration mixes host definitions using "dhcp-client-identifier" and
-"hardware ethernet".  Discovery and patch by Christoph Biedl.
+"hardware ethernet".  It has not been fully researched whether the bug
+had any impact on versions 3.0.x of the DHCP server, and there is a
+specific reason why it might not have had any impact, yet we're fixing
+the underlying bug.  Discovery and patch by Christoph Biedl.
 Reference:
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-1892
 
@@ -753,4 +756,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.170 2009/07/15 22:23:11 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.171 2009/07/15 23:54:07 solar Exp $
