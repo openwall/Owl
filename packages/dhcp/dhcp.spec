@@ -1,5 +1,10 @@
-# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.52 2009/07/15 21:18:54 ldv Exp $
+# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.53 2009/07/15 23:42:01 solar Exp $
 
+# We do not officially support the DHCP client because it is rather
+# complicated, yet it runs entirely as root, which we find an
+# unacceptable and unjustified security risk.  If you enable this
+# setting, then you're essentially running your own revision of this
+# package, and you're on your own with possible vulnerabilities.
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
@@ -8,7 +13,7 @@ Version: 3.0.7
 Release: owl1
 License: ISC License
 Group: System Environment/Daemons
-URL: http://www.isc.org/products/DHCP/
+URL: https://www.isc.org/software/dhcp
 Source0: ftp://ftp.isc.org/isc/dhcp/dhcp-%version.tar.gz
 Source1: dhcpd.init
 Source2: dhcpd.conf.sample
