@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.51 2009/07/15 13:51:12 ldv Exp $
+# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.52 2009/07/15 21:18:54 ldv Exp $
 
 %define BUILD_DHCP_CLIENT 0
 
@@ -27,6 +27,7 @@ Patch11: dhcp-3.0.6-rh-man.diff
 Patch12: dhcp-3.0.7-owl-alt-drop-root.diff
 Patch13: dhcp-3.0.7-alt-format.diff
 Patch14: dhcp-3.0.7-up-dhclient-bound.diff
+Patch15: dhcp-3.0.7-deb-CVE-2009-1892.diff
 PreReq: grep, shadow-utils
 BuildRequires: groff, libcap-devel
 BuildRoot: /override/%name-%version
@@ -100,6 +101,7 @@ subnet.  The DHCP relay takes care of this for the client.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p1
 
 find server -type f -not -name Makefile\* -print0 |
 	xargs -r0 grep -FZl DBDIR -- |
@@ -233,6 +235,11 @@ fi
 %changelog
 * Wed Jul 15 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0.7-owl1
 - Updated to 3.0.7.
+- Fixed potential DHCP server crash in certain configurations
+(CVE-2009-1892; patch by Christoph Biedl).
+- Backported upstream fix for potential stack-based buffer overflow in
+DHCP client (CVE-2009-0692; although we're not supporting dhclient
+officially and not building it by default).
 
 * Thu Oct 18 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0.6-owl2
 - Simplified lowering privileges algorithm.
