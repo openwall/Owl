@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.53 2009/07/15 23:42:01 solar Exp $
+# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.54 2009/07/16 20:28:29 solar Exp $
 
 # We do not officially support the DHCP client because it is rather
 # complicated, yet it runs entirely as root, which we find an
@@ -118,10 +118,6 @@ find client -type f -not -name Makefile\* -print0 |
 %endif
 
 %{expand:%%define optflags %optflags -fno-strict-aliasing -Wall -Wno-unused -D_GNU_SOURCE}
-
-%ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
-%{expand:%%define optflags %optflags -DPTRSIZE_64BIT}
-%endif
 
 %build
 ./configure --copts '%optflags'
