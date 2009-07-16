@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.26 2009/07/16 19:46:50 mci Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.27 2009/07/16 20:01:33 solar Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -16,7 +16,7 @@ Source: %srcname-stripped-for-owl-1.tar.bz2
 # The following subdirectories have been removed from the above tarball:
 # mswin32 macosx zenmap libpcap libpcre
 # and a README-stripped file has been added.
-# The size reduced from ?? MB to ?? MB.
+# The size reduced from 8.7 MB to 2.2 MB.
 # Source: http://nmap.org/dist/%srcname.tar.bz2
 # Signature: http://nmap.org/dist/sigs/%srcname.tar.bz2.asc
 Patch0: nmap-5.00-owl-nse_ldflags.diff
@@ -27,11 +27,14 @@ Patch4: nmap-5.00-alt-owl-fileexistsandisreadable.diff
 Patch5: nmap-5.00-owl-include.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
-BuildRequires: openssl-devel >= 0.9.7g-owl1
-BuildRequires: gcc-c++, libpcap-devel, libcap-devel, pcre-devel
 %if %BUILD_NDIFF
+# The configure script checks for the Python interpreter, which is why
+# this dependency is not just runtime, but also build-time.
+Requires: python
 BuildRequires: python-devel
 %endif
+BuildRequires: openssl-devel >= 0.9.7g-owl1
+BuildRequires: gcc-c++, libpcap-devel, libcap-devel, pcre-devel
 BuildRoot: /override/%name-%version
 
 %description
@@ -70,7 +73,7 @@ aclocal
 autoheader
 autoconf
 %configure \
-	--without-zenmap %nseflag %ncatflag %ndiff_flag\
+	--without-zenmap %nseflag %ncatflag %ndiff_flag \
 	--with-user=nmap \
 	--with-chroot-empty=/var/empty
 touch makefile.dep
@@ -93,7 +96,7 @@ grep -q ^nmap: /etc/passwd ||
 %_datadir/nmap
 
 %if %BUILD_NCAT
-%attr(750,root,wheel) %_bindir/ncat
+%_bindir/ncat
 %_mandir/man1/ncat.1*
 %_datadir/ncat
 %endif
