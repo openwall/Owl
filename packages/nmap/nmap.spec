@@ -1,8 +1,12 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.25 2009/05/29 13:51:55 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.26 2009/07/16 19:46:50 mci Exp $
+
+%define BUILD_NSE_ENABLED 1
+%define BUILD_NCAT 1
+%define BUILD_NDIFF 0
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
-Version: 4.76
+Version: 5.00
 Release: owl1
 License: GPL
 Group: Applications/System
@@ -12,20 +16,22 @@ Source: %srcname-stripped-for-owl-1.tar.bz2
 # The following subdirectories have been removed from the above tarball:
 # mswin32 macosx zenmap libpcap libpcre
 # and a README-stripped file has been added.
-# The size reduced from 5.8 MB to 1.7 MB.
+# The size reduced from ?? MB to ?? MB.
 # Source: http://nmap.org/dist/%srcname.tar.bz2
 # Signature: http://nmap.org/dist/sigs/%srcname.tar.bz2.asc
-Patch0: nmap-4.76-owl-nse_ldflags.diff
-Patch1: nmap-4.76-alt-owl-autoheader.diff
-Patch2: nmap-4.76-owl-warnings.diff
-Patch3: nmap-4.76-alt-owl-drop-priv.diff
-Patch4: nmap-4.76-alt-owl-dot-dir.diff
-Patch5: nmap-4.76-alt-owl-fileexistsandisreadable.diff
-Patch6: nmap-4.76-owl-include.diff
+Patch0: nmap-5.00-owl-nse_ldflags.diff
+Patch1: nmap-5.00-alt-owl-autoheader.diff
+Patch2: nmap-5.00-alt-owl-drop-priv.diff
+Patch3: nmap-5.00-alt-owl-dot-dir.diff
+Patch4: nmap-5.00-alt-owl-fileexistsandisreadable.diff
+Patch5: nmap-5.00-owl-include.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
 BuildRequires: openssl-devel >= 0.9.7g-owl1
 BuildRequires: gcc-c++, libpcap-devel, libcap-devel, pcre-devel
+%if %BUILD_NDIFF
+BuildRequires: python-devel
+%endif
 BuildRoot: /override/%name-%version
 
 %description
@@ -45,16 +51,26 @@ and more.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
 bzip2 -9 CHANGELOG
+
+%if !%BUILD_NSE_ENABLED
+%define nseflag --without-liblua 
+%endif
+
+%if !%BUILD_NCAT
+%define ncatflag --without-ncat
+%endif
+
+%if %BUILD_NDIFF
+%define ndiff_flag --with-ndiff
+%endif
 
 %build
 aclocal
 autoheader
 autoconf
 %configure \
-	--without-zenmap \
-	--without-liblua \
+	--without-zenmap %nseflag %ncatflag %ndiff_flag\
 	--with-user=nmap \
 	--with-chroot-empty=/var/empty
 touch makefile.dep
@@ -76,7 +92,23 @@ grep -q ^nmap: /etc/passwd ||
 %_mandir/man1/nmap.1*
 %_datadir/nmap
 
+%if %BUILD_NCAT
+%attr(750,root,wheel) %_bindir/ncat
+%_mandir/man1/ncat.1*
+%_datadir/ncat
+%endif
+
+%if %BUILD_NDIFF
+%_bindir/ndiff
+%_mandir/man1/ndiff.1*
+%endif
+
 %changelog
+* Thu Jul 16 2009 Michail Litvak <mci-at-owl.openwall.com> 5.00-owl1
+- Updated to 5.00.
+- Updated patches.
+- Added possibility to build with NSE enabled, ncat and ndiff.
+
 * Mon May 18 2009 Michail Litvak <mci-at-owl.openwall.com> 4.76-owl1
 - Updated to 4.76.
 - Updated patches.

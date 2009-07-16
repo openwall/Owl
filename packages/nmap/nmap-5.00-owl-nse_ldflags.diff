@@ -1,5 +1,5 @@
---- nmap-4.76/configure.ac.orig	2008-09-08 23:37:03.000000000 +0000
-+++ nmap-4.76/configure.ac	2009-05-18 19:21:43.000000000 +0000
+--- nmap-5.00/configure.ac.orig	2009-06-24 21:35:54.000000000 +0000
++++ nmap-5.00/configure.ac	2009-07-16 08:50:20.000000000 +0000
 @@ -107,6 +107,7 @@
  needs_cpp_precomp=no
  
@@ -27,16 +27,16 @@
      ;;
    *-bsdi*)
      AC_DEFINE(BSDI)
-@@ -178,7 +179,7 @@
+@@ -177,7 +178,7 @@
+     ;;
    *-linux*)
      AC_DEFINE(LINUX)
-     AC_DEFINE(PCAP_TIMEOUT_IGNORED)  # libpcap doesn't even LOOK at the timeout you give it under Linux
 -    LDFLAGS="-Wl,-E $LDFLAGS" # needed for nse-C-module support
 +    NSE_LDFLAGS="-Wl,-E"
      ;;
    *-apple-darwin*)
      AC_DEFINE(MACOSX)
-@@ -583,6 +584,7 @@
+@@ -612,6 +613,7 @@
    fi
  
    INSTALLNSE="install-nse"
