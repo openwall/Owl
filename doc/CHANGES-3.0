@@ -12,6 +12,9 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/07/16	Package: nmap
+Updated to 5.00.
+
 2009/07/15	Package: dhcp
 SECURITY FIX	Severity: none to low, remote, active
 Updated to 3.0.7.  Fixed the DHCP server premature termination bug when
@@ -756,4 +759,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.171 2009/07/15 23:54:07 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.172 2009/07/16 20:04:53 solar Exp $
