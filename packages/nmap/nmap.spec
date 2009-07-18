@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.28 2009/07/18 06:45:42 mci Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.29 2009/07/18 09:34:59 solar Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -59,7 +59,7 @@ and more.
 bzip2 -9 CHANGELOG
 
 %if !%BUILD_NSE_ENABLED
-%define nseflag --without-liblua 
+%define nseflag --without-liblua
 %endif
 
 %if !%BUILD_NCAT
@@ -110,8 +110,8 @@ grep -q ^nmap: /etc/passwd ||
 
 %changelog
 * Thu Jul 17 2009 Michail Litvak <mci-at-owl.openwall.com> 5.00-owl2
-- Added patch to prevent NSE initialization when no sccripts used.
-- Fixed -drop-priv patch to initialize NSE before priveleges dropping.
+- Added a patch to prevent NSE initialization when no scripts are to be used.
+- Fixed the -drop-priv patch to initialize NSE before privileges dropping.
 
 * Thu Jul 16 2009 Michail Litvak <mci-at-owl.openwall.com> 5.00-owl1
 - Updated to 5.00.
