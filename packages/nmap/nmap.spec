@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.30 2009/07/18 16:13:07 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.31 2009/07/18 17:11:19 solar Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -8,6 +8,7 @@ Summary: Network exploration tool and security scanner.
 Name: nmap
 Version: 5.00
 Release: owl3
+Epoch: 2
 License: GPL
 Group: Applications/System
 URL: http://nmap.org
@@ -31,21 +32,38 @@ Requires: /var/empty
 %if %BUILD_NDIFF
 # The configure script checks for the Python interpreter, which is why
 # this dependency is not just runtime, but also build-time.
-Requires: python
-BuildRequires: python-devel
+Requires: python >= 2.4
+BuildRequires: python-devel >= 2.4
 %endif
 BuildRequires: openssl-devel >= 0.9.7g-owl1
 BuildRequires: gcc-c++, libpcap-devel, libcap-devel, pcre-devel
 BuildRoot: /override/%name-%version
 
 %description
-Nmap is an utility for network exploration or security auditing.
-It supports ping scanning (determine which hosts are up), many port
-scanning techniques, version detection (determine service protocols and
-application versions listening behind ports), and TCP/IP fingerprinting
-(remote host OS or device identification).  Nmap also offers flexible
-target and port specification, decoy/stealth scanning, Sun RPC scanning,
-and more.
+Nmap is an utility for network exploration or security auditing.  Many
+systems and network administrators also find it useful for tasks such as
+network inventory, managing service upgrade schedules, and monitoring
+host or service uptime.  Nmap uses raw IP packets in novel ways to
+determine what hosts are available on the network, what services
+(application name and version) those hosts are offering, what operating
+systems (and OS versions) they are running, what type of packet
+filters/firewalls are in use, and dozens of other characteristics.
+Nmap was designed to rapidly scan large networks, but it also works fine
+against single hosts.
+
+%if %BUILD_NCAT
+%package -n ncat
+Summary: Nmap's remake of netcat - a feature-packed networking utility.
+Group: Applications/System
+
+%description -n ncat
+Ncat is a feature-packed networking utility, which will read and write
+data across a network from the command line.  It uses both TCP and UDP
+for communication and is designed to be a reliable back-end tool to
+instantly provide network connectivity to other applications and users.
+Ncat will not only work with IPv4 and IPv6 but provides the user with a
+virtually limitless number of potential uses.
+%endif
 
 %prep
 %setup -q -n %srcname
@@ -56,7 +74,7 @@ and more.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-bzip2 -9 CHANGELOG
+bzip2 -9 CHANGELOG ncat/ChangeLog doc/TODO*
 
 %if !%BUILD_NSE_ENABLED
 %define nseflag --without-liblua
@@ -92,26 +110,32 @@ grep -q ^nmap: /etc/passwd ||
 
 %files
 %defattr(-,root,root)
-%doc CHANGELOG.bz2 COPYING HACKING docs/{README,*.txt}
+%doc CHANGELOG.bz2 COPYING HACKING docs/{README,TODO*,*.txt}
 %attr(750,root,wheel) %_bindir/nmap
 %_mandir/man1/nmap.1*
 %_datadir/nmap
-
-%if %BUILD_NCAT
-%_bindir/ncat
-%_mandir/man1/ncat.1*
-%_datadir/ncat
-%endif
 
 %if %BUILD_NDIFF
 %_bindir/ndiff
 %_mandir/man1/ndiff.1*
 %endif
 
+%if %BUILD_NCAT
+%files -n ncat
+%defattr(-,root,root)
+%doc ncat/ChangeLog.bz2 ncat/COPYING
+%_bindir/ncat
+%_mandir/man1/ncat.1*
+%_datadir/ncat
+%endif
+
 %changelog
 * Sat Jul 18 2009 Solar Designer <solar-at-owl.openwall.com> 5.00-owl3
 - Replaced the NSE initialization patch with its corrected revision that went
 upstream (by Patrick Donnelly).
+- Moved Ncat to a subpackage.
+- Based the descriptions on those found in upstream's sample spec file.
+- Set Epoch to 2 to match RHEL 4 and upstream's sample spec file.
 
 * Fri Jul 17 2009 Michail Litvak <mci-at-owl.openwall.com> 5.00-owl2
 - Added a patch to prevent NSE initialization when no scripts are to be used.
