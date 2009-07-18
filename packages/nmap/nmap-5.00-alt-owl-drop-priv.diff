@@ -20,7 +20,7 @@
 +  }
 +  if (o.servicescan)
 +    o.scriptversion = 1;
-+  if(o.script)
++  if (o.scriptversion || o.script)
 +    open_nse();
 +#endif
 +
@@ -41,7 +41,7 @@
 -  }
 -  if (o.servicescan)
 -    o.scriptversion = 1;
--  if(o.script)
+-  if (o.scriptversion || o.script)
 -    open_nse();
 -#endif
 -  

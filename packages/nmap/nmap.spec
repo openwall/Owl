@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.29 2009/07/18 09:34:59 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.30 2009/07/18 16:13:07 solar Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -7,7 +7,7 @@
 Summary: Network exploration tool and security scanner.
 Name: nmap
 Version: 5.00
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/System
 URL: http://nmap.org
@@ -21,7 +21,7 @@ Source: %srcname-stripped-for-owl-1.tar.bz2
 # Signature: http://nmap.org/dist/sigs/%srcname.tar.bz2.asc
 Patch0: nmap-5.00-owl-nse_ldflags.diff
 Patch1: nmap-5.00-alt-owl-autoheader.diff
-Patch2: nmap-5.00-owl-nse_open.diff
+Patch2: nmap-5.00-up-20090718-nse_open.diff
 Patch3: nmap-5.00-alt-owl-drop-priv.diff
 Patch4: nmap-5.00-alt-owl-dot-dir.diff
 Patch5: nmap-5.00-alt-owl-fileexistsandisreadable.diff
@@ -51,7 +51,7 @@ and more.
 %setup -q -n %srcname
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
+%patch2 -p0
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
@@ -109,7 +109,11 @@ grep -q ^nmap: /etc/passwd ||
 %endif
 
 %changelog
-* Thu Jul 17 2009 Michail Litvak <mci-at-owl.openwall.com> 5.00-owl2
+* Sat Jul 18 2009 Solar Designer <solar-at-owl.openwall.com> 5.00-owl3
+- Replaced the NSE initialization patch with its corrected revision that went
+upstream (by Patrick Donnelly).
+
+* Fri Jul 17 2009 Michail Litvak <mci-at-owl.openwall.com> 5.00-owl2
 - Added a patch to prevent NSE initialization when no scripts are to be used.
 - Fixed the -drop-priv patch to initialize NSE before privileges dropping.
 
