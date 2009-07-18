@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.27 2009/07/16 20:01:33 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.28 2009/07/18 06:45:42 mci Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -7,7 +7,7 @@
 Summary: Network exploration tool and security scanner.
 Name: nmap
 Version: 5.00
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/System
 URL: http://nmap.org
@@ -21,10 +21,11 @@ Source: %srcname-stripped-for-owl-1.tar.bz2
 # Signature: http://nmap.org/dist/sigs/%srcname.tar.bz2.asc
 Patch0: nmap-5.00-owl-nse_ldflags.diff
 Patch1: nmap-5.00-alt-owl-autoheader.diff
-Patch2: nmap-5.00-alt-owl-drop-priv.diff
-Patch3: nmap-5.00-alt-owl-dot-dir.diff
-Patch4: nmap-5.00-alt-owl-fileexistsandisreadable.diff
-Patch5: nmap-5.00-owl-include.diff
+Patch2: nmap-5.00-owl-nse_open.diff
+Patch3: nmap-5.00-alt-owl-drop-priv.diff
+Patch4: nmap-5.00-alt-owl-dot-dir.diff
+Patch5: nmap-5.00-alt-owl-fileexistsandisreadable.diff
+Patch6: nmap-5.00-owl-include.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
 %if %BUILD_NDIFF
@@ -54,6 +55,7 @@ and more.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 bzip2 -9 CHANGELOG
 
 %if !%BUILD_NSE_ENABLED
@@ -107,6 +109,10 @@ grep -q ^nmap: /etc/passwd ||
 %endif
 
 %changelog
+* Thu Jul 17 2009 Michail Litvak <mci-at-owl.openwall.com> 5.00-owl2
+- Added patch to prevent NSE initialization when no sccripts used.
+- Fixed -drop-priv patch to initialize NSE before priveleges dropping.
+
 * Thu Jul 16 2009 Michail Litvak <mci-at-owl.openwall.com> 5.00-owl1
 - Updated to 5.00.
 - Updated patches.

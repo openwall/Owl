@@ -1,3 +1,53 @@
+--- nmap-5.00/nmap.cc.orig	2009-07-17 14:16:59.000000000 +0000
++++ nmap-5.00/nmap.cc	2009-07-17 19:33:49.000000000 +0000
+@@ -96,6 +96,7 @@
+ #include "scan_engine.h"
+ #include "idle_scan.h"
+ #include "timing.h"
++#include "droppriv.h"
+ #include "NmapOps.h"
+ #include "MACLookup.h"
+ #include "traceroute.h"
+@@ -1495,6 +1496,20 @@
+       o.sendpref = PACKET_SEND_ETH_STRONG;
+   }
+ 
++#ifndef NOLUA
++  if(o.scriptupdatedb) {
++	script_updatedb();
++	// disable warnings
++  	o.max_ips_to_scan = o.numhosts_scanned; 
++  }
++  if (o.servicescan)
++    o.scriptversion = 1;
++  if(o.script)
++    open_nse();
++#endif
++
++  drop_priv();
++
+   /* By now, we've got our port lists.  Give the user a warning if no 
+    * ports are specified for the type of scan being requested.  Other things
+    * (such as OS ident scan) might break cause no ports were specified,  but
+@@ -1674,18 +1689,6 @@
+       free(exclude_spec);
+   }
+ 
+-#ifndef NOLUA
+-  if(o.scriptupdatedb) {
+-	script_updatedb();
+-	// disable warnings
+-  	o.max_ips_to_scan = o.numhosts_scanned; 
+-  }
+-  if (o.servicescan)
+-    o.scriptversion = 1;
+-  if(o.script)
+-    open_nse();
+-#endif
+-  
+   /* Time to create a hostgroup state object filled with all the requested
+      machines. The list is initially empty. It is refilled inside the loop
+      whenever it is empty. */
 --- nmap-5.00/tcpip.cc.orig	2009-06-24 21:35:54.000000000 +0000
 +++ nmap-5.00/tcpip.cc	2009-07-16 09:41:37.000000000 +0000
 @@ -96,6 +96,7 @@
@@ -139,25 +189,6 @@
  dnl Checks for library functions.
  AC_CHECK_FUNCS(strerror)
  RECVFROM_ARG6_TYPE
---- nmap-5.00/nmap.cc.orig	2009-06-24 21:35:54.000000000 +0000
-+++ nmap-5.00/nmap.cc	2009-07-16 07:49:05.000000000 +0000
-@@ -96,6 +96,7 @@
- #include "scan_engine.h"
- #include "idle_scan.h"
- #include "timing.h"
-+#include "droppriv.h"
- #include "NmapOps.h"
- #include "MACLookup.h"
- #include "traceroute.h"
-@@ -1495,6 +1496,8 @@
-       o.sendpref = PACKET_SEND_ETH_STRONG;
-   }
- 
-+  drop_priv();
-+
-   /* By now, we've got our port lists.  Give the user a warning if no 
-    * ports are specified for the type of scan being requested.  Other things
-    * (such as OS ident scan) might break cause no ports were specified,  but
 --- nmap-5.00/nmap_dns.cc.orig	2009-06-24 21:35:54.000000000 +0000
 +++ nmap-5.00/nmap_dns.cc	2009-07-16 07:49:05.000000000 +0000
 @@ -155,6 +155,7 @@
