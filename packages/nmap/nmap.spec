@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.31 2009/07/18 17:11:19 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.32 2009/07/18 17:17:41 solar Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -74,7 +74,7 @@ virtually limitless number of potential uses.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-bzip2 -9 CHANGELOG ncat/ChangeLog doc/TODO*
+bzip2 -9 CHANGELOG ncat/ChangeLog docs/TODO*
 
 %if !%BUILD_NSE_ENABLED
 %define nseflag --without-liblua
@@ -116,6 +116,7 @@ grep -q ^nmap: /etc/passwd ||
 %_datadir/nmap
 
 %if %BUILD_NDIFF
+%doc ndiff/{COPYING,README}
 %_bindir/ndiff
 %_mandir/man1/ndiff.1*
 %endif
@@ -123,7 +124,7 @@ grep -q ^nmap: /etc/passwd ||
 %if %BUILD_NCAT
 %files -n ncat
 %defattr(-,root,root)
-%doc ncat/ChangeLog.bz2 ncat/COPYING
+%doc ncat/{ChangeLog.bz2,COPYING}
 %_bindir/ncat
 %_mandir/man1/ncat.1*
 %_datadir/ncat
@@ -135,6 +136,7 @@ grep -q ^nmap: /etc/passwd ||
 upstream (by Patrick Donnelly).
 - Moved Ncat to a subpackage.
 - Based the descriptions on those found in upstream's sample spec file.
+- Package additional documentation files.
 - Set Epoch to 2 to match RHEL 4 and upstream's sample spec file.
 
 * Fri Jul 17 2009 Michail Litvak <mci-at-owl.openwall.com> 5.00-owl2
