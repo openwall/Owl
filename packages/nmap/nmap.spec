@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.32 2009/07/18 17:17:41 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.33 2009/07/19 09:35:43 solar Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -7,7 +7,7 @@
 Summary: Network exploration tool and security scanner.
 Name: nmap
 Version: 5.00
-Release: owl3
+Release: owl4
 Epoch: 2
 License: GPL
 Group: Applications/System
@@ -27,6 +27,7 @@ Patch3: nmap-5.00-alt-owl-drop-priv.diff
 Patch4: nmap-5.00-alt-owl-dot-dir.diff
 Patch5: nmap-5.00-alt-owl-fileexistsandisreadable.diff
 Patch6: nmap-5.00-owl-include.diff
+Patch7: nmap-5.00-up-20090711-ncat-error-reporting.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
 %if %BUILD_NDIFF
@@ -74,6 +75,7 @@ virtually limitless number of potential uses.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p0
 bzip2 -9 CHANGELOG ncat/ChangeLog docs/TODO*
 
 %if !%BUILD_NSE_ENABLED
@@ -131,6 +133,10 @@ grep -q ^nmap: /etc/passwd ||
 %endif
 
 %changelog
+* Sun Jul 19 2009 Solar Designer <solar-at-owl.openwall.com> 5.00-owl4
+- Added a patch from the upstream SVN repository to make Ncat report basic
+connection errors by default (by David Fifield).
+
 * Sat Jul 18 2009 Solar Designer <solar-at-owl.openwall.com> 5.00-owl3
 - Replaced the NSE initialization patch with its corrected revision that went
 upstream (by Patrick Donnelly).
