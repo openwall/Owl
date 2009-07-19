@@ -1,0 +1,40 @@
+diff -ur vsftpd-2.2.0pre4.orig/vsftpd.8 vsftpd-2.2.0pre4/vsftpd.8
+--- vsftpd-2.2.0pre4.orig/vsftpd.8	2009-07-17 20:56:23 +0000
++++ vsftpd-2.2.0pre4/vsftpd.8	2009-07-19 21:39:50 +0000
+@@ -18,13 +18,13 @@
+ .Xr xinetd 8 .
+ Alternatively, vsftpd can be launched in standalone mode, in which case vsftpd
+ itself will listen on the network. This latter mode is easier to use, and
+-recommended. It is activated by setting
+-.Pa listen=YES
+-in
+-.Pa /etc/vsftpd.conf .
++recommended. It may be activated by specifying
++.Pa -olisten=YES
++on the command line.
+ Direct execution of the
+ .Nm vsftpd
+-binary will then launch the FTP service ready for immediate client connections.
++binary with this option will launch the FTP service ready for immediate client
++connections.
+ .Sh OPTIONS
+ An optional
+ configuration file or files
+@@ -47,12 +47,12 @@
+ config files.
+ .El
+ .Sh EXAMPLES
+-vsftpd -olisten=NO /etc/vsftpd.conf -oftpd_banner=blah
++vsftpd -oftpd_banner='MyDistro vsftpd' /etc/vsftpd.conf -olisten=NO
+ .Pp
+-That example overrides vsftpd's built-in default for the "listen" option to be
+-NO, but then loads /etc/vsftpd.conf which may override that setting. Finally,
+-the "ftpd_banner" setting is set to "blah", which overrides any default vsftpd
+-setting and any identical setting that was in the config file.
++This example overrides vsftpd's built-in default for the "ftpd_banner" option,
++but then loads /etc/vsftpd.conf, which may override that setting. Finally,
++the "listen" setting is set to NO, which overrides any default vsftpd setting
++and any identical setting that might have been found in the config file.
+ .Sh FILES
+ .Pa /etc/vsftpd.conf
+ .Sh SEE ALSO
