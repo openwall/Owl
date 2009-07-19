@@ -9,6 +9,6 @@ service ftp
 	wait		= no
 	rlimit_as	= 16M
 	server		= /usr/sbin/vsftpd
-	server_args	= /etc/vsftpd.conf -olisten=NO
-	disable         = yes
+	server_args	= /etc/vsftpd.conf -olisten=NO -olisten_ipv6=NO
+	disable		= yes
 }
