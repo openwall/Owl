@@ -12,8 +12,21 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
-2009/07/16	Package: nmap
-Updated to 5.00.
+2009/07/18 -
+2009/07/19	Package: vsftpd
+Updated to 2.2.0pre4, which officially reverts the default for "listen"
+back to NO (the way we had it in Owl all the time) and implements the
+"-o" option (the syntax and semantics are subtly different from what we
+had in our own implementation).
+
+2009/07/16 -
+2009/07/19	Package: nmap
+Updated to 5.00 with our usual enhancements for privilege reduction and
+with some post-release fixes.  Enabled build of Ncat (an even more
+powerful remake of the well-known netcat tool, which we previously had
+represented in Owl with OpenBSD's remake) and build of Nmap with NSE
+(Nmap Scripting Engine) support enabled.  Ncat gets into its own binary
+subpackage called "ncat" and installable independently of "nmap".
 
 2009/07/15	Package: dhcp
 SECURITY FIX	Severity: none to low, remote, active
@@ -759,4 +772,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.172 2009/07/16 20:04:53 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.173 2009/07/19 22:50:21 solar Exp $
