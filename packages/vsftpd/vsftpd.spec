@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.31 2009/07/19 21:59:36 solar Exp $
+# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.32 2009/07/19 22:26:14 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
@@ -17,6 +17,7 @@ Patch0: vsftpd-2.2.0-owl-warnings.diff
 Patch1: vsftpd-2.2.0-owl-pam_userpass.diff
 Patch2: vsftpd-2.2.0-owl-alt-defaults.diff
 Patch3: vsftpd-2.2.0-owl-man.diff
+Patch4: vsftpd-2.2.0-owl-fixes.diff
 Requires: logrotate, pam >= 0:0.80-owl2, pam_userpass, tcb, xinetd, /var/empty
 Provides: ftpserver
 BuildRequires: pam-devel, pam_userpass-devel, libcap-devel
@@ -34,6 +35,7 @@ program has been carefully designed to be resilient to attack.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 install -p -m 644 %_sourcedir/vsftpd.eps.gz .
 bzip2 -9 Changelog
 
@@ -91,6 +93,8 @@ the command line rather than a config file for overriding these options.
 config file for overriding "listen", with a related change to the example.
 - In the default xinetd config file, also set "-olisten_ipv6=NO" (in addition
 to "-olisten=NO").
+- Corrected a newly introduced pam_get_item() call in sysdeputil.c not to
+break C strict aliasing rules.
 
 * Sat Jul 18 2009 Michail Litvak <mci-at-owl.openwall.com> 2.2.0-owl0.1
 - Updated to 2.2.0pre4.

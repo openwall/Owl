@@ -1,0 +1,43 @@
+diff -urp vsftpd-2.2.0pre4.orig/sysdeputil.c vsftpd-2.2.0pre4/sysdeputil.c
+--- vsftpd-2.2.0pre4.orig/sysdeputil.c	2009-07-14 04:03:31 +0000
++++ vsftpd-2.2.0pre4/sysdeputil.c	2009-07-19 22:20:26 +0000
+@@ -304,6 +304,15 @@ vsf_sysdep_check_auth(const struct mystr
+ 
+ #else /* VSF_SYSDEP_HAVE_PAM */
+ 
++#if (defined(__sun) || defined(__hpux)) && \
++    !defined(LINUX_PAM) && !defined(_OPENPAM)
++/* Sun's PAM doesn't use const here, while Linux-PAM and OpenPAM do */
++#define lo_const
++#else
++#define lo_const			const
++#endif
++typedef lo_const void *pam_item_t;
++
+ static pam_handle_t* s_pamh;
+ static struct mystr s_pword_str;
+ static int pam_conv_func(int nmsg, const struct pam_message** p_msg,
+@@ -316,6 +325,7 @@ vsf_sysdep_check_auth(struct mystr* p_us
+                       const struct mystr* p_remote_host)
+ {
+   int retval;
++  pam_item_t item;
+   const char* pam_user_name = 0;
+   struct pam_conv the_conv =
+   {
+@@ -369,13 +379,14 @@ vsf_sysdep_check_auth(struct mystr* p_us
+     return 0;
+   }
+ #ifdef PAM_USER
+-  retval = pam_get_item(s_pamh, PAM_USER, (const void**) &pam_user_name);
++  retval = pam_get_item(s_pamh, PAM_USER, &item);
+   if (retval != PAM_SUCCESS)
+   {
+     (void) pam_end(s_pamh, retval);
+     s_pamh = 0;
+     return 0;
+   }
++  pam_user_name = item;
+   str_alloc_text(p_user_str, pam_user_name);
+ #endif
+   retval = pam_acct_mgmt(s_pamh, 0);
