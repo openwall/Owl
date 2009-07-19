@@ -18,6 +18,8 @@ Updated to 2.2.0pre4, which officially reverts the default for "listen"
 back to NO (the way we had it in Owl all the time) and implements the
 "-o" option (the syntax and semantics are subtly different from what we
 had in our own implementation).
+Reference:
+http://lists.freedesktop.org/archives/distributions/2009-July/000322.html
 
 2009/07/16 -
 2009/07/19	Package: nmap
@@ -27,6 +29,8 @@ powerful remake of the well-known netcat tool, which we previously had
 represented in Owl with OpenBSD's remake) and build of Nmap with NSE
 (Nmap Scripting Engine) support enabled.  Ncat gets into its own binary
 subpackage called "ncat" and installable independently of "nmap".
+Reference:
+http://www.openwall.com/lists/owl-users/2009/07/19/1
 
 2009/07/15	Package: dhcp
 SECURITY FIX	Severity: none to low, remote, active
@@ -37,8 +41,9 @@ configuration mixes host definitions using "dhcp-client-identifier" and
 had any impact on versions 3.0.x of the DHCP server, and there is a
 specific reason why it might not have had any impact, yet we're fixing
 the underlying bug.  Discovery and patch by Christoph Biedl.
-Reference:
+References:
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-1892
+http://www.openwall.com/lists/owl-users/2009/07/16/1
 
 2009/07/11	Package: postfix
 Updated to 2.4.11.
@@ -772,4 +777,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.173 2009/07/19 22:50:21 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.174 2009/07/19 23:02:30 solar Exp $
