@@ -1,8 +1,0 @@
---- vsftpd-2.1.0/vsftpd.8.orig	2008-12-17 18:45:19.000000000 +0000
-+++ vsftpd-2.1.0/vsftpd.8	2009-05-25 14:25:05.000000000 +0000
-@@ -33,3 +33,4 @@
- .Pa /etc/vsftpd.conf .
- .Sh SEE ALSO
- .Xr vsftpd.conf 5
-+.end
-\ No newline at end of file

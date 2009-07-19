@@ -1,5 +1,5 @@
---- vsftpd-2.1.0/ftpcmdio.h.orig	2008-02-02 01:30:41.000000000 +0000
-+++ vsftpd-2.1.0/ftpcmdio.h	2008-06-09 20:40:29.000000000 +0000
+--- vsftpd-2.2.0/ftpcmdio.h.orig	2008-02-02 01:30:41.000000000 +0000
++++ vsftpd-2.2.0/ftpcmdio.h	2008-06-09 20:40:29.000000000 +0000
 @@ -50,6 +50,9 @@
   * The same as vsf_cmdio_write(), and then the calling process is exited. The
   * write is _guaranteed_ to not block (ditching output if neccessary).
@@ -10,8 +10,8 @@
  void vsf_cmdio_write_exit(struct vsf_session* p_sess, int status,
                            const char* p_text);
  
---- vsftpd-2.1.0/str.c.orig	2008-12-17 05:54:16.000000000 +0000
-+++ vsftpd-2.1.0/str.c	2009-05-25 19:16:04.000000000 +0000
+--- vsftpd-2.2.0/str.c.orig	2008-12-17 05:54:16.000000000 +0000
++++ vsftpd-2.2.0/str.c	2009-05-25 19:16:04.000000000 +0000
 @@ -435,9 +435,7 @@
    struct str_locate_result retval;
    unsigned int num_chars = vsf_sysutil_strlen(p_chars);
@@ -45,10 +45,10 @@
    if (text_len == 0 || text_len > p_str->len)
    {
      return retval;
---- vsftpd-2.1.0/sysutil.h.orig	2009-01-07 19:56:36.000000000 +0000
-+++ vsftpd-2.1.0/sysutil.h	2009-05-25 19:16:04.000000000 +0000
-@@ -166,6 +166,9 @@
- unsigned int vsf_sysutil_getpid(void);
+--- vsftpd-2.2.0/sysutil.h.orig	2009-07-16 03:31:53.000000000 +0000
++++ vsftpd-2.2.0/sysutil.h	2009-07-18 20:11:11.000000000 +0000
+@@ -168,6 +168,9 @@
+ void vsf_sysutil_clear_pid_cache(void);
  int vsf_sysutil_fork(void);
  int vsf_sysutil_fork_failok(void);
 +#ifdef __GNUC__
@@ -57,8 +57,8 @@
  void vsf_sysutil_exit(int exit_code);
  struct vsf_sysutil_wait_retval
  {
---- vsftpd-2.1.0/twoprocess.c.orig	2009-01-15 01:03:04.000000000 +0000
-+++ vsftpd-2.1.0/twoprocess.c	2009-05-25 19:16:04.000000000 +0000
+--- vsftpd-2.2.0/twoprocess.c.orig	2009-07-18 05:56:44.000000000 +0000
++++ vsftpd-2.2.0/twoprocess.c	2009-07-18 20:11:11.000000000 +0000
 @@ -42,6 +42,9 @@
                                  const struct mystr* p_user_str,
                                  const struct mystr* p_orig_user_str);
@@ -69,8 +69,8 @@
  static void
  handle_sigchld(void* duff)
  {
---- vsftpd-2.1.0/utility.h.orig	2008-02-02 01:30:41.000000000 +0000
-+++ vsftpd-2.1.0/utility.h	2008-06-09 20:40:35.000000000 +0000
+--- vsftpd-2.2.0/utility.h.orig	2008-02-02 01:30:41.000000000 +0000
++++ vsftpd-2.2.0/utility.h	2008-06-09 20:40:35.000000000 +0000
 @@ -10,6 +10,9 @@
   * PARAMETERS
   * p_text       - text string describing why the process is exiting
