@@ -1,5 +1,6 @@
---- vsftpd-2.2.0/tunables.c.orig	2009-07-15 20:08:27.000000000 +0000
-+++ vsftpd-2.2.0/tunables.c	2009-07-18 08:49:44.000000000 +0000
+diff -ur vsftpd-2.2.0pre4.orig/tunables.c vsftpd-2.2.0pre4/tunables.c
+--- vsftpd-2.2.0pre4.orig/tunables.c	2009-07-15 20:08:27 +0000
++++ vsftpd-2.2.0pre4/tunables.c	2009-07-18 08:49:44 +0000
 @@ -175,7 +175,7 @@
    tunable_userlist_deny = 1;
    tunable_use_localtime = 0;
@@ -45,8 +46,9 @@
                        &tunable_email_password_file);
    install_str_setting("/usr/share/ssl/certs/vsftpd.pem",
                        &tunable_rsa_cert_file);
---- vsftpd-2.2.0/vsftpd.conf.orig	2009-06-17 20:05:28.000000000 +0000
-+++ vsftpd-2.2.0/vsftpd.conf	2009-07-18 19:34:01.000000000 +0000
+diff -ur vsftpd-2.2.0pre4.orig/vsftpd.conf vsftpd-2.2.0pre4/vsftpd.conf
+--- vsftpd-2.2.0pre4.orig/vsftpd.conf	2009-06-17 20:05:28 +0000
++++ vsftpd-2.2.0pre4/vsftpd.conf	2009-07-19 21:19:24 +0000
 @@ -1,18 +1,16 @@
 -# Example config file /etc/vsftpd.conf
 +# The configuration file for vsftpd.
@@ -134,21 +136,31 @@
  #
  # You may activate the "-R" option to the builtin ls. This is disabled by
  # default to avoid remote users being able to cause excessive I/O on large
-@@ -105,10 +117,22 @@
+@@ -103,12 +115,25 @@
+ # the presence of the "-R" option, so there is a strong case for enabling it.
+ #ls_recurse_enable=YES
  #
- # When "listen" directive is enabled, vsftpd runs in standalone mode and
- # listens on IPv4 sockets. This directive cannot be used in conjunction
+-# When "listen" directive is enabled, vsftpd runs in standalone mode and
+-# listens on IPv4 sockets. This directive cannot be used in conjunction
 -# with the listen_ipv6 directive.
 -listen=YES
-+# with the listen_ipv6 directive. Beware: the default for this option has
-+# been changing between vsftpd versions, so it is preferable to always
-+# specify it explicitly.
-+listen=NO
- #
- # This directive enables listening on IPv6 sockets. To listen on IPv4 and IPv6
- # sockets, you must run two copies of vsftpd whith two configuration files.
- # Make sure, that one of the listen options is commented !!
- #listen_ipv6=YES
+-#
+-# This directive enables listening on IPv6 sockets. To listen on IPv4 and IPv6
+-# sockets, you must run two copies of vsftpd whith two configuration files.
+-# Make sure, that one of the listen options is commented !!
+-#listen_ipv6=YES
++# When the "listen" or the "listen_ipv6" option is enabled, vsftpd runs in
++# standalone mode and listens on IPv4 or IPv6 sockets, respectively. These
++# options cannot be used together. To listen on IPv4 and IPv6 sockets at once,
++# you must run two copies of vsftpd. It is recommended that you use the
++# command line (rather than a config file) to specify either "-olisten=YES"
++# or "-olisten_ipv6=YES", possibly after a config file name, since these
++# settings are related to the way you invoke vsftpd.
++# The default for both options is NO, although the default for "listen" has
++# been changing between vsftpd versions (it was YES in 2.1.x releases, but
++# never in the Owl package).
++#listen=NO
++#listen_ipv6=NO
 +#
 +# If enabled, all user and group information in directory listings will be
 +# displayed as "ftp".
@@ -159,8 +171,9 @@
 +# local time zone. The default is to display GMT. The times returned by the
 +# MDTM FTP command are also affected by this option.
 +#use_localtime=YES
---- vsftpd-2.2.0/vsftpd.conf.5.orig	2009-07-17 20:57:04.000000000 +0000
-+++ vsftpd-2.2.0/vsftpd.conf.5	2009-07-18 08:03:49.000000000 +0000
+diff -ur vsftpd-2.2.0pre4.orig/vsftpd.conf.5 vsftpd-2.2.0pre4/vsftpd.conf.5
+--- vsftpd-2.2.0pre4.orig/vsftpd.conf.5	2009-07-17 20:57:04 +0000
++++ vsftpd-2.2.0pre4/vsftpd.conf.5	2009-07-18 08:03:49 +0000
 @@ -138,7 +138,7 @@
  different if chroot_local_user is set to YES. In this case, the list becomes
  a list of users which are NOT to be placed in a chroot() jail.
