@@ -1,0 +1,22 @@
+OpenSSL 0.9.7m declares ASN1_item_d2i() without "const" for the second
+argument, but even if a newer version of OpenSSL has "const" there, this
+patch should not produce a warning.  The "data" field is unlikely to
+ever have "const" on it, because of the generic use of the struct type.
+
+diff -urp nmap-5.00.orig/ncat/ncat_ssl.c nmap-5.00/ncat/ncat_ssl.c
+--- nmap-5.00.orig/ncat/ncat_ssl.c	2009-06-12 22:21:39 +0000
++++ nmap-5.00/ncat/ncat_ssl.c	2009-07-19 09:45:35 +0000
+@@ -130,11 +130,11 @@ static int cert_match_dnsname(X509 *cert
+ #if (OPENSSL_VERSION_NUMBER > 0x00907000L)
+     if (method->it != NULL) {
+         ext_str = ASN1_item_d2i(NULL,
+-            (const unsigned char **) &ext->value->data,
++            (unsigned char **) &ext->value->data,
+             ext->value->length, ASN1_ITEM_ptr(method->it));
+     } else {
+         ext_str = method->d2i(NULL,
+-            (const unsigned char **) &ext->value->data,
++            (unsigned char **) &ext->value->data,
+             ext->value->length);
+     }
+ #else

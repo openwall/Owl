@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.33 2009/07/19 09:35:43 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.34 2009/07/19 10:04:03 solar Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -28,6 +28,7 @@ Patch4: nmap-5.00-alt-owl-dot-dir.diff
 Patch5: nmap-5.00-alt-owl-fileexistsandisreadable.diff
 Patch6: nmap-5.00-owl-include.diff
 Patch7: nmap-5.00-up-20090711-ncat-error-reporting.diff
+Patch8: nmap-5.00-owl-warnings.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
 %if %BUILD_NDIFF
@@ -76,6 +77,7 @@ virtually limitless number of potential uses.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p0
+%patch8 -p1
 bzip2 -9 CHANGELOG ncat/ChangeLog docs/TODO*
 
 %if !%BUILD_NSE_ENABLED
@@ -136,6 +138,7 @@ grep -q ^nmap: /etc/passwd ||
 * Sun Jul 19 2009 Solar Designer <solar-at-owl.openwall.com> 5.00-owl4
 - Added a patch from the upstream SVN repository to make Ncat report basic
 connection errors by default (by David Fifield).
+- Patched a couple of warnings in ncat_ssl.c.
 
 * Sat Jul 18 2009 Solar Designer <solar-at-owl.openwall.com> 5.00-owl3
 - Replaced the NSE initialization patch with its corrected revision that went
