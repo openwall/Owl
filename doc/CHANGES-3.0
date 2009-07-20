@@ -12,6 +12,26 @@ change logs for the packages themselves.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/07/20	kernel
+SECURITY FIX	Severity: none to high, local, active
+Updated to Linux 2.4.37.3-ow1.  The 2.4.37.3 kernel release adds the
+"-fno-delete-null-pointer-checks" option to gcc invocations, which is
+important to reduce the impact of a class of kernel bugs (which are yet
+to be found and fixed individually, but are known to exist in general),
+adds several security-relevant fixes to the RTL-8169 NIC driver, and
+makes other assorted changes.  The Linux 2.4.37.3-ow1 kernel patch
+introduces an additional security hardening measure where the kernel
+would no longer allow the "personality" feature (which is needed to
+support some program binaries from other operating systems) to be abused
+to bypass the vm.mmap_min_addr restriction via SUID-root programs with a
+certain class of design errors in them.  Similar changes were introduced
+into 2.6.x kernels recently.
+References:
+http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.3
+http://git.kernel.org/linus/a3ca86aea507904148870946d599e07a340b39bf
+http://www.openwall.com/lists/oss-security/2009/07/16/1
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-1895
+
 2009/07/18 -
 2009/07/19	Package: vsftpd
 Updated to 2.2.0pre4, which officially reverts the default for "listen"
@@ -777,4 +797,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.174 2009/07/19 23:02:30 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.175 2009/07/20 08:14:32 solar Exp $
