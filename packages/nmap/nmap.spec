@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.35 2009/07/19 22:03:00 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.36 2009/07/22 14:37:16 ldv Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -29,6 +29,7 @@ Patch5: nmap-5.00-alt-owl-fileexistsandisreadable.diff
 Patch6: nmap-5.00-owl-include.diff
 Patch7: nmap-5.00-up-20090711-ncat-error-reporting.diff
 Patch8: nmap-5.00-owl-warnings.diff
+Patch9: nmap-5.00-owl-format.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
 %if %BUILD_NDIFF
@@ -78,6 +79,7 @@ virtually limitless number of potential uses.
 %patch6 -p1
 %patch7 -p0
 %patch8 -p1
+%patch9 -p1
 bzip2 -9 CHANGELOG ncat/ChangeLog docs/TODO*
 
 %if !%BUILD_NSE_ENABLED
