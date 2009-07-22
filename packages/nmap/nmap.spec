@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.36 2009/07/22 14:37:16 ldv Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.37 2009/07/22 20:56:30 ldv Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -7,7 +7,7 @@
 Summary: Network exploration tool and security scanner.
 Name: nmap
 Version: 5.00
-Release: owl4
+Release: owl5
 Epoch: 2
 License: GPL
 Group: Applications/System
@@ -137,6 +137,9 @@ grep -q ^nmap: /etc/passwd ||
 %endif
 
 %changelog
+* Thu Jul 23 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 2:5.00-owl5
+- Fixed warnings reported by fresh gcc.
+
 * Sun Jul 19 2009 Solar Designer <solar-at-owl.openwall.com> 2:5.00-owl4
 - Added a patch from the upstream SVN repository to make Ncat report basic
 connection errors by default (by David Fifield).
