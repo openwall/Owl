@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.37 2009/07/22 20:56:30 ldv Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.38 2009/07/23 19:32:40 ldv Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -30,6 +30,7 @@ Patch6: nmap-5.00-owl-include.diff
 Patch7: nmap-5.00-up-20090711-ncat-error-reporting.diff
 Patch8: nmap-5.00-owl-warnings.diff
 Patch9: nmap-5.00-owl-format.diff
+Patch10: nmap-5.00-owl-route.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
 %if %BUILD_NDIFF
@@ -80,6 +81,7 @@ virtually limitless number of potential uses.
 %patch7 -p0
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 bzip2 -9 CHANGELOG ncat/ChangeLog docs/TODO*
 
 %if !%BUILD_NSE_ENABLED
@@ -139,6 +141,7 @@ grep -q ^nmap: /etc/passwd ||
 %changelog
 * Thu Jul 23 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 2:5.00-owl5
 - Fixed warnings reported by fresh gcc.
+- Made nmap work in certain network setups.
 
 * Sun Jul 19 2009 Solar Designer <solar-at-owl.openwall.com> 2:5.00-owl4
 - Added a patch from the upstream SVN repository to make Ncat report basic
