@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.102 2008/07/18 01:54:28 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.103 2009/07/23 22:56:35 ldv Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.3.1
+Version: 1.7.3.2
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -85,6 +85,12 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Thu Jul 23 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.7.3.2-owl1
+- Fixed off-by-one header->version overflow.  The overflow itself is
+harmless, but fresh gcc in fortified mode complains, so the overflow is
+removed to satisfy the modern requirements, as well as to be safe in
+case of major re-arrangements to the charset_header structure.
+
 * Fri Jul 18 2008 Solar Designer <solar-at-owl.openwall.com> 1.7.3.1-owl1
 - Corrected the x86 assembly files for building on Mac OS X.
 - Merged in some generic changes from JtR Pro.
