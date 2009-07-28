@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bind/bind.spec,v 1.26 2009/03/06 18:13:47 solar Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.27 2009/07/28 21:09:18 ldv Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -7,7 +7,7 @@
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.5
-Release: owl5
+Release: owl6
 License: BSD-style
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -43,6 +43,7 @@ Patch8: bind-9.3.1-alt-owl-rndc-confgen.diff
 Patch9: bind-9.3.1-owl-rfc-index.diff
 Patch10: bind-9.3.5-openbsd-owl-expand_fdsets.diff
 Patch11: bind-9.3.5-owl-CVE-2008-5077.diff
+Patch12: bind-9.3.6-up-CVE-2009-0696.diff
 
 Requires: %name-libs = %version-%release
 Requires: owl-startup
@@ -121,6 +122,7 @@ for building applications with ISC BIND libraries.
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 install -pm644 %_sourcedir/rfc1912.txt.bz2 doc/rfc/
 find doc -type f -name '*.txt' -print0 |
@@ -346,6 +348,9 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Tue Jul 28 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.5-owl6
+- Backported upstream fix for a remote DoS bug (CVE-2009-0696).
+
 * Fri Mar 06 2009 Solar Designer <solar-at-owl.openwall.com> 9.3.5-owl5
 - Dropped the root-delegation-only directive from options.conf, made minor
 updates to comments in that file.
