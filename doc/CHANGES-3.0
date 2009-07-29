@@ -47,14 +47,16 @@ clarify the specific issue(s) and their severities in the description.
 	Changes made between Owl 2.0 and Owl-current.
 
 2009/07/28	Package: bind
-SECURITY FIX	Severity: none to low, remote, active
+SECURITY FIX	Severity: low, remote, active
 Backported upstream fix for a remote DoS bug: by sending a specially
 crafted dynamic update packet to a BIND server, a remote unauthenticated
 attacker could cause the server to crash.  According to the ISC and to
-our own testing, this vulnerability affects all servers that are masters
-for one or more zones - it is not limited to those that are configured
-to allow dynamic updates.  BIND's own access controls (such as the
-"allow-query" directive) do not provide an effective workaround.
+our own testing, this vulnerability affects servers that are masters for
+one or more zones - it is not limited to those that are configured to
+allow dynamic updates.  Our default BIND configuration includes several
+master zones, such as 127.in-addr.arpa, which are usable for the attack.
+BIND's own access controls (such as the "allow-query" directive) are
+ineffective against the attack.
 References:
 https://www.isc.org/node/474
 http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=538975
@@ -850,4 +852,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.180 2009/07/29 16:04:39 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.181 2009/07/29 16:42:04 solar Exp $
