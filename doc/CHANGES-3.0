@@ -18,6 +18,20 @@ it is not the overall severity, so other metrics are not factored into
 it.  For example, a "high" impact "local, passive" issue is generally of
 lower overall severity than a "high" impact "remote, active" one - this
 is left up to our users to consider given their specific circumstances.
+
+Per our current conventions, a Denial of Service (DoS) vulnerability is
+generally considered to have a "low" risk impact (even if it is a
+"remote, active" one, which is to be considered separately as it may
+make the vulnerability fairly critical under specific circumstances).
+Some examples of "medium" impact vulnerabilities would be bugs enabling
+non-critical information leaks, cryptographic signature forgeries,
+and/or sending of or accepting spoofed/forged network traffic (where
+such behavior was unexpected), as long as they would not directly allow
+for a "high" impact attack.  Finally, a typical "high" impact
+vulnerability would allow for privilege escalation such as ability to
+execute code as another user ID than the attacker's (a "local" attack)
+or without "legitimately" having such an ability (a "remote" attack).
+
 The metrics specified are generally those for a worst case scenario,
 however in certain cases ranges such as "none to low" or/and "local to
 remote" may be specified, referring to the defaults vs. a worst case yet
@@ -836,4 +850,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.179 2009/07/29 14:51:28 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.180 2009/07/29 16:04:39 solar Exp $
