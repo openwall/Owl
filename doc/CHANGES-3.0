@@ -9,6 +9,26 @@ individual packages won't be mentioned here unless they fix a security
 or a critical reliability problem.  They are, however, mentioned in
 change logs for the packages themselves.
 
+Security fixes have a "Severity" specified for the issue(s) being fixed.
+The three comma-separated metrics given after "Severity:" are: risk
+impact (low, medium, or high), attack vector (local, remote, or
+indirect), and whether the attack may be carried out at will (active) or
+not (passive).  Please note that the specified risk impact is just that,
+it is not the overall severity, so other metrics are not factored into
+it.  For example, a "high" impact "local, passive" issue is generally of
+lower overall severity than a "high" impact "remote, active" one - this
+is left up to our users to consider given their specific circumstances.
+The metrics specified are generally those for a worst case scenario,
+however in certain cases ranges such as "none to low" or/and "local to
+remote" may be specified, referring to the defaults vs. a worst case yet
+"legitimate" custom configuration.  In some complicated cases, multiple
+issues or attacks may be dealt with at once.  When those differ in their
+severity metrics, we use slashes to denote the possible combinations.
+For example, "low/none to high, remote/local" means that we've dealt
+with issue(s) or attack(s) that are "low, remote" and those that are
+"none to high, local".  In those tricky cases, we generally try to
+clarify the specific issue(s) and their severities in the description.
+
 
 	Changes made between Owl 2.0 and Owl-current.
 
@@ -816,4 +836,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.178 2009/07/29 14:09:45 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.179 2009/07/29 14:51:28 solar Exp $
