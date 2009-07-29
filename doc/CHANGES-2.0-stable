@@ -10,7 +10,11 @@ Owl-current, where applicable.
 
 (2009/07/07)
 2009/07/07	kernel
-Updated to Linux 2.4.37.2-ow1.
+SECURITY FIX	Severity: none to high, remote, active
+Updated to Linux 2.4.37.2-ow1.  The 2.4.37.2 kernel release adds several
+bug fixes, including security-relevant ones.
+Reference:
+http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.2
 
 (2009/07/07)
 2009/07/07	Package: openssh
@@ -459,4 +463,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.67 2009/07/07 18:14:15 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.68 2009/07/29 16:49:28 solar Exp $
