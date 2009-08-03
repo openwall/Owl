@@ -42,6 +42,29 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+(2009/07/20 - 2009/08/03)
+2009/08/03	kernel
+SECURITY FIX	Severity: none to high, local to remote, active
+Updated from Linux 2.4.37.2-ow1 to 2.4.37.4-ow1 (jumping over the update
+to 2.4.37.3-ow1, which was temporary and thus only made in Owl-current).
+This update adds the "-fno-delete-null-pointer-checks" option to gcc
+invocations, which is important to reduce the impact of a class of
+kernel bugs (which are yet to be found and fixed individually, but are
+known to exist in general).  It also introduces an additional security
+hardening measure where the kernel will no longer allow the
+"personality" feature (which is needed to support some program binaries
+from other operating systems) to be abused to bypass the
+vm.mmap_min_addr restriction via SUID-root programs with a certain class
+of design errors in them.  Finally, the update adds several
+security-relevant fixes to the RTL-8169 NIC driver, and makes other
+assorted changes.
+References:
+http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.3
+http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.4
+http://git.kernel.org/linus/a3ca86aea507904148870946d599e07a340b39bf
+http://www.openwall.com/lists/oss-security/2009/07/16/1
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-1895
+
 (2009/07/28)
 2009/07/29	Package: bind
 SECURITY FIX	Severity: low, remote, active
@@ -515,4 +538,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.70 2009/07/29 16:55:24 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.71 2009/08/03 18:46:17 solar Exp $
