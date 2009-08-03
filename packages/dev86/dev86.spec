@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/dev86/dev86.spec,v 1.25 2007/10/09 01:02:25 ldv Exp $
+# $Owl: Owl/packages/dev86/dev86.spec,v 1.26 2009/08/03 20:47:32 solar Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
@@ -6,7 +6,8 @@ Version: 0.16.17
 Release: owl5
 License: GPL
 Group: Development/Languages
-Source: http://www.cix.co.uk/~mayday/dev86/Dev86src-%version.tar.gz
+URL: http://www.debath.co.uk
+Source: http://www.debath.co.uk/dev86/Dev86src-%version.tar.gz
 Patch0: dev86-0.16.17-rh-install-no-root.diff
 Patch1: dev86-0.16.17-owl-kinclude.diff
 Patch2: dev86-0.16.17-owl-warnings.diff
