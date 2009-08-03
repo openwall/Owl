@@ -46,6 +46,13 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/08/03	kernel
+Updated to Linux 2.4.37.4-ow1.  The 2.4.37.4 kernel integrates a
+replacement for the "personality" hardening measure introduced in
+2.4.37.3-ow1.
+Reference:
+http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.4
+
 2009/07/29	Package: chkconfig
 Updated to 1.3.42.
 
@@ -75,7 +82,7 @@ to be found and fixed individually, but are known to exist in general),
 adds several security-relevant fixes to the RTL-8169 NIC driver, and
 makes other assorted changes.  The Linux 2.4.37.3-ow1 kernel patch
 introduces an additional security hardening measure where the kernel
-would no longer allow the "personality" feature (which is needed to
+will no longer allow the "personality" feature (which is needed to
 support some program binaries from other operating systems) to be abused
 to bypass the vm.mmap_min_addr restriction via SUID-root programs with a
 certain class of design errors in them.  Similar changes were introduced
@@ -855,4 +862,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.182 2009/07/29 21:47:44 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.183 2009/08/03 17:49:46 solar Exp $
