@@ -1,23 +1,24 @@
-# $Owl: Owl/packages/groff/groff.spec,v 1.20 2005/11/16 13:09:47 solar Exp $
+# $Owl: Owl/packages/groff/groff.spec,v 1.21 2009/08/05 08:05:30 mci Exp $
 
 %define BUILD_USE_X 0
 %define BUILD_CURRENT 0
 
 Summary: A document formatting system.
 Name: groff
-Version: 1.17.2
-Release: owl2
+Version: 1.20.1
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.gnu.org/gnu/groff/groff-%version.tar.gz
+# Signature: ftp://ftp.gnu.org/gnu/groff/groff-%version.tar.gz.sig 
 %if %BUILD_CURRENT
 Source1: ftp://ftp.ffii.org/pub/groff/devel/groff-%version-current.diff.gz
 %endif
 Source2: README.A4
-Patch0: groff-1.17-owl-latin1-shc-hack.diff
-Patch1: groff-1.17.2-suse-pic-format.diff
-Patch2: groff-1.17.2-owl-grn-bound.diff
-Patch3: groff-1.17.2-owl-tmp.diff
+Patch0: groff-1.20.1-rh-nohtml.diff
+Patch1: groff-1.20.1-owl-tmp.diff
+Patch2: groff-1.20.1-alt-docdir.diff
+Patch3: groff-1.20.1-alt-old_drawing_scheme.diff
 Obsoletes: groff-tools
 BuildRequires: mktemp >= 1:1.3.1, zlib-devel, gcc-c++
 BuildRoot: /override/%name-%version
@@ -127,15 +128,28 @@ ln -s tbl.1 gtbl.1
 ln -s troff.1 gtroff.1
 popd
 
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
+
 find %buildroot%_prefix/bin %buildroot%_mandir \
 	-type f -o -type l | \
 	grep -Ev 'afmtodit|grog|mdoc\.samples|mmroff' | \
 	sed -e "s|${RPM_BUILD_ROOT}||g" -e "s|\.[0-9]|\.*|g" > groff-files
 
+%post
+/sbin/install-info %_infodir/groff.info %_infodir/dir
+
+%preun
+if [ $1 -eq 0 ]; then
+        /sbin/install-info --delete %_infodir/groff.info %_infodir/dir
+fi
+
 %files -f groff-files
 %defattr(-,root,root)
 %doc BUG-REPORT NEWS PROBLEMS README README.A4 TODO VERSION
+%_infodir/groff.info*
 %_prefix/share/groff
+%exclude %_libdir/%name/groffer
 
 %files perl
 %defattr(-,root,root)
@@ -144,7 +158,7 @@ find %buildroot%_prefix/bin %buildroot%_mandir \
 %_prefix/bin/afmtodit
 %_mandir/man1/afmtodit.*
 %_mandir/man1/grog.*
-%_mandir/man7/mmroff*
+%_mandir/man1/mmroff*
 
 %if %BUILD_USE_X
 %files gxditview
@@ -154,6 +168,13 @@ find %buildroot%_prefix/bin %buildroot%_mandir \
 %endif
 
 %changelog
+* Tue Aug 04 2009 Michail Litvak <mci-at-owl.openwall.com> 1.20.1-owl1
+- Updated to 1.20.1.
+- Added patches from Alt to fix /usr/share/doc package directory name and 
+patch to revert old default to not emit SGR escape sequences.
+- Added patch from Red Hat to not build html documentation.
+- Dropped the now obsolete patches.
+
 * Sun Feb 03 2002 Michail Litvak <mci-at-owl.openwall.com> 1.17.2-owl2
 - Enforce our new spec file conventions
 

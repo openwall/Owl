@@ -1,0 +1,48 @@
+--- groff-1.20.1/doc/Makefile.sub.orig	2009-01-09 14:25:52.000000000 +0000
++++ groff-1.20.1/doc/Makefile.sub	2009-08-04 13:25:11.000000000 +0000
+@@ -55,11 +55,9 @@
+   meintro.ps \
+   pic.ps
+ 
+-HTMLDOCFILES=\
+-  pic.html
++HTMLDOCFILES=
+ 
+-HTMLDOCFILESALL=\
+-  pic*.html
++HTMLDOCFILESALL=
+ 
+ HTMLDOCIMAGEFILES=\
+   pic*
+@@ -74,11 +72,9 @@
+   webpage.ps \
+   grnexmpl.ps
+ 
+-HTMLEXAMPLEFILES=\
+-  webpage.html
++HTMLEXAMPLEFILES=
+ 
+-HTMLEXAMPLEFILESALL=\
+-  webpage*.html
++HTMLEXAMPLEFILESALL=
+ 
+ HTMLEXAMPLEIMAGEFILES=\
+   webpage*
+@@ -121,7 +117,7 @@
+ 
+ 
+ all: groff.info $(PROCESSEDDOCFILES) prepare_examples \
+-     $(PROCESSEDEXAMPLEFILES) $(make_html)
++     $(PROCESSEDEXAMPLEFILES)
+ 
+ html: $(HTMLDOCFILES) $(HTMLEXAMPLEFILES)
+ 
+@@ -163,7 +159,7 @@
+ distfiles: groff.info gnu.eps
+ 
+ install_data: groff.info gnu.eps $(DOCFILES) $(PROCESSEDDOCFILES) \
+-              $(make_install_html) $(EXAMPLEFILES) $(PROCESSEDEXAMPLEFILES)
++              $(EXAMPLEFILES) $(PROCESSEDEXAMPLEFILES)
+ # Prefer info files in builddir over srcdir; we test for
+ # the existence of `groff.info'.
+ 	-test -d $(DESTDIR)$(infodir) || $(mkinstalldirs) $(DESTDIR)$(infodir)

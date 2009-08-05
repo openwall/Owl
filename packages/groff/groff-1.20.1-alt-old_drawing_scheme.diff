@@ -1,0 +1,20 @@
+--- groff-1.20.1/src/devices/grotty/tty.cpp.orig	2009-01-09 14:25:52.000000000 +0000
++++ groff-1.20.1/src/devices/grotty/tty.cpp	2009-08-04 20:46:39.000000000 +0000
+@@ -56,7 +56,7 @@
+ static int italic_flag;
+ static int reverse_flag_option = 0;
+ static int reverse_flag;
+-static int old_drawing_scheme = 0;
++static int old_drawing_scheme = 1;
+ 
+ static void update_options();
+ static void usage(FILE *stream);
+@@ -871,6 +871,8 @@
+   static char stderr_buf[BUFSIZ];
+   if (getenv("GROFF_NO_SGR"))
+     old_drawing_scheme = 1;
++  if (getenv("GROFF_YES_SGR"))
++    old_drawing_scheme = 0;
+   setbuf(stderr, stderr_buf);
+   int c;
+   static const struct option long_options[] = {
