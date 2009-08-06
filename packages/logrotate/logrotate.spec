@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/logrotate/logrotate.spec,v 1.14 2009/08/06 19:52:24 mci Exp $
+# $Owl: Owl/packages/logrotate/logrotate.spec,v 1.15 2009/08/06 21:45:11 solar Exp $
 
 Summary: Rotates, compresses, removes and mails system log files.
 Name: logrotate
@@ -10,8 +10,8 @@ URL: https://fedorahosted.org/logrotate/
 # https://fedorahosted.org/releases/l/o/logrotate/
 # http://svn.fedorahosted.org/svn/logrotate/
 Source: logrotate-%version.tar.gz
-Patch0: logrotate-3.7.8-owl-commands-paths.diff
-Patch1: logrotate-3.7.8-rh-toolarge.diff
+Patch0: logrotate-3.7.8-owl-paths.diff
+Patch1: logrotate-3.7.8-rh-check-config-file-size.diff
 Requires: crontabs
 BuildRequires: popt
 BuildRoot: /override/%name-%version
