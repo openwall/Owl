@@ -46,6 +46,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/08/06	Package: logrotate
+Updated to 3.7.8.
+
 2009/08/06	Package: groff
 Updated to 1.20.1.
 
@@ -865,4 +868,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.184 2009/08/06 00:28:33 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.185 2009/08/06 22:39:42 solar Exp $
