@@ -46,6 +46,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/08/06	Package: groff
+Updated to 1.20.1.
+
 2009/08/03	kernel
 Updated to Linux 2.4.37.4-ow1.  The 2.4.37.4 kernel integrates a
 replacement for the "personality" hardening measure introduced in
@@ -862,4 +865,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.183 2009/08/03 17:49:46 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.184 2009/08/06 00:28:33 solar Exp $
