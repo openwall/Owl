@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/groff/groff.spec,v 1.21 2009/08/05 08:05:30 mci Exp $
+# $Owl: Owl/packages/groff/groff.spec,v 1.22 2009/08/06 00:12:10 solar Exp $
 
 %define BUILD_USE_X 0
 %define BUILD_CURRENT 0
@@ -9,8 +9,9 @@ Version: 1.20.1
 Release: owl1
 License: GPL
 Group: System Environment/Base
+URL: http://groff.ffii.org
 Source0: ftp://ftp.gnu.org/gnu/groff/groff-%version.tar.gz
-# Signature: ftp://ftp.gnu.org/gnu/groff/groff-%version.tar.gz.sig 
+# Signature: ftp://ftp.gnu.org/gnu/groff/groff-%version.tar.gz.sig
 %if %BUILD_CURRENT
 Source1: ftp://ftp.ffii.org/pub/groff/devel/groff-%version-current.diff.gz
 %endif
@@ -170,8 +171,8 @@ fi
 %changelog
 * Tue Aug 04 2009 Michail Litvak <mci-at-owl.openwall.com> 1.20.1-owl1
 - Updated to 1.20.1.
-- Added patches from Alt to fix /usr/share/doc package directory name and 
-patch to revert old default to not emit SGR escape sequences.
+- Added two patches from ALT: to correct the /usr/share/doc subdirectory name,
+and to restore the old default not to emit SGR escape sequences.
 - Added patch from Red Hat to not build html documentation.
 - Dropped the now obsolete patches.
 
