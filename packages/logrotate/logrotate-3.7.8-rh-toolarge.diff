@@ -1,0 +1,16 @@
+--- logrotate-3.7.8/config.c.orig	2008-06-02 10:26:14.000000000 +0000
++++ logrotate-3.7.8/config.c	2009-08-05 14:26:05.000000000 +0000
+@@ -534,6 +534,13 @@
+ 
+     length = sb.st_size;
+ 
++    if (length > 0xffffff) {
++        message(MESS_ERROR, "file %s too large, probably not a config file.\n",
++                configFile);
++        close(fd);
++        return 1;
++    }    
++
+     buf = alloca(length + 2);
+     if (!buf) {
+ 	message(MESS_ERROR, "alloca() of %d bytes failed\n", (int) length);

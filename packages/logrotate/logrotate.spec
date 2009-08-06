@@ -1,19 +1,17 @@
-# $Owl: Owl/packages/logrotate/logrotate.spec,v 1.13 2009/07/08 00:53:05 solar Exp $
+# $Owl: Owl/packages/logrotate/logrotate.spec,v 1.14 2009/08/06 19:52:24 mci Exp $
 
 Summary: Rotates, compresses, removes and mails system log files.
 Name: logrotate
-Version: 3.6.2
-Release: owl2
+Version: 3.7.8
+Release: owl1
 License: GPL
 Group: System Environment/Base
 URL: https://fedorahosted.org/logrotate/
 # https://fedorahosted.org/releases/l/o/logrotate/
 # http://svn.fedorahosted.org/svn/logrotate/
-Source: logrotate-%version.tar.bz2
-Patch0: logrotate-3.6.2-owl-commands-paths.diff
-Patch1: logrotate-3.6.2-owl-man.diff
-Patch2: logrotate-3.6.2-owl-fchmod-fchown-race.diff
-Patch3: logrotate-3.6.2-owl-tmp.diff
+Source: logrotate-%version.tar.gz
+Patch0: logrotate-3.7.8-owl-commands-paths.diff
+Patch1: logrotate-3.7.8-rh-toolarge.diff
 Requires: crontabs
 BuildRequires: popt
 BuildRoot: /override/%name-%version
@@ -30,8 +28,6 @@ logrotate runs as a daily cron job.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
 
 %build
 %__make CC="%__cc" RPM_OPT_FLAGS="%optflags"
@@ -63,6 +59,11 @@ fi
 %attr(0700,root,root) /var/lib/logrotate
 
 %changelog
+* Wed Aug 05 2009 Michail Litvak <mci-at-owl.openwall.com> 3.7.8-owl1
+- Updated to 3.7.8.
+- Added patch from Red Hat to check length of rotated files.
+- Dropped the now obsolete patches
+
 * Sun Oct 09 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.6.2-owl2
 - Changed the permissions for %%_sbindir/logrotate from 0700 to 0755.
 - Replaced 'make' with '%%__make' and 'gcc' with '%%__cc'.
