@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/logrotate/logrotate.spec,v 1.15 2009/08/06 21:45:11 solar Exp $
+# $Owl: Owl/packages/logrotate/logrotate.spec,v 1.16 2009/08/06 22:37:26 solar Exp $
 
 Summary: Rotates, compresses, removes and mails system log files.
 Name: logrotate
@@ -28,6 +28,7 @@ logrotate runs as a daily cron job.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+sed -i '/^dateext$/ s/^/#/' examples/logrotate-default
 
 %build
 %__make CC="%__cc" RPM_OPT_FLAGS="%optflags"
