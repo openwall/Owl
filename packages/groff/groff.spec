@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/groff/groff.spec,v 1.24 2009/08/14 11:28:49 solar Exp $
+# $Owl: Owl/packages/groff/groff.spec,v 1.25 2009/08/14 12:00:25 solar Exp $
 
 %define BUILD_USE_X 0
 %define BUILD_CURRENT 0
@@ -21,6 +21,7 @@ Patch1: groff-1.20.1-owl-tmp.diff
 Patch2: groff-1.20.1-alt-docdir.diff
 Patch3: groff-1.20.1-alt-old_drawing_scheme.diff
 Patch4: groff-1.20.1-owl-pdfroff-gs-dSAFER.diff
+Patch5: groff-1.20.1-owl-groffer-Makefile.diff
 Obsoletes: groff-tools
 BuildRequires: mktemp >= 1:1.3.1, zlib-devel, gcc-c++
 BuildRoot: /override/%name-%version
@@ -73,6 +74,7 @@ zcat %SOURCE1 | patch -p1 -l
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 install -pm 644 %_sourcedir/README.A4 .
 
 # Remove/disable unused files with temporary file handling issues in them to

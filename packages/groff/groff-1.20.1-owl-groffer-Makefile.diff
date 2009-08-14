@@ -1,0 +1,21 @@
+diff -ur groff-1.20.1.orig/contrib/groffer/Makefile.sub groff-1.20.1/contrib/groffer/Makefile.sub
+--- groff-1.20.1.orig/contrib/groffer/Makefile.sub	2009-01-09 14:25:52 +0000
++++ groff-1.20.1/contrib/groffer/Makefile.sub	2009-08-14 11:53:40 +0000
+@@ -50,15 +50,12 @@
+              $(srcdir)/perl/man.pl \
+              $(srcdir)/perl/perl_test.pl \
+              $(srcdir)/perl/split_env.sh
+-GROFFER_SHELL=$(srcdir)/shell/groffer2.sh
++GROFFER_SHELL=
+ GROFFER_REST=$(srcdir)/roff2.man \
+              $(srcdir)/version.sh \
+              $(srcdir)/perl/groffer.man \
+              $(srcdir)/perl/groffer.pl \
+-             $(srcdir)/perl/roff2.pl \
+-             $(srcdir)/shell/roff2.sh \
+-             $(srcdir)/shell/groffer.man \
+-             $(srcdir)/shell/groffer.sh
++             $(srcdir)/perl/roff2.pl
+ 
+ GROFFER_PERL_=`echo $(GROFFER_PERL) | sed 's|$(srcdir)/perl/||g'`
+ GROFFER_SHELL_=`echo $(GROFFER_SHELL) | sed 's|$(srcdir)/shell||g'`
