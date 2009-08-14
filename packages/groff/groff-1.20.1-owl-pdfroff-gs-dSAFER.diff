@@ -1,0 +1,12 @@
+diff -urp groff-1.20.1.orig/contrib/pdfmark/pdfroff.sh groff-1.20.1/contrib/pdfmark/pdfroff.sh
+--- groff-1.20.1.orig/contrib/pdfmark/pdfroff.sh	2009-01-09 14:25:52 +0000
++++ groff-1.20.1/contrib/pdfmark/pdfroff.sh	2009-08-14 10:47:20 +0000
+@@ -597,7 +597,7 @@
+   $SAY >&2 $n "Writing PDF output ..$c"
+   if test -z "$PDFROFF_POSTPROCESSOR_COMMAND"
+   then
+-    PDFROFF_POSTPROCESSOR_COMMAND="$GS -dQUIET -dBATCH -dNOPAUSE
++    PDFROFF_POSTPROCESSOR_COMMAND="$GS -dQUIET -dBATCH -dSAFER -dNOPAUSE
+       -sDEVICE=pdfwrite -sOutputFile="${PDF_OUTPUT-"-"}
+ 
+   elif test -n "$PDF_OUTPUT"
