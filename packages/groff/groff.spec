@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/groff/groff.spec,v 1.23 2009/08/14 11:19:58 solar Exp $
+# $Owl: Owl/packages/groff/groff.spec,v 1.24 2009/08/14 11:28:49 solar Exp $
 
 %define BUILD_USE_X 0
 %define BUILD_CURRENT 0
@@ -75,10 +75,10 @@ zcat %SOURCE1 | patch -p1 -l
 %patch4 -p1
 install -pm 644 %_sourcedir/README.A4 .
 
-# Remove unused files with temporary file handling issues in them to
+# Remove/disable unused files with temporary file handling issues in them to
 # make sure that these are in fact unused.
 rm -r contrib/groffer/shell
-rm install-sh
+echo -e '#!/bin/sh\nexit 1' > install-sh
 
 %build
 %if %BUILD_USE_X
