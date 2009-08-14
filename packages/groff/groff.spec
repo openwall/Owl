@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/groff/groff.spec,v 1.22 2009/08/06 00:12:10 solar Exp $
+# $Owl: Owl/packages/groff/groff.spec,v 1.23 2009/08/14 11:19:58 solar Exp $
 
 %define BUILD_USE_X 0
 %define BUILD_CURRENT 0
@@ -6,8 +6,8 @@
 Summary: A document formatting system.
 Name: groff
 Version: 1.20.1
-Release: owl1
-License: GPL
+Release: owl2
+License: mostly GPLv3+ and FDL
 Group: System Environment/Base
 URL: http://groff.ffii.org
 Source0: ftp://ftp.gnu.org/gnu/groff/groff-%version.tar.gz
@@ -20,6 +20,7 @@ Patch0: groff-1.20.1-rh-nohtml.diff
 Patch1: groff-1.20.1-owl-tmp.diff
 Patch2: groff-1.20.1-alt-docdir.diff
 Patch3: groff-1.20.1-alt-old_drawing_scheme.diff
+Patch4: groff-1.20.1-owl-pdfroff-gs-dSAFER.diff
 Obsoletes: groff-tools
 BuildRequires: mktemp >= 1:1.3.1, zlib-devel, gcc-c++
 BuildRoot: /override/%name-%version
@@ -71,7 +72,13 @@ zcat %SOURCE1 | patch -p1 -l
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-install -m 644 %_sourcedir/README.A4 .
+%patch4 -p1
+install -pm 644 %_sourcedir/README.A4 .
+
+# Remove unused files with temporary file handling issues in them to
+# make sure that these are in fact unused.
+rm -r contrib/groffer/shell
+rm install-sh
 
 %build
 %if %BUILD_USE_X
@@ -142,12 +149,13 @@ find %buildroot%_prefix/bin %buildroot%_mandir \
 
 %preun
 if [ $1 -eq 0 ]; then
-        /sbin/install-info --delete %_infodir/groff.info %_infodir/dir
+	/sbin/install-info --delete %_infodir/groff.info %_infodir/dir
 fi
 
 %files -f groff-files
 %defattr(-,root,root)
-%doc BUG-REPORT NEWS PROBLEMS README README.A4 TODO VERSION
+%doc COPYING FDL LICENSES
+%doc BUG-REPORT MORE.STUFF NEWS PROBLEMS PROJECTS README README.A4 TODO
 %_infodir/groff.info*
 %_prefix/share/groff
 %exclude %_libdir/%name/groffer
@@ -169,6 +177,14 @@ fi
 %endif
 
 %changelog
+* Fri Aug 14 2009 Solar Designer <solar-at-owl.openwall.com> 1.20.1-owl2
+- Patched many additional temporary file handling issues, including in pdfroff
+(reported by brian m. carlson via Debian), in scripts used during build,
+and in the documentation.
+- Patched pdfroff to invoke gs with the -dSAFER option (also reported by
+brian m. carlson via Debian).  pdfroff is new with our update to 1.20.1.
+- Revised the set of documentation files to package.
+
 * Tue Aug 04 2009 Michail Litvak <mci-at-owl.openwall.com> 1.20.1-owl1
 - Updated to 1.20.1.
 - Added two patches from ALT: to correct the /usr/share/doc subdirectory name,
