@@ -1,6 +1,27 @@
---- groff-1.20.1/configure.orig	2009-01-09 14:25:52.000000000 +0000
-+++ groff-1.20.1/configure	2009-08-04 13:06:09.000000000 +0000
-@@ -12937,33 +12937,12 @@
+diff -urp groff-1.20.1.orig/config.guess groff-1.20.1/config.guess
+--- groff-1.20.1.orig/config.guess	2009-01-09 14:25:52 +0000
++++ groff-1.20.1/config.guess	2009-08-14 06:51:44 +0000
+@@ -104,13 +104,9 @@ trap 'exit 1' 1 2 15
+ # Portable tmp directory creation inspired by the Autoconf team.
+ 
+ set_cc_for_build='
+-trap "exitcode=\$?; (rm -f \$tmpfiles 2>/dev/null; rmdir \$tmp 2>/dev/null) && exit \$exitcode" 0 ;
+-trap "rm -f \$tmpfiles 2>/dev/null; rmdir \$tmp 2>/dev/null; exit 1" 1 2 13 15 ;
+-: ${TMPDIR=/tmp} ;
+- { tmp=`(umask 077 && mktemp -d "$TMPDIR/cgXXXXXX") 2>/dev/null` && test -n "$tmp" && test -d "$tmp" ; } ||
+- { test -n "$RANDOM" && tmp=$TMPDIR/cg$$-$RANDOM && (umask 077 && mkdir $tmp) ; } ||
+- { tmp=$TMPDIR/cg-$$ && (umask 077 && mkdir $tmp) && echo "Warning: creating insecure temp directory" >&2 ; } ||
+- { echo "$me: cannot create a temporary directory in $TMPDIR" >&2 ; exit 1 ; } ;
++trap "exitcode=\$?; (rm -f \$tmpfiles 2>/dev/null; rmdir \$tmp 2>/dev/null) && exit \$exitcode" EXIT ;
++trap "rm -f \$tmpfiles 2>/dev/null; rmdir \$tmp 2>/dev/null; exit 1" PIPE HUP INT QUIT TERM ;
++tmp="`mktemp -dt cg.XXXXXXXXXX`" || exit ;
+ dummy=$tmp/dummy ;
+ tmpfiles="$dummy.c $dummy.o $dummy.rel $dummy" ;
+ case $CC_FOR_BUILD,$HOST_CC,$CC in
+diff -urp groff-1.20.1.orig/configure groff-1.20.1/configure
+--- groff-1.20.1.orig/configure	2009-01-09 14:25:52 +0000
++++ groff-1.20.1/configure	2009-08-14 07:48:44 +0000
+@@ -12937,33 +12937,12 @@ if $ac_need_defaults; then
    test "${CONFIG_HEADERS+set}" = set || CONFIG_HEADERS=$config_headers
  fi
  
@@ -10,8 +31,8 @@
 -# Hook for its removal unless debugging.
 -# Note that there is a small window in which the directory will not be cleaned:
 -# after its creation but before its name has been assigned to `$tmp'.
-+# Create a (secure) temporary directory, and hook for its removal unless debugging.
-+tmp="`mktemp -dt cs.XXXXXXXXXX`" || exit 1
++# Create a temporary directory, and hook for its removal unless debugging.
++tmp="`mktemp -dt cs.XXXXXXXXXX`" || exit
  $debug ||
  {
 -  tmp=
@@ -34,7 +55,237 @@
 -   $as_echo "$as_me: cannot create a temporary directory in ." >&2
 -   { (exit 1); exit 1; }
 +  trap 'exit_status=$?; rm -rf -- "$tmp" && exit $exit_status' EXIT
-+  trap '{ (exit $?); exit $?; }' HUP INT PIPE TERM
++  trap '{ (exit $?); exit $?; }' HUP INT QUIT PIPE TERM
  }
  
  # Set up the scripts for CONFIG_FILES section.
+diff -urp groff-1.20.1.orig/contrib/eqn2graph/eqn2graph.sh groff-1.20.1/contrib/eqn2graph/eqn2graph.sh
+--- groff-1.20.1.orig/contrib/eqn2graph/eqn2graph.sh	2009-01-09 14:25:52 +0000
++++ groff-1.20.1/contrib/eqn2graph/eqn2graph.sh	2009-08-14 10:38:10 +0000
+@@ -69,6 +69,8 @@ for d in "$GROFF_TMPDIR" "$TMPDIR" "$TMP
+ 
+     tmp=$d/eqn2graph$$-$RANDOM
+     (umask 077 && mkdir $tmp) 2> /dev/null && break
++
++    tmp=
+ done;
+ if test -z "$tmp"; then
+     echo "$0: cannot create temporary directory" >&2
+diff -urp groff-1.20.1.orig/contrib/gdiffmk/tests/runtests.in groff-1.20.1/contrib/gdiffmk/tests/runtests.in
+--- groff-1.20.1.orig/contrib/gdiffmk/tests/runtests.in	2009-01-09 14:25:53 +0000
++++ groff-1.20.1/contrib/gdiffmk/tests/runtests.in	2009-08-14 07:23:20 +0000
+@@ -56,8 +56,9 @@ function TestResult {
+ 	fi
+ }
+ 
+-tmpfile=/tmp/$$
+-trap 'rm -f ${tmpfile}' 0 1 2 3 15
++tmpfile="`mktemp -t gdiffmk-runtests.XXXXXXXXXX`" || exit
++trap 'rm -f -- "$tmpfile"' EXIT
++trap 'trap - EXIT; rm -f -- "$tmpfile"; exit 1' HUP INT QUIT TERM
+ 
+ #	Run tests.
+ 
+diff -urp groff-1.20.1.orig/contrib/grap2graph/grap2graph.sh groff-1.20.1/contrib/grap2graph/grap2graph.sh
+--- groff-1.20.1.orig/contrib/grap2graph/grap2graph.sh	2009-01-09 14:25:52 +0000
++++ groff-1.20.1/contrib/grap2graph/grap2graph.sh	2009-08-14 10:37:26 +0000
+@@ -65,6 +65,8 @@ for d in "$GROFF_TMPDIR" "$TMPDIR" "$TMP
+ 
+     tmp=$d/grap2graph$$-$RANDOM
+     (umask 077 && mkdir $tmp) 2> /dev/null && break
++
++    tmp=
+ done;
+ if test -z "$tmp"; then
+     echo "$0: cannot create temporary directory" >&2
+diff -urp groff-1.20.1.orig/contrib/groffer/perl/groffer.pl groff-1.20.1/contrib/groffer/perl/groffer.pl
+--- groff-1.20.1.orig/contrib/groffer/perl/groffer.pl	2009-01-09 14:25:52 +0000
++++ groff-1.20.1/contrib/groffer/perl/groffer.pl	2009-08-14 10:31:42 +0000
+@@ -1380,7 +1380,7 @@ sub _check_prog_on_list {
+ ########################################################################
+ 
+ sub main_temp {
+-  my $template = 'groffer_' . "$$" . '_XXXX';
++  my $template = 'groffer_' . "$$" . '_XXXXXXXXXX';
+   foreach ($ENV{'GROFF_TMPDIR'}, $ENV{'TMPDIR'}, $ENV{'TMP'}, $ENV{'TEMP'},
+ 	   $ENV{'TEMPDIR'}, File::Spec->catfile($ENV{'HOME'}, 'tmp')) {
+     if ($_ && -d $_ && -w $_) {
+@@ -1411,12 +1411,12 @@ sub main_temp {
+ 
+   # further argument: SUFFIX => '.sh'
+   if ($Debug{'KEEP'}) {
+-    ($fh_cat, $tmp_cat) = tempfile(',cat_XXXX', DIR => $tmpdir);
+-    ($fh_stdin, $tmp_stdin) = tempfile(',stdin_XXXX', DIR => $tmpdir);
++    ($fh_cat, $tmp_cat) = tempfile(',cat_XXXXXXXXXX', DIR => $tmpdir);
++    ($fh_stdin, $tmp_stdin) = tempfile(',stdin_XXXXXXXXXX', DIR => $tmpdir);
+   } else {
+-    ($fh_cat, $tmp_cat) = tempfile(',cat_XXXX', UNLINK => 1,
++    ($fh_cat, $tmp_cat) = tempfile(',cat_XXXXXXXXXX', UNLINK => 1,
+ 				   DIR => $tmpdir);
+-    ($fh_stdin, $tmp_stdin) = tempfile(',stdin_XXXX', UNLINK => 1,
++    ($fh_stdin, $tmp_stdin) = tempfile(',stdin_XXXXXXXXXX', UNLINK => 1,
+ 				       DIR => $tmpdir);
+   }
+ }				# main_temp()
+diff -urp groff-1.20.1.orig/contrib/groffer/perl/roff2.pl groff-1.20.1/contrib/groffer/perl/roff2.pl
+--- groff-1.20.1.orig/contrib/groffer/perl/roff2.pl	2009-01-09 14:25:52 +0000
++++ groff-1.20.1/contrib/groffer/perl/roff2.pl	2009-08-14 10:31:14 +0000
+@@ -124,7 +124,7 @@ if ($Has_Groffer) {
+ 	last;
+       }
+     }
+-    my $template = $Name . '_XXXX';
++    my $template = $Name . '_XXXXXXXXXX';
+     my ($fh, $stdin);
+     if ($tempdir) {
+       ($fh, $stdin) = tempfile($template, UNLINK => 1, DIR => $tempdir) ||
+diff -urp groff-1.20.1.orig/contrib/pdfmark/pdfroff.man groff-1.20.1/contrib/pdfmark/pdfroff.man
+--- groff-1.20.1.orig/contrib/pdfmark/pdfroff.man	2009-01-09 14:25:52 +0000
++++ groff-1.20.1/contrib/pdfmark/pdfroff.man	2009-08-14 10:26:54 +0000
+@@ -529,7 +529,7 @@ defaults to
+ .B GROFF_TMPDIR
+ Identifies the directory in which
+ .B pdfroff
+-should create temporary files.
++should create a subdirectory for its temporary files.
+ If
+ .B \%GROFF_TMPDIR
+ is
+@@ -541,7 +541,8 @@ and
+ .B TEMP
+ are considered in turn, as possible temporary file repositories.
+ If none of these are set, then temporary files are created
+-in the current directory.
++in a subdirectory of
++.BR /tmp .
+ .
+ .TP
+ .B GROFF_GHOSTSCRIPT_INTERPRETER
+diff -urp groff-1.20.1.orig/contrib/pdfmark/pdfroff.sh groff-1.20.1/contrib/pdfmark/pdfroff.sh
+--- groff-1.20.1.orig/contrib/pdfmark/pdfroff.sh	2009-01-09 14:25:52 +0000
++++ groff-1.20.1/contrib/pdfmark/pdfroff.sh	2009-08-14 10:23:31 +0000
+@@ -137,7 +137,15 @@
+ #
+ # Set up temporary/intermediate file locations.
+ #
+-  WRKFILE=${GROFF_TMPDIR=${TMPDIR-${TMP-${TEMP-"."}}}}/pdf$$.tmp
++  MYTMPDIR=${GROFF_TMPDIR-${TMPDIR-${TMP-${TEMP-"/tmp"}}}}
++  WRKDIR="`unset TMPDIR && mktemp -dp "$MYTMPDIR" groff-pdfroff.XXXXXXXXXX`" || exit
++
++  trap 'rm -rf -- "$WRKDIR"' EXIT
++  trap 'trap - EXIT; rm -rf -- "$WRKDIR"; exit 1' HUP INT QUIT PIPE TERM
++
++  GROFF_TMPDIR=${WRKDIR}
++
++  WRKFILE=${GROFF_TMPDIR}/pdf$$.tmp
+ #
+   REFCOPY=${GROFF_TMPDIR}/pdf$$.cmp
+   REFFILE=${GROFF_TMPDIR}/pdf$$.ref
+@@ -146,11 +154,6 @@
+   TC_DATA=${GROFF_TMPDIR}/pdf$$.tc
+   BD_DATA=${GROFF_TMPDIR}/pdf$$.ps
+ #
+-# Set a trap, to delete temporary files on exit.
+-# (FIXME: may want to include other signals, in released version).
+-#
+-  trap "rm -f ${GROFF_TMPDIR}/pdf$$.*" 0
+-#
+ # Initialise 'groff' format control settings,
+ # to discriminate table of contents and document body formatting passes.
+ #
+diff -urp groff-1.20.1.orig/contrib/pic2graph/pic2graph.sh groff-1.20.1/contrib/pic2graph/pic2graph.sh
+--- groff-1.20.1.orig/contrib/pic2graph/pic2graph.sh	2009-01-09 14:25:52 +0000
++++ groff-1.20.1/contrib/pic2graph/pic2graph.sh	2009-08-14 10:38:44 +0000
+@@ -80,6 +80,8 @@ for d in "$GROFF_TMPDIR" "$TMPDIR" "$TMP
+     tmp=$d/pic2graph$$-$RANDOM
+     (umask 077 && mkdir $tmp) 2> /dev/null \
+     && break
++
++    tmp=
+ done;
+ if test -z "$tmp"; then
+     echo "$0: cannot create temporary directory" >&2
+diff -urp groff-1.20.1.orig/doc/fixinfo.sh groff-1.20.1/doc/fixinfo.sh
+--- groff-1.20.1.orig/doc/fixinfo.sh	2009-01-09 14:25:52 +0000
++++ groff-1.20.1/doc/fixinfo.sh	2009-08-14 09:43:03 +0000
+@@ -21,7 +21,9 @@
+ # groff.texinfo macro code.  Hopefully, a new texinfo version makes it
+ # unnecessary.
+ 
+-t=${TMPDIR-.}/gro$$.tmp
++t="`mktemp -t groff-fixinfo.XXXXXXXXXX`" || exit
++trap 'rm -f -- "$t"' EXIT
++trap 'trap - EXIT; rm -f -- "$t"; exit 1' HUP INT QUIT TERM
+ 
+ cat $1 | sed '
+ 1 {
+diff -urp groff-1.20.1.orig/doc/groff.info-2 groff-1.20.1/doc/groff.info-2
+--- groff-1.20.1.orig/doc/groff.info-2	2009-01-09 14:25:55 +0000
++++ groff-1.20.1/doc/groff.info-2	2009-08-14 06:35:51 +0000
+@@ -1516,9 +1516,9 @@ not there, `groff' would not know when t
+ 
+ 
+           .sy perl -e 'printf ".nr H %d\\n.nr M %d\\n.nr S %d\\n",\
+-                       (localtime(time))[2,1,0]' > /tmp/x\n[$$]
+-          .so /tmp/x\n[$$]
+-          .sy rm /tmp/x\n[$$]
++                       (localtime(time))[2,1,0]' > timefile\n[$$]
++          .so timefile\n[$$]
++          .sy rm timefile\n[$$]
+           \nH:\nM:\nS
+ 
+      Note that this works by having the `perl' script (run by `sy')
+diff -urp groff-1.20.1.orig/doc/groff.texinfo groff-1.20.1/doc/groff.texinfo
+--- groff-1.20.1.orig/doc/groff.texinfo	2009-01-09 14:25:52 +0000
++++ groff-1.20.1/doc/groff.texinfo	2009-08-14 06:37:10 +0000
+@@ -13269,9 +13269,9 @@ into a document:
+ @pindex perl
+ @Example
+ .sy perl -e 'printf ".nr H %d\\n.nr M %d\\n.nr S %d\\n",\
+-             (localtime(time))[2,1,0]' > /tmp/x\n[$$]
+-.so /tmp/x\n[$$]
+-.sy rm /tmp/x\n[$$]
++             (localtime(time))[2,1,0]' > timefile\n[$$]
++.so timefile\n[$$]
++.sy rm timefile\n[$$]
+ \nH:\nM:\nS
+ @endExample
+ 
+diff -urp groff-1.20.1.orig/gendef.sh groff-1.20.1/gendef.sh
+--- groff-1.20.1.orig/gendef.sh	2009-01-09 14:25:52 +0000
++++ groff-1.20.1/gendef.sh	2009-08-14 07:00:10 +0000
+@@ -34,11 +34,9 @@ do
+ #define $def"
+ done
+ 
+-# Use $TMPDIR if defined.  Default to cwd, for non-Unix systems
+-# which don't have /tmp on each drive (we are going to remove
+-# the file before we exit anyway).  Put the PID in the basename,
+-# since the extension can only hold 3 characters on MS-DOS.
+-t=${TMPDIR-.}/gro$$.tmp
++t="`mktemp -t groff-gendef.XXXXXXXXXX`" || exit
++trap 'rm -f -- "$t"' EXIT
++trap 'trap - EXIT; rm -f -- "$t"; exit 1' HUP INT QUIT TERM
+ 
+ sed -e 's/=/ /' >$t <<EOF
+ $defs
+@@ -46,8 +44,6 @@ EOF
+ 
+ test -r $file && cmp -s $t $file || cp $t $file
+ 
+-rm -f $t
+-
+ exit 0
+ 
+ # eof
+diff -urp groff-1.20.1.orig/src/roff/groff/pipeline.c groff-1.20.1/src/roff/groff/pipeline.c
+--- groff-1.20.1.orig/src/roff/groff/pipeline.c	2009-01-09 14:25:52 +0000
++++ groff-1.20.1/src/roff/groff/pipeline.c	2009-08-14 09:30:28 +0000
+@@ -378,6 +378,7 @@ int run_pipeline(int ncommands, char ***
+   /* Don't use `tmpnam' here: Microsoft's implementation yields unusable
+      file names if current directory is on network share with read-only
+      root. */
++#error AUDIT: This code is only compiled under DOS
+   tmpfiles[0] = tempnam(tmpdir, NULL);
+   tmpfiles[1] = tempnam(tmpdir, NULL);
+ 
