@@ -46,6 +46,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/08/15	Package: mktemp
+Updated to 1.6 with minor post-1.6 upstream changes.
+
 2009/08/14	Package: groff
 SECURITY FIX	Severity: none to high, local/indirect, active/passive
 Corrected pdfroff(1) to create temporary files in a safe manner and to
@@ -888,4 +891,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.187 2009/08/14 13:05:54 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.188 2009/08/15 16:37:17 solar Exp $
