@@ -1,14 +1,15 @@
-# $Owl: Owl/packages/mktemp/mktemp.spec,v 1.12 2006/04/04 01:02:00 ldv Exp $
+# $Owl: Owl/packages/mktemp/mktemp.spec,v 1.13 2009/08/15 16:28:26 solar Exp $
 
 Summary: A small utility for safely making temporary files.
 Name: mktemp
-Version: 1.5
+Version: 1.6
 Release: owl1
 Epoch: 1
-License: BSD
+License: ISC
 Group: System Environment/Base
 URL: http://www.mktemp.org
 Source: ftp://ftp.mktemp.org/pub/mktemp/mktemp-%version.tar.gz
+Patch0: mktemp-1.6-up-20090320.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -18,6 +19,7 @@ users (such as in /tmp).
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 %define _bindir /bin
@@ -34,6 +36,10 @@ make
 %_mandir/man1/mktemp.*
 
 %changelog
+* Sat Aug 15 2009 Solar Designer <solar-at-owl.openwall.com> 1:1.6-owl1
+- Updated to 1.6 with minor post-1.6 upstream changes (these are all post-1.6
+changes made in the mktemp CVS repository as of today).
+
 * Wed Apr 02 2003 Solar Designer <solar-at-owl.openwall.com> 1:1.5-owl1
 - Updated to 1.5.
 

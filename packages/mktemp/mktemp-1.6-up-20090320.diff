@@ -1,0 +1,140 @@
+diff -urp mktemp-1.6/configure.in mktemp/configure.in
+--- mktemp-1.6/configure.in	2008-08-18 15:15:05 +0000
++++ mktemp/configure.in	2008-08-20 11:43:40 +0000
+@@ -1,6 +1,6 @@
+ dnl
+ dnl Process this file with GNU autoconf to produce a configure script.
+-dnl $Id: configure.in,v 1.13 2008/08/18 15:15:05 millert Exp $
++dnl $Id: configure.in,v 1.14 2008/08/20 11:43:40 millert Exp $
+ dnl
+ dnl Copyright (c) 2000, 2001 Todd C. Miller <Todd.Miller@courtesan.com>
+ dnl
+@@ -164,9 +164,8 @@ dnl Function checks
+ dnl
+ AC_REPLACE_FUNCS(strerror strdup)
+ AC_CHECK_FUNCS(getopt_long)
+-AC_CHECK_FUNCS(arc4random,
+-    [AC_CHECK_FUNCS(arc4random_uniform, [], [AC_LIBOBJ(arc4random)])],
+-    [AC_LIBOBJ(arc4random)])
++AC_CHECK_FUNCS(arc4random_uniform, [], [AC_CHECK_FUNCS(arc4random)
++    AC_LIBOBJ(arc4random)])
+ dnl
+ dnl Check for __progname
+ dnl
+diff -urp mktemp-1.6/priv_mktemp.c mktemp/priv_mktemp.c
+--- mktemp-1.6/priv_mktemp.c	2008-08-18 15:02:43 +0000
++++ mktemp/priv_mktemp.c	2009-03-20 13:58:56 +0000
+@@ -17,13 +17,14 @@
+ #include "config.h"
+ 
+ #ifndef lint
+-static const char rcsid[] = "$Id: priv_mktemp.c,v 1.10 2008/08/18 15:02:43 millert Exp $";
++static const char rcsid[] = "$Id: priv_mktemp.c,v 1.16 2009/03/20 13:58:56 millert Exp $";
+ #endif /* not lint */
+ 
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <errno.h>
+ #include <fcntl.h>
++#include <limits.h>
+ #include <stdio.h>
+ #ifdef HAVE_STDLIB_H
+ # include <stdlib.h>
+@@ -38,55 +39,70 @@ static const char rcsid[] = "$Id: priv_m
+ #define MKTEMP_FILE	1
+ #define MKTEMP_DIR	2
+ 
++#define TEMPCHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
++#define NUM_CHARS	(sizeof(TEMPCHARS) - 1)
++
++#ifdef WIN32
++# define mkdir(_path, _mode)	_mkdir(_path)
++#endif
++
++#ifndef INT_MAX
++#define INT_MAX	0x7fffffff
++#endif
++
+ static int
+-_mktemp(path, mode)
++mktemp_internal(path, mode)
+ 	char *path;
+ 	int mode;
+ {
+ 	char *start, *cp;
+-	int fd, r;
+-	char *alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
++	const char *tempchars = TEMPCHARS;
++	unsigned int r, tries;
++	int fd;
+ 
+ 	if (*path == '\0') {
+ 		errno = EINVAL;
+-		return(0);
++		return (-1);
+ 	}
+ 
+-	for (cp = path; *cp; cp++)
++	for (start = path; *start; start++)
+ 		;
+-	do {
+-		cp--;
+-	} while (cp >= path && *cp == 'X');
+-	start = cp + 1;
++	tries = 1;
++	while (start >= path && *--start == 'X') {
++		if (tries < INT_MAX / NUM_CHARS)
++			tries *= NUM_CHARS;
++	}
++	tries *= 2;
++	start++;
+ 
+-	for (;;) {
++	do {
+ 		for (cp = start; *cp; cp++) {
+-			r = arc4random_uniform(26 + 26);
+-			*cp = alphabet[r];
++			r = arc4random_uniform(NUM_CHARS);
++			*cp = tempchars[r];
+ 		}
+ 
+ 		switch (mode) {
+ 		case MKTEMP_FILE:
+ 			fd = open(path, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
+ 			if (fd != -1 || errno != EEXIST)
+-				return fd;
++				return (fd);
+ 			break;
+ 		case MKTEMP_DIR:
+ 			if (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
+-				return(0);
++				return (0);
+ 			if (errno != EEXIST)
+-				return(-1);
++				return (-1);
+ 			break;
+ 		}
+-	}
+-	/*NOTREACHED*/
++	} while (--tries);
++	return (-1);
+ }
+ 
+ int
+ priv_mkstemp(path)
+ 	char *path;
+ {
+-	return (_mktemp(path, MKTEMP_FILE));
++	return (mktemp_internal(path, MKTEMP_FILE));
+ }
+ 
+ char *
+@@ -95,6 +111,6 @@ priv_mkdtemp(path)
+ {
+ 	int error;
+ 
+-	error = _mktemp(path, MKTEMP_DIR);
+-	return(error ? NULL : path);
++	error = mktemp_internal(path, MKTEMP_DIR);
++	return (error ? NULL : path);
+ }
