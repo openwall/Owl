@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/mktemp/mktemp.spec,v 1.13 2009/08/15 16:28:26 solar Exp $
+# $Owl: Owl/packages/mktemp/mktemp.spec,v 1.14 2009/08/15 16:32:23 solar Exp $
 
 Summary: A small utility for safely making temporary files.
 Name: mktemp
@@ -20,6 +20,8 @@ users (such as in /tmp).
 %prep
 %setup -q
 %patch0 -p1
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
 %define _bindir /bin
