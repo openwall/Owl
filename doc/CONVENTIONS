@@ -159,12 +159,14 @@ For patches developed as a part of Owl, ORIGIN is to be set to "owl".
 If a patch is derived from another distribution but with significant
 changes applied, ORIGIN should include "-owl-" as well (which would
 indicate that any bugs are ours).  If a patch has been extracted from
-the primary CVS repository for the package in question (for example,
-this may be the case for various back-ports), ORIGIN should be set to
-"cvs" and WHAT to the date it corresponds to (as YYYYMMDD) plus the
-usual description of the patch.  Patches from upstream maintainers
-that aren't (yet?) in the primary CVS repository (if one even exists)
-may have ORIGIN set to "up".
+the primary CVS/SVN/Git/whatever repository for the package in question
+(for example, this may be the case for various back-ports), ORIGIN
+should be set to "up" and WHAT to the date the patch corresponds to (as
+YYYYMMDD) plus the usual description of the patch.  If the patch fully
+brings the tree up to the version specified by the date, then a
+description is not required.  Patches from upstream maintainers that
+aren't (yet?) in the primary repository (if one even exists) may also
+have ORIGIN set to "up" but with no date specified in the filename.
 
 For multi-word WHATs, separate the words with dashes.  Do not use
 underscores except when referring to an existing identifier (in which
@@ -253,4 +255,4 @@ then require the proper version of mktemp(1):
 As usual, use Requires, PreReq, and/or BuildRequires depending on
 where in the package the uses of mktemp occur.
 
-$Owl: Owl/doc/CONVENTIONS,v 1.30 2005/12/26 22:14:07 solar Exp $
+$Owl: Owl/doc/CONVENTIONS,v 1.31 2009/08/15 16:47:51 solar Exp $
