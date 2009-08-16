@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/groff/groff.spec,v 1.26 2009/08/16 02:30:42 solar Exp $
+# $Owl: Owl/packages/groff/groff.spec,v 1.27 2009/08/16 02:41:40 solar Exp $
 
 %define BUILD_USE_X 0
 %define BUILD_CURRENT 0
@@ -70,7 +70,6 @@ also need to install the groff package and the X Window System.
 %package doc
 Summary: Reference manuals and examples for groff.
 Group: Documentation
-Requires: %name = %version-%release
 
 %description doc
 This package contains reference manuals and examples for languages and
@@ -221,12 +220,13 @@ fi
 
 %files doc
 %defattr(-,root,root)
+%doc %dir %docdir
 %doc %docdir/[a-z]*
 
 %changelog
 * Sun Aug 16 2009 Solar Designer <solar-at-owl.openwall.com> 1.20.1-owl3
 - Require mktemp in the main package (for the packaged shell scripts).
-- Require the main package in all subpackages.
+- Require the main package in subpackages other than -doc.
 - Install groffer's "library" scripts, which were mistakenly excluded with the
 update to 1.20.1.
 - Moved all extra Perl scripts introduced with our update to 1.20.1 to the

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/db4/db4.spec,v 1.21 2009/05/09 06:15:25 solar Exp $
+# $Owl: Owl/packages/db4/db4.spec,v 1.22 2009/08/16 02:49:16 solar Exp $
 
 %define __soversion	4.3
 %define _libdb_a	libdb-%__soversion.a
@@ -9,7 +9,7 @@
 Summary: The Berkeley DB database library (version 4) for C.
 Name: db4
 Version: 4.3.29
-Release: owl4
+Release: owl5
 License: Sleepycat
 Group: System Environment/Libraries
 URL: http://www.sleepycat.com
@@ -63,7 +63,6 @@ and libraries for building programs which use the Berkeley DB.
 %package doc
 Summary: Development documentation for the Berkeley DB (version 4) library.
 Group: Documentation
-Requires: db4 = %version-%release
 
 %description doc
 The Berkeley Database (Berkeley DB) is a programmatic toolkit that
@@ -220,6 +219,9 @@ chmod -R u+w %buildroot
 %endif
 
 %changelog
+* Sun Aug 16 2009 Solar Designer <solar-at-owl.openwall.com> 4.3.29-owl5
+- Don't require the main package in -doc.
+
 * Sat May 09 2009 Solar Designer <solar-at-owl.openwall.com> 4.3.29-owl4
 - Moved the documentation from db4-devel to db4-doc (a new subpackage).
 
