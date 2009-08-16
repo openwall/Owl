@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/findutils/findutils.spec,v 1.25 2009/08/16 18:08:14 mci Exp $
+# $Owl: Owl/packages/findutils/findutils.spec,v 1.26 2009/08/16 19:28:00 solar Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils
 Version: 4.4.2
 Release: owl1
 Epoch: 1
-License: GPLv3
+License: GPLv3+
 Group: Applications/File
 URL: http://www.gnu.org/software/findutils/
 Source0: ftp://ftp.gnu.org/gnu/findutils/findutils-%version.tar.gz
@@ -60,14 +60,14 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc NEWS.bz2 README README-hacking THANKS
+%doc AUTHORS COPYING NEWS.bz2 README README-hacking THANKS
 %_bindir/find
 %_bindir/xargs
 %_mandir/man1/find.1*
 %_mandir/man1/xargs.1*
 %_infodir/*.info*
 %_datadir/locale/*/LC_MESSAGES/findutils.mo
-%exclude %_bindir/oldfind 
+%exclude %_bindir/oldfind
 
 %changelog
 * Fri Aug 07 2009 Michail Litvak <mci-at-owl.openwall.com> 1:4.4.2-owl1
