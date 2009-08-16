@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/groff/groff.spec,v 1.27 2009/08/16 02:41:40 solar Exp $
+# $Owl: Owl/packages/groff/groff.spec,v 1.28 2009/08/16 04:34:04 solar Exp $
 
 %define BUILD_USE_X 0
 %define BUILD_CURRENT 0
@@ -98,7 +98,6 @@ echo -e '#!/bin/sh\nexit 1' > install-sh
 PATH=$PATH:%_prefix/X11R6/bin
 %endif
 
-export ac_cv_func_mkstemp=yes \
 %configure
 make
 
@@ -215,7 +214,7 @@ fi
 %files gxditview
 %defattr(-,root,root)
 %_bindir/gxditview
-%_datadir/X11/app-defaults/GXditview
+%_prefix/X11R6/lib/X11/app-defaults/GXditview*
 %endif
 
 %files doc
@@ -224,6 +223,10 @@ fi
 %doc %docdir/[a-z]*
 
 %changelog
+* Sun Aug 16 2009 Solar Designer <solar-at-owl.openwall.com> 1.20.1-owl4
+- Dropped "export ac_cv_func_mkstemp=yes" as it did not work with the new
+configure script anyway.
+
 * Sun Aug 16 2009 Solar Designer <solar-at-owl.openwall.com> 1.20.1-owl3
 - Require mktemp in the main package (for the packaged shell scripts).
 - Require the main package in subpackages other than -doc.
