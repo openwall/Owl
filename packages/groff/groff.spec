@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/groff/groff.spec,v 1.28 2009/08/16 04:34:04 solar Exp $
+# $Owl: Owl/packages/groff/groff.spec,v 1.29 2009/08/16 05:22:56 solar Exp $
 
 %define BUILD_USE_X 0
 %define BUILD_CURRENT 0
@@ -6,7 +6,7 @@
 Summary: A document formatting system.
 Name: groff
 Version: 1.20.1
-Release: owl3
+Release: owl4
 License: mostly GPLv3+ and FDL
 Group: System Environment/Base
 URL: http://groff.ffii.org
