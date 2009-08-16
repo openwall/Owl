@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/findutils/findutils.spec,v 1.26 2009/08/16 19:28:00 solar Exp $
+# $Owl: Owl/packages/findutils/findutils.spec,v 1.27 2009/08/16 19:41:58 ldv Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils
@@ -42,6 +42,7 @@ install -pm644 %_includedir/regex.h gnulib/lib/
 %configure --without-included-regex
 make -C po update-po
 make
+make -k check
 
 %install
 rm -rf %buildroot
