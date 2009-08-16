@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installisotree.sh,v 1.7 2009/05/29 14:35:52 solar Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.8 2009/08/16 02:52:35 solar Exp $
 
 set -e
 
@@ -52,7 +52,7 @@ echo "`date '+%Y %b %e %H:%M:%S'`: Started"
 
 log "Removing packages that are typically not needed on a CD"
 cd "$ROOT"
-chroot "$ROOT" rpm -e man-pages-posix bind-doc bash-doc cvs-doc pam-doc db4-doc rpm-devel openssh-blacklist ||:
+chroot "$ROOT" rpm -e man-pages-posix bind-doc bash-doc cvs-doc pam-doc db4-doc groff-doc rpm-devel openssh-blacklist ||:
 
 log "Installing kernel"
 cd "$ROOT/boot"
