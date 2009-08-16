@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/groff/groff.spec,v 1.25 2009/08/14 12:00:25 solar Exp $
+# $Owl: Owl/packages/groff/groff.spec,v 1.26 2009/08/16 02:30:42 solar Exp $
 
 %define BUILD_USE_X 0
 %define BUILD_CURRENT 0
@@ -6,7 +6,7 @@
 Summary: A document formatting system.
 Name: groff
 Version: 1.20.1
-Release: owl2
+Release: owl3
 License: mostly GPLv3+ and FDL
 Group: System Environment/Base
 URL: http://groff.ffii.org
@@ -23,6 +23,7 @@ Patch3: groff-1.20.1-alt-old_drawing_scheme.diff
 Patch4: groff-1.20.1-owl-pdfroff-gs-dSAFER.diff
 Patch5: groff-1.20.1-owl-groffer-Makefile.diff
 Obsoletes: groff-tools
+Requires: mktemp >= 1:1.3.1
 BuildRequires: mktemp >= 1:1.3.1, zlib-devel, gcc-c++
 BuildRoot: /override/%name-%version
 
@@ -42,18 +43,20 @@ need to install the groff-gxditview package.
 %package perl
 Summary: Parts of the groff formatting system that require Perl.
 Group: Applications/Publishing
+Requires: %name = %version-%release
 
 %description perl
 The groff-perl package contains the parts of the groff text processor
 package that require Perl.  These include the afmtodit font processor
 for creating PostScript font files, the grog utility that can be used
-to automatically determine groff command-line options, and the mmroff
-reference preprocessor.
+to automatically determine groff command-line options, the mmroff
+reference preprocessor, and some others.
 
 %if %BUILD_USE_X
 %package gxditview
 Summary: An X previewer for groff text processor output.
 Group: Applications/Publishing
+Requires: %name = %version-%release
 
 %description gxditview
 gxditview displays the groff text processor's output on an X Window
@@ -63,6 +66,15 @@ If you are going to use groff as a text processor, you should install
 gxditview so that you preview your processed text files in X.  You'll
 also need to install the groff package and the X Window System.
 %endif
+
+%package doc
+Summary: Reference manuals and examples for groff.
+Group: Documentation
+Requires: %name = %version-%release
+
+%description doc
+This package contains reference manuals and examples for languages and
+macros implemented in the groff package.
 
 %prep
 %setup -q
@@ -113,7 +125,7 @@ cd src/xditview
 cd ../..
 %endif
 
-pushd %buildroot%_prefix/bin
+pushd %buildroot%_bindir
 ln -s troff gtroff
 ln -s tbl gtbl
 ln -s pic gpic
@@ -138,13 +150,20 @@ ln -s tbl.1 gtbl.1
 ln -s troff.1 gtroff.1
 popd
 
+# Prepare documentation.  groff's install creates this directory on its own.
+%define docdir %_docdir/%name-%version
+install -pm 644 \
+	COPYING FDL LICENSES \
+	BUG-REPORT MORE.STUFF NEWS PROBLEMS PROJECTS README README.A4 TODO \
+	%buildroot%docdir/
+find %buildroot%docdir \( -name '*.html' -o -name '*.ps' -o -name '*.eps' \) \
+	-type f -print0 | xargs -r0 gzip -9n --
+find %buildroot%docdir \( -name '*.m[es]' -o -name '*.xpm' \) \
+	-type f -print0 | xargs -r0 bzip2 -9 --
+bzip2 -9 %buildroot%docdir/NEWS
+
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
-
-find %buildroot%_prefix/bin %buildroot%_mandir \
-	-type f -o -type l | \
-	grep -Ev 'afmtodit|grog|mdoc\.samples|mmroff' | \
-	sed -e "s|${RPM_BUILD_ROOT}||g" -e "s|\.[0-9]|\.*|g" > groff-files
 
 %post
 /sbin/install-info %_infodir/groff.info %_infodir/dir
@@ -154,31 +173,68 @@ if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/groff.info %_infodir/dir
 fi
 
-%files -f groff-files
+%files
 %defattr(-,root,root)
-%doc COPYING FDL LICENSES
-%doc BUG-REPORT MORE.STUFF NEWS PROBLEMS PROJECTS README README.A4 TODO
+%doc %dir %docdir
+%doc %docdir/[A-Z]*
+%_bindir/*
+%_libdir/groff
+%_datadir/groff
+%_mandir/man?/*
 %_infodir/groff.info*
-%_prefix/share/groff
-%exclude %_libdir/%name/groffer
+%if %BUILD_USE_X
+%exclude %_bindir/gxditview
+%endif
+# These are part of -perl
+%exclude %_bindir/afmtodit
+%exclude %_bindir/groffer
+%exclude %_bindir/grog
+%exclude %_bindir/mmroff
+%exclude %_bindir/roff2*
+%exclude %_mandir/man1/afmtodit.*
+%exclude %_mandir/man1/groffer.*
+%exclude %_mandir/man1/grog.*
+%exclude %_mandir/man1/mmroff.*
+%exclude %_mandir/man1/roff2*
+%exclude %_libdir/groff/groffer
 
 %files perl
 %defattr(-,root,root)
-%_prefix/bin/grog
-%_prefix/bin/mmroff
-%_prefix/bin/afmtodit
+%_bindir/afmtodit
+%_bindir/groffer
+%_bindir/grog
+%_bindir/mmroff
+%_bindir/roff2*
 %_mandir/man1/afmtodit.*
+%_mandir/man1/groffer.*
 %_mandir/man1/grog.*
-%_mandir/man1/mmroff*
+%_mandir/man1/mmroff.*
+%_mandir/man1/roff2*
+%_libdir/groff/groffer
 
 %if %BUILD_USE_X
 %files gxditview
 %defattr(-,root,root)
-%_prefix/X11R6/bin/gxditview
-%config /etc/X11/app-defaults/GXditview
+%_bindir/gxditview
+%_datadir/X11/app-defaults/GXditview
 %endif
 
+%files doc
+%defattr(-,root,root)
+%doc %docdir/[a-z]*
+
 %changelog
+* Sun Aug 16 2009 Solar Designer <solar-at-owl.openwall.com> 1.20.1-owl3
+- Require mktemp in the main package (for the packaged shell scripts).
+- Require the main package in all subpackages.
+- Install groffer's "library" scripts, which were mistakenly excluded with the
+update to 1.20.1.
+- Moved all extra Perl scripts introduced with our update to 1.20.1 to the
+-perl subpackage where they belong.
+- Re-worked the way the documentation is packaged by making use of portions of
+documentation installed by groff's normal install procedure, introduced a -doc
+subpackage for newly packaged language & macro reference manuals and examples.
+
 * Fri Aug 14 2009 Solar Designer <solar-at-owl.openwall.com> 1.20.1-owl2
 - Patched many additional temporary file handling issues, including in pdfroff
 (reported by brian m. carlson via Debian), in scripts used during build,
