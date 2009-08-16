@@ -46,6 +46,11 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/08/16	Package: findutils
+Updated to 4.4.2.  With this update, we're switching to the find(1)
+implementation based around fts(3) instead of GNU find's "own" directory
+traversal code.
+
 2009/08/15	Package: mktemp
 Updated to 1.6 with minor post-1.6 upstream changes.
 
@@ -891,4 +896,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.188 2009/08/15 16:37:17 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.189 2009/08/16 20:29:49 solar Exp $
