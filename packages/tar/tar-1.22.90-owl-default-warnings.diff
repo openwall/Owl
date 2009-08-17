@@ -1,0 +1,14 @@
+diff -ur tar-1.22.90.orig/src/common.h tar-1.22.90/src/common.h
+--- tar-1.22.90.orig/src/common.h	2009-08-09 07:38:01 +0000
++++ tar-1.22.90/src/common.h	2009-08-17 04:19:12 +0000
+@@ -810,7 +810,9 @@
+ 
+ /* The warnings composing WARN_VERBOSE_WARNINGS are enabled by default
+    in verbose mode */
+-#define WARN_VERBOSE_WARNINGS    (WARN_RENAME_DIRECTORY|WARN_NEW_DIRECTORY)
++#define WARN_VERBOSE_WARNINGS    (WARN_ALONE_ZERO_BLOCK | \
++                                 WARN_RENAME_DIRECTORY | \
++                                 WARN_NEW_DIRECTORY)
+ #define WARN_ALL                 (0xffffffff & ~WARN_VERBOSE_WARNINGS)
+ 
+ void set_warning_option (const char *arg);

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.44 2009/08/17 04:01:53 solar Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.45 2009/08/17 04:25:44 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -14,6 +14,7 @@ Source0: ftp://alpha.gnu.org/gnu/tar/tar-%version.tar.bz2
 Source1: tar.1
 Patch0: tar-1.22.90-alt.diff
 Patch1: tar-1.22.90-owl-error-handling.diff
+Patch2: tar-1.22.90-owl-default-warnings.diff
 PreReq: /sbin/install-info, grep
 BuildRequires: gettext, texinfo
 BuildRequires: rpm-build >= 0:4, sed >= 4.0.9
@@ -32,6 +33,7 @@ backups.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
