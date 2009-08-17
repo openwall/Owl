@@ -46,6 +46,16 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/08/17	Package: tar
+Updated to 1.22.90, which replaces most of our error handling fixes
+originally implemented in the Owl package of tar in Nov-Dec 2008 with
+more elaborate changes by Sergey Poznyakoff.  Dropped the
+--ignore-device-id option in favor of its official name of
+--no-check-device.
+References:
+http://lists.gnu.org/archive/html/bug-tar/2009-03/msg00000.html
+http://lists.gnu.org/archive/html/bug-tar/2009-08/msg00016.html
+
 2009/08/16	Package: findutils
 Updated to 4.4.2.  With this update, we're switching to the find(1)
 implementation based around fts(3) instead of GNU find's "own" directory
@@ -896,4 +906,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.189 2009/08/16 20:29:49 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.190 2009/08/17 04:49:17 solar Exp $
