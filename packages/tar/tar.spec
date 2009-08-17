@@ -1,20 +1,21 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.43 2008/12/23 05:09:01 solar Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.44 2009/08/17 04:01:53 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
-Version: 1.20
-Release: owl4
+Version: 1.22.90
+Release: owl1
 License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
-Source0: ftp://ftp.gnu.org/gnu/tar/tar-%version.tar.bz2
+# http://savannah.gnu.org/projects/tar
+# Releases: ftp://ftp.gnu.org/gnu/tar/tar-%version.tar.bz2 (and .sig)
+Source0: ftp://alpha.gnu.org/gnu/tar/tar-%version.tar.bz2
+# Signature: ftp://alpha.gnu.org/gnu/tar/tar-%version.tar.bz2.sig
 Source1: tar.1
-Patch0: tar-1.20-alt.diff
-Patch1: tar-1.20-owl-ignore-device-id.diff
-Patch2: tar-1.20-owl-warnings.diff
-Patch3: tar-1.20-owl-error-handling.diff
+Patch0: tar-1.22.90-alt.diff
+Patch1: tar-1.22.90-owl-error-handling.diff
 PreReq: /sbin/install-info, grep
-BuildRequires: automake, autoconf, cvs, gettext, texinfo
+BuildRequires: gettext, texinfo
 BuildRequires: rpm-build >= 0:4, sed >= 4.0.9
 BuildRoot: /override/%name-%version
 
@@ -31,8 +32,6 @@ backups.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -43,7 +42,7 @@ export tar_cv_path_RSH=%_bindir/ssh
 sed -i '/HAVE_CLOCK_GETTIME/d' config.h
 %__make LIB_CLOCK_GETTIME=
 %__make -k check LIB_CLOCK_GETTIME=
-bzip2 -9fk ChangeLog
+bzip2 -9fk NEWS
 
 %install
 rm -rf %buildroot
@@ -84,9 +83,21 @@ fi
 %_mandir/man1/tar.1*
 %_infodir/tar.info*
 %_prefix/share/locale/*/LC_MESSAGES/*
-%doc AUTHORS NEWS THANKS
+%doc AUTHORS COPYING NEWS.bz2 README THANKS
 
 %changelog
+* Mon Aug 17 2009 Solar Designer <solar-at-owl.openwall.com> 1.22.90-owl1
+- Updated to 1.22.90.
+- Extracted Dmitry V. Levin's latest changes from ALT Linux's repository at
+http://git.altlinux.org/gears/t/tar.git and forward-ported them from upstream
+code slightly newer than 1.22 to the 1.22.90 alpha release.
+- Since most of our error handling fixes have been replaced by more elaborate
+changes by Sergey Poznyakoff in the upstream code, the new error handling
+patch has been reduced to forward-ports of two fixes that seem to have been
+missed upstream, as well as a new fix that became relevant with 1.22.90.
+- Dropped the --ignore-device-id option (in favor of its official name of
+--no-check-device).
+
 * Tue Dec 23 2008 Solar Designer <solar-at-owl.openwall.com> 1.20-owl4
 - A further change to the error handling patch: when creating incremental
 archives, validate the filenames passed as input to tar in
