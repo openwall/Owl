@@ -77,7 +77,104 @@ diff -ur rpm-4.2.orig/macros.in rpm-4.2/macros.in
  
  #==============================================================================
  # ---- per-platform macros.
-@@ -903,15 +903,15 @@
+@@ -753,6 +753,96 @@
+   export RPM_BUILD_ROOT}\
+   %{?_javaclasspath:CLASSPATH=\"%{_javaclasspath}\"\
+   export CLASSPATH}\
++  # These autoconf variables are predefined to harden configure checks for\
++  # security sensitive functions, and to speedup configure checks for\
++  # most popular functions.\
++  export ac_cv_func_alloca=yes\
++  export ac_cv_func_asprintf=yes\
++  export ac_cv_func_atexit=yes\
++  export ac_cv_func_bcopy=yes\
++  export ac_cv_func_dcgettext=yes\
++  export ac_cv_func_fchdir=yes\
++  export ac_cv_func_fchmod=yes\
++  export ac_cv_func_fchown=yes\
++  export ac_cv_func_fork=yes\
++  export ac_cv_func_fseeko=yes\
++  export ac_cv_func_ftruncate=yes\
++  export ac_cv_func_fwprintf=yes\
++  export ac_cv_func_getaddrinfo=yes\
++  export ac_cv_func_getcwd=yes\
++  export ac_cv_func_getegid=yes\
++  export ac_cv_func_geteuid=yes\
++  export ac_cv_func_getgid=yes\
++  export ac_cv_func_gethostname=yes\
++  export ac_cv_func_getline=yes\
++  export ac_cv_func_getopt=yes\
++  export ac_cv_func_getpagesize=yes\
++  export ac_cv_func_getrusage=yes\
++  export ac_cv_func_gettimeofday=yes\
++  export ac_cv_func_getuid=yes\
++  export ac_cv_func_iconv=yes\
++  export ac_cv_func_isascii=yes\
++  export ac_cv_func_iswcntrl=yes\
++  export ac_cv_func_lstat=yes\
++  export ac_cv_func_mbrtowc=yes\
++  export ac_cv_func_mbsinit=yes\
++  export ac_cv_func_memchr=yes\
++  export ac_cv_func_memcmp=yes\
++  export ac_cv_func_memcpy=yes\
++  export ac_cv_func_memmove=yes\
++  export ac_cv_func_mempcpy=yes\
++  export ac_cv_func_memset=yes\
++  export ac_cv_func_mkstemp=yes\
++  export ac_cv_func_mmap=yes\
++  export ac_cv_func_munmap=yes\
++  export ac_cv_func_pathconf=yes\
++  export ac_cv_func_putenv=yes\
++  export ac_cv_func_raise=yes\
++  export ac_cv_func_readlink=yes\
++  export ac_cv_func_realpath=yes\
++  export ac_cv_func_rename=yes\
++  export ac_cv_func_sbrk=yes\
++  export ac_cv_func_select=yes\
++  export ac_cv_func_setenv=yes\
++  export ac_cv_func_setlocale=yes\
++  export ac_cv_func_sigaction=yes\
++  export ac_cv_func_sigprocmask=yes\
++  export ac_cv_func_sigsetmask=yes\
++  export ac_cv_func_snprintf=yes\
++  export ac_cv_func_stpcpy=yes\
++  export ac_cv_func_strcasecmp=yes\
++  export ac_cv_func_strchr=yes\
++  export ac_cv_func_strdup=yes\
++  export ac_cv_func_strerror=yes\
++  export ac_cv_func_strftime=yes\
++  export ac_cv_func_strlcat=yes\
++  export ac_cv_func_strlcpy=yes\
++  export ac_cv_func_strncasecmp=yes\
++  export ac_cv_func_strncat=yes\
++  export ac_cv_func_strncmp=yes\
++  export ac_cv_func_strncpy=yes\
++  export ac_cv_func_strndup=yes\
++  export ac_cv_func_strnlen=yes\
++  export ac_cv_func_strstr=yes\
++  export ac_cv_func_strtol=yes\
++  export ac_cv_func_strtoul=yes\
++  export ac_cv_func_strtoull=yes\
++  export ac_cv_func_sysconf=yes\
++  export ac_cv_func_tcgetattr=yes\
++  export ac_cv_func_times=yes\
++  export ac_cv_func_tmpfile=yes\
++  export ac_cv_func_tsearch=yes\
++  export ac_cv_func_uname=yes\
++  export ac_cv_func_unsetenv=yes\
++  export ac_cv_func_utime=yes\
++  export ac_cv_func_utimes=yes\
++  export ac_cv_func_vasprintf=yes\
++  export ac_cv_func_vfork=yes\
++  export ac_cv_func_vprintf=yes\
++  export ac_cv_func_vsnprintf=yes\
++  export ac_cv_func_waitpid=yes\
++  export ac_cv_func_wcslen=yes\
++  export ac_cv_func_wcwidth=yes\
+   \
+   %{verbose:set -x}%{!verbose:exec > /dev/null}\
+   umask 022\
+@@ -903,15 +993,15 @@
  %_sbindir		%{_exec_prefix}/sbin
  %_libexecdir		%{_exec_prefix}/libexec
  %_datadir		%{_prefix}/share

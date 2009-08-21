@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.72 2007/08/17 00:25:42 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.73 2009/08/21 20:45:14 ldv Exp $
 
 %define WITH_PYTHON 0
 
@@ -8,7 +8,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl18
+Release: owl19
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -492,6 +492,11 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Fri Aug 21 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl19
+- Predefined a bunch of autoconf variables in %%___build_pre macro
+to harden configure checks for security sensitive functions, and
+to speedup configure checks for most popular functions.
+
 * Fri Aug 17 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl18
 - Changed rpmbuild to pass --wildcards to tar on build from tarball.
 
