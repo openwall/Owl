@@ -77,7 +77,7 @@ diff -ur rpm-4.2.orig/macros.in rpm-4.2/macros.in
  
  #==============================================================================
  # ---- per-platform macros.
-@@ -753,6 +753,96 @@
+@@ -753,6 +753,97 @@
    export RPM_BUILD_ROOT}\
    %{?_javaclasspath:CLASSPATH=\"%{_javaclasspath}\"\
    export CLASSPATH}\
@@ -120,6 +120,7 @@ diff -ur rpm-4.2.orig/macros.in rpm-4.2/macros.in
 +  export ac_cv_func_memmove=yes\
 +  export ac_cv_func_mempcpy=yes\
 +  export ac_cv_func_memset=yes\
++  export ac_cv_func_mkdtemp=yes\
 +  export ac_cv_func_mkstemp=yes\
 +  export ac_cv_func_mmap=yes\
 +  export ac_cv_func_munmap=yes\
@@ -174,7 +175,7 @@ diff -ur rpm-4.2.orig/macros.in rpm-4.2/macros.in
    \
    %{verbose:set -x}%{!verbose:exec > /dev/null}\
    umask 022\
-@@ -903,15 +993,15 @@
+@@ -903,15 +994,15 @@
  %_sbindir		%{_exec_prefix}/sbin
  %_libexecdir		%{_exec_prefix}/libexec
  %_datadir		%{_prefix}/share
