@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.73 2009/08/21 20:45:14 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.74 2009/08/22 01:09:33 ldv Exp $
 
 %define WITH_PYTHON 0
 
@@ -496,6 +496,7 @@ fi
 - Predefined a bunch of autoconf variables in %%___build_pre macro
 to harden configure checks for security sensitive functions, and
 to speedup configure checks for most popular functions.
+- Fixed gendiff to avoid producing changelog diffs with no context.
 
 * Fri Aug 17 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl18
 - Changed rpmbuild to pass --wildcards to tar on build from tarball.
