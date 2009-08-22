@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/findutils/findutils.spec,v 1.27 2009/08/16 19:41:58 ldv Exp $
+# $Owl: Owl/packages/findutils/findutils.spec,v 1.28 2009/08/22 00:34:26 ldv Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils
 Version: 4.4.2
-Release: owl1
+Release: owl2
 Epoch: 1
 License: GPLv3+
 Group: Applications/File
@@ -37,9 +37,10 @@ bzip2 -9k NEWS
 %build
 # do not build the locate subdirectory
 sed -i 's/ locate / /' Makefile*
+# Build with included regex from gnulib until our glibc is updated.
 # The regex.h must be kept in sync with --without-included-regex.
-install -pm644 %_includedir/regex.h gnulib/lib/
-%configure --without-included-regex
+#install -pm644 %_includedir/regex.h gnulib/lib/
+%configure #--without-included-regex
 make -C po update-po
 make
 make -k check
@@ -71,6 +72,9 @@ fi
 %exclude %_bindir/oldfind
 
 %changelog
+* Sat Aug 22 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:4.4.2-owl2
+- Build with included regex until glibc is updated.
+
 * Fri Aug 07 2009 Michail Litvak <mci-at-owl.openwall.com> 1:4.4.2-owl1
 - Updated to 4.4.2.
 - Dropped obsolete patches.
