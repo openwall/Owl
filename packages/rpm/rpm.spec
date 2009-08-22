@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.74 2009/08/22 01:09:33 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.75 2009/08/22 02:14:36 ldv Exp $
 
 %define WITH_PYTHON 0
 
@@ -15,6 +15,7 @@ Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
 Source1: rpminit
 Source2: rpminit.1
 Source3: gendiff
+Source4: configure-presets
 # XXX: Patch0 is only for the case of using glibc with NPTL and is currently
 # not applied.
 #Patch0: rpm-4.2-owl-pthreads.diff
@@ -321,6 +322,7 @@ rm %buildroot%__libdir/*.la
 
 install -p -m 755 %_sourcedir/rpminit %buildroot%__bindir/
 install -p -m 644 %_sourcedir/rpminit.1 %buildroot%__mandir/man1/
+install -p -m 644 %_sourcedir/configure-presets %buildroot%__bindir/
 
 echo "%%defattr(-,root,root)"
 platforms="`echo %buildroot%_rpmlibdir/*/macros | sed 's#/macros##g; s#%buildroot%__prefix/lib/##g'`"
@@ -445,6 +447,7 @@ fi
 
 %files build
 %defattr(-,root,root)
+%__bindir/configure-presets
 %__bindir/rpmbuild
 %__libdir/librpmbuild-%rpm_version.so
 %_rpmlibdir/brp-*
@@ -493,9 +496,10 @@ fi
 
 %changelog
 * Fri Aug 21 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl19
-- Predefined a bunch of autoconf variables in %%___build_pre macro
-to harden configure checks for security sensitive functions, and
-to speedup configure checks for most popular functions.
+- Predefined a bunch of autoconf variables by sourcing new configure-presets
+script in %%___build_pre macro, to harden configure checks for security
+sensitive functions, and to speedup configure checks for most popular
+functions.
 - Fixed gendiff to avoid producing changelog diffs with no context.
 
 * Fri Aug 17 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl18
