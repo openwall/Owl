@@ -46,6 +46,26 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/08/23	kernel
+SECURITY FIX	Severity: none to high/medium, local, active
+Updated to Linux 2.4.37.5-ow1.  The 2.4.37.5 kernel adds a fix for the
+"Linux NULL pointer dereference due to incorrect proto_ops
+initializations", which on Owl was not exploitable into privilege
+escalation on its own due to the vm.mmap_min_addr feature, as long as
+the latter was enabled and working (there have been no known issues with
+it in recent kernels).  In our patched kernels, vm.mmap_min_addr is
+enabled by default.  Additionally, our default kernels did not include
+support for any socket types via which the bug is known to be
+triggerable.  More importantly, Linux 2.4.37.5-ow1 adds a fix for the
+sigaltstack local information leak affecting 64-bit kernel builds.
+References:
+http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.5
+http://lists.openwall.net/bugtraq/2009/08/13/11
+http://www.openwall.com/lists/oss-security/2009/08/14/2
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-2692
+http://www.openwall.com/lists/oss-security/2009/08/05/1
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-2847
+
 2009/08/17	Package: tar
 Updated to 1.22.90, which replaces most of our error handling fixes
 originally implemented in the Owl package of tar in Nov-Dec 2008 with
@@ -906,4 +926,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.190 2009/08/17 04:49:17 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.191 2009/08/23 06:19:14 solar Exp $
