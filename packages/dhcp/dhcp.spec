@@ -1,26 +1,40 @@
-# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.45 2005/11/16 12:21:03 solar Exp $
+# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.45.2.1 2009/08/23 10:47:36 solar Exp $
 
+# We do not officially support the DHCP client because it is rather
+# complicated, yet it runs entirely as root, which we find an
+# unacceptable and unjustified security risk.  If you enable this
+# setting, then you're essentially running your own revision of this
+# package, and you're on your own with possible vulnerabilities.
 %define BUILD_DHCP_CLIENT 0
 
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
-Version: 3.0pl2
-Release: owl11
+Version: 3.0.7
+Release: owl1
 License: ISC License
 Group: System Environment/Daemons
-URL: http://www.isc.org/products/DHCP/
+URL: https://www.isc.org/software/dhcp
 Source0: ftp://ftp.isc.org/isc/dhcp/dhcp-%version.tar.gz
 Source1: dhcpd.init
 Source2: dhcpd.conf.sample
-Patch0: dhcp-3.0pl2-owl-man.diff
-Patch1: dhcp-3.0pl2-owl-drop-root.diff
-Patch2: dhcp-3.0pl2-rh-owl-script.diff
-Patch3: dhcp-3.0pl2-owl-warnings.diff
-Patch4: dhcp-3.0pl2-owl-bound.diff
-Patch5: dhcp-3.0pl2-owl-fixes.diff
-Patch6: dhcp-3.0pl2-owl-support-contact.diff
+Patch0: dhcp-3.0.7-alt-owl-fixes.diff
+Patch1: dhcp-3.0.6-owl-alt-errwarn.diff
+Patch2: dhcp-3.0.6-alt-daemonize.diff
+Patch3: dhcp-3.0.6-alt-defaults.diff
+Patch4: dhcp-3.0.6-rh-owl-script.diff
+Patch5: dhcp-3.0.7-owl-support-contact.diff
+Patch6: dhcp-3.0.6-owl-bound.diff
+Patch7: dhcp-3.0.6-alt-Makefile.diff
+Patch8: dhcp-3.0.6-rh-dhcpctl-man.diff
+Patch9: dhcp-3.0.6-rh-memory.diff
+Patch10: dhcp-3.0.6-rh-failover-ports.diff
+Patch11: dhcp-3.0.6-rh-man.diff
+Patch12: dhcp-3.0.7-owl-alt-drop-root.diff
+Patch13: dhcp-3.0.7-alt-format.diff
+Patch14: dhcp-3.0.7-up-dhclient-bound.diff
+Patch15: dhcp-3.0.7-deb-CVE-2009-1892.diff
 PreReq: grep, shadow-utils
-BuildRequires: groff
+BuildRequires: groff, libcap-devel
 BuildRoot: /override/%name-%version
 
 %description
@@ -84,34 +98,51 @@ subnet.  The DHCP relay takes care of this for the client.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
 
-%{expand:%%define optflags %optflags -fno-strict-aliasing -Wall -Wno-unused}
-
-%ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
-%{expand:%%define optflags %optflags -DPTRSIZE_64BIT}
+find server -type f -not -name Makefile\* -print0 |
+	xargs -r0 grep -FZl DBDIR -- |
+	xargs -r0 sed -i s,DBDIR,/var/lib/dhcp/dhcpd/state,g --
+%if %BUILD_DHCP_CLIENT
+find client -type f -not -name Makefile\* -print0 |
+	xargs -r0 grep -FZl DBDIR -- |
+	xargs -r0 sed -i s,DBDIR,/var/lib/dhcp/dhclient/state,g --
 %endif
 
+%{expand:%%define optflags %optflags -fno-strict-aliasing -Wall -Wno-unused -D_GNU_SOURCE}
+
 %build
-./configure --copts "%optflags -D_GNU_SOURCE"
+./configure --copts '%optflags'
 %__make CC="%__cc" DEBUG=
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot/etc/{rc.d/init.d}
+mkdir -p %buildroot/etc/sysconfig
 %__make install \
-	DESTDIR="%buildroot" \
-	ADMMANDIR="%_mandir/man8" \
-	FFMANDIR="%_mandir/man5" \
-	LIBMANDIR="%_mandir/man3" \
-	USRMANDIR="%_mandir/man1"
+	INSTALL='install -pm644' \
+	MANINSTALL='$(INSTALL)' \
+	DESTDIR='%buildroot' \
+	LIBDIR='%_libdir' \
+	INCDIR='%_includedir' \
+	ADMMANDIR='%_mandir/man8' \
+	FFMANDIR='%_mandir/man5' \
+	LIBMANDIR='%_mandir/man3' \
+	USRMANDIR='%_mandir/man1'
 
 cd %buildroot
 
-mkdir -p etc/{rc.d/init.d,sysconfig}
 mkdir -p var/lib/dhcp/{dhcpd,dhclient}/state
 
-install -m 700 %_sourcedir/dhcpd.init etc/rc.d/init.d/dhcpd
-install -m 600 %_sourcedir/dhcpd.conf.sample etc/
+install -pD -m700 %_sourcedir/dhcpd.init .%_initrddir/dhcpd
+install -p -m600 %_sourcedir/dhcpd.conf.sample etc/
 
 touch var/lib/dhcp/dhcpd/state/dhcpd.leases
 touch var/lib/dhcp/dhclient/state/dhclient.leases
@@ -122,22 +153,9 @@ DHCPDARGS=
 EOF
 
 # Remove unpackaged files - development stuff
-rm .%_mandir/man3/dhcpctl.3*
-rm .%_mandir/man3/omapi.3*
-rm .%_mandir/man3/omshell.3*
-rm usr/local/include/dhcpctl.h
-rm usr/local/include/isc-dhcp/boolean.h
-rm usr/local/include/isc-dhcp/dst.h
-rm usr/local/include/isc-dhcp/int.h
-rm usr/local/include/isc-dhcp/lang.h
-rm usr/local/include/isc-dhcp/list.h
-rm usr/local/include/isc-dhcp/result.h
-rm usr/local/include/isc-dhcp/types.h
-rm usr/local/include/omapip/alloc.h
-rm usr/local/include/omapip/buffer.h
-rm usr/local/include/omapip/omapip.h
-rm usr/local/lib/libdhcpctl.a
-rm usr/local/lib/libomapi.a
+rm -r .%_includedir
+rm -r .%_libdir/lib*.a
+rm -r .%_mandir/man3
 
 %if !%BUILD_DHCP_CLIENT
 # Remove unpackaged files - the DHCP client
@@ -158,26 +176,26 @@ grep -q ^dhcp: /etc/passwd ||
 %pre server
 rm -f /var/run/dhcp.restart
 if [ $1 -ge 2 ]; then
-	/etc/rc.d/init.d/dhcpd status && touch /var/run/dhcp.restart || :
-	/etc/rc.d/init.d/dhcpd stop || :
+	%_initrddir/dhcpd status && touch /var/run/dhcp.restart || :
+	%_initrddir/dhcpd stop || :
 fi
 
 %post server
 /sbin/chkconfig --add dhcpd
 if [ -f /var/run/dhcp.restart ]; then
-	/etc/rc.d/init.d/dhcpd start
+	%_initrddir/dhcpd start
 fi
 rm -f /var/run/dhcp.restart
 
 %preun server
 if [ $1 -eq 0 ]; then
-	/etc/rc.d/init.d/dhcpd stop || :
+	%_initrddir/dhcpd stop || :
 	/sbin/chkconfig --del dhcpd
 fi
 
 %files
 %defattr(-,root,root)
-%doc README RELNOTES CHANGES COPYRIGHT
+%doc README RELNOTES LICENSE
 %_bindir/omshell
 %_mandir/man1/omshell.1*
 %_mandir/man5/dhcp-eval.5*
@@ -199,8 +217,8 @@ fi
 
 %files server
 %defattr(-,root,root)
-%config /etc/sysconfig/dhcpd
-%config /etc/rc.d/init.d/dhcpd
+%config(noreplace) /etc/sysconfig/dhcpd
+%config %_initrddir/dhcpd
 /etc/dhcpd.conf.sample
 %_sbindir/dhcpd
 %_mandir/man5/dhcpd.conf.5*
@@ -216,6 +234,28 @@ fi
 %_mandir/man8/dhcrelay.8*
 
 %changelog
+* Wed Jul 15 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0.7-owl1
+- Updated to 3.0.7.
+- Fixed potential DHCP server crash in certain configurations
+(CVE-2009-1892; patch by Christoph Biedl).
+- Backported upstream fix for potential stack-based buffer overflow in
+DHCP client (CVE-2009-0692; although we're not supporting dhclient
+officially and not building it by default).
+
+* Thu Oct 18 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0.6-owl2
+- Simplified lowering privileges algorithm.
+
+* Sun Oct 14 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0.6-owl1
+- Updated to 3.0.6.
+
+* Tue Sep 26 2006 Juan M. Bello Rivas <jmbr-at-owl.openwall.com> 3.0.4-owl1
+- Updated to version 3.0.4.
+
+* Tue Sep 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0pl2-owl12
+- Fixed init script to properly handle "reload" mode.
+- Updated init script to new conventions.
+- Use the %%_initrddir macro.
+
 * Fri Apr 29 2005 Solar Designer <solar-at-owl.openwall.com> 3.0pl2-owl11
 - Do register dhcpd with chkconfig, but don't enable it for any runlevels
 by default.
@@ -243,7 +283,7 @@ third-party modifications and that might not be based off their latest code.
 - Remove unpackaged files.
 
 * Sun Jun 13 2004 Solar Designer <solar-at-owl.openwall.com> 3.0pl2-owl7
-- Added a bounds checking patch covering sprintf() calls with "%s" format
+- Added a bounds checking patch covering sprintf() calls with "%%s" format
 specifier and non-constant strings and forcing the use of snprintf() and
 vsnprintf() in all places where that was previously supported.
 

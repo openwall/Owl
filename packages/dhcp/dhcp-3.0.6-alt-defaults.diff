@@ -1,0 +1,24 @@
+--- dhcp/Makefile.conf
++++ dhcp/Makefile.conf
+@@ -50,7 +50,7 @@ DEBUG = -g
+ #WARNERR = -Werror
+ RANLIB = ranlib
+ MKDEP = mkdep
+-CLIENT_PATH = '"PATH=/usr/ucb:/usr/bin:/usr/sbin:/bin:/sbin"'
++CLIENT_PATH = '"PATH=/sbin:/usr/sbin:/usr/local/sbin:/bin:/usr/bin:/usr/local/bin"'
+ 
+ BINDLIB = ../minires/libres.a
+ BINDINC =
+--- dhcp/server/dhcpd.conf.5
++++ dhcp/server/dhcpd.conf.5
+@@ -2038,8 +2038,8 @@ The syntax of the \fIsyslog.conf\fR file may be different on some
+ operating systems - consult the \fIsyslog.conf\fR manual page to be
+ sure.  To get syslog to start logging to the new file, you must first
+ create the file with correct ownership and permissions (usually, the
+-same owner and permissions of your /var/log/messages or
+-/usr/adm/messages file should be fine) and send a SIGHUP to syslogd.
++same owner and permissions of your /var/log/messages
++file should be fine) and send a SIGHUP to syslogd.
+ Some systems support log rollover using a shell script or program
+ called newsyslog or logrotate, and you may be able to configure this
+ as well so that your log file doesn't grow uncontrollably.

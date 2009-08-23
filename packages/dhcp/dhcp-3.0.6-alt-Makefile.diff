@@ -1,0 +1,77 @@
+--- dhcp/Makefile
++++ dhcp/Makefile
+@@ -33,7 +33,7 @@ all:
+ 	 if [ ! -d work.$$sysname ]; then \
+ 	   echo No build directory for $$sysname - please run ./configure.; \
+ 	else \
+-	   (cd work.$$sysname; make all); \
++	   $(MAKE) -C work.$$sysname all; \
+ 	fi
+ 
+ install:
+@@ -41,7 +41,7 @@ install:
+ 	 if [ ! -d work.$$sysname ]; then \
+ 	   echo No build directory for $$sysname - please run ./configure.; \
+ 	else \
+-	   (cd work.$$sysname; make install); \
++	   $(MAKE) -C work.$$sysname install; \
+ 	fi
+ 
+ depend:
+@@ -49,7 +49,7 @@ depend:
+ 	 if [ ! -d work.$$sysname ]; then \
+ 	   echo No build directory for $$sysname - please run ./configure.; \
+ 	else \
+-	   (cd work.$$sysname; make depend); \
++	   $(MAKE) -C work.$$sysname depend; \
+ 	fi
+ 
+ clean:
+@@ -57,7 +57,7 @@ clean:
+ 	 if [ ! -d work.$$sysname ]; then \
+ 	   echo No build directory for $$sysname - please run ./configure.; \
+ 	else \
+-	   (cd work.$$sysname; make clean); \
++	   $(MAKE) -C work.$$sysname clean; \
+ 	fi
+ 
+ realclean:
+@@ -65,7 +65,7 @@ realclean:
+ 	 if [ ! -d work.$$sysname ]; then \
+ 	   echo No build directory for $$sysname - please run ./configure.; \
+ 	else \
+-	   (cd work.$$sysname; make realclean); \
++	   $(MAKE) -C work.$$sysname realclean; \
+ 	fi
+ 
+ distclean:
+@@ -73,7 +73,7 @@ distclean:
+ 	 if [ ! -d work.$$sysname ]; then \
+ 	   echo No build directory for $$sysname - please run ./configure.; \
+ 	else \
+-	   (cd work.$$sysname; make distclean); \
++	   $(MAKE) -C work.$$sysname distclean; \
+ 	fi
+ 
+ links:
+@@ -81,6 +81,6 @@ links:
+ 	 if [ ! -d work.$$sysname ]; then \
+ 	   echo No build directory for $$sysname - please run ./configure.; \
+ 	else \
+-	   (cd work.$$sysname; make links); \
++	   $(MAKE) -C work.$$sysname links; \
+ 	fi
+ 
+--- dhcp/dst/Makefile.dist
++++ dhcp/dst/Makefile.dist
+@@ -30,7 +30,9 @@ CFLAGS = $(DEBUG) $(PREDEFINES) $(INCLUDES) $(COPTS) -DHMAC_MD5 -DMINIRES_LIB
+ 
+ all:	libdst.a
+ 
+-install:
++install: all
++	mkdir -p $(DESTDIR)$(LIBDIR)
++	$(INSTALL) libdst.a $(DESTDIR)$(LIBDIR)/
+ 
+ libdst.a:	$(OBJ)
+ 	rm -f dst.a

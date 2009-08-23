@@ -1,0 +1,56 @@
+--- dhcp/server/confpars.c
++++ dhcp/server/confpars.c
+@@ -994,10 +994,13 @@ void parse_failover_peer (cfile, group, type)
+ 		parse_warn (cfile, "peer address may not be omitted");
+ 
+ 	/* XXX - when/if we get a port number assigned, just set as default */
++	/* See http://bugzilla.redhat.com/show_bug.cgi?id=167292
++	 * IANA registration by Bernard Volz <volz at cisco.com>
++	 */
+ 	if (!peer -> me.port)
+-		parse_warn (cfile, "local port may not be omitted");
++		peer -> me.port = 647;
+ 	if (!peer -> partner.port)
+-		parse_warn (cfile, "peer port may not be omitted");
++		peer -> partner.port = 847;
+ 
+ 	if (peer -> i_am == primary) {
+ 	    if (!peer -> hba) {
+--- dhcp/server/dhcpd.conf.5
++++ dhcp/server/dhcpd.conf.5
+@@ -531,9 +531,9 @@ primary server might look like this:
+ failover peer "foo" {
+   primary;
+   address anthrax.rc.vix.com;
+-  port 519;
++  port 647;
+   peer address trantor.rc.vix.com;
+-  peer port 520;
++  peer port 847;
+   max-response-delay 60;
+   max-unacked-updates 10;
+   mclt 3600;
+@@ -592,9 +592,7 @@ statement
+ .B port \fIport-number\fR\fB;\fR
+ .PP
+ The \fBport\fR statement declares the TCP port on which the server
+-should listen for connections from its failover peer.   This statement
+-may not currently be omitted, because the failover protocol does not
+-yet have a reserved TCP port number.
++should listen for connections from its failover peer.
+ .RE
+ .PP
+ The 
+@@ -606,10 +604,8 @@ statement
+ .PP
+ The \fBpeer port\fR statement declares the TCP port to which the
+ server should connect to reach its failover peer for failover
+-messages.   This statement may not be omitted because the failover
+-protocol does not yet have a reserved TCP port number.   The port
+-number declared in the \fBpeer port\fR statement may be the same as
+-the port number declared in the \fBport\fR statement.
++messages.  The port number declared in the \fBpeer port\fR statement
++may be the same as the port number declared in the \fBport\fR statement.
+ .RE
+ .PP
+ The 

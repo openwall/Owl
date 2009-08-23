@@ -1,0 +1,20 @@
+--- dhcp/common/lpf.c
++++ dhcp/common/lpf.c
+@@ -251,6 +251,7 @@ static void lpf_tr_filter_setup (info)
+ 
+ 	/* Set up the bpf filter program structure.    This is defined in
+ 	   bpf.c */
++	memset(&p, '\0', sizeof p);
+ 	p.len = dhcp_bpf_tr_filter_len;
+ 	p.filter = dhcp_bpf_tr_filter;
+ 
+--- dhcp/common/packet.c
++++ dhcp/common/packet.c
+@@ -141,6 +141,7 @@ void assemble_udp_ip_header (interface, buf, bufix,
+ 	struct udphdr udp;
+ 
+ 	/* Fill out the IP header */
++	memset( &ip, '\0', sizeof ip);
+ 	IP_V_SET (&ip, 4);
+ 	IP_HL_SET (&ip, 20);
+ 	ip.ip_tos = IPTOS_LOWDELAY;

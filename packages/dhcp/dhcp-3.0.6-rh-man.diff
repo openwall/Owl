@@ -1,0 +1,12 @@
+--- dhcp/server/dhcpd.conf.5
++++ dhcp/server/dhcpd.conf.5
+@@ -2110,7 +2110,8 @@ statement
+ The \fInext-server\fR statement is used to specify the host address of
+ the server from which the initial boot file (specified in the
+ \fIfilename\fR statement) is to be loaded.   \fIServer-name\fR should
+-be a numeric IP address or a domain name.
++be a numeric IP address or a domain name.  If no \fInext-server\fR
++statement applies to a given client, the address 0.0.0.0 is used.
+ .RE
+ .PP
+ The
