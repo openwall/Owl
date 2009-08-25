@@ -1,0 +1,11 @@
+--- m4-1.4.13/doc/m4.texinfo.orig	2009-03-05 12:46:01.000000000 +0000
++++ m4-1.4.13/doc/m4.texinfo	2009-08-16 16:25:02.000000000 +0000
+@@ -58,7 +58,7 @@
+ 
+ @dircategory Text creation and manipulation
+ @direntry
+-* M4: (m4).                     A powerful macro processor.
++* M4: (m4).					A powerful macro processor.
+ @end direntry
+ 
+ @titlepage
