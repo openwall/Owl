@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.45 2009/08/17 04:25:44 solar Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.46 2009/08/25 13:40:17 ldv Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.22.90
-Release: owl1
+Release: owl2
 License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
@@ -15,6 +15,7 @@ Source1: tar.1
 Patch0: tar-1.22.90-alt.diff
 Patch1: tar-1.22.90-owl-error-handling.diff
 Patch2: tar-1.22.90-owl-default-warnings.diff
+Patch3: tar-1.22.90-owl-tests.diff
 PreReq: /sbin/install-info, grep
 BuildRequires: gettext, texinfo
 BuildRequires: rpm-build >= 0:4, sed >= 4.0.9
@@ -34,6 +35,7 @@ backups.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -88,6 +90,9 @@ fi
 %doc AUTHORS COPYING NEWS.bz2 README THANKS
 
 %changelog
+* Tue Aug 25 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.22.90-owl2
+- Fixed tests/xform-h.at.
+
 * Mon Aug 17 2009 Solar Designer <solar-at-owl.openwall.com> 1.22.90-owl1
 - Updated to 1.22.90.
 - Extracted Dmitry V. Levin's latest changes from ALT Linux's repository at
