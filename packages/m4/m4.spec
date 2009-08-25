@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/m4/m4.spec,v 1.20 2009/08/25 08:12:19 mci Exp $
+# $Owl: Owl/packages/m4/m4.spec,v 1.21 2009/08/25 12:11:03 solar Exp $
 
 Summary: The GNU macro processor.
 Name: m4
@@ -45,6 +45,8 @@ export ac_cv_func_mkstemp=yes \
 %__make CFLAGS="%optflags" LDFLAGS=-s
 %__make -k check
 
+bzip2 -9k NEWS
+
 %install
 rm -rf %buildroot
 %makeinstall INSTALL_DATA="install -c -m 644"
@@ -63,7 +65,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc NEWS README
+%doc AUTHORS COPYING NEWS.bz2 README THANKS
 %_bindir/m4
 %_mandir/man1/m4.*
 %_infodir/*.info*
