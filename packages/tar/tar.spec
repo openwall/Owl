@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.46 2009/08/25 13:40:17 ldv Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.47 2009/08/26 00:22:26 ldv Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -15,7 +15,6 @@ Source1: tar.1
 Patch0: tar-1.22.90-alt.diff
 Patch1: tar-1.22.90-owl-error-handling.diff
 Patch2: tar-1.22.90-owl-default-warnings.diff
-Patch3: tar-1.22.90-owl-tests.diff
 PreReq: /sbin/install-info, grep
 BuildRequires: gettext, texinfo
 BuildRequires: rpm-build >= 0:4, sed >= 4.0.9
@@ -35,7 +34,7 @@ backups.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
+sed -i 's,^tar .* basedir$,&/*,' tests/xform-h.at tests/testsuite
 
 %{expand:%%define optflags %optflags -Wall}
 
