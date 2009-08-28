@@ -1,0 +1,12 @@
+--- bison-2.4.1/doc/bison.texinfo.orig	2008-11-19 16:57:30.000000000 +0000
++++ bison-2.4.1/doc/bison.texinfo	2009-08-16 06:23:33.000000000 +0000
+@@ -55,7 +55,8 @@
+ 
+ @dircategory Software development
+ @direntry
+-* bison: (bison).       @acronym{GNU} parser generator (Yacc replacement).
++* bison: (bison).                               @acronym{GNU} parser generator
++                                                (Yacc replacement).
+ @end direntry
+ 
+ @titlepage

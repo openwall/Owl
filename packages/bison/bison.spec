@@ -1,16 +1,17 @@
-# $Owl: Owl/packages/bison/bison.spec,v 1.29 2006/09/18 23:30:54 ldv Exp $
+# $Owl: Owl/packages/bison/bison.spec,v 1.30 2009/08/28 22:27:36 mci Exp $
 
 %define BUILD_TEST 0
 
 Summary: A GNU general-purpose parser generator.
 Name: bison
-Version: 2.3
+Version: 2.4.1
 Release: owl1
-License: GPL
+License: GPLv3
 Group: Development/Tools
 URL: http://www.gnu.org/software/bison/
 Source: ftp://ftp.gnu.org/gnu/bison/bison-%version.tar.bz2
-Patch0: bison-2.0-owl-info.diff
+# Signature: ftp://ftp.gnu.org/gnu/bison/bison-%version.tar.bz2.sig
+Patch0: bison-2.4.1-owl-info.diff
 PreReq: /sbin/install-info
 BuildRequires: mktemp >= 1:1.3.1
 BuildRequires: glibc >= 0:2.2
@@ -69,6 +70,9 @@ fi
 %_libdir/liby.a
 
 %changelog
+* Sun Aug 16 2009 Michail Litvak <mci-at-owl.openwall.com> 2.4.1-owl1
+- Updated to 2.4.1.
+
 * Tue Sep 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3-owl1
 - Updated to 2.3.
 
