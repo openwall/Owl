@@ -46,6 +46,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/08/28	Package: pam
+Updated to 1.1.0.
+
 2009/08/25	Package: m4
 Updated to 1.4.13.
 
@@ -929,4 +932,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.192 2009/08/25 11:57:02 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.193 2009/08/28 08:05:58 ldv Exp $
