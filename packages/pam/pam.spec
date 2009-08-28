@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.54 2009/08/28 13:42:52 solar Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.55 2009/08/28 13:50:21 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
@@ -8,8 +8,8 @@ Release: owl1
 License: GPLv2+ or BSD-style
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
-Source0: ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%version.tar.bz2
-Source1: ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%version-docs.tar.bz2
+Source0: ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%version.tar.bz2
+Source1: ftp://ftp.kernel.org/pub/linux/libs/pam/documentation/Linux-PAM-%version-docs.tar.bz2
 Source2: pam-redhat-%rh_version.tar.bz2
 Source3: pam_listfile.c
 Source4: other.pam
@@ -26,7 +26,7 @@ Patch8: Linux-PAM-1.1.0-alt-pam_chroot.diff
 Patch9: Linux-PAM-1.1.0-owl-pam_stack.diff
 PreReq: /sbin/ldconfig
 Requires: glibc-crypt_blowfish
-# Just to make sure noone misses pam_unix and pam_pwdb, which are now
+# Just to make sure no one misses pam_unix and pam_pwdb, which are now
 # provided by tcb.
 Requires: tcb >= 0.9.9
 BuildRequires: glibc-crypt_blowfish-devel
