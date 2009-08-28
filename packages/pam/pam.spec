@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.52 2008/02/12 20:43:35 solar Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.53 2009/08/28 08:02:21 ldv Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
-Version: 0.99.4.0
-Release: owl3
-%define rh_version 0.80-1
-License: GPL or BSD
+Version: 1.1.0
+Release: owl1
+%define rh_version 0.99.10-1
+License: GPLv2+ or BSD-style
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
 Source0: ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%version.tar.bz2
@@ -14,14 +14,16 @@ Source2: pam-redhat-%rh_version.tar.bz2
 Source3: pam_listfile.c
 Source4: other.pam
 Source5: system-auth.pam
-Patch0: Linux-PAM-0.99.4.0-cvs-20060523.diff
-Patch1: Linux-PAM-0.99.2.1-alt-const.diff
-Patch2: Linux-PAM-0.99.2.1-owl-pam_limits-acct.diff
-Patch3: Linux-PAM-0.99.2.1-owl-pam_mkhomedir-acct.diff
-Patch4: Linux-PAM-0.99.2.1-owl-pam_wheel-use_uid.diff
-Patch5: Linux-PAM-0.99.4.0-alt-pam_chroot.diff
-Patch6: Linux-PAM-0.99.4.0-owl-pam_stack.diff
-Patch7: Linux-PAM-0.99.2.1-alt-pam_xauth-check_acl.diff
+Patch0: Linux-PAM-1.1.0-up-20090626-bug2809661.diff
+Patch1: Linux-PAM-1.1.0-alt-const.diff
+Patch2: Linux-PAM-1.1.0-owl-pam_limits-acct.diff
+Patch3: Linux-PAM-1.1.0-alt-pam_mkhomedir-fixes.diff
+Patch4: Linux-PAM-1.1.0-owl-pam_mkhomedir-acct.diff
+Patch5: Linux-PAM-1.1.0-owl-pam_wheel-use_uid.diff
+Patch6: Linux-PAM-1.1.0-alt-pam_xauth-check_acl.diff
+Patch7: Linux-PAM-1.1.0-owl-pam_get_authtok.patch
+Patch8: Linux-PAM-1.1.0-alt-pam_chroot.diff
+Patch9: Linux-PAM-1.1.0-owl-pam_stack.diff
 PreReq: /sbin/ldconfig
 Requires: glibc-crypt_blowfish
 # Just to make sure noone misses pam_unix and pam_pwdb, which are now
@@ -52,8 +54,8 @@ Summary: The Linux-PAM documentation.
 Group: Documentation
 
 %description doc
-This package contains the main Linux-PAM documentation in text, HTML, and
-PostScript formats.
+This package contains the main Linux-PAM documentation in text, HTML,
+and PostScript formats.
 
 %package compat
 Summary: PAM modules for backwards compatibility.
@@ -64,11 +66,10 @@ Requires: %name = %version-%release
 This package contains PAM modules for backwards compatibility.
 
 %prep
-%setup -q -n Linux-PAM-%version -a2
-%setup -qDT -n Linux-PAM-%version/doc -a1
-%setup -qDT -n Linux-PAM-%version
+%setup -q -n Linux-PAM-%version -b1 -a2
+mv pam-redhat-%rh_version/pam_chroot modules/
 
-%patch0 -p0
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -76,49 +77,51 @@ This package contains PAM modules for backwards compatibility.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-
-# Remove unwanted modules.
-for d in pam_{console,cracklib,debug,loginuid,postgresok,rps,selinux,timestamp,umask,unix}; do
-	rm -r modules/$d
-	sed -i "s,modules/$d/Makefile,," configure.in
-	sed -i "s/ $d / /" modules/Makefile.am
-done
-find modules -type f -name Makefile -delete -print
+%patch8 -p1
+%patch9 -p1
 
 # Replace pam_listfile.
 install -pm644 %_sourcedir/pam_listfile.c modules/pam_listfile/
 
-mkdir modules/READMEs
-for f in modules/pam_*/README; do
-	d="${f%%/*}"
-	install -pm644 "$f" "modules/READMEs/README.${d##*/}"
+# Include pam-redhat modules.
+for d in stack chroot; do
+	sed -i "s,modules/pam_xauth/Makefile ,&modules/pam_$d/Makefile ," configure*
+	sed -i "s/ pam_xauth/& pam_$d/" modules/Makefile*
 done
+
+# Remove unwanted modules.
+for d in cracklib debug loginuid keyinit namespace radius rps \
+	 selinux sepermit timestamp tty_audit unix; do
+	sed -i "s,modules/pam_$d/Makefile,," configure*
+	sed -i "s/pam_$d //" modules/Makefile*
+	sed -i "s/tst-pam_$d[0-9]* //" xtests/Makefile*
+done
+
+# Workaround old autotools.
+touch aclocal.m4 Makefile.in config.h.in
+sed -i 's,\(sys_lib_dlsearch_path_spec="/\)[^"]*"$,\1%_lib %_libdir",' configure
 
 %define docdir %_docdir/pam-%version
 # Use optflags_lib for this package if defined.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %build
-aclocal -I m4
-libtoolize -f
-autoconf
-autoheader
-automake -a
-export ac_cv_lib_ndbm_dbm_store=no \
-	ac_cv_lib_db_dbm_store=no \
-	ac_cv_lib_selinux_getfilecon=no \
-	ac_cv_search_FascistCheck='none required'
+export ac_cv_lib_ndbm_dbm_store=no ac_cv_lib_db_dbm_store=no
 %configure \
-	--prefix=/ \
-	--exec-prefix=/ \
-	--libdir=/%_lib \
-	--sbindir=/sbin \
-	--includedir=%_includedir/security \
+	--disable-audit \
+	--disable-cracklib \
 	--disable-nls \
 	--disable-read-both-confs \
-	--enable-fakeroot=%buildroot \
-	--enable-docdir=%docdir
+	--disable-prelude \
+	--disable-rpath \
+	--disable-selinux \
+	--docdir=%docdir \
+	--htmldir=%docdir/html \
+	--includedir=%_includedir/security \
+	--libdir=/%_lib \
+	--sbindir=/sbin
 %__make
+%__make check
 
 %install
 rm -rf %buildroot
@@ -142,7 +145,7 @@ rm %buildroot{%_libdir,/%_lib/security}/*.la
 # Make sure that all modules are built.
 >check.log
 for d in modules/pam_*; do
-	[ -d "$d" ] || continue
+	[ -s "$d/Makefile" ] || continue
 	m="${d##*/}"
 	! ls -1 "%buildroot/%_lib/security/$m"*.so 2>/dev/null || continue
 	echo "ERROR: $m module did not build." >&2
@@ -151,24 +154,33 @@ done
 ! [ -s check.log ] || exit 1
 
 # Make sure that no module exports symbols beyond standard set.
->check.log
-for d in modules/pam_*; do
-	[ -d "$d" ] || continue
-	m="${d##*/}"
-	readelf -Ws "%buildroot/%_lib/security/$m"*.so |
+for f in %buildroot/%_lib/security/pam*.so; do
+	readelf -Ws "$f" |
 		grep -w GLOBAL |
 		grep -Ewv 'UND|pam_sm_(acct_mgmt|authenticate|chauthtok|close_session|open_session|setcred)'  ||
 			continue
-	echo "ERROR: $m module exports symbol(s) beyond standard set." >&2
-	echo "$m" >>check.log
+	echo "ERROR: ${f##*/} exports symbol(s) beyond standard set." >&2
+	echo "${f##*/}" >>check.log
 done
 ! [ -s check.log ] || exit 1
 
 # Make sure that no shared object has undefined symbols.
->check.log
 for f in %buildroot/%_lib/lib*.so.0 %buildroot/%_lib/security/pam*.so; do
 	LD_LIBRARY_PATH="%buildroot/%_lib" ldd -r "$f" 2>&1 >/dev/null |
 		tee -a check.log
+done
+! [ -s check.log ] || exit 1
+
+# Make sure that none of the modules pull in threading libraries.
+for f in %buildroot/%_lib/security/pam*.so; do
+	# except pam_userdb
+	[ "${f##*/}" != pam_userdb.so ] ||
+		continue
+	LD_LIBRARY_PATH="%buildroot/%_lib" ldd -r "$f" 2>&1 |
+		fgrep -q libpthread ||
+			continue
+	echo "ERROR: ${f##*/} pulls in libpthread." >&2
+	echo "${f##*/}" >>check.log
 done
 ! [ -s check.log ] || exit 1
 
@@ -176,14 +188,16 @@ install -pD -m644 %_sourcedir/other.pam %buildroot/etc/pam.d/other
 install -pD -m644 %_sourcedir/system-auth.pam %buildroot/etc/pam.d/system-auth
 
 # Documentation
-rm -f doc/ps/*.log
-install -pm644 doc/figs/*.txt doc/txts/
-install -pm644 AUTHORS NEWS ChangeLog CHANGELOG doc/CREDITS Copyright \
-	%buildroot%docdir/
-cp -a doc/{txts,html,ps} %buildroot%docdir/
-cp -a modules/READMEs %buildroot%docdir/modules
-find %buildroot%docdir/ -type f -size +4k \( -iname changelog -or -name \*.txt -or -name \*.ps \) -print0 |
+mkdir -p %buildroot%docdir/modules
+for f in modules/pam_*/README; do
+	d="${f%%/*}"
+	[ -s "$d/Makefile" ] || continue
+	install -pm644 "$f" "%buildroot%docdir/modules/${d##*/}"
+done
+install -pm644 AUTHORS NEWS ChangeLog CHANGELOG Copyright %buildroot%docdir/
+find %buildroot%docdir/ -type f -size +4k \( -iname changelog -or -name \*.txt \) -print0 |
 	xargs -r0 gzip -9nf --
+rm %buildroot%docdir/*.pdf
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -201,7 +215,9 @@ find %buildroot%docdir/ -type f -size +4k \( -iname changelog -or -name \*.txt -
 /%_lib/libpamc.so.*
 /%_lib/libpam_misc.so.*
 
+/sbin/mkhomedir_helper
 /sbin/pam_tally
+/sbin/pam_tally2
 
 %dir /%_lib/security
 /%_lib/security/pam_access.so
@@ -210,6 +226,7 @@ find %buildroot%docdir/ -type f -size +4k \( -iname changelog -or -name \*.txt -
 /%_lib/security/pam_echo.so
 /%_lib/security/pam_env.so
 /%_lib/security/pam_exec.so
+/%_lib/security/pam_faildelay.so
 /%_lib/security/pam_filter.so
 /%_lib/security/pam_ftp.so
 /%_lib/security/pam_group.so
@@ -223,14 +240,17 @@ find %buildroot%docdir/ -type f -size +4k \( -iname changelog -or -name \*.txt -
 /%_lib/security/pam_motd.so
 /%_lib/security/pam_nologin.so
 /%_lib/security/pam_permit.so
-/%_lib/security/pam_rhosts_auth.so
+/%_lib/security/pam_pwhistory.so
+/%_lib/security/pam_rhosts.so
 /%_lib/security/pam_rootok.so
 /%_lib/security/pam_securetty.so
 /%_lib/security/pam_shells.so
 /%_lib/security/pam_stress.so
 /%_lib/security/pam_succeed_if.so
 /%_lib/security/pam_tally.so
+/%_lib/security/pam_tally2.so
 /%_lib/security/pam_time.so
+/%_lib/security/pam_umask.so
 /%_lib/security/pam_userdb.so
 /%_lib/security/pam_warn.so
 /%_lib/security/pam_wheel.so
@@ -242,8 +262,9 @@ find %buildroot%docdir/ -type f -size +4k \( -iname changelog -or -name \*.txt -
 %attr(640,root,wheel) %config(noreplace) /etc/security/chroot.conf
 %attr(640,root,wheel) %config(noreplace) /etc/security/group.conf
 %attr(640,root,wheel) %config(noreplace) /etc/security/limits.conf
-%attr(644,root,root) %config(noreplace) /etc/security/pam_env.conf
 %attr(640,root,wheel) %config(noreplace) /etc/security/time.conf
+%attr(644,root,root) %config(noreplace) /etc/security/pam_env.conf
+%attr(644,root,root) %config(noreplace) /etc/environment
 
 %_mandir/man5/*
 %_mandir/man8/*
@@ -262,9 +283,16 @@ find %buildroot%docdir/ -type f -size +4k \( -iname changelog -or -name \*.txt -
 %files doc
 %defattr(-,root,root)
 %dir %docdir
-%docdir/[hpst]*
+%docdir/[^ACNm]*
 
 %changelog
+* Fri Aug 28 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1.0-owl10
+- Updated Linux-PAM to 1.1.0, which replaces pam_rhosts_auth.so with
+pam_rhosts.so and introduces new modules: pam_faildelay.so, pam_pwhistory.so,
+pam_tally2.so and pam_umask.so.
+- Updated pam-redhat to 0.99.10-1.
+- Reworked layout of documentation files.
+
 * Tue Feb 12 2008 Solar Designer <solar-at-owl.openwall.com> 0.99.4.0-owl3
 - In system-auth, reduced the default value for the N2 parameter to
 pam_passwdqc's min=... option (the minimum length for passphrases) from

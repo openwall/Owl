@@ -1,0 +1,13 @@
+--- Linux-PAM/libpam/pam_get_authtok.c
++++ Linux-PAM/libpam/pam_get_authtok.c
+@@ -92,7 +92,9 @@ pam_get_authtok (pam_handle_t *pamh, int item, const char **authtok,
+       authtok_type = get_option (pamh, "authtok_type");
+       if (authtok_type == NULL)
+ 	{
+-	  retval = pam_get_item (pamh, PAM_AUTHTOK_TYPE, (const void **)&authtok_type);
++	  const void *void_item = NULL;
++	  retval = pam_get_item (pamh, PAM_AUTHTOK_TYPE, &void_item);
++	  authtok_type = void_item;
+ 	  if (retval != PAM_SUCCESS || authtok_type == NULL)
+ 	    authtok_type = "";
+ 	}

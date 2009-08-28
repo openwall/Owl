@@ -1,0 +1,44 @@
+--- Linux-PAM/modules/pam_mkhomedir/pam_mkhomedir.c
++++ Linux-PAM/modules/pam_mkhomedir/pam_mkhomedir.c
+@@ -43,6 +43,7 @@
+ #include <string.h>
+ #include <syslog.h>
+ #include <signal.h>
++#include <fcntl.h>
+ 
+ /*
+  * here, we make a definition for the externally accessible function
+@@ -136,14 +137,27 @@ create_homedir (pam_handle_t *pamh, options_t *opt,
+ 	static char *envp[] = { NULL };
+ 	char *args[] = { NULL, NULL, NULL, NULL, NULL };
+ 
+-	if (getrlimit(RLIMIT_NOFILE, &rlim)==0) {
+-          if (rlim.rlim_max >= MAX_FD_NO)
+-                rlim.rlim_max = MAX_FD_NO;
+-	  for (i=0; i < (int)rlim.rlim_max; i++) {
+-	  	close(i);
+-	  }
++	if (getrlimit(RLIMIT_NOFILE, &rlim) ||
++	    rlim.rlim_max > MAX_FD_NO)
++		rlim.rlim_max = MAX_FD_NO;
++	for (i = STDERR_FILENO + 1; i < (int)rlim.rlim_max; ++i)
++		close(i);
++
++	if ((i = open("/dev/null", O_RDWR)) < 0) {
++		pam_syslog(pamh, LOG_ERR, "failed to open %s: %m", "/dev/null");
++		_exit(PAM_SYSTEM_ERR);
++	}
++
++	if ((i != STDIN_FILENO && dup2(i, STDIN_FILENO) != STDIN_FILENO) ||
++	    (i != STDOUT_FILENO && dup2(i, STDOUT_FILENO) != STDOUT_FILENO) ||
++	    (i != STDERR_FILENO && dup2(i, STDERR_FILENO) != STDERR_FILENO)) {
++		pam_syslog(pamh, LOG_ERR, "failed to redirect STDIN/OUT/ERR: %m");
++		_exit(PAM_SYSTEM_ERR);
+ 	}
+ 
++	if (i > STDERR_FILENO)
++		close(i);
++
+ 	/* exec the mkhomedir helper */
+ 	args[0] = x_strdup(MKHOMEDIR_HELPER);
+ 	args[1] = pwd->pw_name;

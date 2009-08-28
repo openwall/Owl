@@ -1,0 +1,18 @@
+Fix compiling with --disable-nls:
+
+2009-06-26  Thorsten Kukuk  <kukuk at thkukuk.de>
+
+        * modules/pam_lastlog/pam_lastlog.c (last_login_failed): Fix
+        usage of wrong variable [bug#2809661].
+
+--- Linux-PAM/modules/pam_lastlog/pam_lastlog.c
++++ Linux-PAM/modules/pam_lastlog/pam_lastlog.c
+@@ -471,7 +471,7 @@ last_login_failed(pam_handle_t *pamh, int announce, const char *user, time_t llt
+ 		failed),
+ 	    failed);
+ #else
+-	if (daysleft == 1)
++	if (failed == 1)
+ 	    retval = asprintf(&line,
+ 		_("There was %d failed login attempt since the last successful login."),
+ 		failed);

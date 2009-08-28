@@ -1,9 +1,8 @@
-Support stacking for account management as well as for session setup.
+# Support stacking for account management as well as for session setup.
 
-diff -upk.orig Linux-PAM-0.99.2.1.orig/modules/pam_limits/pam_limits.c Linux-PAM-0.99.2.1/modules/pam_limits/pam_limits.c
---- Linux-PAM-0.99.2.1.orig/modules/pam_limits/pam_limits.c	2005-09-21 13:35:29 +0000
-+++ Linux-PAM-0.99.2.1/modules/pam_limits/pam_limits.c	2005-12-26 20:42:27 +0000
-@@ -672,14 +672,24 @@ pam_sm_close_session (pam_handle_t *pamh
+--- Linux-PAM/modules/pam_limits/pam_limits.c
++++ Linux-PAM/modules/pam_limits/pam_limits.c
+@@ -800,14 +800,24 @@ pam_sm_close_session (pam_handle_t *pamh UNUSED, int flags UNUSED,
  }
  
  #ifdef PAM_STATIC
