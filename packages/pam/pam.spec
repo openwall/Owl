@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.53 2009/08/28 08:02:21 ldv Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.54 2009/08/28 13:42:52 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
@@ -21,7 +21,7 @@ Patch3: Linux-PAM-1.1.0-alt-pam_mkhomedir-fixes.diff
 Patch4: Linux-PAM-1.1.0-owl-pam_mkhomedir-acct.diff
 Patch5: Linux-PAM-1.1.0-owl-pam_wheel-use_uid.diff
 Patch6: Linux-PAM-1.1.0-alt-pam_xauth-check_acl.diff
-Patch7: Linux-PAM-1.1.0-owl-pam_get_authtok.patch
+Patch7: Linux-PAM-1.1.0-owl-pam_get_authtok.diff
 Patch8: Linux-PAM-1.1.0-alt-pam_chroot.diff
 Patch9: Linux-PAM-1.1.0-owl-pam_stack.diff
 PreReq: /sbin/ldconfig
