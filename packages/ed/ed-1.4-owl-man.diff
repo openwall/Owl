@@ -1,0 +1,43 @@
+--- ed-1.4/doc/ed.1.orig	2009-08-25 21:08:48.000000000 +0000
++++ ed-1.4/doc/ed.1	2009-08-25 21:14:33.000000000 +0000
+@@ -110,7 +110,7 @@
+ .IR `!!' .
+ .TP 8
+ -s
+-Suppresses diagnostics. This should be used if
++Suppresses diagnostics.  This should be used if
+ .BR ed 's
+ standard input is from a script.
+ 
+@@ -167,7 +167,7 @@
+ and is legal wherever it makes sense.
+ 
+ An address range is two addresses separated either by a comma or
+-semicolon. The value of the first address in a range cannot exceed the
++semicolon.  The value of the first address in a range cannot exceed the
+ value of the second.  If only one address is given in a range, then
+ the second address is set to the given address.  If an
+ .IR n- tuple
+@@ -543,7 +543,7 @@
+ (.,.)d
+ Deletes the addressed lines from the buffer.
+ If there is a line after the deleted range, then the current address is set
+-to this line. Otherwise the current address is set to the line
++to this line.  Otherwise the current address is set to the line
+ before the deleted range.
+ 
+ .TP 8
+@@ -994,10 +994,10 @@
+ 
+ .SH SEE ALSO
+ 
+-.IR vi (1),
+-.IR sed (1),
+ .IR regex (3),
+-.IR sh (1).
++.IR sh (1),
++.IR sed (1),
++.IR vi (1),
+ 
+ USD:12-13
+ 

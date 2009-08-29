@@ -1,23 +1,17 @@
-# $Owl: Owl/packages/ed/ed.spec,v 1.21 2007/11/16 00:00:52 ldv Exp $
+# $Owl: Owl/packages/ed/ed.spec,v 1.22 2009/08/29 13:25:44 mci Exp $
 
 Summary: The GNU line-oriented text editor.
 Name: ed
-Version: 0.2
-Release: owl24
-License: GPL
+Version: 1.4
+Release: owl1
+License: GPLv3+
 Group: Applications/Text
 URL: http://www.gnu.org/software/ed/
-Source: ftp://ftp.gnu.org/gnu/ed-%version.tar.gz
-Patch0: ed-0.2-alt-configure.diff
-Patch1: ed-0.2-alt-error.diff
-Patch2: ed-0.2-deb-Makefile.diff
-Patch3: ed-0.2-deb-parentheses.diff
-Patch4: ed-0.2-alt-tmp.diff
-Patch5: ed-0.2-alt-progname.diff
-Patch6: ed-0.2-deb-owl-man.diff
-Patch7: ed-0.2-alt-owl-info.diff
-Patch8: ed-0.2-alt-glibc.diff
-Patch9: ed-0.2-alt-warnings.diff
+Source: ftp://ftp.gnu.org/gnu/ed/ed-%version.tar.gz
+# Signature: ftp://ftp.gnu.org/gnu/ed/ed-%version.tar.gz.sig
+Patch0: ed-1.4-owl-alt-progname.diff
+Patch1: ed-1.4-alt-owl-info.diff
+Patch2: ed-1.4-owl-man.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
@@ -33,28 +27,19 @@ editors such as vi and emacs.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-rm getopt.h regex.h
-rm configure ed.info
 
 %{expand:%%define optflags %optflags -Wall -Dlint}
 
 %build
-autoreconf -fis
-# glibc does have sigsetjmp, it's just a macro, which confuses autoconf.
-export ac_cv_func_sigsetjmp=yes
-%configure --exec-prefix=/
+%configure --prefix=/usr --exec-prefix=/ --bindir=/bin
 make LDFLAGS=-s
 make -k check
 
 %install
-%makeinstall bindir=%buildroot/bin mandir=%buildroot%_mandir/man1
+%makeinstall bindir=%buildroot/bin
+
+# Remove unpackaged files
+rm %buildroot%_infodir/dir
 
 %post
 /sbin/install-info %_infodir/ed.info %_infodir/dir
@@ -66,12 +51,16 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc NEWS POSIX README THANKS
+%doc NEWS AUTHORS README
 /bin/*ed
 %_infodir/ed.info*
 %_mandir/man1/*ed.*
 
 %changelog
+* Tue Aug 25 2009 Michail Litvak <mci-at-owl.openwall.com> 1.4-owl1
+- Updated to 1.4.
+- Removed outdated patches (there was significant source changes).
+
 * Thu Nov 15 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.2-owl24
 - Synced with ed-0.2-alt6:
 - Disabled build of code provided by glibc.

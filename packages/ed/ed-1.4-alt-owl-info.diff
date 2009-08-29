@@ -1,0 +1,14 @@
+--- ed-1.4/doc/ed.texinfo.orig	2009-07-10 11:54:33.000000000 +0000
++++ ed-1.4/doc/ed.texinfo	2009-08-25 14:00:30.000000000 +0000
+@@ -8,9 +8,9 @@
+ @set UPDATED 10 July 2009
+ @set VERSION 1.4
+ 
+-@dircategory Basics
++@dircategory Text creation and manipulation
+ @direntry
+-* Ed: (ed).                     The GNU line editor
++* Ed: (ed).					The GNU line editor
+ @end direntry
+ 
+ @copying

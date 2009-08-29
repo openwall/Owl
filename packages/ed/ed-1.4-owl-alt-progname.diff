@@ -1,0 +1,50 @@
+--- ed-1.4/main.c.orig	2009-06-10 17:48:25.000000000 +0000
++++ ed-1.4/main.c	2009-08-25 13:16:47.000000000 +0000
+@@ -32,17 +32,18 @@
+  *
+  */
+ 
++#define _GNU_SOURCE
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <sys/stat.h>
+ #include <locale.h>
++#include <errno.h>
+ 
+ #include "carg_parser.h"
+ #include "ed.h"
+ 
+ 
+-static const char * invocation_name = 0;
+ static const char * const Program_name = "GNU Ed";
+ static const char * const program_name = "ed";
+ static const char * const program_year = "2009";
+@@ -60,7 +61,7 @@ char traditional( void ) { return tradit
+ static void show_help( void )
+   {
+   printf( "%s - The GNU line editor.\n", Program_name );
+-  printf( "\nUsage: %s [options] [file]\n", invocation_name );
++  printf( "\nUsage: %s [options] [file]\n", program_invocation_short_name);
+   printf( "\nOptions:\n" );
+   printf( "  -h, --help                 display this help and exit\n" );
+   printf( "  -V, --version              output version information and exit\n" );
+@@ -106,8 +107,8 @@ static void show_error( const char * msg
+     if( errcode > 0 ) fprintf( stderr, ": %s", strerror( errcode ) );
+     fprintf( stderr, "\n" );
+     }
+-  if( help && invocation_name && invocation_name[0] != 0 )
+-    fprintf( stderr, "Try `%s --help' for more information.\n", invocation_name );
++  if( help )
++    fprintf( stderr, "Try `%s --help' for more information.\n", program_invocation_short_name );
+   }
+ 
+ 
+@@ -152,7 +153,6 @@ int main( const int argc, const char *ar
+     { show_error( "Memory exhausted", 0, 0 ); return 1; }
+   if( ap_error( &parser ) )				/* bad option */
+     { show_error( ap_error( &parser ), 0, 1 ); return 1; }
+-  invocation_name = argv[0];
+   restricted_ = ( n > 2 && argv[0][n-3] == 'r' );
+ 
+   for( argind = 0; argind < ap_arguments( &parser ); ++argind )
