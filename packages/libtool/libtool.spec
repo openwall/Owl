@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/libtool/libtool.spec,v 1.22 2009/05/09 06:03:53 solar Exp $
+# $Owl: Owl/packages/libtool/libtool.spec,v 1.23 2009/08/30 11:50:05 solar Exp $
 
-%define BUILD_TEST 0
+%{?!BUILD_TEST: %define BUILD_TEST 1}
 
 Summary: The GNU Libtool, which simplifies the use of shared libraries.
 Name: libtool
 Version: 1.5.22
-Release: owl2
+Release: owl3
 License: GPL/LGPL
 Group: Development/Tools
 URL: http://www.gnu.org/software/libtool/
@@ -51,8 +51,8 @@ rm doc/libtool.info
 %define __libtoolize echo --
 %configure
 
-make -C doc
-make
+%__make -C doc
+%__make
 %if %BUILD_TEST
 %__make check
 %endif
@@ -93,6 +93,9 @@ fi
 %_libdir/libltdl.so.*
 
 %changelog
+* Sun Aug 30 2009 Solar Designer <solar-at-owl.openwall.com> 1.5.22-owl3
+- Run the tests during package build by default.
+
 * Sat May 09 2009 Solar Designer <solar-at-owl.openwall.com> 1.5.22-owl2
 - Once again prevent build host name leaks into the generated libtool script
 (this was broken with a previous update).
