@@ -1,6 +1,6 @@
-# $Owl: Owl/packages/automake/automake.spec,v 1.17 2009/08/30 11:56:14 solar Exp $
+# $Owl: Owl/packages/automake/automake.spec,v 1.18 2009/08/30 12:59:17 solar Exp $
 
-%{?!BUILD_TEST: %define BUILD_TEST 1}
+%{?!BUILD_TEST: %define BUILD_TEST 0}
 
 %define api_version 1.9
 
@@ -66,7 +66,7 @@ fi
 
 %changelog
 * Sun Aug 30 2009 Solar Designer <solar-at-owl.openwall.com> 1.9.6-owl2
-- Run the tests during package build by default.
+- Allow for overriding BUILD_TEST without having to edit this spec file.
 
 * Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.9.6-owl1
 - Updated to 1.9.6.
