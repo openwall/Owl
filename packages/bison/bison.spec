@@ -1,6 +1,6 @@
-# $Owl: Owl/packages/bison/bison.spec,v 1.31 2009/08/30 11:20:13 solar Exp $
+# $Owl: Owl/packages/bison/bison.spec,v 1.32 2009/08/30 11:45:33 solar Exp $
 
-%define BUILD_TEST 0
+%{?!BUILD_TEST: %define BUILD_TEST 1}
 
 Summary: A GNU general-purpose parser generator.
 Name: bison

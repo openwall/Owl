@@ -1,13 +1,13 @@
-# $Owl: Owl/packages/automake/automake.spec,v 1.16 2006/06/06 20:10:12 ldv Exp $
+# $Owl: Owl/packages/automake/automake.spec,v 1.17 2009/08/30 11:56:14 solar Exp $
 
-%define BUILD_TEST 0
+%{?!BUILD_TEST: %define BUILD_TEST 1}
 
 %define api_version 1.9
 
 Summary: A GNU tool for automatically creating Makefiles.
 Name: automake
 Version: %{api_version}.6
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Tools
 URL: http://www.gnu.org/software/automake/
@@ -65,6 +65,9 @@ fi
 %dir %_datadir/aclocal
 
 %changelog
+* Sun Aug 30 2009 Solar Designer <solar-at-owl.openwall.com> 1.9.6-owl2
+- Run the tests during package build by default.
+
 * Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.9.6-owl1
 - Updated to 1.9.6.
 
