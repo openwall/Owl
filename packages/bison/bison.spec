@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bison/bison.spec,v 1.30 2009/08/28 22:27:36 mci Exp $
+# $Owl: Owl/packages/bison/bison.spec,v 1.31 2009/08/30 11:20:13 solar Exp $
 
 %define BUILD_TEST 0
 
@@ -6,17 +6,13 @@ Summary: A GNU general-purpose parser generator.
 Name: bison
 Version: 2.4.1
 Release: owl1
-License: GPLv3
+License: GPLv3+
 Group: Development/Tools
 URL: http://www.gnu.org/software/bison/
 Source: ftp://ftp.gnu.org/gnu/bison/bison-%version.tar.bz2
 # Signature: ftp://ftp.gnu.org/gnu/bison/bison-%version.tar.bz2.sig
 Patch0: bison-2.4.1-owl-info.diff
 PreReq: /sbin/install-info
-BuildRequires: mktemp >= 1:1.3.1
-BuildRequires: glibc >= 0:2.2
-BuildRequires: automake, autoconf
-BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
 %description
@@ -60,7 +56,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS NEWS.bz2 THANKS
+%doc AUTHORS COPYING NEWS.bz2 THANKS
 %_mandir/*/*
 %_datadir/aclocal/*
 %_datadir/bison
