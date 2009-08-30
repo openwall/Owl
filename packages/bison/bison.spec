@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bison/bison.spec,v 1.32 2009/08/30 11:45:33 solar Exp $
+# $Owl: Owl/packages/bison/bison.spec,v 1.33 2009/08/30 17:55:21 solar Exp $
 
 %{?!BUILD_TEST: %define BUILD_TEST 1}
 
@@ -13,6 +13,7 @@ Source: ftp://ftp.gnu.org/gnu/bison/bison-%version.tar.bz2
 # Signature: ftp://ftp.gnu.org/gnu/bison/bison-%version.tar.bz2.sig
 Patch0: bison-2.4.1-owl-info.diff
 PreReq: /sbin/install-info
+BuildRequires: m4 >= 1.4.6
 BuildRoot: /override/%name-%version
 
 %description
