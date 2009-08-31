@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.45 2009/07/11 04:06:18 solar Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.46 2009/08/31 10:15:58 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
-Version: 2.4.11
+Version: 2.4.13
 Release: owl1
 Epoch: 1
 License: IBM Public License
@@ -361,6 +361,9 @@ fi
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
 
 %changelog
+* Mon Aug 31 2009 Solar Designer <solar-at-owl.openwall.com> 1:2.4.13-owl1
+- Updated to 2.4.13.
+
 * Sat Jul 11 2009 Solar Designer <solar-at-owl.openwall.com> 1:2.4.11-owl1
 - Updated to 2.4.11.
 
