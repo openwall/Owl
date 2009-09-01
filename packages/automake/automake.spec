@@ -1,6 +1,4 @@
-# $Owl: Owl/packages/automake/automake.spec,v 1.18 2009/08/30 12:59:17 solar Exp $
-
-%{?!BUILD_TEST: %define BUILD_TEST 0}
+# $Owl: Owl/packages/automake/automake.spec,v 1.19 2009/09/01 17:22:30 ldv Exp $
 
 %define api_version 1.9
 
@@ -34,9 +32,7 @@ bzip2 -9k ChangeLog NEWS TODO
 %build
 %configure
 %__make
-%if %BUILD_TEST
-%__make check
-%endif
+%{?_with_test:%__make check}
 
 %install
 rm -rf %buildroot

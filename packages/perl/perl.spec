@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.54 2007/03/22 00:50:51 galaxy Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.55 2009/09/01 17:22:31 ldv Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -16,9 +16,6 @@
 # Build a shared library of perl.  For example, this is needed for PostgreSQL
 # to use perl as a procedural language.
 %define BUILD_DSO_PERL 0
-
-# Whether or not to run tests after build.
-%define BUILD_TEST 1
 
 # Set this if you might be running kernel with enabled "Destroy shared
 # memory segments not in use" (CONFIG_HARDEN_SHM) configuration option.
@@ -204,7 +201,7 @@ rm -rf %buildroot
 
 %__make
 
-%if %BUILD_TEST
+%if "0%{!?_without_test:1}" == "01"
 cat << EOF > lib/Net/libnet.cfg
 {
         test_hosts => 0,

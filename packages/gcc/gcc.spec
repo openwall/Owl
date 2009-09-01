@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.54 2009/05/27 10:49:09 ldv Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.55 2009/09/01 17:22:31 ldv Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -10,7 +10,6 @@
 %define BUILD_JAVA 0
 %define BUILD_OBJC 0
 %define BUILD_ADA 0
-%define BUILD_TESTSUITE 0
 
 # Do we need libstdc++-compat libraries?
 %define BUILD_CXX_COMPAT 1
@@ -59,9 +58,7 @@ Source4: ftp://ftp.gnu.org/gnu/gcc/gcc-%version/gcc-java-%version.tar.bz2
 %if %BUILD_OBJC
 Source5: ftp://ftp.gnu.org/gnu/gcc/gcc-%version/gcc-objc-%version.tar.bz2
 %endif
-%if %BUILD_TESTSUITE
-Source6: ftp://ftp.gnu.org/gnu/gcc/gcc-%version/gcc-testsuite-%version.tar.bz2
-%endif
+%{?_with_test:Source6: ftp://ftp.gnu.org/gnu/gcc/gcc-%version/gcc-testsuite-%version.tar.bz2}
 %if %BUILD_CXX_COMPAT
 %if %BUILD_CXX_COMPAT_V2
 # 2.7.2.8, 2.8.0, 2.9.0 (Red Hat Linux 6.2 and below)
@@ -313,9 +310,7 @@ rm compat/i386/libstdc++.so.2.9.dummy
 %setup -q -T -D -b 5
 %endif
 
-%if %BUILD_TESTSUITE
-%setup -q -T -D -b 6
-%endif
+%{?_with_test:%setup -q -T -D -b 6}
 
 %build
 # Rebuild configure(s) and Makefile(s) if templates are newer...
