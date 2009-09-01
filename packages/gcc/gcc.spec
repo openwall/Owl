@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.55 2009/09/01 17:22:31 ldv Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.56 2009/09/01 18:39:58 ldv Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -10,6 +10,7 @@
 %define BUILD_JAVA 0
 %define BUILD_OBJC 0
 %define BUILD_ADA 0
+%undefine _with_test
 
 # Do we need libstdc++-compat libraries?
 %define BUILD_CXX_COMPAT 1
