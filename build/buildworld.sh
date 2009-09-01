@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/buildworld.sh,v 1.44 2006/12/30 17:26:15 ldv Exp $
+# $Owl: Owl/build/buildworld.sh,v 1.45 2009/09/01 17:18:02 ldv Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -92,7 +92,7 @@ built()
 
 build_native()
 {
-	local NUMBER PACKAGE WORK NAME VERSION ARCHIVE FLAGS
+	local NUMBER PACKAGE WORK NAME VERSION ARCHIVE FLAGS WITH_WITHOUT_TEST
 
 	NUMBER=$1
 	PACKAGE=$2
@@ -127,6 +127,11 @@ build_native()
 	else
 		FLAGS=-bb
 	fi
+	case "${RUN_TESTS-}" in
+		yes) WITH_WITHOUT_TEST='--with test' ;;
+		no) WITH_WITHOUT_TEST='--without test' ;;
+		*) WITH_WITHOUT_TEST= ;;
+	esac
 	if $TIME $PERSONALITY $RPMB $FLAGS $PACKAGE.spec \
 		$TARGET \
 		--define "distribution $NATIVE_DISTRIBUTION" \
@@ -135,6 +140,7 @@ build_native()
 		--define "buildhost $BUILDHOST" \
 		--define "home $HOME" \
 		--define "number $NUMBER" \
+		$WITH_WITHOUT_TEST \
 		&> $HOME/logs/$PACKAGE < /dev/null;
 	then
 		mv $WORK/RPMS/*/* $HOME/RPMS/
