@@ -1,0 +1,64 @@
+--- elinks-0.11.7/src/protocol/user.c.orig	2009-08-22 11:15:08.000000000 +0000
++++ elinks-0.11.7/src/protocol/user.c	2009-08-30 19:35:39.000000000 +0000
+@@ -216,33 +216,45 @@ get_subject_from_query(unsigned char *qu
+ static unsigned char *
+ save_form_data_to_file(struct uri *uri)
+ {
+-	unsigned char *filename = get_tempdir_filename("elinks-XXXXXX");
+-	int formfd;
+-	FILE *formfile;
++	unsigned char *filename = get_tempdir_filename("formdata");
++	int fd;
++	FILE *fp;
++	size_t nmemb, len;
++	unsigned char *formdata;
+ 
+ 	if (!filename) return NULL;
+ 
+-	formfd = safe_mkstemp(filename);
+-	if (formfd < 0) {
++	fd = safe_mkstemp(filename);
++	if (fd < 0) {
+ 		mem_free(filename);
+ 		return NULL;
+ 	}
+ 
+-	formfile = fdopen(formfd, "w");
+-	if (!formfile) {
++	if (!uri->post) return filename;
++
++	/* Jump the content type */
++	formdata = strchr(uri->post, '\n');
++	formdata = formdata ? formdata + 1 : uri->post;
++	len = strlen(formdata);
++	if (len == 0) return filename;
++
++	fp = fdopen(fd, "w");
++	if (!fp) {
++
++error:
++		unlink(filename);
+ 		mem_free(filename);
+-		close(formfd);
++		close(fd);
+ 		return NULL;
+ 	}
+-
+-	if (uri->post) {
+-		/* Jump the content type */
+-		unsigned char *formdata = strchr(uri->post, '\n');
+-
+-		formdata = formdata ? formdata + 1 : uri->post;
+-		fwrite(formdata, strlen(formdata), 1, formfile);
++	nmemb = fwrite(formdata, len, 1, fp);
++	if (nmemb != 1) {
++		fclose(fp);
++		goto error;
+ 	}
+-	fclose(formfile);
++
++	if (fclose(fp) != 0)
++		goto error;
+ 
+ 	return filename;
+ }

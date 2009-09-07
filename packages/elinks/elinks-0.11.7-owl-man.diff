@@ -1,0 +1,56 @@
+--- elinks-0.11.7/doc/man/man1/elinks.1.in.orig	2009-08-22 11:15:08.000000000 +0000
++++ elinks-0.11.7/doc/man/man1/elinks.1.in	2009-08-30 19:54:00.000000000 +0000
+@@ -405,5 +405,7 @@
+ This manual page was written by Peter Gervai <grin@tolna\&.net>, using excerpts from a (yet?) unknown \fILinks\fR fan for the \fIDebian GNU/Linux system\fR (but may be used by others)\&. Contributions from Francis A\&. Holop\&. Extended, clarified and made more up\-to\-date by Petr Baudis <pasky@ucw\&.cz>\&. Updated by Zas <zas@norz\&.org>\&. The conversion to Asciidoc and trimming was done by Jonas Fonseca <fonseca@diku\&.dk>\&.
+ .sp
+ .SH "SEE ALSO"
+-\fBelinkskeys\fR(5), \fBelinks.conf\fR(5), \fBlinks\fR(1), \fBlynx\fR(1), \fBw3m\fR(1), \fBwget\fR(1)
++.BR lftp (1),
++.BR elinks.conf (5),
++.BR elinkskeys (5)
+ .sp
+--- elinks-0.11.7/doc/man/man5/elinks.conf.5.orig	2009-08-22 11:15:08.000000000 +0000
++++ elinks-0.11.7/doc/man/man5/elinks.conf.5	2009-08-30 19:51:18.000000000 +0000
+@@ -1128,9 +1128,11 @@
+ Enable mailcap support\&.
+ .RE
+ .PP
+-mime\&.mailcap\&.path <str> (default: "~/\&.mailcap:/etc/mailcap:/usr/etc/mailcap:/usr/local/etc/mailcap:/usr/share/mailcap:/usr/share/misc/mailcap")
++mime\&.mailcap\&.path <str>
+ .RS 4
+ Mailcap search path\&. Colon\-separated list of files\&. Leave as "" to use MAILCAP environment variable instead\&.
++.BR
++(default: "~/\&.mailcap:/etc/mailcap:/usr/etc/mailcap:/usr/local/etc/mailcap:/usr/share/mailcap:/usr/share/misc/mailcap")
+ .RE
+ .PP
+ mime\&.mailcap\&.ask [0|1] (default: 1)
+@@ -1170,7 +1172,10 @@
+ Enable mime\&.types support\&.
+ .RE
+ .PP
+-mime\&.mimetypes\&.path <str> (default: "~/\&.mime\&.types:/etc/mime\&.types:/usr/etc/mime\&.types:/usr/local/etc/mime\&.types:/usr/share/mime\&.types:/usr/share/misc/mime\&.types")
++mime\&.mimetypes\&.path <str>
++.cflags 4 /
++(default: "~/\&.mime\&.types:/etc/mime\&.types:/usr/etc/mime\&.types:/usr/local/etc/mime\&.types:/usr/share/mime\&.types:/usr/share/misc/mime\&.types")
++.cflags 0 /
+ .RS 4
+ The search path for mime\&.types files\&. Colon\-separated list of files\&.
+ .RE
+@@ -3093,5 +3098,6 @@
+ Generated using output from ELinks version 0\&.11\&.7\&.
+ .sp
+ .SH "SEE ALSO"
+-\fBelinks\fR(1), \fBelinkskeys\fR(5)
++.BR elinks (1),
++.BR elinkskeys (5)
+ .sp
+--- elinks-0.11.7/doc/man/man5/elinkskeys.5.orig	2009-08-22 11:15:08.000000000 +0000
++++ elinks-0.11.7/doc/man/man5/elinkskeys.5	2009-08-30 19:52:40.000000000 +0000
+@@ -1611,5 +1611,6 @@
+ This manual page was finally written by Peter Wang (one and a half years after writing the binding code), using excerpts by David Mediavilla\&. You can thank Petr Baudis for the subtle requests for documentation\&. Updated by Zas\&. Moved to asciidoc format and cleaned up by Jonas Fonseca\&.
+ .sp
+ .SH "SEE ALSO"
+-\fBelinks\fR(1), \fBelinks.conf\fR(5)
++.BR elinks (1),
++.BR elinks.conf (5)
+ .sp

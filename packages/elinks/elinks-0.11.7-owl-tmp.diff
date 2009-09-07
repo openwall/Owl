@@ -1,19 +1,23 @@
-diff -puNr elinks-0.11.2.orig/src/protocol/user.c elinks-0.11.2/src/protocol/user.c
---- elinks-0.11.2.orig/src/protocol/user.c	2006-11-19 13:46:37 +0000
-+++ elinks-0.11.2/src/protocol/user.c	2007-03-25 14:58:20 +0000
-@@ -216,7 +216,7 @@ get_subject_from_query(unsigned char *qu
- static unsigned char *
- save_form_data_to_file(struct uri *uri)
+--- elinks-0.11.7/src/util/file.c.orig	2009-08-22 11:15:08.000000000 +0000
++++ elinks-0.11.7/src/util/file.c	2009-08-30 18:15:54.000000000 +0000
+@@ -181,12 +181,10 @@ get_tempdir_filename(unsigned char *name
  {
--	unsigned char *filename = get_tempdir_filename("elinks-XXXXXX");
-+	unsigned char *filename = get_tempdir_filename("formdata");
- 	int formfd;
- 	FILE *formfile;
+ 	unsigned char *tmpdir = getenv("TMPDIR");
  
-diff -puNr elinks-0.11.2.orig/src/session/download.c elinks-0.11.2/src/session/download.c
---- elinks-0.11.2.orig/src/session/download.c	2006-11-19 13:46:37 +0000
-+++ elinks-0.11.2/src/session/download.c	2007-03-25 15:26:47 +0000
-@@ -561,23 +561,21 @@ create_download_file_do(struct terminal 
+-	if (!tmpdir || !*tmpdir) tmpdir = getenv("TMP");
+-	if (!tmpdir || !*tmpdir) tmpdir = getenv("TEMPDIR");
+-	if (!tmpdir || !*tmpdir) tmpdir = getenv("TEMP");
+ 	if (!tmpdir || !*tmpdir) tmpdir = "/tmp";
+ 
+-	return straconcat(tmpdir, "/", name, NULL);
++	return straconcat(tmpdir,
++		"/" ELINKS_TEMPNAME_PREFIX "-", name, ".XXXXXX", NULL);
+ }
+ 
+ unsigned char *
+--- elinks-0.11.7/src/session/download.c.orig	2009-08-22 11:15:08.000000000 +0000
++++ elinks-0.11.7/src/session/download.c	2009-08-30 18:15:54.000000000 +0000
+@@ -587,23 +587,21 @@ create_download_file_do(struct terminal 
  	unsigned char *wd;
  	int h = -1;
  	int saved_errno;
@@ -46,7 +50,7 @@ diff -puNr elinks-0.11.2.orig/src/session/download.c elinks-0.11.2/src/session/d
  	saved_errno = errno; /* Saved in case of ... --Zas */
  
  	if (wd) {
-@@ -655,37 +653,6 @@ create_download_file(struct terminal *te
+@@ -681,37 +679,6 @@ create_download_file(struct terminal *te
  
  
  static unsigned char *
@@ -84,7 +88,7 @@ diff -puNr elinks-0.11.2.orig/src/session/download.c elinks-0.11.2/src/session/d
  subst_file(unsigned char *prog, unsigned char *file)
  {
  	struct string name;
-@@ -783,7 +750,6 @@ resume_download(void *ses, unsigned char
+@@ -809,7 +776,6 @@ resume_download(void *ses, unsigned char
  struct codw_hop {
  	struct type_query *type_query;
  	unsigned char *real_file;
@@ -92,7 +96,7 @@ diff -puNr elinks-0.11.2.orig/src/session/download.c elinks-0.11.2/src/session/d
  };
  
  static void
-@@ -807,9 +773,8 @@ continue_download_do(struct terminal *te
+@@ -833,9 +799,8 @@ continue_download_do(struct terminal *te
  
  	if (type_query->external_handler) {
  		file_download->external_handler = subst_file(type_query->external_handler,
@@ -103,7 +107,7 @@ diff -puNr elinks-0.11.2.orig/src/session/download.c elinks-0.11.2/src/session/d
  		mem_free_set(&type_query->external_handler, NULL);
  	}
  
-@@ -826,7 +791,6 @@ continue_download_do(struct terminal *te
+@@ -852,7 +817,6 @@ continue_download_do(struct terminal *te
  	return;
  
  cancel:
@@ -111,7 +115,7 @@ diff -puNr elinks-0.11.2.orig/src/session/download.c elinks-0.11.2/src/session/d
  	tp_cancel(type_query);
  	mem_free(codw_hop);
  }
-@@ -843,8 +807,7 @@ continue_download(void *data, unsigned c
+@@ -869,8 +833,7 @@ continue_download(void *data, unsigned c
  	}
  
  	if (type_query->external_handler) {
@@ -121,7 +125,7 @@ diff -puNr elinks-0.11.2.orig/src/session/download.c elinks-0.11.2/src/session/d
  		if (!file) {
  			mem_free(codw_hop);
  			tp_cancel(type_query);
-@@ -853,7 +816,6 @@ continue_download(void *data, unsigned c
+@@ -879,7 +842,6 @@ continue_download(void *data, unsigned c
  	}
  
  	codw_hop->type_query = type_query;
@@ -129,7 +133,7 @@ diff -puNr elinks-0.11.2.orig/src/session/download.c elinks-0.11.2/src/session/d
  
  	kill_downloads_to_file(file);
  
-@@ -861,6 +823,7 @@ continue_download(void *data, unsigned c
+@@ -887,6 +849,7 @@ continue_download(void *data, unsigned c
  			     &codw_hop->real_file,
  			     !!type_query->external_handler, 0,
  			     continue_download_do, codw_hop);
@@ -137,27 +141,8 @@ diff -puNr elinks-0.11.2.orig/src/session/download.c elinks-0.11.2/src/session/d
  }
  
  
-diff -puNr elinks-0.11.2.orig/src/util/file.c elinks-0.11.2/src/util/file.c
---- elinks-0.11.2.orig/src/util/file.c	2006-11-19 13:46:37 +0000
-+++ elinks-0.11.2/src/util/file.c	2007-03-25 14:19:30 +0000
-@@ -181,12 +181,10 @@ get_tempdir_filename(unsigned char *name
- {
- 	unsigned char *tmpdir = getenv("TMPDIR");
- 
--	if (!tmpdir || !*tmpdir) tmpdir = getenv("TMP");
--	if (!tmpdir || !*tmpdir) tmpdir = getenv("TEMPDIR");
--	if (!tmpdir || !*tmpdir) tmpdir = getenv("TEMP");
- 	if (!tmpdir || !*tmpdir) tmpdir = "/tmp";
- 
--	return straconcat(tmpdir, "/", name, NULL);
-+	return straconcat(tmpdir,
-+		"/" ELINKS_TEMPNAME_PREFIX "-", name, ".XXXXXX", NULL);
- }
- 
- unsigned char *
-diff -puNr elinks-0.11.2.orig/src/viewer/text/textarea.c elinks-0.11.2/src/viewer/text/textarea.c
---- elinks-0.11.2.orig/src/viewer/text/textarea.c	2006-11-19 13:46:37 +0000
-+++ elinks-0.11.2/src/viewer/text/textarea.c	2007-03-25 14:57:26 +0000
+--- elinks-0.11.7/src/viewer/text/textarea.c.orig	2009-08-22 11:15:08.000000000 +0000
++++ elinks-0.11.7/src/viewer/text/textarea.c	2009-08-30 19:08:26.000000000 +0000
 @@ -295,19 +295,21 @@ save_textarea_file(unsigned char *value)
  	FILE *file = NULL;
  	int h;
@@ -176,7 +161,7 @@ diff -puNr elinks-0.11.2.orig/src/viewer/text/textarea.c elinks-0.11.2/src/viewe
 -	} else {
 +	file = fdopen(h, "w");
 +	if (!file) {
- 		mem_free(filename);
+ 		mem_free_set(&filename, NULL);
 +		return NULL;
  	}
  
@@ -185,4 +170,3 @@ diff -puNr elinks-0.11.2.orig/src/viewer/text/textarea.c elinks-0.11.2/src/viewe
 +
  	return filename;
  }
- 

@@ -1,20 +1,21 @@
-# $Owl: Owl/packages/elinks/elinks.spec,v 1.23 2007/03/27 11:29:25 galaxy Exp $
+# $Owl: Owl/packages/elinks/elinks.spec,v 1.24 2009/09/07 13:09:25 mci Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
-Version: 0.11.2
+Version: 0.11.7
 Release: owl1
-License: GPL
+License: GPLv2
 Group: Applications/Internet
 URL: http://elinks.or.cz
 Source: http://elinks.or.cz/download/%name-%version.tar.bz2
-Patch0: elinks-0.11.2-owl-tmp.diff
+# Signature: http://elinks.or.cz/download/%name-%version.tar.bz2.asc
+Patch0: elinks-0.11.7-owl-tmp.diff
 Patch1: elinks-0.11.2-owl-vitmp.diff
 Patch2: elinks-0.11.2-owl-no-xterm-title.diff
-Patch3: elinks-0.11.2-owl-no-uname-leak.diff
+Patch3: elinks-0.11.7-owl-no-uname-leak.diff
 Patch4: elinks-0.11.2-owl-external-programs.diff
-Patch5: elinks-0.11.2-owl-man.diff
-Patch6: elinks-0.11.2-owl-up-formdata.diff
+Patch5: elinks-0.11.7-owl-man.diff
+Patch6: elinks-0.11.7-up-20090830-formdata.diff
 Requires: gpm, zlib, bzip2, openssl
 Provides: links
 Obsoletes: links
@@ -86,6 +87,10 @@ rm %buildroot%_datadir/locale/locale.alias
 %_mandir/man?/*
 
 %changelog
+* Sun Aug 30 2009 Michail Litvak <mci-at-owl.openwall.com> 0.11.7-owl1
+- Updated to 0.11.7.
+- Regenerated patches.
+
 * Sun Mar 25 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.11.2-owl1
 - Updated to 0.11.2.
 - Reviewed all patches and re-applied ones that are relevant.
