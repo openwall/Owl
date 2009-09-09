@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.103 2009/07/23 22:56:35 ldv Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.104 2009/09/09 04:52:10 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.3.2
+Version: 1.7.3.3
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -32,29 +32,32 @@ cd src
 %ifarch %ix86
 %define with_cpu_fallback 1
 %ifarch athlon i786 i886 i986
-make linux-x86-mmx CFLAGS='%cflags'
+%__make linux-x86-mmx CFLAGS='%cflags'
 %else
-make linux-x86-any CFLAGS='%cflags'
+%__make linux-x86-any CFLAGS='%cflags'
+%{!?_without_test:%__make check}
 mv ../run/john ../run/john-non-mmx
-make clean
-make linux-x86-mmx CFLAGS='%cflags -DCPU_FALLBACK=1'
+%__make clean
+%__make linux-x86-mmx CFLAGS='%cflags -DCPU_FALLBACK=1'
 %endif
+%{!?_without_test:%__make check}
 mv ../run/john ../run/john-non-sse
-make clean
-make linux-x86-sse2 CFLAGS='%cflags -DCPU_FALLBACK=1'
+%__make clean
+%__make linux-x86-sse2 CFLAGS='%cflags -DCPU_FALLBACK=1'
 %endif
 %ifarch x86_64
-make linux-x86-64 CFLAGS='%cflags'
+%__make linux-x86-64 CFLAGS='%cflags'
 %endif
 %ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
-make linux-alpha CFLAGS='%cflags'
+%__make linux-alpha CFLAGS='%cflags'
 %endif
 %ifarch sparc sparcv9
-make linux-sparc CFLAGS='%cflags'
+%__make linux-sparc CFLAGS='%cflags'
 %endif
 %ifarch ppc
-make linux-ppc32 CFLAGS='%cflags'
+%__make linux-ppc32 CFLAGS='%cflags'
 %endif
+%{!?_without_test:%__make check}
 
 %install
 rm -rf %buildroot
@@ -85,6 +88,11 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Wed Sep 09 2009 Solar Designer <solar-at-owl.openwall.com> 1.7.3.3-owl1
+- "make check" has been implemented.
+- The --test option will now take an optional argument - the duration of
+each benchmark in seconds.
+
 * Thu Jul 23 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.7.3.2-owl1
 - Fixed off-by-one header->version overflow.  The overflow itself is
 harmless, but fresh gcc in fortified mode complains, so the overflow is
