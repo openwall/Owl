@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/make/make.spec,v 1.15 2006/06/06 01:06:26 ldv Exp $
+# $Owl: Owl/packages/make/make.spec,v 1.16 2009/09/09 21:42:14 ldv Exp $
 
 Summary: A GNU tool which simplifies the build process for users.
 Name: make
@@ -26,9 +26,12 @@ program need to be recompiled, and issues commands to recompile them.
 bzip2 -9k NEWS
 
 %build
-export ac_cv_func_mkstemp=yes \
+export ac_cv_func_mkstemp=yes
 %configure
-make
+%__make
+
+%check
+%__make check
 
 %install
 rm -rf %buildroot

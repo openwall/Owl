@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gawk/gawk.spec,v 1.16 2006/02/03 22:31:15 ldv Exp $
+# $Owl: Owl/packages/gawk/gawk.spec,v 1.17 2009/09/09 21:51:57 ldv Exp $
 
 %define BUILD_PROFILE 0
 
@@ -44,9 +44,12 @@ it creates a profile of your program with line execution counts.
 rm doc/gawk.info awklib/stamp-eg
 %configure
 pushd awklib
-make stamp-eg
+%__make stamp-eg
 popd
-make
+%__make
+
+%check
+%__make check
 
 %install
 rm -rf %buildroot
