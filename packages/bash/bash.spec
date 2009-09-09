@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.43 2007/10/08 18:27:34 ldv Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.44 2009/09/09 22:12:55 ldv Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
@@ -131,6 +131,10 @@ export \
 	--without-installed-readline
 
 %__make
+
+%check
+%{expand:%%{!?_with_test: %%{!?_without_test: %%global _without_test --without-test}}}
+%__make check
 
 %install
 rm -rf %buildroot
