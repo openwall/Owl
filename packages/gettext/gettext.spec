@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gettext/gettext.spec,v 1.14 2007/12/05 00:26:56 ldv Exp $
+# $Owl: Owl/packages/gettext/gettext.spec,v 1.15 2009/09/09 21:46:49 ldv Exp $
 
 Summary: GNU libraries and utilities for producing multi-lingual messages.
 Name: gettext
@@ -43,6 +43,11 @@ programs.
 
 %build
 %configure --enable-shared --without-included-gettext
+%__make
+
+%check
+%{expand:%%{!?_with_test: %%{!?_without_test: %%global _without_test --without-test}}}
+%__make check
 
 %install
 rm -rf %buildroot
