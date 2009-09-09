@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.105 2009/09/09 05:09:19 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.106 2009/09/09 05:23:45 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -92,6 +92,9 @@ install -m 644 -p run/mailer doc/
 - "make check" has been implemented.
 - The --test option will now take an optional argument - the duration of each
 benchmark in seconds.
+- Section .note.GNU-stack has been added to all assembly files to avoid the
+stack area unnecessarily being made executable on Linux systems that use this
+mechanism.
 - In DumbForce, explicitly NUL-terminate word[] when switching to a new length.
 
 * Thu Jul 23 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.7.3.2-owl1
