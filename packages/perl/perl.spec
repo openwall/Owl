@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.55 2009/09/01 17:22:31 ldv Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.56 2009/09/09 16:42:24 ldv Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -201,7 +201,7 @@ rm -rf %buildroot
 
 %__make
 
-%if "0%{!?_without_test:1}" == "01"
+%check
 cat << EOF > lib/Net/libnet.cfg
 {
         test_hosts => 0,
@@ -211,7 +211,6 @@ __END__
 EOF
 IN_RPM=1 %__make test
 rm lib/Net/libnet.cfg
-%endif
 
 %install
 rm -rf %buildroot

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.67 2009/01/09 00:26:25 ldv Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.68 2009/09/09 16:42:24 ldv Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -145,11 +145,13 @@ sed -i 's/\${SHLIB_MAJOR}\.\${SHLIB_MINOR}/\${VERSION}/g' Makefile.org
 ./Configure %opensslflags --openssldir=%openssldir linux-sparcv9
 %endif
 
-LD_LIBRARY_PATH=`pwd` make SLIB=%_lib
+LD_LIBRARY_PATH=`pwd` %__make SLIB=%_lib
 touch -r libcrypto.so.%version libcrypto-stamp
 touch -r libssl.so.%version libssl-stamp
-LD_LIBRARY_PATH=`pwd` make rehash
-LD_LIBRARY_PATH=`pwd` make test
+LD_LIBRARY_PATH=`pwd` %__make rehash
+
+%check
+LD_LIBRARY_PATH=`pwd` %__make test
 
 %install
 rm -rf %buildroot
