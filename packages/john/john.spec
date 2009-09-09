@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.106 2009/09/09 05:23:45 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.107 2009/09/09 16:44:55 ldv Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -35,12 +35,12 @@ cd src
 %__make linux-x86-mmx CFLAGS='%cflags'
 %else
 %__make linux-x86-any CFLAGS='%cflags'
-%{!?_without_test:%__make check}
+%{!?_without_check:%{!?_without_test:%__make check}}
 mv ../run/john ../run/john-non-mmx
 %__make clean
 %__make linux-x86-mmx CFLAGS='%cflags -DCPU_FALLBACK=1'
 %endif
-%{!?_without_test:%__make check}
+%{!?_without_check:%{!?_without_test:%__make check}}
 mv ../run/john ../run/john-non-sse
 %__make clean
 %__make linux-x86-sse2 CFLAGS='%cflags -DCPU_FALLBACK=1'
@@ -57,7 +57,7 @@ mv ../run/john ../run/john-non-sse
 %ifarch ppc
 %__make linux-ppc32 CFLAGS='%cflags'
 %endif
-%{!?_without_test:%__make check}
+%{!?_without_check:%{!?_without_test:%__make check}}
 
 %install
 rm -rf %buildroot
