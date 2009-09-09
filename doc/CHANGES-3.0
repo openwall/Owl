@@ -46,6 +46,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/09/09	Package: gnupg
+Updated to 1.4.10.
+
 2009/09/07	Package: elinks
 Updated to 0.11.7.
 
@@ -944,4 +947,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.197 2009/09/07 14:24:00 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.198 2009/09/09 21:07:17 ldv Exp $
