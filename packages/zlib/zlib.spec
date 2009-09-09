@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/zlib/zlib.spec,v 1.13 2005/11/16 13:32:46 solar Exp $
+# $Owl: Owl/packages/zlib/zlib.spec,v 1.14 2009/09/09 14:17:51 ldv Exp $
 
 Summary: The zlib compression and decompression library.
 Name: zlib
@@ -51,14 +51,14 @@ fgrep -B999 @ zlib.h >License
 CFLAGS="%optflags" ./configure --prefix=%_prefix
 ! grep -wE 'NO_vsnprintf|HAS_vsprintf_void|HAS_vsnprintf_void|NO_snprintf|HAS_sprintf_void|HAS_snprintf_void' Makefile
 %__make
-%__make test
+%{!?_without_check:%{!?_without_test:%__make test}}
 rm -f *.s *.o
 
 # next build and test shared zlib
 CFLAGS="%optflags -fPIC" ./configure --prefix=%_prefix --shared
 ! grep -wE 'NO_vsnprintf|HAS_vsprintf_void|HAS_vsnprintf_void|NO_snprintf|HAS_sprintf_void|HAS_snprintf_void' Makefile
 %__make
-%__make test
+%{!?_without_check:%{!?_without_test:%__make test}}
 
 bzip2 -9fk ChangeLog FAQ algorithm.txt
 
