@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/m4/m4.spec,v 1.21 2009/08/25 12:11:03 solar Exp $
+# $Owl: Owl/packages/m4/m4.spec,v 1.22 2009/09/09 16:45:50 ldv Exp $
 
 Summary: The GNU macro processor.
 Name: m4
@@ -43,9 +43,10 @@ sed -i 's,/tmp,.,' checks/check-them
 export ac_cv_func_mkstemp=yes \
 %configure #--without-included-regex
 %__make CFLAGS="%optflags" LDFLAGS=-s
-%__make -k check
-
 bzip2 -9k NEWS
+
+%check
+%__make check
 
 %install
 rm -rf %buildroot

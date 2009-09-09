@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/pcre/pcre.spec,v 1.12 2009/05/29 15:13:10 solar Exp $
+# $Owl: Owl/packages/pcre/pcre.spec,v 1.13 2009/09/09 16:45:50 ldv Exp $
 
 %{?!BUILD_CPP: %define BUILD_CPP 0}
 
@@ -90,6 +90,8 @@ This package contains PCRE C++ wrapper development library and header files.
 	--disable-cpp
 %endif
 %__make
+
+%check
 %__make check
 
 %install

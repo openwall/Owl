@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bison/bison.spec,v 1.34 2009/09/01 17:22:30 ldv Exp $
+# $Owl: Owl/packages/bison/bison.spec,v 1.35 2009/09/09 16:45:50 ldv Exp $
 
 Summary: A GNU general-purpose parser generator.
 Name: bison
@@ -34,7 +34,9 @@ bzip2 -9k NEWS
 %build
 %configure
 %__make
-%{!?_without_test:%__make check}
+
+%check
+%__make check
 
 %install
 rm -rf %buildroot

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/cvs/cvs.spec,v 1.34 2008/05/10 16:38:14 ldv Exp $
+# $Owl: Owl/packages/cvs/cvs.spec,v 1.35 2009/09/09 16:45:50 ldv Exp $
 
 Summary: A version control system.
 Name: cvs
@@ -147,7 +147,10 @@ autoreconf -fisv
 
 %__make LDFLAGS=-s
 bzip2 -9 FAQ NEWS
-%{?_enable_check:TMPDIR=/tmp %__make check}
+
+%check
+%{expand:%%{!?_with_test: %%{!?_without_test: %%global _without_test --without-test}}}
+TMPDIR=/tmp %__make check
 
 %install
 rm -rf %buildroot

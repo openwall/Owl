@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/tinycdb/tinycdb.spec,v 1.5 2006/06/26 17:24:10 ldv Exp $
+# $Owl: Owl/packages/tinycdb/tinycdb.spec,v 1.6 2009/09/09 16:45:51 ldv Exp $
 
 Summary: Shared library and command line tool for managing constant databases.
 Name: tinycdb
@@ -52,6 +52,8 @@ This package contains tinycdb development libraries and header files.
 
 %build
 %__make CC="%__cc" CFLAGS="%optflags -Wall -W -D_GNU_SOURCE"
+
+%check
 %__make check
 
 %install

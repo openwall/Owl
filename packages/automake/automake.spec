@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/automake/automake.spec,v 1.19 2009/09/01 17:22:30 ldv Exp $
+# $Owl: Owl/packages/automake/automake.spec,v 1.20 2009/09/09 16:45:50 ldv Exp $
 
 %define api_version 1.9
 
@@ -32,7 +32,10 @@ bzip2 -9k ChangeLog NEWS TODO
 %build
 %configure
 %__make
-%{?_with_test:%__make check}
+
+%check
+%{expand:%%{!?_with_test: %%{!?_without_test: %%global _without_test --without-test}}}
+%__make check
 
 %install
 rm -rf %buildroot

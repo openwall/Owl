@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.47 2009/08/26 00:22:26 ldv Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.48 2009/09/09 16:45:50 ldv Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -44,8 +44,10 @@ export tar_cv_path_RSH=%_bindir/ssh
 %configure --bindir=/bin --with-rmt=/sbin/rmt
 sed -i '/HAVE_CLOCK_GETTIME/d' config.h
 %__make LIB_CLOCK_GETTIME=
-%__make -k check LIB_CLOCK_GETTIME=
 bzip2 -9fk NEWS
+
+%check
+%__make check LIB_CLOCK_GETTIME=
 
 %install
 rm -rf %buildroot

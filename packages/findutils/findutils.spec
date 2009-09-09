@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/findutils/findutils.spec,v 1.28 2009/08/22 00:34:26 ldv Exp $
+# $Owl: Owl/packages/findutils/findutils.spec,v 1.29 2009/09/09 16:45:50 ldv Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils
@@ -41,9 +41,11 @@ sed -i 's/ locate / /' Makefile*
 # The regex.h must be kept in sync with --without-included-regex.
 #install -pm644 %_includedir/regex.h gnulib/lib/
 %configure #--without-included-regex
-make -C po update-po
-make
-make -k check
+%__make -C po update-po
+%__make
+
+%check
+%__make check
 
 %install
 rm -rf %buildroot

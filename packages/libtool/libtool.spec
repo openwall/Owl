@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/libtool/libtool.spec,v 1.24 2009/09/01 17:22:31 ldv Exp $
+# $Owl: Owl/packages/libtool/libtool.spec,v 1.25 2009/09/09 16:45:50 ldv Exp $
 
 Summary: The GNU Libtool, which simplifies the use of shared libraries.
 Name: libtool
@@ -51,8 +51,10 @@ rm doc/libtool.info
 
 %__make -C doc
 %__make
-%{!?_without_test:%__make check}
 bzip2 -9fk ChangeLog
+
+%check
+%__make check
 
 %install
 rm -rf %buildroot

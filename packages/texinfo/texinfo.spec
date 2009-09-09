@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/texinfo/texinfo.spec,v 1.30 2009/09/01 17:22:31 ldv Exp $
+# $Owl: Owl/packages/texinfo/texinfo.spec,v 1.31 2009/09/09 16:45:51 ldv Exp $
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
@@ -53,8 +53,10 @@ unset LINGUAS || :
 export LC_ALL=C
 %configure --mandir=%_mandir --infodir=%_infodir
 %__make
-%{!?_without_test:%__make check}
 bzip2 -9f ChangeLog*
+
+%check
+%__make check
 
 %install
 rm -rf %buildroot

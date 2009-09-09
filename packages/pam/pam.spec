@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.55 2009/08/28 13:50:21 solar Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.56 2009/09/09 16:45:50 ldv Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
@@ -121,6 +121,8 @@ export ac_cv_lib_ndbm_dbm_store=no ac_cv_lib_db_dbm_store=no
 	--libdir=/%_lib \
 	--sbindir=/sbin
 %__make
+
+%check
 %__make check
 
 %install

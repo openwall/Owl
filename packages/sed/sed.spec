@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/sed/sed.spec,v 1.19 2006/04/04 00:15:08 ldv Exp $
+# $Owl: Owl/packages/sed/sed.spec,v 1.20 2009/09/09 16:45:50 ldv Exp $
 
 Summary: A GNU stream text editor.
 Name: sed
@@ -53,7 +53,8 @@ rm doc/sed.info
 ./sed/sed -i 's,@DOCDIR@,%_docdir/%name-%version,' doc/sed-in.texi doc/sed.x
 %__make
 
-%__make -k check
+%check
+%__make check
 
 %install
 rm -rf %buildroot

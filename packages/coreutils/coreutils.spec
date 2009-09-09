@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.26 2007/10/08 23:27:26 ldv Exp $
+# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.27 2009/09/09 16:45:50 ldv Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
@@ -141,8 +141,6 @@ export gnulib_cv_have_boot_time=no
 %__make -C po update-po
 %__make
 
-%{?!_without_check:%{?!_disable_check:%__make -k check}}
-
 # Build our version of true and false
 %__cc %optflags -Wall -W -static -nostartfiles -DSTATUS=0 \
 	%_sourcedir/exit.c -o true
@@ -154,6 +152,9 @@ export gnulib_cv_have_boot_time=no
 
 # Compress (some) docs to save space
 bzip2 -9fk ChangeLog NEWS THANKS
+
+%check
+%__make check
 
 %install
 rm -rf %buildroot

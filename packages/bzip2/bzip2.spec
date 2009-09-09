@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bzip2/bzip2.spec,v 1.30 2008/03/20 03:51:19 ldv Exp $
+# $Owl: Owl/packages/bzip2/bzip2.spec,v 1.31 2009/09/09 16:45:50 ldv Exp $
 
 Summary: An extremely powerful file compression utility.
 Name: bzip2
@@ -63,8 +63,10 @@ chmod u+x samples.sh
 %build
 autoreconf -fisv
 %configure
-make
-make -k check
+%__make
+
+%check
+%__make check
 
 %install
 rm -rf %buildroot

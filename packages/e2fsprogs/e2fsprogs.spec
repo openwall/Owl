@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.48 2009/05/05 19:13:28 mci Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.49 2009/09/09 16:45:50 ldv Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -103,7 +103,9 @@ find -type f -print0 |
 
 # NB: this package cannot be built using parallel tasks -- (GM)
 %__make all
-%__make -k check
+
+%check
+%__make check
 
 %install
 rm -rf %buildroot

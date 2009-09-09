@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/cpio/cpio.spec,v 1.26 2007/08/18 21:18:24 ldv Exp $
+# $Owl: Owl/packages/cpio/cpio.spec,v 1.27 2009/09/09 16:45:50 ldv Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
@@ -54,7 +54,9 @@ install -m644 %_sourcedir/rmt.8 .
 %build
 %configure --enable-mt
 %__make LDFLAGS=-s
-%__make -k check
+
+%check
+%__make check
 
 %install
 rm -rf %buildroot

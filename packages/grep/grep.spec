@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/grep/grep.spec,v 1.22 2007/04/23 20:37:30 ldv Exp $
+# $Owl: Owl/packages/grep/grep.spec,v 1.23 2009/09/09 16:45:50 ldv Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
@@ -62,6 +62,8 @@ install -pm644 %_includedir/regex.h lib/
 : >lib/error.c
 %configure --bindir=/bin --without-included-regex
 %__make
+
+%check
 %__make check
 
 %install

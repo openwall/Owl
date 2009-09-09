@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/ed/ed.spec,v 1.23 2009/08/30 09:11:13 solar Exp $
+# $Owl: Owl/packages/ed/ed.spec,v 1.24 2009/09/09 16:45:50 ldv Exp $
 
 Summary: The GNU line-oriented text editor.
 Name: ed
@@ -33,8 +33,10 @@ editors such as vi and emacs.
 %configure \
 	CC='%__cc' CFLAGS='%optflags' \
 	--prefix=/usr --exec-prefix=/ --bindir=/bin
-make LDFLAGS=-s
-make -k check
+%__make LDFLAGS=-s
+
+%check
+%__make check
 
 %install
 %makeinstall bindir=%buildroot/bin
