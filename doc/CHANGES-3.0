@@ -49,6 +49,15 @@ clarify the specific issue(s) and their severities in the description.
 2009/09/09	Package: gnupg
 Updated to 1.4.10.
 
+2009/09/01 -
+2009/09/09	Packages: rpm, *;
+		Owl/build/{buildworld.conf,buildworld.sh}
+Many RPM spec files have been adjusted and a new tri-state setting has
+been introduced into buildworld.conf to control whether the testsuites
+are to be run.  The default is to run most tests, other possible
+settings are to run all of the tests (including extremely slow ones) or
+to disable all tests.
+
 2009/09/07	Package: elinks
 Updated to 0.11.7.
 
@@ -86,6 +95,18 @@ http://www.openwall.com/lists/oss-security/2009/08/14/2
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-2692
 http://www.openwall.com/lists/oss-security/2009/08/05/1
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-2847
+
+2009/08/22	Package: rpm
+Introduced the configure-presets script, which pre-defines a bunch of
+autoconf variables in order to achieve more deterministic and slightly
+quicker builds.  Most importantly, this makes the configure scripts of
+many other packages assume the presence of certain security-relevant
+interfaces (fail-close behavior) rather than auto-detect those and
+possibly fallback to other interfaces (fail-open behavior).  The
+configure-presets script is automatically "sourced" before the %build
+section commands are invoked (including when our rpmbuild(8) is used to
+build third-party packages), and it may also be explicitly "sourced" for
+manual builds of autoconf'ed software by Owl users.
 
 2009/08/17	Package: tar
 Updated to 1.22.90, which replaces most of our error handling fixes
@@ -947,4 +968,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.198 2009/09/09 21:07:17 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.199 2009/09/09 21:55:16 solar Exp $
