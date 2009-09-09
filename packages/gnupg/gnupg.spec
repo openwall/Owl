@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.44 2008/03/26 21:43:07 ldv Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.45 2009/09/09 20:58:20 ldv Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.4.9
+Version: 1.4.10
 Release: owl1
 License: GPL
 Group: Applications/Cryptography
@@ -10,7 +10,7 @@ URL: http://www.gnupg.org
 Source0: ftp://ftp.gnupg.org/gcrypt/gnupg/%name-%version.tar.bz2
 Source1: gpgsplit.1
 Source2: lspgpot.1
-Patch0: gnupg-1.4.9-alt-ru.po.diff
+Patch0: gnupg-1.4.10-alt-ru.po.diff
 Patch1: gnupg-1.4.3-alt-always-trust.diff
 Patch2: gnupg-1.4.2-alt-cp1251.diff
 Patch3: gnupg-1.4.2-fw-secret-key-checks.diff
@@ -44,6 +44,9 @@ bzip2 -9k NEWS doc/{DETAILS,FAQ}
 	--with-mailprog=/usr/sbin/sendmail \
 	--enable-noexecstack
 %__make
+
+%check
+%__make check
 
 %install
 mkdir -p %buildroot%_libdir/%name
@@ -96,6 +99,9 @@ fi
 %exclude %_datadir/gnupg/faq.html
 
 %changelog
+* Wed Sep 09 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.10-owl1
+- Updated to 1.4.10.
+
 * Wed Mar 26 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.9-owl1
 - Updated to 1.4.9.
 
