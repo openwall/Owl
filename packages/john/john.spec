@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.108 2009/09/14 01:22:11 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.109 2009/09/14 02:21:21 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -94,6 +94,7 @@ install -m 644 -p run/mailer doc/
 (the corresponding argument to rec_format_error() was a string literal on all
 calls to that function).  This was independently discovered and reported by
 Dmitry V. Levin and Guillaume Rousse.
+- Made some corrections/enhancements to recovery.c's error handling.
 
 * Wed Sep 09 2009 Solar Designer <solar-at-owl.openwall.com> 1.7.3.3-owl1
 - "make check" has been implemented.
