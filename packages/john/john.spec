@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.107 2009/09/09 16:44:55 ldv Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.108 2009/09/14 01:22:11 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.3.3
+Version: 1.7.3.4
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,6 +88,13 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Sep 14 2009 Solar Designer <solar-at-owl.openwall.com> 1.7.3.4-owl1
+- Fixed a pexit() call in recovery.c: rec_format_error() to build with -Wformat
+-Werror=format-security, although there was no real issue with the current code
+(the corresponding argument to rec_format_error() was a string literal on all
+calls to that function).  This was independently discovered and reported by
+Dmitry V. Levin and Guillaume Rousse.
+
 * Wed Sep 09 2009 Solar Designer <solar-at-owl.openwall.com> 1.7.3.3-owl1
 - "make check" has been implemented.
 - The --test option will now take an optional argument - the duration of each
