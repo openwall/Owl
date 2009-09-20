@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.21 2006/04/04 23:02:03 ldv Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.22 2009/09/20 20:26:01 ldv Exp $
 
 Summary: Fake Linux kernel package for Red Hat Linux compatibility.
 Name: kernel
-Version: %(sed -n 's,^#define UTS_RELEASE "\(2\.[2-9]\.[0-9]\+\).*$,\1fake,p' < %_includedir/linux/version.h)
-Release: owl6
+Version: %(awk '$1=="#define"&&$2=="LINUX_VERSION_CODE"{printf("%%d.%%d.%%dfake\n",$3/256/256,($3/256)%%256,$3%%256)}' < %_includedir/linux/version.h)
+Release: owl7
 License: public domain
 Group: System Environment/Base
 Source: BuildASM-sparc.sh
@@ -14,8 +14,6 @@ Provides: kernel-drm = 4.2.99.3
 Provides: kernel-drm = 4.3.0
 %ifarch sparc sparcv9
 BuildArchitectures: %_arch
-%else
-BuildArchitectures: noarch
 %endif
 BuildRoot: /override/%name-%version
 
@@ -37,10 +35,16 @@ files.
 rm -rf %buildroot
 mkdir -p %buildroot%_includedir
 cd %buildroot
-ln -s ../src/linux/include/linux .%_includedir/linux
+ln -s ../src/linux/include/linux .%_includedir/
+%ifarch %ix86 x86_64
+ln -s ../src/linux/include/asm-i386 .%_includedir/
+%endif
+%ifarch x86_64
+ln -s ../src/linux/include/asm-x86_64 .%_includedir/
+%endif
 %ifarch sparc sparcv9
-ln -s ../src/linux/include/asm-sparc .%_includedir/asm-sparc
-ln -s ../src/linux/include/asm-sparc64 .%_includedir/asm-sparc64
+ln -s ../src/linux/include/asm-sparc .%_includedir/
+ln -s ../src/linux/include/asm-sparc64 .%_includedir/
 mkdir .%_includedir/asm
 install -pm744 %_sourcedir/BuildASM-sparc.sh .%_includedir/asm/BuildASM
 .%_includedir/asm/BuildASM .%_includedir
@@ -56,6 +60,12 @@ ln -s ../src/linux/include/asm-generic .%_includedir/
 %_includedir/linux
 %_includedir/asm
 %_includedir/asm-generic
+%ifarch %ix86 x86_64
+%_includedir/asm-i386
+%endif
+%ifarch x86_64
+%_includedir/asm-x86_64
+%endif
 %ifarch sparc sparcv9
 %_includedir/asm-sparc*
 
@@ -64,6 +74,9 @@ test -L %_includedir/asm && rm -f %_includedir/asm || :
 %endif
 
 %changelog
+* Sun Sep 20 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.6.x-owl7
+- Updated for 2.6.x kernels.
+
 * Wed Apr 05 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.4.x-owl6
 - Include asm-generic symlink.
 
