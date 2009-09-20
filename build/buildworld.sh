@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/buildworld.sh,v 1.45 2009/09/01 17:18:02 ldv Exp $
+# $Owl: Owl/build/buildworld.sh,v 1.46 2009/09/20 21:53:52 ldv Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -343,9 +343,8 @@ sanity_check()
 		exit 1
 	}
 
-	test -r /usr/include/linux/version.h -a \
-	    -r /usr/include/linux/autoconf.h || {
-		log "No version.h and/or autoconf.h (kernel never configured?)"
+	test -r /usr/include/linux/version.h || {
+		log "No /usr/include/linux/version.h (kernel never configured?)"
 		exit 1
 	}
 }
