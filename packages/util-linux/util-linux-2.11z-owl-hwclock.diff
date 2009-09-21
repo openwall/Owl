@@ -5,8 +5,9 @@
  #include "nls.h"
  
 -#if defined(__i386__)
+-#include <asm/io.h>		/* for inb, outb */
 +#if defined(__i386__) || defined(__x86_64__)
- #include <asm/io.h>		/* for inb, outb */
++#include <sys/io.h>		/* for inb, outb */
  #elif defined(__alpha__)
  /* <asm/io.h> fails to compile, probably because of u8 etc */
 @@ -214,7 +214,7 @@ set_cmos_access(int Jensen, int funky_to

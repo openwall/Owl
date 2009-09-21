@@ -1,0 +1,49 @@
+--- util-linux/mount/pivot_root.c
++++ util-linux/mount/pivot_root.c
+@@ -1,19 +1,23 @@
+-/* pivot_root.c - Change the root file system */
+-
+-/* Written 2000 by Werner Almesberger */
+-
++/*
++ * pivot_root.c - Change the root file system
++ *
++ * Copyright (C) 2000 Werner Almesberger
++ *
++ * This file is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This file is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
+ #include <stdio.h>
+-#include <errno.h>	/* needed for <linux/unistd.h> below */
+-
+-#ifdef __ia64__
+-# include <sys/syscall.h>
+-# define pivot_root(new_root,put_old) syscall(SYS_pivot_root,new_root,put_old)
+-#else
+-# include <linux/unistd.h>
++#include <sys/syscall.h>
++#include <unistd.h>
+ 
+-static
+-_syscall2(int,pivot_root,const char *,new_root,const char *,put_old)
+-#endif
++#define pivot_root(new_root,put_old) syscall(SYS_pivot_root,new_root,put_old)
+ 
+ int main(int argc, const char **argv)
+ {
+@@ -21,7 +25,7 @@
+ 		fprintf(stderr, "usage: %s new_root put_old\n", argv[0]);
+ 		return 1;
+ 	}
+-	if (pivot_root(argv[1],argv[2]) < 0) {
++	if (pivot_root(argv[1], argv[2]) < 0) {
+ 		perror("pivot_root");
+ 		return 1;
+ 	}
