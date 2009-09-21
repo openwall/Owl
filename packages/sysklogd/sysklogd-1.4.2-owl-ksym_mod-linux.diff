@@ -1,0 +1,12 @@
+--- sysklogd/ksym_mod.c
++++ sysklogd/ksym_mod.c
+@@ -97,9 +97,7 @@
+ #include "module.h"
+ #if !defined(__GLIBC__)
+ #include <linux/time.h>
+-#include <linux/linkage.h>
+ #else /* __GLIBC__ */
+-#include <linux/linkage.h>
+ extern __off64_t lseek64 __P ((int __fd, __off64_t __offset, int __whence));
+ extern int get_kernel_syms __P ((struct kernel_sym *__table));
+ #endif /* __GLIBC__ */

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/sysklogd/sysklogd.spec,v 1.25 2007/10/25 17:57:35 solar Exp $
+# $Owl: Owl/packages/sysklogd/sysklogd.spec,v 1.26 2009/09/21 14:11:06 ldv Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.4.1
-Release: owl12
+Release: owl13
 License: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 URL: http://www.infodrom.org/projects/sysklogd/
@@ -12,7 +12,7 @@ Source1: syslog.conf
 Source2: syslog.init
 Source3: syslog.logrotate
 Source4: syslog.sysconfig
-Patch0: sysklogd-1.4.1-cvs-20050525.diff
+Patch0: sysklogd-1.4.1-cvs-20060928.diff
 Patch1: sysklogd-1.4.2-rh-alt-warnings.diff
 Patch2: sysklogd-1.4.2-rh-ksymless.diff
 Patch3: sysklogd-1.4.2-owl-Makefile.diff
@@ -28,6 +28,8 @@ Patch12: sysklogd-1.4.2-caen-owl-syslogd-drop-root.diff
 Patch13: sysklogd-1.4.2-alt-syslogd-chroot.diff
 Patch14: sysklogd-1.4.2-alt-syslogd-funix_dir.diff
 Patch15: sysklogd-1.4.2-owl-syslogd-unixcred.diff
+Patch16: sysklogd-1.4.2-up-SO_BSDCOMPAT.diff
+Patch17: sysklogd-1.4.2-owl-ksym_mod-linux.diff
 PreReq: shadow-utils, grep, fileutils, /sbin/chkconfig
 Requires: logrotate, /var/empty
 BuildRoot: /override/%name-%version
@@ -56,9 +58,11 @@ places according to a configuration file.
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
+%patch17 -p1
 
 %build
-%__make CFLAGS="%optflags -Wall -DSYSV -D_FILE_OFFSET_BITS=64"
+%__make CFLAGS='%optflags -Wall -DSYSV $(shell getconf LFS_CFLAGS)'
 
 %install
 rm -rf %buildroot
@@ -124,6 +128,13 @@ fi
 %_mandir/*/*
 
 %changelog
+* Sun Sep 20 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.1-owl13
+- Updated to post-1.4.1 cvs snapshot 20060928.
+- Fixed build with linux kernel 2.6.x headers.
+- Fixed CFLAGS to include "getconf LFS_CFLAGS" output.
+- Prefixed each syslog.conf entry with the minus sign to avoid syncing
+after every logging.
+
 * Wed Oct 24 2007 ArkanoiD <ark-at-owl.openwall.com> 1.4.1-owl12
 - Unix socket credentials verification
 

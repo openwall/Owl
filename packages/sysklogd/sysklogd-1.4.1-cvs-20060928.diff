@@ -63,15 +63,17 @@ Index: Makefile
 ===================================================================
 RCS file: /var/cvs/infodrom/sysklogd/Makefile,v
 retrieving revision 1.7
-retrieving revision 1.9
-diff -u -p -a -r1.7 -r1.9
+retrieving revision 1.10
+diff -u -p -a -r1.7 -r1.10
 --- Makefile	12 Oct 1998 20:25:15 -0000	1.7
-+++ Makefile	29 Apr 2004 11:04:03 -0000	1.9
-@@ -4,12 +4,15 @@ CC= gcc
++++ Makefile	25 May 2006 07:12:44 -0000	1.10
+@@ -4,12 +4,17 @@ CC= gcc
  #CFLAGS= -g -DSYSV -Wall
  #LDFLAGS= -g
  CFLAGS= $(RPM_OPT_FLAGS) -O3 -DSYSV -fomit-frame-pointer -Wall -fno-strength-reduce
 +# -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
++# -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE
++# $(shell getconf LFS_CFLAGS)
  LDFLAGS= -s
  
  # Look where your install program is.
@@ -85,7 +87,7 @@ diff -u -p -a -r1.7 -r1.9
  
  # There is one report that under an all ELF system there may be a need to
  # explicilty link with libresolv.a.  If linking syslogd fails you may wish
-@@ -34,8 +37,9 @@ FSSTND = -DFSSTND
+@@ -34,8 +39,9 @@ FSSTND = -DFSSTND
  # The following define establishes ownership for the man pages.
  # Avery tells me that there is a difference between Debian and
  # Slackware.  Rather than choose sides I am leaving it up to the user.
@@ -97,7 +99,7 @@ diff -u -p -a -r1.7 -r1.9
  
  # The following define establishes the name of the pid file for the
  # syslogd daemon.  The library include file (paths.h) defines the
-@@ -116,7 +120,7 @@ install_exec: syslogd klogd
+@@ -116,7 +122,7 @@ install_exec: syslogd klogd
  	${INSTALL} -m 500 -s klogd ${BINDIR}/klogd
  
  install_man:
@@ -113,10 +115,10 @@ Index: README.1st
 ===================================================================
 RCS file: /var/cvs/infodrom/sysklogd/README.1st,v
 retrieving revision 1.1.1.1
-retrieving revision 1.2
-diff -u -p -a -r1.1.1.1 -r1.2
+retrieving revision 1.3
+diff -u -p -a -r1.1.1.1 -r1.3
 --- README.1st	2 Jun 1997 17:21:39 -0000	1.1.1.1
-+++ README.1st	4 Sep 2003 13:22:23 -0000	1.2
++++ README.1st	25 May 2006 08:11:49 -0000	1.3
 @@ -1,5 +1,5 @@
 -Very important information before using version 1.3
 ----------------------------------------------------
@@ -125,17 +127,40 @@ diff -u -p -a -r1.1.1.1 -r1.2
  
  The included version of syslogd behaves in a slightly different manner
  to the one in former releases.  Please review the following important
-@@ -63,3 +63,10 @@ differences:
+@@ -63,3 +63,33 @@ differences:
    these scripts should remove all old .pid files found in /var/run.
    This will insure that klogd and syslogd start properly even if prior
    executions have been terminated harshly.
 +
 +* Large file support, i.e. support to write to log files that are
-+  larger than 2 GB is not part of syslogd, but a matter of the Glibc
++  larger than 2 GB is not part of syslogd, but a matter of the glibc
 +  emitting different system calls to the kernel interface.  To support
 +  large files you'll have to compile syslogd with the compiler defines
-+  -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE so that glibc adjusts the
-+  system calls.
++  commented out in the main Makefile so that glibc adjusts the system
++  calls.
++
++Modifying the kernel console log level
++--------------------------------------
++
++  There are two ways to alter the kernel console log level.  This
++  setting controls whether log messages from the kernel should appear
++  on the system console or not.
++
++  In the past, klogd had to do this with the -c parameter.  Using '-c
++  4' will set the log level of console messages to 4 and only display
++  warnings and errors but not regular debug or information messages.
++
++  This behaviour is deprecated and hencely not enforced anymore via
++  the RC script of klogd.  Instead sysctl(8) should be used as
++  interface to various kernel variables.  These can be stored
++  non-volatile in /etc/sysctl.conf.
++
++  The prevent the kernel to flood the system console and to achieve
++  the same behaviour of '-c 4' simply add the following to the
++  configuration file and let sysctl set this kernel parameter upon
++  system boot.
++
++  kernel/printk = 4 4 1 7
 Index: README.linux
 ===================================================================
 RCS file: /var/cvs/infodrom/sysklogd/README.linux,v
@@ -362,7 +387,7 @@ Index: module.h
 RCS file: module.h
 diff -N module.h
 --- /dev/null	1 Jan 1970 00:00:00 -0000
-+++ module.h	27 Jul 2004 11:36:10 -0000	1.3
++++ module.h	25 May 2006 07:15:57 -0000	1.4
 @@ -0,0 +1,90 @@
 +/*
 +    module.h - Miscellaneous module definitions
@@ -392,9 +417,9 @@ diff -N module.h
 + *	Created local copy of module.h based on the content of Linux
 + *	2.2 since <linux/module.h> doesn't work anymore with its
 + *	recent content from Linux 2.4/2.6.
++ * Thu May 25 09:14:33 CEST 2006: Martin Schulze <joey@infodrom.org>
++ *	Removed asm/atomic.h since it is not needed anymore.
 + */
-+
-+#include <asm/atomic.h>
 +
 +#define MODULE_NAME_LEN 60
 +
@@ -559,10 +584,10 @@ Index: syslog.conf.5
 ===================================================================
 RCS file: /var/cvs/infodrom/sysklogd/syslog.conf.5,v
 retrieving revision 1.7
-retrieving revision 1.10
-diff -u -p -a -r1.7 -r1.10
+retrieving revision 1.11
+diff -u -p -a -r1.7 -r1.11
 --- syslog.conf.5	21 Aug 1999 10:49:14 -0000	1.7
-+++ syslog.conf.5	22 May 2003 19:31:20 -0000	1.10
++++ syslog.conf.5	28 Sep 2006 18:43:36 -0000	1.11
 @@ -64,7 +64,7 @@ in
  The
  .I facility
@@ -577,12 +602,13 @@ diff -u -p -a -r1.7 -r1.10
  This 
  .BR syslogd (8)
 -has a syntax extension to the original BSD source, that makes its use
-+has a syntax extension to the original BSD source, which makes its use
- more intuitively.  You may precede every priority with an equation sign
+-more intuitively.  You may precede every priority with an equation sign
 -(``='') to specify only this single priority and not any of the
 -above.  You may also (both is valid, too) precede the priority with an
 -exclamation mark (``!'') to ignore all that priorities, either exact
 -this one or this and any higher priority.  If you use both extensions
++has a syntax extension to the original BSD source, which makes its use
++more intuitive.  You may precede every priority with an equation sign
 +(``='') to specify that
 +.B syslogd
 +should only refer to this single priority and not this priority and
@@ -608,15 +634,41 @@ diff -u -p -a -r1.7 -r1.10
  .IR /var/log/messages ,
  except for all messages that use the
  .B mail
+Index: syslog_tst.c
+===================================================================
+RCS file: /var/cvs/infodrom/sysklogd/syslog_tst.c,v
+retrieving revision 1.1.1.1
+retrieving revision 1.2
+diff -u -p -a -r1.1.1.1 -r1.2
+--- syslog_tst.c	2 Jun 1997 17:21:41 -0000	1.1.1.1
++++ syslog_tst.c	18 Sep 2006 09:56:13 -0000	1.2
+@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
+ 					if ( (nl = strrchr(bufr, '\n')) != \
+ 					    (char *) 0)
+ 						*nl = '\0';
+-					syslog(LOG_INFO, bufr);
++                                       syslog(LOG_INFO, "%s", bufr);
+ 					logged += strlen(bufr);
+ 					if ( logged > 1024 )
+ 					{
+@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
+ 		}
+ 		else
+ 			while (argc-- > 1)
+-				syslog(LOG_INFO, argv++[1]);
++                               syslog(LOG_INFO, "%s", argv++[1]);
+ 	}
+ 	else
+ 	{
 Index: syslogd.c
 ===================================================================
 RCS file: /var/cvs/infodrom/sysklogd/syslogd.c,v
 retrieving revision 1.34
-retrieving revision 1.47
-diff -u -p -a -r1.34 -r1.47
+retrieving revision 1.48
+diff -u -p -a -r1.34 -r1.48
 --- syslogd.c	11 Mar 2001 19:40:10 -0000	1.34
-+++ syslogd.c	25 May 2005 18:08:30 -0000	1.47
-@@ -441,6 +441,39 @@ static char sccsid[] = "@(#)syslogd.c	5.
++++ syslogd.c	25 May 2006 07:49:54 -0000	1.48
+@@ -441,6 +441,45 @@ static char sccsid[] = "@(#)syslogd.c	5.
   *	Don't return a closed fd if `-a' is called with a wrong path.
   *	Thanks to Bill Nottingham <notting@redhat.com> for providing
   *	a patch.
@@ -653,10 +705,16 @@ diff -u -p -a -r1.34 -r1.47
 + *
 + * Sun Nov  7 13:47:00 CET 2004: Martin Schulze <joey@infodrom.org>
 + *	Remove trailing newline when forwarding messages.
++ *
++ * Thu May 25 09:47:38 CEST 2006: Martin Schulze <joey@infodrom.org>
++ *	Reset the 'restart' flag immediately after entering the
++ *	restart code, so that subsequent SIGHUPs are able to set it
++ *	again and cause a new restart.  This fixes a race condition
++ *	when somebody sends tons of HUP signals.
   */
  
  
-@@ -890,11 +923,11 @@ int main(argc, argv)
+@@ -890,11 +929,11 @@ int main(argc, argv)
  		dprintf("Checking pidfile.\n");
  		if (!check_pid(PidFile))
  		{
@@ -669,7 +727,7 @@ diff -u -p -a -r1.34 -r1.47
  				sleep(300);
  				/*
  				 * Not reached unless something major went wrong.  5
-@@ -992,6 +1025,7 @@ int main(argc, argv)
+@@ -992,6 +1031,7 @@ int main(argc, argv)
  	(void) signal(SIGCHLD, reapchild);
  	(void) signal(SIGALRM, domark);
  	(void) signal(SIGUSR1, Debug ? debug_switch : SIG_IGN);
@@ -677,7 +735,18 @@ diff -u -p -a -r1.34 -r1.47
  	(void) alarm(TIMERINTVL);
  
  	/* Create a partial message table for all file descriptors. */
-@@ -1141,13 +1175,13 @@ int main(argc, argv)
+@@ -1074,9 +1114,9 @@ int main(argc, argv)
+ 				  (fd_set *) NULL, (struct timeval *) NULL);
+ 		if ( restart )
+ 		{
++			restart = 0;
+ 			dprintf("\nReceived SIGHUP, reloading syslogd.\n");
+ 			init();
+-			restart = 0;
+ 			continue;
+ 		}
+ 		if (nfds == 0) {
+@@ -1141,13 +1181,13 @@ int main(argc, argv)
  				 */
  				printchopped(from, line, \
   					     i + 2,  finet);
@@ -693,7 +762,7 @@ diff -u -p -a -r1.34 -r1.47
  			}
  		}
  #endif
-@@ -1216,6 +1250,7 @@ static int create_inet_socket()
+@@ -1216,6 +1256,7 @@ static int create_inet_socket()
  {
  	int fd, on = 1;
  	struct sockaddr_in sin;
@@ -701,7 +770,7 @@ diff -u -p -a -r1.34 -r1.47
  
  	fd = socket(AF_INET, SOCK_DGRAM, 0);
  	if (fd < 0) {
-@@ -1241,6 +1276,24 @@ static int create_inet_socket()
+@@ -1241,6 +1282,24 @@ static int create_inet_socket()
  		close(fd);
  		return -1;
  	}
@@ -726,7 +795,7 @@ diff -u -p -a -r1.34 -r1.47
  	if (bind(fd, (struct sockaddr *) &sin, sizeof(sin)) < 0) {
  		logerror("bind, suspending inet");
  		close(fd);
-@@ -1254,30 +1307,26 @@ char **
+@@ -1254,30 +1313,26 @@ char **
  crunch_list(list)
  	char *list;
  {
@@ -765,7 +834,7 @@ diff -u -p -a -r1.34 -r1.47
  	}
  	
  	/*
-@@ -1285,30 +1334,28 @@ crunch_list(list)
+@@ -1285,30 +1340,28 @@ crunch_list(list)
  	 * characters are different from any delimiters,
  	 * so we don't have to care about this.
  	 */
@@ -810,7 +879,7 @@ diff -u -p -a -r1.34 -r1.47
  #endif
  	return result;
  }
-@@ -1539,30 +1586,48 @@ void logmsg(pri, msg, from, flags)
+@@ -1539,30 +1592,48 @@ void logmsg(pri, msg, from, flags)
  	int fac, prilev, lognum;
  	int msglen;
  	char *timestamp;
@@ -868,7 +937,7 @@ diff -u -p -a -r1.34 -r1.47
  	/* extract facility and priority level */
  	if (flags & MARK)
  		fac = LOG_NFACILITIES;
-@@ -1581,9 +1646,13 @@ void logmsg(pri, msg, from, flags)
+@@ -1581,9 +1652,13 @@ void logmsg(pri, msg, from, flags)
  			(void) close(f->f_file);
  			f->f_file = -1;
  		}
@@ -882,7 +951,7 @@ diff -u -p -a -r1.34 -r1.47
  		return;
  	}
  #ifdef SYSV
-@@ -1646,9 +1715,13 @@ void logmsg(pri, msg, from, flags)
+@@ -1646,9 +1721,13 @@ void logmsg(pri, msg, from, flags)
  			}
  		}
  	}
@@ -896,7 +965,7 @@ diff -u -p -a -r1.34 -r1.47
  }
  #if FALSE
  } /* balance parentheses for emacs */
-@@ -1771,7 +1844,7 @@ void fprintlog(f, from, flags, msg)
+@@ -1771,7 +1850,7 @@ void fprintlog(f, from, flags, msg)
  			dprintf("Not sending message to remote.\n");
  		else {
  			f->f_time = now;
@@ -905,7 +974,7 @@ diff -u -p -a -r1.34 -r1.47
  				(char *) iov[4].iov_base);
  			l = strlen(line);
  			if (l > MAXLINE)
-@@ -1815,7 +1888,7 @@ void fprintlog(f, from, flags, msg)
+@@ -1815,7 +1894,7 @@ void fprintlog(f, from, flags, msg)
  			v->iov_len = 1;
  		}
  	again:
@@ -914,7 +983,7 @@ diff -u -p -a -r1.34 -r1.47
  		   open the file at startup. */
  		if (f->f_file == -1)
  			break;
-@@ -1852,7 +1925,7 @@ void fprintlog(f, from, flags, msg)
+@@ -1852,7 +1931,7 @@ void fprintlog(f, from, flags, msg)
  				errno = e;
  				logerror(f->f_un.f_fname);
  			}
@@ -923,7 +992,7 @@ diff -u -p -a -r1.34 -r1.47
  			(void) fsync(f->f_file);
  		break;
  
-@@ -1891,7 +1964,7 @@ void wallmsg(f, iov)
+@@ -1891,7 +1970,7 @@ void wallmsg(f, iov)
  	register struct filed *f;
  	struct iovec *iov;
  {
@@ -932,7 +1001,7 @@ diff -u -p -a -r1.34 -r1.47
  	register int i;
  	int ttyf, len;
  	static int reenter = 0;
-@@ -1899,6 +1972,8 @@ void wallmsg(f, iov)
+@@ -1899,6 +1978,8 @@ void wallmsg(f, iov)
  	struct utmp *uptr;
  	char greetings[200];
  
@@ -941,7 +1010,7 @@ diff -u -p -a -r1.34 -r1.47
  	if (reenter++)
  		return;
  
-@@ -1913,7 +1988,6 @@ void wallmsg(f, iov)
+@@ -1913,7 +1994,6 @@ void wallmsg(f, iov)
  	if (fork() == 0) {
  		(void) signal(SIGTERM, SIG_DFL);
  		(void) alarm(0);
@@ -949,7 +1018,7 @@ diff -u -p -a -r1.34 -r1.47
  #ifndef SYSV
  		(void) signal(SIGTTOU, SIG_IGN);
  		(void) sigsetmask(0);
-@@ -1929,7 +2003,7 @@ void wallmsg(f, iov)
+@@ -1929,7 +2009,7 @@ void wallmsg(f, iov)
  			/* is this slot used? */
  			if (ut.ut_name[0] == '\0')
  				continue;
@@ -958,7 +1027,7 @@ diff -u -p -a -r1.34 -r1.47
  			        continue;
  			if (!(strcmp (ut.ut_name,"LOGIN"))) /* paranoia */
  			        continue;
-@@ -1959,6 +2033,7 @@ void wallmsg(f, iov)
+@@ -1959,6 +2039,7 @@ void wallmsg(f, iov)
  				iov[1].iov_len = 0;
  			}
  			if (setjmp(ttybuf) == 0) {

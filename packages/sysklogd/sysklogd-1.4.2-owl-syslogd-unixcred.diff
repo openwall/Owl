@@ -2,9 +2,9 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
 --- sysklogd-1.4.1.orig/syslogd.c	2005-08-18 14:51:39 +0000
 +++ sysklogd-1.4.1/syslogd.c	2007-10-31 16:24:54 +0000
 @@ -474,6 +474,9 @@ static char sccsid[] = "@(#)syslogd.c	5.
-  *
-  * Sun Nov  7 13:47:00 CET 2004: Martin Schulze <joey@infodrom.org>
-  *	Remove trailing newline when forwarding messages.
+  *	restart code, so that subsequent SIGHUPs are able to set it
+  *	again and cause a new restart.  This fixes a race condition
+  *	when somebody sends tons of HUP signals.
 + *
 + * Wed Oct 31 18:24:54 MSD 2007: ArkanoiD <ark at owl.openwall.com>
 + *	Enable unix socket peer credentials check
