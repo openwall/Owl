@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/iproute2/iproute2.spec,v 1.22 2005/11/16 13:11:14 solar Exp $
+# $Owl: Owl/packages/iproute2/iproute2.spec,v 1.23 2009/09/21 15:27:27 ldv Exp $
 
 %define ver 2.4.7
 %define snapshot ss020116
@@ -6,7 +6,7 @@
 Summary: Enhanced IP routing and network devices configuration tools.
 Name: iproute2
 Version: %ver.%snapshot
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%ver-now-%snapshot-try.tar.gz
@@ -27,6 +27,7 @@ Patch2: iproute2-2.4.7-owl-warnings.diff
 Patch3: iproute2-2.4.7-deb-netlink.diff
 Patch4: iproute2-2.4.7-owl-nstat-bound.diff
 Patch5: iproute2-2.4.7-devik-htb.diff
+Patch6: iproute2-2.4.7-owl-Makefile.diff
 Provides: iproute = %version
 Obsoletes: iproute
 BuildRequires: db4-devel, bison
@@ -47,6 +48,7 @@ utilities (ip, tc, rtmon, rtacct, ifstat, nstat, rtstat, ss).
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %{expand:%%define optflags %optflags -Wall -Wstrict-prototypes}
 
@@ -86,6 +88,9 @@ gzip -9nf iproute2-ps/*.ps
 %_mandir/man8/*
 
 %changelog
+* Sun Sep 20 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.4.7.ss020116-owl4
+- Disabled build time kernel headers check.
+
 * Sat Mar 05 2005 Michail Litvak <mci-at-owl.openwall.com> 2.4.7.ss020116-owl3
 - Added patch to support HTB qdisc.
 

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/iputils/iputils.spec,v 1.26 2005/12/11 19:15:54 ldv Exp $
+# $Owl: Owl/packages/iputils/iputils.spec,v 1.27 2009/09/21 15:10:55 ldv Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
 Version: ss020927
-Release: owl5
+Release: owl6
 License: mostly BSD, some GPL
 Group: Applications/Internet
 Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%version.tar.gz
@@ -13,7 +13,8 @@ Patch0: iputils-ss020927-rh-owl-cache-reverse-lookups.diff
 Patch1: iputils-ss020927-owl-warnings.diff
 Patch2: iputils-ss020927-owl-socketbits.diff
 Patch3: iputils-ss020927-owl-man.diff
-Patch4: bonding-0.2-owl-ioctl.diff
+Patch4: iputils-ss020927-alt-Makefile.diff
+Patch5: bonding-0.2-owl-ioctl.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
@@ -31,7 +32,8 @@ mv -f bonding-0.2/README bonding-0.2/README.ifenslave
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p0
+%patch4 -p1
+%patch5 -p0
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -98,6 +100,9 @@ fi
 /etc/control.d/facilities/ping6
 
 %changelog
+* Sun Sep 20 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> ss020927-owl6
+- Disabled build time kernel headers check.
+
 * Thu Nov 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> ss020927-owl5
 - Added owl-control facility for ping6.
 - Relocated ping6, tracepath and tracepath6 to /bin.

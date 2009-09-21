@@ -1,0 +1,11 @@
+--- iputils/Makefile
++++ iputils/Makefile
+@@ -31,7 +31,7 @@ IPV4_TARGETS=tracepath ping clockdiff rdisc arping tftpd rarpd
+ IPV6_TARGETS=tracepath6 traceroute6 ping6
+ TARGETS=$(IPV4_TARGETS) $(IPV6_TARGETS)
+ 
+-all: check-kernel $(TARGETS)
++all: $(TARGETS)
+ 
+ 
+ tftpd: tftpd.o tftpsubs.o
