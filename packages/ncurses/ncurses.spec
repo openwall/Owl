@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.32 2006/05/30 23:32:08 ldv Exp $
+# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.33 2009/09/21 13:14:50 ldv Exp $
 
 %define major 5
 %define oldmajor 4
@@ -116,9 +116,6 @@ rm -f c++/demo
 %__make -C c++
 %endif
 
-# Let's run test-suite
-TERMINFO=%buildroot%_datadir/terminfo %__make -C test
-
 %install
 rm -rf %buildroot
 mkdir -p %buildroot%_prefix/lib
@@ -154,8 +151,6 @@ ln -s libncurses++.so.5 %buildroot%_libdir/libncurses++.so
 mkdir -p rpm-doc/c++
 install -p -m 644 c++/{NEWS,PROBLEMS,README-first} rpm-doc/c++/
 %endif
-
-%__make clean -C test
 
 # the resetall script
 install -m 755 %_sourcedir/ncurses-resetall.sh \
