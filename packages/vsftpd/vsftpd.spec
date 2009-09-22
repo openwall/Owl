@@ -1,14 +1,14 @@
-# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.32 2009/07/19 22:26:14 solar Exp $
+# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.33 2009/09/22 05:46:31 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
 Version: 2.2.0
-Release: owl0.2
+Release: owl1
 License: GPL
 Group: System Environment/Daemons
 URL: http://vsftpd.beasts.org
-Source0: ftp://vsftpd.beasts.org/users/cevans/vsftpd-%{version}pre4.tar.gz
-# Signature: ftp://vsftpd.beasts.org/users/cevans/vsftpd-%{version}pre4.tar.gz.asc
+Source0: ftp://vsftpd.beasts.org/users/cevans/vsftpd-%version.tar.gz
+# Signature: ftp://vsftpd.beasts.org/users/cevans/vsftpd-%version.tar.gz.asc
 Source1: vsftpd.eps.gz
 Source2: vsftpd.pam
 Source3: vsftpd.xinetd
@@ -17,7 +17,7 @@ Patch0: vsftpd-2.2.0-owl-warnings.diff
 Patch1: vsftpd-2.2.0-owl-pam_userpass.diff
 Patch2: vsftpd-2.2.0-owl-alt-defaults.diff
 Patch3: vsftpd-2.2.0-owl-man.diff
-Patch4: vsftpd-2.2.0-owl-fixes.diff
+Patch4: vsftpd-2.2.0-owl-signals.diff
 Requires: logrotate, pam >= 0:0.80-owl2, pam_userpass, tcb, xinetd, /var/empty
 Provides: ftpserver
 BuildRequires: pam-devel, pam_userpass-devel, libcap-devel
@@ -86,6 +86,10 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %_mandir/man8/vsftpd.8*
 
 %changelog
+* Tue Sep 22 2009 Solar Designer <solar-at-owl.openwall.com> 2.2.0-owl1
+- Updated to 2.2.0 release.
+- Fixed a couple of async signal safety issues in sysutil.c.
+
 * Sun Jul 19 2009 Solar Designer <solar-at-owl.openwall.com> 2.2.0-owl0.2
 - Re-wrote the config file comment on "listen" and "listen_ipv6" to recommend
 the command line rather than a config file for overriding these options.
