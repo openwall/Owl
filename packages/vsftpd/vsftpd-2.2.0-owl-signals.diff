@@ -1,0 +1,25 @@
+diff -urp vsftpd-2.2.0.orig/sysutil.c vsftpd-2.2.0/sysutil.c
+--- vsftpd-2.2.0.orig/sysutil.c	2009-08-08 01:51:25 +0000
++++ vsftpd-2.2.0/sysutil.c	2009-09-22 05:31:36 +0000
+@@ -73,7 +73,7 @@ static struct vsf_sysutil_sig_details
+ {
+   vsf_sighandle_t sync_sig_handler;
+   void* p_private;
+-  int pending;
++  volatile sig_atomic_t pending;
+   int running;
+   int use_alarm;
+ } s_sig_details[NSIG];
+@@ -117,10 +117,8 @@ vsf_sysutil_common_sighandler(int signum
+ {
+   if (signum < 0 || signum >= NSIG)
+   {
+-    /* bug() is not async safe but this check really is a "cannot happen"
+-     * debug aid.
+-     */
+-    bug("signal out of range in vsf_sysutil_common_sighandler");
++    /* "cannot happen" */
++    return;
+   }
+   if (s_sig_details[signum].sync_sig_handler)
+   {
