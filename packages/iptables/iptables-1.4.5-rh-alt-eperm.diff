@@ -1,0 +1,32 @@
+--- ip6tables.c
++++ ip6tables.c
+@@ -1846,11 +1846,12 @@ int do_command6(int argc, char *argv[], char **table, struct ip6tc_handle **hand
+ 		*handle = ip6tc_init(*table);
+ 
+ 	/* try to insmod the module if iptc_init failed */
++	errno = 0;
+ 	if (!*handle && xtables_load_ko(xtables_modprobe_program, false) != -1)
+ 		*handle = ip6tc_init(*table);
+ 
+ 	if (!*handle)
+-		xtables_error(VERSION_PROBLEM,
++		xtables_error(errno == EPERM ? OTHER_PROBLEM : VERSION_PROBLEM,
+ 			"can't initialize ip6tables table `%s': %s",
+ 			*table, ip6tc_strerror(errno));
+ 
+--- iptables.c
++++ iptables.c
+@@ -1884,11 +1884,12 @@ int do_command(int argc, char *argv[], char **table, struct iptc_handle **handle
+ 		*handle = iptc_init(*table);
+ 
+ 	/* try to insmod the module if iptc_init failed */
++	errno = 0;
+ 	if (!*handle && xtables_load_ko(xtables_modprobe_program, false) != -1)
+ 		*handle = iptc_init(*table);
+ 
+ 	if (!*handle)
+-		xtables_error(VERSION_PROBLEM,
++		xtables_error(errno == EPERM ? OTHER_PROBLEM : VERSION_PROBLEM,
+ 			   "can't initialize iptables table `%s': %s",
+ 			   *table, iptc_strerror(errno));
+ 

@@ -1,25 +1,24 @@
-# $Owl: Owl/packages/iptables/iptables.spec,v 1.24 2006/05/20 22:42:58 galaxy Exp $
+# $Owl: Owl/packages/iptables/iptables.spec,v 1.25 2009/09/23 23:57:43 ldv Exp $
 
-%define BUILD_STATIC 0
 %define BUILD_IPV6 0
 
 Summary: Tools for managing Netfilter/iptables packet filtering rules.
 Name: iptables
-Version: 1.3.5
-Release: owl2
-License: GPL
+Version: 1.4.5
+Release: owl1
+License: GPLv2+
 Group: System Environment/Base
 URL: http://www.netfilter.org/projects/iptables/
 Source0: ftp://ftp.netfilter.org/pub/iptables/%name-%version.tar.bz2
 Source1: iptables.init
 Source2: iptables-config
-Patch0: iptables-1.3.5-svn-r6466.diff
-Patch1: iptables-1.3.5-alt-link.diff
-Patch2: iptables-1.3.5-alt-modprobe.diff
-Patch3: iptables-1.3.5-alt-iptc-defs.diff
-Patch4: iptables-1.3.5-rh-alt-eperm.diff
-Patch5: iptables-1.3.5-owl-warnings.diff
-Patch6: iptables-1.3.5-owl-man.diff
+Patch0: iptables-1.4.5-alt-fixes.diff
+Patch1: iptables-1.4.5-alt-link.diff
+Patch2: iptables-1.4.5-alt-modprobe.diff
+Patch3: iptables-1.4.5-alt-configure.diff
+Patch4: iptables-1.4.5-rh-alt-eperm.diff
+Patch5: iptables-1.4.5-owl-warnings.diff
+Patch6: iptables-1.4.5-owl-Makefile.diff
 PreReq: chkconfig
 Requires: coreutils, grep, mktemp
 BuildRequires: kernel-headers >= 2.4.4
@@ -38,6 +37,7 @@ Group: System Environment/Base
 URL: http://www.netfilter.org
 PreReq: chkconfig
 Requires: coreutils, grep, mktemp
+Requires: %name = %version-%release
 
 %description -n iptables6
 Tools found in this package are used to set up, maintain, and inspect the
@@ -50,29 +50,30 @@ iptables-based filtering is used on Linux 2.4.x and newer kernels.
 %prep
 %setup -q
 %patch0 -p0
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
+%patch1 -p0
+%patch2 -p0
+%patch3 -p0
+%patch4 -p0
+%patch5 -p0
+%patch6 -p0
+
+%define _libdir /%_lib
+%{expand:%%define optflags %optflags -fno-strict-aliasing}
 
 %build
-%__make all \
-	CC="%__cc" \
-	COPT_FLAGS="%optflags" \
-%if %BUILD_STATIC
-	NO_SHARED_LIBS="1" \
-%else
-	LDLIBS="-ldl" \
+autoreconf
+%configure \
+	--sbindir=/sbin \
+	--with-xtlibdir=/%_lib/iptables \
+%if !%BUILD_IPV6
+	--disable-ipv6 \
 %endif
-%if %BUILD_IPV6
-	experimental \
-%endif
-	DO_IPV6="%BUILD_IPV6" \
-	PREFIX="%_prefix" \
-	LIBDIR="/%_lib" \
-	BINDIR="/sbin"
+	#
+
+# Build libraries first
+printf '\n%s\n' 'build-libLTLIBRARIES: $(lib_LTLIBRARIES)' >>Makefile
+%__make V=1 LDFLAGS=-Wl,--as-needed build-libLTLIBRARIES
+%__make V=1 LDFLAGS=-Wl,--as-needed
 
 %if %BUILD_IPV6
 sed s/iptables/ip6tables/g <%_sourcedir/iptables.init >ip6tables.init
@@ -81,20 +82,10 @@ sed s/iptables/ip6tables/g <%_sourcedir/iptables-config >ip6tables-config
 
 %install
 rm -rf %buildroot
-%__make install \
-%if %BUILD_STATIC
-	NO_SHARED_LIBS="1" \
-%endif
-%if %BUILD_IPV6
-	install-experimental \
-%endif
-	DO_IPV6="%BUILD_IPV6" \
-	DESTDIR=%buildroot \
-	PREFIX="%_prefix" \
-	LIBDIR="/%_lib" \
-	BINDIR="/sbin" \
-	MANDIR="%_mandir" \
-	INCDIR="%_includedir"
+%__make install DESTDIR=%buildroot
+
+# Do not package .la files.
+rm %buildroot%_libdir/lib*.la
 
 mkdir -p %buildroot/etc/rc.d/init.d %buildroot/etc/sysconfig
 install -pm755 %_sourcedir/iptables.init \
@@ -131,11 +122,16 @@ fi
 %config /etc/rc.d/init.d/iptables
 %config(noreplace) /etc/sysconfig/iptables-config
 /sbin/iptables*
-%_mandir/*/iptables*
-%if !%BUILD_STATIC
+%_mandir/man8/iptables*
+/%_lib/libip4tc.so.*
+/%_lib/libxtables.so.*
 %dir /%_lib/iptables
 /%_lib/iptables/libipt*
-%endif
+/%_lib/iptables/libxt*
+%exclude %_libdir/lib*.so
+%exclude %_includedir/*
+%exclude %_libdir/pkgconfig/*.pc
+%doc iptables.xslt
 
 %if %BUILD_IPV6
 %files -n iptables6
@@ -144,13 +140,17 @@ fi
 %config(noreplace) /etc/sysconfig/ip6tables-config
 /sbin/ip6tables*
 %_mandir/*/ip6tables*
-%if !%BUILD_STATIC
+/%_lib/libip6tc.so.*
 %dir /%_lib/iptables
 /%_lib/iptables/libip6t*
 %endif
-%endif
 
 %changelog
+* Wed Sep 23 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.5-owl1
+- Updated to 1.4.5.
+- Updated patches from ALT's iptables-1.4.5-alt1 package.
+- Dropped BUILD_STATIC support.
+
 * Sat May 20 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.3.5-owl2
 - Fixed broken logic for unsupported extensions in extensions/Makefile.
 From now on, all unsupported target/matches are marked as such.
