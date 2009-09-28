@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.56 2009/09/09 16:45:50 ldv Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.57 2009/09/28 23:12:57 ldv Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 1.1.0
-Release: owl1
+Release: owl2
 %define rh_version 0.99.10-1
 License: GPLv2+ or BSD-style
 Group: System Environment/Base
@@ -288,6 +288,9 @@ rm %buildroot%docdir/*.pdf
 %docdir/[^ACNm]*
 
 %changelog
+* Mon Sep 28 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1.0-owl2
+- In system-auth, changed pam_passwdqc options to use /etc/passwdqc.conf file.
+
 * Fri Aug 28 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1.0-owl10
 - Updated Linux-PAM to 1.1.0, which replaces pam_rhosts_auth.so with
 pam_rhosts.so and introduces new modules: pam_faildelay.so, pam_pwhistory.so,
