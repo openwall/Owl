@@ -1,1 +1,1 @@
-pam_passwdqc/pam_passwdqc.spec
+passwdqc/passwdqc.spec
