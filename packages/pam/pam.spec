@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.57 2009/09/28 23:12:57 ldv Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.58 2009/09/29 01:21:40 ldv Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
@@ -29,6 +29,7 @@ Requires: glibc-crypt_blowfish
 # Just to make sure no one misses pam_unix and pam_pwdb, which are now
 # provided by tcb.
 Requires: tcb >= 0.9.9
+Requires: passwdqc
 BuildRequires: glibc-crypt_blowfish-devel
 BuildRequires: automake, autoconf, bison, flex
 BuildRequires: sed >= 4.1, db4-devel >= 4.2
