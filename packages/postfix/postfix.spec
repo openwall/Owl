@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.46 2009/08/31 10:15:58 solar Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.47 2009/09/30 00:25:59 ldv Exp $
 
 Summary: Postfix mail system.
 Name: postfix
 Version: 2.4.13
-Release: owl1
+Release: owl2
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
@@ -283,6 +283,9 @@ ln -s ../sbin/sendmail %buildroot%_bindir/newaliases
 
 # Chrooted environment
 touch %buildroot%queue_directory/etc/{hosts,localtime,services,{host,nsswitch,resolv}.conf}
+touch %buildroot%queue_directory/dev/log
+mkdir %buildroot/etc/syslog.d
+ln -s %queue_directory/dev/log %buildroot/etc/syslog.d/postfix
 
 %pre
 grep -q ^postdrop: /etc/group || groupadd -g 161 postdrop
@@ -346,6 +349,7 @@ fi
 %config %config_directory/main.cf.dist
 %config /etc/rc.d/init.d/postfix
 /etc/control.d/facilities/*
+/etc/syslog.d/postfix
 /etc/aliases
 /etc/aliases.db
 %_libdir/%libpostfix
@@ -359,8 +363,14 @@ fi
 %_bindir/rmail
 %_mandir/man?/*
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
+%attr(711,root,root) %dir %queue_directory/dev
+%attr(666,root,root) %ghost %queue_directory/dev/log
 
 %changelog
+* Tue Sep 29 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.4.13-owl2
+- Packaged /etc/syslog.d/postfix symlink to configure syslogd to listen
+on %queue_directory/dev/log socket.
+
 * Mon Aug 31 2009 Solar Designer <solar-at-owl.openwall.com> 1:2.4.13-owl1
 - Updated to 2.4.13.
 
