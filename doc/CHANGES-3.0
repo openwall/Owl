@@ -46,6 +46,15 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/09/28 -
+2009/10/10	Packages: pam, pam_passwdqc, passwdqc;
+		Owl/build/installorder.conf
+The pam_passwdqc package has been replaced with passwdqc, a new package,
+which includes pam_passwdqc(8) (the PAM module), libpasswdqc
+(a password/passphrase strength checking library), pwqcheck(1)
+(a standalone password/passphrase strength checking program), and
+pwqgen(1) (a standalone random passphrase generator program).
+
 2009/09/23	Package: iptables
 Updated to 1.4.5.
 
@@ -974,4 +983,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.201 2009/09/23 23:59:23 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.202 2009/10/11 00:39:41 solar Exp $
