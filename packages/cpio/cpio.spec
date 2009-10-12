@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/cpio/cpio.spec,v 1.28 2009/10/12 20:57:18 mci Exp $
+# $Owl: Owl/packages/cpio/cpio.spec,v 1.29 2009/10/12 20:59:51 mci Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
@@ -7,7 +7,7 @@ Release: owl1
 License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/cpio/
-Source0: ftp://alpha.gnu.org/pub/gnu/cpio-%version.tar.bz2
+Source0: ftp://alpha.gnu.org/pub/gnu/cpio/cpio-%version.tar.bz2
 Source1: rmt.8
 Patch0: cpio-2.9-owl-info.diff
 Patch1: cpio-2.9-alt-mkdir-mknod.diff
