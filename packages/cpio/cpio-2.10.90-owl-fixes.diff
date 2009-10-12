@@ -1,6 +1,6 @@
---- cpio/lib/rtapelib.c
-+++ cpio/lib/rtapelib.c
-@@ -488,12 +488,14 @@ rmt_open__ (const char *file_name, int open_mode, int bias,
+--- cpio-2.10.90/lib/rtapelib.c.orig	2009-06-18 16:07:51.000000000 +0000
++++ cpio-2.10.90/lib/rtapelib.c	2009-09-07 19:12:48.000000000 +0000
+@@ -504,12 +504,14 @@ rmt_open__ (const char *file_name, int o
  	/* Child.  */
  
  	close (STDIN_FILENO);
@@ -17,9 +17,9 @@
  	close (from_remote[remote_pipe_number][PREAD]);
  	close (from_remote[remote_pipe_number][PWRITE]);
  
---- cpio/src/copyin.c
-+++ cpio/src/copyin.c
-@@ -178,7 +178,7 @@ list_file(struct cpio_file_stat* file_hdr, int in_file_des)
+--- cpio-2.10.90/src/copyin.c.orig	2009-07-31 09:16:26.000000000 +0000
++++ cpio-2.10.90/src/copyin.c	2009-09-07 19:12:48.000000000 +0000
+@@ -178,7 +178,7 @@ list_file(struct cpio_file_stat* file_hd
  #endif
        if (crc != file_hdr->c_chksum)
  	{
@@ -28,7 +28,7 @@
  		 file_hdr->c_name, crc, file_hdr->c_chksum);
  	}
      }
-@@ -527,7 +527,7 @@ copyin_regular_file (struct cpio_file_stat* file_hdr, int in_file_des)
+@@ -525,7 +525,7 @@ copyin_regular_file (struct cpio_file_st
        if (archive_format == arf_crcascii)
  	{
  	  if (crc != file_hdr->c_chksum)
@@ -37,7 +37,7 @@
  		   file_hdr->c_name, crc, file_hdr->c_chksum);
  	}
        tape_skip_padding (in_file_des, file_hdr->c_filesize);
-@@ -539,8 +539,9 @@ copyin_regular_file (struct cpio_file_stat* file_hdr, int in_file_des)
+@@ -537,8 +537,9 @@ copyin_regular_file (struct cpio_file_st
       "bug-gnu-utils@prep.ai.mit.edu".  (96/7/10) -BEM */
    if (delayed_seek_count > 0)
      {
@@ -49,7 +49,7 @@
        delayed_seek_count = 0;
      }
  
-@@ -552,7 +552,7 @@ copyin_regular_file (struct cpio_file_stat* file_hdr, int in_file_des)
+@@ -550,7 +551,7 @@ copyin_regular_file (struct cpio_file_st
    if (archive_format == arf_crcascii)
      {
        if (crc != file_hdr->c_chksum)
@@ -58,7 +58,7 @@
  	       file_hdr->c_name, crc, file_hdr->c_chksum);
      }
  
-@@ -1004,14 +1004,14 @@ from_ascii (char const *where, size_t digs, unsigned logbase)
+@@ -991,14 +992,14 @@ from_ascii (char const *where, size_t di
        char *p = strchr (codetab, toupper (*buf));
        if (!p)
  	{
@@ -75,7 +75,7 @@
  	  break;
  	}
        value += d;
-@@ -1022,7 +1022,7 @@ from_ascii (char const *where, size_t digs, unsigned logbase)
+@@ -1009,7 +1010,7 @@ from_ascii (char const *where, size_t di
      }
    if (overflow)
      error (0, 0, _("Archive value %.*s is out of range"),
@@ -84,7 +84,7 @@
    return value;
  }
  
-@@ -1534,7 +1534,7 @@ process_copy_in ()
+@@ -1521,7 +1522,7 @@ process_copy_in ()
  	    tape_skip_padding (in_file_des, file_hdr.c_filesize);
  	    if (crc != file_hdr.c_chksum)
  	      {
@@ -93,18 +93,8 @@
  		       file_hdr.c_name, crc, file_hdr.c_chksum);
  	      }
           /* Debian hack: -v and -V now work with --only-verify-crc.
---- cpio/src/copyout.c
-+++ cpio/src/copyout.c
-@@ -595,7 +595,6 @@ assign_string (char **pvar, char *value)
- void
- process_copy_out ()
- {
--  int res;			/* Result of functions.  */
-   dynamic_string input_name;	/* Name of file read from stdin.  */
-   struct stat file_stat;	/* Stat record for file.  */
-   struct cpio_file_stat file_hdr; /* Output header information.  */
---- cpio/src/copypass.c
-+++ cpio/src/copypass.c
+--- cpio-2.10.90/src/copypass.c.orig	2009-02-14 12:39:37.000000000 +0000
++++ cpio-2.10.90/src/copypass.c	2009-09-07 19:12:51.000000000 +0000
 @@ -189,8 +189,9 @@ process_copy_pass ()
                   "bug-gnu-utils@prep.ai.mit.edu".  (96/7/10) -BEM */
  	      if (delayed_seek_count > 0)
@@ -117,9 +107,9 @@
  		  delayed_seek_count = 0;
  		}
  
---- cpio/src/util.c
-+++ cpio/src/util.c
-@@ -482,9 +482,9 @@ copy_files_disk_to_tape (int in_des, int out_des, off_t num_bytes,
+--- cpio-2.10.90/src/util.c.orig	2009-02-14 12:39:37.000000000 +0000
++++ cpio-2.10.90/src/util.c	2009-09-07 19:12:51.000000000 +0000
+@@ -484,9 +484,9 @@ copy_files_disk_to_tape (int in_des, int
    while (num_bytes > 0)
      {
        if (input_size == 0)
@@ -132,7 +122,7 @@
  	  {
  	    if (rc > 0)
  	      {
-@@ -497,7 +497,7 @@ copy_files_disk_to_tape (int in_des, int out_des, off_t num_bytes,
+@@ -499,7 +499,7 @@ copy_files_disk_to_tape (int in_des, int
  	      }
  	    else
  	      error (0, 0, _("Read error at byte %lld in file %s, padding with zeros"),
@@ -141,7 +131,7 @@
  	    write_nuls_to_file (num_bytes, out_des, tape_buffered_write);
  	    break;
  	  }
-@@ -534,7 +534,7 @@ copy_files_disk_to_disk (int in_des, int out_des, off_t num_bytes,
+@@ -536,7 +536,7 @@ copy_files_disk_to_disk (int in_des, int
    while (num_bytes > 0)
      {
        if (input_size == 0)
@@ -150,7 +140,7 @@
  	  {
  	    if (rc > 0)
  	      {
-@@ -547,7 +547,7 @@ copy_files_disk_to_disk (int in_des, int out_des, off_t num_bytes,
+@@ -549,7 +549,7 @@ copy_files_disk_to_disk (int in_des, int
  	      }
  	    else
  	      error (0, 0, _("Read error at byte %lld in file %s, padding with zeros"),
@@ -159,9 +149,9 @@
  	    write_nuls_to_file (num_bytes, out_des, disk_buffered_write);
  	    break;
  	  }
---- cpio/tests/genfile.c
-+++ cpio/tests/genfile.c
-@@ -481,7 +481,8 @@ mkhole (int fd, off_t displ)
+--- cpio-2.10.90/tests/genfile.c.orig	2009-06-18 16:08:14.000000000 +0000
++++ cpio-2.10.90/tests/genfile.c	2009-09-07 19:12:51.000000000 +0000
+@@ -478,7 +478,8 @@ mkhole (int fd, off_t displ)
  {
    if (lseek (fd, displ, SEEK_CUR) == -1)
      error (EXIT_FAILURE, errno, "lseek");
@@ -171,7 +161,7 @@
  }
  
  static void
-@@ -679,13 +680,15 @@ exec_checkpoint (struct action *p)
+@@ -676,13 +677,15 @@ exec_checkpoint (struct action *p)
  	    error (0, errno, _("cannot open `%s'"), p->name);
  	    break;
  	  }
@@ -189,7 +179,7 @@
        break;
  
      default:
-@@ -744,7 +747,8 @@ exec_command (void)
+@@ -741,7 +744,8 @@ exec_command (void)
    signal (SIGCHLD, SIG_DFL);
  #endif
  

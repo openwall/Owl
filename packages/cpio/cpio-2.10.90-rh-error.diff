@@ -1,0 +1,11 @@
+--- cpio-2.10.90/src/copyout.c.orig	2009-07-31 09:16:26.000000000 +0000
++++ cpio-2.10.90/src/copyout.c	2009-09-09 20:06:49.000000000 +0000
+@@ -297,7 +297,7 @@ to_ascii (char *where, uintmax_t v, size
+ static void
+ field_width_error (const char *filename, const char *fieldname)
+ {
+-  error (0, 0, _("%s: field width not sufficient for storing %s"),
++  error (1, 0, _("%s: field width not sufficient for storing %s"),
+ 	 filename, fieldname);
+ }
+ 

@@ -1,16 +1,14 @@
-src/main.c (parse_opt): Change no_abs_paths_flag default value in extract mode from "false" to "true".
-
---- cpio/src/main.c
-+++ cpio/src/main.c
-@@ -241,6 +241,7 @@
+--- cpio-2.10.90/src/main.c.orig	2009-07-31 09:16:48.000000000 +0000
++++ cpio-2.10.90/src/main.c	2009-09-08 20:23:17.000000000 +0000
+@@ -238,6 +238,7 @@ static struct argp_option options[] = {
  
  static char *input_archive_name = 0;
  static char *output_archive_name = 0;
 +static int abs_paths_flag_changed = false;
  
- static void
- license ()
-@@ -429,10 +430,12 @@ crc newc odc bin ustar tar (all-caps also recognized)"), arg);
+ static int
+ warn_control (char *arg)
+@@ -404,10 +405,12 @@ crc newc odc bin ustar tar (all-caps als
  
      case NO_ABSOLUTE_FILENAMES_OPTION:		/* --no-absolute-filenames */
        no_abs_paths_flag = true;
@@ -23,7 +21,7 @@ src/main.c (parse_opt): Change no_abs_paths_flag default value in extract mode f
        break;
        
      case NO_PRESERVE_OWNER_OPTION:		/* --no-preserve-owner */
-@@ -652,6 +655,8 @@ process_args (int argc, char *argv[])
+@@ -599,6 +602,8 @@ process_args (int argc, char *argv[])
        save_patterns = &argv[index];
        if (input_archive_name)
  	archive_name = input_archive_name;
@@ -32,7 +30,7 @@ src/main.c (parse_opt): Change no_abs_paths_flag default value in extract mode f
      }
    else if (copy_function == copy_out)
      {
-@@ -687,6 +692,8 @@ process_args (int argc, char *argv[])
+@@ -634,6 +639,8 @@ process_args (int argc, char *argv[])
  	archive_format = arf_binary;
        if (output_archive_name)
  	archive_name = output_archive_name;
@@ -41,7 +39,7 @@ src/main.c (parse_opt): Change no_abs_paths_flag default value in extract mode f
      }
    else
      {
-@@ -707,10 +714,10 @@ process_args (int argc, char *argv[])
+@@ -654,10 +661,10 @@ process_args (int argc, char *argv[])
        CHECK_USAGE(rename_flag, "--rename", "--pass-through");
        CHECK_USAGE(append_flag, "--append", "--pass-through");
        CHECK_USAGE(rename_batch_file, "--rename-batch-file", "--pass-through");

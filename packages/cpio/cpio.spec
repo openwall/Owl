@@ -1,24 +1,22 @@
-# $Owl: Owl/packages/cpio/cpio.spec,v 1.27 2009/09/09 16:45:50 ldv Exp $
+# $Owl: Owl/packages/cpio/cpio.spec,v 1.28 2009/10/12 20:57:18 mci Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
-Version: 2.9
+Version: 2.10.90
 Release: owl1
 License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/cpio/
-Source0: ftp://ftp.gnu.org/gnu/cpio-%version.tar.bz2
+Source0: ftp://alpha.gnu.org/pub/gnu/cpio-%version.tar.bz2
 Source1: rmt.8
-Patch0: paxlib-cvs-20070817-safer_name_suffix-alloca.diff
-Patch1: gnulib-up-version.diff
-Patch2: cpio-2.9-owl-info.diff
+Patch0: cpio-2.9-owl-info.diff
+Patch1: cpio-2.9-alt-mkdir-mknod.diff
+Patch2: cpio-2.9-alt-open-O_EXCL.diff
 Patch3: cpio-2.9-rh-svr4compat.diff
-Patch4: cpio-2.9-alt-no_abs_paths_flag.diff
-Patch5: cpio-2.9-alt-open-O_EXCL.diff
-Patch6: cpio-2.9-alt-mkdir-mknod.diff
-Patch7: cpio-2.9-owl-warnings.diff
-Patch8: cpio-2.9-deb-owl-mt-scsi.diff
-Patch9: cpio-2.9-deb-owl-rmt.diff
+Patch4: cpio-2.10.90-alt-no_abs_paths_flag.diff
+Patch5: cpio-2.10.90-owl-fixes.diff
+Patch6: cpio-2.10.90-rh-error.diff
+
 PreReq: /sbin/install-info
 Provides: mt-st, rmt
 Prefix: %_prefix
@@ -39,17 +37,16 @@ and can read archives created on machines with a different byte-order.
 
 %prep
 %setup -q
-%patch0 -p0
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
 install -m644 %_sourcedir/rmt.8 .
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
 %configure --enable-mt
@@ -96,6 +93,10 @@ fi
 %_datadir/locale/*/LC_MESSAGES/cpio.mo
 
 %changelog
+* Mon Oct 12 2009 Michail Litvak <mci-at-owl.openwall.com> 2.10.90-owl1
+- Updated to 2.10.90.
+- Removed patches which included to upstream.
+
 * Fri Aug 17 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.9-owl1
 - Updated to 2.9.
 - Fixed crash bug in list and extract modes.
