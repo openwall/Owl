@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.49 2009/09/09 16:45:50 ldv Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.50 2009/10/13 09:38:24 mci Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -10,10 +10,10 @@
 %define BUILD_CHECKER 0
 %define BUILD_DEBUG 0
 
-Summary: Utilities for managing the second extended (ext2) filesystem.
+Summary: Utilities for managing ext2/ext3/ext4 filesystems.
 Name: e2fsprogs
-Version: 1.41.5
-Release: owl2
+Version: 1.41.9
+Release: owl1
 License: GPL
 Group: System Environment/Base
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
@@ -22,7 +22,7 @@ Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
 Patch1: e2fsprogs-1.41.5-alt-fixes.diff
 Patch2: e2fsprogs-1.41.5-owl-blkid-env.diff
 Patch3: e2fsprogs-1.41.5-owl-tests.diff
-Patch4: e2fsprogs-1.41.5-owl-warnings.diff
+Patch4: e2fsprogs-1.41.9-owl-warnings.diff
 PreReq: /sbin/ldconfig
 BuildRequires: gettext, texinfo, automake, autoconf
 BuildRequires: glibc >= 0:2.2, sed >= 0:4.1
@@ -33,13 +33,14 @@ BuildRoot: /override/%name-%version
 
 %description
 The e2fsprogs package contains a number of utilities for creating,
-checking, modifying and correcting any inconsistencies in second
-extended (ext2) filesystems.  e2fsprogs contains e2fsck (used to repair
+checking, modifying, and correcting any inconsistencies in ext2, ext3,
+and ext4 filesystems.  E2fsprogs contains e2fsck (used to repair
 filesystem inconsistencies after an unclean shutdown), mke2fs (used to
 initialize a partition to contain an empty ext2 filesystem), debugfs
 (used to examine the internal structure of a filesystem, to manually
-repair a corrupted filesystem or to create test cases for e2fsck), tune2fs
-(used to modify filesystem parameters) and most of the other core ext2fs
+repair a corrupted filesystem or to create test cases for e2fsck),
+tune2fs (used to modify filesystem parameters), resize2fs to grow and
+shrink unmounted ext2 filesystems, and most of the other core ext2fs
 filesystem utilities.
 
 %package devel
@@ -49,8 +50,8 @@ PreReq: /sbin/install-info
 Requires: e2fsprogs = %version-%release
 
 %description devel
-e2fsprogs-devel contains the libraries and header files needed to
-develop second extended (ext2) filesystem-specific programs.
+E2fsprogs-devel contains the libraries and header files needed to
+develop ext2, ext3, or ext4 filesystem-specific programs.
 
 %prep
 %setup -q
@@ -169,6 +170,7 @@ fi
 /sbin/tune2fs
 /sbin/e2undo
 %_sbindir/filefrag
+%_sbindir/e2freefrag
 %_sbindir/mklost+found
 
 /%_lib/libblkid.so.*
@@ -194,6 +196,7 @@ fi
 %_mandir/man8/e2label.8*
 %_mandir/man8/e2undo.8*
 %_mandir/man8/filefrag.8*
+%_mandir/man8/e2freefrag.8*
 %_mandir/man8/findfs.8*
 %_mandir/man8/fsck.8*
 %_mandir/man8/fsck.ext2.8*
@@ -264,6 +267,10 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Mon Oct 12 2009 Michail Litvak <mci-at-owl.openwall.com> 1.41.9-owl1
+- Updated to 1.41.9.
+- Updated -owl-warnings patch.
+
 * Thu May 05 2009 Michail Litvak <mci-at-owl.openwall.com> 1.41.5-owl2
 - Fixed compiler warnings.
 
