@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/cpio/cpio.spec,v 1.29 2009/10/12 20:59:51 mci Exp $
+# $Owl: Owl/packages/cpio/cpio.spec,v 1.30 2009/10/13 22:44:58 solar Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
@@ -8,6 +8,7 @@ License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/cpio/
 Source0: ftp://alpha.gnu.org/pub/gnu/cpio/cpio-%version.tar.bz2
+# Signature: ftp://alpha.gnu.org/pub/gnu/cpio/cpio-%version.tar.bz2.sig
 Source1: rmt.8
 Patch0: cpio-2.9-owl-info.diff
 Patch1: cpio-2.9-alt-mkdir-mknod.diff
@@ -95,7 +96,7 @@ fi
 %changelog
 * Mon Oct 12 2009 Michail Litvak <mci-at-owl.openwall.com> 2.10.90-owl1
 - Updated to 2.10.90.
-- Removed patches which included to upstream.
+- Removed patches included upstream.
 
 * Fri Aug 17 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.9-owl1
 - Updated to 2.9.
