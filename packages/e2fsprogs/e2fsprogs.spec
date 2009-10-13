@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.50 2009/10/13 09:38:24 mci Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.51 2009/10/13 23:03:12 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -16,7 +16,9 @@ Version: 1.41.9
 Release: owl1
 License: GPL
 Group: System Environment/Base
+URL: http://e2fsprogs.sourceforge.net
 Source: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
+# Signature: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz.asc
 # http://repo.or.cz/w/e2fsprogs.git?a=shortlog;h=maint
 #Patch0: e2fsprogs-1.40.4-git-20071229-maint.diff
 Patch1: e2fsprogs-1.41.5-alt-fixes.diff
@@ -44,14 +46,14 @@ shrink unmounted ext2 filesystems, and most of the other core ext2fs
 filesystem utilities.
 
 %package devel
-Summary: Ext2 filesystem-specific static libraries and headers.
+Summary: Ext2/ext3/ext4 filesystem-specific static libraries and headers.
 Group: Development/Libraries
 PreReq: /sbin/install-info
 Requires: e2fsprogs = %version-%release
 
 %description devel
-E2fsprogs-devel contains the libraries and header files needed to
-develop ext2, ext3, or ext4 filesystem-specific programs.
+e2fsprogs-devel contains the libraries and header files needed to build
+ext2, ext3, and/or ext4 filesystem-specific programs.
 
 %prep
 %setup -q
