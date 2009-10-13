@@ -46,6 +46,12 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/10/13	Package: e2fsprogs
+Updated to 1.41.9.
+
+2009/10/13	Package: cpio
+Updated to 2.10.90.
+
 2009/09/28 -
 2009/10/10	Packages: pam, pam_passwdqc, passwdqc;
 		Owl/build/installorder.conf
@@ -983,4 +989,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.202 2009/10/11 00:39:41 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.203 2009/10/13 23:07:45 solar Exp $
