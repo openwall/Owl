@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.29 2007/08/30 20:37:48 ldv Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.30 2009/10/21 20:59:44 mci Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -6,13 +6,13 @@
 
 Summary: The VIM editor.
 Name: vim
-%define major 6
-%define minor 4
+%define major 7
+%define minor 2
 %define alpha %nil
-%define patchlevel 4
+%define patchlevel 267
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl3
+Release: owl1
 License: Charityware
 Group: Applications/Editors
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%major.%minor%alpha.tar.bz2
@@ -22,16 +22,13 @@ Source3: vitmp.1
 Source4: vimrc
 Source5: gvim.desktop
 Source6: README
-Patch0: vim-6.4-deb-fixes.diff
-Patch1: vim-6.4-deb-man.diff
-Patch2: vim-6.4-owl-tmp.diff
-Patch3: vim-6.4-rh-fix-keys.diff
-Patch4: vim-6.4-rh-owl-spec-syntax.diff
-Patch5: vim-6.4-rh-owl-vim-not-vi.diff
-Patch6: vim-6.4-rh-owl-xxd-locale.diff
-Patch7: vim-6.4-rh-paths.diff
-Patch8: vim-6.4-up-format-helptags.diff
-Patch9: vim-6.4-up-modeline.diff
+Patch0: vim-6.4-rh-owl-spec-syntax.diff
+Patch1: vim-6.4-rh-paths.diff
+Patch2: vim-7.2-deb-fixes.diff
+Patch3: vim-7.2-owl-tmp.diff
+Patch4: vim-7.2-rh-fix-keys.diff
+Patch5: vim-7.2-rh-owl-vim-not-vi.diff
+Patch6: vim-7.2-rh-owl-xxd-locale.diff
 Requires: mktemp >= 1:1.3.1
 BuildRequires: libtermcap-devel, ncurses-devel, perl
 BuildRequires: sed >= 4.0.9
@@ -122,9 +119,6 @@ test ! -e failed
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
 rm src/auto/configure
 install -pm644 %_sourcedir/README .
 
@@ -232,6 +226,10 @@ cp %_sourcedir/gvim.desktop etc/X11/applnk/Applications/
 %else
 # XXX: investigate this -- (GM)
 rm -r .%_mandir/man1/evim.1*
+rm -r .%_mandir/fr*/man1/evim.1*
+rm -r .%_mandir/it*/man1/evim.1*
+rm -r .%_mandir/pl*/man1/evim.1*
+rm -r .%_mandir/ru*/man1/evim.1*
 %endif
 
 install -pm644 %_sourcedir/vimrc .%_datadir/vim/
@@ -247,7 +245,15 @@ chmod 644 ../runtime/doc/vim2html.pl
 %_bindir/xxd
 %_datadir/vim
 %_mandir/man1/vim.*
+%_mandir/fr*/man1/vim.*
+%_mandir/it*/man1/vim.*
+%_mandir/pl*/man1/vim.*
+%_mandir/ru*/man1/vim.*
 %_mandir/man1/xxd.*
+%_mandir/fr*/man1/xxd.*
+%_mandir/it*/man1/xxd.*
+%_mandir/pl*/man1/xxd.*
+%_mandir/ru*/man1/xxd.*
 
 %files small
 %defattr(-,root,root)
@@ -272,7 +278,15 @@ chmod 644 ../runtime/doc/vim2html.pl
 %_mandir/man1/rvim.*
 %_mandir/man1/view.*
 %_mandir/man1/vimdiff.*
+%_mandir/fr*/man1/vimdiff.*
+%_mandir/it*/man1/vimdiff.*
+%_mandir/pl*/man1/vimdiff.*
+%_mandir/ru*/man1/vimdiff.*
 %_mandir/man1/vimtutor.*
+%_mandir/fr*/man1/vimtutor.*
+%_mandir/it*/man1/vimtutor.*
+%_mandir/pl*/man1/vimtutor.*
+%_mandir/ru*/man1/vimtutor.*
 
 %if %BUILD_USE_X
 %files X11
@@ -288,9 +302,17 @@ chmod 644 ../runtime/doc/vim2html.pl
 %_mandir/man1/gview.*
 %_mandir/man1/gex.*
 %_mandir/man1/evim.*
+%_mandir/fr*/man1/evim.*
+%_mandir/it*/man1/evim.*
+%_mandir/pl*/man1/evim.*
+%_mandir/ru*/man1/evim.*
 %endif
 
 %changelog
+* Tue Oct 20 2009 Michail Litvak <mci-at-owl.openwall.com> 7.2.267-owl1
+- Updated to 7.2 patchlevel 267.
+- Regenerated patches, removed patches included to upstream.
+
 * Thu Aug 30 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.4.4-owl3
 - Backported upstream patch to disallow system() function in modelines
 (CVE-2007-2438).
