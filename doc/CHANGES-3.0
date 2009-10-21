@@ -46,6 +46,12 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/10/21	Package: vim
+Updated to 7.2 patchlevel 267.
+
+2009/10/21	Package: strace
+Updated to 4.5.19.
+
 2009/10/13	Package: e2fsprogs
 Updated to 1.41.9.
 
@@ -989,4 +995,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.203 2009/10/13 23:07:45 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.204 2009/10/21 23:01:18 solar Exp $
