@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.30 2009/10/21 20:59:44 mci Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.31 2009/10/21 22:35:58 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -15,6 +15,7 @@ Version: %major.%minor%{?patchlevel:.%patchlevel}
 Release: owl1
 License: Charityware
 Group: Applications/Editors
+URL: http://www.vim.org
 Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%major.%minor%alpha.tar.bz2
 Source1: vim-%major.%minor-%version.bz2
 Source2: vitmp.c
