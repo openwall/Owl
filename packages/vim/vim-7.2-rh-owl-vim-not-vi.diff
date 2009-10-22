@@ -1,0 +1,13 @@
+--- vim72/src/option.c.orig	2008-07-18 13:05:33.000000000 +0000
++++ vim72/src/option.c	2009-10-14 20:43:37.000000000 +0000
+@@ -2949,8 +2949,8 @@ set_init_1()
+     langmap_init();
+ #endif
+ 
+-    /* Be Vi compatible by default */
+-    p_cp = TRUE;
++    /* Don't be Vi compatible by default */
++    p_cp = FALSE;
+ 
+     /* Use POSIX compatibility when $VIM_POSIX is set. */
+     if (mch_getenv((char_u *)"VIM_POSIX") != NULL)

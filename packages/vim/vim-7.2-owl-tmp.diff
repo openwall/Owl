@@ -1,0 +1,99 @@
+--- vim72/runtime/tools/vimspell.sh.orig	2008-07-17 19:48:08.000000000 +0000
++++ vim72/runtime/tools/vimspell.sh	2009-10-15 19:53:46.000000000 +0000
+@@ -16,20 +16,7 @@
+ # Safe method for the temp file by Javier Fernández-Sanguino_Peña
+ 
+ INFILE=$1
+-tmp="${TMPDIR-/tmp}"
+-OUTFILE=`mktemp -t vimspellXXXXXX || tempfile -p vimspell || echo none`
+-# If the standard commands failed then create the file
+-# since we cannot create a directory (we cannot remove it on exit)
+-# create a file in the safest way possible.
+-if test "$OUTFILE" = none; then
+-        OUTFILE=$tmp/vimspell$$
+-	[ -e $OUTFILE ] && { echo "Cannot use temporary file $OUTFILE, it already exists!"; exit 1 ; } 
+-        (umask 077; touch $OUTFILE)
+-fi
+-# Note the copy of vimspell cannot be deleted on exit since it is
+-# used by vim, otherwise it should do this:
+-# trap "rm -f $OUTFILE" 0 1 2 3 9 11 13 15
+-
++OUTFILE="`mktemp -t vimspell.XXXXXXXXXX`" || exit
+ 
+ #
+ # local spellings
+--- vim72/src/fileio.c.orig	2009-10-19 20:30:52.000000000 +0000
++++ vim72/src/fileio.c	2009-10-19 20:33:55.000000000 +0000
+@@ -3479,26 +3479,16 @@ buf_write(buf, fname, sfname, start, end
+ 		/*
+ 		 * Check if we can create a file and set the owner/group to
+ 		 * the ones from the original file.
+-		 * First find a file name that doesn't exist yet (use some
+-		 * arbitrary numbers).
+ 		 */
+-		STRCPY(IObuff, fname);
+-		for (i = 4913; ; i += 123)
+-		{
+-		    sprintf((char *)gettail(IObuff), "%d", i);
+-		    if (mch_lstat((char *)IObuff, &st) < 0)
+-			break;
+-		}
+-		fd = mch_open((char *)IObuff,
+-				    O_CREAT|O_WRONLY|O_EXCL|O_NOFOLLOW, perm);
++ 		sprintf((char *)IObuff, "%s.XXXXXX", fname);
++ 		fd = mkstemp((char *)IObuff);
+ 		if (fd < 0)	/* can't write in directory */
+ 		    backup_copy = TRUE;
+ 		else
+ 		{
+ # ifdef UNIX
+-#  ifdef HAVE_FCHOWN
+-		    ignored = fchown(fd, st_old.st_uid, st_old.st_gid);
+-#  endif
++ 		    if (fchown(fd, st_old.st_uid, st_old.st_gid) == 0)
++ 			fchmod(fd, perm);
+ 		    if (mch_stat((char *)IObuff, &st) < 0
+ 			    || st.st_uid != st_old.st_uid
+ 			    || st.st_gid != st_old.st_gid
+--- vim72/src/vimtutor.orig	2008-04-05 10:21:11.000000000 +0000
++++ vim72/src/vimtutor	2009-10-14 21:01:28.000000000 +0000
+@@ -23,34 +23,14 @@
+ xx=$1
+ export xx
+ 
+-# We need a temp file for the copy.  First try using a standard command.
+-tmp="${TMPDIR-/tmp}"
+-TUTORCOPY=`mktemp $tmp/tutorXXXXXX || tempfile -p tutor || echo none`
+-
+-# If the standard commands failed then create a directory to put the copy in.
+-# That is a secure way to make a temp file.
+-if test "$TUTORCOPY" = none; then
+-	tmpdir=$tmp/vimtutor$$
+-	OLD_UMASK=`umask`
+-	umask 077
+-	getout=no
+-	mkdir $tmpdir || getout=yes
+-	umask $OLD_UMASK
+-	if test $getout = yes; then
+-		echo "Could not create directory for tutor copy, exiting."
+-		exit 1
+-	fi
+-	TUTORCOPY=$tmpdir/tutorcopy
+-	touch $TUTORCOPY
+-	TODELETE=$tmpdir
+-else
+-	TODELETE=$TUTORCOPY
+-fi
+-
++# We need a temp file for the copy.
++TUTORCOPY="`mktemp -t vimtutor.XXXXXXXXXX`" || exit
+ export TUTORCOPY
+ 
+ # remove the copy of the tutor on exit
+-trap "rm -rf $TODELETE" 0 1 2 3 9 11 13 15
++trap 'rm -f -- "$TUTORCOPY"' EXIT
++trap 'trap - EXIT; rm -f -- "$TUTORCOPY"; exit 1' HUP INT QUIT TERM
++
+ 
+ for i in $seq; do
+ 	testvim=`which $i 2>/dev/null`

@@ -1,0 +1,55 @@
+--- vim72/src/xxd/xxd.c.orig	2007-11-29 20:05:16.000000000 +0000
++++ vim72/src/xxd/xxd.c	2009-10-13 20:33:27.000000000 +0000
+@@ -90,12 +90,12 @@
+ #if __MWERKS__ && !defined(BEBOX)
+ # include <unix.h>	/* for fdopen() on MAC */
+ #endif
+-
+ #if defined(__BORLANDC__) && __BORLANDC__ <= 0x0410 && !defined(fileno)
+ /* Missing define and prototype grabbed from the BC 4.0 <stdio.h> */
+ # define fileno(f)       ((f)->fd)
+ FILE   _FAR *_Cdecl _FARFUNC fdopen(int __handle, char _FAR *__type);
+ #endif
++#include <locale.h>
+ 
+ 
+ /*  This corrects the problem of missing prototypes for certain functions
+@@ -452,6 +452,11 @@ char *argv[];
+   long length = -1, n = 0, seekoff = 0;
+   char l[LLEN+1];
+   char *pname, *pp;
++  char *lang=getenv("LANG");
++  if(!lang) lang=getenv("LC_ALL");
++  if(!lang) lang=getenv("LC_CTYPE");
++  if(lang)
++	  setlocale(LC_ALL, lang);
+ 
+ #ifdef AMIGA
+   /* This program doesn't work when started from the Workbench */
+@@ -672,7 +677,7 @@ char *argv[];
+       if (fp != stdin)
+ 	{
+ 	  fprintf(fpo, "unsigned char %s", isdigit((int)argv[1][0]) ? "__" : "");
+-	  for (e = 0; (c = argv[1][e]) != 0; e++)
++	  for (e = 0; (c = (unsigned char)argv[1][e]) != 0; e++)
+ 	    putc(isalnum(c) ? c : '_', fpo);
+ 	  fputs("[] = {\n", fpo);
+ 	}
+@@ -691,7 +696,7 @@ char *argv[];
+       if (fp != stdin)
+ 	{
+ 	  fprintf(fpo, "unsigned int %s", isdigit((int)argv[1][0]) ? "__" : "");
+-	  for (e = 0; (c = argv[1][e]) != 0; e++)
++	  for (e = 0; (c = (unsigned char)argv[1][e]) != 0; e++)
+ 	    putc(isalnum(c) ? c : '_', fpo);
+ 	  fprintf(fpo, "_len = %d;\n", p);
+ 	}
+@@ -756,7 +761,7 @@ char *argv[];
+ #ifdef __MVS__
+ 	  (e >= 64)
+ #else
+-	  (e > 31 && e < 127)
++	  ((e > 31 && e < 127) || isalnum(e))
+ #endif
+ 	  ? e : '.';
+       if (e)
