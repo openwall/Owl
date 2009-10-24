@@ -46,6 +46,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/10/24	Package: xinetd
+Updated to 2.3.14.
+
 2009/10/24	Package: vsftpd
 Updated to 2.2.1.
 
@@ -998,4 +1001,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.205 2009/10/24 06:55:14 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.206 2009/10/24 10:57:14 solar Exp $
