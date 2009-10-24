@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/xinetd/xinetd.spec,v 1.39 2009/10/24 10:55:45 solar Exp $
+# $Owl: Owl/packages/xinetd/xinetd.spec,v 1.40 2009/10/24 11:12:02 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
@@ -23,6 +23,7 @@ Patch1: xinetd-2.3.14-up-revert-bad_port_check.diff
 Patch2: xinetd-2.3.14-owl-fixes.diff
 Patch3: xinetd-2.3.13-alt-pidfile.diff
 Patch4: xinetd-2.3.13-alt-parse_inet_addresses.diff
+Patch5: xinetd-2.3.14-owl-man.diff
 PreReq: /sbin/chkconfig
 Requires: tcp_wrappers >= 7.6-owl3.2
 Provides: inetd
@@ -51,6 +52,7 @@ limits on the number of servers that can be started, among other things.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 bzip2 -9k CHANGELOG
 
 %{expand:%%define optflags %optflags -Wall -W -Wno-unused -Wno-switch}

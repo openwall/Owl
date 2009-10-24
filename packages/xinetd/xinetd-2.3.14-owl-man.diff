@@ -1,0 +1,26 @@
+diff -ur xinetd-2.3.14.orig/xinetd/xinetd.conf.man xinetd-2.3.14/xinetd/xinetd.conf.man
+--- xinetd-2.3.14.orig/xinetd/xinetd.conf.man	2005-10-05 17:15:33 +0000
++++ xinetd-2.3.14/xinetd/xinetd.conf.man	2009-10-24 11:08:11 +0000
+@@ -228,7 +228,7 @@
+ determines the arguments passed to the server. In contrast to \fBinetd\fP,
+ the server name should \fInot\fP be included in \fIserver_args\fP.
+ .TP
+-+.B libwrap
++.B libwrap
+ overrides the service name passed to libwrap (which defaults to the
+ server name, the first server_args component with NAMEINARGS, the id
+ for internal services and the service name for redirected services).
+diff -ur xinetd-2.3.14.orig/xinetd/xinetd.man xinetd-2.3.14/xinetd/xinetd.man
+--- xinetd-2.3.14.orig/xinetd/xinetd.man	2003-05-30 15:10:57 +0000
++++ xinetd-2.3.14/xinetd/xinetd.man	2009-10-24 11:07:54 +0000
+@@ -185,8 +185,9 @@
+ .LP
+ .I "http://cr.yp.to/daemontools.html"
+ .\" *********************** AUTHOR ****************************
+-.SH AUTHOR
++.SH AUTHORS
+ Panos Tsirigotis, CS Dept, University of Colorado, Boulder
++.br
+ Rob Braun
+ .\" *********************** PRONUNCIATION ****************************
+ .SH PRONUNCIATION
