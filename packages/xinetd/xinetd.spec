@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/xinetd/xinetd.spec,v 1.40 2009/10/24 11:12:02 solar Exp $
+# $Owl: Owl/packages/xinetd/xinetd.spec,v 1.41 2009/10/24 11:30:34 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
@@ -24,6 +24,8 @@ Patch2: xinetd-2.3.14-owl-fixes.diff
 Patch3: xinetd-2.3.13-alt-pidfile.diff
 Patch4: xinetd-2.3.13-alt-parse_inet_addresses.diff
 Patch5: xinetd-2.3.14-owl-man.diff
+Patch6: xinetd-2.3.12-rh-tcp_rpc.diff
+Patch7: xinetd-2.3.14-rh-man.diff
 PreReq: /sbin/chkconfig
 Requires: tcp_wrappers >= 7.6-owl3.2
 Provides: inetd
@@ -53,6 +55,8 @@ limits on the number of servers that can be started, among other things.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
+%patch7 -p1
 bzip2 -9k CHANGELOG
 
 %{expand:%%define optflags %optflags -Wall -W -Wno-unused -Wno-switch}
@@ -122,6 +126,8 @@ fi
 - Added range checks to parse_int()-like functions in xinetd/util.c as needed
 because of changes between 2.3.13 and 2.3.14.
 - With ctype macros, cast char arguments to (int)(unsigned char).
+- Added a couple of Red Hat derived patches (NOLIBWRAP for RPC/TCP services,
+correctly install the xinetd.log(5) man page into section 5).
 
 * Thu Jul 20 2006 Solar Designer <solar-at-owl.openwall.com> 2.3.13-owl4
 - Changed the permissions on /etc/xinetd.d to 750 root:wheel, and on
