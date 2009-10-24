@@ -1,0 +1,403 @@
+diff -urp xinetd-2.3.14.orig/libs/src/portable/cvt.c xinetd-2.3.14/libs/src/portable/cvt.c
+--- xinetd-2.3.14.orig/libs/src/portable/cvt.c	2003-02-19 17:29:27 +0000
++++ xinetd-2.3.14/libs/src/portable/cvt.c	2009-10-24 08:12:48 +0000
+@@ -115,7 +115,7 @@ APPEND (FUNC_PREFIX, fcvt_r) (FLOAT_TYPE
+        return -1;
+ 
+     i = 0;
+-    while (i < n && isdigit (buf[i]))
++    while (i < n && isdigit ((int)(unsigned char)buf[i]))
+        ++i;
+     *decpt = i;
+ 
+@@ -126,7 +126,7 @@ APPEND (FUNC_PREFIX, fcvt_r) (FLOAT_TYPE
+     if (i < n) {
+        do
+        ++i;
+-       while (i < n && !isdigit (buf[i]));
++       while (i < n && !isdigit ((int)(unsigned char)buf[i]));
+ 
+        if (*decpt == 1 && buf[0] == '0' && value != 0.0) {
+           /* We must not have leading zeroes.  Strip them all out and
+diff -urp xinetd-2.3.14.orig/libs/src/portable/inet_aton.c xinetd-2.3.14/libs/src/portable/inet_aton.c
+--- xinetd-2.3.14.orig/libs/src/portable/inet_aton.c	2003-02-19 17:29:27 +0000
++++ xinetd-2.3.14/libs/src/portable/inet_aton.c	2009-10-24 08:01:28 +0000
+@@ -103,11 +103,11 @@ inet_aton(const char *cp, struct in_addr
+ {
+ 	register uint32_t val;
+ 	register int base, n;
+-	register char c;
++	register int c;
+ 	unsigned int parts[4];
+ 	register unsigned int *pp = parts;
+ 
+-	c = *cp;
++	c = (unsigned char)*cp;
+ 	for (;;) {
+ 		/*
+ 		 * Collect number up to ``.''.
+@@ -118,20 +118,20 @@ inet_aton(const char *cp, struct in_addr
+ 			return (0);
+ 		val = 0; base = 10;
+ 		if (c == '0') {
+-			c = *++cp;
++			c = (unsigned char)*++cp;
+ 			if (c == 'x' || c == 'X')
+-				base = 16, c = *++cp;
++				base = 16, c = (unsigned char)*++cp;
+ 			else
+ 				base = 8;
+ 		}
+ 		for (;;) {
+ 			if (isascii(c) && isdigit(c)) {
+ 				val = (val * base) + (c - '0');
+-				c = *++cp;
++				c = (unsigned char)*++cp;
+ 			} else if (base == 16 && isascii(c) && isxdigit(c)) {
+ 				val = (val << 4) |
+ 					(c + 10 - (islower(c) ? 'a' : 'A'));
+-				c = *++cp;
++				c = (unsigned char)*++cp;
+ 			} else
+ 				break;
+ 		}
+@@ -145,7 +145,7 @@ inet_aton(const char *cp, struct in_addr
+ 			if (pp >= parts + 3)
+ 				return (0);
+ 			*pp++ = val;
+-			c = *++cp;
++			c = (unsigned char)*++cp;
+ 		} else
+ 			break;
+ 	}
+diff -urp xinetd-2.3.14.orig/libs/src/portable/strcasecmp.c xinetd-2.3.14/libs/src/portable/strcasecmp.c
+--- xinetd-2.3.14.orig/libs/src/portable/strcasecmp.c	2003-02-19 17:29:27 +0000
++++ xinetd-2.3.14/libs/src/portable/strcasecmp.c	2009-10-24 08:18:20 +0000
+@@ -8,8 +8,8 @@ strcasecmp(s1, s2)
+ 	*us1 = (const u_char *)s1,
+ 	*us2 = (const u_char *)s2;
+ 
+-	while (tolower(*us1) == tolower(*us2++))
++	while (tolower((int)*us1) == tolower((int)*us2++))
+ 		if (*us1++ == '\0')
+ 			return (0);
+-	return (tolower(*us1) - tolower(*--us2));
++	return (tolower((int)*us1) - tolower((int)*--us2));
+ }
+diff -urp xinetd-2.3.14.orig/libs/src/sio/sprint.c xinetd-2.3.14/libs/src/sio/sprint.c
+--- xinetd-2.3.14.orig/libs/src/sio/sprint.c	2003-03-09 19:27:07 +0000
++++ xinetd-2.3.14/libs/src/sio/sprint.c	2009-10-24 08:14:19 +0000
+@@ -84,7 +84,7 @@ static char S_NULL[S_NULL_LEN+1] = "(nul
+ 
+ #define STR_TO_DEC( str, num )						\
+ 	num = NUM( *str++ ) ;						\
+-	while ( isdigit( *str ) )					\
++	while ( isdigit( (int)(unsigned char)*str ) )			\
+ 	{								\
+ 		num *= 10 ;						\
+ 		num += NUM( *str++ ) ;					\
+@@ -180,7 +180,7 @@ static char *conv_fp( char format, doubl
+ 	/*
+ 	 * Check for Infinity and NaN
+ 	 */
+-	if ( isalpha( *p ) )
++	if ( isalpha( (int)(unsigned char)*p ) )
+ 	{
+ 		*len = strlen( strcpy( buf, p ) ) ;
+ 		*is_negative = FALSE ;
+@@ -406,7 +406,8 @@ int __sio_converter( __sio_od_t *odp, in
+ 			/*
+ 			 * Try to avoid checking for flags, width or precision
+ 			 */
+-			if ( isascii( *fmt ) && ! islower( *fmt ) )
++			if ( isascii( (int)(unsigned char)*fmt ) &&
++			    ! islower( (int)(unsigned char)*fmt ) )
+ 			{
+ 				/*
+ 				 * Recognize flags: -, #, BLANK, +
+@@ -430,7 +431,7 @@ int __sio_converter( __sio_od_t *odp, in
+ 				/*
+ 				 * Check if a width was specified
+ 				 */
+-				if ( isdigit( *fmt ) )
++				if ( isdigit( (int)(unsigned char)*fmt ) )
+ 				{
+ 					STR_TO_DEC( fmt, min_width ) ;
+ 					adjust_width = YES ;
+@@ -456,7 +457,7 @@ int __sio_converter( __sio_od_t *odp, in
+ 				{
+ 					adjust_precision = YES ;
+ 					fmt++ ;
+-					if ( isdigit( *fmt ) )
++					if ( isdigit( (int)(unsigned char)*fmt ) )
+ 					{
+ 						STR_TO_DEC( fmt, precision ) ;
+ 					}
+diff -urp xinetd-2.3.14.orig/libs/src/str/strutil.c xinetd-2.3.14/libs/src/str/strutil.c
+--- xinetd-2.3.14.orig/libs/src/str/strutil.c	2003-06-01 14:09:43 +0000
++++ xinetd-2.3.14/libs/src/str/strutil.c	2009-10-24 08:11:35 +0000
+@@ -25,7 +25,7 @@
+  */
+ char *str_casefind( register char *str, char *sstr )
+ {
+-	register int ssfc = *sstr++ ;		/* sub-string first char */
++	register int ssfc = (unsigned char)*sstr++ ; /* sub-string first char */
+ 
+ 	if ( ssfc == 0 )
+ 		return( str ) ;
+@@ -36,7 +36,7 @@ char *str_casefind( register char *str, 
+ 	while ( *str )
+ 	{
+ 		char *current = str ;
+-		register int strc = *str++ ;
++		register int strc = (unsigned char)*str++ ;
+ 		char *sp ;							/* string pointer */
+ 		char *ssp ;							/* sub-string pointer */
+ 
+@@ -47,8 +47,8 @@ char *str_casefind( register char *str, 
+ 		
+ 		for ( sp = str, ssp = sstr ;; sp++, ssp++ )
+ 		{
+-			register int sc = *sp ;				/* string char */
+-			register int ssc = *ssp ;			/* substring char */
++			register int sc = (unsigned char)*sp ;		/* string char */
++			register int ssc = (unsigned char)*ssp ;	/* substring char */
+ 
+ 			/*
+ 			 * End-of-substring means we got a match
+diff -urp xinetd-2.3.14.orig/xinetd/addr.c xinetd-2.3.14/xinetd/addr.c
+--- xinetd-2.3.14.orig/xinetd/addr.c	2005-04-08 21:23:07 +0000
++++ xinetd-2.3.14/xinetd/addr.c	2009-10-24 08:16:02 +0000
+@@ -276,7 +276,7 @@ int check_hostname( const char *addr )
+ 
+    for (i = 0; addr[i]; ++i)
+    {
+-      if ( !isdigit(addr[i]) && (addr[i] != '.') )
++      if ( !isdigit((int)(unsigned char)addr[i]) && (addr[i] != '.') )
+          return 1;
+    }
+    return 0;
+@@ -641,7 +641,7 @@ static result_e factorized_addr( const c
+ 
+    for ( i = 0 ; str_addr[i] != OPEN_CURLY_BRACKET ; last = str_addr[i++] )
+    {
+-      if ( isdigit( str_addr[i] ) )
++      if ( isdigit( (int)(unsigned char)str_addr[i] ) )
+       {
+          num = num * 10 + str_addr[i] - '0' ;
+          continue ;
+@@ -680,7 +680,7 @@ static result_e factorized_addr( const c
+       num = 0 ;
+       for ( i = i+1, last = COMMA ;; last = str_addr[i++] )
+       {
+-         if ( isdigit( str_addr[i] ) )
++         if ( isdigit( (int)(unsigned char)str_addr[i] ) )
+          {
+             num = num * 10 + str_addr[i] - '0' ;
+             continue ;
+diff -urp xinetd-2.3.14.orig/xinetd/ident.c xinetd-2.3.14/xinetd/ident.c
+--- xinetd-2.3.14.orig/xinetd/ident.c	2005-10-05 17:20:11 +0000
++++ xinetd-2.3.14/xinetd/ident.c	2009-10-24 07:59:06 +0000
+@@ -241,7 +241,7 @@ static char *verify_line( char *line, 
+       unsigned int line_id_len = strlen( line_id ) ;
+ 
+       start = p+1 ;
+-      for ( p = start ; isspace( *p ) ; p++ ) ;
++      for ( p = start ; isspace( (int)(unsigned char)*p ) ; p++ ) ;
+       if ( *p == NUL )
+          return( NULL ) ;
+       start = p ;
+@@ -250,10 +250,10 @@ static char *verify_line( char *line, 
+       start += line_id_len ;      /* skip it */
+    }
+ 
+-   for ( p = start ; isspace( *p ) ; p++ ) ;      /* skip any white-space */
++   for ( p = start ; isspace( (int)(unsigned char)*p ) ; p++ ) ; /* skip any white-space */
+    if ( *p != ':' )
+       return( NULL ) ;
+-   for ( p++ ; isspace( *p ) ; p++ ) ;
++   for ( p++ ; isspace( (int)(unsigned char)*p ) ; p++ ) ;
+    if ( *p == NUL )
+       return( NULL ) ;
+    return( p ) ;
+diff -urp xinetd-2.3.14.orig/xinetd/parsers.c xinetd-2.3.14/xinetd/parsers.c
+--- xinetd-2.3.14.orig/xinetd/parsers.c	2005-10-05 21:45:41 +0000
++++ xinetd-2.3.14/xinetd/parsers.c	2009-10-24 07:56:33 +0000
+@@ -793,7 +793,7 @@ static int get_limit( char *limit_str, r
+    }
+ 
+    p = limit_str + strlen( limit_str ) - 1;
+-   while ( p > limit_str && isspace( *p ) )
++   while ( p > limit_str && isspace( (int)(unsigned char)*p ) )
+       p--;
+ 
+    if (*p == 'k' || *p == 'K') {
+diff -urp xinetd-2.3.14.orig/xinetd/parsesup.c xinetd-2.3.14/xinetd/parsesup.c
+--- xinetd-2.3.14.orig/xinetd/parsesup.c	2003-05-31 21:58:58 +0000
++++ xinetd-2.3.14/xinetd/parsesup.c	2009-10-24 07:58:25 +0000
+@@ -39,7 +39,7 @@ char *next_line( int fd )
+       for ( p = line ;; p++ )
+          if ( *p == NUL || *p == COMMENT_BEGIN )
+             break ;                                /* skip this line */
+-         else if ( isspace( *p ) )
++         else if ( isspace( (int)(unsigned char)*p ) )
+             continue ;                             /* skip white space */
+          else
+             return( line ) ;
+@@ -69,7 +69,7 @@ static char *get_attr_op( char *line, ch
+    /*
+     * First get the attribute name
+     */
+-   for ( p = line ; isspace( *p ) ; p++ ) ;      /* skip spaces */
++   for ( p = line ; isspace( (int)(unsigned char)*p ) ; p++ ) ; /* skip spaces */
+    if ( *p == NUL )
+    {
+       parsemsg( LOG_ERR, func, "Empty line" ) ;
+@@ -77,7 +77,7 @@ static char *get_attr_op( char *line, ch
+    }
+ 
+    attr = p ;
+-   for ( ; ! isspace( *p ) && (*p != '='); p++ ) ;            /* skip attribute name */
++   for ( ; ! isspace( (int)(unsigned char)*p ) && (*p != '='); p++ ) ; /* skip attribute name */
+    if ( *p == NUL )
+    {
+       parsemsg( LOG_ERR, func, "Nothing after attribute: %s", attr ) ;
+@@ -90,7 +90,7 @@ static char *get_attr_op( char *line, ch
+    }
+    *p++ = NUL ;         /* now attribute name is NUL terminated */
+ 
+-   while ( isspace( *p ) ) p++ ;      /* skip spaces */
++   while ( isspace( (int)(unsigned char)*p ) ) p++ ; /* skip spaces */
+ 
+    switch ( *p )
+    {
+@@ -200,7 +200,7 @@ int line_has_only_1_char( const char *li
+    for ( p = line ; *p ; p++ )
+       if ( *p == target_char )
+          target_char = NUL ;
+-      else if ( ! isspace( *p ) )
++      else if ( ! isspace( (int)(unsigned char)*p ) )
+          return( FALSE ) ;
+    return( target_char != ch ) ;
+ }
+diff -urp xinetd-2.3.14.orig/xinetd/sensor.c xinetd-2.3.14/xinetd/sensor.c
+--- xinetd-2.3.14.orig/xinetd/sensor.c	2003-08-06 06:12:10 +0000
++++ xinetd-2.3.14/xinetd/sensor.c	2005-06-28 16:11:39 +0000
+@@ -100,21 +100,22 @@ void process_sensor( const struct servic
+ 	 {
+ 	    /* Here again, eh?...update time stamp. */
+             char *exp_time;
+-	    time_t stored_time;
++	    int stored_time;
+ 
+ 	    item_matched--; /* Is # plus 1, to even get here must be >= 1 */
+             exp_time = pset_pointer( global_no_access_time, item_matched ) ;
+             if (exp_time == NULL)
+                return ;
+ 
+-            if ( parse_base10(exp_time, (int *)&stored_time) )
++            if ( parse_base10(exp_time, &stored_time) == 0)
+             {  /* if never let them off, bypass */
+                if (stored_time != -1)
+                {
+                   time_t nowtime, new_time;
+ 
+                   nowtime = time(NULL);
+-                  new_time = (time_t)nowtime+(60*SC_DENY_TIME(SVC_CONF(sp)));                     if (difftime(new_time, (time_t)stored_time) > 0.0)
++                  new_time = (time_t)nowtime+(60*SC_DENY_TIME(SVC_CONF(sp)));
++		  if (difftime(new_time, (time_t)stored_time) > 0.0)
+ 	          {   /* new_time is longer save it   */
+ 		     char time_buf[40], *new_exp_time;
+ 
+@@ -168,12 +169,14 @@ static void scrub_global_access_list( vo
+       for (u=0; u < count; u++)
+       {
+          char *exp_time;
+-         time_t stored_time;
++         int stored_time;
+ 	 
+ 	 exp_time = pset_pointer( global_no_access_time, u ) ;
+-         stored_time = atol(exp_time);
+ 
+-	 if (stored_time == -1)   /* never let them off   */
++	 if (exp_time == NULL)
++	    continue;
++
++	 if (parse_base10(exp_time, &stored_time) || stored_time == -1)   /* never let them off   */
+ 	    continue;
+ 
+ 	 if (difftime(nowtime, (time_t)stored_time) >= 0.0)
+diff -urp xinetd-2.3.14.orig/xinetd/time.c xinetd-2.3.14/xinetd/time.c
+--- xinetd-2.3.14.orig/xinetd/time.c	2003-02-19 17:29:28 +0000
++++ xinetd-2.3.14/xinetd/time.c	2009-10-24 08:16:17 +0000
+@@ -66,7 +66,7 @@ static int get_num( int *nump, 
+    const char *func = "get_num" ;
+    int i = 0;
+ 
+-   for ( *nump = 0 ; isdigit( s[i] ) ; i++ )
++   for ( *nump = 0 ; isdigit( (int)(unsigned char)s[i] ) ; i++ )
+    {
+       *nump *= 10 ;
+       *nump += s[i] - '0' ;
+diff -urp xinetd-2.3.14.orig/xinetd/util.c xinetd-2.3.14/xinetd/util.c
+--- xinetd-2.3.14.orig/xinetd/util.c	2005-10-05 21:45:41 +0000
++++ xinetd-2.3.14/xinetd/util.c	2009-10-24 10:20:29 +0000
+@@ -274,10 +274,12 @@ int parse_int(const char *str, int base,
+ 	errno = 0;
+ 	strtol_res = strtol(str, (char **)&endptr, base);
+ 
+-	if (errno == 0 && *str != NUL) {
++	if (errno == 0 && *str != NUL &&
++	    strtol_res >= INT_MIN && strtol_res <= INT_MAX) {
+ 		/* Special case: -1 means allow trailing whitespace */
+ 		if (term == -1) {
+-			while (*endptr != NUL && isspace(*endptr))
++			while (*endptr != NUL &&
++			    isspace((int)(unsigned char)*endptr))
+ 				endptr++;
+ 			term = NUL;
+ 		}
+@@ -297,7 +299,15 @@ int parse_uint(const char *str, int base
+ 	unsigned long long tmp;
+ 	int ret;
+ 	ret = parse_ull(str, base, term, &tmp);
+-	*res = (unsigned int)tmp;
++	if (!ret) {
++		/* This kind of check is only valid for unsigned types */
++		if ((unsigned int)tmp == tmp)
++			*res = (unsigned int)tmp;
++		else
++			ret = -1;
++	}
++	if (ret)
++		*res = 0;
+ 	return ret;
+ }
+ 
+@@ -316,7 +326,8 @@ int parse_ull(const char *str, int base,
+ 	if (errno == 0 && *str != NUL) {
+ 		/* Special case: -1 means allow trailing whitespace */
+ 		if (term == -1) {
+-			while (*endptr != NUL && isspace(*endptr))
++			while (*endptr != NUL &&
++			    isspace((int)(unsigned char)*endptr))
+ 				endptr++;
+ 			term = NUL;
+ 		}
+@@ -343,12 +354,8 @@ int parse_base10(const char *str, int *r
+ 
+ bool_int parse_all_digits(const char *ptr)
+ {
+-	size_t num=0, len = strlen(ptr);
+-
+-	while (isdigit(*ptr++))
+-		num++;
+-	if (num == len)
+-		return TRUE;
+-	else
+-		return FALSE;
++	while (*ptr)
++		if (!isdigit((int)(unsigned char)*ptr++))
++			return FALSE;
++	return TRUE;
+ }
