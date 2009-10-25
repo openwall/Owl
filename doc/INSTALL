@@ -68,6 +68,10 @@ To actually install Owl, change directory to /usr/src/world and type:
 If there are any problems during the "installworld" stage (watch for
 the "Failed" lines), correct their cause and re-run the command.
 
+The setup program (invoked by "make setup" above) helps you take care of
+some of the configuration settings for the newly installed system, but
+it does not currently create /etc/fstab.  You need to do this manually.
+
 Once the Owl userland is installed, you need to also install a kernel
 and configure a boot loader.  Owl currently does not provide a pre-built
 kernel other than on the CDs, so you will need to either build the
@@ -79,8 +83,8 @@ chrooted to your newly installed userland:
 
 	chroot /owl
 
-Currently, Owl supports Linux 2.4.x kernels.  We recommend that you use
-the version provided with your copy of Owl.
+Currently, Owl supports Linux 2.4.x and 2.6.x kernels.  We recommend
+that you use the version provided with your copy of Owl.
 
 You may choose to configure the boot loader available with Owl (LILO
 or SILO, depending on the architecture), or you may use a boot loader
@@ -89,4 +93,4 @@ already installed on the system (if any).
 Once the installation is complete, make sure to manually unmount the
 filesystems with umount(8) prior to rebooting the system.
 
-$Owl: Owl/doc/INSTALL,v 1.23 2007/06/06 08:51:53 solar Exp $
+$Owl: Owl/doc/INSTALL,v 1.24 2009/10/25 04:56:43 solar Exp $
