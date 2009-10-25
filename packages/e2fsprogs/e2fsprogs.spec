@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.51 2009/10/13 23:03:12 solar Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.52 2009/10/25 06:51:24 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -13,7 +13,7 @@
 Summary: Utilities for managing ext2/ext3/ext4 filesystems.
 Name: e2fsprogs
 Version: 1.41.9
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 URL: http://e2fsprogs.sourceforge.net
@@ -25,6 +25,7 @@ Patch1: e2fsprogs-1.41.5-alt-fixes.diff
 Patch2: e2fsprogs-1.41.5-owl-blkid-env.diff
 Patch3: e2fsprogs-1.41.5-owl-tests.diff
 Patch4: e2fsprogs-1.41.9-owl-warnings.diff
+Patch5: e2fsprogs-1.41.9-owl-initialize-readline_shutdown.diff
 PreReq: /sbin/ldconfig
 BuildRequires: gettext, texinfo, automake, autoconf
 BuildRequires: glibc >= 0:2.2, sed >= 0:4.1
@@ -63,6 +64,7 @@ chmod -R u+w .
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 bzip2 -9k RELEASE-NOTES
 
 # remove these unwanted header files just in case
@@ -269,6 +271,11 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Sun Oct 25 2009 Solar Designer <solar-at-owl.openwall.com> 1.41.9-owl2
+- Initialize the readline_shutdown pointer (to NULL) such that
+ss_delete_invocation() won't attempt to call a non-existent
+readline_shutdown function via the previously-uninitialized pointer.
+
 * Mon Oct 12 2009 Michail Litvak <mci-at-owl.openwall.com> 1.41.9-owl1
 - Updated to 1.41.9.
 - Updated -owl-warnings patch.
