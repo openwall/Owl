@@ -42,6 +42,20 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl 2.0-stable.
 
+(2009/10/25)
+2009/10/25	kernel
+SECURITY FIX	Severity: none to medium, local, active
+Updated to Linux 2.4.37.6-ow1.  The 2.4.37.6 kernel fixes a number of
+information leak vulnerabilities.  One of these was already fixed in
+2.4.37.5-ow1, and the remaining ones may or may not affect specific
+systems depending on both kernel and userspace configuration.  The
+2.4.37.6-ow1 patch additionally fixes a typo in one of the information
+leak fixes (CVE-2009-3612).
+References:
+http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.6
+http://patchwork.ozlabs.org/patch/35412/
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-3612
+
 (2009/08/23)
 2009/08/23	kernel
 SECURITY FIX	Severity: none to high/medium, local, active
@@ -573,4 +587,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.73 2009/08/23 10:49:24 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.74 2009/10/25 04:39:21 solar Exp $
