@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.52 2009/10/25 06:51:24 solar Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.53 2009/10/25 07:00:28 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -78,9 +78,6 @@ find -type f -print0 |
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-# There're currently no pre-compiled versions of these texinfo files
-# included, should uncomment if that changes.
-#rm doc/libext2fs.info
 %configure \
 	--with-cc="%__cc" \
 	--disable-e2initrd-helper \
@@ -88,7 +85,6 @@ find -type f -print0 |
 	--disable-uuidd \
 	--enable-elf-shlibs \
 	--enable-htree \
-	--enable-htree-clear \
 	--enable-nls \
 %if %BUILD_COMPRESSION
 	--enable-compression \
@@ -106,7 +102,6 @@ find -type f -print0 |
 %endif
 	--enable-maintainer-mode # to build NLS files
 
-# NB: this package cannot be built using parallel tasks -- (GM)
 %__make all
 
 %check
