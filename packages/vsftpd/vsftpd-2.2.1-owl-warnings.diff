@@ -1,0 +1,165 @@
+--- vsftpd/ftpcmdio.h
++++ vsftpd/ftpcmdio.h
+@@ -1,6 +1,8 @@
+ #ifndef VSF_FTPCMDIO_H
+ #define VSF_FTPCMDIO_H
+ 
++#include "port/porting_junk.h"
++
+ struct mystr;
+ struct vsf_session;
+ 
+@@ -51,7 +53,7 @@ void vsf_cmdio_write_raw(struct vsf_session* p_sess, const char* p_text);
+  * write is _guaranteed_ to not block (ditching output if neccessary).
+  */
+ void vsf_cmdio_write_exit(struct vsf_session* p_sess, int status,
+-                          const char* p_text);
++                          const char* p_text) VSF_NORETURN;
+ 
+ /* vsf_cmdio_write_str()
+  * PURPOSE
+--- vsftpd/port/porting_junk.h
++++ vsftpd/port/porting_junk.h
+@@ -26,5 +26,18 @@
+  */
+ #include "cmsg_extras.h"
+ 
++#if defined(__GNUC__) && defined(__GNUC_MINOR__)
++# define VSF_GNUC_PREREQ(maj, min) \
++        (((__GNUC__ << 16) + __GNUC_MINOR__) >= (((maj) << 16) + (min)))
++#else
++# define VSF_GNUC_PREREQ(maj, min) 0
++#endif
++
++#if VSF_GNUC_PREREQ(2,5)
++# define VSF_NORETURN __attribute__((noreturn))
++#else
++# define VSF_NORETURN
++#endif
++
+ #endif /* VSF_PORTINGJUNK_H */
+ 
+--- vsftpd/str.c
++++ vsftpd/str.c
+@@ -435,9 +435,7 @@ str_locate_chars(const struct mystr* p_str, const char* p_chars)
+   struct str_locate_result retval;
+   unsigned int num_chars = vsf_sysutil_strlen(p_chars);
+   unsigned int i = 0;
+-  retval.found = 0;
+-  retval.char_found = 0;
+-  retval.index = 0;
++  vsf_sysutil_memclr(&retval, sizeof(retval));
+   for (; i < p_str->len; ++i)
+   {
+     unsigned int j = 0;
+@@ -462,9 +460,7 @@ str_locate_text(const struct mystr* p_str, const char* p_text)
+   struct str_locate_result retval;
+   unsigned int i;
+   unsigned int text_len = vsf_sysutil_strlen(p_text);
+-  retval.found = 0;
+-  retval.char_found = 0;
+-  retval.index = 0;
++  vsf_sysutil_memclr(&retval, sizeof(retval));
+   if (text_len == 0 || text_len > p_str->len)
+   {
+     /* Not found */
+@@ -489,9 +485,7 @@ str_locate_text_reverse(const struct mystr* p_str, const char* p_text)
+   struct str_locate_result retval;
+   unsigned int i;
+   unsigned int text_len = vsf_sysutil_strlen(p_text);
+-  retval.found = 0;
+-  retval.char_found = 0;
+-  retval.index = 0;
++  vsf_sysutil_memclr(&retval, sizeof(retval));
+   if (text_len == 0 || text_len > p_str->len)
+   {
+     return retval;
+--- vsftpd/sysutil.c
++++ vsftpd/sysutil.c
+@@ -23,9 +23,6 @@
+ #define _LARGEFILE64_SOURCE 1
+ #define _LARGE_FILES 1
+ 
+-/* For Linux, this adds nothing :-) */
+-#include "port/porting_junk.h"
+-
+ #include <signal.h>
+ #include <string.h>
+ #include <stdlib.h>
+--- vsftpd/sysutil.h
++++ vsftpd/sysutil.h
+@@ -6,6 +6,7 @@
+ #ifndef VSF_FILESIZE_H
+ #include "filesize.h"
+ #endif
++#include "port/porting_junk.h"
+ 
+ /* Return value queries */
+ int vsf_sysutil_retval_is_error(int retval);
+@@ -168,7 +169,7 @@ unsigned int vsf_sysutil_getpid(void);
+ void vsf_sysutil_clear_pid_cache(void);
+ int vsf_sysutil_fork(void);
+ int vsf_sysutil_fork_failok(void);
+-void vsf_sysutil_exit(int exit_code);
++void vsf_sysutil_exit(int exit_code) VSF_NORETURN;
+ struct vsf_sysutil_wait_retval
+ {
+   int PRIVATE_HANDS_OFF_syscall_retval;
+--- vsftpd/twoprocess.c
++++ vsftpd/twoprocess.c
+@@ -42,7 +42,7 @@ static void calculate_chdir_dir(int anon, struct mystr* p_userdir_str,
+                                 const struct mystr* p_user_str,
+                                 const struct mystr* p_orig_user_str);
+ 
+-static void
++static void VSF_NORETURN
+ handle_sigchld(void* duff)
+ {
+ 
+--- vsftpd/utility.h
++++ vsftpd/utility.h
+@@ -1,6 +1,8 @@
+ #ifndef VSF_UTILITY_H
+ #define VSF_UTILITY_H
+ 
++#include "port/porting_junk.h"
++
+ struct mystr;
+ 
+ /* die()
+@@ -10,7 +12,7 @@ struct mystr;
+  * PARAMETERS
+  * p_text       - text string describing why the process is exiting
+  */
+-void die(const char* p_text);
++void die(const char* p_text) VSF_NORETURN;
+ 
+ /* die2()
+  * PURPOSE
+@@ -20,7 +22,7 @@ void die(const char* p_text);
+  * p_text1      - text string describing why the process is exiting
+  * p_text2      - text to safely concatenate to p_text1
+  */
+-void die2(const char* p_text1, const char* p_text2);
++void die2(const char* p_text1, const char* p_text2) VSF_NORETURN;
+ 
+ /* bug()
+  * PURPOSE
+@@ -29,7 +31,7 @@ void die2(const char* p_text1, const char* p_text2);
+  * PARAMETERS
+  * p_text       - text string describing what bug trap has triggered
+  *       */
+-void bug(const char* p_text);
++void bug(const char* p_text) VSF_NORETURN;
+ 
+ /* vsf_exit()
+  * PURPOSE
+@@ -38,7 +40,7 @@ void bug(const char* p_text);
+  * PARAMETERS
+  * p_text       - text string describing why the process is exiting
+  */
+-void vsf_exit(const char* p_text);
++void vsf_exit(const char* p_text) VSF_NORETURN;
+ 
+ #endif
+ 
