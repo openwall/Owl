@@ -74,18 +74,67 @@
    if (text_len == 0 || text_len > p_str->len)
    {
      return retval;
+--- vsftpd/sysdeputil.c
++++ vsftpd/sysdeputil.c
+@@ -7,6 +7,12 @@
+  * Highly system dependent utilities - e.g. authentication, capabilities.
+  */
+ 
++#if (defined(__FreeBSD__) && __FreeBSD__ >= 3)
++  #define _FILE_OFFSET_BITS 64
++  #define _LARGEFILE_SOURCE 1
++  #define _LARGEFILE64_SOURCE 1
++#endif
++
+ #include "sysdeputil.h"
+ #include "str.h"
+ #include "sysutil.h"
+@@ -16,15 +22,6 @@
+ #include "tunables.h"
+ #include "builddefs.h"
+ 
+-/* For Linux, this adds nothing :-) */
+-#include "port/porting_junk.h"
+-
+-#if (defined(__FreeBSD__) && __FreeBSD__ >= 3)
+-  #define _FILE_OFFSET_BITS 64
+-  #define _LARGEFILE_SOURCE 1
+-  #define _LARGEFILE64_SOURCE 1
+-#endif
+-
+ /* For INT_MAX */
+ #include <limits.h>
+ 
 --- vsftpd/sysutil.c
 +++ vsftpd/sysutil.c
-@@ -23,9 +23,6 @@
+@@ -10,21 +10,18 @@
+  * dependencies on libc or syscalls.
+  */
+ 
+-#define PRIVATE_HANDS_OFF_syscall_retval syscall_retval
+-#define PRIVATE_HANDS_OFF_exit_status exit_status
+-#include "sysutil.h"
+-#include "utility.h"
+-#include "tunables.h"
+-#include "sysdeputil.h"
+-
+ /* Activate 64-bit file support on Linux/32bit plus others */
+ #define _FILE_OFFSET_BITS 64
+ #define _LARGEFILE_SOURCE 1
  #define _LARGEFILE64_SOURCE 1
  #define _LARGE_FILES 1
  
 -/* For Linux, this adds nothing :-) */
 -#include "port/porting_junk.h"
--
++#define PRIVATE_HANDS_OFF_syscall_retval syscall_retval
++#define PRIVATE_HANDS_OFF_exit_status exit_status
++#include "sysutil.h"
++#include "utility.h"
++#include "tunables.h"
++#include "sysdeputil.h"
+ 
  #include <signal.h>
  #include <string.h>
- #include <stdlib.h>
 --- vsftpd/sysutil.h
 +++ vsftpd/sysutil.h
 @@ -6,6 +6,7 @@

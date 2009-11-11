@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.35 2009/10/27 00:30:24 ldv Exp $
+# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.36 2009/11/11 18:28:18 ldv Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
 Version: 2.2.1
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Daemons
 URL: http://vsftpd.beasts.org
@@ -84,6 +84,9 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %_mandir/man8/vsftpd.8*
 
 %changelog
+* Wed Nov 11 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.2.1-owl3
+- Fixed regression in LFS support by activating LFS early.
+
 * Tue Oct 27 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.2.1-owl2
 - Made fixes for compilation warnings more portable.
 
