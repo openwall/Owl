@@ -1,14 +1,15 @@
-# $Owl: Owl/packages/diffstat/diffstat.spec,v 1.13 2009/05/23 20:23:05 mci Exp $
+# $Owl: Owl/packages/diffstat/diffstat.spec,v 1.14 2009/11/18 04:59:38 solar Exp $
 
 Summary: A utility which provides statistics based on the output of diff.
 Name: diffstat
-Version: 1.47
+Version: 1.51
 Release: owl1
 Group: Development/Tools
 License: distributable
 URL: http://invisible-island.net/diffstat/
 Source: ftp://dickey.his.com/diffstat/%name-%version.tgz
-Patch: diffstat-1.47-owl-man.diff
+Patch0: diffstat-1.47-owl-man.diff
+Patch1: diffstat-1.51-owl-tmp.diff
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
 
@@ -20,11 +21,15 @@ to provide a summary of the changes in large, complex patch files.
 
 %prep
 %setup -q
-%patch -p1
+%patch0 -p1
+%patch1 -p1
 
 %build
 %configure --with-warnings
 %__make
+
+%check
+%__make check
 
 %install
 rm -rf %buildroot
@@ -37,6 +42,11 @@ rm -rf %buildroot
 %_mandir/man1/*
 
 %changelog
+* Wed Nov 18 2009 Solar Designer <solar-at-owl.openwall.com> 1.51-owl1
+- Updated to 1.51.
+- Remove the temporary directory on error (introduced in 1.48+).
+- Run the testsuite.
+
 * Sat May 23 2009 Michail Litvak <mci-at-owl.openwall.com> 1.47-owl1
 - Updated to 1.47.
 
