@@ -46,6 +46,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/11/18	Package: diffstat
+Updated to 1.51.
+
 2009/11/18	Package: vsftpd
 Updated to 2.2.2.
 
@@ -1020,4 +1023,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.209 2009/11/18 04:23:23 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.210 2009/11/18 05:10:22 solar Exp $
