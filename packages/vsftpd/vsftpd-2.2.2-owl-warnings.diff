@@ -1,5 +1,6 @@
---- vsftpd/ftpcmdio.h
-+++ vsftpd/ftpcmdio.h
+diff -urp vsftpd-2.2.2.orig/ftpcmdio.h vsftpd-2.2.2/ftpcmdio.h
+--- vsftpd-2.2.2.orig/ftpcmdio.h	2008-02-02 01:30:41 +0000
++++ vsftpd-2.2.2/ftpcmdio.h	2009-11-18 04:09:48 +0000
 @@ -1,6 +1,8 @@
  #ifndef VSF_FTPCMDIO_H
  #define VSF_FTPCMDIO_H
@@ -9,7 +10,7 @@
  struct mystr;
  struct vsf_session;
  
-@@ -51,7 +53,7 @@ void vsf_cmdio_write_raw(struct vsf_session* p_sess, const char* p_text);
+@@ -51,7 +53,7 @@ void vsf_cmdio_write_raw(struct vsf_sess
   * write is _guaranteed_ to not block (ditching output if neccessary).
   */
  void vsf_cmdio_write_exit(struct vsf_session* p_sess, int status,
@@ -18,8 +19,9 @@
  
  /* vsf_cmdio_write_str()
   * PURPOSE
---- vsftpd/port/porting_junk.h
-+++ vsftpd/port/porting_junk.h
+diff -urp vsftpd-2.2.2.orig/port/porting_junk.h vsftpd-2.2.2/port/porting_junk.h
+--- vsftpd-2.2.2.orig/port/porting_junk.h	2008-02-02 01:30:39 +0000
++++ vsftpd-2.2.2/port/porting_junk.h	2009-11-18 04:09:48 +0000
 @@ -26,5 +26,18 @@
   */
  #include "cmsg_extras.h"
@@ -39,9 +41,10 @@
 +
  #endif /* VSF_PORTINGJUNK_H */
  
---- vsftpd/str.c
-+++ vsftpd/str.c
-@@ -435,9 +435,7 @@ str_locate_chars(const struct mystr* p_str, const char* p_chars)
+diff -urp vsftpd-2.2.2.orig/str.c vsftpd-2.2.2/str.c
+--- vsftpd-2.2.2.orig/str.c	2008-12-17 05:54:16 +0000
++++ vsftpd-2.2.2/str.c	2009-11-18 04:09:48 +0000
+@@ -435,9 +435,7 @@ str_locate_chars(const struct mystr* p_s
    struct str_locate_result retval;
    unsigned int num_chars = vsf_sysutil_strlen(p_chars);
    unsigned int i = 0;
@@ -52,7 +55,7 @@
    for (; i < p_str->len; ++i)
    {
      unsigned int j = 0;
-@@ -462,9 +460,7 @@ str_locate_text(const struct mystr* p_str, const char* p_text)
+@@ -462,9 +460,7 @@ str_locate_text(const struct mystr* p_st
    struct str_locate_result retval;
    unsigned int i;
    unsigned int text_len = vsf_sysutil_strlen(p_text);
@@ -63,7 +66,7 @@
    if (text_len == 0 || text_len > p_str->len)
    {
      /* Not found */
-@@ -489,9 +485,7 @@ str_locate_text_reverse(const struct mystr* p_str, const char* p_text)
+@@ -489,9 +485,7 @@ str_locate_text_reverse(const struct mys
    struct str_locate_result retval;
    unsigned int i;
    unsigned int text_len = vsf_sysutil_strlen(p_text);
@@ -74,8 +77,9 @@
    if (text_len == 0 || text_len > p_str->len)
    {
      return retval;
---- vsftpd/sysdeputil.c
-+++ vsftpd/sysdeputil.c
+diff -urp vsftpd-2.2.2.orig/sysdeputil.c vsftpd-2.2.2/sysdeputil.c
+--- vsftpd-2.2.2.orig/sysdeputil.c	2009-11-12 03:16:15 +0000
++++ vsftpd-2.2.2/sysdeputil.c	2009-11-18 04:09:48 +0000
 @@ -7,6 +7,12 @@
   * Highly system dependent utilities - e.g. authentication, capabilities.
   */
@@ -105,8 +109,9 @@
  /* For INT_MAX */
  #include <limits.h>
  
---- vsftpd/sysutil.c
-+++ vsftpd/sysutil.c
+diff -urp vsftpd-2.2.2.orig/sysutil.c vsftpd-2.2.2/sysutil.c
+--- vsftpd-2.2.2.orig/sysutil.c	2009-11-12 02:03:19 +0000
++++ vsftpd-2.2.2/sysutil.c	2009-11-18 04:09:48 +0000
 @@ -10,21 +10,18 @@
   * dependencies on libc or syscalls.
   */
@@ -135,8 +140,9 @@
  
  #include <signal.h>
  #include <string.h>
---- vsftpd/sysutil.h
-+++ vsftpd/sysutil.h
+diff -urp vsftpd-2.2.2.orig/sysutil.h vsftpd-2.2.2/sysutil.h
+--- vsftpd-2.2.2.orig/sysutil.h	2009-11-12 00:48:37 +0000
++++ vsftpd-2.2.2/sysutil.h	2009-11-18 04:09:48 +0000
 @@ -6,6 +6,7 @@
  #ifndef VSF_FILESIZE_H
  #include "filesize.h"
@@ -146,7 +152,7 @@
  /* Return value queries */
  int vsf_sysutil_retval_is_error(int retval);
 @@ -168,7 +169,7 @@ unsigned int vsf_sysutil_getpid(void);
- void vsf_sysutil_clear_pid_cache(void);
+ void vsf_sysutil_post_fork(void);
  int vsf_sysutil_fork(void);
  int vsf_sysutil_fork_failok(void);
 -void vsf_sysutil_exit(int exit_code);
@@ -154,9 +160,10 @@
  struct vsf_sysutil_wait_retval
  {
    int PRIVATE_HANDS_OFF_syscall_retval;
---- vsftpd/twoprocess.c
-+++ vsftpd/twoprocess.c
-@@ -42,7 +42,7 @@ static void calculate_chdir_dir(int anon, struct mystr* p_userdir_str,
+diff -urp vsftpd-2.2.2.orig/twoprocess.c vsftpd-2.2.2/twoprocess.c
+--- vsftpd-2.2.2.orig/twoprocess.c	2009-07-18 05:56:44 +0000
++++ vsftpd-2.2.2/twoprocess.c	2009-11-18 04:09:48 +0000
+@@ -42,7 +42,7 @@ static void calculate_chdir_dir(int anon
                                  const struct mystr* p_user_str,
                                  const struct mystr* p_orig_user_str);
  
@@ -165,8 +172,9 @@
  handle_sigchld(void* duff)
  {
  
---- vsftpd/utility.h
-+++ vsftpd/utility.h
+diff -urp vsftpd-2.2.2.orig/utility.h vsftpd-2.2.2/utility.h
+--- vsftpd-2.2.2.orig/utility.h	2008-02-02 01:30:41 +0000
++++ vsftpd-2.2.2/utility.h	2009-11-18 04:09:48 +0000
 @@ -1,6 +1,8 @@
  #ifndef VSF_UTILITY_H
  #define VSF_UTILITY_H
@@ -194,7 +202,7 @@
  
  /* bug()
   * PURPOSE
-@@ -29,7 +31,7 @@ void die2(const char* p_text1, const char* p_text2);
+@@ -29,7 +31,7 @@ void die2(const char* p_text1, const cha
   * PARAMETERS
   * p_text       - text string describing what bug trap has triggered
   *       */

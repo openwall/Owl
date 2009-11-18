@@ -1,6 +1,7 @@
---- vsftpd-2.2.0/sysdeputil.c.orig	2009-07-14 04:03:31.000000000 +0000
-+++ vsftpd-2.2.0/sysdeputil.c	2009-07-18 08:02:39.000000000 +0000
-@@ -166,7 +166,7 @@
+diff -urp vsftpd-2.2.2-owl-warnings/sysdeputil.c vsftpd-2.2.2/sysdeputil.c
+--- vsftpd-2.2.2-owl-warnings/sysdeputil.c	2009-11-18 04:09:48 +0000
++++ vsftpd-2.2.2/sysdeputil.c	2009-11-18 04:11:02 +0000
+@@ -163,7 +163,7 @@
  /* END config */
  
  /* PAM support - we include our own dummy version if the system lacks this */
@@ -9,8 +10,8 @@
  
  /* No PAM? Try getspnam() with a getpwnam() fallback */
  #ifndef VSF_SYSDEP_HAVE_PAM
-@@ -305,9 +305,7 @@
- #else /* VSF_SYSDEP_HAVE_PAM */
+@@ -309,9 +309,7 @@ vsf_sysdep_check_auth(struct mystr* p_us
+ typedef lo_const void* pam_item_t;
  
  static pam_handle_t* s_pamh;
 -static struct mystr s_pword_str;
@@ -20,7 +21,7 @@
  static void vsf_auth_shutdown(void);
  
  int
-@@ -319,14 +317,15 @@
+@@ -324,14 +322,15 @@ vsf_sysdep_check_auth(struct mystr* p_us
    const char* pam_user_name = 0;
    struct pam_conv the_conv =
    {
@@ -39,7 +40,7 @@
    retval = pam_start(tunable_pam_service_name,
                       str_getbuf(p_user_str), &the_conv, &s_pamh);
    if (retval != PAM_SUCCESS)
-@@ -432,6 +431,7 @@
+@@ -438,6 +437,7 @@ vsf_auth_shutdown(void)
    vsf_remove_uwtmp();
  }
  
@@ -47,7 +48,7 @@
  static int
  pam_conv_func(int nmsg, const struct pam_message** p_msg,
                struct pam_response** p_reply, void* p_addata)
-@@ -467,6 +467,7 @@
+@@ -473,6 +473,7 @@ pam_conv_func(int nmsg, const struct pam
    *p_reply = p_resps;
    return PAM_SUCCESS;
  }

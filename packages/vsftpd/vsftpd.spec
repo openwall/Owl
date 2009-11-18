@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.36 2009/11/11 18:28:18 ldv Exp $
+# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.37 2009/11/18 04:17:21 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
-Version: 2.2.1
-Release: owl3
+Version: 2.2.2
+Release: owl1
 License: GPL
 Group: System Environment/Daemons
 URL: http://vsftpd.beasts.org
@@ -13,8 +13,8 @@ Source1: vsftpd.eps.gz
 Source2: vsftpd.pam
 Source3: vsftpd.xinetd
 Source4: vsftpd.logrotate
-Patch0: vsftpd-2.2.1-owl-warnings.diff
-Patch1: vsftpd-2.2.0-owl-pam_userpass.diff
+Patch0: vsftpd-2.2.2-owl-warnings.diff
+Patch1: vsftpd-2.2.2-owl-pam_userpass.diff
 Patch2: vsftpd-2.2.1-owl-alt-defaults.diff
 Patch3: vsftpd-2.2.0-owl-man.diff
 Requires: logrotate, pam >= 0:0.80-owl2, pam_userpass, tcb, xinetd, /var/empty
@@ -84,6 +84,9 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %_mandir/man8/vsftpd.8*
 
 %changelog
+* Wed Nov 18 2009 Solar Designer <solar-at-owl.openwall.com> 2.2.2-owl1
+- Updated to 2.2.2.
+
 * Wed Nov 11 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.2.1-owl3
 - Fixed regression in LFS support by activating LFS early.
 
