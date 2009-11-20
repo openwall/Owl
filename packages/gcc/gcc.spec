@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.57 2009/11/20 10:43:33 solar Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.58 2009/11/20 10:53:20 solar Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -40,7 +40,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: 3.4.5
-Release: owl3
+Release: owl4
 Epoch: 1
 License: GPL
 Group: Development/Languages
