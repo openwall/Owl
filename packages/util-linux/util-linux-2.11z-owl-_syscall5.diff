@@ -1,0 +1,39 @@
+diff -urp util-linux-2.11z.orig/fdisk/llseek.c util-linux-2.11z/fdisk/llseek.c
+--- util-linux-2.11z.orig/fdisk/llseek.c	2002-10-31 13:44:31 +0000
++++ util-linux-2.11z/fdisk/llseek.c	2009-11-20 11:50:12 +0000
+@@ -30,7 +30,9 @@ extern ext2_loff_t ext2_llseek (unsigned
+ #define my_llseek lseek
+ 
+ #else
++#define __KERNEL__
+ #include <linux/unistd.h>	/* for __NR__llseek */
++#undef __KERNEL__
+ 
+ static int _llseek (unsigned int, unsigned long,
+ 		   unsigned long, ext2_loff_t *, unsigned int);
+diff -urp util-linux-2.11z.orig/fdisk/sfdisk.c util-linux-2.11z/fdisk/sfdisk.c
+--- util-linux-2.11z.orig/fdisk/sfdisk.c	2003-01-28 18:18:03 +0000
++++ util-linux-2.11z/fdisk/sfdisk.c	2009-11-20 11:49:53 +0000
+@@ -46,7 +46,9 @@
+ #include <sys/ioctl.h>
+ #include <sys/stat.h>
+ #include <sys/utsname.h>
++#define __KERNEL__
+ #include <linux/unistd.h>	/* _syscall */
++#undef __KERNEL__
+ #include "nls.h"
+ #include "common.h"
+ 
+diff -urp util-linux-2.11z.orig/partx/partx.c util-linux-2.11z/partx/partx.c
+--- util-linux-2.11z.orig/partx/partx.c	2002-10-31 13:51:06 +0000
++++ util-linux-2.11z/partx/partx.c	2009-11-20 11:53:05 +0000
+@@ -338,7 +338,9 @@ xmalloc (size_t size) {
+ #endif
+ 
+ #ifdef NEED__llseek
++#define __KERNEL__
+ #include <linux/unistd.h>       /* _syscall */
++#undef __KERNEL__
+ static
+ _syscall5(int,  _llseek,  uint,  fd, ulong, hi, ulong, lo,
+ 	  long long *, res, uint, wh);

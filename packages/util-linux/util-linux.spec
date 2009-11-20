@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.47 2009/09/21 22:12:25 ldv Exp $
+# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.48 2009/11/20 12:23:24 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -7,7 +7,7 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.11z
-Release: owl12
+Release: owl13
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%version.tar.bz2
@@ -27,8 +27,9 @@ Patch8: util-linux-2.11z-up-elvtune.diff
 Patch9: util-linux-2.11z-up-cytune.diff
 Patch10: util-linux-2.11z-owl-hwclock.diff
 Patch11: util-linux-2.11z-up-pivot_root.diff
+Patch12: util-linux-2.11z-owl-_syscall5.diff
 %if %BUILD_CRYPTO
-Patch12: util-linux-2.11z-crypto-v3.diff.bz2
+Patch100: util-linux-2.11z-crypto-v3.diff.bz2
 %endif
 PreReq: /sbin/install-info
 PreReq: owl-control >= 0.4, owl-control < 2.0
@@ -86,8 +87,9 @@ to query the status of a loop device.
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
-%if %BUILD_CRYPTO
 %patch12 -p1
+%if %BUILD_CRYPTO
+%patch100 -p1
 %endif
 
 %build
@@ -351,6 +353,10 @@ fi
 %endif
 
 %changelog
+* Fri Nov 20 2009 Solar Designer <solar-at-owl.openwall.com> 2.11z-owl13
+- Temporarily #define __KERNEL__ when including <linux/unistd.h> in places
+where the definition of _syscall5() is needed for _llseek().
+
 * Sun Sep 20 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.11z-owl12
 - Fixed build with linux kernel 2.6.x headers.
 
