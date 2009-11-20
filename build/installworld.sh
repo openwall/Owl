@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installworld.sh,v 1.30 2006/12/30 17:29:55 ldv Exp $
+# $Owl: Owl/build/installworld.sh,v 1.31 2009/11/20 10:46:34 solar Exp $
 
 . installworld.conf
 
@@ -207,7 +207,7 @@ done
 
 if [ "$NEED_FAKE" = yes ]; then
 	log "Removing installation support packages"
-	for PACKAGE in glibc-compat-fake libstdc++-v{3,5}-compat db4-compat-fake; do
+	for PACKAGE in glibc-compat-fake libstdc++-v5-compat db4-compat-fake; do
 		if ! $RPM $RPM_FLAGS --root $ROOT -ev $PACKAGE; then
 			log "Removal of $PACKAGE failed"
 		fi
