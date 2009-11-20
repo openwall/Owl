@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.58 2009/11/20 10:53:20 solar Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.59 2009/11/20 10:57:33 solar Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -367,7 +367,7 @@ cd obj-%_target_platform
 	--enable-threads=%threads \
 %if %USE_VERSION_SPECIFIC_LIBS
 	--enable-version-specific-runtime-libs \
-%if BUILD_GXX
+%if %BUILD_GXX
 	--with-gxx-include-dir=%version_libdir/c++ \
 %endif # BUILD_GXX
 %else # USE_VERSION_SPECIFIC_LIBS
@@ -375,7 +375,7 @@ cd obj-%_target_platform
 	--with-gxx-include-dir=%_includedir/c++/%version \
 %endif # BUILD_GXX
 %endif # USE_VERSION_SPECIFIC_LIBS
-%if BUILD_GXX
+%if %BUILD_GXX
 	--disable-libstdcxx-pch \
 %endif # BUILD_GXX
 	--disable-checking \
@@ -688,7 +688,7 @@ fi
 %_libdir/libstdc++.so.2.9
 %_libdir/libstdc++-*libc6*.so*
 %else # BUILD_CXX_COMPAT_SEPARATE
-%if BUILD_CXX_COMPAT_V2
+%if %BUILD_CXX_COMPAT_V2
 %files -n libstdc++-v2-compat
 %defattr(-,root,root)
 %_libdir/libstdc++.so.2.7.2.8
@@ -699,13 +699,13 @@ fi
 %_libdir/libstdc++-*libc6*.so*
 %endif # BUILD_CXX_COMPAT_V3
 %endif # BUILD_CXX_COMPAT_V2
-%if BUILD_CXX_COMPAT_V3
+%if %BUILD_CXX_COMPAT_V3
 %files -n libstdc++-v3-compat
 %defattr(-,root,root)
 %_libdir/libstdc++.so.2.9
 %_libdir/libstdc++-*libc6*.so*
 %endif # BUILD_CXX_COMPAT_V3
-%if BUILD_CXX_COMPAT_V5
+%if %BUILD_CXX_COMPAT_V5
 %files -n libstdc++-v5-compat
 %defattr(-,root,root)
 %_libdir/libstdc++.so.5.0.2
