@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.56 2009/09/01 18:39:58 ldv Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.57 2009/11/20 10:43:33 solar Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -15,10 +15,12 @@
 # Do we need libstdc++-compat libraries?
 %define BUILD_CXX_COMPAT 1
 # ... 2.7.2.8, 2.8.0 and 2.9.0 versions to upgrade RHL 6.2 and below
-%define BUILD_CXX_COMPAT_V2 1
+%define BUILD_CXX_COMPAT_V2 0
 # ... 2.10.0 version to upgrade Owl 1.0 and 1.1 systems
-%define BUILD_CXX_COMPAT_V3 1
-# ... 5.0.2 version to upgrade Owl-current (glibc 3.2.2)
+%define BUILD_CXX_COMPAT_V3 0
+# ... 5.0.2 version to upgrade pre-2.0 Owl-current (gcc 3.2.2)
+# This version is also required by some third-party software builds,
+# such as official builds of Firefox 2.0.
 %define BUILD_CXX_COMPAT_V5 1
 # Should we use separate packages for each compatible library
 %define BUILD_CXX_COMPAT_SEPARATE 1
@@ -159,7 +161,7 @@ PreReq: /sbin/ldconfig
 
 %description -n libstdc++-v2-compat
 This package includes the old shared libraries necessary to run C++
-applications built against the libraries. This package contains
+applications built against the libraries.  This package contains
 libstdc++ library versions 2.7.2.8, 2.8.0, and 2.9.0 and is used to
 upgrade Red Hat Linux 6.2 and below.
 %endif # BUILD_CXX_COMPAT_V2
@@ -174,7 +176,7 @@ Obsoletes: libstdc++-compat
 
 %description -n libstdc++-v3-compat
 This package includes the old shared libraries necessary to run C++
-applications built against the libraries. This package contains
+applications built against the libraries.  This package contains
 libstdc++ library version 2.10.0 and is used to upgrade systems running
 Openwall GNU/*/Linux versions 1.0 and 1.1.
 %endif # BUILD_CXX_COMPAT_V3
@@ -187,9 +189,9 @@ PreReq: /sbin/ldconfig
 
 %description -n libstdc++-v5-compat
 This package includes the old shared libraries necessary to run C++
-applications built against the libraries. This package contains
+applications built against the libraries.  This package contains
 libstdc++ library version 5.0.2 and used to upgrade systems running
-Openwall GNU/*/Linux based on glibc 3.2.2 only.
+Openwall GNU/*/Linux based on gcc 3.2.2 only.
 %endif # BUILD_CXX_COMPAT_V5
 
 %endif # BUILD_CXX_COMPAT_SEPARATE
@@ -784,6 +786,9 @@ fi
 %endif
 
 %changelog
+* Fri Nov 20 2009 Solar Designer <solar-at-owl.openwall.com> 1:3.4.5-owl4
+- Disabled building of V2 and V3 compat subpackages (gcc 2.x'ish libstdc++).
+
 * Wed May 27 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:3.4.5-owl3
 - Disabled unused libstdc++ precompiled header files.
 
