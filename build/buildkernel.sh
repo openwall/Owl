@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/Attic/buildkernel.sh,v 1.2 2007/01/06 22:25:49 ldv Exp $
+# $Owl: Owl/build/Attic/buildkernel.sh,v 1.3 2009/11/20 07:57:43 solar Exp $
 
 set -e
 
@@ -49,6 +49,10 @@ detect_arch()
 		;;
 	alpha)
 		ARCHITECTURE=alpha
+		;;
+	*)
+		echo >&2 "Unknown architecture"
+		exit 1
 		;;
 	esac
 }
@@ -112,10 +116,8 @@ export TMP=$HOME/tmp-work
 
 KERNEL_SRC="$(find $HOME/kernel/ -name 'linux-*.tar.bz2' -printf '%f\n')"
 KERNEL="${KERNEL_SRC%.tar.bz2}"
-OW_SRC="$(find $HOME/kernel/ -name 'linux-*-ow*.tar.gz' -printf '%f\n')"
-OW="${OW_SRC%.tar.gz}"
-CRYPTO_SRC="$(find $HOME/kernel/ -name 'patch-cryptoloop-*.bz2' -printf '%f\n')"
-CRYPTO="${CRYPTO_SRC%.bz2}"
+OPENVZ_SRC="$(find $HOME/kernel/ -name 'patch-*.el*stab*-combined.bz2' -printf '%f\n')"
+OW_SRC="$(find $HOME/kernel/ -name 'linux-*.el*stab*-owl*.diff.gz' -printf '%f\n')"
 
 PACKAGES=$BRANCH/packages
 NATIVE=$HOME/native
@@ -126,24 +128,16 @@ cd $HOME/tmp-work
 log "Unpacking $KERNEL_SRC"
 tar xf "$HOME/kernel/$KERNEL_SRC"
 
-log "Unpacking $OW_SRC"
-tar xf "$HOME/kernel/$OW_SRC"
-
-log "Unpacking $CRYPTO_SRC"
-bzcat "$HOME/kernel/$CRYPTO_SRC" >"$CRYPTO"
-
 cd "$KERNEL"
 
-log "Applying $OW.diff"
-patch -s -p1 <"$HOME/tmp-work/$OW/$OW.diff"
+log "Applying $OPENVZ_SRC"
+bzcat "$HOME/kernel/$OPENVZ_SRC" | patch -s -p1 -T
 
-log "Applying $CRYPTO"
-patch -s -p1 <"$HOME/tmp-work/$CRYPTO"
+log "Applying $OW_SRC"
+zcat "$HOME/kernel/$OW_SRC" | patch -s -p1 -Z
 
-sed -i -e 's/\(#define LINUX_COMPILE_HOST \\"\)[^"]*"/\1\${ARCH}.pvt.openwall.com\\"/' \
-       -e 's/\(#define LINUX_COMPILE_DOMAIN \\"\)[^"]*"/\1\\"/' Makefile
-printf '\nprint_arch:\n\t@echo ${ARCH} >&2\n' >>Makefile
-ARCH="$(env MAKEFLAGS= make print_arch 2>&1 >/dev/null)"
+# Assume that our guess of the architecture matches the kernel's
+ARCH=$ARCHITECTURE
 
 if [ -f "$CDROM/dot-config-$ARCH" ]; then
 	DOT_CONFIG="dot-config-$ARCH"
@@ -156,15 +150,12 @@ cp "$CDROM/$DOT_CONFIG" .config
 log "Configuring kernel"
 yes '' |make oldconfig
 
-log "Building kernel dependencies"
-make dep
-
 log "Building kernel image for $ARCH"
 make "-j$PROCESSORS" bzImage
-	
+
 log "Copying kernel image"
 install -pm644 System.map "arch/$ARCH/boot/bzImage" "$HOME/kernel-work/boot/"
-	
+
 log "Copying header files"
 rm -rf "$HOME/kernel-work/include"
 cp -a include "$HOME/kernel-work/include"

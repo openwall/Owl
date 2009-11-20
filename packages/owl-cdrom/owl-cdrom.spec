@@ -1,15 +1,15 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.48 2009/05/29 14:44:31 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.49 2009/11/20 08:04:12 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 1.6
+Version: 1.7
 Release: owl1
 License: public domain
 Group: System Environment/Base
 Source0: rc.ramdisk
 Source1: welcome-cdrom.sh
 Source10: lilo.conf
-Source11: dot-config
+Source11: dot-config-i386
 Source12: dot-config-x86_64
 Source13: floppy-update.sh
 Source14: message
@@ -35,7 +35,7 @@ install -m 600 %_sourcedir/message boot/
 %ifarch x86_64
 install -m 644 %_sourcedir/dot-config-x86_64 boot/config
 %else
-install -m 644 %_sourcedir/dot-config boot/config
+install -m 644 %_sourcedir/dot-config-i386 boot/config
 %endif
 ln -s ../rom/{dev,etc,home,root,tmp,var,world} ram/
 
@@ -90,6 +90,9 @@ fi
 %dir /owl
 
 %changelog
+* Fri Nov 20 2009 Solar Designer <solar-at-owl.openwall.com> 1.7-owl1
+- Updated for 2.6/OpenVZ kernels.
+
 * Fri May 29 2009 Solar Designer <solar-at-owl.openwall.com> 1.6-owl1
 - Disabled the USB EHCI driver in dot-config*, because it resulted in a lockup
 on boot at least on Samsung Q45 laptops.
