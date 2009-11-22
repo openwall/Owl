@@ -1,0 +1,44 @@
+--- vzctl/src/enter.c
++++ vzctl/src/enter.c
+@@ -294,7 +294,7 @@ int do_enter(vps_handler *h, envid_t veid, char *root)
+ 			char buf[64];
+ 			char *term;
+ 			char *arg[] = {"-bash", NULL};
+-			char *env[] = {"PATH=/bin:/sbin:/usr/bin:/usr/sbin:",
++			char *env[] = {"PATH=/bin:/sbin:/usr/bin:/usr/sbin",
+ 				"HISTFILE=/dev/null",
+ 				"USER=root", "HOME=/root", "LOGNAME=root",
+ 				NULL, /* for TERM */
+--- vzctl/src/lib/exec.c
++++ vzctl/src/lib/exec.c
+@@ -39,17 +39,15 @@
+ static volatile sig_atomic_t alarm_flag, child_exited;
+ static char *argv_bash[] = {"bash", NULL};
+ static char *envp_bash[] = {"HOME=/", "TERM=linux",
+-	"PATH=/bin:/sbin:/usr/bin:/usr/sbin:.", NULL};
++	"PATH=/bin:/sbin:/usr/bin:/usr/sbin", NULL};
+ 
+ int vz_env_create_ioctl(vps_handler *h, envid_t veid, int flags);
+ 
+ int execvep(const char *path, char *const argv[], char *const envp[])
+ {
+ 	if (!strchr(path, '/')) {
+-		char *p = getenv("PATH");
++		char *p = "/bin:/sbin:/usr/bin:/usr/sbin";
+ 
+-		if (!p)
+-			p = "/bin:/usr/bin:/sbin";
+ 		for (; p && *p;) {
+ 			char partial[FILENAME_MAX];
+ 			char *p2;
+--- vzctl/src/lib/script.c
++++ vzctl/src/lib/script.c
+@@ -38,7 +38,7 @@
+ #include "fs.h"
+ 
+ volatile sig_atomic_t alarm_flag;
+-static char *envp_bash[] = {"HOME=/", "TERM=linux", "PATH=/bin:/sbin:/usr/bin:/usr/sbin:", NULL};
++static char *envp_bash[] = {"HOME=/", "TERM=linux", "PATH=/bin:/sbin:/usr/bin:/usr/sbin", NULL};
+ 
+ int read_script(const char *fname, char *include, char **buf)
+ {
