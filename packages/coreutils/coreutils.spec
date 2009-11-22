@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.27 2009/09/09 16:45:50 ldv Exp $
+# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.28 2009/11/22 14:07:30 ldv Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
 Version: 5.97
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Base
 URL: http://www.gnu.org/software/%name/
@@ -34,6 +34,7 @@ Patch4: coreutils-5.97-up-copy_internal.diff
 Patch5: coreutils-5.97-up-new-hashes.diff
 Patch6: coreutils-5.97-up-getpwd-openat.diff
 Patch7: coreutils-5.91-alt-hostname.diff
+Patch8: coreutils-8.1-owl-tests-touch.diff
 
 # Owl/ALT specific
 Patch10: coreutils-5.92-owl-info-true-false.diff
@@ -99,6 +100,7 @@ install -pm644 %_sourcedir/coreutils-ru.po po/ru.po
 %patch5 -p1
 %patch6 -p0
 %patch7 -p1
+%patch8 -p1
 
 # Owl/ALT specific
 %patch10 -p1
@@ -251,6 +253,9 @@ fi
 %doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
+* Sun Nov 22 2009 Dmitry V. Levin <ldv@altlinux.org> 5.97-owl3
+- Fixed tests/touch/not-owner on read-only root file system.
+
 * Mon Oct 08 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.97-owl2
 - Updated to stable b5_9x snapshot 20060628.
 - Fixed cut(1) double-free bug (Jim Meyering, RH#220312).
