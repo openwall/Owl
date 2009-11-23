@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.48 2009/11/20 12:23:24 solar Exp $
+# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.49 2009/11/23 07:02:06 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -7,7 +7,7 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.11z
-Release: owl13
+Release: owl14
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%version.tar.bz2
@@ -24,7 +24,7 @@ Patch5: util-linux-2.12q-up-20050910-remount.diff
 Patch6: util-linux-2.11z-owl-llseek.diff
 Patch7: util-linux-2.11z-owl-blockdev.diff
 Patch8: util-linux-2.11z-up-elvtune.diff
-Patch9: util-linux-2.11z-up-cytune.diff
+Patch9: util-linux-2.11z-owl-cytune.diff
 Patch10: util-linux-2.11z-owl-hwclock.diff
 Patch11: util-linux-2.11z-up-pivot_root.diff
 Patch12: util-linux-2.11z-owl-_syscall5.diff
@@ -353,6 +353,10 @@ fi
 %endif
 
 %changelog
+* Mon Nov 23 2009 Solar Designer <solar-at-owl.openwall.com> 2.11z-owl14
+- In sys-utils/cytune.c, #define __iomem before including <linux/cyclades.h>.
+This is needed for building with our current kernel headers on x86_64.
+
 * Fri Nov 20 2009 Solar Designer <solar-at-owl.openwall.com> 2.11z-owl13
 - Temporarily #define __KERNEL__ when including <linux/unistd.h> in places
 where the definition of _syscall5() is needed for _llseek().
