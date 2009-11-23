@@ -1,0 +1,14 @@
+diff -ur vzctl-3.0.23.orig/etc/vz.conf vzctl-3.0.23/etc/vz.conf
+--- vzctl-3.0.23.orig/etc/vz.conf	2008-10-30 13:24:43 +0000
++++ vzctl-3.0.23/etc/vz.conf	2009-11-23 04:11:15 +0000
+@@ -14,8 +14,8 @@
+ DISK_QUOTA=yes
+ VZFASTBOOT=no
+ 
+-# Disable module loading. If set, vz initscript do not load any modules.
+-#MODULES_DISABLED=yes
++# Disable module loading. If set, vz initscript does not load any modules.
++MODULES_DISABLED=yes
+ 
+ # The name of the device whose IP address will be used as source IP for CT.
+ # By default automatically assigned.

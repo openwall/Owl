@@ -1,14 +1,15 @@
-# $Owl: Owl/packages/vzctl/vzctl.spec,v 1.1 2009/11/22 21:27:21 ldv Exp $
+# $Owl: Owl/packages/vzctl/vzctl.spec,v 1.2 2009/11/23 04:17:51 solar Exp $
 
 Summary: OpenVZ containers control utility.
 Name: vzctl
 Version: 3.0.23
-Release: owl1
+Release: owl2
 License: GPLv2+
 Group: System Environment/Kernel
 URL: http://openvz.org/
 Source: http://download.openvz.org/utils/%name/%version/src/%name-%version.tar.bz2
-Patch: vzctl-3.0.23-owl-PATH.diff
+Patch0: vzctl-3.0.23-owl-PATH.diff
+Patch1: vzctl-3.0.23-owl-config.diff
 PreReq: /sbin/chkconfig
 Requires: vzquota
 BuildRoot: /override/%name-%version
@@ -19,7 +20,8 @@ i.e. create, start, shutdown, set various options and limits etc.
 
 %prep
 %setup -q
-%patch -p1
+%patch0 -p1
+%patch1 -p1
 
 %{expand:%%define optflags %optflags -fno-strict-aliasing}
 
@@ -69,5 +71,8 @@ fi
 %dev(c,126,0) %attr(600,root,root) /dev/vzctl
 
 %changelog
+* Mon Nov 23 2009 Solar Designer <solar-at-owl.openwall.com> 3.0.23-owl2
+- Set MODULES_DISABLED=yes in the default config to match our default kernel.
+
 * Sun Nov 22 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0.23-owl1
 - Initial revision.
