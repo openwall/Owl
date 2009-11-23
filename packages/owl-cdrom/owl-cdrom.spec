@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.49 2009/11/20 08:04:12 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.50 2009/11/23 02:57:06 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -51,7 +51,7 @@ set -e
 chmod 755 /
 chown root:root /
 
-for DIR in dev etc home root tmp var; do
+for DIR in dev etc home root tmp var vz; do
 	test -d /$DIR -a ! -e /rom/$DIR
 	mv /$DIR /rom/
 	ln -s ram/$DIR /
@@ -90,8 +90,10 @@ fi
 %dir /owl
 
 %changelog
-* Fri Nov 20 2009 Solar Designer <solar-at-owl.openwall.com> 1.7-owl1
+* Mon Nov 23 2009 Solar Designer <solar-at-owl.openwall.com> 1.7-owl1
 - Updated for 2.6/OpenVZ kernels.
+- Don't automatically copy /etc/vz/dists (which is a bit large) to /ram.
+- Move /vz to /ram.
 
 * Fri May 29 2009 Solar Designer <solar-at-owl.openwall.com> 1.6-owl1
 - Disabled the USB EHCI driver in dot-config*, because it resulted in a lockup
