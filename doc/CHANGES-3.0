@@ -53,7 +53,7 @@ New packages: tools to create/control/examine/destroy OpenVZ containers.
 2009/11/20 -
 2009/11/23	kernel;
 		Owl/build/buildkernel.sh;
-		Packages: owl-cdrom, util-linux
+		Packages: owl-cdrom, procps, util-linux
 The default kernel has been replaced with OpenVZ's latest from their
 "rhel5" branch, with some modifications of our own (mostly for better
 compatibility with the Owl userland, as well as for security).
@@ -1056,4 +1056,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.211 2009/11/23 04:50:51 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.212 2009/11/23 07:41:17 solar Exp $
