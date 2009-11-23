@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-cdrom/rc.ramdisk,v 1.7 2009/05/24 16:14:46 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/rc.ramdisk,v 1.8 2009/11/23 02:56:25 solar Exp $
 
 echo "Setting up a filesystem in RAM"
 
@@ -8,12 +8,14 @@ mount -nt tmpfs -omode=755 tmpfs /ram
 find /rom -printf "%i %P\n" | sort -n | cut -f2 -d' ' | tar cf - -C /rom \
     --exclude var/lib \
     --exclude etc/termcap \
+    --exclude etc/vz/dists \
     --exclude world \
     --files-from - |
 	tar xf - -C /ram
 
 ln -s /rom/var/lib /ram/var/
 ln -s /rom/etc/termcap /ram/etc/
+ln -s /rom/etc/vz/dists /ram/etc/vz/
 
 sed 's,^,/ram/dev/,' < /rom/etc/securetty > /ram/etc/securetty
 
