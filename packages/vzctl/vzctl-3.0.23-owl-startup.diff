@@ -1,0 +1,12 @@
+--- vzctl/etc/init.d/vz-redhat.in
++++ vzctl/etc/init.d/vz-redhat.in
+@@ -501,6 +501,9 @@ start()
+ 	check_kernel
+ 	check_kernel_config
+ 
++	grep -qs '^ONBOOT="\?yes' ${CONFIG_DIR}/[0-9]*.conf ||
++		exit 0 # there are no containers to start
++
+ 	if ! lockfile $LOCKFILE; then
+ 		__echo "OpenVZ is locked"
+ 		print_failure
