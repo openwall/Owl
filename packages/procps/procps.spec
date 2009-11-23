@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/procps/Attic/procps.spec,v 1.30 2005/12/05 19:09:16 ldv Exp $
+# $Owl: Owl/packages/procps/Attic/procps.spec,v 1.31 2009/11/23 07:36:06 solar Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
 Version: 3.2.5
-Release: owl7
+Release: owl8
 License: GPL and LGPL
 Group: System Environment/Base
 URL: http://procps.sf.net
@@ -30,6 +30,7 @@ Patch28: procps-3.2.5-owl-pmap.diff
 Patch29: procps-3.2.5-owl-stat2proc.diff
 Patch30: procps-3.2.5-owl-top.diff
 Patch31: procps-3.2.5-owl-warnings.diff
+Patch32: procps-3.2.5-owl-PAGE_SIZE.diff
 PreReq: /sbin/ldconfig
 BuildRequires: ncurses-devel
 BuildRoot: /override/%name-%version
@@ -63,6 +64,7 @@ skill, slabtop, snice, sysctl, tload, top, uptime, vmstat, w, and watch.
 %patch29 -p1
 %patch30 -p1
 %patch31 -p1
+%patch32 -p1
 
 %build
 %__make CC="%__cc" CFLAGS="%optflags"
@@ -84,6 +86,11 @@ rm -rf %buildroot
 %_mandir/man?/*
 
 %changelog
+* Mon Nov 23 2009 Solar Designer <solar-at-owl.openwall.com> 3.2.5-owl8
+- Temporarily #define __KERNEL__ when including <asm/page.h> to get PAGE_SIZE.
+This is addressed differently (in a cleaner way) in 3.2.7, but the resulting
+change to OUTBUF_SIZE is not obviously correct.
+
 * Mon Dec 05 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.2.5-owl7
 - Changed top's default view to summary when only one CPU is installed.
 

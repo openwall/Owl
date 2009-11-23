@@ -1,0 +1,13 @@
+diff -ur procps-3.2.5.orig/ps/common.h procps-3.2.5/ps/common.h
+--- procps-3.2.5.orig/ps/common.h	2004-10-09 03:55:50 +0000
++++ procps-3.2.5/ps/common.h	2009-11-23 07:27:39 +0000
+@@ -14,7 +14,9 @@
+ 
+ #include "../proc/procps.h"
+ #include "../proc/readproc.h"
++#define __KERNEL__
+ #include <asm/page.h>  /* looks safe for glibc, we need PAGE_SIZE */
++#undef __KERNEL__
+ 
+ #if 0
+ #define trace(args...) printf(## args)
