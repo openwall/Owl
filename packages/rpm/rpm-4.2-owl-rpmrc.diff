@@ -53,3 +53,18 @@ diff -ur rpm-4.2.orig/rpmrc.in rpm-4.2/rpmrc.in
  
  optflags: m68k -O2 -g -fomit-frame-pointer
  
+@@ -160,10 +171,10 @@
+ buildarchtranslate: osfmach3_i486: i386
+ buildarchtranslate: osfmach3_i386: i386
+ 
+-buildarchtranslate: athlon: i386
+-buildarchtranslate: i686: i386
+-buildarchtranslate: i586: i386
+-buildarchtranslate: i486: i386
++buildarchtranslate: athlon: i686
++buildarchtranslate: i686: i686
++buildarchtranslate: i586: i586
++buildarchtranslate: i486: i486
+ buildarchtranslate: i386: i386
+ 
+ buildarchtranslate: alphaev5: alpha

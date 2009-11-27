@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.76 2009/09/09 14:06:24 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.77 2009/11/27 15:53:11 ldv Exp $
 
 %define WITH_PYTHON 0
 
@@ -8,7 +8,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl20
+Release: owl21
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -495,6 +495,9 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Fri Nov 27 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl21
+- Changed default build architecture on i686+ CPUs to i686.
+
 * Wed Sep 09 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl20
 - Implemented automated %%check control using --with/--without
 check/test switches.
