@@ -46,6 +46,12 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/11/28	Package: rpm;
+		Owl/build/buildworld.sh;
+		Owl/doc/{ARCHITECTURES,BUILD}
+On 32-bit x86, packages are now built for the i686 architecture flavor
+by default.
+
 2009/11/23	Packages: vzctl, vzquota;
 		Owl/build/installorder.conf
 New packages: tools to create/control/examine/destroy OpenVZ containers.
@@ -1056,4 +1062,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.212 2009/11/23 07:41:17 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.213 2009/11/28 03:54:18 solar Exp $
