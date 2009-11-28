@@ -119,9 +119,9 @@ There are no dependencies on our version of slang within Owl itself.
 
 Red Hat Linux 9 and above provides the newer Native POSIX Thread Library
 (NPTL) in their glibc (C library) package.  We continue to provide the
-older LinuxThreads library.  NPTL would require support from the kernel
-which we currently do not provide.  This is something that will change
-once we move to Linux 2.6.x and drop support for Linux 2.4.x kernels.
+older LinuxThreads library.  NPTL would require support from the kernel,
+which Linux 2.4.x kernels did not provide.  Now that we have moved to
+Linux 2.6.x, we're about to start building glibc with NPTL.
 
 We're currently unaware of a Red Hat Linux 9 or any other package
 which would fail to work without NPTL.  This is no surprise because
@@ -134,4 +134,4 @@ The one problem we are aware of and have resolved is the source code
 for recent versions of RPM requiring NPTL.  We have resolved that
 dependency on NPTL in our build of RPM.
 
-$Owl: Owl/doc/REDHAT,v 1.10 2006/02/02 10:20:34 solar Exp $
+$Owl: Owl/doc/REDHAT,v 1.11 2009/11/28 00:02:36 solar Exp $
