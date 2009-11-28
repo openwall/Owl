@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/vzctl/vzctl.spec,v 1.3 2009/11/23 21:10:41 ldv Exp $
+# $Owl: Owl/packages/vzctl/vzctl.spec,v 1.4 2009/11/28 21:05:49 ldv Exp $
 
 Summary: OpenVZ containers control utility.
 Name: vzctl
 Version: 3.0.23
-Release: owl3
+Release: owl4
 License: GPLv2+
 Group: System Environment/Kernel
 URL: http://openvz.org/
@@ -11,6 +11,7 @@ Source: http://download.openvz.org/utils/%name/%version/src/%name-%version.tar.b
 Patch0: vzctl-3.0.23-owl-PATH.diff
 Patch1: vzctl-3.0.23-owl-config.diff
 Patch2: vzctl-3.0.23-owl-startup.diff
+Patch3: vzctl-3.0.23-owl-veip.diff
 PreReq: /sbin/chkconfig
 Requires: vzquota
 BuildRoot: /override/%name-%version
@@ -24,6 +25,7 @@ i.e. create, start, shutdown, set various options and limits etc.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %{expand:%%define optflags %optflags -fno-strict-aliasing}
 
@@ -68,11 +70,14 @@ fi
 %config /etc/vz/dists
 %config /etc/sysconfig/network-scripts/*
 %ghost /etc/cron.d/vz
-/var/lib/vzctl
+/var/run/vzctl
 /vz
 %dev(c,126,0) %attr(600,root,root) /dev/vzctl
 
 %changelog
+* Sat Nov 28 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0.23-owl4
+- Moved veip runtime directory from /var/lib/vzctl/ to /var/run/vzctl/.
+
 * Mon Nov 23 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0.23-owl3
 - Changed startup script to skip OpenVZ initialization if there are no
 containers to start.

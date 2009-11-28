@@ -1,0 +1,33 @@
+--- vzctl/Makefile.am
++++ vzctl/Makefile.am
+@@ -32,7 +32,7 @@ vzlockdir   = $(vzdir)/lock
+ vzdumpdir   = $(vzdir)/dump
+ vzprivdir   = $(vzdir)/private
+ vzrootdir   = $(vzdir)/root
+-veipdumpdir = $(localstatedir)/lib/vzctl/veip
++veipdumpdir = $(localstatedir)/run/vzctl/veip
+ modulesdir  = $(pkglibdir)/modules
+ 
+ install-data-local:
+--- vzctl/Makefile.in
++++ vzctl/Makefile.in
+@@ -211,7 +211,7 @@ vzlockdir = $(vzdir)/lock
+ vzdumpdir = $(vzdir)/dump
+ vzprivdir = $(vzdir)/private
+ vzrootdir = $(vzdir)/root
+-veipdumpdir = $(localstatedir)/lib/vzctl/veip
++veipdumpdir = $(localstatedir)/run/vzctl/veip
+ modulesdir = $(pkglibdir)/modules
+ DISTRO_TARGETS = \
+ 	install-redhat \
+--- vzctl/scripts/vps-functions.in
++++ vzctl/scripts/vps-functions.in
+@@ -34,7 +34,7 @@ VZ_CANT_ADDIP=34
+ VZ_IP_INUSE=78
+ 
+ # iptables parameters
+-VE_STATE_DIR="/var/lib/vzctl/veip/"
++VE_STATE_DIR="/var/run/vzctl/veip/"
+ CONF_DIR="@PKGCONFDIR@/conf/"
+ 
+ ARPSEND_CMD="arpsend -c 1 -w 1"
