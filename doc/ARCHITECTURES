@@ -6,9 +6,9 @@ flavors and various architecture-specific details.
 
 On many architectures, Owl supports multiple flavors (or versions) of
 the architecture.  For example, i386 and i686 are both versions of the
-x86 (IA32) architecture.  It is possible (and in fact recommended, in
-most cases) to build and/or use binary packages intended for an older
-version of the architecture on your modern hardware.
+x86 (IA32) architecture.  It is possible to build and/or use binary
+packages intended for an older version of the architecture on your
+modern hardware.
 
 Packages built for an architecture flavor closest to that implemented
 in your CPU may provide a small performance improvement (usually 1 to
@@ -37,8 +37,9 @@ the older flavor.  This is how all Owl packages are built by default.
 
 Architecture flavor may be specified via the ARCHITECTURE= line in
 buildworld.conf.  This line is optional and commented out by default,
-in which case the oldest flavor of the build host's architecture is
-selected.
+in which case the default flavor is architecture-specific (a certain
+flavor of the build host's architecture, in some cases the oldest, in
+others not).
 
 Cross-builds are not supported: it is not possible to build packages
 for an architecture different than that of the build host, nor for a
@@ -54,8 +55,8 @@ newer CPU.  Both the i386 and the i686 packages are tuned for an i686,
 with the only difference being that the i686 packages make use of the
 instructions only available with this newer architecture flavor.
 
-It is recommended that you only use i386 packages, as the performance
-improvement with the i686 is minimal (less than 1% overall).
+Although the overall performance improvement with the i686 packages is
+small, this is our current default.
 
 
 	x86-64, also known as AMD64 and EM64T.
@@ -89,4 +90,4 @@ built for alphaev56 are tuned for EV56/PCA56 processors (21164A,
 plain alpha packages.  On an EV6+ (21264, 21264A), use the alphaev56
 packages.
 
-$Owl: Owl/doc/ARCHITECTURES,v 1.7 2006/04/23 22:32:34 solar Exp $
+$Owl: Owl/doc/ARCHITECTURES,v 1.8 2009/11/28 01:46:57 solar Exp $

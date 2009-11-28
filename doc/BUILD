@@ -84,7 +84,7 @@ As user "build", change directory to /usr/src/world and type:
 
 	make clean && make buildworld
 
-With the default buildworld.conf, packages will be built for oldest
+With the default buildworld.conf, packages will be built for a certain
 flavor of the build host's architecture (see ARCHITECTURES) and the
 build will attempt to use all system processors.
 
@@ -116,4 +116,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Owl: Owl/doc/BUILD,v 1.39 2009/11/28 00:34:55 solar Exp $
+$Owl: Owl/doc/BUILD,v 1.40 2009/11/28 01:46:57 solar Exp $
