@@ -46,6 +46,19 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/11/30      Package: libtool
+SECURITY FIX    Severity: none to high, local, passive
+Applied upstream's backport of libltdl changes from the libtool 2.26b
+release: no longer attempt to dlopen() the old_library listed in .la
+files, and do not open module.la files from the current directory.
+No Owl packages use libltdl and therefore are not vulnerable, but third
+party software could be used by e.g. creating a malicious .la file and
+tricking a privileged user into executing a libltdl-based application
+in the same directory.
+References:
+http://lists.gnu.org/archive/html/libtool/2009-11/msg00059.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-3736
+
 2009/11/28	Package: rpm;
 		Owl/build/buildworld.sh;
 		Owl/doc/{ARCHITECTURES,BUILD}
@@ -1062,4 +1075,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.213 2009/11/28 03:54:18 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.214 2009/11/30 21:13:45 ldv Exp $
