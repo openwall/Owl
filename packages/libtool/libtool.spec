@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/libtool/libtool.spec,v 1.25 2009/09/09 16:45:50 ldv Exp $
+# $Owl: Owl/packages/libtool/libtool.spec,v 1.26 2009/11/30 20:27:59 ldv Exp $
 
 Summary: The GNU Libtool, which simplifies the use of shared libraries.
 Name: libtool
 Version: 1.5.22
-Release: owl3
+Release: owl4
 License: GPL/LGPL
 Group: Development/Tools
 URL: http://www.gnu.org/software/libtool/
@@ -15,6 +15,7 @@ Patch3: libtool-1.5.18-alt-deb-link_all_deplibs.diff
 Patch4: libtool-1.5.18-alt-ltmain-legacy.diff
 Patch5: libtool-1.5.18-alt-ld.so.conf.diff
 Patch6: libtool-1.5.18-rh-multilib-hack.diff
+Patch7: libtool-1.5.26-up-ltdl.diff
 PreReq: /sbin/install-info, autoconf, automake, m4, perl
 Requires: libtool-libs = %version-%release, mktemp
 Prefix: %_prefix
@@ -43,6 +44,7 @@ shared libraries.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 rm doc/libtool.info
@@ -91,6 +93,10 @@ fi
 %_libdir/libltdl.so.*
 
 %changelog
+* Mon Nov 30 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.5.22-owl4
+- Applied upstream's backport of libltdl changes from the 2.26b release
+to fix CVE-2009-3736.
+
 * Sun Aug 30 2009 Solar Designer <solar-at-owl.openwall.com> 1.5.22-owl3
 - Run the tests during package build by default.
 
