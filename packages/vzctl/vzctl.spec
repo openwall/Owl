@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/vzctl/vzctl.spec,v 1.4 2009/11/28 21:05:49 ldv Exp $
+# $Owl: Owl/packages/vzctl/vzctl.spec,v 1.5 2009/11/30 12:49:00 ldv Exp $
 
 Summary: OpenVZ containers control utility.
 Name: vzctl
 Version: 3.0.23
-Release: owl4
+Release: owl5
 License: GPLv2+
 Group: System Environment/Kernel
 URL: http://openvz.org/
@@ -12,6 +12,7 @@ Patch0: vzctl-3.0.23-owl-PATH.diff
 Patch1: vzctl-3.0.23-owl-config.diff
 Patch2: vzctl-3.0.23-owl-startup.diff
 Patch3: vzctl-3.0.23-owl-veip.diff
+Patch4: vzctl-3.0.23-alt-postcreate.diff
 PreReq: /sbin/chkconfig
 Requires: vzquota
 BuildRoot: /override/%name-%version
@@ -26,6 +27,7 @@ i.e. create, start, shutdown, set various options and limits etc.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %{expand:%%define optflags %optflags -fno-strict-aliasing}
 
@@ -75,6 +77,9 @@ fi
 %dev(c,126,0) %attr(600,root,root) /dev/vzctl
 
 %changelog
+* Mon Nov 30 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0.23-owl5
+- Imported ALT's enhancements to the postcreate.sh script.
+
 * Sat Nov 28 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0.23-owl4
 - Moved veip runtime directory from /var/lib/vzctl/ to /var/run/vzctl/.
 

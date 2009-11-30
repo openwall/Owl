@@ -1,0 +1,100 @@
+--- vzctl/etc/dists/scripts/postcreate.sh
++++ vzctl/etc/dists/scripts/postcreate.sh
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/bin/sh
+ #  Copyright (C) 2000-2008, Parallels, Inc. All rights reserved.
+ #
+ #  This program is free software; you can redistribute it and/or modify
+@@ -22,14 +22,14 @@
+ # 2. Disables root password if it is empty.
+ #
+ 
+-function randcrontab()
++randcrontab()
+ {
+-	file=${VE_ROOT}"/etc/crontab"
++	file="$VE_ROOT/etc/crontab"
+ 
+-	[ -f "${file}" ] || return 0
++	[ -f "$file" ] || return 0
+ 
+-	/bin/cp -fp ${file} ${file}.$$
+-	cat ${file} | awk '
++	cp -fp "$file" "$file.$$" &&
++		awk '
+ BEGIN { srand(); }
+ {
+ 	if ($0 ~ /^[ \t]*#/ || $0 ~ /^[ \t]+*$/) {
+@@ -61,25 +61,61 @@ BEGIN { srand(); }
+ 	}
+ 	print line;
+ }
+-' > ${file}.$$ && /bin/mv -f ${file}.$$ ${file}
+-	/bin/rm -f ${file}.$$ 2>/dev/null
++' < "$file" > "$file.$$" && mv -f "$file.$$" "$file"
++	rm -f "$file.$$" 2>/dev/null
+ }
+ 
+-function disableroot()
++disableroot()
+ {
+-	file=${VE_ROOT}"/etc/passwd"
++	file="$VE_ROOT/etc/passwd"
+ 
+-	[ -f "$file" ] || return 0
++	[ -f "$file" ] &&
++		grep -qs '^root::' "$file" ||
++		return 0
++
++	sed -i 's/^root::/root:!!:/g' "$file"
++}
+ 
+-	if /bin/grep -q "^root::" "${file}" 2>/dev/null; then
+-		/bin/sed 's/^root::/root:!!:/g' < ${file} > ${file}.$$ &&
+-			/bin/mv -f ${file}.$$ ${file}
+-		/bin/rm -f ${file}.$$ 2>/dev/null
++fixinittab()
++{
++	file="$VE_ROOT/etc/inittab"
++
++	[ -f "$file" ] &&
++		grep -qs '^[0-9].*mingetty.*tty' "$file" ||
++		return 0
++
++	sed -i 's|^[0-9].*mingetty.*tty|#&|' "$file"
++}
++
++fixsyslog()
++{
++	file="$VE_ROOT/etc/syslog.conf"
++
++	[ -f "$file" ] &&
++		grep -qs '^[^#[:space:]]\+[[:space:]]\+/dev/tty' "$file" ||
++		return 0
++
++	sed -i 's|^[^#[:space:]]\+[[:space:]]\+/dev/tty|#&|' "$file"
++}
++
++copy_localtime()
++{
++	local f=/etc/localtime
++	if [ -s "$f" ]; then
++		rm -f -- "$VE_ROOT$f" &&
++			install -pm644 -- "$f" "$VE_ROOT$f"
+ 	fi
+ }
+ 
+-[ -z "${VE_ROOT}" ] && return 1
++[ -n "$VE_ROOT" ] || exit 1
+ randcrontab
+ disableroot
++fixinittab
++fixsyslog
++copy_localtime
++if [ -d /etc/hooks/post_create.d ] &&
++   type run-parts >/dev/null 2>&1; then
++	run-parts /etc/hooks/post_create.d
++fi
+ 
+ exit 0
