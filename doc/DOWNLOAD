@@ -15,6 +15,7 @@ ftp://ftp.spb.ru.openwall.com/pub/Owl/	(St. Petersburg, Russia)
 ftp://ftp.cz.openwall.com/pub/Owl/	(Czech Republic)
 ftp://ftp.fr.openwall.com/pub/Owl/	(France)
 ftp://ftp.ua.openwall.com/pub/Owl/	(Ukraine)
+ftp://ftp.linux.kiev.ua/pub/Owl/	(Ukraine)
 ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Austria)
 	http://gd.tuwien.ac.at/opsys/linux/Owl/
 	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
@@ -76,4 +77,4 @@ Finally, the CVSweb interface is provided at:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/DOWNLOAD,v 1.42 2009/12/01 13:26:24 solar Exp $
+$Owl: Owl/doc/DOWNLOAD,v 1.43 2009/12/01 13:43:31 solar Exp $

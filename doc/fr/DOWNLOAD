@@ -12,6 +12,7 @@ ftp://ftp2.ru.openwall.com/pub/Owl/	(Russie)
 ftp://ftp.cz.openwall.com/pub/Owl/	(République Tchèque)
 ftp://ftp.fr.openwall.com/pub/Owl/	(France)
 ftp://ftp.ua.openwall.com/pub/Owl/	(Ukraine)
+ftp://ftp.linux.kiev.ua/pub/Owl/	(Ukraine)
 ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Autriche)
 	http://gd.tuwien.ac.at/opsys/linux/Owl/
 	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
@@ -64,4 +65,4 @@ utiliser la compression avec chaque méthode d'accès au serveur CVS anonyme,
 typiquement en spécifiant l'option -z3 à CVS et/ou "Compression yes" dans le
 fichier de configuration du client SSH.
 
-$Owl: Owl/doc/fr/DOWNLOAD,v 1.25 2009/04/11 21:20:44 solar Exp $
+$Owl: Owl/doc/fr/DOWNLOAD,v 1.26 2009/12/01 13:43:31 solar Exp $
