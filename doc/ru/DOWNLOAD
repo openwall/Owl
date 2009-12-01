@@ -29,6 +29,7 @@ kernel			исходные тексты ядра и рекомендуемые обновления
 Owl.mtree		спецификация mtree(8) для вышеуказанного
 i?86, sparc*, alpha*	готовые (бинарные) пакеты Owl
 iso			ISO-9660 образы компакт-дисков Owl
+vztemplate		готовые шаблоны контейнеров OpenVZ
 
 В некоторых каталогах погут использоваться символьные ссылки на общие
 для разных веток файлы, поэтому для того, чтобы получить полную копию
@@ -67,4 +68,4 @@ CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
 
 Интерфейс CVSweb доступен по адресу http://cvsweb.openwall.com
 
-$Owl: Owl/doc/ru/DOWNLOAD,v 1.29 2009/04/11 21:20:44 solar Exp $
+$Owl: Owl/doc/ru/DOWNLOAD,v 1.30 2009/12/01 13:26:24 solar Exp $

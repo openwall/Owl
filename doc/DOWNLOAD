@@ -29,6 +29,7 @@ kernel			kernel sources and recommended patches
 Owl.mtree		mtree(8) specification of the above
 i?86, sparc*, alpha*	Owl binary packages
 iso			ISO-9660 images of Owl CDs (live + installable)
+vztemplate		pre-created OpenVZ container templates
 
 Some of the subdirectories may use symlinks to files common to several
 Owl branches.  Thus, to download just one Owl branch you may need to
@@ -75,4 +76,4 @@ Finally, the CVSweb interface is provided at:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/DOWNLOAD,v 1.41 2009/04/11 21:20:44 solar Exp $
+$Owl: Owl/doc/DOWNLOAD,v 1.42 2009/12/01 13:26:24 solar Exp $
