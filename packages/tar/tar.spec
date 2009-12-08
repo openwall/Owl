@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.48 2009/09/09 16:45:50 ldv Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.49 2009/12/08 17:00:58 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.22.90
-Release: owl2
+Release: owl3
 License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
@@ -15,6 +15,7 @@ Source1: tar.1
 Patch0: tar-1.22.90-alt.diff
 Patch1: tar-1.22.90-owl-error-handling.diff
 Patch2: tar-1.22.90-owl-default-warnings.diff
+Patch3: tar-1.22.90-owl-save-memory.diff
 PreReq: /sbin/install-info, grep
 BuildRequires: gettext, texinfo
 BuildRequires: rpm-build >= 0:4, sed >= 4.0.9
@@ -34,6 +35,7 @@ backups.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 sed -i 's,^tar .* basedir$,&/*,' tests/xform-h.at tests/testsuite
 
 %{expand:%%define optflags %optflags -Wall}
@@ -91,6 +93,11 @@ fi
 %doc AUTHORS COPYING NEWS.bz2 README THANKS
 
 %changelog
+* Tue Dec 08 2009 Solar Designer <solar-at-owl.openwall.com> 1.22.90-owl3
+- Corrected highly non-optimal memory allocation by
+canonicalize_filename_mode(), which got exposed with an unrelated change
+made shortly before the 1.22.90 alpha release.
+
 * Tue Aug 25 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.22.90-owl2
 - Fixed tests/xform-h.at.
 

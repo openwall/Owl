@@ -1,0 +1,33 @@
+This patch corrects highly non-optimal memory allocation by
+canonicalize_filename_mode(), which got exposed with:
+
+2009-08-07  Sergey Poznyakoff  <gray@gnu.org.ua>
+[...]
+	* src/misc.c: Include canonicalize.h
+	(zap_slashes, normalize_filename): New functions.
+
+On a specific test case, this reduces tar's memory usage from 32 MB to
+4.5 MB for the initial full backup run ("-g" enabled), and from 19 MB to
+5.5 MB for a subsequent incremental run.
+
+--- tar-1.22.90/gnu/canonicalize.c.orig	2009-08-07 11:55:47 +0000
++++ tar-1.22.90/gnu/canonicalize.c	2009-12-08 15:50:40 +0000
+@@ -161,6 +161,7 @@ canonicalize_filename_mode (const char *
+   char const *end;
+   char const *rname_limit;
+   size_t extra_len = 0;
++  size_t actual_size;
+   Hash_table *ht = NULL;
+ 
+   if (name == NULL)
+@@ -325,6 +326,10 @@ canonicalize_filename_mode (const char *
+     --dest;
+   *dest = '\0';
+ 
++  actual_size = strlen(rname) + 1;
++  if (rname_limit - rname > actual_size)
++    rname = xrealloc (rname, actual_size);
++
+   free (extra_buf);
+   if (ht)
+     hash_free (ht);
