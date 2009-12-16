@@ -6,9 +6,17 @@ canonicalize_filename_mode(), which got exposed with:
 	* src/misc.c: Include canonicalize.h
 	(zap_slashes, normalize_filename): New functions.
 
-On a specific test case, this reduces tar's memory usage from 32 MB to
-4.5 MB for the initial full backup run ("-g" enabled), and from 19 MB to
-5.5 MB for a subsequent incremental run.
+On a specific test case (a tree with around 3500 sub-directories with a
+total of around 58,000 files), this reduces tar's memory usage from
+32 MB to 4.5 MB for the initial full backup run ("-g" enabled), and from
+19 MB to 5.5 MB for a subsequent incremental run.
+
+On a real-world system with around 370,000 directories and 2.3 million
+files where the problem was first spotted, an incremental run of a
+32-bit build of tar 1.22.90 bumped into the 3 GB process address space
+limit and failed, whereas a build with this patch applied uses around
+400 MB during incremental runs and around 300 MB during initial full
+backup runs.
 
 --- tar-1.22.90/gnu/canonicalize.c.orig	2009-08-07 11:55:47 +0000
 +++ tar-1.22.90/gnu/canonicalize.c	2009-12-08 15:50:40 +0000
