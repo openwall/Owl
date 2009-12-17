@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.109 2009/09/14 02:21:21 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.110 2009/12/17 19:26:04 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.3.4
+Version: 1.7.3.5
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,6 +88,10 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Thu Dec 17 2009 Solar Designer <solar-at-owl.openwall.com> 1.7.3.5-owl1
+- Processing of word mangling rules has been made significantly faster,
+primarily due to caching and updating of the current "word" length.
+
 * Mon Sep 14 2009 Solar Designer <solar-at-owl.openwall.com> 1.7.3.4-owl1
 - Fixed a pexit() call in recovery.c: rec_format_error() to build with -Wformat
 -Werror=format-security, although there was no real issue with the current code
