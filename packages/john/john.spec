@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.110 2009/12/17 19:26:04 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.111 2009/12/25 18:59:32 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.3.5
+Version: 1.7.4
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,9 +88,20 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Thu Dec 17 2009 Solar Designer <solar-at-owl.openwall.com> 1.7.3.5-owl1
-- Processing of word mangling rules has been made significantly faster,
-primarily due to caching and updating of the current "word" length.
+* Fri Dec 25 2009 Solar Designer <solar-at-owl.openwall.com> 1.7.4-owl1
+- Support for back-references and "parallel" ranges has been added to the
+word mangling rules preprocessor.
+- The notion of numeric variables has been introduced into the rules engine,
+two variables have been pre-defined ("l" and "m"), support for up to 11
+user-defined variables ("a" through "k") and a new numeric constant ("z")
+have been added.
+- New rule commands have been added: "A", "X", and "v".
+- New rule reject flags have been added: ":" and "p".
+- Processing of word mangling rules has been made significantly faster.
+- The default rulesets have been revised to make use of the new features, for
+speed, to produce fewer duplicates, and to attempt additional kinds of
+candidate passwords (such as for years 2010 through 2019).
+- The default for the Idle setting has been changed from N to Y.
 
 * Mon Sep 14 2009 Solar Designer <solar-at-owl.openwall.com> 1.7.3.4-owl1
 - Fixed a pexit() call in recovery.c: rec_format_error() to build with -Wformat
