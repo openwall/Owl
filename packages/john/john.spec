@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.111 2009/12/25 18:59:32 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.112 2009/12/25 20:47:34 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -101,6 +101,8 @@ have been added.
 - The default rulesets have been revised to make use of the new features, for
 speed, to produce fewer duplicates, and to attempt additional kinds of
 candidate passwords (such as for years 2010 through 2019).
+- Optimized idle_yield() to check the time less frequently when there appears
+to be no other demand for CPU time.
 - The default for the Idle setting has been changed from N to Y.
 
 * Mon Sep 14 2009 Solar Designer <solar-at-owl.openwall.com> 1.7.3.4-owl1
