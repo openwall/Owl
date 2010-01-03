@@ -1,15 +1,16 @@
-# $Owl: Owl/packages/patchutils/patchutils.spec,v 1.10 2009/05/25 13:19:24 solar Exp $
+# $Owl: Owl/packages/patchutils/patchutils.spec,v 1.11 2010/01/03 23:48:59 solar Exp $
 
 Summary: Patchutils is a small collection of programs that operate on patch files.
 Name: patchutils
 Version: 0.3.1
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Text
 URL: http://cyberelk.net/tim/patchutils/
 Source: http://cyberelk.net/tim/data/patchutils/stable/patchutils-%version.tar.bz2
 # Signature: http://cyberelk.net/tim/data/patchutils/stable/patchutils-%version.tar.bz2.sig
 Patch0: patchutils-0.2.30-owl-tmp.diff
+Patch1: patchutils-0.3.1-up-tmp.diff
 PreReq: /sbin/install-info
 Requires: mktemp >= 1:1.3.1
 Prefix: %_prefix
@@ -36,6 +37,7 @@ This version contains:
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 bzip2 -9k ChangeLog
 
 %build
@@ -53,6 +55,10 @@ rm -rf %buildroot
 %_mandir/*/*
 
 %changelog
+* Mon Jan 04 2010 Solar Designer <solar-at-owl.openwall.com> 0.3.1-owl2
+- Added a patch from the upstream git repository to have temporary files
+removed.
+
 * Sun May 24 2009 Michail Litvak <mci-at-owl.openwall.com> 0.3.1-owl1
 - Updated to 0.3.1.
 
