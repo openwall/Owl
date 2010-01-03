@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.112 2009/12/25 20:47:34 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.113 2010/01/03 22:53:50 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.4
+Version: 1.7.4.1
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,6 +88,10 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Jan 04 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.4.1-owl1
+- Fixed some bugs introduced in 1.7.4 affecting wordlist mode's elimination of
+consecutive duplicate candidate passwords.
+
 * Fri Dec 25 2009 Solar Designer <solar-at-owl.openwall.com> 1.7.4-owl1
 - Support for back-references and "parallel" ranges has been added to the
 word mangling rules preprocessor.
