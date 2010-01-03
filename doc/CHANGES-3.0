@@ -46,6 +46,15 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2009/12/17 -
+2010/01/04	Package: john
+John the Ripper has been enhanced in numerous ways, bringing it up to
+version 1.7.4.1.  Functionality and performance of the word mangling
+rules engine have been improved, the default rulesets have been revised,
+and idle priority (with newly improved code) has been made the default.
+Reference:
+http://www.openwall.com/lists/announce/2009/12/26/1
+
 2009/11/30	Package: libtool
 SECURITY FIX	Severity: none to high, local, passive
 Applied upstream's backport of libltdl changes from the libtool 2.26b
@@ -1075,4 +1084,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.215 2009/12/01 13:08:04 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.216 2010/01/03 23:23:05 solar Exp $
