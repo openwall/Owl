@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/iputils/iputils.spec,v 1.27 2009/09/21 15:10:55 ldv Exp $
+# $Owl: Owl/packages/iputils/iputils.spec,v 1.28 2010/01/04 00:02:04 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
 Version: ss020927
-Release: owl6
+Release: owl7
 License: mostly BSD, some GPL
 Group: Applications/Internet
 Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%version.tar.gz
@@ -14,7 +14,8 @@ Patch1: iputils-ss020927-owl-warnings.diff
 Patch2: iputils-ss020927-owl-socketbits.diff
 Patch3: iputils-ss020927-owl-man.diff
 Patch4: iputils-ss020927-alt-Makefile.diff
-Patch5: bonding-0.2-owl-ioctl.diff
+Patch5: iputils-ss020927-owl-ipv6.diff
+Patch10: bonding-0.2-owl-ioctl.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
@@ -33,7 +34,8 @@ mv -f bonding-0.2/README bonding-0.2/README.ifenslave
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p0
+%patch5 -p1
+%patch10 -p0
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -100,6 +102,12 @@ fi
 /etc/control.d/facilities/ping6
 
 %changelog
+* Mon Jan 04 2010 Solar Designer <solar-at-owl.openwall.com> ss020927-owl7
+- Added a patch by Simon Baker to make ping6 and tracepath6 work with our new
+kernel version.  As a side effect, this breaks builds with Linux 2.4 kernel
+headers.  Reference:
+http://www.openwall.com/lists/owl-users/2009/12/10/3
+
 * Sun Sep 20 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> ss020927-owl6
 - Disabled build time kernel headers check.
 

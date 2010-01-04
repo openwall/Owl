@@ -1,0 +1,44 @@
+diff -uNr iputils.orig/ping6.c iputils/ping6.c
+--- iputils.orig/ping6.c	2002-09-20 16:08:11 +0100
++++ iputils/ping6.c	2009-12-10 18:12:49 +0000
+@@ -483,7 +483,7 @@
+ 
+ 	if (1) {
+ 		int on = 1;
+-		if (setsockopt(icmp_sock, IPPROTO_IPV6, IPV6_HOPLIMIT,
++		if (setsockopt(icmp_sock, IPPROTO_IPV6, IPV6_2292HOPLIMIT,
+ 			       &on, sizeof(on)) == -1) {
+ 			perror ("can't receive hop limit");
+ 			exit(2);
+@@ -701,7 +701,7 @@
+ 
+ 	for (c = CMSG_FIRSTHDR(msg); c; c = CMSG_NXTHDR(msg, c)) {
+ 		if (c->cmsg_level != SOL_IPV6 ||
+-		    c->cmsg_type != IPV6_HOPLIMIT)
++		    c->cmsg_type != IPV6_2292HOPLIMIT)
+ 			continue;
+ 		if (c->cmsg_len < CMSG_LEN(sizeof(int)))
+ 			continue;
+diff -uNr iputils.orig/tracepath6.c iputils/tracepath6.c
+--- iputils.orig/tracepath6.c	2001-09-02 03:03:46 +0100
++++ iputils/tracepath6.c	2009-12-11 09:23:37 +0000
+@@ -111,7 +111,7 @@
+ 		if (cmsg->cmsg_level == SOL_IPV6) {
+ 			if (cmsg->cmsg_type == IPV6_RECVERR) {
+ 				e = (struct sock_extended_err *)CMSG_DATA(cmsg);
+-			} else if (cmsg->cmsg_type == IPV6_HOPLIMIT) {
++			} else if (cmsg->cmsg_type == IPV6_2292HOPLIMIT) {
+ 				rethops = *(int*)CMSG_DATA(cmsg);
+ 			}
+ 		} else if (cmsg->cmsg_level == SOL_IP) {
+@@ -354,8 +354,8 @@
+ 		perror("IP_RECVERR");
+ 		exit(1);
+ 	}
+-	if (setsockopt(fd, SOL_IPV6, IPV6_HOPLIMIT, &on, sizeof(on))) {
+-		perror("IPV6_HOPLIMIT");
++	if (setsockopt(fd, SOL_IPV6, IPV6_RECVHOPLIMIT, &on, sizeof(on))) {
++		perror("IPV6_RECVHOPLIMIT");
+ 		exit(1);
+ 	}
+ 	if (mapped && setsockopt(fd, SOL_IP, IP_RECVTTL, &on, sizeof(on))) {
