@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.113 2010/01/03 22:53:50 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.114 2010/01/18 07:30:44 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.4.1
+Version: 1.7.4.2
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,6 +88,16 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Jan 18 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.4.2-owl1
+- Major performance improvements for processing of large password files or
+sets of files, especially with salt-less or same-salt hashes, achieved
+primarily through introduction of two additional hash table sizes (64K and 1M
+entries), changes to the loader, and smarter processing of successful guesses.
+- Many default buffer and hash table sizes have been increased and thresholds
+for the use of hash tables lowered.
+- Some previously missed common website passwords found on public lists of
+"top N passwords" have been added to the bundled common passwords list.
+
 * Mon Jan 04 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.4.1-owl1
 - Fixed some bugs introduced in 1.7.4 affecting wordlist mode's elimination of
 consecutive duplicate candidate passwords.
