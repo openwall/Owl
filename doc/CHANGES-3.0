@@ -46,6 +46,18 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/01/20	Package: gzip
+SECURITY FIX	Severity: none to high, local/indirect, passive
+Applied upstream's fix for an integer underflow leading to array index
+error in the way gzip used to decompress files / archives, compressed
+withthe Lempel–Ziv–Welch (LZW) compression algorithm.  An attacker could
+provide a specially-crafted LZW compressed gzip archive, which once
+decompressed by an unsuspecting user (on 64 bit system) would lead to
+denial of service (gzip crash), or, potentially to arbitrary code
+execution with the privileges of the user running gzip.
+Reference:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0001
+
 2009/12/17 -
 2010/01/04	Package: john
 John the Ripper has been enhanced in numerous ways, bringing it up to
@@ -1084,4 +1096,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.216 2010/01/03 23:23:05 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.217 2010/01/20 01:06:11 ldv Exp $
