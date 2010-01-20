@@ -1,14 +1,15 @@
-# $Owl: Owl/packages/pciutils/pciutils.spec,v 1.2 2009/06/10 15:11:30 mci Exp $
+# $Owl: Owl/packages/pciutils/pciutils.spec,v 1.3 2010/01/20 23:26:57 solar Exp $
 
 Summary: Linux PCI utilities.
 Name: pciutils
-Version: 3.1.2
+Version: 3.1.5
 Release: owl1
-License: GPL
+License: GPLv2
 Group: Applications/System
+URL: http://mj.ucw.cz/pciutils.html
 Source0: ftp://atrey.karlin.mff.cuni.cz/pub/linux/pci/%name-%version.tar.gz
-Patch0: pciutils-3.1.2-pci.ids-20090519.diff.bz2
-Prefix: %_prefix
+# http://pci-ids.ucw.cz
+#Patch0: pciutils-%version-pci.ids-20YYMMDD.diff.bz2
 BuildRequires: zlib-devel
 BuildRoot: /override/%name-%version
 
@@ -18,10 +19,10 @@ setting up devices connected to the PCI bus.
 
 %prep
 %setup -q
-%patch0 -p1
+#%patch0 -p1
 
 %build
-%__make SHARED=no ZLIB=yes STRIP='' OPT='%optflags' PREFIX=/usr \
+%__make SHARED=no ZLIB=yes STRIP='' OPT='%optflags' PREFIX=%_prefix \
 	IDSDIR=%_datadir/hwdata PCI_IDS=pci.ids
 
 %install
@@ -41,5 +42,8 @@ rm -rf %buildroot
 %_datadir/hwdata/pci.ids.gz
 
 %changelog
+* Thu Jan 21 2010 Solar Designer <solar-at-owl.openwall.com> 3.1.5-owl1
+- Updated to 3.1.5.
+
 * Fri May 29 2009 Michail Litvak <mci-at-owl.openwall.com> 3.1.2-owl1
 - Initial packaging for Owl.
