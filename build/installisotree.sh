@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installisotree.sh,v 1.8 2009/08/16 02:52:35 solar Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.9 2010/01/21 20:48:03 solar Exp $
 
 set -e
 
@@ -67,6 +67,7 @@ cd "$ROOT/etc"
 sed -i 's|^\(/dev/cdrom[[:space:]]*\).*|\1/\t\t\tiso9660\tro\t\t\t0 0|' fstab
 echo -e '/boot/floppy.image /boot/floppy\t\text2\tloop,ro\t\t\t0 0' >> fstab
 sed -i 's|^\(~~:S:wait:\).*|\1/bin/bash --login|' inittab
+sed -i 's/^\(DISK_QUOTA=\)yes$/\1no/' vz/vz.conf
 
 log "Installing kernel source"
 cd "$ROOT/usr/src"
