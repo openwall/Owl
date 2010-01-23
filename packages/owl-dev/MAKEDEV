@@ -1,6 +1,6 @@
 #!/bin/bash -
 
-VERSION='MAKEDEV 2.5.2-0.12-owl1'
+VERSION='MAKEDEV 2.5.2-0.13-owl1'
 
 # This version of MAKEDEV is based on work of many people.  The script was
 # initially written by Nick Holloway, and then maintained by Michael K.
@@ -49,7 +49,7 @@ opt_d=
 opt_n=
 opt_p=
 opt_V=
-opt_touch=
+opt_rpm=
 
 while [ $# -ge 1 ]
 do
@@ -61,8 +61,8 @@ do
 		-p)	shift; opt_p=1 ;;
 		-V|--version|--help)
 			shift; opt_V=1 ;;
-		--touch)
-			shift; opt_touch=1 ;;
+		--rpm)
+			shift; opt_rpm=1 ;;
 		-*)	echo "$0: unknown flag \"$1\"" >&2; exit 1 ;;
 		*)	break ;;
 	esac
@@ -74,7 +74,7 @@ then
 	exit 0
 fi
 
-opts="${opt_n:+-n} ${opt_p:+-p} ${opt_v:+-v} ${opt_d:+-d} ${opt_touch:+--touch}"
+opts="${opt_n:+-n} ${opt_p:+-p} ${opt_v:+-v} ${opt_d:+-d} ${opt_rpm:+--rpm}"
 
 #---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#
 
@@ -91,14 +91,9 @@ makedev () {	# usage: makedev name [bcu] major minor owner group mode
 			rm -f $1
 		else
 			rm -f $1-
-			if [ "$opt_touch" ]
+			if [ "$opt_rpm" ]
 			then
-				touch $1- &&
-				chmod $7 $1- &&
-				mv $1- $1 || {
-					rm -f $1-
-					exit 1
-				}
+				echo "%dev($2,$3,$4) %attr($7,$5,$6) /dev/$1"
 			else
 				mknod $1- $2 $3 $4 &&
 				chown $5:$6 $1- &&

@@ -1,15 +1,15 @@
-# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.25 2010/01/23 22:49:43 solar Exp $
+# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.26 2010/01/23 23:32:16 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
-Version: 0.12
+Version: 0.13
 Release: owl1
 License: public domain
 Group: System Environment/Base
 Source0: MAKEDEV
 Source1: MAKEDEV.8
-PreReq: grep
-PreReq: owl-etc >= 0.18-owl1, fileutils, sh-utils
+PreReq: grep, shadow-utils
+PreReq: owl-etc >= 0.18-owl1
 Provides: dev
 Obsoletes: MAKEDEV, dev
 BuildArchitectures: noarch
@@ -29,45 +29,44 @@ initial set of device files to be placed into /dev.  It also provides
 
 %install
 rm -rf %buildroot
-mkdir -p -m 700 %buildroot/dev
-mkdir -p %buildroot%_mandir/man8
+mkdir -p %buildroot{/dev,%_mandir/man8}
 install -pm 700 %_sourcedir/MAKEDEV %buildroot/dev/
 install -pm 644 %_sourcedir/MAKEDEV.8 %buildroot%_mandir/man8/
 
+# Create directories and symlinks, but only output filelist lines for devices
 pushd %buildroot/dev
-# Create regular files with the proper names and permissions (not device
-# files, yet).  This idea (but not the implementation) is taken from iNs.
-./MAKEDEV --touch generic
-
-# Restrict the permissions as we don't set the correct groups, yet
-find %buildroot/dev ! -type d -size 0 -print0 | xargs -0 chmod go-rwx --
+./MAKEDEV -p --rpm generic > devlist
 popd
 
-# Build the filelist
+# Start building the filelist
 cat > filelist << EOF
 %%defattr(-,root,root)
+/dev/MAKEDEV
 %%_mandir/man8/MAKEDEV.8*
 EOF
-find %buildroot/dev ! -type d ! -size 0 | \
-	sed "s,^%buildroot,," >> filelist
+
+# Directories
 find %buildroot/dev -type d -mindepth 1 | \
-	sed "s,^%buildroot,%%ghost %%dir ," >> filelist
-find %buildroot/dev ! -type d -size 0 | \
-	sed "s,^%buildroot,%%ghost %%verify(not group mode rdev) ," \
-	>> filelist
+	sed "s,^%buildroot,%%dir ," >> filelist
+# Symlinks
+find %buildroot/dev -type l | \
+	sed "s,^%buildroot,," >> filelist
+# Device files
+cat %buildroot/dev/devlist >> filelist
+rm %buildroot/dev/devlist
 
 %post
 grep -q ^audio: /etc/group || groupadd -g 120 audio
 grep -q ^video: /etc/group || groupadd -g 121 video
 grep -q ^radio: /etc/group || groupadd -g 122 radio
 
-cd /dev || exit 1
-echo "Creating device files"
-/dev/MAKEDEV -p generic
-
 %files -f filelist
 
 %changelog
+* Sun Jan 24 2010 Solar Designer <solar-at-owl.openwall.com> 0.13-owl1
+- Have MAKEDEV output a portion of RPM's filelist using %%dev such that the
+package contains proper entries for the device files.
+
 * Fri May 22 2009 Solar Designer <solar-at-owl.openwall.com> 0.12-owl1
 - Create /dev/sr* devices (needed for cdrkit), not just /dev/scd*.
 - Minor updates to the MAKEDEV(8) man page (to the reference to "Linux
