@@ -1,6 +1,6 @@
---- nmap-5.00/configure.ac.orig	2009-06-24 21:35:54.000000000 +0000
-+++ nmap-5.00/configure.ac	2009-07-16 08:50:20.000000000 +0000
-@@ -107,6 +107,7 @@
+--- nmap-5.20/configure.ac.orig	2009-11-05 19:50:33.000000000 +0000
++++ nmap-5.20/configure.ac	2010-01-22 14:20:42.000000000 +0000
+@@ -87,6 +87,7 @@
  needs_cpp_precomp=no
  
  LUA_CFLAGS="-DLUA_USE_POSIX -DLUA_USE_DLOPEN"
@@ -8,7 +8,7 @@
  
  case "$host" in
    *alpha-dec-osf*)
-@@ -114,15 +115,15 @@
+@@ -94,15 +95,15 @@
      ;;
    *-netbsd* | *-knetbsd*-gnu)
      AC_DEFINE(NETBSD)
@@ -27,7 +27,7 @@
      ;;
    *-bsdi*)
      AC_DEFINE(BSDI)
-@@ -177,7 +178,7 @@
+@@ -157,7 +158,7 @@
      ;;
    *-linux*)
      AC_DEFINE(LINUX)
@@ -36,7 +36,7 @@
      ;;
    *-apple-darwin*)
      AC_DEFINE(MACOSX)
-@@ -612,6 +613,7 @@
+@@ -594,6 +595,7 @@
    fi
  
    INSTALLNSE="install-nse"

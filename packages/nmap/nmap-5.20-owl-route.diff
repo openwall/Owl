@@ -1,0 +1,19 @@
+--- nmap-5.20/tcpip.cc.orig	2010-01-15 03:55:23.000000000 +0000
++++ nmap-5.20/tcpip.cc	2010-01-22 15:25:37.000000000 +0000
+@@ -3327,6 +3327,16 @@ static struct sys_route *getsysroutes_pr
+         }
+       }
+     }
++    /* If device name in the route file does not match any interface, then
++       try to find at least an alias of interface that matches. */
++    if (i == numifaces) {
++      for(i=0; i < numifaces; i++) {
++        if (!strcmp(iface, ifaces[i].devname)) {
++          routes[numroutes].device = &ifaces[i];
++          break;
++        }
++      }
++    }
+     if (i == numifaces) {
+       error("Failed to find device %s which was referenced in /proc/net/route", iface);
+       continue;

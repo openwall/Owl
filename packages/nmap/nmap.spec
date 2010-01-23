@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.38 2009/07/23 19:32:40 ldv Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.39 2010/01/23 09:39:12 mci Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -6,8 +6,8 @@
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
-Version: 5.00
-Release: owl5
+Version: 5.20
+Release: owl1
 Epoch: 2
 License: GPL
 Group: Applications/System
@@ -17,20 +17,18 @@ Source: %srcname-stripped-for-owl-1.tar.bz2
 # The following subdirectories have been removed from the above tarball:
 # mswin32 macosx zenmap libpcap libpcre
 # and a README-stripped file has been added.
-# The size reduced from 8.7 MB to 2.2 MB.
+# The size reduced from 9.6 MB to 3 MB.
 # Source: http://nmap.org/dist/%srcname.tar.bz2
 # Signature: http://nmap.org/dist/sigs/%srcname.tar.bz2.asc
-Patch0: nmap-5.00-owl-nse_ldflags.diff
-Patch1: nmap-5.00-alt-owl-autoheader.diff
-Patch2: nmap-5.00-up-20090718-nse_open.diff
-Patch3: nmap-5.00-alt-owl-drop-priv.diff
-Patch4: nmap-5.00-alt-owl-dot-dir.diff
-Patch5: nmap-5.00-alt-owl-fileexistsandisreadable.diff
-Patch6: nmap-5.00-owl-include.diff
-Patch7: nmap-5.00-up-20090711-ncat-error-reporting.diff
-Patch8: nmap-5.00-owl-warnings.diff
-Patch9: nmap-5.00-owl-format.diff
-Patch10: nmap-5.00-owl-route.diff
+Patch0: nmap-5.20-owl-nse_ldflags.diff
+Patch1: nmap-5.20-alt-owl-autoheader.diff
+Patch2: nmap-5.20-alt-owl-drop-priv.diff
+Patch3: nmap-5.20-alt-owl-dot-dir.diff
+Patch4: nmap-5.20-alt-owl-fileexistsandisreadable.diff
+Patch5: nmap-5.20-owl-include.diff
+Patch6: nmap-5.20-owl-warnings.diff
+Patch7: nmap-5.20-owl-route.diff
+Patch8: nmap-5.20-up-20100123.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
 %if %BUILD_NDIFF
@@ -73,15 +71,13 @@ virtually limitless number of potential uses.
 %setup -q -n %srcname
 %patch0 -p1
 %patch1 -p1
-%patch2 -p0
+%patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p0
+%patch7 -p1
 %patch8 -p1
-%patch9 -p1
-%patch10 -p1
 bzip2 -9 CHANGELOG ncat/ChangeLog docs/TODO*
 
 %if !%BUILD_NSE_ENABLED
@@ -121,6 +117,7 @@ grep -q ^nmap: /etc/passwd ||
 %doc CHANGELOG.bz2 COPYING HACKING docs/{README,TODO*,*.txt}
 %attr(750,root,wheel) %_bindir/nmap
 %_mandir/man1/nmap.1*
+%_mandir/*/man1/nmap.1*
 %_datadir/nmap
 
 %if %BUILD_NDIFF
@@ -139,6 +136,11 @@ grep -q ^nmap: /etc/passwd ||
 %endif
 
 %changelog
+* Fri Jan 22 2010 Michail Litvak <mci-at-owl.openwall.com> 2:5.20-owl1
+- Updated to 5.20.
+- Regenerated patches.
+- Added a patch from the upstream SVN repository to fix some errors.
+
 * Thu Jul 23 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 2:5.00-owl5
 - Fixed warnings reported by fresh gcc.
 - Made nmap work in certain network setups.

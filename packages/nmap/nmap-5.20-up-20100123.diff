@@ -1,0 +1,539 @@
+diff -urx .svn -x '*.xml' -x '*.spec' -x '*.spec.in' -x nmap-header-template.cc -x examples -x macosx nmap-5.20/CHANGELOG stable-5.2/CHANGELOG
+--- nmap-5.20/CHANGELOG	2010-01-15 20:18:16 +0000
++++ stable-5.2/CHANGELOG	2010-01-23 00:41:57 +0000
+@@ -1,4 +1,23 @@
+-# Nmap Changelog ($Id: CHANGELOG 16482 2010-01-15 20:18:16Z fyodor $); -*-text-*-
++# Nmap Changelog ($Id: CHANGELOG 16540 2010-01-22 17:48:39Z david $); -*-text-*-
++
++o Fixed an error that occurred when UDP scan was combined with version
++  scan. UDP ports would appear in the state "unknown" at the end of
++  the scan, and in some cases an assertion failure would be raised.
++  This was an unintended side effect of the memory use reduction
++  changes in 5.20. The bug was reported by Jon Kibler. [David]
++
++o [NSE] Fixed a bug in http.lua that could lead to an assertion
++  failure. It happened when there was an error getting the a response
++  at the beginning of a batch in http.pipeline. The symptoms of the
++  bug were:
++    NSE: Received only 0 of 1 expected reponses.
++    Decreasing max pipelined requests to 0.
++    NSOCK (0.1870s) Write request for 0 bytes...
++    nmap: nsock_core.c:516: handle_write_result: Assertion `bytesleft > 0' failed.
++  The error was reported by Brandon Enright and pyllyukko.
++
++o Fixed a bug with the decoding of NMAP OID component values greater
++  than 127. [Patrik Karlsson, David]
+ 
+ Nmap 5.20
+ 
+diff -urx .svn -x '*.xml' -x '*.spec' -x '*.spec.in' -x nmap-header-template.cc -x examples -x macosx nmap-5.20/ncat/ncat_listen.c stable-5.2/ncat/ncat_listen.c
+--- nmap-5.20/ncat/ncat_listen.c	2010-01-06 05:54:55 +0000
++++ stable-5.2/ncat/ncat_listen.c	2010-01-23 00:42:23 +0000
+@@ -85,7 +85,7 @@
+  *                                                                         *
+  ***************************************************************************/
+ 
+-/* $Id: ncat_listen.c 16410 2010-01-06 05:54:55Z david $ */
++/* $Id: ncat_listen.c 16501 2010-01-19 18:57:25Z david $ */
+ 
+ #include "ncat.h"
+ 
+@@ -306,21 +306,13 @@
+ 
+     /* On Linux the new socket will be blocking, but on BSD it inherits the
+        non-blocking status of the listening socket. The socket must be blocking
+-       for operations like SSL_accept to work in the way that we use them. */
++       for operations like SSL_read to work in the way that we use them. */
+     block_socket(s.fd);
+ 
+ #ifdef HAVE_OPENSSL
+     if (o.ssl) {
+         s.ssl = new_ssl(s.fd);
+-        if (SSL_accept(s.ssl) != 1) {
+-            if (o.verbose) {
+-                loguser("Failed SSL connection from %s: %s\n",
+-                        inet_socktop(&remoteaddr), ERR_error_string(ERR_get_error(), NULL));
+-            }
+-            SSL_free(s.ssl);
+-            Close(s.fd);
+-            return;
+-        }
++        SSL_set_accept_state(s.ssl);
+     }
+ #endif
+ 
+diff -urx .svn -x '*.xml' -x '*.spec' -x '*.spec.in' -x nmap-header-template.cc -x examples -x macosx nmap-5.20/nmap-rpc stable-5.2/nmap-rpc
+--- nmap-5.20/nmap-rpc	2008-01-17 07:22:03 +0000
++++ stable-5.2/nmap-rpc	2010-01-23 00:41:57 +0000
+@@ -17,7 +17,7 @@
+ #
+ # ident "@(#)rpc        1.11    95/07/14 SMI"   /* SVr4.0 1.2   */
+ #
+-# $Date: 2008-01-16 23:22:03 -0800 (Wed, 16 Jan 2008) $
++# $Date: 2008-01-17 10:22:03 +0300 (Thu, 17 Jan 2008) $
+ #
+ # $Revision: 6728 $
+ #
+diff -urx .svn -x '*.xml' -x '*.spec' -x '*.spec.in' -x nmap-header-template.cc -x examples -x macosx nmap-5.20/nse_main.lua stable-5.2/nse_main.lua
+--- nmap-5.20/nse_main.lua	2009-12-30 02:34:05 +0000
++++ stable-5.2/nse_main.lua	2010-01-23 00:41:57 +0000
+@@ -89,7 +89,7 @@
+ do -- Append the nselib directory to the Lua search path
+   local t, path = assert(cnse.fetchfile_absolute("nselib/"));
+   assert(t == "directory", "could not locate nselib directory!");
+-  package.path = package.path..";"..path.."?.lua";
++  package.path = path.."?.lua;"..package.path;
+ end
+ 
+ local stdnse = require "stdnse";
+diff -urx .svn -x '*.xml' -x '*.spec' -x '*.spec.in' -x nmap-header-template.cc -x examples -x macosx nmap-5.20/nselib/http.lua stable-5.2/nselib/http.lua
+--- nmap-5.20/nselib/http.lua	2010-01-13 02:53:13 +0000
++++ stable-5.2/nselib/http.lua	2010-01-23 00:41:48 +0000
+@@ -270,7 +270,27 @@
+   return table.concat(lines), partial
+ end
+ 
+--- Receive exactly <code>length</code> bytes.
++-- Receive until the connection is closed.
++local function recv_all(s, partial)
++  local parts
++
++  partial = partial or ""
++
++  parts = {partial}
++  while true do
++    local status, part = s:receive()
++    if not status then
++      break
++    else
++      parts[#parts + 1] = part
++    end
++  end
++
++  return table.concat(parts), ""
++end
++
++-- Receive exactly <code>length</code> bytes. Returns <code>nil</code> if that
++-- many aren't available.
+ local function recv_length(s, length, partial)
+   local parts, last
+ 
+@@ -284,6 +304,9 @@
+ 
+     parts[#parts + 1] = last
+     status, last = s:receive()
++    if not status then
++      return nil
++    end
+     length = length - #last
+   end
+ 
+@@ -344,7 +367,9 @@
+     chunks[#chunks + 1] = chunk
+ 
+     line, partial = recv_line(s, partial)
+-    if not line or not string.match(line, "^\r?\n") then
++    if not line then
++      return nil, string.format("Didn't find CRLF after chunk-data.")
++    elseif not string.match(line, "^\r?\n") then
+       return nil, string.format("Didn't find CRLF after chunk-data; got %q.", line)
+     end
+   until chunk_size == 0
+@@ -356,21 +381,55 @@
+ -- <code>recv_header</code>. The handling is sensitive to the request method
+ -- and the status code of the response.
+ local function recv_body(s, response, method, partial)
++  local connection_close, connection_keepalive
++  local version_major, version_minor
+   local transfer_encoding
+   local content_length
+   local err
+ 
+   partial = partial or ""
+ 
++  -- First check for Connection: close and Connection: keep-alive. This is
++  -- necessary to handle some servers that don't follow the protocol.
++  connection_close = false
++  connection_keepalive = false
++  if response.header.connection then
++    local offset, token
++    offset = 0
++    while true do
++      offset, token = get_token(response.header.connection, offset + 1)
++      if not offset then
++        break
++      end
++      if string.lower(token) == "close" then
++        connection_close = true
++      elseif string.lower(token) == "keep-alive" then
++        connection_keepalive = true
++      end
++    end
++  end
++
++  -- The HTTP version may also affect our decisions.
++  version_major, version_minor = string.match(response["status-line"], "^HTTP/(%d+)%.(%d+)")
++
+   -- See RFC 2616, section 4.4 "Message Length".
+ 
+   -- 1. Any response message which "MUST NOT" include a message-body (such as
+   --    the 1xx, 204, and 304 responses and any response to a HEAD request) is
+   --    always terminated by the first empty line after the header fields...
++  --
++  -- Despite the above, some servers return a body with response to a HEAD
++  -- request. So if an HTTP/1.0 server returns a response without Connection:
++  -- keep-alive, or any server returns a response with Connection: close, read
++  -- whatever's left on the socket (should be zero bytes).
+   if string.upper(method) == "HEAD"
+     or (response.status >= 100 and response.status <= 199)
+     or response.status == 204 or response.status == 304 then
+-    return "", partial
++    if connection_close or (version_major == "1" and version_minor == "0" and not connection_keepalive) then
++      return recv_all(s, partial)
++    else
++      return "", partial
++    end
+   end
+ 
+   -- 2. If a Transfer-Encoding header field (section 14.41) is present and has
+@@ -410,19 +469,7 @@
+   -- Case 4 is unhandled.
+ 
+   -- 5. By the server closing the connection.
+-  do
+-    local parts = {partial}
+-    while true do
+-      local status, part = s:receive()
+-      if not status then
+-        break
+-      else
+-        parts[#parts + 1] = part
+-      end
+-    end
+-
+-    return table.concat(parts), ""
+-  end
++  return recv_all(s, partial)
+ end
+ 
+ -- Sets response["status-line"] and response.status.
+@@ -1113,7 +1160,6 @@
+   local responses
+   local response
+   local partial
+-  local j, batch_end
+ 
+   responses = {}
+ 
+@@ -1140,9 +1186,11 @@
+   responses[#responses + 1] = response
+ 
+   local limit = getPipelineMax(response)
++  local count = 1
+   stdnse.print_debug("Number of requests allowed by pipeline: " .. limit)
+ 
+   while #responses < #allReqs do
++    local j, batch_end
+     -- we build a big string with many requests, upper limited by the var "limit"
+     local requests = ""
+ 
+@@ -1162,9 +1210,10 @@
+     end
+ 
+     -- Connect to host and send all the requests at once!
+-    if not socket:get_info() then
++    if count >= limit or not socket:get_info() then
+       socket:connect(host.ip, port.number, bopt)
+       partial = ""
++      count = 0
+     end
+     socket:set_timeout(10000)
+     socket:send(requests)
+@@ -1174,15 +1223,18 @@
+       if not response then
+         break
+       end
++      count = count + 1
+       responses[#responses + 1] = response
+     end
+ 
+     socket:close()
+-    partial = ""
+ 
+-    if #responses < batch_end then
+-      stdnse.print_debug("Received only %d of %d expected reponses.\nDecreasing max pipelined requests to %d.", limit - (batch_end - #responses), limit, limit - (batch_end - #responses))
+-      limit = limit - (batch_end - #responses)
++    if count == 0 then
++      stdnse.print_debug("Received 0 of %d expected reponses.\nGiving up on pipeline.", limit);
++      break
++    elseif count < limit then
++      stdnse.print_debug("Received only %d of %d expected reponses.\nDecreasing max pipelined requests to %d.", count, limit, count)
++      limit = count
+     end
+   end
+ 
+@@ -1231,8 +1283,7 @@
+     end
+   end
+ 
+-  local response = {}
+-  local result = {status=nil,["status-line"]=nil,header={},body=""}
++  local error_response = {status=nil,["status-line"]=nil,header={},body=""}
+   local socket
+ 
+   method = string.match(data, "^(%S+)")
+@@ -1240,13 +1291,13 @@
+   socket, partial = comm.tryssl(host, port, data, opts)
+ 
+   if not socket then
+-    return result
++    return error_response
+   end
+ 
+   repeat
+     response, partial = next_response(socket, method, partial)
+     if not response then
+-      return nil, partial
++      return error_response
+     end
+     -- See RFC 2616, sections 8.2.3 and 10.1.1, for the 100 Continue status.
+     -- Sometimes a server will tell us to "go ahead" with a POST body before
+diff -urx .svn -x '*.xml' -x '*.spec' -x '*.spec.in' -x nmap-header-template.cc -x examples -x macosx nmap-5.20/nselib/snmp.lua stable-5.2/nselib/snmp.lua
+--- nmap-5.20/nselib/snmp.lua	2009-12-14 01:03:53 +0000
++++ stable-5.2/nselib/snmp.lua	2010-01-23 00:41:48 +0000
+@@ -182,6 +182,53 @@
+    return pos, value
+ end
+ 
++-- Decode one component of an OID from a byte string. 7 bits of the component
++-- are stored in each octet, most significant first, with the eigth bit set in
++-- all octets but the last. These encoding rules come from
++-- http://luca.ntop.org/Teaching/Appunti/asn1.html, section 5.9 OBJECT
++-- IDENTIFIER.
++local function decode_oid_component(encStr, pos)
++   local octet
++   local n = 0
++
++   repeat
++      pos, octet = bin.unpack("C", encStr, pos)
++      n = n * 128 + bit.band(0x7F, octet)
++   until octet < 128
++
++   return pos, n
++end
++
++--- Decodes an OID from a sequence of bytes.
++--
++-- @param encStr Encoded string.
++-- @param len Length of sequence in bytes.
++-- @param pos Current position in the string.
++-- @return The position after decoding.
++-- @return The OID as an array.
++local function decodeOID(encStr, len, pos)
++   local last
++   local oid = {}
++   local octet
++
++   last = pos + len - 1
++   if pos <= last then
++      oid._snmp = '06'
++      pos, octet = bin.unpack("C", encStr, pos)
++      oid[2] = math.mod(octet, 40)
++      octet = octet - oid[2]
++      oid[1] = octet/40
++   end
++
++   while pos <= last do
++      local c
++      pos, c = decode_oid_component(encStr, pos)
++      oid[#oid + 1] = c
++   end
++ 
++   return pos, oid
++end
++
+ ---
+ -- Decodes a sequence according to ASN.1 basic encoding rules.
+ -- @param encStr Encoded string.
+@@ -225,17 +272,8 @@
+       return pos, false
+ 
+    elseif (etype == "06") then -- OID
+-      local oid = {}
+-      oid._snmp = '06'
+-      local octet
+-      pos, octet = bin.unpack("C", encStr, pos)
+-      oid[2] = math.mod(octet, 40)
+-      octet = octet - oid[2]
+-      oid[1] = octet/40
+-      for i = 2, elen do
+-	 pos, oid[i+1] = bin.unpack("C", encStr, pos)
+-      end
+-      return pos, oid
++      return decodeOID( encStr, elen, pos )
++
+    elseif (etype == "30") then -- sequence
+       local seq
+       pos, seq = decodeSeq(encStr, elen, pos)
+diff -urx .svn -x '*.xml' -x '*.spec' -x '*.spec.in' -x nmap-header-template.cc -x examples -x macosx nmap-5.20/nsock/src/error.h stable-5.2/nsock/src/error.h
+--- nmap-5.20/nsock/src/error.h	2009-04-15 00:37:23 +0000
++++ stable-5.2/nsock/src/error.h	2010-01-23 00:42:02 +0000
+@@ -54,7 +54,7 @@
+  *                                                                         *
+  ***************************************************************************/
+ 
+-/* $Id: error.h 12956 2009-04-15 00:37:23Z fyodor $ */
++/* $Id: error.h 16511 2010-01-20 18:04:29Z david $ */
+ 
+ #ifndef ERROR_H
+ #define ERROR_H
+@@ -75,9 +75,9 @@
+ #include <unistd.h>
+ #endif
+ 
+-void fatal(char *fmt, ...);
++void fatal(char *fmt, ...) __attribute__((noreturn));
+ void myerror(char *fmt, ...);
+-void pfatal(char *fmt, ...);
++void pfatal(char *fmt, ...) __attribute__((noreturn));
+ void gh_perror(char *err, ...);
+ 
+ #endif /* ERROR_H */
+diff -urx .svn -x '*.xml' -x '*.spec' -x '*.spec.in' -x nmap-header-template.cc -x examples -x macosx nmap-5.20/nsock/src/nsock_ssl.c stable-5.2/nsock/src/nsock_ssl.c
+--- nmap-5.20/nsock/src/nsock_ssl.c	2009-04-25 21:22:57 +0000
++++ stable-5.2/nsock/src/nsock_ssl.c	2010-01-23 00:42:02 +0000
+@@ -56,7 +56,7 @@
+  *                                                                         *
+  ***************************************************************************/
+ 
+-/* $Id: nsock_ssl.c 13078 2009-04-25 21:22:57Z fyodor $ */
++/* $Id: nsock_ssl.c 16509 2010-01-20 17:32:30Z david $ */
+ 
+ 
+ #include "nsock.h"
+@@ -191,9 +191,9 @@
+    SSL object is SSL_VERIFY_NONE, or if OpenSSL is disabled, this function
+    always returns true. */
+ int nsi_ssl_post_connect_verify(const nsock_iod nsockiod) {
++#if HAVE_OPENSSL
+   msiod *iod = (msiod *) nsockiod;
+ 
+-#if HAVE_OPENSSL
+   assert(iod->ssl != NULL);
+   if (SSL_get_verify_mode(iod->ssl) != SSL_VERIFY_NONE) {
+     X509 *cert;
+diff -urx .svn -x '*.xml' -x '*.spec' -x '*.spec.in' -x nmap-header-template.cc -x examples -x macosx nmap-5.20/portlist.cc stable-5.2/portlist.cc
+--- nmap-5.20/portlist.cc	2009-12-20 03:22:19 +0000
++++ stable-5.2/portlist.cc	2010-01-23 00:41:57 +0000
+@@ -87,7 +87,7 @@
+  *                                                                         *
+  ***************************************************************************/
+ 
+-/* $Id: portlist.cc 16313 2009-12-20 03:22:19Z david $ */
++/* $Id: portlist.cc 16540 2010-01-22 17:48:39Z david $ */
+ 
+ 
+ #include "portlist.h"
+@@ -662,6 +662,7 @@
+ 
+ /* Create the port if it doesn't exist; otherwise this is like lookupPort. */
+ Port *PortList::createPort(u16 portno, u8 protocol) {
++  Port *p;
+   u16 mapped_portno;
+   u8 mapped_protocol;
+ 
+@@ -670,10 +671,13 @@
+   if (!mapPort(&mapped_portno, &mapped_protocol))
+     return NULL;
+ 
+-  if (port_list[mapped_protocol][mapped_portno] == NULL) {
+-    Port *p = new Port();
++  p = port_list[mapped_protocol][mapped_portno];
++  if (p == NULL) {
++    p = new Port();
+     p->portno = portno;
+     p->proto = protocol;
++    p->state = default_port_state[mapped_protocol].state;
++    p->reason.reason_id = ER_NORESPONSE;
+     port_list[mapped_protocol][mapped_portno] = p;
+   }
+ 
+diff -urx .svn -x '*.xml' -x '*.spec' -x '*.spec.in' -x nmap-header-template.cc -x examples -x macosx nmap-5.20/scripts/smb-brute.nse stable-5.2/scripts/smb-brute.nse
+--- nmap-5.20/scripts/smb-brute.nse	2009-12-30 02:34:05 +0000
++++ stable-5.2/scripts/smb-brute.nse	2010-01-23 00:41:47 +0000
+@@ -380,6 +380,24 @@
+ 	return true
+ end
+ 
++---Determines whether or not a login was "bad". A bad login is one where an account becomes locked out. 
++--
++--@param hostinfo The hostinfo table. 
++--@param result   The result code. 
++--@return <code>true</code> if the password used for logging in was correct, <code>false</code> otherwise. Keep
++--        in mind that this doesn't imply the login was successful (only results.SUCCESS indicates that), rather
++--        that the password was valid. 
++
++function is_bad_result(hostinfo, result)
++	-- If result is LOCKED, it's always bad. 
++	if(result == results.ACCOUNT_LOCKED or result == results.ACCOUNT_LOCKED_NOW) then
++		return true
++	end
++
++	-- Otherwise, it's good
++	return false
++end
++
+ ---Count the number of one bits in a binary representation of the given number. This is used for case-sensitive
+ -- checks. 
+ --
+@@ -937,30 +955,29 @@
+ --io.write(string.format("%s:%s\n", username, password))
+ 			local result = check_login(hostinfo, username, password, get_type(hostinfo))
+ 
+-			if(is_positive_result(hostinfo, result)) then
+-
+-				-- First, the special case -- a lockout occurred (bad news!)
+-				if(result == results.ACCOUNT_LOCKED) then
+-					-- Add it to the list of locked usernames
+-					hostinfo['locked_usernames'][username] = true
+-
+-					-- Unless the user requested to keep going, stop the check
+-					if(not(nmap.registry.args.smblockout == 1 or nmap.registry.args.smblockout == "true")) then
+-						-- Mark it as found, which is technically true
+-						status, err = found_account(hostinfo, username, nil, results.ACCOUNT_LOCKED_NOW)
+-						if(status == false) then
+-							return err
+-						end
+-
+-						-- Let the user know that it went badly
+-						stdnse.print_debug(1, "smb-brute: '%s' became locked out; stopping", username)
+-
+-						return true, hostinfo['accounts'], hostinfo['locked_usernames']
+-					else
+-						stdnse.print_debug(1, "smb-brute: '%s' became locked out; continuing", username)
++			-- Check if the username was locked out
++			if(is_bad_result(hostinfo, result)) then
++				-- Add it to the list of locked usernames
++				hostinfo['locked_usernames'][username] = true
++
++				-- Unless the user requested to keep going, stop the check
++				if(not(nmap.registry.args.smblockout == 1 or nmap.registry.args.smblockout == "true")) then
++					-- Mark it as found, which is technically true
++					status, err = found_account(hostinfo, username, nil, results.ACCOUNT_LOCKED_NOW)
++					if(status == false) then
++						return err
+ 					end
++
++					-- Let the user know that it went badly
++					stdnse.print_debug(1, "smb-brute: '%s' became locked out; stopping", username)
++
++					return true, hostinfo['accounts'], hostinfo['locked_usernames']
++				else
++					stdnse.print_debug(1, "smb-brute: '%s' became locked out; continuing", username)
+ 				end
++			end
+ 
++			if(is_positive_result(hostinfo, result)) then
+ 				-- Reset the connection
+ 				stdnse.print_debug(2, "smb-brute: Found an account; resetting connection")
+ 				status, err = restart_session(hostinfo)
