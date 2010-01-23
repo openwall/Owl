@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.24 2009/05/21 21:01:34 solar Exp $
+# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.25 2010/01/23 22:49:43 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
@@ -6,8 +6,8 @@ Version: 0.12
 Release: owl1
 License: public domain
 Group: System Environment/Base
-Source: MAKEDEV-2.5.2.tar.gz
-Patch: MAKEDEV-2.5.2-owl.diff
+Source0: MAKEDEV
+Source1: MAKEDEV.8
 PreReq: grep
 PreReq: owl-etc >= 0.18-owl1, fileutils, sh-utils
 Provides: dev
@@ -22,27 +22,28 @@ access to a number of kernel facilities.  This package creates the
 initial set of device files to be placed into /dev.  It also provides
 /dev/MAKEDEV, a script to create and manage the device files.
 
+# We don't have any source archives to unpack, but we need a build directory
+# for creating the filelist in.
 %prep
-%setup -q -n MAKEDEV-2.5.2
-%patch -p1
+%setup -c -T
 
 %install
 rm -rf %buildroot
 mkdir -p -m 700 %buildroot/dev
 mkdir -p %buildroot%_mandir/man8
-install -m 700 MAKEDEV %buildroot/dev/
-install -m 644 MAKEDEV.man %buildroot%_mandir/man8/MAKEDEV.8
+install -pm 700 %_sourcedir/MAKEDEV %buildroot/dev/
+install -pm 644 %_sourcedir/MAKEDEV.8 %buildroot%_mandir/man8/
 
+pushd %buildroot/dev
 # Create regular files with the proper names and permissions (not device
 # files, yet).  This idea (but not the implementation) is taken from iNs.
-cd %buildroot/dev
 ./MAKEDEV --touch generic
 
 # Restrict the permissions as we don't set the correct groups, yet
 find %buildroot/dev ! -type d -size 0 -print0 | xargs -0 chmod go-rwx --
+popd
 
 # Build the filelist
-cd $RPM_BUILD_DIR/MAKEDEV-2.5.2
 cat > filelist << EOF
 %%defattr(-,root,root)
 %%_mandir/man8/MAKEDEV.8*
