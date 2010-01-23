@@ -1,5 +1,4 @@
-.\" $Id: Owl/packages/owl-dev/MAKEDEV.8,v 1.1 2010/01/23 22:23:53 solar Exp $
-.TH MAKEDEV 8 "14th August 1994" Linux "Linux Programmer's Manual"
+.TH MAKEDEV 8 "" Linux
 .SH NAME
 MAKEDEV \- create devices
 .SH SYNOPSIS
@@ -389,7 +388,13 @@ Linux used to have devices in /dev for controlling network devices, but
 that is no longer the case.  To see what network devices are known by the
 kernel, look at /proc/net/dev.
 .SH "SEE ALSO"
-Linux Allocated Devices, maintained by H.\ Peter Anvin,
-<Peter.Anvin@linux.org>.
-.SH AUTHOR
-Nick Holloway, <Nick.Hollowa
+Linux Allocated Devices, available at:
+.PP
+http://www.lanana.org/docs/device-list/
+.PP
+and also as Documentation/devices.txt in the Linux kernel source tree.
+.SH AUTHORS
+This MAKEDEV script was initially written by Nick Holloway,
+and then maintained by Michael K. Johnson
+and later by Nalin Dahyabhai of Red Hat.
+Finally, it has been modified for Owl.
