@@ -124,53 +124,28 @@ symlink () {	# usage: symlink name target
 
 #---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#
 
-# For bash and ksh, we can use faster builtin routines to do manipulation,
-# otherwise (ash) fall back to slower method using `expr'.
-# The extra level of indirection using `eval' is necessary a) for ksh, and
-# b) to get past ash.
+# For bash and ksh, we can use fast builtin routines to do manipulation.
+# The extra level of indirection using `eval' is necessary for ksh.
 
-if [ "$RANDOM" != "$RANDOM" ]
-then
-	math () {
-		eval echo "\$(($*))"
-	}
-	index () {	# index string c
-		eval "I=\${1%$2*}"
-		eval echo "\${#I}"
-	}
-	suffix () {
-		eval echo "\${1#$2}"
-	}
-	strip () {
-		eval echo "\${1% $2 *} \${1#* $2 }"
-	}
-	first () {
-		eval echo "\${1:0:1}"
-	}
-	second () {
-		eval echo "\${1:1:1}"
-	}
-else
-	math () {
-		expr "$@"
-	}
-	index () {	# index string c
-		expr $1 : ".*$2" - 1
-	}
-	suffix () {
-		expr "$1" : "$2\(.*\)"
-	}
-	strip () {
-		echo "[$1][$2]" >&2
-		echo "`expr \"$1\" : \"\(.*\) $2 \"` `expr \"$1\" : \".* $2 \(.*\)\"`"
-	}
-	first () {
-		expr "$1" : "\(.\)"
-	}
-	second () {
-		expr "$1" : ".\(.\)"
-	}
-fi
+math () {
+	eval echo "\$(($*))"
+}
+index () {	# index string c
+	eval "I=\${1%$2*}"
+	eval echo "\${#I}"
+}
+suffix () {
+	eval echo "\${1#$2}"
+}
+strip () {
+	eval echo "\${1% $2 *} \${1#* $2 }"
+}
+first () {
+	eval echo "\${1:0:1}"
+}
+second () {
+	eval echo "\${1:1:1}"
+}
 
 #---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#
 
