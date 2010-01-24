@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/groff/groff.spec,v 1.29 2009/08/16 05:22:56 solar Exp $
+# $Owl: Owl/packages/groff/groff.spec,v 1.30 2010/01/24 03:55:36 solar Exp $
 
 %define BUILD_USE_X 0
 %define BUILD_CURRENT 0
@@ -6,14 +6,15 @@
 Summary: A document formatting system.
 Name: groff
 Version: 1.20.1
-Release: owl4
+Release: owl5
 License: mostly GPLv3+ and FDL
 Group: System Environment/Base
 URL: http://groff.ffii.org
 Source0: ftp://ftp.gnu.org/gnu/groff/groff-%version.tar.gz
 # Signature: ftp://ftp.gnu.org/gnu/groff/groff-%version.tar.gz.sig
 %if %BUILD_CURRENT
-Source1: ftp://ftp.ffii.org/pub/groff/devel/groff-%version-current.diff.gz
+# http://groff.ffii.org/groff/devel/groff-%version-current.diff.gz
+Source1: groff-%version-current-20YYMMDD.diff.bz2
 %endif
 Source2: README.A4
 Patch0: groff-1.20.1-rh-nohtml.diff
@@ -22,6 +23,7 @@ Patch2: groff-1.20.1-alt-docdir.diff
 Patch3: groff-1.20.1-alt-old_drawing_scheme.diff
 Patch4: groff-1.20.1-owl-pdfroff-gs-dSAFER.diff
 Patch5: groff-1.20.1-owl-groffer-Makefile.diff
+Patch6: groff-1.20.1-up-20090401-doc.tmac-ec.diff
 Obsoletes: groff-tools
 Requires: mktemp >= 1:1.3.1
 BuildRequires: mktemp >= 1:1.3.1, zlib-devel, gcc-c++
@@ -86,6 +88,7 @@ zcat %SOURCE1 | patch -p1 -l
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 install -pm 644 %_sourcedir/README.A4 .
 
 # Remove/disable unused files with temporary file handling issues in them to
@@ -223,6 +226,12 @@ fi
 %doc %docdir/[a-z]*
 
 %changelog
+* Sun Jan 24 2010 Solar Designer <solar-at-owl.openwall.com> 1.20.1-owl5
+- Added upstream's fix for
+"/usr/share/groff/1.20.1/tmac/doc.tmac:3375: bad character definition"
+(call the '.ec' request to restore the default escape character before
+mapping characters).
+
 * Sun Aug 16 2009 Solar Designer <solar-at-owl.openwall.com> 1.20.1-owl4
 - Dropped "export ac_cv_func_mkstemp=yes" as it did not work with the new
 configure script anyway.
