@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/groff/groff.spec,v 1.30 2010/01/24 03:55:36 solar Exp $
+# $Owl: Owl/packages/groff/groff.spec,v 1.31 2010/01/24 04:03:08 solar Exp $
 
 %define BUILD_USE_X 0
 %define BUILD_CURRENT 0
@@ -10,8 +10,9 @@ Release: owl5
 License: mostly GPLv3+ and FDL
 Group: System Environment/Base
 URL: http://groff.ffii.org
-Source0: ftp://ftp.gnu.org/gnu/groff/groff-%version.tar.gz
+# ftp://ftp.gnu.org/gnu/groff/groff-%version.tar.gz
 # Signature: ftp://ftp.gnu.org/gnu/groff/groff-%version.tar.gz.sig
+Source0: groff-%version.tar.bz2
 %if %BUILD_CURRENT
 # http://groff.ffii.org/groff/devel/groff-%version-current.diff.gz
 Source1: groff-%version-current-20YYMMDD.diff.bz2
