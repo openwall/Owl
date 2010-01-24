@@ -46,6 +46,10 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/01/24	Package: nmap
+Updated to 5.20 with our usual enhancements for privilege reduction and
+with some post-release fixes.
+
 2010/01/21	Package: pciutils
 Updated to 3.1.5.
 
@@ -1102,4 +1106,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.220 2010/01/20 23:49:23 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.221 2010/01/24 20:05:08 solar Exp $
