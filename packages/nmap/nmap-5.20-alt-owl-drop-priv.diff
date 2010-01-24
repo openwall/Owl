@@ -49,7 +49,7 @@
       machines. The list is initially empty. It is refilled inside the loop
       whenever it is empty. */
 --- nmap-5.20/tcpip.cc.orig	2010-01-15 03:55:23.000000000 +0000
-+++ nmap-5.20/tcpip.cc	2010-01-22 14:31:13.000000000 +0000
++++ nmap-5.20/tcpip.cc	2010-01-24 18:39:10.000000000 +0000
 @@ -96,6 +96,7 @@
  #include "portreasons.h"
  #include <dnet.h>
@@ -81,7 +81,7 @@
    int i;
  
    if (!howmany)
-@@ -3505,7 +3513,7 @@ struct sys_route *getsysroutes(int *howm
+@@ -3505,16 +3513,18 @@ struct sys_route *getsysroutes(int *howm
    }
  
    /* First let us try Linux-style /proc/net/route */
@@ -89,8 +89,10 @@
 +  routethrough_init();
    if (routefp) {
      routes = getsysroutes_proc(routefp, howmany);
-     fclose(routefp);
-@@ -3515,6 +3523,9 @@ struct sys_route *getsysroutes(int *howm
+-    fclose(routefp);
+   } else {
+     routes = getsysroutes_dnet(howmany);
+   }
  
    numroutes = *howmany;
  
@@ -265,7 +267,7 @@
    if (services_initialized) return 0;
  
    char filename[512];
---- nmap-5.20/droppriv.cc.orig	2010-01-22 14:26:33.000000000 +0000
+--- nmap-5.20/droppriv.cc.orig	2010-01-24 18:38:29.000000000 +0000
 +++ nmap-5.20/droppriv.cc	2008-05-12 22:10:40.000000000 +0000
 @@ -0,0 +1,95 @@
 +#include "nmap.h"
@@ -363,7 +365,7 @@
 +}
 +
 +#endif /* NMAP_USER */
---- nmap-5.20/droppriv.h.orig	2010-01-22 14:26:33.000000000 +0000
+--- nmap-5.20/droppriv.h.orig	2010-01-24 18:38:29.000000000 +0000
 +++ nmap-5.20/droppriv.h	2007-10-07 11:39:28.000000000 +0000
 @@ -0,0 +1,13 @@
 +#ifndef NMAP_DROPPRIV_H__
