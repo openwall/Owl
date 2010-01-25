@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.70 2010/01/25 02:35:48 solar Exp $
+# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.71 2010/01/25 02:50:44 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
@@ -170,7 +170,7 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 
 %changelog
 * Mon Jan 25 2010 Solar Designer <solar-at-owl.openwall.com> 0.32-owl1
-- Added /etc/mime.types (from Apache httpd 2.2.14).
+- Added /etc/mime.types (from Apache httpd 2.2.14 with minor changes).
 
 * Tue Jan 08 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.31-owl3
 - Removed %%ghost attribute from /etc/mtab file.

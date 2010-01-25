@@ -1,6 +1,8 @@
+# $Owl: Owl/packages/owl-etc/mime.types,v 1.2 2010/01/25 02:50:44 solar Exp $
+#
 # This file maps Internet media types to unique file extension(s).
 # Although created for httpd, this file is used by many software systems
-# and has been placed in the public domain for unlimited redisribution.
+# and has been placed in the public domain for unlimited redistribution.
 #
 # The table below contains both registered and (common) unregistered types.
 # A type that has no unique extension can be ignored -- they are listed
@@ -116,7 +118,7 @@ application/news-transmission
 application/nss
 application/ocsp-request
 application/ocsp-response
-application/octet-stream bin dms lha lrf lzh so iso dmg dist distz pkg bpk dump elc deploy
+application/octet-stream bin dms lha lrf lzh so iso dmg dist distz pkg bpk dump elc deploy authorized_keys
 application/oda					oda
 application/oebps-package+xml			opf
 application/ogg					ogx
@@ -800,7 +802,7 @@ application/x-font-vfont
 application/x-futuresplash			spl
 application/x-gnumeric				gnumeric
 application/x-gtar				gtar
-application/x-gzip
+application/x-gzip				gz
 application/x-hdf				hdf
 application/x-java-jnlp-file			jnlp
 application/x-latex				latex
