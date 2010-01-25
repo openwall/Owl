@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.69 2008/01/08 22:10:12 ldv Exp $
+# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.70 2010/01/25 02:35:48 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 0.31
-Release: owl3
+Version: 0.32
+Release: owl1
 License: public domain
 Group: System Environment/Base
 Source0: passwd
@@ -16,6 +16,7 @@ Source12: host.conf
 Source13: nsswitch.conf
 Source20: protocols
 Source21: services
+Source22: mime.types
 Source30: hosts.allow
 Source31: hosts.deny
 Source40: profile
@@ -42,7 +43,7 @@ cd %buildroot
 touch etc/motd var/log/lastlog
 install -p %_sourcedir/{passwd,shadow,group,fstab} etc/
 install -p %_sourcedir/{securetty,shells,host.conf,nsswitch.conf} etc/
-install -p %_sourcedir/{protocols,services,hosts.{allow,deny}} etc/
+install -p %_sourcedir/{protocols,services,mime.types,hosts.{allow,deny}} etc/
 install -p %_sourcedir/{profile,bashrc,inputrc} etc/
 install -p %_sourcedir/{csh.{login,cshrc}} etc/
 touch etc/{group,passwd,shadow}-
@@ -150,6 +151,7 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %config(noreplace) /etc/nsswitch.conf
 %config /etc/protocols
 %config /etc/services
+%config /etc/mime.types
 %config(noreplace) /etc/hosts.allow
 %config(noreplace) /etc/hosts.deny
 %config(noreplace) /etc/profile
@@ -167,6 +169,9 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %dir %attr(755,root,root) /etc/sysconfig
 
 %changelog
+* Mon Jan 25 2010 Solar Designer <solar-at-owl.openwall.com> 0.32-owl1
+- Added /etc/mime.types (from Apache httpd 2.2.14).
+
 * Tue Jan 08 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.31-owl3
 - Removed %%ghost attribute from /etc/mtab file.
 
