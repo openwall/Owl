@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gawk/gawk.spec,v 1.17 2009/09/09 21:51:57 ldv Exp $
+# $Owl: Owl/packages/gawk/gawk.spec,v 1.18 2010/01/26 17:18:56 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -8,8 +8,10 @@ Version: 3.1.1
 Release: owl4
 License: GPL
 Group: Applications/Text
-Source0: ftp://ftp.gnu.org/gnu/gawk/gawk-%version.tar.gz
-Source1: ftp://ftp.gnu.org/gnu/gawk/gawk-%version-ps.tar.gz
+# ftp://ftp.gnu.org/gnu/gawk/gawk-%version.tar.gz
+Source0: gawk-%version.tar.bz2
+# ftp://ftp.gnu.org/gnu/gawk/gawk-%version-ps.tar.gz
+Source1: gawk-%version-ps.tar.bz2
 Patch0: gawk-3.1.1-eggert-tmp.diff
 Patch1: gawk-3.1.1-owl-info.diff
 PreReq: /sbin/install-info

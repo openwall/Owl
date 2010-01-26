@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.17 2006/04/04 00:15:07 ldv Exp $
+# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.18 2010/01/26 17:18:56 solar Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
@@ -7,7 +7,8 @@ Release: owl1
 License: GPL
 Group: Applications/Text
 URL: http://www.gnu.org/software/diffutils/
-Source0: ftp://alpha.gnu.org/pub/gnu/%name/%name-%version.tar.gz
+# ftp://alpha.gnu.org/pub/gnu/%name/%name-%version.tar.gz
+Source: %name-%version.tar.bz2
 Patch0: diffutils-2.8.7-owl-info.diff
 Patch1: diffutils-2.8.7-rh-warnings.diff
 Patch2: diffutils-2.8.7-alt-tmp.diff

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/mutt/mutt.spec,v 1.26 2007/05/31 11:46:25 ldv Exp $
+# $Owl: Owl/packages/mutt/mutt.spec,v 1.27 2010/01/26 17:18:56 solar Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
@@ -7,7 +7,8 @@ Release: owl1
 License: GPL
 Group: Applications/Internet
 URL: http://www.mutt.org
-Source0: ftp://ftp.mutt.org/mutt/mutt-%version.tar.gz
+# ftp://ftp.mutt.org/mutt/mutt-%version.tar.gz
+Source0: mutt-%version.tar.bz2
 Source1: Muttrc-color
 Patch0: mutt-1.4-owl-no-sgid.diff
 Patch1: mutt-1.4-owl-muttbug-tmp.diff

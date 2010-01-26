@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.47 2009/09/30 00:25:59 ldv Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.48 2010/01/26 17:18:57 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -8,7 +8,8 @@ Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
 URL: http://www.postfix.org/
-Source0: ftp://ftp.porcupine.org/mirrors/postfix-release/official/%name-%version.tar.gz
+# ftp://ftp.porcupine.org/mirrors/postfix-release/official/%name-%version.tar.gz
+Source0: %name-%version.tar.bz2
 Source1: aliases
 Source2: main.cf
 Source3: postfix.init

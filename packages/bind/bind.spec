@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bind/bind.spec,v 1.27 2009/07/28 21:09:18 ldv Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.28 2010/01/26 17:18:56 solar Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -12,7 +12,8 @@ License: BSD-style
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
 
-Source0: ftp://ftp.isc.org/isc/bind9/%version/bind-%version-P2.tar.gz
+# ftp://ftp.isc.org/isc/bind9/%version/bind-%version-P2.tar.gz
+Source0: bind-%version-P2.tar.bz2
 Source1: rfc1912.txt.bz2
 Source2: bind-debug.control
 Source3: bind-slave.control

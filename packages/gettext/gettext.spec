@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gettext/gettext.spec,v 1.15 2009/09/09 21:46:49 ldv Exp $
+# $Owl: Owl/packages/gettext/gettext.spec,v 1.16 2010/01/26 17:18:56 solar Exp $
 
 Summary: GNU libraries and utilities for producing multi-lingual messages.
 Name: gettext
@@ -7,7 +7,8 @@ Release: owl1
 License: GPL/LGPL
 Group: Development/Tools
 URL: http://www.gnu.org/software/gettext/
-Source: ftp://ftp.gnu.org/gnu/gettext/%name-%version.tar.gz
+# ftp://ftp.gnu.org/gnu/gettext/%name-%version.tar.gz
+Source: %name-%version.tar.bz2
 Patch0: gettext-0.14.5-alt-gettextize-quiet.diff
 Patch1: gettext-0.14.5-alt-m4.diff
 Patch2: gettext-0.14.5-alt-tmp.diff

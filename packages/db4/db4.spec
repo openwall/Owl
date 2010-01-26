@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/db4/db4.spec,v 1.22 2009/08/16 02:49:16 solar Exp $
+# $Owl: Owl/packages/db4/db4.spec,v 1.23 2010/01/26 17:18:56 solar Exp $
 
 %define __soversion	4.3
 %define _libdb_a	libdb-%__soversion.a
@@ -13,7 +13,8 @@ Release: owl5
 License: Sleepycat
 Group: System Environment/Libraries
 URL: http://www.sleepycat.com
-Source0: ftp://ftp.sleepycat.com/releases/db-%version.tar.gz
+# ftp://ftp.sleepycat.com/releases/db-%version.tar.gz
+Source0: db-%version.tar.bz2
 Source1: ftp://ftp.sleepycat.com/releases/db.1.85.tar.gz
 Patch0: db-1.85-up-fixes.diff
 Patch1: db-1.85-rh-errno.diff

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.8 2009/05/18 01:50:32 solar Exp $
+# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.9 2010/01/26 17:18:56 solar Exp $
 
 %{?!BUILD_NETSCSID:	%define BUILD_NETSCSID 0}
 
@@ -9,7 +9,8 @@ Release: owl3
 License: GPLv2
 Group: Applications/System
 URL: http://cdrkit.org
-Source0: http://cdrkit.org/releases/cdrkit-%version.tar.gz
+# http://cdrkit.org/releases/cdrkit-%version.tar.gz
+Source0: cdrkit-%version.tar.bz2
 Source1: cdrkit-build
 Source2: cdrkit-install
 Source3: align.h

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.44 2009/09/09 22:12:55 ldv Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.45 2010/01/26 17:18:55 solar Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
@@ -8,8 +8,10 @@ Version: %bash_version.%bash_patchlevel
 Release: owl4
 Group: System Environment/Shells
 License: GPL
-Source0: ftp://ftp.gnu.org/gnu/bash/bash-%bash_version.tar.gz
-Source1: ftp://ftp.gnu.org/gnu/bash/bash-doc-%bash_version.tar.gz
+# ftp://ftp.gnu.org/gnu/bash/bash-%bash_version.tar.gz
+Source0: bash-%bash_version.tar.bz2
+# ftp://ftp.gnu.org/gnu/bash/bash-doc-%bash_version.tar.gz
+Source1: bash-doc-%bash_version.tar.bz2
 Source2: dot-bashrc
 Source3: dot-bash_profile
 Source4: dot-bash_logout

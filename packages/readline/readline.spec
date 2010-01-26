@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/readline/readline.spec,v 1.26 2006/05/21 00:02:51 ldv Exp $
+# $Owl: Owl/packages/readline/readline.spec,v 1.27 2010/01/26 17:18:57 solar Exp $
 
 Summary: A library for editing typed in command lines.
 Name: readline
@@ -7,7 +7,8 @@ Release: owl1
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/%name/
-Source: ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.gz
+# ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.gz
+Source: %name-%version.tar.bz2
 Patch0: readline-5.1-up-patchlevel.diff
 Patch1: readline-5.1-rh-man.diff
 Patch2: readline-5.1-alt-owl-shlib.diff

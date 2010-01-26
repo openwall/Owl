@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.54 2009/07/16 20:28:29 solar Exp $
+# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.55 2010/01/26 17:18:56 solar Exp $
 
 # We do not officially support the DHCP client because it is rather
 # complicated, yet it runs entirely as root, which we find an
@@ -14,7 +14,8 @@ Release: owl1
 License: ISC License
 Group: System Environment/Daemons
 URL: https://www.isc.org/software/dhcp
-Source0: ftp://ftp.isc.org/isc/dhcp/dhcp-%version.tar.gz
+# ftp://ftp.isc.org/isc/dhcp/dhcp-%version.tar.gz
+Source0: dhcp-%version.tar.bz2
 Source1: dhcpd.init
 Source2: dhcpd.conf.sample
 Patch0: dhcp-3.0.7-alt-owl-fixes.diff

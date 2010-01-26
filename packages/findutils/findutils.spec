@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/findutils/findutils.spec,v 1.29 2009/09/09 16:45:50 ldv Exp $
+# $Owl: Owl/packages/findutils/findutils.spec,v 1.30 2010/01/26 17:18:56 solar Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils
@@ -8,8 +8,9 @@ Epoch: 1
 License: GPLv3+
 Group: Applications/File
 URL: http://www.gnu.org/software/findutils/
-Source0: ftp://ftp.gnu.org/gnu/findutils/findutils-%version.tar.gz
+# ftp://ftp.gnu.org/gnu/findutils/findutils-%version.tar.gz
 # Signature: ftp://ftp.gnu.org/gnu/findutils/findutils-%version.tar.gz.sig
+Source0: findutils-%version.tar.bz2
 Source1: findutils-ru.po
 Patch0: findutils-4.4.2-owl-info.diff
 PreReq: /sbin/install-info

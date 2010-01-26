@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/libtool/libtool.spec,v 1.26 2009/11/30 20:27:59 ldv Exp $
+# $Owl: Owl/packages/libtool/libtool.spec,v 1.27 2010/01/26 17:18:56 solar Exp $
 
 Summary: The GNU Libtool, which simplifies the use of shared libraries.
 Name: libtool
@@ -7,7 +7,8 @@ Release: owl4
 License: GPL/LGPL
 Group: Development/Tools
 URL: http://www.gnu.org/software/libtool/
-Source: ftp://ftp.gnu.org/gnu/libtool/libtool-%version.tar.gz
+# ftp://ftp.gnu.org/gnu/libtool/libtool-%version.tar.gz
+Source: libtool-%version.tar.bz2
 Patch0: libtool-1.5.22-alt-tmp.diff
 Patch1: libtool-1.5.18-owl-info.diff
 Patch2: libtool-1.5.22-owl-buildhost.diff

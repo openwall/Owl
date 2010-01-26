@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.33 2009/09/21 13:14:50 ldv Exp $
+# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.34 2010/01/26 17:18:57 solar Exp $
 
 %define major 5
 %define oldmajor 4
@@ -13,7 +13,8 @@ Release: owl3
 License: distributable
 Group: System Environment/Libraries
 URL: http://dickey.his.com/ncurses/ncurses.html
-Source0: ftp://invisible-island.net/%name/%name-%version.tar.gz
+# ftp://invisible-island.net/%name/%name-%version.tar.gz
+Source0: %name-%version.tar.bz2
 Source1: ncurses-linux
 Source2: ncurses-linux-m
 Source3: ncurses-resetall.sh

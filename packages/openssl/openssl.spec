@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.68 2009/09/09 16:42:24 ldv Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.69 2010/01/26 17:18:57 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -7,7 +7,8 @@ Release: owl3
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
-Source: ftp://ftp.openssl.org/source/%name-%version.tar.gz
+# ftp://ftp.openssl.org/source/%name-%version.tar.gz
+Source: %name-%version.tar.bz2
 Patch0: openssl-0.9.7m-cvs-20071004-SSL_get_shared_ciphers.diff
 Patch1: openssl-0.9.7g-owl-alt-issetugid.diff
 Patch2: openssl-0.9.7m-mdk-alt-owl-Makefile.diff

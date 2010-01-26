@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.77 2009/11/27 15:53:11 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.78 2010/01/26 17:18:57 solar Exp $
 
 %define WITH_PYTHON 0
 
@@ -11,7 +11,8 @@ Version: %rpm_version
 Release: owl21
 License: GPL
 Group: System Environment/Base
-Source0: ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
+# ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
+Source0: rpm-%version.tar.bz2
 Source1: rpminit
 Source2: rpminit.1
 Source3: gendiff
