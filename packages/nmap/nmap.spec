@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.40 2010/01/24 00:51:22 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.41 2010/01/27 21:47:15 solar Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -6,7 +6,7 @@
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
-Version: 5.20
+Version: 5.21
 Release: owl1
 Epoch: 2
 License: GPL
@@ -30,7 +30,6 @@ Patch4: nmap-5.20-alt-owl-fileexistsandisreadable.diff
 Patch5: nmap-5.20-owl-include.diff
 Patch6: nmap-5.20-owl-warnings.diff
 Patch7: nmap-5.20-owl-route.diff
-Patch8: nmap-5.20-up-20100123.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
 %if %BUILD_NDIFF
@@ -79,7 +78,6 @@ virtually limitless number of potential uses.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
 bzip2 -9 CHANGELOG ncat/ChangeLog docs/TODO*
 
 %if !%BUILD_NSE_ENABLED
@@ -138,6 +136,9 @@ grep -q ^nmap: /etc/passwd ||
 %endif
 
 %changelog
+* Wed Jan 27 2010 Solar Designer <solar-at-owl.openwall.com> 2:5.21-owl1
+- Updated to 5.21.
+
 * Sat Jan 23 2010 Michail Litvak <mci-at-owl.openwall.com> 2:5.20-owl1
 - Updated to 5.20.
 - Regenerated patches.
