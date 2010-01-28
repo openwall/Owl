@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installisotree.sh,v 1.9 2010/01/21 20:48:03 solar Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.10 2010/01/28 16:54:20 solar Exp $
 
 set -e
 
@@ -41,7 +41,7 @@ cd $HOME
 
 # Ensure that root directory is empty, re-create it with proper permissions.
 rmdir -- "$ROOT"
-mkdir -- "$ROOT"
+mkdir -m 755 -- "$ROOT"
 
 MAKE_CDROM=yes "$HOME/native/$BRANCH/build/installworld.sh"
 
@@ -87,6 +87,11 @@ cd "$ROOT/rom/world"
 tar -cf- --owner=build --group=sources --exclude Root -C "$HOME" \
 	"native/$BRANCH" Makefile |
 	tar -xf-
+if "`uname -m`" = x86_64 ]; then
+	pushd "native/$BRANCH"
+	tar cjf packages.tar.bz2 --remove-files packages
+	popd
+fi
 
 cp -rpL "$HOME/RPMS" .
 mkdir sources
