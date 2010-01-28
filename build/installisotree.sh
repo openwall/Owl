@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installisotree.sh,v 1.10 2010/01/28 16:54:20 solar Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.11 2010/01/28 18:14:19 solar Exp $
 
 set -e
 
@@ -87,7 +87,7 @@ cd "$ROOT/rom/world"
 tar -cf- --owner=build --group=sources --exclude Root -C "$HOME" \
 	"native/$BRANCH" Makefile |
 	tar -xf-
-if "`uname -m`" = x86_64 ]; then
+if [ "`uname -m`" = x86_64 ]; then
 	pushd "native/$BRANCH"
 	tar cjf packages.tar.bz2 --remove-files packages
 	popd
