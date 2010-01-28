@@ -1,0 +1,83 @@
+ncat_proxy.c: In function `ncat_http_server':
+ncat_proxy.c:163: warning: dereferencing type-punned pointer will break strict-aliasing rules
+
+diff -urp nmap-5.21.orig/ncat/ncat_proxy.c nmap-5.21/ncat/ncat_proxy.c
+--- nmap-5.21.orig/ncat/ncat_proxy.c	2009-10-10 02:41:06 +0000
++++ nmap-5.21/ncat/ncat_proxy.c	2010-01-28 13:18:35 +0000
+@@ -148,7 +148,7 @@ static int handle_method(struct socket_b
+ int ncat_http_server(void)
+ {
+     int c, s;
+-    size_t sslen;
++    socklen_t sslen;
+     union sockaddr_u conn;
+ 
+ #ifndef WIN32
+@@ -160,7 +160,7 @@ int ncat_http_server(void)
+     for (;;) {
+         sslen = sizeof(conn.storage);
+ 
+-        c = accept(s, &conn.sockaddr, (socklen_t *) &sslen);
++        c = accept(s, &conn.sockaddr, &sslen);
+ 
+         if (c == -1) {
+             if (errno == EINTR)
+
+OpenSSL 0.9.7m declares ASN1_item_d2i() without "const" for the second
+argument.  Unfortunately, the following hunk is not acceptable upstream:
+http://seclists.org/nmap-dev/2009/q3/268
+
+diff -urp nmap-5.21.orig/ncat/ncat_ssl.c nmap-5.21/ncat/ncat_ssl.c
+--- nmap-5.21.orig/ncat/ncat_ssl.c	2009-11-14 22:47:53 +0000
++++ nmap-5.21/ncat/ncat_ssl.c	2010-01-22 16:02:00 +0000
+@@ -280,11 +280,11 @@ static int cert_match_dnsname(X509 *cert
+ #if (OPENSSL_VERSION_NUMBER > 0x00907000L)
+     if (method->it != NULL) {
+         gen_names = (STACK_OF(GENERAL_NAME) *) ASN1_item_d2i(NULL,
+-            (const unsigned char **) &data,
++            (unsigned char **) &data,
+             ext->value->length, ASN1_ITEM_ptr(method->it));
+     } else {
+         gen_names = (STACK_OF(GENERAL_NAME) *) method->d2i(NULL,
+-            (const unsigned char **) &data,
++            (unsigned char **) &data,
+             ext->value->length);
+     }
+ #else
+
+nmap_dns.cc: In function `void parse_resolvdotconf()':
+nmap_dns.cc:951: warning: unsigned int format, different type arg (arg 4)
+
+diff -urp nmap-5.21.orig/nmap_dns.cc nmap-5.21/nmap_dns.cc
+--- nmap-5.21.orig/nmap_dns.cc	2010-01-27 01:18:00 +0000
++++ nmap-5.21/nmap_dns.cc	2010-01-28 13:19:57 +0000
+@@ -947,7 +947,7 @@ static void parse_resolvdotconf() {
+   }
+ 
+   /* Customize a sscanf format to sizeof(ipaddr). */
+-  Snprintf(fmt, sizeof(fmt), "nameserver %%%us", sizeof(ipaddr));
++  Snprintf(fmt, sizeof(fmt), "nameserver %%%us", (unsigned int)sizeof(ipaddr));
+ 
+   while (fgets(buf, sizeof(buf), fp)) {
+     tp = buf;
+
+The following hunk fixes:
+traceroute.cc: In member function `void TracerouteState::read_replies(long int)':
+traceroute.cc:1031: warning: 'header_len' might be used uninitialized in this function
+
+diff -urp nmap-5.21.orig/nmap_error.h nmap-5.21/nmap_error.h
+--- nmap-5.21.orig/nmap_error.h	2010-01-15 03:55:23 +0000
++++ nmap-5.21/nmap_error.h	2010-01-24 20:47:28 +0000
+@@ -122,10 +122,12 @@ extern "C" {
+ #endif
+ 
+ void fatal(const char *fmt, ...)
++     __attribute__ ((noreturn))
+      __attribute__ ((format (printf, 1, 2)));
+ void error(const char *fmt, ...)
+      __attribute__ ((format (printf, 1, 2)));
+ void pfatal(const char *err, ...)
++     __attribute__ ((noreturn))
+      __attribute__ ((format (printf, 1, 2)));
+ void gh_perror(const char *err, ...)
+      __attribute__ ((format (printf, 1, 2)));

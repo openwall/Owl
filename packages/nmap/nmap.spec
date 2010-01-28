@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.41 2010/01/27 21:47:15 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.42 2010/01/28 13:32:08 solar Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -7,7 +7,7 @@
 Summary: Network exploration tool and security scanner.
 Name: nmap
 Version: 5.21
-Release: owl1
+Release: owl2
 Epoch: 2
 License: GPL
 Group: Applications/System
@@ -28,7 +28,7 @@ Patch2: nmap-5.20-alt-owl-drop-priv.diff
 Patch3: nmap-5.20-alt-owl-dot-dir.diff
 Patch4: nmap-5.20-alt-owl-fileexistsandisreadable.diff
 Patch5: nmap-5.20-owl-include.diff
-Patch6: nmap-5.20-owl-warnings.diff
+Patch6: nmap-5.21-owl-warnings.diff
 Patch7: nmap-5.20-owl-route.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
@@ -136,6 +136,9 @@ grep -q ^nmap: /etc/passwd ||
 %endif
 
 %changelog
+* Thu Jan 28 2010 Solar Designer <solar-at-owl.openwall.com> 2:5.21-owl2
+- Fixed two additional compiler warnings seen with a 64-bit build.
+
 * Wed Jan 27 2010 Solar Designer <solar-at-owl.openwall.com> 2:5.21-owl1
 - Updated to 5.21.
 
