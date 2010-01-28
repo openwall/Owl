@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installworld.sh,v 1.31 2009/11/20 10:46:34 solar Exp $
+# $Owl: Owl/build/installworld.sh,v 1.32 2010/01/28 16:57:05 solar Exp $
 
 . installworld.conf
 
@@ -63,11 +63,14 @@ function setup_rpm()
 }
 
 if [ "$MAKE_CDROM" = yes -a -n "$ISOTREE_ROOT" ]; then
-	ROOT="$ISOTREE_ROOT"
+	FORCE_ROOT="$ISOTREE_ROOT"
+fi
+if [ -n "$FORCE_ROOT" ]; then
+	ROOT="$FORCE_ROOT"
 fi
 
 if [ ! -d $ROOT -o ! -O $ROOT ] ||
-   [ "$MAKE_CDROM" = yes -a "$(readlink -e "$ROOT")" = / ]; then
+   [ -n "$FORCE_ROOT" -a "$(readlink -e "$ROOT")" = / ]; then
 	echo >&2 "Invalid ROOT ($ROOT) or not running as the directory owner"
 	exit 1
 fi
