@@ -1,14 +1,14 @@
-# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.26 2010/01/23 23:32:16 solar Exp $
+# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.27 2010/01/28 16:19:39 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
 Version: 0.13
-Release: owl1
+Release: owl2
 License: public domain
 Group: System Environment/Base
 Source0: MAKEDEV
 Source1: MAKEDEV.8
-PreReq: grep, shadow-utils
+PreReq: grep
 PreReq: owl-etc >= 0.18-owl1
 Provides: dev
 Obsoletes: MAKEDEV, dev
@@ -63,6 +63,9 @@ grep -q ^radio: /etc/group || groupadd -g 122 radio
 %files -f filelist
 
 %changelog
+* Thu Jan 28 2010 Solar Designer <solar-at-owl.openwall.com> 0.13-owl2
+- Don't "PreReq: shadow-utils" again (this was broken with 0.13-owl1).
+
 * Sun Jan 24 2010 Solar Designer <solar-at-owl.openwall.com> 0.13-owl1
 - Have MAKEDEV output a portion of RPM's filelist using %%dev such that the
 package contains proper entries for the device files.
