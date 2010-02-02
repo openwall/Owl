@@ -1,0 +1,53 @@
+From: Dmitry V. Levin
+Date: Sat, 30 Jan 2010 21:47:07 +0000
+Subject: [PATCH] Send diagnostics to stderr instead of stdout
+
+* zforce.in: In case of usage error, output short error diagnostics to
+stderr instead of printing help text to stdout.
+* zmore.in: Likewise.
+* znew.in: Likewise.
+---
+ zforce.in |    2 +-
+ zmore.in  |    2 +-
+ znew.in   |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/zforce.in b/zforce.in
+index b9e057d..fdce8b6 100644
+--- a/zforce.in
++++ b/zforce.in
+@@ -44,7 +44,7 @@ not compress them twice.
+ Report bugs to <bug-gzip@gnu.org>."
+ 
+ if test $# = 0; then
+-  echo "$usage"
++  echo >&2 "$0: invalid number of operands; try \`$0 --help' for help"
+   exit 1
+ fi
+ 
+diff --git a/zmore.in b/zmore.in
+index 64b144d..0f048c9 100644
+--- a/zmore.in
++++ b/zmore.in
+@@ -57,7 +57,7 @@ fi
+ 
+ if test $# = 0; then
+     if test -t 0; then
+-	echo "$usage"
++	echo >&2 "$0: invalid number of operands; try \`$0 --help' for help"
+     else
+ 	gzip -cdfq | eval ${PAGER-more}
+     fi
+diff --git a/znew.in b/znew.in
+index 43f3148..78ae253 100644
+--- a/znew.in
++++ b/znew.in
+@@ -97,7 +97,7 @@ do
+ done
+ 
+ if test $# -eq 0; then
+-  echo "$usage"
++  echo >&2 "$0: invalid number of operands; try \`$0 --help' for help"
+   exit 1
+ fi
+ 

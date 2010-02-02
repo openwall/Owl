@@ -1,0 +1,45 @@
+From: Dmitry V. Levin
+Date: Sat, 30 Jan 2010 16:24:38 +0000
+Subject: [PATCH] Fix exit status of signal handlers in shell scripts
+
+The value of `$?' on entrance to signal handlers in shell scripts
+cannot be relied upon, so set the exit code explicitly to
+128 + SIGTERM == 143.
+* gzexe.in: Use `exit 143' in signal handler.
+---
+ gzexe.in |    8 +++++---
+ 1 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/gzexe.in b/gzexe.in
+index e59b5fc..e6128c3 100644
+--- a/gzexe.in
++++ b/gzexe.in
+@@ -81,7 +81,8 @@ tmp=
+ trap 'res=$?
+   test -n "$tmp" && rm -f "$tmp"
+   (exit $res); exit $res
+-' 0 1 2 3 5 10 13 15
++' 0
++trap '(exit 143); exit 143' 1 2 3 5 10 13 15
+ 
+ mktemp_status=
+ 
+@@ -146,7 +147,7 @@ for i do
+   if test $decomp -eq 0; then
+     (cat <<'EOF' &&
+ #!/bin/sh
+-skip=44
++skip=45
+ 
+ tab='	'
+ nl='
+@@ -160,7 +161,8 @@ gztmpdir=
+ trap 'res=$?
+   test -n "$gztmpdir" && rm -fr "$gztmpdir"
+   (exit $res); exit $res
+-' 0 1 2 3 5 10 13 15
++' 0
++trap '(exit 143); exit 143' 1 2 3 5 10 13 15
+ 
+ if type mktemp >/dev/null 2>&1; then
+   gztmpdir=`mktemp -dt`

@@ -1,25 +1,21 @@
-# $Owl: Owl/packages/gzip/gzip.spec,v 1.28 2010/01/19 23:02:06 ldv Exp $
+# $Owl: Owl/packages/gzip/gzip.spec,v 1.29 2010/02/02 22:01:26 ldv Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
-Version: 1.3.5
-Release: owl5
-License: GPL
+Version: 1.4
+Release: owl1
+License: GPLv3+
 Group: Applications/File
 URL: http://www.gnu.org/software/%name/
-Source: ftp://alpha.gnu.org/gnu/gzip/gzip-%version.tar.gz
-Patch0: gzip-1.3.5-owl-info.diff
-Patch1: gzip-1.3.5-alt-basename.diff
-Patch2: gzip-1.3.5-openbsd-owl-alt-tmp.diff
-Patch3: gzip-1.3.5-rh-alt-stderr.diff
-Patch4: gzip-1.3.5-rh-owl-alt-zgrep.diff
-Patch5: gzip-1.3.5-deb-alt-signal.diff
-Patch6: gzip-1.3.5-deb-alt-original-filename.diff
-Patch7: gzip-1.3.5-alt-copy_stat.diff
-Patch8: gzip-1.3.5-alt-bzip2.diff
-Patch9: gzip-1.3.5-gentoo-huft_build-return.diff
-Patch10: gzip-1.3.5-google-owl-bound.diff
-Patch11: gzip-1.3.5-up-unlzw-bound-CVE-2010-0001.diff
+Source: ftp://ftp.gnu.org/gnu/gzip/gzip-%version.tar.gz
+# Signature: ftp://ftp.gnu.org/gnu/gzip/gzip-%version.tar.gz.sig
+Patch0: gzip-1.4-up-znew-K.diff
+Patch1: gzip-1.4-up-gzexe-signal.diff
+Patch2: gzip-1.4-up-stderr.diff
+Patch3: gzip-1.4-up-zgrep-signal.diff
+Patch4: gzip-1.4-owl-info.diff
+Patch5: gzip-1.4-openbsd-owl-alt-tmp.diff
+Patch6: gzip-1.4-alt-bzip2-xz.diff
 BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
@@ -45,27 +41,36 @@ GNU gzip and bzip2 data compression programs.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p0
-%patch10 -p1
-%patch11 -p1
+
+%{expand:%%define optflags %optflags -Wall -DGNU_STANDARD=0}
 
 %build
-%configure --bindir=/bin
-make
-bzip2 -9fk ChangeLog
+# Unset the variable gl_printf_safe to indicate that we do not need
+# a safe handling of non-IEEE-754 'long double' values.
+# This is required to enforce build with system vfprintf().
+sed -i 's/gl_printf_safe=yes/gl_printf_safe=/' configure
+
+%configure --bindir=/bin --disable-silent-rules
+%__make
+ln -sf zdiff zcmp
+cp gzip.1 gzip.doc
+
+%check
+%__make check
 
 %install
 rm -rf %buildroot
 %makeinstall bindir=%buildroot/bin
 mkdir -p %buildroot%_bindir
 
+# uncompress is a part of ncompress package
+rm %buildroot/bin/uncompress
+
 for i in zcmp zegrep zforce zless znew gzexe zdiff zfgrep zgrep zmore; do
 	mv %buildroot/bin/$i %buildroot%_bindir/
 done
 
-# replace hardlinks with symlinks
+# replace wrappers with symlinks
 ln -sf gzip %buildroot/bin/gunzip
 ln -sf gzip %buildroot/bin/zcat
 ln -sf zdiff %buildroot%_bindir/zcmp
@@ -119,7 +124,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS ChangeLog.bz2 NEWS README THANKS TODO
+%doc AUTHORS NEWS README THANKS TODO
 /bin/*
 %_bindir/g*zip
 %_mandir/*/g*zip.*
@@ -135,6 +140,11 @@ fi
 %exclude %_mandir/*/zcat.*
 
 %changelog
+* Tue Feb 02 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4-owl1
+- Updated to 1.4.
+- Reviewed patches, removed obsolete ones.
+- Enabled test suite.
+
 * Tue Jan 19 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.3.5-owl5
 - Applied upstream fix for an integer underflow bug (CVE-2010-0001).
 

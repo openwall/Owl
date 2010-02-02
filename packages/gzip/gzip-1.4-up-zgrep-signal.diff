@@ -1,0 +1,42 @@
+From: Dmitry V. Levin
+Date: Sat, 30 Jan 2010 22:36:35 +0000
+Subject: [PATCH] Terminate zgrep gracefully when a pipeline is interrupted by a signal
+
+zgrep is not terminated gracefully when its grep/sed pipeline
+is terminated by a signal.  For example, a command like
+zgrep -F .TH /usr/share/man/man1/*.gz |head
+works long time after the "head" completion.
+Another example, a command like
+zgrep unmatched-pattern /usr/share/man/man1/*.gz
+cannot be interrupted by sending a SIGQUIT with Ctrl-\ key, it outputs
+zgrep: line 221: test: : integer expression expected
+and goes on.
+* zgrep.in: Terminate gracefully when the grep/sed pipeline is
+terminated by a signal.
+---
+ zgrep.in |    9 +++++++--
+ 1 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/zgrep.in b/zgrep.in
+index a828bbc..c356d59 100644
+--- a/zgrep.in
++++ b/zgrep.in
+@@ -213,11 +213,16 @@ do
+       r=$(
+ 	exec 4>&1
+ 	(eval "$grep" 4>&-; echo $? >&4) 3>&- | sed "$sed_script" >&3 4>&-
+-      ) || r=2
+-      exit $r
++      ) && exit $r
++      r=$?
++      test $r -gt 128 && test $r -le 143 && exit $r || exit 2
+     fi >&3 5>&-
+   )
+   r=$?
++  if test $r -gt 128 && test $r -le 143; then
++    kill -$(($r-128)) $$
++    exit $r
++  fi
+   test "$gzip_status" -eq 0 || test "$gzip_status" -eq 2 || r=2
+   test $res -lt $r && res=$r
+ done

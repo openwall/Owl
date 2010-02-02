@@ -1,0 +1,11 @@
+--- gzip-1.4/doc/gzip.texi
++++ gzip-1.4/doc/gzip.texi
+@@ -28,7 +28,7 @@ Free Documentation License''.
+ 
+ @dircategory Compression
+ @direntry
+-* Gzip: (gzip).                 General (de)compression of files (lzw).
++* Gzip: (gzip).                                 General (de)compression of files (lzw).
+ @end direntry
+ 
+ @dircategory Individual utilities

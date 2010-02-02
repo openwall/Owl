@@ -1,0 +1,126 @@
+From: Dmitry V. Levin
+Date: Fri, 29 Jan 2010 12:34:56 +0000
+Subject: [PATCH] Fix "znew -K" to work without use of compress utility
+
+* znew.in: Change -K option to imply -t, do not use compress(1).
+* znew.1: Document it.
+* tests/znew-k: New test.
+* Makefile.am (TESTS): Add it.
+---
+ Makefile.am  |    3 ++-
+ tests/znew-k |   42 ++++++++++++++++++++++++++++++++++++++++++
+ znew.1       |    3 ++-
+ znew.in      |    8 +++-----
+ 4 files changed, 49 insertions(+), 7 deletions(-)
+ create mode 100755 tests/znew-k
+
+diff --git a/Makefile.am b/Makefile.am
+index ac95615..cea37f2 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -108,7 +108,8 @@ TESTS =						\
+   tests/memcpy-abuse				\
+   tests/trailing-nul				\
+   tests/zdiff					\
+-  tests/zgrep-f
++  tests/zgrep-f					\
++  tests/znew-k
+ 
+ EXTRA_DIST += $(TESTS)
+ 
+diff --git a/tests/znew-k b/tests/znew-k
+new file mode 100755
+index 0000000..9a334c8
+--- /dev/null
++++ b/tests/znew-k
+@@ -0,0 +1,42 @@
++#!/bin/sh
++# Check that znew -K works without compress(1).
++
++# Copyright (C) 2010 Free Software Foundation, Inc.
++
++# This program is free software: you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation, either version 3 of the License, or
++# (at your option) any later version.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.
++# limit so don't run it by default.
++
++if test "$VERBOSE" = yes; then
++  set -x
++  gzip --version
++fi
++
++: ${srcdir=.}
++. "$srcdir/tests/init.sh"; path_prepend_ "`pwd`"
++
++cat <<'EOF' >compress || framework_failure
++#!/bin/sh
++echo >&2 'compress have been called'
++exit 1
++EOF
++chmod +x compress || framework_failure
++
++printf '%1012977s' ' ' | gzip -c >znew-k.Z || framework_failure
++
++fail=0
++
++znew -K znew-k.Z || fail=1
++test -f znew-k.Z || fail=1
++
++Exit $fail
+diff --git a/znew.1 b/znew.1
+index 5cfb472..dcdf84f 100644
+--- a/znew.1
++++ b/znew.1
+@@ -27,7 +27,8 @@ Use the slowest compression method (optimal compression).
+ Use pipes for the conversion to reduce disk space usage.
+ .TP
+ .B \-K
+-Keep a .Z file when it is smaller than the .gz file
++Keep a .Z file when it is smaller than the .gz file; implies
++.BR -t .
+ .SH "SEE ALSO"
+ gzip(1), zmore(1), zdiff(1), zgrep(1), zforce(1), gzexe(1), compress(1)
+ .SH BUGS
+diff --git a/znew.in b/znew.in
+index c7cdfc8..43f3148 100644
+--- a/znew.in
++++ b/znew.in
+@@ -41,7 +41,7 @@ Options:
+   -v     Verbose; display name and statistics for each file compressed.
+   -9     Use the slowest compression method (optimal compression).
+   -P     Use pipes for the conversion to reduce disk space usage.
+-  -K     Keep a .Z file when it is smaller than the .gz file.
++  -K     Keep a .Z file when it is smaller than the .gz file; implies -t.
+       --help     display this help and exit
+       --version  output version information and exit
+ 
+@@ -106,7 +106,7 @@ case "$opt" in
+   *t*) check=1; opt=`echo "$opt" | sed 's/t//g'`
+ esac
+ case "$opt" in
+-  *K*) keep=1; opt=`echo "$opt" | sed 's/K//g'`
++  *K*) keep=1; check=1; opt=`echo "$opt" | sed 's/K//g'`
+ esac
+ case "$opt" in
+   *P*) pipe=1; opt=`echo "$opt" | sed 's/P//g'`
+@@ -164,10 +164,8 @@ for i do
+ 			      `expr \( $new + $block - 1 \) / $block`; then
+     if test $pipe -eq 1; then
+       rm -f "$n$ext"
+-    elif test $check -eq 1; then
+-      mv "$n.$$" "$n.Z" && rm -f "$n$ext"
+     else
+-      gzip -d "$n$ext" && compress "$n" && rm -f "$n$ext"
++      mv "$n.$$" "$n.Z" && rm -f "$n$ext"
+     fi
+     echo "$n.Z smaller than $n$ext -- unchanged"
+ 
