@@ -46,6 +46,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/02/02	Package: gzip
+Updated to 1.4.
+
 2010/01/28	Owl/build/{Makefile,installworld.conf,installworld.sh,
 		installvztree.sh,makevztemplate.sh}
 Implemented "make vztemplate" - a make target to easily generate OpenVZ
@@ -1113,4 +1116,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.224 2010/01/28 17:48:19 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.225 2010/02/02 22:03:17 ldv Exp $
