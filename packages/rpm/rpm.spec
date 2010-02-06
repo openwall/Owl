@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.78 2010/01/26 17:18:57 solar Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.79 2010/02/06 13:20:54 solar Exp $
 
 %define WITH_PYTHON 0
 
@@ -115,7 +115,7 @@ supplied by RPM Package Manager libraries.
 %package -n popt
 Summary: A C library for parsing command line arguments.
 Version: %popt_version
-Group: Development/Libraries
+Group: System Environment/Libraries
 PreReq: /sbin/ldconfig
 
 %description -n popt
