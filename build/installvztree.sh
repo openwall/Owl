@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installvztree.sh,v 1.1 2010/01/28 16:57:05 solar Exp $
+# $Owl: Owl/build/installvztree.sh,v 1.2 2010/02/06 14:20:38 solar Exp $
 
 set -e
 
@@ -51,10 +51,10 @@ exec </dev/null >logs/installvztree 2>&1
 echo "`date '+%Y %b %e %H:%M:%S'`: Started"
 
 cd "$ROOT"
-log "Removing packages that are undesirable inside a container"
+log "Removing packages that are harmful inside a container"
 chroot "$ROOT" rpm -e vzctl vzquota ||:
 log "Removing packages that are typically not needed inside a container"
-chroot "$ROOT" rpm -e bind-doc bash-doc cvs-doc pam-doc db4-doc groff-doc rpm-devel ||:
+chroot "$ROOT" rpm -e hdparm smartmontools mdadm lilo dmidecode pciutils modutils losetup acct bind-doc bash-doc cvs-doc pam-doc db4-doc groff-doc rpm-devel ||:
 
 log "Removing SSH host keys"
 cd "$ROOT/etc"
