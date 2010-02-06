@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/db4/db4.spec,v 1.23 2010/01/26 17:18:56 solar Exp $
+# $Owl: Owl/packages/db4/db4.spec,v 1.24 2010/02/06 13:30:02 solar Exp $
 
 %define __soversion	4.3
 %define _libdb_a	libdb-%__soversion.a
@@ -51,7 +51,7 @@ recovery.  The Berkeley DB supports C, C++, Java, and Perl APIs.
 
 %package devel
 Summary: Development files for the Berkeley DB (version 4) library.
-Group: System Environment/Libraries
+Group: Development/Libraries
 Requires: db4 = %version-%release
 Obsoletes: db2-devel, db3-devel
 
