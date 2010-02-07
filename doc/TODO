@@ -1,5 +1,92 @@
-This is the public Owl TODO list.  It used to contain many per-package
-items, but most of those became obsoleted or at least not relevant to
-our upcoming release.  Thus, this file is to be populated with new content.
+This is the public Owl TODO list.  Currently, it focuses on items
+relevant to our upcoming release.
 
-$Owl: Owl/doc/TODO,v 1.182 2010/02/07 03:58:51 solar Exp $
+
+	Required before the next release.
+
+Update to latest OpenVZ "rhel5" kernel.  If required, add fixes for the
+most relevant and most critical recently-discovered vulnerabilities not
+fixed in OpenVZ's kernel yet.  ("New" vulnerabilities in 2.6.x kernels
+are discovered so often that there will almost always be some that are
+already-public but not yet fixed in Red Hat's and OpenVZ's latest
+released kernels yet, because of their QA delay.  A reasonable approach
+may be to identify and fix the most relevant and most critical of those
+vulnerabilities ourselves.  Luckily, most are not relevant and/or not
+critical, but a few might be.  We'll see what the situation will be
+shortly before our release.  As of this writing, we need to update from
+-128.2.1.el5.028stab064.8 to -164.10.1.el5.028stab067.4 and likely apply
+some additional fixes at the same time, but this will keep changing.)
+
+tcb getgroups(2) fix.
+
+lftpget fix.
+
+Bring the documentation translations in sync with English (or drop from
+the release).  For example, translations of ARCHITECTURES are currently
+outdated as it relates to i386 vs. i686, and non-English documentation
+does not reflect our move to 2.6 kernels yet.
+
+
+	Desirable before the next release.
+
+glibc to use NPTL, now that we only support 2.6 kernels.
+
+RPM'ed and modular kernel.  We have outgrown the stage of being a "do it
+yourself" system, so it makes sense to have our default kernel RPM'ed,
+finally.  Also, our kernels barely fit on 2.88 MB "floppies" now, which
+means that soon we'll have to start building kernel modules by default
+(and it'd be better to have those in an RPM subpackage), or switch to
+"non-emulated" CD boots (maybe this would be a good thing to do anyway,
+for modern machines?), or fully drop features from default kernel builds.
+
+Start using initrd on our CDs - autodetect CD/DVD drive location, wait
+for USB - or consider alternatives to initrd that would achieve the same.
+
+Start to implement security hardening of OpenVZ kernels.
+
+Make ping(1) working as non-root, likely with "ICMP sockets" to be
+introduced into the kernel (preferably restricted to a sysctl'able group).
+This will get rid of the very last SUID program in our default install,
+hence it is pretty important.
+
+Introduce new /etc/sysconfig/ settings for unattended machines (force
+"yes" to fsck, msulogin timeout, disable console screensaver, ...)
+
+Debug and fix sysklogd-1.4.2-owl-syslogd-unixcred.diff, which is
+currently confused by many kinds of kernel messages (especially with
+CONFIG_PRINTK_TIME, but not only in that case).
+
+Support "killproc -d 10 $httpd" in init scripts (RHEL4 compatibility,
+can test with their httpd package).
+
+Replace our hybrid 2.4+2.6 modutils with plain module-init-tools.
+
+Update whatever packages we manage to, but don't break RHEL 4 compatibility
+(we'll break it after the release).
+
+Package xz utils - easy, but it'd be nice to have at least a quick look
+at the code first (vulnerabilities are expected).
+
+User's Guide - review and edit the draft, identify and add important
+missing chapters (adding/removing users, managing OpenVZ containers,
+maybe something else).
+
+Consider adding support for ext4 into owl-setup.  If so, enable it in
+our default kernel (this will require dealing with the kernel size issue
+mentioned above first).  We already have support in the kernel sources
+and in our e2fsprogs.
+
+SPARC, Alpha - builds, testing, fixes, final builds.  We haven't been
+building Owl for these architectures for a while.  Possibly this is not
+worth the time as it would delay the release.  Maybe it could be done
+post-release, for the stable branch.
+
+Obtain a faster US mirror.  The ibiblio mirror appears to be limited to
+2 Mbps per connection, which is a lot slower than downloading to the US
+from our European mirrors.  Maybe approach the kernel.org folks.
+
+Update the on-demand CD sales setup with Owl-current ISO snapshots
+shortly before making the release, to have the setup ready for being
+updated to the release.  Setup separate "products" for i686 and x86-64.
+
+$Owl: Owl/doc/TODO,v 1.183 2010/02/07 05:05:38 solar Exp $
