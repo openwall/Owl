@@ -24,15 +24,6 @@ diff -uprk.orig glibc-2.3.5.orig/resolv/Makefile glibc-2.3.5/resolv/Makefile
  
  tests = tst-aton tst-leaks
  xtests = tst-leaks2
-@@ -49,7 +49,7 @@ libresolv-routines := gethnamaddr res_co
- 		      res_data res_mkquery res_query res_send		\
- 		      inet_net_ntop inet_net_pton inet_neta base64	\
- 		      ns_parse ns_name ns_netint ns_ttl ns_print	\
--		      ns_samedomain
-+		      ns_samedomain shuffle
- 
- libanl-routines := gai_cancel gai_error gai_misc gai_notify gai_suspend \
- 		   getaddrinfo_a
 diff -uprk.orig glibc-2.3.5.orig/resolv/res_init.c glibc-2.3.5/resolv/res_init.c
 --- glibc-2.3.5.orig/resolv/res_init.c	2004-10-11 20:49:25 +0000
 +++ glibc-2.3.5/resolv/res_init.c	2005-05-08 22:51:47 +0000
@@ -60,7 +51,7 @@ diff -uprk.orig glibc-2.3.5.orig/resolv/res_mkquery.c glibc-2.3.5/resolv/res_mkq
 -#if 0
 -	hp->id = htons(++statp->id);
 +#if 1
-+	hp->id = htons(statp->id = _shuffle_next());
++	hp->id = htons(statp->id = res_randomid());
  #else
  	hp->id = htons(statp->id);
  	int randombits;
