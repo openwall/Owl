@@ -46,6 +46,12 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/02/11	Package: glibc
+Replaced linuxthreads with NPTL.
+
+2010/02/11	Package: tcb
+Updated to 1.0.4.
+
 2010/02/02	Package: gzip
 Updated to 1.4.
 
@@ -1116,4 +1122,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.225 2010/02/02 22:03:17 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.226 2010/02/11 17:41:44 ldv Exp $
