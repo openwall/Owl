@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.110 2008/07/19 12:20:05 ldv Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.111 2010/02/11 17:31:21 ldv Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,14 +11,13 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 1.0.3
-Release: owl7
+Release: owl8
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
 Source0: ftp://ftp.gnu.org/gnu/%name/glibc-%basevers%{?snapshot:-%snapshot}.tar.bz2
 %if %{?snapshot:0}%{!?snapshot:1}
-Source1: ftp://ftp.gnu.org/gnu/%name/glibc-linuxthreads-%basevers.tar.bz2
-Source2: ftp://ftp.gnu.org/gnu/%name/glibc-libidn-%basevers.tar.bz2
+Source1: ftp://ftp.gnu.org/gnu/%name/glibc-libidn-%basevers.tar.bz2
 %endif
 Source3: crypt_blowfish-%crypt_bf_version.tar.gz
 Source4: crypt_freesec.c
@@ -39,8 +38,6 @@ Source6: strlcpy.3
 Patch0: glibc-2.3.5-cvs-20050427-canonicalize.diff
 Patch1: glibc-2.3.6-cvs-20051116-divdi3.diff
 Patch2: glibc-2.3.6-cvs-20060103-ctermid.diff
-Patch3: glibc-2.3.6-cvs-20060426-linuxthreads-i386-pt-machine.diff
-Patch4: glibc-2.3.6-up-linuxthreads-x86_64-pt-machine.diff
 
 # RH
 Patch100: glibc-2.3.5-fedora.diff
@@ -53,7 +50,6 @@ Patch201: glibc-2.3.4-suse-getconf-default_output.diff
 Patch220: glibc-2.3.6-gentoo-alpha-xstat.diff
 
 # ALT
-Patch300: glibc-2.3.5-alt-doc-linuxthreads.diff
 Patch301: glibc-2.3.5-alt-string2.diff
 Patch302: glibc-2.3.5-alt-sys-mount.diff
 Patch303: glibc-2.3.5-openbsd-alt-sys-queue.diff
@@ -160,7 +156,7 @@ compatibility package with necessary binaries of old libdb libraries.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
-%setup -q %{!?snapshot:-a 1 -a 2} -a 3 -n %name-%basevers%{?snapshot:-%snapshot}
+%setup -q %{!?snapshot:-a 1} -a 3 -n %name-%basevers%{?snapshot:-%snapshot}
 
 # CVS
 # fix realpath(3) to return NULL and set errno to ENOTDIR for such
@@ -172,12 +168,6 @@ compatibility package with necessary binaries of old libdb libraries.
 
 # remove inappropriate __nonnull attribute from ctermid
 %patch2 -p0
-
-# fix linuxthreads ix86 TLS
-%patch3 -p0
-
-# linuxthreads x86-64 asm correction
-%patch4 -p0
 
 # RH
 # usual glibc-fedora.patch
@@ -195,8 +185,6 @@ compatibility package with necessary binaries of old libdb libraries.
 %patch220 -p1
 
 # ALT
-# fix linuxthreads documentation
-%patch300 -p1
 # fix -Wpointer-arith issue in string2.h
 %patch301 -p1
 # fix sys/mount.h for gcc -pedantic support
@@ -315,14 +303,12 @@ CFLAGS="-g %optflags -DNDEBUG=1 -finline-limit=2000" \
 %if !%BUILD_PROFILE
 	--disable-profile \
 %endif
-	--enable-add-ons=linuxthreads,libidn \
-	--without-cvs \
-	--without-__thread
+	--enable-add-ons=nptl,libidn \
+	--without-cvs
 
 %__make MAKE="%__make -s"
 popd
 
-%__make -C linuxthreads/man
 %__make -C crypt_blowfish-%crypt_bf_version man
 
 %install
@@ -333,7 +319,6 @@ mkdir -p %buildroot
 
 # These man pages require special attention
 mkdir -p %buildroot%_mandir/man3
-install -p -m 644 linuxthreads/man/*.3thr %buildroot%_mandir/man3/
 install -p -m 644 crypt_blowfish-%crypt_bf_version/*.3 %buildroot%_mandir/man3/
 install -p -m 644 %_sourcedir/strlcpy.3 %buildroot%_mandir/man3/
 echo '.so man3/strlcpy.3' > %buildroot%_mandir/man3/strlcat.3
@@ -414,11 +399,6 @@ touch %buildroot%_libdir/gconv/gconv-modules.cache
 # The last bit: more documentation
 rm -rf documentation
 mkdir documentation
-cp -pr linuxthreads/Examples documentation/examples.threads
-install -pm644 linuxthreads/ChangeLog documentation/ChangeLog.threads
-install -pm644 linuxthreads/Changes documentation/Changes.threads
-install -pm644 linuxthreads/README documentation/README.threads
-install -pm644 linuxthreads/FAQ.html documentation/FAQ-threads.html
 install -pm644 timezone/README documentation/README.timezone
 install -pm644 ChangeLog documentation/
 bzip2 -9qf documentation/ChangeLog*
@@ -482,6 +462,10 @@ fi
 %endif
 
 %changelog
+* Thu Feb 11 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.6-owl8
+- Switched from linuxthreads to NPTL.
+- Optimized res_randomid patch.
+
 * Thu Jul 17 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.6-owl7
 - Made crypt_blowfish buildable by modern gcc compilers by moving
 fcrypt weak alias definition from crypt-entry.c to wrapper.c file.
