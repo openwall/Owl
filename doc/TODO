@@ -17,8 +17,6 @@ shortly before our release.  As of this writing, we need to update from
 -128.2.1.el5.028stab064.8 to -164.10.1.el5.028stab067.4 and likely apply
 some additional fixes at the same time, but this will keep changing.)
 
-tcb getgroups(2) fix.
-
 lftpget fix.
 
 Bring the documentation translations in sync with English (or drop from
@@ -28,8 +26,6 @@ does not reflect our move to 2.6 kernels yet.
 
 
 	Desirable before the next release.
-
-glibc to use NPTL, now that we only support 2.6 kernels.
 
 RPM'ed and modular kernel.  We have outgrown the stage of being a "do it
 yourself" system, so it makes sense to have our default kernel RPM'ed,
@@ -89,4 +85,4 @@ Update the on-demand CD sales setup with Owl-current ISO snapshots
 shortly before making the release, to have the setup ready for being
 updated to the release.  Setup separate "products" for i686 and x86-64.
 
-$Owl: Owl/doc/TODO,v 1.183 2010/02/07 05:05:38 solar Exp $
+$Owl: Owl/doc/TODO,v 1.184 2010/02/11 17:35:21 ldv Exp $
