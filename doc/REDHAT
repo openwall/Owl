@@ -1,11 +1,10 @@
 In most cases it is possible to install applications packaged for a
-recent version of Fedora Core or Red Hat Enterprise Linux on Owl.  As of
-Owl 2.0 release, this applies to FC3 and RHEL4.
+certain version of Red Hat Enterprise Linux, CentOS, or Fedora on Owl.
+As of Owl 2.0 release, this applies to RHEL4, CentOS 4, and FC3.
 
 This file lists known issues with using packages from or intended for
-Red Hat Linux (Fedora Core, Red Hat Enterprise Linux) on Owl.  The names
-of affected Red Hat Linux packages, if applicable and known, are given
-in braces.
+Red Hat Enterprise Linux, CentOS, and Fedora on Owl.  The names of
+affected Red Hat packages, if applicable and known, are given in braces.
 
 
 	Packages providing cron jobs (slocate).
@@ -17,8 +16,8 @@ Owl provides the following directories specified by LSB 1.3:
 /etc/cron.weekly
 /etc/cron.monthly
 
-It also provides the directory /etc/cron.hourly found on Red Hat
-Linux.
+It also provides the directory /etc/cron.hourly found on Red Hat's
+distributions.
 
 Both Red Hat Linux and Owl will only process scripts placed in these
 directories if the filenames satisfy certain criteria.  Red Hat Linux
@@ -90,7 +89,7 @@ The Owl perl package does not provide the libperl.so library.
 The workaround is to rebuild packages linked with libperl.so.
 
 
-	The Owl perl package is not fully compatibile with Red Hat's
+	The Owl perl package is not fully compatible with Red Hat's
 	(crypto-utils, foomatic, newt-perl, perl-Net-DNS, perl-XML-LibXML,
 	perl-XML-SAX, spamassassin, subversion-perl).
 
@@ -114,24 +113,4 @@ don't do that.  If another package requires S-Lang with UTF-8 support,
 the workaround is simply to replace our slang package with Red Hat's.
 There are no dependencies on our version of slang within Owl itself.
 
-
-	No NPTL support in glibc.
-
-Red Hat Linux 9 and above provides the newer Native POSIX Thread Library
-(NPTL) in their glibc (C library) package.  We continue to provide the
-older LinuxThreads library.  NPTL would require support from the kernel,
-which Linux 2.4.x kernels did not provide.  Now that we have moved to
-Linux 2.6.x, we're about to start building glibc with NPTL.
-
-We're currently unaware of a Red Hat Linux 9 or any other package
-which would fail to work without NPTL.  This is no surprise because
-Red Hat Linux itself provides fallback libraries for the case when
-support for NPTL is not available in the running Linux kernel, and
-their packages are thus meant to work with the non-NPTL libraries as
-well.
-
-The one problem we are aware of and have resolved is the source code
-for recent versions of RPM requiring NPTL.  We have resolved that
-dependency on NPTL in our build of RPM.
-
-$Owl: Owl/doc/REDHAT,v 1.11 2009/11/28 00:02:36 solar Exp $
+$Owl: Owl/doc/REDHAT,v 1.12 2010/02/12 01:44:36 solar Exp $
