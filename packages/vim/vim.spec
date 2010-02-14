@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.31 2009/10/21 22:35:58 solar Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.32 2010/02/14 21:15:05 mci Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -9,7 +9,7 @@ Name: vim
 %define major 7
 %define minor 2
 %define alpha %nil
-%define patchlevel 267
+%define patchlevel 351
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
 Release: owl1
@@ -107,6 +107,23 @@ X Window System.  This package lets you run VIM as an X application
 with a graphical interface and mouse support.
 %endif
 
+%package spell
+Summary: The dictionaries for spell checking.  This package is optional.
+Group: Applications/Editors
+Requires: vim-common
+
+%description spell
+This subpackage contains dictionaries for vim spell checking in
+many different languages.
+
+%package tutor
+Summary: Vim tutorial.  This package is optional.
+Group: Applications/Editors
+Requires: vim-common
+
+%description tutor
+This subpackage contains Vim tutorial files in many different languages.
+
 %prep
 %setup -q -n %vimdir
 {
@@ -160,6 +177,7 @@ mv vim gvim
 export ac_cv_func_mkstemp=yes \
 %configure \
 	--with-features=huge \
+	--disable-netbeans \
 	--enable-perlinterp --disable-tclinterp \
 	--with-x=no --enable-gui=no \
 	--enable-multibyte \
@@ -171,6 +189,9 @@ mv vim vim-enhanced
 export ac_cv_func_mkstemp=yes \
 %configure \
 	--with-features=small \
+	--disable-netbeans \
+	--disable-arabic \
+	--disable-farsi \
 	--disable-pythoninterp --disable-perlinterp --disable-tclinterp \
 	--with-x=no --enable-gui=no \
 	--with-tlib=termcap --disable-gpm
@@ -274,7 +295,6 @@ chmod 644 ../runtime/doc/vim2html.pl
 %_bindir/view
 %_bindir/vim
 %_bindir/vimdiff
-%_bindir/vimtutor
 %_mandir/man1/rview.*
 %_mandir/man1/rvim.*
 %_mandir/man1/view.*
@@ -289,6 +309,17 @@ chmod 644 ../runtime/doc/vim2html.pl
 %_mandir/pl*/man1/vimtutor.*
 %_mandir/ru*/man1/vimtutor.*
 
+%files spell
+%defattr(-,root,root)
+%dir %_datadir/%name/vim*/spell
+%_datadir/%name/vim*/spell/*
+
+%files tutor
+%defattr(-,root,root)
+%_bindir/vimtutor
+%dir %_datadir/%name/vim*/tutor
+%_datadir/%name/vim*/tutor/*
+
 %if %BUILD_USE_X
 %files X11
 %defattr(-,root,root)
@@ -298,6 +329,8 @@ chmod 644 ../runtime/doc/vim2html.pl
 %_prefix/X11R6/bin/gview
 %_prefix/X11R6/bin/gex
 %_prefix/X11R6/bin/evim
+%dir %_datadir/%name/vim*/lang
+%_datadir/%name/vim*/lang/*
 %_mandir/man1/gvim.*
 %_mandir/man1/vimx.*
 %_mandir/man1/gview.*
@@ -310,6 +343,10 @@ chmod 644 ../runtime/doc/vim2html.pl
 %endif
 
 %changelog
+* Sun Feb 14 2010 Michail Litvak <mci-at-owl.openwall.com> 7.2.351-owl1
+- Updated to 7.2 patchlevel 351.
+- Introduced new subpackages -spell and -tutor.
+
 * Tue Oct 20 2009 Michail Litvak <mci-at-owl.openwall.com> 7.2.267-owl1
 - Updated to 7.2 patchlevel 267.
 - Regenerated patches, removed patches included to upstream.
