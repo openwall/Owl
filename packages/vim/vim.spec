@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.32 2010/02/14 21:15:05 mci Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.33 2010/02/15 05:07:34 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -266,6 +266,8 @@ chmod 644 ../runtime/doc/vim2html.pl
 %doc README
 %_bindir/xxd
 %_datadir/vim
+%exclude %_datadir/%name/vim*/spell
+%exclude %_datadir/%name/vim*/tutor
 %_mandir/man1/vim.*
 %_mandir/fr*/man1/vim.*
 %_mandir/it*/man1/vim.*
