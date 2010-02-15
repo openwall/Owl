@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.33 2010/02/15 05:07:34 solar Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.34 2010/02/15 05:10:52 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -305,11 +305,6 @@ chmod 644 ../runtime/doc/vim2html.pl
 %_mandir/it*/man1/vimdiff.*
 %_mandir/pl*/man1/vimdiff.*
 %_mandir/ru*/man1/vimdiff.*
-%_mandir/man1/vimtutor.*
-%_mandir/fr*/man1/vimtutor.*
-%_mandir/it*/man1/vimtutor.*
-%_mandir/pl*/man1/vimtutor.*
-%_mandir/ru*/man1/vimtutor.*
 
 %files spell
 %defattr(-,root,root)
@@ -321,6 +316,11 @@ chmod 644 ../runtime/doc/vim2html.pl
 %_bindir/vimtutor
 %dir %_datadir/%name/vim*/tutor
 %_datadir/%name/vim*/tutor/*
+%_mandir/man1/vimtutor.*
+%_mandir/fr*/man1/vimtutor.*
+%_mandir/it*/man1/vimtutor.*
+%_mandir/pl*/man1/vimtutor.*
+%_mandir/ru*/man1/vimtutor.*
 
 %if %BUILD_USE_X
 %files X11
