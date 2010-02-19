@@ -52,9 +52,6 @@ Debug and fix sysklogd-1.4.2-owl-syslogd-unixcred.diff, which is
 currently confused by many kinds of kernel messages (especially with
 CONFIG_PRINTK_TIME, but not only in that case).
 
-Support "killproc -d 10 $httpd" in init scripts (RHEL4 compatibility,
-can test with their httpd package).
-
 Replace our hybrid 2.4+2.6 modutils with plain module-init-tools.
 
 Update whatever packages we manage to, but don't break RHEL 4 compatibility
@@ -85,4 +82,4 @@ Update the on-demand CD sales setup with Owl-current ISO snapshots
 shortly before making the release, to have the setup ready for being
 updated to the release.  Setup separate "products" for i686 and x86-64.
 
-$Owl: Owl/doc/TODO,v 1.184 2010/02/11 17:35:21 ldv Exp $
+$Owl: Owl/doc/TODO,v 1.185 2010/02/19 14:39:35 solar Exp $
