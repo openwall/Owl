@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-startup/functions,v 1.15 2008/12/25 01:42:34 galaxy Exp $
+# $Owl: Owl/packages/owl-startup/functions,v 1.16 2010/02/19 14:38:40 solar Exp $
 #
 # Functions defined in this file are used by many /etc/rc.d/init.d scripts;
 # they offer some limited Red Hat compatibility.
@@ -110,18 +110,20 @@ function daemon()
 
 function killproc()
 {
-	local NAME WHICH BASENAME PIDFILE EXPECT SIGNAL DEFAULT FLAGS STATUS
+	local NAME WHICH BASENAME PIDFILE EXPECT DELAY SIGNAL DEFAULT FLAGS
+	local STATUS
 
 # Process options.
 	NAME=
 	PIDFILE=
 	EXPECT=
+	DELAY=3
 # start-stop-daemon wants a signal number.
 	SIGNAL="`kill -l TERM`"
 	DEFAULT=true
 	while [ $# -ge 1 ]; do
 		case "$1" in
-		--pidfile)
+		--pidfile|-p)
 			shift
 			PIDFILE="$1"
 			shift
@@ -129,6 +131,11 @@ function killproc()
 		--expect-user)
 			shift
 			EXPECT="$1"
+			shift
+			;;
+		-d)
+			shift
+			DELAY="$1"
 			shift
 			;;
 		-[0-9]*)
@@ -191,8 +198,12 @@ function killproc()
 		usleep 100000
 		if start-stop-daemon $FLAGS --test > /dev/null; then
 			sleep 1
-			SIGNAL="`kill -l KILL`"
-			start-stop-daemon $FLAGS --signal "$SIGNAL" > /dev/null
+			if start-stop-daemon $FLAGS --test > /dev/null; then
+				sleep "$DELAY"
+				SIGNAL="`kill -l KILL`"
+				start-stop-daemon $FLAGS --signal "$SIGNAL" \
+				    > /dev/null
+			fi
 		fi
 		test -n "$PIDFILE" && rm -f "$PIDFILE"
 	fi
@@ -213,7 +224,7 @@ function status()
 	EXPECT=
 	while [ "$1" != "${1##-}" ]; do
 		case "$1" in
-		--pidfile)
+		--pidfile|-p)
 			shift
 			PIDFILE="$1"
 			shift

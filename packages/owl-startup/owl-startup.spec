@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.75 2008/12/25 01:47:54 galaxy Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.76 2010/02/19 14:38:40 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.34
+Version: 0.35
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -167,6 +167,11 @@ fi
 %doc redhat
 
 %changelog
+* Fri Feb 19 2010 Solar Designer <solar-at-owl.openwall.com> 0.35-owl1
+- Enhanced killproc() with support for the "-d" (delay) option, and killproc()
+and status() with support for the "-p" option (same as "--pidfile") for Red Hat
+compatibility.
+
 * Wed Dec 25 2008 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.34-owl1
 - Added /usr/local/bin and /usr/local/sbin to PATH in functions.
 - Enhanced our "which" emulation to return more relevant results.
