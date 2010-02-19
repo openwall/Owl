@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.111 2010/02/11 17:31:21 ldv Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.112 2010/02/19 06:27:29 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -10,8 +10,8 @@
 Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
-%define crypt_bf_version 1.0.3
-Release: owl8
+%define crypt_bf_version 1.0.4
+Release: owl9
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
@@ -462,6 +462,12 @@ fi
 %endif
 
 %changelog
+* Fri Feb 19 2010 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl9
+- Corrected the sanity check of the "setting" string in _crypt_blowfish_rn() to
+reject iteration counts encoded as 36 through 39.  Previously, these would be
+misinterpreted as being the same as 04 through 07.  This was reported to us by
+Joey Smith.
+
 * Thu Feb 11 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.6-owl8
 - Switched from linuxthreads to NPTL.
 - Optimized res_randomid patch.
