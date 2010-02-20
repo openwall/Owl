@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.69 2010/01/26 17:18:57 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.70 2010/02/20 18:55:30 solar Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.7m
-Release: owl3
+Release: owl4
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -106,7 +106,8 @@ bzip2 -9k CHANGES CHANGES.SSLeay
 # Avoid conflict with pow10(3).
 sed -i s/pow10/pow10i/ crypto/bio/b_print.c
 
-# Correct compilation options.
+# Correct compilation options.  "-Wall" is already present in Configure.
+%{expand:%%define optflags %optflags -Wa,--noexecstack}
 perl -pi -e 's/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/%optflags/' \
 	Configure
 
@@ -116,8 +117,6 @@ sed -i 's/\${SHLIB_MAJOR}\.\${SHLIB_MINOR}/\${VERSION}/g' Makefile.org
 
 %define openssldir %_datadir/ssl
 %define opensslflags shared -DSSL_ALLOW_ADH --prefix=%_prefix
-
-%{expand:%%define optflags %optflags -Wall -Wa,--noexecstack}
 
 %build
 %ifarch %ix86
@@ -249,6 +248,10 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %attr(0644,root,root) %_mandir/man1/CA.pl.1*
 
 %changelog
+* Sat Feb 20 2010 Solar Designer <solar-at-owl.openwall.com> 0.9.7m-owl4
+- Corrected the addition of -Wa,--noexecstack to gcc options actually used
+during OpenSSL build.
+
 * Thu Jan 08 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.9.7m-owl3
 - Backported upstream fixes of incorrect checks for malformed signatures
 (CVE-2008-5077).
