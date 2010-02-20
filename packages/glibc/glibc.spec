@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.112 2010/02/19 06:27:29 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.113 2010/02/20 11:34:49 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -462,11 +462,12 @@ fi
 %endif
 
 %changelog
-* Fri Feb 19 2010 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl9
+* Sat Feb 20 2010 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl9
 - Corrected the sanity check of the "setting" string in _crypt_blowfish_rn() to
 reject iteration counts encoded as 36 through 39.  Previously, these would be
 misinterpreted as being the same as 04 through 07.  This was reported to us by
 Joey Smith.
+- Added .section .note.GNU-stack to crypt_blowfish's x86.S.
 
 * Thu Feb 11 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.6-owl8
 - Switched from linuxthreads to NPTL.
