@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.113 2010/02/20 11:34:49 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.114 2010/02/20 14:52:07 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -468,6 +468,7 @@ reject iteration counts encoded as 36 through 39.  Previously, these would be
 misinterpreted as being the same as 04 through 07.  This was reported to us by
 Joey Smith.
 - Added .section .note.GNU-stack to crypt_blowfish's x86.S.
+- Enhanced crypt_freesec.c to detect and reject invalid "setting" strings.
 
 * Thu Feb 11 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.6-owl8
 - Switched from linuxthreads to NPTL.
