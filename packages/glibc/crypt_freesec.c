@@ -2,8 +2,9 @@
  * This version is derived from the original implementation of FreeSec
  * (release 1.1) by David Burren.  I've reviewed the changes made in
  * OpenBSD (as of 2.7) and modified the original code in a similar way
- * where applicable.  I've also made it reentrant and did a number of
- * other changes -- SD.
+ * where applicable.  I've also made it reentrant and made a number of
+ * other changes.
+ * - Solar Designer <solar at openwall.com>
  */
 
 /*
@@ -36,8 +37,8 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	$Owl: Owl/packages/glibc/crypt_freesec.c,v 1.4 2005/11/16 13:08:32 solar Exp $
- *	$Id: Owl/packages/glibc/crypt_freesec.c,v 1.4 2005/11/16 13:08:32 solar Exp $
+ *	$Owl: Owl/packages/glibc/crypt_freesec.c,v 1.5 2010/02/20 12:37:43 solar Exp $
+ *	$Id: Owl/packages/glibc/crypt_freesec.c,v 1.5 2010/02/20 12:37:43 solar Exp $
  *
  * This is an original implementation of the DES and the crypt(3) interfaces
  * by David Burren <davidb at werj.com.au>.
@@ -54,9 +55,8 @@
  * posted to the sci.crypt newsgroup by the author and is available for FTP.
  *
  * ARCHITECTURE ASSUMPTIONS:
- *	This code used to have some nasty ones, but I believe these have
- *	been removed by now.  The code isn't very portable and requires a
- *	32-bit integer type, though -- SD.
+ *	This code used to have some nasty ones, but these have been removed
+ *	by now.  The code requires a 32-bit integer type, though.
  */
 
 #include <sys/types.h>
