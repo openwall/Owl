@@ -37,8 +37,8 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	$Owl: Owl/packages/glibc/crypt_freesec.c,v 1.5 2010/02/20 12:37:43 solar Exp $
- *	$Id: Owl/packages/glibc/crypt_freesec.c,v 1.5 2010/02/20 12:37:43 solar Exp $
+ *	$Owl: Owl/packages/glibc/crypt_freesec.c,v 1.6 2010/02/20 14:45:06 solar Exp $
+ *	$Id: Owl/packages/glibc/crypt_freesec.c,v 1.6 2010/02/20 14:45:06 solar Exp $
  *
  * This is an original implementation of the DES and the crypt(3) interfaces
  * by David Burren <davidb at werj.com.au>.
@@ -181,22 +181,35 @@ static u_int32_t fp_maskl[8][256], fp_maskr[8][256];
 static u_int32_t key_perm_maskl[8][128], key_perm_maskr[8][128];
 static u_int32_t comp_maskl[8][128], comp_maskr[8][128];
 
+/*
+ * We match the behavior of UFC-crypt on systems where "char" is signed by
+ * default (the majority), regardless of char's signedness on our system.
+ */
 static inline int
 ascii_to_bin(char ch)
 {
-	if (ch > 'z')
-		return(0);
-	if (ch >= 'a')
-		return(ch - 'a' + 38);
-	if (ch > 'Z')
-		return(0);
-	if (ch >= 'A')
-		return(ch - 'A' + 12);
-	if (ch > '9')
-		return(0);
-	if (ch >= '.')
-		return(ch - '.');
-	return(0);
+	signed char sch = ch;
+	int retval;
+
+	retval = sch - '.';
+	if (sch >= 'A') {
+		retval = sch - ('A' - 12);
+		if (sch >= 'a')
+			retval = sch - ('a' - 38);
+	}
+	retval &= 0x3f;
+
+	return(retval);
+}
+
+/*
+ * When we choose to "support" invalid salts, nevertheless disallow those
+ * containing characters that would violate the passwd file format.
+ */
+static inline int
+ascii_is_unsafe(char ch)
+{
+	return !ch || ch == '\n' || ch == ':';
 }
 
 void
@@ -626,14 +639,24 @@ _crypt_extended_r(const char *key, const char *setting,
 	if (*setting == _PASSWORD_EFMT1) {
 		/*
 		 * "new"-style:
-		 *	setting - underscore, 4 bytes of count, 4 bytes of salt
+		 *	setting - underscore, 4 chars of count, 4 chars of salt
 		 *	key - unlimited characters
 		 */
-		for (i = 1, count = 0; i < 5; i++)
-			count |= ascii_to_bin(setting[i]) << (i - 1) * 6;
+		for (i = 1, count = 0; i < 5; i++) {
+			int value = ascii_to_bin(setting[i]);
+			if (ascii64[value] != setting[i])
+				return(NULL);
+			count |= value << (i - 1) * 6;
+		}
+		if (!count)
+			return(NULL);
 
-		for (i = 5, salt = 0; i < 9; i++)
-			salt |= ascii_to_bin(setting[i]) << (i - 5) * 6;
+		for (i = 5, salt = 0; i < 9; i++) {
+			int value = ascii_to_bin(setting[i]);
+			if (ascii64[value] != setting[i])
+				return(NULL);
+			salt |= value << (i - 5) * 6;
+		}
 
 		while (*key) {
 			/*
@@ -652,35 +675,25 @@ _crypt_extended_r(const char *key, const char *setting,
 			if (des_setkey((u_char *) keybuf, data))
 				return(NULL);
 		}
-		strncpy(data->output, setting, 9);
-		/*
-		 * Double check that we weren't given a short setting.
-		 * If we were, the above code will probably have created
-		 * wierd values for count and salt, but we don't really care.
-		 * Just make sure the output string doesn't have an extra
-		 * NUL in it.
-		 */
+		memcpy(data->output, setting, 9);
 		data->output[9] = '\0';
-		p = (u_char *) data->output + strlen(data->output);
+		p = (u_char *) data->output + 9;
 	} else {
 		/*
 		 * "old"-style:
-		 *	setting - 2 bytes of salt
+		 *	setting - 2 chars of salt
 		 *	key - up to 8 characters
 		 */
 		count = 25;
+
+		if (ascii_is_unsafe(setting[0]) || ascii_is_unsafe(setting[1]))
+			return(NULL);
 
 		salt = (ascii_to_bin(setting[1]) << 6)
 		     |  ascii_to_bin(setting[0]);
 
 		data->output[0] = setting[0];
-		/*
-		 * If the encrypted password that the salt was extracted from
-		 * is only 1 character long, the salt will be corrupted.  We
-		 * need to ensure that the output string doesn't have an extra
-		 * NUL in it!
-		 */
-		data->output[1] = setting[1] ? setting[1] : data->output[0];
+		data->output[1] = setting[1];
 		p = (u_char *) data->output + 2;
 	}
 	setup_salt(salt, data);
@@ -734,6 +747,7 @@ static struct {
 	char *hash;
 	char *pw;
 } tests[] = {
+/* "new"-style */
 	{"_J9..CCCCXBrJUJV154M", "U*U*U*U*"},
 	{"_J9..CCCCXUhOBTXzaiE", "U*U***U"},
 	{"_J9..CCCC4gQ.mB/PffM", "U*U***U*"},
@@ -746,6 +760,30 @@ static struct {
 	{"_J9..SDizxmRI1GjnQuE", "zxyDPWgydbQjgq"},
 	{"_K9..SaltNrQgIYUAeoY", "726 even"},
 	{"_J9..SDSD5YGyRCr4W4c", ""},
+/* "old"-style, valid salts */
+	{"CCNf8Sbh3HDfQ", "U*U*U*U*"},
+	{"CCX.K.MFy4Ois", "U*U***U"},
+	{"CC4rMpbg9AMZ.", "U*U***U*"},
+	{"XXxzOu6maQKqQ", "*U*U*U*U"},
+	{"SDbsugeBiC58A", ""},
+	{"./xZjzHv5vzVE", "password"},
+	{"0A2hXM1rXbYgo", "password"},
+	{"A9RXdR23Y.cY6", "password"},
+	{"ZziFATVXHo2.6", "password"},
+	{"zZDDIZ0NOlPzw", "password"},
+/* "old"-style, "reasonable" invalid salts, UFC-crypt behavior expected */
+	{"\001\002wyd0KZo65Jo", "password"},
+	{"a_C10Dk/ExaG.", "password"},
+	{"~\377.5OTsRVjwLo", "password"},
+/* The below are erroneous inputs, so NULL return is expected/required */
+	{"", ""}, /* no salt */
+	{" ", ""}, /* setting string is too short */
+	{"a:", ""}, /* unsafe character */
+	{"\na", ""}, /* unsafe character */
+	{"_/......", ""}, /* setting string is too short for its type */
+	{"_........", ""}, /* zero iteration count */
+	{"_/!......", ""}, /* invalid character in count */
+	{"_/......!", ""}, /* invalid character in salt */
 	{NULL}
 };
 
@@ -753,8 +791,12 @@ int main(void)
 {
 	int i;
 
-	for (i = 0; tests[i].hash; i++)
-	if (strcmp(crypt(tests[i].pw, tests[i].hash), tests[i].hash)) {
+	for (i = 0; tests[i].hash; i++) {
+		char *hash = crypt(tests[i].pw, tests[i].hash);
+		if (!hash && strlen(tests[i].hash) < 13)
+			continue; /* expected failure */
+		if (!strcmp(hash, tests[i].hash))
+			continue; /* expected success */
 		puts("FAILED");
 		return 1;
 	}
