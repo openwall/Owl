@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.114 2010/01/18 07:30:44 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.115 2010/02/24 18:27:29 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.4.2
+Version: 1.7.5
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,6 +88,15 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Wed Feb 24 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.5-owl1
+- Support the use of "--format" along with "--show" or "--make-charset".
+- Added support for "\r" (character lists with repeats) and "\p0" (reference
+to the immediately preceding character list/range) to the rules preprocessor.
+- The undefined and undocumented behavior of some subtle rules preprocessor
+constructs has been changed to arguably be more sensible.
+- Some bugs were fixed, most notably JtR crashing on no password hashes loaded
+(bug introduced in 1.7.4.2).
+
 * Mon Jan 18 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.4.2-owl1
 - Major performance improvements for processing of large password files or
 sets of files, especially with salt-less or same-salt hashes, achieved
