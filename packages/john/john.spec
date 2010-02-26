@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.115 2010/02/24 18:27:29 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.116 2010/02/26 00:10:58 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -88,12 +88,13 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Wed Feb 24 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.5-owl1
+* Fri Feb 26 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.5-owl1
 - Support the use of "--format" along with "--show" or "--make-charset".
+- More intuitive choice of .rec and .log filenames for custom session names.
 - Added support for "\r" (character lists with repeats) and "\p0" (reference
 to the immediately preceding character list/range) to the rules preprocessor.
-- The undefined and undocumented behavior of some subtle rules preprocessor
-constructs has been changed to arguably be more sensible.
+- Changed the undefined and undocumented behavior of some subtle rules
+preprocessor constructs to arguably be more sensible.
 - Some bugs were fixed, most notably JtR crashing on no password hashes loaded
 (bug introduced in 1.7.4.2).
 
