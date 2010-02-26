@@ -46,15 +46,20 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/02/26	Package: john
+Several minor features were added and usability improvements made to
+John the Ripper, bringing it up to version 1.7.5.
+
+2010/02/11 -
+2010/02/25	Package: tcb
+Updated to 1.0.5.
+
 2010/02/15	Package: vim
 Updated to 7.2 patchlevel 351.  Introduced new subpackages -spell and
 -tutor (not installed by default).
 
 2010/02/11	Package: glibc
 Replaced linuxthreads with NPTL.
-
-2010/02/11	Package: tcb
-Updated to 1.0.4.
 
 2010/02/02	Package: gzip
 Updated to 1.4.
@@ -1126,4 +1131,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.227 2010/02/15 05:11:47 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.228 2010/02/26 01:40:39 solar Exp $
