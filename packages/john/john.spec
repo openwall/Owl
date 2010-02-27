@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.117 2010/02/26 01:13:37 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.118 2010/02/27 17:59:24 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.5
+Version: 1.7.5.1
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,11 +88,13 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sat Feb 27 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.5.1-owl1
+- Added a new numeric variable to the word mangling rules engine: "p" for
+position of the character last found with the "/" or "%" commands.
+
 * Fri Feb 26 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.5-owl1
 - Support the use of "--format" along with "--show" or "--make-charset".
 - More intuitive choice of .rec and .log filenames for custom session names.
-- Added a new numeric variable to the word mangling rules engine: "p" for
-position of the character last found with the "/" or "%" commands.
 - Added support for "\r" (character lists with repeats) and "\p0" (reference
 to the immediately preceding character list/range) to the rules preprocessor.
 - Changed the undefined and undocumented behavior of some subtle rules
