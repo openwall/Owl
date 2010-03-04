@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.23 2010/03/04 04:51:44 gremlin Exp $
+# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.24 2010/03/04 04:52:48 gremlin Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
@@ -87,7 +87,7 @@ test "$1" -eq 0 && sed -i -re '/\/bin\/t\?csh/d' /etc/shells
 %_datadir/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
-* Wed Mar 03 2010 Gremlin from Kremlin <gremlin-at-owl.openwall.com> 6.14.00-owl1
+* Wed Mar 03 2010 Gremlin from Kremlin <gremlin-at-owl.openwall.com> 6.17.00-owl1
 - Updated to 6.17.00
 
 * Thu May 04 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.14.00-owl5
