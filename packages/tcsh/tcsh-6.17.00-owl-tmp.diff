@@ -1,8 +1,8 @@
-diff -ur tcsh-6.14.00-orig/sh.c tcsh-6.14.00/sh.c
---- tcsh-6.14.00-orig/sh.c	2005-03-22 00:26:36 +0300
-+++ tcsh-6.14.00/sh.c	2005-09-18 13:30:45 +0400
-@@ -737,7 +737,13 @@
- 	shtemp = Strspl(SAVE(strtmp2), doldol);	/* For << */
+diff -pruN tcsh-6.17.00.orig/sh.c tcsh-6.17.00/sh.c
+--- tcsh-6.17.00.orig/sh.c	2009-06-25 21:15:37 +0000
++++ tcsh-6.17.00/sh.c	2010-03-03 17:55:49 +0000
+@@ -714,7 +714,13 @@ main(int argc, char **argv)
+ 	xfree(tmp2);
      }
  #else /* !WINNT_NATIVE */
 -    shtemp = Strspl(STRtmpsh, doldol);	/* For << */
@@ -16,29 +16,26 @@ diff -ur tcsh-6.14.00-orig/sh.c tcsh-6.14.00/sh.c
  #endif /* WINNT_NATIVE */
  
      /*
-diff -ur tcsh-6.14.00-orig/sh.dol.c tcsh-6.14.00/sh.dol.c
---- tcsh-6.14.00-orig/sh.dol.c	2004-12-26 00:15:06 +0300
-+++ tcsh-6.14.00/sh.dol.c	2005-09-18 13:44:06 +0400
-@@ -1023,45 +1023,27 @@
-     eChar  c;
-     Char   *Dv[2];
-     Char    obuf[BUFSIZE + 1], lbuf[BUFSIZE], mbuf[BUFSIZE];
--    int     ocnt, lcnt, mcnt;
-+    int     ocnt, lcnt, mcnt, fd;
+diff -pruN tcsh-6.17.00.orig/sh.dol.c tcsh-6.17.00/sh.dol.c
+--- tcsh-6.17.00.orig/sh.dol.c	2009-06-19 16:25:00 +0000
++++ tcsh-6.17.00/sh.dol.c	2010-03-03 18:08:28 +0000
+@@ -936,45 +936,30 @@ heredoc(Char *term)
      Char *lbp, *obp, *mbp;
      Char  **vp;
      int    quoted;
 -    char   *tmp;
--#ifndef WINNT_NATIVE
--    struct timeval tv;
++    int    fd;
 +    char   *tmp, *dot;
+ #ifndef WINNT_NATIVE
+     struct timeval tv;
  
--again:
--#endif /* WINNT_NATIVE */
+ again:
+ #endif /* WINNT_NATIVE */
      tmp = short2str(shtemp);
 -#ifndef O_CREAT
 -# define O_CREAT 0
--    if (creat(tmp, 0600) < 0)
+-    if (xcreat(tmp, 0600) < 0)
++
 +    dot = strrchr(tmp, '.');
 +    if (!dot)
 +	stderror(ERR_NAME | ERR_NOMATCH);
@@ -47,21 +44,25 @@ diff -ur tcsh-6.14.00-orig/sh.dol.c tcsh-6.14.00/sh.dol.c
 +    if ((fd = mkstemp(tmp)) < 0)
  	stderror(ERR_SYSTEM, tmp, strerror(errno));
 -#endif
--    (void) close(0);
+-    xclose(0);
 -#ifndef O_TEMPORARY
 -# define O_TEMPORARY 0
 -#endif
 -#ifndef O_EXCL
 -# define O_EXCL 0
 -#endif
--    if (open(tmp, O_RDWR|O_CREAT|O_EXCL|O_TEMPORARY|O_LARGEFILE, 0600) == -1) {
+-    if (xopen(tmp, O_RDWR|O_CREAT|O_EXCL|O_TEMPORARY|O_LARGEFILE, 0600) ==
+-	-1) {
 -	int oerrno = errno;
 -#ifndef WINNT_NATIVE
 -	if (errno == EEXIST) {
 -	    if (unlink(tmp) == -1) {
 -		(void) gettimeofday(&tv, NULL);
--		shtemp = Strspl(STRtmpsh, putn((((int)tv.tv_sec) ^ 
--		    ((int)tv.tv_usec) ^ ((int)getpid())) & 0x00ffffff));
+-		xfree(shtemp);
+-		mbp = putn((((int)tv.tv_sec) ^ 
+-		    ((int)tv.tv_usec) ^ ((int)getpid())) & 0x00ffffff);
+-		shtemp = Strspl(STRtmpsh, mbp);
+-		xfree(mbp);
 -	    }
 -	    goto again;
 -	}
@@ -70,7 +71,8 @@ diff -ur tcsh-6.14.00-orig/sh.dol.c tcsh-6.14.00/sh.dol.c
 -	errno = oerrno;
 - 	stderror(ERR_SYSTEM, tmp, strerror(errno));
 +
-+    if (fd != 0) {
++    if (fd)
++    {
 +	if (dup2(fd, 0) < 0)
 +	    stderror(ERR_SYSTEM, "dup2", strerror(errno));
 +	(void) close(fd);
@@ -79,10 +81,10 @@ diff -ur tcsh-6.14.00-orig/sh.dol.c tcsh-6.14.00/sh.dol.c
      (void) unlink(tmp);		/* 0 0 inode! */
      Dv[0] = term;
      Dv[1] = NULL;
-diff -uNr tcsh-6.14.00.orig/tcsh.man tcsh-6.14.00/tcsh.man
---- tcsh-6.14.00.orig/tcsh.man	2005-03-25 17:36:08 +0000
-+++ tcsh-6.14.00/tcsh.man	2005-10-19 15:18:28 +0000
-@@ -4880,8 +4880,11 @@
+diff -pruN tcsh-6.17.00.orig/tcsh.man tcsh-6.17.00/tcsh.man
+--- tcsh-6.17.00.orig/tcsh.man	2009-07-10 17:09:32 +0000
++++ tcsh-6.17.00/tcsh.man	2010-03-03 17:55:49 +0000
+@@ -4922,8 +4922,11 @@ Read by login shells at logout after \fI
  .I /bin/sh
  Used to interpret shell scripts not starting with a `#'.
  .TP 16

@@ -1,0 +1,13 @@
+diff -pruN tcsh-6.17.00.orig/sh.c tcsh-6.17.00/sh.c
+--- tcsh-6.17.00.orig/sh.c	2009-06-25 21:15:37 +0000
++++ tcsh-6.17.00/sh.c	2010-03-03 11:34:20 +0000
+@@ -1288,6 +1288,9 @@ main(int argc, char **argv)
+      */
+     process(setintr);
+ 
++    /* Take care of signals (especially HUP) here instead of inside flush. */
++    handle_pending_signals();
++
+     /*
+      * Mop-up.
+      */

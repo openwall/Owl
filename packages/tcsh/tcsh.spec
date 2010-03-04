@@ -1,15 +1,17 @@
-# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.22 2006/09/16 02:06:15 galaxy Exp $
+# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.23 2010/03/04 04:51:44 gremlin Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
-Version: 6.14.00
-Release: owl5
+Version: 6.17.00
+Release: owl1
 License: BSD
 Group: System Environment/Shells
 URL: http://www.tcsh.org/Home
 Source: ftp://ftp.astron.com/pub/tcsh/%name-%version.tar.gz
-Patch0: tcsh-6.14.00-suse-owl-tmp.diff
-Patch1: tcsh-6.14.00-owl-config.diff
+Patch0: tcsh-6.17.00-owl-tmp.diff
+Patch1: tcsh-6.17.00-owl-config.diff
+Patch2: tcsh-6.17.00-rh-printexitvalue.diff
+Patch3: tcsh-6.17.00-rh-signal.diff
 PreReq: fileutils, grep
 Requires(postun): sed >= 4.0.9
 BuildRequires: perl, groff, libtermcap-devel, glibc-utils
@@ -28,29 +30,8 @@ like syntax.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-
-cat > catalogs << EOF
-de ISO-8859-1 german
-el ISO-8859-7 greek
-en ISO-8859-1 C
-es ISO-8859-1 spanish
-et ISO-8859-1 et
-fi ISO-8859-1 finnish
-fr ISO-8859-1 french
-it ISO-8859-1 italian
-ja eucJP ja
-ru KOI8-R russian
-uk KOI8-U ukrainian
-EOF
-
-while read lang charset language; do
-	if ! grep -q '^$ codeset=' nls/$language/set1; then
-		echo '$ codeset='$charset      >  nls/$language/set1.codeset
-		cat nls/$language/set1         >> nls/$language/set1.codeset
-		cat nls/$language/set1.codeset >  nls/$language/set1
-		rm nls/$language/set1.codeset
-	fi
-done < catalogs
+%patch2 -p1
+%patch3 -p1
 
 %define	_bindir	/bin
 
@@ -69,22 +50,33 @@ ln -sf tcsh %buildroot%_bindir/csh
 ln -sf tcsh.1 %buildroot%_mandir/man1/csh.1
 nroff -me eight-bit.me > eight-bit.txt
 
-while read lang charset language; do
+while read lang language; do
 	dest=%buildroot%_datadir/locale/$lang/LC_MESSAGES
 	if test -f tcsh.$language.cat; then
 		mkdir -p $dest
 		install -m 644 tcsh.$language.cat $dest/tcsh
 	fi
-done < catalogs
+done < _EOF
+de german
+el greek
+en C
+es spanish
+et et
+fi finnish
+fr french
+it italian
+ja ja
+pl pl
+ru russian
+uk ukrainian
+_EOF
 
 %post
-if ! grep -qs '^/bin/csh$' /etc/shells; then echo /bin/csh >> /etc/shells; fi
-if ! grep -qs '^/bin/tcsh$' /etc/shells; then echo /bin/tcsh >> /etc/shells; fi
+grep -qs '^/bin/csh$' /etc/shells || echo /bin/csh >> /etc/shells
+grep -qs '^/bin/tcsh$' /etc/shells || echo /bin/tcsh >> /etc/shells
 
 %postun
-if [ $1 -eq 0 ]; then
-	sed -i '/\/bin\/t\?csh/d' /etc/shells
-fi
+test "$1" -eq 0 && sed -i -re '/\/bin\/t\?csh/d' /etc/shells
 
 %files
 %defattr(-,root,root)
@@ -95,6 +87,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
+* Wed Mar 03 2010 Gremlin from Kremlin <gremlin-at-owl.openwall.com> 6.14.00-owl1
+- Updated to 6.17.00
+
 * Thu May 04 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.14.00-owl5
 - Added glibc-utils to BuildRequires due to gencat.
 
