@@ -1,0 +1,24 @@
+diff -urp tcsh-6.17.00/sh.dol.c tcsh-6.17.00-owl-warnings/sh.dol.c
+--- tcsh-6.17.00/sh.dol.c	2010-03-05 07:04:02 +0000
++++ tcsh-6.17.00-owl-warnings/sh.dol.c	2010-03-05 07:35:39 +0000
+@@ -625,7 +625,7 @@ Dgetdol(void)
+ 
+ 	    for (i = 0; Isdigit(*np); i = i * 10 + *np++ - '0')
+ 		continue;
+-	    if (i < 0 || i > upb && !any("-*", *np)) {
++	    if (i < 0 || (i > upb && !any("-*", *np))) {
+ 		cleanup_until(name);
+ 		dolerror(vp->v_name);
+ 		return;
+diff -urp tcsh-6.17.00/tw.parse.c tcsh-6.17.00-owl-warnings/tw.parse.c
+--- tcsh-6.17.00/tw.parse.c	2007-07-02 15:48:48 +0000
++++ tcsh-6.17.00-owl-warnings/tw.parse.c	2010-03-05 07:48:48 +0000
+@@ -2157,7 +2157,7 @@ print_by_column(Char *dir, Char *items[]
+ 		}
+ 		else {
+ 		    /* Print filename followed by '/' or '*' or ' ' */
+-		    xprintf("%-S%c", items[i], filetype(dir, items[i]));
++		    xprintf("%-S%c", items[i], (char)filetype(dir, items[i]));
+ 		    wx++;
+ 		}
+ #endif /* COLOR_LS_F */
