@@ -1,46 +1,50 @@
-diff -pruN tcsh-6.17.00.orig/sh.c tcsh-6.17.00/sh.c
+diff -urp tcsh-6.17.00.orig/sh.c tcsh-6.17.00/sh.c
 --- tcsh-6.17.00.orig/sh.c	2009-06-25 21:15:37 +0000
-+++ tcsh-6.17.00/sh.c	2010-03-03 17:55:49 +0000
-@@ -714,7 +714,13 @@ main(int argc, char **argv)
- 	xfree(tmp2);
-     }
- #else /* !WINNT_NATIVE */
++++ tcsh-6.17.00/sh.c	2010-03-05 06:35:40 +0000
+@@ -698,24 +698,6 @@ main(int argc, char **argv)
+ #endif /* COLOR_LS_F */
+ 
+     doldol = putn((int) getpid());	/* For $$ */
+-#ifdef WINNT_NATIVE
+-    {
+-	char *tmp;
+-	Char *tmp2;
+-	if ((tmp = getenv("TMP")) != NULL) {
+-	    tmp = xasprintf("%s/%s", tmp, "sh");
+-	    tmp2 = SAVE(tmp);
+-	xfree(tmp);
+-    }
+-	else {
+-	    tmp2 = SAVE(""); 
+-	}
+-	shtemp = Strspl(tmp2, doldol);	/* For << */
+-	xfree(tmp2);
+-    }
+-#else /* !WINNT_NATIVE */
 -    shtemp = Strspl(STRtmpsh, doldol);	/* For << */
-+    {
-+	char *tmpdir = getenv ("TMPDIR");
-+	if (!tmpdir)
-+	    tmpdir = "/tmp";
-+	shtemp = Strspl(SAVE(tmpdir), SAVE("/sh.XXXXXX")); /* For << */
-+    }
-+
- #endif /* WINNT_NATIVE */
+-#endif /* WINNT_NATIVE */
  
      /*
-diff -pruN tcsh-6.17.00.orig/sh.dol.c tcsh-6.17.00/sh.dol.c
+      * Record the interrupt states from the parent process. If the parent is
+diff -urp tcsh-6.17.00.orig/sh.dol.c tcsh-6.17.00/sh.dol.c
 --- tcsh-6.17.00.orig/sh.dol.c	2009-06-19 16:25:00 +0000
-+++ tcsh-6.17.00/sh.dol.c	2010-03-03 18:08:28 +0000
-@@ -936,45 +936,30 @@ heredoc(Char *term)
++++ tcsh-6.17.00/sh.dol.c	2010-03-05 07:04:02 +0000
+@@ -936,46 +936,20 @@ heredoc(Char *term)
      Char *lbp, *obp, *mbp;
      Char  **vp;
      int    quoted;
--    char   *tmp;
 +    int    fd;
-+    char   *tmp, *dot;
- #ifndef WINNT_NATIVE
-     struct timeval tv;
+     char   *tmp;
+-#ifndef WINNT_NATIVE
+-    struct timeval tv;
  
- again:
- #endif /* WINNT_NATIVE */
-     tmp = short2str(shtemp);
+-again:
+-#endif /* WINNT_NATIVE */
+-    tmp = short2str(shtemp);
 -#ifndef O_CREAT
 -# define O_CREAT 0
 -    if (xcreat(tmp, 0600) < 0)
-+
-+    dot = strrchr(tmp, '.');
-+    if (!dot)
-+	stderror(ERR_NAME | ERR_NOMATCH);
-+    strcpy(dot, ".XXXXXX");
-+
++    tmp = strspl(getenv("TMPDIR") ?: "/tmp", "/tcsh.XXXXXX");
 +    if ((fd = mkstemp(tmp)) < 0)
  	stderror(ERR_SYSTEM, tmp, strerror(errno));
 -#endif
@@ -70,31 +74,43 @@ diff -pruN tcsh-6.17.00.orig/sh.dol.c tcsh-6.17.00/sh.dol.c
 -	(void) unlink(tmp);
 -	errno = oerrno;
 - 	stderror(ERR_SYSTEM, tmp, strerror(errno));
-+
 +    if (fd)
 +    {
 +	if (dup2(fd, 0) < 0)
 +	    stderror(ERR_SYSTEM, "dup2", strerror(errno));
 +	(void) close(fd);
      }
-+
      (void) unlink(tmp);		/* 0 0 inode! */
++    xfree(tmp);
      Dv[0] = term;
      Dv[1] = NULL;
-diff -pruN tcsh-6.17.00.orig/tcsh.man tcsh-6.17.00/tcsh.man
+     gflag = 0;
+diff -urp tcsh-6.17.00.orig/sh.h tcsh-6.17.00/sh.h
+--- tcsh-6.17.00.orig/sh.h	2009-06-25 21:27:37 +0000
++++ tcsh-6.17.00/sh.h	2010-03-05 06:35:11 +0000
+@@ -584,8 +584,6 @@ extern char *seterr;		/* Error message f
+ extern int errno;		/* Error from C library routines */
+ #endif
+ extern int exitset;
+-/* Temp name for << shell files in /tmp, for xfree() */
+-EXTERN Char   *shtemp IZERO;
+ 
+ #ifdef BSDTIMES
+ EXTERN struct timeval time0;	/* Time at which the shell started */
+diff -urp tcsh-6.17.00.orig/tcsh.man tcsh-6.17.00/tcsh.man
 --- tcsh-6.17.00.orig/tcsh.man	2009-07-10 17:09:32 +0000
-+++ tcsh-6.17.00/tcsh.man	2010-03-03 17:55:49 +0000
++++ tcsh-6.17.00/tcsh.man	2010-03-05 07:00:15 +0000
 @@ -4922,8 +4922,11 @@ Read by login shells at logout after \fI
  .I /bin/sh
  Used to interpret shell scripts not starting with a `#'.
  .TP 16
 -.I /tmp/sh*
 -Temporary file for `<<'.
-+.I $TMPDIR/sh.*
++.I $TMPDIR/tcsh.*
 +Temporary files for `<<'.
 +.TP 16
-+.I /tmp/sh.*
-+The same as above, but used when $TMPDIR is unavailable.
++.I /tmp/tcsh.*
++Same as above, but used when $TMPDIR is not set.
  .TP 16
  .I /etc/passwd
  Source of home directories for `~name' substitutions.
