@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.24 2010/03/04 04:52:48 gremlin Exp $
+# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.25 2010/03/05 08:08:59 solar Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
@@ -7,11 +7,12 @@ Release: owl1
 License: BSD
 Group: System Environment/Shells
 URL: http://www.tcsh.org/Home
-Source: ftp://ftp.astron.com/pub/tcsh/%name-%version.tar.gz
+Source: ftp://ftp.astron.com/pub/tcsh/%name-%version.tar.bz2
 Patch0: tcsh-6.17.00-owl-tmp.diff
 Patch1: tcsh-6.17.00-owl-config.diff
 Patch2: tcsh-6.17.00-rh-printexitvalue.diff
 Patch3: tcsh-6.17.00-rh-signal.diff
+Patch4: tcsh-6.17.00-owl-warnings.diff
 PreReq: fileutils, grep
 Requires(postun): sed >= 4.0.9
 BuildRequires: perl, groff, libtermcap-devel, glibc-utils
@@ -32,8 +33,11 @@ like syntax.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %define	_bindir	/bin
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
 %configure
@@ -56,7 +60,7 @@ while read lang language; do
 		mkdir -p $dest
 		install -m 644 tcsh.$language.cat $dest/tcsh
 	fi
-done < _EOF
+done << EOF
 de german
 el greek
 en C
@@ -69,14 +73,16 @@ ja ja
 pl pl
 ru russian
 uk ukrainian
-_EOF
+EOF
 
 %post
-grep -qs '^/bin/csh$' /etc/shells || echo /bin/csh >> /etc/shells
-grep -qs '^/bin/tcsh$' /etc/shells || echo /bin/tcsh >> /etc/shells
+fgrep -qx /bin/csh /etc/shells || echo /bin/csh >> /etc/shells
+fgrep -qx /bin/tcsh /etc/shells || echo /bin/tcsh >> /etc/shells
 
 %postun
-test "$1" -eq 0 && sed -i -re '/\/bin\/t\?csh/d' /etc/shells
+if [ $1 -eq 0 ]; then
+	sed -i '/\/bin\/t\?csh/d' /etc/shells
+fi
 
 %files
 %defattr(-,root,root)
@@ -87,7 +93,15 @@ test "$1" -eq 0 && sed -i -re '/\/bin\/t\?csh/d' /etc/shells
 %_datadir/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
-* Wed Mar 03 2010 Gremlin from Kremlin <gremlin-at-owl.openwall.com> 6.17.00-owl1
+* Fri Mar 05 2010 Solar Designer <solar-at-owl.openwall.com> 6.17.00-owl1
+- Reworked the -tmp patch to always use strings of the regular "char" (not
+"Char") for the temporary files directory and temporary file pathnames.
+- Changed %post to use "fgrep -x", reverted Gremlin's changes to %postun.
+- Corrected a typo in the spec file (6.17.00-owl0 wouldn't build).
+- Re-compressed the source tarball from .gz to .bz2.
+- Enabled -Wall and fixed the code to build without any warnings again.
+
+* Wed Mar 03 2010 Gremlin from Kremlin <gremlin-at-owl.openwall.com> 6.17.00-owl0
 - Updated to 6.17.00
 
 * Thu May 04 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.14.00-owl5
