@@ -6,7 +6,7 @@
  * Written by Solar Designer <solar at owl.openwall.com> and placed in the
  * public domain.
  *
- * $Owl: Owl/packages/vim/vitmp.c,v 1.5 2005/12/19 00:10:58 solar Exp $
+ * $Owl: Owl/packages/vim/vitmp.c,v 1.6 2010/03/09 02:33:11 ldv Exp $
  */
 #include <stdio.h>
 #include <string.h>
@@ -16,14 +16,15 @@ int main(int argc, const char * const *argv)
 {
 	char *newargv[argc + 4]; /* GNU C */
 
-	newargv[0] = "/bin/vi";
+	newargv[0] = "vi";
 	/* No swap files, use memory only */
 	newargv[1] = "-n";
 	/* Don't make a backup before overwriting a file */
-	newargv[2] = "-c"; newargv[3] = "set nowritebackup";
+	newargv[2] = "-c";
+	newargv[3] = "set nobackup nowritebackup patchmode=";
 	memcpy(&newargv[4], &argv[1], argc * sizeof(char *));
 
-	execv(newargv[0], newargv);
+	execv("/bin/vi", newargv);
 	perror("execv");
 
 	return 1;

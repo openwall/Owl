@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.34 2010/02/15 05:10:52 solar Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.35 2010/03/09 02:33:11 ldv Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -12,7 +12,7 @@ Name: vim
 %define patchlevel 351
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl1
+Release: owl2
 License: Charityware
 Group: Applications/Editors
 URL: http://www.vim.org
@@ -345,6 +345,9 @@ chmod 644 ../runtime/doc/vim2html.pl
 %endif
 
 %changelog
+* Tue Mar 09 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 7.2.351-owl2
+- vitmp: Updated vi commands required to disable backups in modern VIM.
+
 * Sun Feb 14 2010 Michail Litvak <mci-at-owl.openwall.com> 7.2.351-owl1
 - Updated to 7.2 patchlevel 351.
 - Introduced new subpackages -spell and -tutor.
