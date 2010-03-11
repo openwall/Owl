@@ -1,26 +1,9 @@
 Changes by ALT Linux team extracted from the Git repository at
-http://git.altlinux.org/gears/t/tar.git on 2009/08/17 and forward-ported
-from upstream code slightly newer than 1.22 to the 1.22.90 alpha release.
+http://git.altlinux.org/gears/t/tar.git using "git diff v1.23..1.23-alt2 tar".
 
-The src/list.c hunk removing the "lone zero block" warning has been
-replaced by a change to WARN_ALL in tar-1.22.90-owl-default-warnings.diff.
-
-diff -urp tar-1.22.90.orig/doc/tar.texi tar-1.22.90-alt/doc/tar.texi
---- tar-1.22.90.orig/doc/tar.texi	2009-08-09 07:38:01 +0000
-+++ tar-1.22.90-alt/doc/tar.texi	2009-08-17 01:38:04 +0000
-@@ -55,7 +55,7 @@ supports it in developing GNU and promot
- 
- @dircategory Archiving
- @direntry
--* Tar: (tar).                   Making tape (or disk) archives.
-+* Tar: (tar).                                   Making tape (or disk) archives.
- @end direntry
- 
- @dircategory Individual utilities
-diff -urp tar-1.22.90.orig/lib/rtapelib.c tar-1.22.90-alt/lib/rtapelib.c
---- tar-1.22.90.orig/lib/rtapelib.c	2009-03-19 11:47:19 +0000
-+++ tar-1.22.90-alt/lib/rtapelib.c	2009-08-17 01:38:04 +0000
-@@ -491,12 +491,14 @@ rmt_open__ (const char *file_name, int o
+--- tar/lib/rtapelib.c
++++ tar/lib/rtapelib.c
+@@ -491,12 +491,14 @@ rmt_open__ (const char *file_name, int open_mode, int bias,
  	/* Child.  */
  
  	close (STDIN_FILENO);
@@ -37,10 +20,33 @@ diff -urp tar-1.22.90.orig/lib/rtapelib.c tar-1.22.90-alt/lib/rtapelib.c
  	close (from_remote[remote_pipe_number][PREAD]);
  	close (from_remote[remote_pipe_number][PWRITE]);
  
-diff -urp tar-1.22.90.orig/src/create.c tar-1.22.90-alt/src/create.c
---- tar-1.22.90.orig/src/create.c	2009-08-09 07:38:01 +0000
-+++ tar-1.22.90-alt/src/create.c	2009-08-17 01:40:44 +0000
-@@ -578,7 +578,12 @@ write_gnu_long_link (struct tar_stat_inf
+--- tar/src/buffer.c
++++ tar/src/buffer.c
+@@ -1374,7 +1374,6 @@ static bool
+ check_label_pattern (const char *label)
+ {
+   char *string;
+-  bool result;
+ 
+   if (fnmatch (volume_label_option, label, 0) == 0)
+     return true;
+@@ -1385,10 +1384,11 @@ check_label_pattern (const char *label)
+   string = drop_volume_label_suffix (label);
+   if (string)
+     {
+-      result = fnmatch (string, volume_label_option, 0) == 0;
++      bool result = fnmatch (string, volume_label_option, 0) == 0;
+       free (string);
++      return result;
+     }
+-  return result;
++  return false;
+ }
+ 
+ /* Check if the next block contains a volume label and if this matches
+--- tar/src/create.c
++++ tar/src/create.c
+@@ -575,7 +575,12 @@ write_gnu_long_link (struct tar_stat_info *st, const char *p, char type)
    GNAME_TO_CHARS (tmpname, header->header.gname);
    free (tmpname);
  
@@ -54,7 +60,7 @@ diff -urp tar-1.22.90.orig/src/create.c tar-1.22.90-alt/src/create.c
    header->header.typeflag = type;
    finish_header (st, header, -1);
  
-@@ -908,9 +913,13 @@ start_header (struct tar_stat_info *st)
+@@ -910,9 +915,13 @@ start_header (struct tar_stat_info *st)
        break;
  
      case OLDGNU_FORMAT:
@@ -71,9 +77,9 @@ diff -urp tar-1.22.90.orig/src/create.c tar-1.22.90-alt/src/create.c
        break;
  
      case POSIX_FORMAT:
-@@ -1560,6 +1569,19 @@ dump_file0 (struct tar_stat_info *st, co
-   if (is_avoided_name (p))
-     return;
+@@ -1554,6 +1563,19 @@ dump_file0 (struct tar_stat_info *st, const char *p,
+       return;
+     }
  
 +  if (S_ISSOCK (st->stat.st_mode))
 +    {
@@ -91,8 +97,8 @@ diff -urp tar-1.22.90.orig/src/create.c tar-1.22.90-alt/src/create.c
    is_dir = S_ISDIR (st->stat.st_mode) != 0;
  
    if (!is_dir && dump_hard_link (st))
-@@ -1671,7 +1693,8 @@ dump_file0 (struct tar_stat_info *st, co
- 		exit_status = TAREXIT_DIFFERS;
+@@ -1666,7 +1688,8 @@ dump_file0 (struct tar_stat_info *st, const char *p,
+ 	      set_exit_status (TAREXIT_DIFFERS);
  	    }
  	  else if (atime_preserve_option == replace_atime_preserve
 -		   && set_file_atime (fd, p, restore_times) != 0)
@@ -101,7 +107,7 @@ diff -urp tar-1.22.90.orig/src/create.c tar-1.22.90-alt/src/create.c
  	    utime_error (p);
  	}
  
-@@ -1743,18 +1766,6 @@ dump_file0 (struct tar_stat_info *st, co
+@@ -1725,18 +1748,6 @@ dump_file0 (struct tar_stat_info *st, const char *p,
      type = BLKTYPE;
    else if (S_ISFIFO (st->stat.st_mode))
      type = FIFOTYPE;
@@ -120,9 +126,8 @@ diff -urp tar-1.22.90.orig/src/create.c tar-1.22.90-alt/src/create.c
    else
      {
        unknown_file_error (p);
-diff -urp tar-1.22.90.orig/src/extract.c tar-1.22.90-alt/src/extract.c
---- tar-1.22.90.orig/src/extract.c	2009-08-05 15:52:00 +0000
-+++ tar-1.22.90-alt/src/extract.c	2009-08-17 01:43:07 +0000
+--- tar/src/extract.c
++++ tar/src/extract.c
 @@ -131,6 +131,33 @@ extr_init (void)
      }
  }
@@ -184,7 +189,7 @@ diff -urp tar-1.22.90.orig/src/extract.c tar-1.22.90-alt/src/extract.c
    if (failed && errno == EPERM)
      {
        /* On Solaris, chmod may fail if we don't have PRIV_ALL.  */
-@@ -247,7 +274,7 @@ check_time (char const *file_name, struc
+@@ -247,7 +274,7 @@ check_time (char const *file_name, struct timespec t)
     punt for the rest.  Sigh!  */
  
  static void
@@ -221,7 +226,7 @@ diff -urp tar-1.22.90.orig/src/extract.c tar-1.22.90-alt/src/extract.c
  	      invert_permissions, permstatus, typeflag);
  }
  
-@@ -624,7 +652,7 @@ apply_nonancestor_delayed_set_stat (char
+@@ -624,7 +652,7 @@ apply_nonancestor_delayed_set_stat (char const *file_name, bool after_links)
  	  sb.stat.st_gid = data->gid;
  	  sb.atime = data->atime;
  	  sb.mtime = data->mtime;
@@ -230,7 +235,7 @@ diff -urp tar-1.22.90.orig/src/extract.c tar-1.22.90-alt/src/extract.c
  		    data->invert_permissions, data->permstatus, DIRTYPE);
  	}
  
-@@ -675,7 +703,7 @@ extract_dir (char *file_name, int typefl
+@@ -675,7 +703,7 @@ extract_dir (char *file_name, int typeflag)
  	      || old_files_option == OVERWRITE_OLD_FILES))
  	{
  	  struct stat st;
@@ -239,7 +244,7 @@ diff -urp tar-1.22.90.orig/src/extract.c tar-1.22.90-alt/src/extract.c
  	    {
  	      if (interdir_made)
  		{
-@@ -854,6 +882,12 @@ extract_file (char *file_name, int typef
+@@ -854,6 +882,12 @@ extract_file (char *file_name, int typeflag)
  
    mv_end ();
  
@@ -252,7 +257,7 @@ diff -urp tar-1.22.90.orig/src/extract.c tar-1.22.90-alt/src/extract.c
    /* If writing to stdout, don't try to do anything to the filename;
       it doesn't exist, or we don't want to touch it anyway.  */
  
-@@ -866,11 +900,6 @@ extract_file (char *file_name, int typef
+@@ -866,11 +900,6 @@ extract_file (char *file_name, int typeflag)
  
    if (to_command_option)
      sys_wait_command ();
@@ -264,7 +269,7 @@ diff -urp tar-1.22.90.orig/src/extract.c tar-1.22.90-alt/src/extract.c
  
    return status;
  }
-@@ -1023,7 +1052,7 @@ extract_symlink (char *file_name, int ty
+@@ -1023,7 +1052,7 @@ extract_symlink (char *file_name, int typeflag)
        break;
  
    if (status == 0)
@@ -273,7 +278,7 @@ diff -urp tar-1.22.90.orig/src/extract.c tar-1.22.90-alt/src/extract.c
    else
      symlink_error (current_stat_info.link_name, file_name);
    return status;
-@@ -1060,7 +1089,7 @@ extract_node (char *file_name, int typef
+@@ -1060,7 +1089,7 @@ extract_node (char *file_name, int typeflag)
    if (status != 0)
      mknod_error (file_name);
    else
@@ -282,7 +287,7 @@ diff -urp tar-1.22.90.orig/src/extract.c tar-1.22.90-alt/src/extract.c
  	      ARCHIVED_PERMSTATUS, typeflag);
    return status;
  }
-@@ -1081,7 +1110,7 @@ extract_fifo (char *file_name, int typef
+@@ -1081,7 +1110,7 @@ extract_fifo (char *file_name, int typeflag)
        break;
  
    if (status == 0)
@@ -300,9 +305,19 @@ diff -urp tar-1.22.90.orig/src/extract.c tar-1.22.90-alt/src/extract.c
  		  valid_source = source;
  		}
  	    }
-diff -urp tar-1.22.90.orig/src/system.c tar-1.22.90-alt/src/system.c
---- tar-1.22.90.orig/src/system.c	2009-06-18 08:29:29 +0000
-+++ tar-1.22.90-alt/src/system.c	2009-08-17 01:38:04 +0000
+--- tar/src/names.c
++++ tar/src/names.c
+@@ -871,7 +871,7 @@ void
+ collect_and_sort_names (void)
+ {
+   struct name *name;
+-  struct name *next_name, *prev_name;
++  struct name *next_name, *prev_name = NULL;
+   int num_names;
+   struct stat statbuf;
+   Hash_table *nametab;
+--- tar/src/system.c
++++ tar/src/system.c
 @@ -230,7 +230,25 @@ int
  sys_truncate (int fd)
  {
@@ -330,25 +345,24 @@ diff -urp tar-1.22.90.orig/src/system.c tar-1.22.90-alt/src/system.c
  }
  
  /* Return nonzero if NAME is the name of a regular file, or if the file
-diff -urp tar-1.22.90.orig/src/tar.c tar-1.22.90-alt/src/tar.c
---- tar-1.22.90.orig/src/tar.c	2009-08-09 07:38:01 +0000
-+++ tar-1.22.90-alt/src/tar.c	2009-08-17 01:38:04 +0000
-@@ -1373,6 +1373,11 @@ parse_opt (int key, char *arg, struct ar
+--- tar/src/tar.c
++++ tar/src/tar.c
+@@ -1463,7 +1463,11 @@ parse_opt (int key, char *arg, struct argp_state *state)
+       
        ignore_zeros_option = true;
        break;
- 
+-      
++
 +    case 'y':
 +      WARN ((0, 0, _("Warning: option '%c' is deprecated!"
 +		     " Next time use -j instead."), key));
 +      /* Fall through to using bzip2. */
-+
      case 'j':
-       set_use_compress_program_option ("bzip2");
+       set_use_compress_program_option (BZIP2_PROGRAM);
        break;
-diff -urp tar-1.22.90.orig/src/xheader.c tar-1.22.90-alt/src/xheader.c
---- tar-1.22.90.orig/src/xheader.c	2009-08-05 15:52:00 +0000
-+++ tar-1.22.90-alt/src/xheader.c	2009-08-17 01:38:04 +0000
-@@ -235,7 +235,7 @@ xheader_format_name (struct tar_stat_inf
+--- tar/src/xheader.c
++++ tar/src/xheader.c
+@@ -261,7 +261,7 @@ xheader_format_name (struct tar_stat_info *st, const char *fmt, size_t n)
    char *dir = NULL;
    char *base = NULL;
    char pidbuf[UINTMAX_STRSIZE_BOUND];
@@ -357,7 +371,7 @@ diff -urp tar-1.22.90.orig/src/xheader.c tar-1.22.90-alt/src/xheader.c
    char nbuf[UINTMAX_STRSIZE_BOUND];
    char const *nptr = NULL;
  
-@@ -1279,7 +1279,7 @@ sparse_map_decoder (struct tar_stat_info
+@@ -1330,7 +1330,7 @@ sparse_map_decoder (struct tar_stat_info *st,
      {
        uintmax_t u;
        char *delim;
@@ -366,9 +380,8 @@ diff -urp tar-1.22.90.orig/src/xheader.c tar-1.22.90-alt/src/xheader.c
  
        if (!ISDIGIT (*arg))
  	{
-diff -urp tar-1.22.90.orig/tests/genfile.c tar-1.22.90-alt/tests/genfile.c
---- tar-1.22.90.orig/tests/genfile.c	2009-08-09 07:39:58 +0000
-+++ tar-1.22.90-alt/tests/genfile.c	2009-08-17 01:38:04 +0000
+--- tar/tests/genfile.c
++++ tar/tests/genfile.c
 @@ -488,7 +488,8 @@ mkhole (int fd, off_t displ)
  {
    if (lseek (fd, displ, SEEK_CUR) == -1)

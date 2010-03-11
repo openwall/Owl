@@ -1,0 +1,11 @@
+--- tar/doc/tar.texi
++++ tar/doc/tar.texi
+@@ -55,7 +55,7 @@ supports it in developing GNU and promoting software freedom.''
+ 
+ @dircategory Archiving
+ @direntry
+-* Tar: (tar).                   Making tape (or disk) archives.
++* Tar: (tar).                                   Making tape (or disk) archives.
+ @end direntry
+ 
+ @dircategory Individual utilities

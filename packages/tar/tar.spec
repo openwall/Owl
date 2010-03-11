@@ -1,21 +1,19 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.49 2009/12/08 17:00:58 solar Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.50 2010/03/11 16:24:02 ldv Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
-Version: 1.22.90
-Release: owl3
+Version: 1.23
+Release: owl1
 License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
 # http://savannah.gnu.org/projects/tar
-# Releases: ftp://ftp.gnu.org/gnu/tar/tar-%version.tar.bz2 (and .sig)
-Source0: ftp://alpha.gnu.org/gnu/tar/tar-%version.tar.bz2
-# Signature: ftp://alpha.gnu.org/gnu/tar/tar-%version.tar.bz2.sig
+Source0: ftp://ftp.gnu.org/gnu/tar/tar-%version.tar.bz2
+# Signature: ftp://ftp.gnu.org/gnu/tar/tar-%version.tar.bz2.sig
 Source1: tar.1
-Patch0: tar-1.22.90-alt.diff
-Patch1: tar-1.22.90-owl-error-handling.diff
-Patch2: tar-1.22.90-owl-default-warnings.diff
-Patch3: tar-1.22.90-owl-save-memory.diff
+Patch0: tar-1.23-alt.diff
+Patch1: tar-1.23-owl-default-warnings.diff
+Patch2: tar-1.23-owl-info.diff
 PreReq: /sbin/install-info, grep
 BuildRequires: gettext, texinfo
 BuildRequires: rpm-build >= 0:4, sed >= 4.0.9
@@ -35,15 +33,13 @@ backups.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-sed -i 's,^tar .* basedir$,&/*,' tests/xform-h.at tests/testsuite
 
 %{expand:%%define optflags %optflags -Wall}
 
 %build
 rm doc/tar.info
 export tar_cv_path_RSH=%_bindir/ssh
-%configure --bindir=/bin --with-rmt=/sbin/rmt
+%configure --bindir=/bin --with-rmt=/sbin/rmt --disable-silent-rules
 sed -i '/HAVE_CLOCK_GETTIME/d' config.h
 %__make LIB_CLOCK_GETTIME=
 bzip2 -9fk NEWS
@@ -93,6 +89,9 @@ fi
 %doc AUTHORS COPYING NEWS.bz2 README THANKS
 
 %changelog
+* Thu Mar 11 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.23-owl1
+- Updated to 1.23.
+
 * Tue Dec 08 2009 Solar Designer <solar-at-owl.openwall.com> 1.22.90-owl3
 - Corrected highly non-optimal memory allocation by
 canonicalize_filename_mode(), which got exposed with an unrelated change
