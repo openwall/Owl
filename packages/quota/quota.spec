@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/quota/quota.spec,v 1.25 2005/11/16 13:31:51 solar Exp $
+# $Owl: Owl/packages/quota/quota.spec,v 1.26 2010/03/14 16:47:09 galaxy Exp $
 
 Summary: System administration tools for monitoring users' disk usage.
 Name: quota
-Version: 3.13
+Version: 3.17
 Release: owl1
 License: BSD
 Group: System Environment/Base
@@ -10,12 +10,11 @@ URL: http://sourceforge.net/projects/linuxquota/
 Source: http://prdownloads.sourceforge.net/linuxquota/quota-%version.tar.gz
 Patch0: quota-3.11-alt-bad-kernel-includes.diff
 Patch1: quota-3.11-owl-man.diff
-Patch2: quota-3.11-owl-tmp.diff
+Patch2: quota-3.17-owl-tmp.diff
 Patch3: quota-3.11-owl-vitmp.diff
-Patch4: quota-3.11-rh-no-strip.diff
-Patch5: quota-3.13-mdk-alt-warnquota.diff
-Patch6: quota-3.13-alt-getprivs.diff
-Patch7: quota-3.13-alt-get_loop_device_name.diff
+Patch4: quota-3.13-owl-warnquota-typo.diff
+Patch5: quota-3.17-mdk-alt-owl-warnquota.diff
+Patch7: quota-3.17-alt-get_loop_device_name.diff
 BuildRequires: e2fsprogs-devel
 BuildRoot: /override/%name-%version
 
@@ -31,7 +30,6 @@ and limiting users' and or groups' disk usage, per filesystem.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
 %patch7 -p1
 
 %{expand:%%define optflags %optflags -Wall}
@@ -47,7 +45,7 @@ rm -rf %buildroot
 
 mkdir -p %buildroot{%_bindir,/sbin,%_sbindir,%_mandir/man{1,2,3,8}}
 
-%__make install ROOTDIR=%buildroot
+%__make install ROOTDIR=%buildroot STRIP=
 chmod -R u+w %buildroot/
 ln -s quotaon.8.gz %buildroot%_mandir/man8/quotaoff.8.gz
 
@@ -70,6 +68,16 @@ rm %buildroot%_datadir/locale/*/LC_MESSAGES/quota.mo
 %_mandir/man?/*
 
 %changelog
+* Mon Mar 15 2010 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.17-owl1
+- Updated to 3.17.
+- Updated the -owl-tmp patch since part of it was included upstream.
+- Dropped the -rh-no-strip patch, but used STRIP= in make install.
+- Dropped the -alt-getprivs patch since it was accepted upstream with
+slight modifications.
+- Re-generated the -mdk-alt-warnquota patch.
+- Re-generated the -alt-get_loop_device_name patch.
+- Fixed a typo in warnquota.c.
+
 * Sat Nov 12 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.13-owl1
 - Updated to 3.13.
 - Imported few patches from ALT's quota package.
