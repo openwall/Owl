@@ -6,7 +6,7 @@
  # values can be quoted:
 -MAIL_CMD 	= "/usr/my/sendmail/instead/sendmail -t"
 -FROM 		= "bas@localhost"
-+MAIL_CMD 	= "//usr/sbin/sendmail -t"
++MAIL_CMD 	= "/usr/sbin/sendmail -t"
 +FROM 		= "root@localhost"
  # but they don't have to be:
 -SUBJECT 	= Hey, user, clean up your account!
