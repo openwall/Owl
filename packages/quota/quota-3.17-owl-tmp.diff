@@ -1,0 +1,14 @@
+--- quota-tools/edquota.c	2010-03-14 18:13:06 +0300
++++ quota-tools.tmp/edquota.c	2010-03-14 18:18:30 +0300
+@@ -254,10 +254,7 @@ int main(int argc, char **argv)
+ 		copy_prototype(argc, argv, handles);
+ 
+ 	umask(077);
+-	if (getuid() == geteuid() && getgid() == getegid())
+-		tmpdir = getenv("TMPDIR");
+-	if (!tmpdir)
+-		tmpdir = _PATH_TMP;
++	tmpdir = strdup(__secure_getenv("TMPDIR") ?: "/tmp");
+ 	tmpfil = smalloc(strlen(tmpdir) + strlen("/EdP.aXXXXXX") + 1);
+ 	strcpy(tmpfil, tmpdir);
+ 	strcat(tmpfil, "/EdP.aXXXXXX");
