@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/quota/quota.spec,v 1.26 2010/03/14 16:47:09 galaxy Exp $
+# $Owl: Owl/packages/quota/quota.spec,v 1.27 2010/03/18 09:07:28 solar Exp $
 
 Summary: System administration tools for monitoring users' disk usage.
 Name: quota
@@ -7,14 +7,19 @@ Release: owl1
 License: BSD
 Group: System Environment/Base
 URL: http://sourceforge.net/projects/linuxquota/
-Source: http://prdownloads.sourceforge.net/linuxquota/quota-%version.tar.gz
+Source: quota-3.17-stripped-for-owl-1.tar.bz2
+# The following has been removed from the tarball:
+# autom4te.cache, CVS, *.orig, *.rej
+# The .tar.bz2 file was created with:
+# tar cjf %SOURCE0 --owner=root --group=root quota-tools
+# Source: http://prdownloads.sourceforge.net/linuxquota/quota-%version.tar.gz
 Patch0: quota-3.11-alt-bad-kernel-includes.diff
 Patch1: quota-3.11-owl-man.diff
 Patch2: quota-3.17-owl-tmp.diff
 Patch3: quota-3.11-owl-vitmp.diff
 Patch4: quota-3.13-owl-warnquota-typo.diff
 Patch5: quota-3.17-mdk-alt-owl-warnquota.diff
-Patch7: quota-3.17-alt-get_loop_device_name.diff
+Patch6: quota-3.17-alt-get_loop_device_name.diff
 BuildRequires: e2fsprogs-devel
 BuildRoot: /override/%name-%version
 
@@ -30,7 +35,7 @@ and limiting users' and or groups' disk usage, per filesystem.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch7 -p1
+%patch6 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
