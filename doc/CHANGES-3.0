@@ -46,6 +46,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/03/19	Package: libnids
+Updated to 1.24.
+
 2010/03/13 -
 2010/03/16	Package: passwdqc
 Enhanced passwdqc in numerous ways bringing it up to version 1.2.0.
@@ -1149,4 +1152,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.232 2010/03/16 10:43:07 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.233 2010/03/19 10:02:15 solar Exp $
