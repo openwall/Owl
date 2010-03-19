@@ -46,6 +46,23 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/03/11 -
+2010/03/19	Packages: tar, cpio
+SECURITY FIX	Severity: high, indirect, passive
+Updated tar to 1.23, which includes a fix for the heap-based buffer
+overflow in the rmt client functionality (CVE-2010-0624), and applied
+a fix for the same vulnerability to cpio.  The attack would require
+either that an rmt server being used by tar or cpio on purpose is
+compromised first (by other means) or that these tools are fooled into
+accessing a malicious rmt server via having them run on a malicious
+filename.  The latter risk was mitigated by tar's default to use ssh for
+the --rsh-command and by ssh defaulting to asking the user before
+accepting an unrecognized host key.  In cpio's case, it was mitigated by
+cpio requiring the --rsh-command option to use rmt.
+References:
+http://www.agrs.tu-berlin.de/index.php?id=78327
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0624
+
 2010/03/19	Package: libnids
 Updated to 1.24.
 
@@ -55,14 +72,6 @@ Enhanced passwdqc in numerous ways bringing it up to version 1.2.0.
 
 2010/03/15	Package: quota
 Updated to 3.17.
-
-2010/03/11	Package: tar
-Updated to 1.23.  Please note that CVE-2010-0624 did not affect our
-package of tar directly (and thus this update is not a security fix)
-because our package did not include tar's rmt program.
-References:
-http://www.agrs.tu-berlin.de/index.php?id=78327
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0624
 
 2010/03/05	Package: tcsh
 Updated to 6.17.00.
@@ -1152,4 +1161,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.233 2010/03/19 10:02:15 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.234 2010/03/19 18:21:37 solar Exp $
