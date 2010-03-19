@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/libnids/libnids.spec,v 1.20 2009/05/15 04:39:45 mci Exp $
+# $Owl: Owl/packages/libnids/libnids.spec,v 1.21 2010/03/19 09:59:58 solar Exp $
 
 Summary: NIDS E-component.
 Name: libnids
-Version: 1.23
+Version: 1.24
 Release: owl1
 Epoch: 1
 License: GPL
@@ -33,6 +33,8 @@ building applications which use libnids, as well as documentation on libnids.
 %setup -q
 %patch0 -p1
 
+%{expand:%%define optflags %optflags -Wall -W}
+
 %build
 %configure --disable-libglib --enable-shared
 %__make
@@ -57,6 +59,10 @@ rm -rf %buildroot
 %_libdir/libnids.a
 
 %changelog
+* Fri Mar 19 2010 Solar Designer <solar-at-owl.openwall.com> 1:1.24-owl1
+- Updated to 1.24.
+- Added -Wall -W to the %%optflags.
+
 * Thu May 14 2009 Michail Litvak <mci-at-owl.openwall.com> 1:1.23-owl1
 - Updated to 1.23.
 - Added patch from Debian with small man page fix.
