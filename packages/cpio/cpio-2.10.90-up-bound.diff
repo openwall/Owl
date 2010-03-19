@@ -1,0 +1,54 @@
+From 9bc39283e4cc6ab9e5913ccbf766998eab4ff093 Mon Sep 17 00:00:00 2001
+From: Sergey Poznyakoff <gray-at-gnu.org.ua>
+Date: Mon, 1 Mar 2010 10:49:03 +0200
+Subject: [PATCH] Bugfixes in rtapelib
+
+* lib/rmt.h (rmtcreat): Use fcntl O_ macros insead of
+their hardcoded values.
+* lib/rtapelib.c (rmt_read__,rmt_ioctl__): Prevent
+potential overflow.
+---
+ lib/rmt.h      |    2 +-
+ lib/rtapelib.c |    9 ++++++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/lib/rmt.h b/lib/rmt.h
+index 50f037c..2ce9dc5 100644
+--- a/lib/rmt.h
++++ b/lib/rmt.h
+@@ -61,7 +61,7 @@ extern bool force_local_option;
+ 
+ #define rmtcreat(dev_name, mode, command) \
+    (_remdev (dev_name) \
+-    ? rmt_open__ (dev_name, 1 | O_CREAT, __REM_BIAS, command) \
++    ? rmt_open__ (dev_name, O_CREAT | O_WRONLY, __REM_BIAS, command) \
+     : creat (dev_name, mode))
+ 
+ #define rmtlstat(dev_name, muffer) \
+diff --git a/lib/rtapelib.c b/lib/rtapelib.c
+index 02ad1e7..cb645db 100644
+--- a/lib/rtapelib.c
++++ b/lib/rtapelib.c
+@@ -573,7 +573,8 @@ rmt_read__ (int handle, char *buffer, size_t length)
+ 
+   sprintf (command_buffer, "R%lu\n", (unsigned long) length);
+   if (do_command (handle, command_buffer) == -1
+-      || (status = get_status (handle)) == SAFE_READ_ERROR)
++      || (status = get_status (handle)) == SAFE_READ_ERROR
++      || status > length)
+     return SAFE_READ_ERROR;
+ 
+   for (counter = 0; counter < status; counter += rlen, buffer += rlen)
+@@ -709,6 +710,12 @@ rmt_ioctl__ (int handle, int operation, char *argument)
+ 	    || (status = get_status (handle), status == -1))
+ 	  return -1;
+ 
++	if (status > sizeof (struct mtop))
++	  {
++	    errno = EOVERFLOW;
++	    return -1;
++	  }
++	
+ 	for (; status > 0; status -= counter, argument += counter)
+ 	  {
+ 	    counter = safe_read (READ_SIDE (handle), argument, status);
