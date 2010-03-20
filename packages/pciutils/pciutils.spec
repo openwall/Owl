@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/pciutils/pciutils.spec,v 1.4 2010/01/26 15:03:16 solar Exp $
+# $Owl: Owl/packages/pciutils/pciutils.spec,v 1.5 2010/03/20 21:40:38 solar Exp $
 
 Summary: Linux PCI utilities.
 Name: pciutils
-Version: 3.1.6
+Version: 3.1.7
 Release: owl1
 License: GPLv2
 Group: Applications/System
@@ -42,6 +42,9 @@ rm -rf %buildroot
 %_datadir/hwdata/pci.ids.gz
 
 %changelog
+* Sat Mar 20 2010 Solar Designer <solar-at-owl.openwall.com> 3.1.7-owl1
+- Updated to 3.1.7.
+
 * Tue Jan 26 2010 Solar Designer <solar-at-owl.openwall.com> 3.1.6-owl1
 - Updated to 3.1.6.
 
