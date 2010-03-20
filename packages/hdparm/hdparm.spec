@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/hdparm/hdparm.spec,v 1.22 2009/05/09 13:51:04 mci Exp $
+# $Owl: Owl/packages/hdparm/hdparm.spec,v 1.23 2010/03/20 22:01:40 solar Exp $
 
 Summary: An utility for displaying and/or setting hard disk parameters.
 Name: hdparm
-Version: 9.15
+Version: 9.28
 Release: owl1
 License: BSD-style
 Group: Applications/System
@@ -26,6 +26,10 @@ rm -rf %buildroot
 install -D -m755 hdparm %buildroot/sbin/hdparm
 install -pD -m644 hdparm.8 %buildroot%_mandir/man8/hdparm.8
 
+# We don't package wiper/ yet.  When we do, we'll likely package it as
+# "documentation" initially and we'll need to add a warning/disclaimer
+# about the security risk of running it on a mounted filesystem tree.
+
 %files
 %defattr(-,root,root)
 %doc hdparm.lsm Changelog LICENSE.TXT README.acoustic TODO
@@ -33,6 +37,9 @@ install -pD -m644 hdparm.8 %buildroot%_mandir/man8/hdparm.8
 %_mandir/man8/hdparm.8*
 
 %changelog
+* Sat Mar 20 2010 Solar Designer <solar-at-owl.openwall.com> 9.28-owl1
+- Updated to 9.28.
+
 * Sat May 09 2009 Michail Litvak <mci-at-owl.openwall.com> 9.15-owl1
 - Updated to 9.15.
 

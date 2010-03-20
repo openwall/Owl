@@ -46,6 +46,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/03/20	Package: hdparm
+Updated to 9.28.
+
 2010/03/20	Package: pciutils
 Updated to 3.1.7.
 
@@ -1164,4 +1167,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.235 2010/03/20 21:40:37 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.236 2010/03/20 22:01:40 solar Exp $
