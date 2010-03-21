@@ -53,21 +53,25 @@ Updated to 9.28.
 Updated to 3.1.7.
 
 2010/03/11 -
-2010/03/19	Packages: tar, cpio
+2010/03/20	Packages: tar, cpio
 SECURITY FIX	Severity: high, indirect, passive
 Updated tar to 1.23, which includes a fix for the heap-based buffer
 overflow in the rmt client functionality (CVE-2010-0624), and applied
 a fix for the same vulnerability to cpio.  The attack would require
 either that an rmt server being used by tar or cpio on purpose is
 compromised first (by other means) or that these tools are fooled into
-accessing a malicious rmt server via having them run on a malicious
-filename.  The latter risk was mitigated by tar's default to use ssh for
-the --rsh-command and by ssh defaulting to asking the user before
-accepting an unrecognized host key.  In cpio's case, it was mitigated by
-cpio requiring the --rsh-command option to use rmt.
+accessing a malicious rmt server, such as via having them run on a
+malicious filename.  The latter risk was mitigated by tar's default to
+use ssh for the --rsh-command and by ssh defaulting to asking the user
+before accepting an unrecognized host key.  In cpio's case, it was
+mitigated by cpio requiring the --rsh-command option to use rmt.  With
+our update to tar, we have also patched it to require its --rsh-command
+option to use rmt (just like cpio does), and we applied a number of
+post-release fixes for regressions introduced in the 1.23 release.
 References:
 http://www.agrs.tu-berlin.de/index.php?id=78327
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0624
+http://lists.gnu.org/archive/html/bug-tar/2010-03/msg00036.html
 
 2010/03/19	Package: libnids
 Updated to 1.24.
@@ -1167,4 +1171,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.236 2010/03/20 22:01:40 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.237 2010/03/21 06:09:24 solar Exp $
