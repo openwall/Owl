@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.51 2010/03/21 00:35:55 ldv Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.52 2010/03/21 06:40:46 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.23
-Release: owl2
+Release: owl3
 License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
@@ -16,6 +16,7 @@ Patch1: tar-1.23-owl-default-warnings.diff
 Patch2: tar-1.23-owl-info.diff
 Patch3: tar-1.23-owl-rsh-command.diff
 Patch4: tar-1.23-up-20100320.diff
+Patch5: tar-1.23-owl-tests.diff
 PreReq: /sbin/install-info, grep
 BuildRequires: gettext, texinfo
 BuildRequires: rpm-build >= 0:4, sed >= 4.0.9
@@ -37,6 +38,7 @@ backups.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -93,6 +95,9 @@ fi
 %doc AUTHORS COPYING NEWS.bz2 README THANKS
 
 %changelog
+* Sun Mar 21 2010 Solar Designer <solar-at-owl.openwall.com> 1.23-owl3
+- Fixed a couple of bugs in tests/extrac07.at.
+
 * Sat Mar 20 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.23-owl2
 - Updated to release_1_23-7-g340dbf5 snapshot to fix regressions
 introduced in 1.23 release.

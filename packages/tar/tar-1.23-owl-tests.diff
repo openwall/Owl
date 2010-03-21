@@ -1,0 +1,14 @@
+diff -ur tar-1.23.orig/tests/extrac07.at tar-1.23/tests/extrac07.at
+--- tar-1.23.orig/tests/extrac07.at	2010-01-26 11:30:21 +0000
++++ tar-1.23/tests/extrac07.at	2010-03-21 06:34:06 +0000
+@@ -52,7 +52,9 @@
+ dir/
+ dir/foo
+ ],
+-[],[],[ustar]) # Testing one format is enough
++[],[],[],[ustar]) # Testing one format is enough
++
++chmod +w out/dir
+ 
+ AT_CLEANUP
+ 
