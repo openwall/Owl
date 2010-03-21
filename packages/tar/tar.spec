@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.50 2010/03/11 16:24:02 ldv Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.51 2010/03/21 00:35:55 ldv Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.23
-Release: owl1
+Release: owl2
 License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
@@ -14,6 +14,8 @@ Source1: tar.1
 Patch0: tar-1.23-alt.diff
 Patch1: tar-1.23-owl-default-warnings.diff
 Patch2: tar-1.23-owl-info.diff
+Patch3: tar-1.23-owl-rsh-command.diff
+Patch4: tar-1.23-up-20100320.diff
 PreReq: /sbin/install-info, grep
 BuildRequires: gettext, texinfo
 BuildRequires: rpm-build >= 0:4, sed >= 4.0.9
@@ -33,12 +35,14 @@ backups.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
 %build
 rm doc/tar.info
-export tar_cv_path_RSH=%_bindir/ssh
+export tar_cv_path_RSH=no
 %configure --bindir=/bin --with-rmt=/sbin/rmt --disable-silent-rules
 sed -i '/HAVE_CLOCK_GETTIME/d' config.h
 %__make LIB_CLOCK_GETTIME=
@@ -89,6 +93,15 @@ fi
 %doc AUTHORS COPYING NEWS.bz2 README THANKS
 
 %changelog
+* Sat Mar 20 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.23-owl2
+- Updated to release_1_23-7-g340dbf5 snapshot to fix regressions
+introduced in 1.23 release.
+- Changed --rsh-command to have no default as proposed by Solar Designer.
+If this option is not given, then the "remote functionality" is now
+disabled.  If a filename looks like it is "remote" and neither the
+--rsh-command nor the --force-local option is given, then tar will fail
+with an error.
+
 * Thu Mar 11 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.23-owl1
 - Updated to 1.23.
 

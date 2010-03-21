@@ -1,0 +1,1086 @@
+--- tar/NEWS
++++ tar/NEWS
+@@ -1,7 +1,48 @@
+-GNU tar NEWS - User visible changes. 2010-03-10
++GNU tar NEWS - User visible changes. 2010-03-20
+ Please send GNU tar bug reports to <bug-tar@gnu.org>
+ 
+ 
++
++* Bugfixes.
++
++** Spurious error diagnostics on broken pipe.
++
++When receiving SIGPIPE, tar would exit with error status and
++"write error" diagnostics. In particular, this occurred if
++invoked as in the example below:
++
++   tar tf archive.tar | head -n 1
++
++** --remove-files
++
++Tar --remove-files failed to remove a directory which contained
++symlinks to another files within that directory.
++
++** --test-label behavior
++
++In case of a mismatch, `tar --test-label LABEL' exits with code 1,
++not 2 as it did in previous versions.
++
++The `--verbose' option used with `--test-label' provides additional
++diagnostics.
++
++Several volume labels may be specified in a command line, e.g.:
++
++   tar --test-label -f archive 'My volume' 'New volume' 'Test volume'
++
++In this case, tar exits with code 0 if any one of the arguments
++matches the actual volume label.
++
++** --label used with --update
++
++The `--label' option can be used with `--update' to prevent accidental
++update of an archive:
++
++  tar -rf archive --label 'My volume' .
++
++This did not work in previous versions, in spite of what the docs said.  
++
++
+ version 1.23 - Sergey Poznyakoff, 2010-03-10
+ 
+ * Record size autodetection
+@@ -694,7 +735,7 @@ tar.
+ * New message translations fi (Finnish), gl (Galician), hr (Croatian),
+   hu (Hungarian), ms (Malaysian), nb (Norwegian), ro (Romanian), sk
+   (Slovak), zh_CN (Chinese simplified), zh_TW (Chinese traditional).
+-  The code 'no' for Norwegian (BokmÃ¥l) has been withdrawn; use 'nb' instead.
++  The code 'no' for Norwegian (Bokmål) has been withdrawn; use 'nb' instead.
+ 
+ * Bug fixes.
+ 
+@@ -1019,7 +1060,7 @@ version 1.13 - Paul Eggert, 1999-07-08.
+   but they have been removed to maintain compatibility with paxutils.
+   Please try --use=bzip2 instead of --bzip2.
+ 
+-Version 1.12 - FranÃ§ois Pinard, 1997-04.
++Version 1.12 - François Pinard, 1997-04.
+ 
+ Sensitive matters
+ * Use shell globbing patterns for --label, instead of regular expressions.
+@@ -1062,7 +1103,7 @@ Various changes
+ 
+ Many bugs are squashed, while others still run free.
+ 
+-Version 1.11.8 - FranÃ§ois Pinard, 1995-06.
++Version 1.11.8 - François Pinard, 1995-06.
+ 
+ * Messages available in French, German, Portuguese and Swedish.
+ * The distribution provides a rudimentary Texinfo manual.
+--- tar/THANKS
++++ tar/THANKS
+@@ -133,7 +133,7 @@ David Steiner		dsteiner@ispa.uni-osnabrueck.de
+ David Taylor		taylor@think.com
+ Dean Gaudet		dgaudet@watdragon.uwaterloo.ca
+ Demizu Noritoshi	nori-d@is.aist-nara.ac.jp
+-Denis Excoffier         denis.excoffier@airbus.com
++Denis Excoffier         denis.excoffier@free.fr
+ Denis Fortin		fortin@acm.org
+ Dennis Pixton		dennis@math.binghamton.edu
+ Dick Streefland		dicks@tasking.nl
+--- tar/doc/tar.texi
++++ tar/doc/tar.texi
+@@ -449,7 +449,7 @@ operations (@samp{create}, @samp{list}, and @samp{extract}) as well as
+ two frequently used options (@samp{file} and @samp{verbose}).  The other
+ chapters do not refer to the tutorial frequently; however, if a section
+ discusses something which is a complex variant of a basic concept, there
+-may be a cross reference to that basic concept.  (The entire book,
++may be a cross-reference to that basic concept.  (The entire book,
+ including the tutorial, assumes that the reader understands some basic
+ concepts of using a Unix-type operating system; @pxref{Tutorial}.)
+ 
+@@ -3210,7 +3210,7 @@ successfully.  This option is intended for use in shell scripts.
+ Here is an example of what you can see using this option:
+ 
+ @smallexample
+-$ tar --show-defaults
++$ @kbd{tar --show-defaults}
+ --format=gnu -f- -b20 --quoting-style=escape
+ --rmt-command=/usr/libexec/rmt --rsh-command=/usr/bin/rsh
+ @end smallexample
+@@ -3342,12 +3342,12 @@ To see transformed member names in verbose listings, use
+ @opsummary{uncompress}
+ @item --uncompress
+ 
+-(See @option{--compress}. @pxref{gzip})
++(See @option{--compress}, @pxref{gzip})
+ 
+ @opsummary{ungzip}
+ @item --ungzip
+ 
+-(See @option{--gzip}. @pxref{gzip})
++(See @option{--gzip}, @pxref{gzip})
+ 
+ @opsummary{unlink-first}
+ @item --unlink-first
+@@ -4551,7 +4551,7 @@ $ @kbd{tar --extract -vv --occurrence --file=collection.tar blues}
+ @end smallexample
+ 
+ @xref{Writing}, for more information on @option{--extract} and
+-@xref{Option Summary, --occurrence}, for the description of
++see @ref{Option Summary, --occurrence}, for a description of
+ @option{--occurrence} option.
+ 
+ @node update
+@@ -4599,7 +4599,7 @@ To see the @option{--update} option at work, create a new file,
+ @file{classical}, in your practice directory, and some extra text to the
+ file @file{blues}, using any text editor.  Then invoke @command{tar} with
+ the @samp{update} operation and the @option{--verbose} (@option{-v})
+-option specified, using the names of all the files in the practice
++option specified, using the names of all the files in the @file{practice}
+ directory as file name arguments:
+ 
+ @smallexample
+@@ -4646,8 +4646,8 @@ To use @option{--concatenate}, give the first archive with
+ @option{--file} option and name the rest of archives to be
+ concatenated on the command line.  The members, and their member
+ names, will be copied verbatim from those archives to the first
+-one@footnote{This can cause multiple members to have the same name, for
+-information on how this affects reading the archive, @ref{multiple}.}.
++one@footnote{This can cause multiple members to have the same name.  For
++information on how this affects reading the archive, see @ref{multiple}.}.
+ The new, concatenated archive will be called by the same name as the
+ one given with the @option{--file} option.  As usual, if you omit
+ @option{--file}, @command{tar} will use the value of the environment
+@@ -4811,7 +4811,7 @@ tar: funk not found in archive
+ The spirit behind the @option{--compare} (@option{--diff},
+ @option{-d}) option is to check whether the archive represents the
+ current state of files on disk, more than validating the integrity of
+-the archive media.  For this latter goal, @xref{verify}.
++the archive media.  For this latter goal, see @ref{verify}.
+ 
+ @node create options
+ @section Options Used by @option{--create}
+@@ -4869,7 +4869,7 @@ either a textual date representation in almost arbitrary format
+ with @samp{/} or @samp{.}.  In the latter case, the modification time
+ of that file will be used.
+ 
+-The following example will set the modification date to 00:00:00 UTC,
++The following example will set the modification date to 00:00:00,
+ January 1, 1970:
+ 
+ @smallexample
+@@ -5536,9 +5536,9 @@ space, you can use @option{--starting-file=@var{name}} (@option{-K
+ archive.  This assumes, of course, that there is now free space, or
+ that you are now extracting into a different file system.  (You could
+ also choose to suspend @command{tar}, remove unnecessary files from
+-the file system, and then restart the same @command{tar} operation.
+-In this case, @option{--starting-file} is not necessary.
+-@xref{Incremental Dumps}, @xref{interactive}, and @ref{exclude}.)
++the file system, and then resume the same @command{tar} operation.
++In this case, @option{--starting-file} is not necessary.)  See also
++@ref{interactive}, and @ref{exclude}.
+ 
+ @node Same Order
+ @unnumberedsubsubsec Same Order
+@@ -5692,16 +5692,20 @@ $ @kbd{tar -C sourcedir -cf - . | tar -C targetdir -xf -}
+ The command also works using long option forms:
+ 
+ @smallexample
++@group
+ $ @kbd{(cd sourcedir; tar --create --file=- . ) \
+        | (cd targetdir; tar --extract --file=-)}
++@end group
+ @end smallexample
+ 
+ @noindent
+ or
+ 
+ @smallexample
+-$ @kbd{tar --directory sourcedir --create --file=- . ) \
++@group
++$ @kbd{tar --directory sourcedir --create --file=- . \
+        | tar --directory targetdir --extract --file=-}
++@end group       
+ @end smallexample
+ 
+ @noindent
+@@ -8069,8 +8073,8 @@ $ @kbd{tar --transform 's,^,/usr/local/,S', -c -v -f arch.tar \
+        --show-transformed /lib}
+ drwxr-xr-x root/root       0 2008-07-08 16:20 /usr/local/lib/
+ -rwxr-xr-x root/root 1250840 2008-05-25 07:44 /usr/local/lib/libc-2.3.2.so
+-lrwxrwxrwx root/root       0 2008-06-24 17:12 /usr/local/lib/libc.so.6 ->
+-libc-2.3.2.so
++lrwxrwxrwx root/root       0 2008-06-24 17:12 /usr/local/lib/libc.so.6 \
++ -> libc-2.3.2.so
+ @end smallexample
+ 
+ Unlike @option{--strip-components}, @option{--transform} can be used
+@@ -8691,7 +8695,7 @@ $ @kbd{tar cfa archive.tar.lzma .}
+ @end smallexample
+ 
+ For a complete list of file name suffixes recognized by @GNUTAR{},
+-@ref{auto-compress}.
++see @ref{auto-compress}.
+ 
+ Reading compressed archive is even simpler: you don't need to specify
+ any additional options as @GNUTAR{} recognizes its format
+@@ -8709,7 +8713,7 @@ The format recognition algorithm is based on @dfn{signatures}, a
+ special byte sequences in the beginning of file, that are specific for
+ certain compression formats.  If this approach fails, @command{tar}
+ falls back to using archive name suffix to determine its format
+-(@xref{auto-compress}, for a list of recognized suffixes).
++(@pxref{auto-compress}, for a list of recognized suffixes).
+ 
+ The only case when you have to specify a decompression option while
+ reading the archive is when reading from a pipe or from a tape drive
+@@ -9370,7 +9374,7 @@ free from many of @samp{v7}'s drawbacks.
+ @cindex ustar archive format
+ Archive format defined by @acronym{POSIX}.1-1988 specification is called
+ @code{ustar}.  Although it is more flexible than the V7 format, it
+-still has many restrictions (@xref{Formats,ustar}, for the detailed
++still has many restrictions (@pxref{Formats,ustar}, for the detailed
+ description of @code{ustar} format).  Along with V7 format,
+ @code{ustar} format is a good choice for archives intended to be read
+ with other implementations of @command{tar}.
+@@ -9800,7 +9804,7 @@ The condensed file will contain both file map and file data, so no
+ additional data will be needed to restore it.  If the original file
+ name was @file{@var{dir}/@var{name}}, then the condensed file will be
+ named @file{@var{dir}/@/GNUSparseFile.@var{n}/@/@var{name}}, where
+-@var{n} is a decimal number@footnote{technically speaking, @var{n} is a
++@var{n} is a decimal number@footnote{Technically speaking, @var{n} is a
+ @dfn{process @acronym{ID}} of the @command{tar} process which created the
+ archive (@pxref{PAX keywords}).}.
+ 
+@@ -11300,9 +11304,9 @@ archive which will be displayed when the archive is listed with
+ @option{--multi-volume} (@pxref{Using Multiple Tapes}), then the
+ volume label will have @samp{Volume @var{nnn}} appended to the name
+ you give, where @var{nnn} is the number of the volume of the archive.
+-If you use the @option{--label=@var{volume-label}}) option when
++If you use the @option{--label=@var{volume-label}} option when
+ reading an archive, it checks to make sure the label on the tape
+-matches the one you give. @xref{label}.
++matches the one you gave.  @xref{label}.
+ 
+ When @command{tar} writes an archive to tape, it creates a single
+ tape file.  If multiple archives are written to the same tape, one
+@@ -11351,15 +11355,16 @@ will usually see lots of spurious messages.
+ @cindex Labeling an archive
+ @cindex Labels on the archive media
+ @cindex Labeling multi-volume archives
+-@UNREVISED
+ 
+ @opindex label
+   To avoid problems caused by misplaced paper labels on the archive
+-media, you can include a @dfn{label} entry---an archive member which
+-contains the name of the archive---in the archive itself.  Use the
++media, you can include a @dfn{label} entry --- an archive member which
++contains the name of the archive --- in the archive itself.  Use the
+ @option{--label=@var{archive-label}} (@option{-V @var{archive-label}})
+-option in conjunction with the @option{--create} operation to include
+-a label entry in the archive as it is being created.
++option@footnote{Until version 1.10, that option was called
++@option{--volume}, but is not available under that name anymore.} in
++conjunction with the @option{--create} operation to include a label
++entry in the archive as it is being created.
+ 
+ @table @option
+ @item --label=@var{archive-label}
+@@ -11398,7 +11403,7 @@ V--------- 0 0        0 1992-03-07 12:01 iamalabel--Volume Header--
+   However, @option{--list} option will cause listing entire
+ contents of the archive, which may be undesirable (for example, if the
+ archive is stored on a tape).  You can request checking only the volume
+-by specifying @option{--test-label} option.  This option reads only the
++label by specifying @option{--test-label} option.  This option reads only the
+ first block of an archive, so it can be used with slow storage
+ devices.  For example:
+ 
+@@ -11409,16 +11414,35 @@ iamalabel
+ @end group
+ @end smallexample
+ 
+-  If @option{--test-label} is used with a single command line
+-argument, @command{tar} compares the volume label with the
+-argument.  It exits with code 0 if the two strings match, and with code
+-2 otherwise.  In this case no output is displayed.  For example:
++  If @option{--test-label} is used with one or more command line
++arguments, @command{tar} compares the volume label with each
++argument.  It exits with code 0 if a match is found, and with code 1
++otherwise@footnote{Note that @GNUTAR{} versions up to 1.23 indicated
++mismatch with an exit code 2 and printed a spurious diagnostics on
++stderr.}.  No output is displayed, unless you also used the
++@option{--verbose} option.  For example:
++
++@smallexample
++@group
++$ @kbd{tar --test-label --file=iamanarchive 'iamalabel'}
++@result{} 0
++$ @kbd{tar --test-label --file=iamanarchive 'alabel'}
++@result{} 1
++@end group
++@end smallexample
++
++  When used with the @option{--verbose} option, @command{tar}
++prints the actual volume label (if any), and a verbose diagnostics in
++case of a mismatch:
+ 
+ @smallexample
+ @group
+-$ @kbd{tar --test-label --file=iamanarchive 'iamalable'}
++$ @kbd{tar --test-label --verbose --file=iamanarchive 'iamalabel'}
++iamalabel
+ @result{} 0
+-$ @kbd{tar --test-label --file=iamanarchive 'iamalable' alabel}
++$ @kbd{tar --test-label --verbose --file=iamanarchive 'alabel'}
++iamalabel
++tar: Archive label mismatch
+ @result{} 1
+ @end group
+ @end smallexample
+@@ -11458,9 +11482,6 @@ up.  Since the volume numbering is automatically added in labels at
+ creation time, it sounded logical to equally help the user taking care
+ of it when the archive is being read.
+ 
+-  The @option{--label} was once called @option{--volume}, but is not
+-available under that name anymore.
+-
+   You can also use @option{--label} to get a common information on
+ all tapes of a series.  For having this information different in each
+ series created through a single script used on a regular basis, just
+@@ -11474,13 +11495,19 @@ $ @kbd{tar --create --file=/dev/tape --multi-volume \
+ @end group
+ @end smallexample
+ 
+-  Also note that each label has its own date and time, which corresponds
+-to when @GNUTAR{} initially attempted to write it,
++  Some more notes about volume labels:
++
++@itemize @bullet
++@item Each label has its own date and time, which corresponds
++to the time when @GNUTAR{} initially attempted to write it,
+ often soon after the operator launches @command{tar} or types the
+-carriage return telling that the next tape is ready.  Comparing date
+-labels does give an idea of tape throughput only if the delays for
+-rewinding tapes and the operator switching them were negligible, which
+-is usually not the case.
++carriage return telling that the next tape is ready.
++
++@item Comparing date labels to get an idea of tape throughput is
++unreliable.  It gives correct results only if the delays for rewinding
++tapes and the operator switching them were negligible, which is
++usually not the case.
++@end itemize
+ 
+ @node verify
+ @section Verifying Data as It is Stored
+@@ -11907,7 +11934,8 @@ Right margin of the text output. Used for wrapping.
+ 
+ This appendix contains an index of all @GNUTAR{} long command line
+ options. The options are listed without the preceding double-dash.
+-For a cross-reference of short command line options, @ref{Short Option Summary}.
++For a cross-reference of short command line options, see
++@ref{Short Option Summary}.
+ 
+ @printindex op
+ 
+--- tar/src/buffer.c
++++ tar/src/buffer.c
+@@ -1374,7 +1374,7 @@ static bool
+ check_label_pattern (const char *label)
+ {
+   char *string;
+-  bool result;
++  bool result = false;
+ 
+   if (fnmatch (volume_label_option, label, 0) == 0)
+     return true;
+@@ -1841,6 +1841,7 @@ open_archive (enum access_mode wanted_access)
+   switch (wanted_access)
+     {
+     case ACCESS_READ:
++    case ACCESS_UPDATE:
+       if (volume_label_option)
+         match_volume_label ();
+       break;
+@@ -1850,9 +1851,6 @@ open_archive (enum access_mode wanted_access)
+       if (volume_label_option)
+         write_volume_label ();
+       break;
+-
+-    default:
+-      break;
+     }
+   set_volume_start_time ();
+ }
+--- tar/src/list.c
++++ tar/src/list.c
+@@ -1412,22 +1412,23 @@ test_archive_label ()
+   if (read_header (&current_header, &current_stat_info, read_header_auto)
+       == HEADER_SUCCESS)
+     {
+-      char *s = NULL;
+-	
+       decode_header (current_header,
+ 		     &current_stat_info, &current_format, 0);
+       if (current_header->header.typeflag == GNUTYPE_VOLHDR)
+ 	assign_string (&volume_label, current_header->header.name);
+-
+-      if (volume_label
+-	  && (name_match (volume_label)
+-	      || (multi_volume_option
+-		  && (s = drop_volume_label_suffix (volume_label))
+-		  && name_match (s))))
+-	if (verbose_option)
+-	  print_volume_label ();
+-      free (s);
++      
++      if (volume_label)
++	{
++	  if (verbose_option)
++	    print_volume_label ();
++	  if (!name_match (volume_label) && multi_volume_option)
++	    {
++	      char *s = drop_volume_label_suffix (volume_label);
++	      name_match (s);
++	      free (s);
++	    }
++	}
+     }
+   close_archive ();
+-  names_notfound ();
++  label_notfound ();
+ }
+--- tar/src/misc.c
++++ tar/src/misc.c
+@@ -25,7 +25,6 @@
+ #include <xgetcwd.h>
+ #include <unlinkdir.h>
+ #include <utimens.h>
+-#include <canonicalize.h>
+ 
+ #if HAVE_STROPTS_H
+ # include <stropts.h>
+@@ -34,6 +33,10 @@
+ # include <sys/filio.h>
+ #endif
+ 
++#ifndef DOUBLE_SLASH_IS_DISTINCT_ROOT
++# define DOUBLE_SLASH_IS_DISTINCT_ROOT 0
++#endif
++
+ 
+ /* Handling strings.  */
+ 
+@@ -230,10 +233,99 @@ zap_slashes (char *name)
+   return name;
+ }
+ 
++/* Normalize NAME by resolving any relative references and
++   removing trailing slashes.  Destructive version: modifies its argument. */ 
++int
++normalize_filename_x (char *name)
++{
++  char *p, *q;
++
++  p = name;
++  if (DOUBLE_SLASH_IS_DISTINCT_ROOT && ISSLASH (*p))
++    p++;
++
++  /* Remove /./, resolve /../ and compress sequences of slashes */
++  for (q = p; *q; )
++    {
++      if (ISSLASH (*q))
++	{
++	  *p++ = *q++;
++	  while (ISSLASH (*q))
++	    q++;
++	  continue;
++	}
++      else if (p == name)
++	{
++	  if (*q == '.')
++	    {
++	      if (ISSLASH (q[1]))
++		{
++		  q += 2;
++		  continue;
++		}
++	      if (q[1] == '.' && ISSLASH (q[2]))
++		return 1;
++	    }
++	}
++      else
++	{
++	  if (*q == '.' && ISSLASH (p[-1]))
++	    {
++	      if (ISSLASH (q[1]))
++		{
++		  q += 2;
++		  while (ISSLASH (*q))
++		    q++;
++		  continue;
++		}
++	      else if (q[1] == '.' && ISSLASH (q[2]))
++		{
++		  do
++		    {
++		      --p;
++		    }
++		  while (p > name && !ISSLASH (p[-1]));
++		  q += 3;
++		  continue;
++		}
++	    }
++	}
++      *p++ = *q++;
++    }
++
++  /* Remove trailing slashes */
++  while (p - 1 > name && ISSLASH (p[-1]))
++    p--;
++  
++  *p = 0;
++  return 0;
++}
++
++/* Normalize NAME by resolving any relative references, removing trailing
++   slashes, and converting it to absolute file name.  Return the normalized
++   name, or NULL in case of error. */
++
+ char *
+ normalize_filename (const char *name)
+ {
+-  return zap_slashes (canonicalize_filename_mode (name, CAN_MISSING));
++  char *copy;
++
++  if (name[0] != '/')
++    {
++      copy = xgetcwd ();
++      copy = xrealloc (copy, strlen (copy) + strlen (name) + 2);
++
++      strcat (copy, "/");
++      strcat (copy, name);
++    }
++  else
++    copy = xstrdup (name);
++  if (normalize_filename_x (copy))
++    {
++      free (copy);
++      return NULL;
++    }
++  return xrealloc (copy, strlen (copy) + 1);
+ }
+ 
+ 
+@@ -870,5 +962,3 @@ namebuf_name (namebuf_t buf, const char *name)
+   return buf->buffer;
+ }
+ 
+-
+-  
+--- tar/src/names.c
++++ tar/src/names.c
+@@ -589,7 +589,7 @@ all_names_found (struct tar_stat_info *p)
+   return true;
+ }
+ 
+-static void
++static int
+ regex_usage_warning (const char *name)
+ {
+   static int warned_once = 0;
+@@ -603,6 +603,7 @@ regex_usage_warning (const char *name)
+ 	     _("Use --wildcards to enable pattern matching,"
+ 	       " or --no-wildcards to suppress this warning")));
+     }
++  return warned_once;
+ }
+ 
+ /* Print the names of things in the namelist that were not matched.  */
+@@ -615,12 +616,11 @@ names_notfound (void)
+     if (!WASFOUND (cursor) && cursor->name[0])
+       {
+ 	regex_usage_warning (cursor->name);
+-	if (cursor->found_count == 0)
+-	  ERROR ((0, 0, _("%s: Not found in archive"),
+-		  quotearg_colon (cursor->name)));
+-	else
+-	  ERROR ((0, 0, _("%s: Required occurrence not found in archive"),
+-		  quotearg_colon (cursor->name)));  
++	ERROR ((0, 0, 
++		(cursor->found_count == 0) ?
++		     _("%s: Not found in archive") :
++		     _("%s: Required occurrence not found in archive"),
++		quotearg_colon (cursor->name)));
+       }
+ 
+   /* Don't bother freeing the name list; we're about to exit.  */
+@@ -639,6 +639,42 @@ names_notfound (void)
+ 	}
+     }
+ }
++
++void
++label_notfound (void)
++{
++  struct name const *cursor;
++
++  if (!namelist)
++    return;
++  
++  for (cursor = namelist; cursor; cursor = cursor->next)
++    if (WASFOUND (cursor))
++      return;
++
++  if (verbose_option)
++    error (0, 0, _("Archive label mismatch"));
++  set_exit_status (TAREXIT_DIFFERS);
++
++  for (cursor = namelist; cursor; cursor = cursor->next)
++    {
++      if (regex_usage_warning (cursor->name))
++	break;
++    }
++
++  /* Don't bother freeing the name list; we're about to exit.  */
++  namelist = NULL;
++  nametail = NULL;
++
++  if (same_order_option)
++    {
++      const char *name;
++
++      while ((name = name_next (1)) != NULL
++	     && regex_usage_warning (name) == 0)
++	;
++    }
++}
+ 
+ /* Sorting name lists.  */
+ 
+@@ -871,7 +907,7 @@ void
+ collect_and_sort_names (void)
+ {
+   struct name *name;
+-  struct name *next_name, *prev_name;
++  struct name *next_name, *prev_name = NULL;
+   int num_names;
+   struct stat statbuf;
+   Hash_table *nametab;
+--- tar/src/tar.c
++++ tar/src/tar.c
+@@ -1254,7 +1254,7 @@ tar_help_filter (int key, const char *text, void *input)
+ {
+   struct obstack stk;
+   char *s;
+-
++  
+   switch (key)
+     {
+     default:
+@@ -1286,19 +1286,23 @@ tar_help_filter (int key, const char *text, void *input)
+       break;
+       
+     case ARGP_KEY_HELP_EXTRA:
+-      obstack_init (&stk);
+-      s = _("Valid arguments for the --quoting-style option are:");
+-      obstack_grow (&stk, s, strlen (s));
+-      obstack_grow (&stk, "\n\n", 2);
+-      tar_list_quoting_styles (&stk, "  ");
+-      s = _("\n*This* tar defaults to:\n");
+-      obstack_grow (&stk, s, strlen (s));
+-      s = format_default_settings ();
+-      obstack_grow (&stk, s, strlen (s));
+-      obstack_1grow (&stk, '\n');
+-      obstack_1grow (&stk, 0);
+-      s = xstrdup (obstack_finish (&stk));
+-      obstack_free (&stk, NULL);
++      {
++	const char *tstr;
++
++	obstack_init (&stk);
++	tstr = _("Valid arguments for the --quoting-style option are:");
++	obstack_grow (&stk, tstr, strlen (tstr));
++	obstack_grow (&stk, "\n\n", 2);
++	tar_list_quoting_styles (&stk, "  ");
++	tstr = _("\n*This* tar defaults to:\n");
++	obstack_grow (&stk, tstr, strlen (tstr));
++	s = format_default_settings ();
++	obstack_grow (&stk, s, strlen (s));
++	obstack_1grow (&stk, '\n');
++	obstack_1grow (&stk, 0);
++	s = xstrdup (obstack_finish (&stk));
++	obstack_free (&stk, NULL);
++      }
+     }
+   return s;
+ }
+@@ -2566,8 +2570,6 @@ main (int argc, char **argv)
+ 
+   obstack_init (&argv_stk);
+ 
+-  /* Ensure default behavior for some signals */
+-  signal (SIGPIPE, SIG_IGN);
+   /* System V fork+wait does not work if SIGCHLD is ignored.  */
+   signal (SIGCHLD, SIG_DFL);
+ 
+--- tar/tests/Makefile.am
++++ tar/tests/Makefile.am
+@@ -89,6 +89,9 @@ TESTSUITE_AT = \
+  ignfail.at\
+  label01.at\
+  label02.at\
++ label03.at\
++ label04.at\
++ label05.at\
+  link01.at\
+  link02.at\
+  link03.at\
+@@ -118,11 +121,13 @@ TESTSUITE_AT = \
+  rename05.at\
+  remfiles01.at\
+  remfiles02.at\
++ remfiles03.at\
+  same-order01.at\
+  same-order02.at\
+  shortfile.at\
+  shortupd.at\
+  shortrec.at\
++ sigpipe.at\
+  sparse01.at\
+  sparse02.at\
+  sparse03.at\
+--- /dev/null
++++ tar/tests/label03.at
+@@ -0,0 +1,89 @@
++# Process this file with autom4te to create testsuite. -*- Autotest -*-
++
++# Test suite for GNU tar.
++# Copyright (C) 2010 Free Software Foundation, Inc.
++
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 3, or (at your option)
++# any later version.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.
++
++# Description: Test the functionality of the --test-label option.
++# In versions up to 1.23 it did not match the documentation. This
++# test case follows the examples from "9.7 Including a Label in the Archive".
++# References: <15929_1268069389_4B95340D_15929_35_1_D621E31C29598A43AF7B4BBD30CCDDFD0838294A@fr0-mailmb04.res.airbus.corp>
++#
++
++AT_SETUP([test-label option])
++AT_KEYWORDS([label label03 test-label])
++
++AT_TAR_CHECK([
++exec <&-
++genfile --file file
++tar -c --label='iamalabel' --file iamanarchive file
++tar -c --file unlabeled.tar file
++decho "# Display label"
++tar --test-label --file=iamanarchive; echo $?
++decho "# Display label: unlabeled"
++tar --test-label --file=unlabeled.tar; echo $?
++decho "# Test label: success"
++tar --test-label --file=iamanarchive 'iamalabel'; echo $?
++decho "# Test label: failure"
++tar --test-label --file=iamanarchive 'amalabel'; echo $?
++decho "# Test label: unlabeled"
++tar --test-label --file=unlabeled.tar 'amalabel'; echo $?
++decho "# Test label, verbose: success"
++tar --test-label --verbose --file=iamanarchive 'iamalabel'; echo $?
++decho "# Test label, verbose: failure"
++tar --test-label --verbose --file=iamanarchive 'amalabel'; echo $?
++decho "# Test label: multiple arguments"
++tar --test-label --file=iamanarchive a iamalabel b; echo $?
++decho "# Test label: wildcards"
++tar --test-label --file=iamanarchive --wildcards '*label'; echo $?
++],
++[0],
++[# Display label
++iamalabel
++0
++# Display label: unlabeled
++0
++# Test label: success
++0
++# Test label: failure
++1
++# Test label: unlabeled
++1
++# Test label, verbose: success
++iamalabel
++0
++# Test label, verbose: failure
++iamalabel
++1
++# Test label: multiple arguments
++0
++# Test label: wildcards
++0
++],
++[# Display label
++# Display label: unlabeled
++# Test label: success
++# Test label: failure
++# Test label: unlabeled
++# Test label, verbose: success
++# Test label, verbose: failure
++tar: Archive label mismatch
++# Test label: multiple arguments
++# Test label: wildcards
++],[],[],[gnu,oldgnu,posix])
++
++AT_CLEANUP
++
++
+--- /dev/null
++++ tar/tests/label04.at
+@@ -0,0 +1,53 @@
++# Process this file with autom4te to create testsuite. -*- Autotest -*-
++
++# Test suite for GNU tar.
++# Copyright (C) 2010 Free Software Foundation, Inc.
++
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 3, or (at your option)
++# any later version.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.
++
++# Description: Test the functionality of the --label option used in
++# conjunction with an operation, other than create. It was broken
++# in versions up to 1.23.
++# References: <15929_1268069389_4B95340D_15929_35_1_D621E31C29598A43AF7B4BBD30CCDDFD0838294A@fr0-mailmb04.res.airbus.corp>
++#
++
++AT_SETUP([label with non-create option])
++AT_KEYWORDS([label label04])
++
++AT_TAR_CHECK([
++exec <&-
++genfile --file file
++decho "# Create volume"
++tar -c -f archive --label='New volume' file
++decho "# Update: wrong label"
++tar -rf archive --label='My volume' file; echo $?
++decho "# Update: right label"
++tar -rf archive --label='New volume' file
++],
++[0],
++[# Create volume
++# Update: wrong label
++2
++# Update: right label
++],
++[# Create volume
++# Update: wrong label
++tar: Volume `New volume' does not match `My volume'
++tar: Error is not recoverable: exiting now
++# Update: right label
++],[],[],[gnu,oldgnu,posix])
++
++AT_CLEANUP
++
++
+--- /dev/null
++++ tar/tests/label05.at
+@@ -0,0 +1,50 @@
++# Process this file with autom4te to create testsuite. -*- Autotest -*-
++
++# Test suite for GNU tar.
++# Copyright (C) 2010 Free Software Foundation, Inc.
++
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 3, or (at your option)
++# any later version.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.
++
++# Description: See label04.  This testcase uses an unlabeled archive
++# volume.
++
++AT_SETUP([label with non-create option])
++AT_KEYWORDS([label label05])
++
++AT_TAR_CHECK([
++exec <&-
++genfile --file file
++decho "# Create volume"
++tar -c -f archive file
++decho "# Update: wrong label"
++tar -rf archive --label='My volume' file; echo $?
++decho "# Update: right label"
++tar -rf archive file
++],
++[0],
++[# Create volume
++# Update: wrong label
++2
++# Update: right label
++],
++[# Create volume
++# Update: wrong label
++tar: Archive not labeled to match `My volume'
++tar: Error is not recoverable: exiting now
++# Update: right label
++],[],[],[gnu,oldgnu,posix])
++
++AT_CLEANUP
++
++
+--- tar/tests/remfiles01.at
++++ tar/tests/remfiles01.at
+@@ -30,6 +30,7 @@ AT_KEYWORDS([create remove-files remfiles01 gzip])
+ 
+ unset TAR_OPTIONS
+ AT_CHECK([
++AT_UNPRIVILEGED_PREREQ
+ AT_GZIP_PREREQ
+ AT_SORT_PREREQ
+ 
+@@ -51,7 +52,9 @@ EC=$?
+ sed -n '/(child)/p' err >&2
+ rm err
+ find . | sort
+-exit $EC
++# Gzip exit code is propagated to the shell. Usually it is
++# 141.  We convert all non-zero exits to 2 to make it predictable.
++test $EC && exit 2
+ ],
+ [2],
+ [.
+--- /dev/null
++++ tar/tests/remfiles03.at
+@@ -0,0 +1,45 @@
++# Process this file with autom4te to create testsuite. -*- Autotest -*-
++
++# Test suite for GNU tar.
++# Copyright (C) 2009 Free Software Foundation, Inc.
++
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 3, or (at your option)
++# any later version.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
++# 02110-1301, USA.
++
++# Description: Called with --remove-files, tar 1.23 failed
++# to remove a directory if it contained symlinks to another files
++# within that directory.
++# Reported-by: Alexander Kozlov <akozlov@nada.kth.se>
++# References: http://lists.gnu.org/archive/html/bug-tar/2010-03/msg00028.html
++#             <Pine.SOC.4.64.1003150951060.28948@faun.nada.kth.se>
++
++AT_SETUP([remove-files with symbolic links])
++AT_KEYWORDS([create remove-files remfiles03])
++
++AT_CHECK([
++mkdir a
++mkdir a/b
++ln -s b a/c || AT_SKIP_TEST
++tar --remove-files -cf a.tar a
++genfile --stat a
++],
++[0],
++[],
++[genfile: stat(a) failed: No such file or directory
++])
++
++AT_CLEANUP
++
++
+--- /dev/null
++++ tar/tests/sigpipe.at
+@@ -0,0 +1,39 @@
++# Process this file with autom4te to create testsuite. -*- Autotest -*-
++
++# Test suite for GNU tar.
++# Copyright (C) 2010 Free Software Foundation, Inc.
++
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 3, or (at your option)
++# any later version.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++
++# You should have received a copy of the GNU General Public License
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.
++
++AT_SETUP([sigpipe handling])
++AT_KEYWORDS([sigpipe])
++
++# Description: Tar 1.23 ignored sigpipe which lead to spurious "write
++# error" diagnostics when piping output to another programs.
++# Reported-by: "Dmitry V. Levin" <ldv@altlinux.org>
++# References: http://lists.gnu.org/archive/html/bug-tar/2010-03/msg00039.html
++#             <20100319184141.GC30047@wo.int.altlinux.org>
++
++AT_CHECK([
++genfile --length 2048 --file first
++genfile --length 2048 --file second
++genfile --length 2049 --file third
++
++tar cf archive first second third
++
++tar tf archive | :
++],
++[0])
++
++AT_CLEANUP
+--- tar/tests/testsuite.at
++++ tar/tests/testsuite.at
+@@ -148,6 +148,9 @@ m4_include([extrac08.at])
+ 
+ m4_include([label01.at])
+ m4_include([label02.at])
++m4_include([label03.at])
++m4_include([label04.at])
++m4_include([label05.at])
+ 
+ m4_include([backup01.at])
+ 
+@@ -226,6 +229,9 @@ m4_include([grow.at])
+ 
+ m4_include([remfiles01.at])
+ m4_include([remfiles02.at])
++m4_include([remfiles03.at])
++
++m4_include([sigpipe.at])
+ 
+ m4_include([star/gtarfail.at])
+ m4_include([star/gtarfail2.at])

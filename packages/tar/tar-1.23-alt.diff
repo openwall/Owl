@@ -20,30 +20,6 @@ http://git.altlinux.org/gears/t/tar.git using "git diff v1.23..1.23-alt2 tar".
  	close (from_remote[remote_pipe_number][PREAD]);
  	close (from_remote[remote_pipe_number][PWRITE]);
  
---- tar/src/buffer.c
-+++ tar/src/buffer.c
-@@ -1374,7 +1374,6 @@ static bool
- check_label_pattern (const char *label)
- {
-   char *string;
--  bool result;
- 
-   if (fnmatch (volume_label_option, label, 0) == 0)
-     return true;
-@@ -1385,10 +1384,11 @@ check_label_pattern (const char *label)
-   string = drop_volume_label_suffix (label);
-   if (string)
-     {
--      result = fnmatch (string, volume_label_option, 0) == 0;
-+      bool result = fnmatch (string, volume_label_option, 0) == 0;
-       free (string);
-+      return result;
-     }
--  return result;
-+  return false;
- }
- 
- /* Check if the next block contains a volume label and if this matches
 --- tar/src/create.c
 +++ tar/src/create.c
 @@ -575,7 +575,12 @@ write_gnu_long_link (struct tar_stat_info *st, const char *p, char type)
@@ -305,17 +281,6 @@ http://git.altlinux.org/gears/t/tar.git using "git diff v1.23..1.23-alt2 tar".
  		  valid_source = source;
  		}
  	    }
---- tar/src/names.c
-+++ tar/src/names.c
-@@ -871,7 +871,7 @@ void
- collect_and_sort_names (void)
- {
-   struct name *name;
--  struct name *next_name, *prev_name;
-+  struct name *next_name, *prev_name = NULL;
-   int num_names;
-   struct stat statbuf;
-   Hash_table *nametab;
 --- tar/src/system.c
 +++ tar/src/system.c
 @@ -230,7 +230,25 @@ int

@@ -1,0 +1,22 @@
+Change --rsh-command to have no default.  If this option is not given,
+then the "remote functionality" is now disabled.  If a filename looks
+like it is "remote" and neither the --rsh-command nor the --force-local
+option is given, then tar will fail with an error.
+
+Proposed by Solar Designer.
+
+--- tar/lib/rtapelib.c
++++ tar/lib/rtapelib.c
+@@ -367,6 +367,12 @@ rmt_open__ (const char *file_name, int open_mode, int bias,
+   char *remote_file;		/* remote file name (often a device) */
+   char *remote_user;		/* remote user name */
+ 
++#ifndef REMOTE_SHELL
++  if (!remote_shell)
++    error (EXIT_ON_EXEC_ERROR, 0, "%s: %s",
++	file_name, _("Cannot execute remote shell"));
++#endif
++
+   /* Find an unused pair of file descriptors.  */
+ 
+   for (remote_pipe_number = 0;
