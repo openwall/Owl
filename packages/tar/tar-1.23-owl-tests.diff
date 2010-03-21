@@ -8,7 +8,7 @@ diff -ur tar-1.23.orig/tests/extrac07.at tar-1.23/tests/extrac07.at
 -[],[],[ustar]) # Testing one format is enough
 +[],[],[],[ustar]) # Testing one format is enough
 +
-+chmod +w out/dir
++chmod +w ustar/out/dir
  
  AT_CLEANUP
  
