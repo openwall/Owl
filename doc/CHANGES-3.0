@@ -46,14 +46,8 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
-2010/03/20	Package: hdparm
-Updated to 9.28.
-
-2010/03/20	Package: pciutils
-Updated to 3.1.7.
-
 2010/03/11 -
-2010/03/20	Packages: tar, cpio
+2010/03/21	Packages: tar, cpio
 SECURITY FIX	Severity: high, indirect, passive
 Updated tar to 1.23, which includes a fix for the heap-based buffer
 overflow in the rmt client functionality (CVE-2010-0624), and applied
@@ -72,6 +66,12 @@ References:
 http://www.agrs.tu-berlin.de/index.php?id=78327
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0624
 http://lists.gnu.org/archive/html/bug-tar/2010-03/msg00036.html
+
+2010/03/20	Package: hdparm
+Updated to 9.28.
+
+2010/03/20	Package: pciutils
+Updated to 3.1.7.
 
 2010/03/19	Package: libnids
 Updated to 1.24.
@@ -1171,4 +1171,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.237 2010/03/21 06:09:24 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.238 2010/03/21 07:55:50 solar Exp $
