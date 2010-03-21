@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.52 2010/03/21 06:40:46 solar Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.53 2010/03/21 07:51:48 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -43,7 +43,7 @@ backups.
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-rm doc/tar.info
+rm doc/tar.info*
 export tar_cv_path_RSH=no
 %configure --bindir=/bin --with-rmt=/sbin/rmt --disable-silent-rules
 sed -i '/HAVE_CLOCK_GETTIME/d' config.h
@@ -97,6 +97,7 @@ fi
 %changelog
 * Sun Mar 21 2010 Solar Designer <solar-at-owl.openwall.com> 1.23-owl3
 - Fixed a couple of bugs in tests/extrac07.at.
+- Updated the documentation on --rsh-command to reflect the lack of default.
 
 * Sat Mar 20 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.23-owl2
 - Updated to release_1_23-7-g340dbf5 snapshot to fix regressions

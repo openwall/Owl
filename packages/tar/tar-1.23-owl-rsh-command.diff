@@ -3,15 +3,50 @@ then the "remote functionality" is now disabled.  If a filename looks
 like it is "remote" and neither the --rsh-command nor the --force-local
 option is given, then tar will fail with an error.
 
-Proposed by Solar Designer.
+To achieve the above, we issue "export tar_cv_path_RSH=no" in our RPM
+spec file, before building tar.  The patch below checks for the
+condition early on and prints a proper message.  It also updates the
+texinfo documentation, but it does not update the --rsh-command usage
+message printed by tar because a change to it would require updates to
+the translations as well.
 
---- tar/lib/rtapelib.c
-+++ tar/lib/rtapelib.c
-@@ -367,6 +367,12 @@ rmt_open__ (const char *file_name, int open_mode, int bias,
+This was proposed by Solar Designer, but not approved upstream:
+
+http://lists.gnu.org/archive/html/bug-tar/2010-03/msg00036.html
+
+diff -urp tar-1.23.orig/doc/tar.texi tar-1.23/doc/tar.texi
+--- tar-1.23.orig/doc/tar.texi	2010-03-09 14:24:24 +0000
++++ tar-1.23/doc/tar.texi	2010-03-21 07:29:22 +0000
+@@ -10233,16 +10233,8 @@ Archive file is local even if it contain
+ 
+ @opindex rsh-command
+ @item --rsh-command=@var{command}
+-Use remote @var{command} instead of @command{rsh}.  This option exists
+-so that people who use something other than the standard @command{rsh}
+-(e.g., a Kerberized @command{rsh}) can access a remote device.
+-
+-When this command is not used, the shell command found when
+-the @command{tar} program was installed is used instead.  This is
+-the first found of @file{/usr/ucb/rsh}, @file{/usr/bin/remsh},
+-@file{/usr/bin/rsh}, @file{/usr/bsd/rsh} or @file{/usr/bin/nsh}.
+-The installer may have overridden this by defining the environment
+-variable @env{RSH} @emph{at installation time}.
++Use remote @var{command} instead of the compile-time default (if any).
++The typical setting to use is @code{--rsh-command=/usr/bin/ssh}.
+ 
+ @item -[0-7][lmh]
+ Specify drive and density.
+diff -urp tar-1.23.orig/lib/rtapelib.c tar-1.23/lib/rtapelib.c
+--- tar-1.23.orig/lib/rtapelib.c	2010-03-10 09:15:37 +0000
++++ tar-1.23/lib/rtapelib.c	2010-03-21 07:31:36 +0000
+@@ -367,6 +367,15 @@ rmt_open__ (const char *file_name, int o
    char *remote_file;		/* remote file name (often a device) */
    char *remote_user;		/* remote user name */
  
 +#ifndef REMOTE_SHELL
++  /* We could use a more specific error message here (such as to recommend the
++     use of --rsh-command), but this one already has translations to languages
++     other than English.  */
 +  if (!remote_shell)
 +    error (EXIT_ON_EXEC_ERROR, 0, "%s: %s",
 +	file_name, _("Cannot execute remote shell"));
@@ -20,3 +55,11 @@ Proposed by Solar Designer.
    /* Find an unused pair of file descriptors.  */
  
    for (remote_pipe_number = 0;
+@@ -459,6 +468,7 @@ rmt_open__ (const char *file_name, int o
+ #ifdef REMOTE_SHELL
+ 	remote_shell = REMOTE_SHELL;
+ #else
++	/* "Can't happen" given the check at the beginning of this function.  */
+ 	free (file_name_copy);
+ 	errno = EIO;
+ 	return -1;
