@@ -1,0 +1,10 @@
+--- bash-3.2.48/lib/readline/complete.c	2007-08-23 17:41:09 +0000
++++ bash-4.0-rc1/lib/readline/complete.c	2009-01-04 19:32:32 +0000
+@@ -406,6 +437,7 @@ set_completion_defaults (what_to_do)
+   rl_filename_quoting_desired = 1;
+   rl_completion_type = what_to_do;
+   rl_completion_suppress_append = rl_completion_suppress_quote = 0;
++  rl_completion_append_character = ' ';
+ 
+   /* The completion entry function may optionally change this. */
+   rl_completion_mark_symlink_dirs = _rl_complete_mark_symlink_dirs;

@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.45 2010/01/26 17:18:55 solar Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.46 2010/03/22 21:28:21 solar Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
 %define bash_version 3.1
 %define bash_patchlevel 17
 Version: %bash_version.%bash_patchlevel
-Release: owl4
+Release: owl5
 Group: System Environment/Shells
 License: GPL
 # ftp://ftp.gnu.org/gnu/bash/bash-%bash_version.tar.gz
@@ -32,6 +32,7 @@ Patch25: bash-3.1-rh-man.diff
 Patch26: bash-3.1-rh-info-tags.diff
 Patch30: bash-3.1-deb-random.diff
 Patch31: bash-3.1-deb-doc.diff
+Patch32: bash-3.1-up-rl_completion_append_character.diff
 Patch100: readline-5.1-up-pl1.diff
 Patch101: readline-5.1-alt-warnings.diff
 Patch102: readline-5.1-alt-nls.diff
@@ -88,6 +89,7 @@ version %version.
 %patch26 -p1
 %patch30 -p1
 %patch31 -p1
+%patch32 -p1
 pushd lib/readline
 %patch100 -p0
 %patch101 -p1
@@ -275,6 +277,10 @@ fi
 %docdir/txt
 
 %changelog
+* Mon Mar 22 2010 Solar Designer <solar-at-owl.openwall.com> 3.1.17-owl5
+- Added upstream fix (introduced in 4.x) to reset the character appended to
+pathnames on completion such that it does not get stuck at '/'.
+
 * Mon Oct 08 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.17-owl4
 - Moved bash examples to -doc subpackage.
 - Repackaged documentation to reside in single directory inside %_docdir/.
