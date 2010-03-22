@@ -1,0 +1,12 @@
+diff -ur gzip-1.4.orig/tests/zgrep-f gzip-1.4/tests/zgrep-f
+--- gzip-1.4.orig/tests/zgrep-f	2010-01-08 18:16:51 +0000
++++ gzip-1.4/tests/zgrep-f	2010-03-22 18:34:31 +0000
+@@ -26,6 +26,8 @@
+ : ${srcdir=.}
+ . "$srcdir/tests/init.sh"; path_prepend_ .
+ 
++test -d /proc/$$/fd || skip_ '/proc/$$/fd is not available'
++
+ echo needle > n || framework_failure
+ echo needle > haystack || framework_failure
+ gzip haystack || framework_failure

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gzip/gzip.spec,v 1.29 2010/02/02 22:01:26 ldv Exp $
+# $Owl: Owl/packages/gzip/gzip.spec,v 1.30 2010/03/22 18:44:38 solar Exp $
 
 Summary: The GNU data compression program.
 Name: gzip
 Version: 1.4
-Release: owl1
+Release: owl2
 License: GPLv3+
 Group: Applications/File
 URL: http://www.gnu.org/software/%name/
@@ -16,6 +16,7 @@ Patch3: gzip-1.4-up-zgrep-signal.diff
 Patch4: gzip-1.4-owl-info.diff
 Patch5: gzip-1.4-openbsd-owl-alt-tmp.diff
 Patch6: gzip-1.4-alt-bzip2-xz.diff
+Patch7: gzip-1.4-owl-tests.diff
 BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
@@ -41,6 +42,7 @@ GNU gzip and bzip2 data compression programs.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %{expand:%%define optflags %optflags -Wall -DGNU_STANDARD=0}
 
@@ -140,6 +142,10 @@ fi
 %exclude %_mandir/*/zcat.*
 
 %changelog
+* Mon Mar 22 2010 Solar Designer <solar-at-owl.openwall.com> 1.4-owl2
+- Skip the "zgrep -f" test when /proc/$$/fd is not available (patch by
+Dmitry V. Levin).
+
 * Tue Feb 02 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4-owl1
 - Updated to 1.4.
 - Reviewed patches, removed obsolete ones.
