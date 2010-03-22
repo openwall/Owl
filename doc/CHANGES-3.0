@@ -46,6 +46,20 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/03/22	kernel;
+		Owl/build/buildkernel.sh;
+		Package: owl-cdrom
+SECURITY FIX	Severity: none to high, remote, active
+Updated the kernel to OpenVZ's latest from their "rhel5" branch
+(2.6.18-164.11.1.el5.028stab068.5 released on 2010/03/18) with Red Hat's
+patches up to 2.6.18-164.15.1.el5 added (apparently prepared by Red Hat
+on 2010/03/01, released and announced on 2010/03/16), and with some
+minor changes of our own.  We call the resulting kernel version
+2.6.18-164.15.1.el5.028stab068.5-owl1.  Compared to earlier "rhel5"
+kernels, this update fixes a large number of vulnerabilities of varying
+impact in various kernel subsystems, which may or may not have been
+exposed in specific circumstances.
+
 2010/03/11 -
 2010/03/21	Packages: tar, cpio
 SECURITY FIX	Severity: high, indirect, passive
@@ -1171,4 +1185,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.239 2010/03/21 08:29:16 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.240 2010/03/22 19:11:19 solar Exp $
