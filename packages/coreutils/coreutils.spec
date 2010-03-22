@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.28 2009/11/22 14:07:30 ldv Exp $
+# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.29 2010/03/22 22:55:08 solar Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
 Version: 5.97
-Release: owl3
+Release: owl4
 License: GPL
 Group: System Environment/Base
 URL: http://www.gnu.org/software/%name/
@@ -253,7 +253,13 @@ fi
 %doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
-* Sun Nov 22 2009 Dmitry V. Levin <ldv@altlinux.org> 5.97-owl3
+* Mon Mar 22 2010 Solar Designer <solar-at-owl.openwall.com> 5.97-owl4
+- In exit.c, invoke the syscall via the _syscall1() macro rather than via the
+glibc wrapper when we're compiling for 32-bit x86, because our current glibc
+(after the switch to NPTL) produces large static binaries for exit.c on this
+architecture.
+
+* Sun Nov 22 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.97-owl3
 - Fixed tests/touch/not-owner on read-only root file system.
 
 * Mon Oct 08 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.97-owl2
