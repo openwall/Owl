@@ -1,15 +1,15 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.50 2009/11/23 02:57:06 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.51 2010/03/22 18:16:29 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 1.7
+Version: 1.8
 Release: owl1
 License: public domain
 Group: System Environment/Base
 Source0: rc.ramdisk
 Source1: welcome-cdrom.sh
 Source10: lilo.conf
-Source11: dot-config-i386
+Source11: dot-config-i686
 Source12: dot-config-x86_64
 Source13: floppy-update.sh
 Source14: message
@@ -35,7 +35,7 @@ install -m 600 %_sourcedir/message boot/
 %ifarch x86_64
 install -m 644 %_sourcedir/dot-config-x86_64 boot/config
 %else
-install -m 644 %_sourcedir/dot-config-i386 boot/config
+install -m 644 %_sourcedir/dot-config-i686 boot/config
 %endif
 ln -s ../rom/{dev,etc,home,root,tmp,var,world} ram/
 
@@ -90,6 +90,10 @@ fi
 %dir /owl
 
 %changelog
+* Mon Mar 22 2010 Solar Designer <solar-at-owl.openwall.com> 1.8-owl1
+- Updated the configs for 2.6.18-164.15.1.el5.028stab068.5-owl1.
+- Use rootdelay=10 with the non-ide label to allow for booting off USB devices.
+
 * Mon Nov 23 2009 Solar Designer <solar-at-owl.openwall.com> 1.7-owl1
 - Updated for 2.6/OpenVZ kernels.
 - Don't automatically copy /etc/vz/dists (which is a bit large) to /ram.
