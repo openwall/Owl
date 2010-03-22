@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/Attic/buildkernel.sh,v 1.3 2009/11/20 07:57:43 solar Exp $
+# $Owl: Owl/build/Attic/buildkernel.sh,v 1.4 2010/03/22 18:17:32 solar Exp $
 
 set -e
 
@@ -152,6 +152,12 @@ yes '' |make oldconfig
 
 log "Building kernel image for $ARCH"
 make "-j$PROCESSORS" bzImage
+
+case "$ARCH" in
+*86)
+	ARCH=i386
+	;;
+esac
 
 log "Copying kernel image"
 install -pm644 System.map "arch/$ARCH/boot/bzImage" "$HOME/kernel-work/boot/"
