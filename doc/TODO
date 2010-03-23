@@ -13,16 +13,13 @@ released kernels yet, because of their QA delay.  A reasonable approach
 may be to identify and fix the most relevant and most critical of those
 vulnerabilities ourselves.  Luckily, most are not relevant and/or not
 critical, but a few might be.  We'll see what the situation will be
-shortly before our release.  As of this writing, we need to update from
--128.2.1.el5.028stab064.8 to -164.10.1.el5.028stab067.4 and likely apply
-some additional fixes at the same time, but this will keep changing.)
+shortly before our release.)
 
 lftpget fix.
 
 Bring the documentation translations in sync with English (or drop from
 the release).  For example, translations of ARCHITECTURES are currently
-outdated as it relates to i386 vs. i686, and non-English documentation
-does not reflect our move to 2.6 kernels yet.
+outdated as it relates to i386 vs. i686.
 
 
 	Desirable before the next release.
@@ -82,4 +79,4 @@ Update the on-demand CD sales setup with Owl-current ISO snapshots
 shortly before making the release, to have the setup ready for being
 updated to the release.  Setup separate "products" for i686 and x86-64.
 
-$Owl: Owl/doc/TODO,v 1.185 2010/02/19 14:39:35 solar Exp $
+$Owl: Owl/doc/TODO,v 1.186 2010/03/23 01:07:14 solar Exp $
