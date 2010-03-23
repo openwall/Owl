@@ -117,23 +117,4 @@ mit UTF-8 Unterstützung benötigen kann man einfach unser slang Paket
 mit dem von Red Hat ersetzen, da es innerhalb von Owl keine Abhängigkeiten
 zu dem slang Paket gibt.
 
-
-	Keine Unterstützung für NPTL in der glibc.
-
-Red Hat Linux 9 unterstützt die Native POSIX Thread Library (NPTL) in
-ihrem glibc (C library) Paket.  Wir stellen weiterhin die ältere LinuxThreads
-Bibilothek zur Verfügung.  NPTL benötigt einen entsprechenden Kernel, den wir im
-Moment nicht bereitstellen.  Dies wird sich ändern, wenn wir zu Linux 2.6.x
-wechseln und die Unterstützung für Linux 2.4.x einstellen.
-
-Im Moment ist uns kein Red Hat Linux 9 Paket bekannt, welches nicht ohne
-NPTL funktioniert.  Dies ist auch nicht verwunderlich, da Red Hat Linux
-selbst durch Bibilotheken Rückwärtskompatibilität zur Verfügung stellt,
-falls der laufende Kernel kein NPTL enthält.  Dadurch funktionieren die
-Pakete auch auf einem System ohne NPTL.
-
-Ein uns bekanntes Problem liegt in den Sourcen zu den aktuellsten Versionen
-von RPM (neuer als die, die in PHL 9 verwendet werden) die NPTL verwenden.
-Diese Abhängigkeit ist in unserer Version von RPM gelöst.
-
-$Owl: Owl/doc/de/REDHAT,v 1.5 2006/02/03 08:53:27 schmidt Exp $
+$Owl: Owl/doc/de/REDHAT,v 1.6 2010/03/23 01:01:57 solar Exp $
