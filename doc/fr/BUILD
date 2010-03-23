@@ -67,7 +67,7 @@ Owl.
 
 	(Re-)compilations natives.
 
-Vous avez besoin d'avoir un noyau Linux 2.4.x configuré sans
+Vous avez besoin d'avoir un noyau Linux 2.6.x configuré sans
 /usr/src/linux. En tant que l'utilisateur "build", changez de répertoire
 vers /usr/src/world et tapez :
 
@@ -107,4 +107,4 @@ Les paquets individuels peuvent être compilés ou re-compilés avec
 étrangers (SRPMs) compilés avec l'environnement de compilation de Owl vous
 avez aussi besoin d'inclure dans "nom" la partie numéro de version.
 
-$Owl: Owl/doc/fr/BUILD,v 1.10 2006/02/15 16:38:43 solar Exp $
+$Owl: Owl/doc/fr/BUILD,v 1.11 2010/03/23 01:04:13 solar Exp $

@@ -67,7 +67,7 @@ und wenn die Software, die bereits Bestandteil von Owl ist, ge-updated wird.
 
 	Richtige (Neu-)Übersetzung.
 
-Man braucht einen konfigurierten 2.4er Linux Kernel in /usr/src/linux.
+Man braucht einen konfigurierten 2.6er Linux Kernel in /usr/src/linux.
 Wechsle als Benutzer "build" nach /usr/src/world und gib ein:
 
 	make clean && make buildworld
@@ -104,4 +104,4 @@ Individuelle Pakete können wieder- oder neuübersetzt werden, indem man
 Für fremde Pakete (SRPMs) die mit der Owl-Arbeitsumgebung erstellt worden
 sind, muss man zusätzlich die Versionsnummer in "name" einfügen.
 
-$Owl: Owl/doc/de/BUILD,v 1.17 2006/02/01 17:53:09 solar Exp $
+$Owl: Owl/doc/de/BUILD,v 1.18 2010/03/23 01:04:13 solar Exp $

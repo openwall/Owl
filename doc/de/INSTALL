@@ -87,7 +87,7 @@ land geschehen:
 
 	chroot /owl
 
-Aktuell unterstützt Owl den 2.4er Kernel.  Es wird empfohlen den Kernel
+Aktuell unterstützt Owl den 2.6er Kernel.  Es wird empfohlen den Kernel
 zu installieren, der mit Ihrer Owl-Kopie mitgeliefert wird.
 
 Man kann nun den boot loader konfigurieren, der unter Owl verfügbar
@@ -97,4 +97,4 @@ bereits installierten (falls vorhanden) verwenden.
 Nach Abschluss der Installation müssen die Dateisysteme noch manuell mittels
 umount(8) ausgehängt werden.  Danach kann das System sicher neugestartet werden.
 
-$Owl: Owl/doc/de/INSTALL,v 1.16 2006/02/03 08:53:27 schmidt Exp $
+$Owl: Owl/doc/de/INSTALL,v 1.17 2010/03/23 01:04:13 solar Exp $
