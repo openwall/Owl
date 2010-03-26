@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.29 2010/03/22 22:55:08 solar Exp $
+# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.30 2010/03/26 04:00:43 solar Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
@@ -157,6 +157,9 @@ bzip2 -9fk ChangeLog NEWS THANKS
 
 %check
 %__make check
+
+./true
+! ./false || false
 
 %install
 rm -rf %buildroot
