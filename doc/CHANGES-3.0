@@ -46,6 +46,11 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/03/27	Package: passwdqc
+In passwdqc 1.2.1, a password strength check has been adjusted to no
+longer subject certain passwords that start with a digit and/or end with
+a capital letter to an unintentionally stricter policy.
+
 2010/03/22	kernel;
 		Owl/build/buildkernel.sh;
 		Package: owl-cdrom
@@ -1185,4 +1190,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.240 2010/03/22 19:11:19 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.241 2010/03/27 20:16:23 solar Exp $
