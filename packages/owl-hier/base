@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-hier/base,v 1.6 2010/03/30 17:09:56 solar Exp $
+# $Owl: Owl/packages/owl-hier/base,v 1.7 2010/03/30 17:28:24 solar Exp $
 
 # /
 /set type=file uname=root gname=root mode=0755
@@ -40,6 +40,12 @@ mtree		type=dir mode=0700
 # /etc/opt
 opt		type=dir
 # /etc/opt
+..
+
+
+# /etc/profile.d
+profile.d	type=dir
+# /etc/profile.d
 ..
 
 

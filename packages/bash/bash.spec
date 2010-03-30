@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.47 2010/03/30 16:59:14 solar Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.48 2010/03/30 17:28:23 solar Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
@@ -217,7 +217,7 @@ cd %buildroot
 # These conflict with real manpages
 rm .%_mandir/man1/{echo,kill,printf,pwd,test}.1
 
-mkdir -p etc/{skel,profile.d}
+mkdir -p etc/skel
 install -pm 644 %_sourcedir/profile etc/
 install -pm 644 %_sourcedir/bashrc etc/
 install -pm 644 %_sourcedir/dot-bashrc etc/skel/.bashrc
@@ -252,7 +252,6 @@ fi
 %files
 %defattr(-,root,root)
 %config(noreplace) /etc/profile
-%dir %attr(755,root,root) /etc/profile.d
 %config(noreplace) /etc/bashrc
 %config(noreplace) /etc/skel/.b*
 %dir %docdir
@@ -285,8 +284,7 @@ fi
 
 %changelog
 * Tue Mar 30 2010 Solar Designer <solar-at-owl.openwall.com> 3.1.17-owl6
-- Moved /etc/profile, /etc/profile.d, and /etc/bashrc from the owl-etc package
-to this one.
+- Moved /etc/profile and /etc/bashrc from the owl-etc package to this one.
 
 * Mon Mar 22 2010 Solar Designer <solar-at-owl.openwall.com> 3.1.17-owl5
 - Added upstream fix (introduced in 4.x) to reset the character appended to

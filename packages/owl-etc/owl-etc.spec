@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.73 2010/03/30 17:14:58 solar Exp $
+# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.74 2010/03/30 17:28:23 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
@@ -160,8 +160,9 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 
 %changelog
 * Tue Mar 30 2010 Solar Designer <solar-at-owl.openwall.com> 0.33-owl1
-- Moved profile, profile.d, bashrc, csh.login, and csh.cshrc from owl-etc to
-bash and tcsh packages as appropriate.
+- Moved profile, bashrc, csh.login, and csh.cshrc from owl-etc to the bash and
+tcsh packages as appropriate.
+- Moved profile.d to owl-hier.
 
 * Mon Jan 25 2010 Solar Designer <solar-at-owl.openwall.com> 0.32-owl1
 - Added /etc/mime.types (from Apache httpd 2.2.14 with minor changes).
