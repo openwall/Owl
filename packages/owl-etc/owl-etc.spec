@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.72 2010/03/30 16:59:14 solar Exp $
+# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.73 2010/03/30 17:14:58 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
@@ -34,7 +34,7 @@ Initial set of configuration files to be placed into /etc.
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot/var/log
+mkdir -p %buildroot/{etc,var/log}
 cd %buildroot
 touch etc/motd var/log/lastlog
 install -p %_sourcedir/{passwd,shadow,group,fstab} etc/
