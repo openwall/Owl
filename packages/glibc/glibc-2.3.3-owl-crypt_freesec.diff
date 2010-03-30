@@ -12,9 +12,9 @@ diff -puNr glibc-2.3.3-200406160000.orig/crypt/Makefile glibc-2.3.3-200406160000
  
 diff -puNr glibc-2.3.3-200406160000.orig/crypt/wrapper.c glibc-2.3.3-200406160000/crypt/wrapper.c
 --- glibc-2.3.3-200406160000.orig/crypt/wrapper.c	Fri Nov  8 01:38:44 2002
-+++ glibc-2.3.3-200406160000/crypt/wrapper.c	Sat Jan  8 03:15:19 2005
-@@ -103,32 +103,72 @@ static char *_crypt_retval_magic(char *r
-  * its initialization code. Thus, it is important that our multiple hashing
++++ glibc-2.3.3-200406160000/crypt/wrapper.c	Mon Mar 29 20:01:03 2010
+@@ -105,32 +105,74 @@ static char *_crypt_retval_magic(char *r
+  * its initialization code.  Thus, it is important that our multiple hashing
   * algorithms either don't conflict with each other in their use of the
   * data area or reset the initialized field themselves whenever required.
 - * Currently, the hashing algorithms simply have no conflicts: the first
@@ -31,6 +31,7 @@ diff -puNr glibc-2.3.3-200406160000.orig/crypt/wrapper.c glibc-2.3.3-20040616000
 +#include "crypt_freesec.h"
 +
 +#include <signal.h>
++#include <atomic.h>
 +#include <bits/libc-lock.h>
 +
 +__libc_lock_define_initialized (static, _crypt_extended_init_lock)
@@ -44,6 +45,7 @@ diff -puNr glibc-2.3.3-200406160000.orig/crypt/wrapper.c glibc-2.3.3-20040616000
 +	__libc_lock_lock(_crypt_extended_init_lock);
 +	if (!initialized) {
 +		_crypt_extended_init();
++		atomic_write_barrier();
 +		initialized = 1;
 +	}
 +	__libc_lock_unlock(_crypt_extended_init_lock);
@@ -93,7 +95,7 @@ diff -puNr glibc-2.3.3-200406160000.orig/crypt/wrapper.c glibc-2.3.3-20040616000
  	if (setting[0] == '$' && setting[1] == '2') {
  		if (_crypt_data_alloc(data, size, CRYPT_OUTPUT_SIZE))
  			return NULL;
-@@ -139,13 +179,27 @@ char *__crypt_ra(__const char *key, __co
+@@ -141,13 +183,27 @@ char *__crypt_ra(__const char *key, __co
  			return NULL;
  		return __md5_crypt_r(key, setting, (char *)*data, *size);
  	}

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.114 2010/02/20 14:52:07 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.115 2010/03/30 12:46:59 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 1.0.4
-Release: owl9
+Release: owl10
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
@@ -77,6 +77,7 @@ Patch408: glibc-2.3.2-owl-tmpfile.diff
 Patch409: glibc-2.3.3-owl-tmp-scripts.diff
 Patch410: glibc-2.3.3-owl-rpcgen-cpp.diff
 Patch411: glibc-2.3.5-owl-alt-sanitize-env.diff
+Patch412: glibc-2.3.6-owl-crypt-wb.diff
 
 Requires: /etc/nsswitch.conf
 Provides: glibc-crypt_blowfish = %crypt_bf_version, ldconfig
@@ -246,6 +247,8 @@ install -pm644 %_sourcedir/crypt_freesec.[ch] crypt/
 %patch410 -p1
 # sanitize the environment in a paranoid way
 %patch411 -p1
+# add atomic_write_barrier() before setting the UFC crypt() "initialized" flag
+%patch412 -p1
 
 # XXX: check sparcv9 builds and probably fix this.
 #%ifarch sparcv9
@@ -462,6 +465,13 @@ fi
 %endif
 
 %changelog
+* Tue Mar 30 2010 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl10
+- Added atomic_write_barrier() before setting the "initialized" flag in
+crypt/crypt_util.c: __init_des_r() (upstream code), as well as in
+crypt/wrapper.c: _crypt_extended_init_r() (Owl-specific instance of the
+same approach).  The __init_des_r() issue was reported upstream:
+http://sourceware.org/bugzilla/show_bug.cgi?id=11449
+
 * Sat Feb 20 2010 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl9
 - Corrected the sanity check of the "setting" string in _crypt_blowfish_rn() to
 reject iteration counts encoded as 36 through 39.  Previously, these would be
