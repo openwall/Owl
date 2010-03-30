@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.25 2006/04/04 00:58:54 ldv Exp $
+# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.26 2010/03/30 17:09:56 solar Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
-Version: 0.8
-Release: owl3
+Version: 0.9
+Release: owl1
 License: public domain
 Group: System Environment/Base
 Source: base
@@ -74,6 +74,9 @@ comm -3 - filelist.remove >> filelist
 %files -f filelist
 
 %changelog
+* Tue Mar 30 2010 Solar Designer <solar-at-owl.openwall.com> 0.9-owl1
+- Added /etc/skel (it was created but not owned by another package).
+
 * Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.8-owl3
 - Added x86_64 support.
 
