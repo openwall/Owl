@@ -1,13 +1,15 @@
-# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.25 2010/03/05 08:08:59 solar Exp $
+# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.26 2010/03/30 16:59:14 solar Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
 Version: 6.17.00
-Release: owl1
+Release: owl2
 License: BSD
 Group: System Environment/Shells
 URL: http://www.tcsh.org/Home
-Source: ftp://ftp.astron.com/pub/tcsh/%name-%version.tar.bz2
+Source0: ftp://ftp.astron.com/pub/tcsh/%name-%version.tar.bz2
+Source1: csh.login
+Source2: csh.cshrc
 Patch0: tcsh-6.17.00-owl-tmp.diff
 Patch1: tcsh-6.17.00-owl-config.diff
 Patch2: tcsh-6.17.00-rh-printexitvalue.diff
@@ -49,7 +51,7 @@ test -x %__perl && %__perl tcsh.man2html tcsh.man || :
 rm -rf %buildroot
 
 install -m 755 -D tcsh %buildroot%_bindir/tcsh
-install -m 644 -D tcsh.man %buildroot%_mandir/man1/tcsh.1
+install -pm 644 -D tcsh.man %buildroot%_mandir/man1/tcsh.1
 ln -sf tcsh %buildroot%_bindir/csh
 ln -sf tcsh.1 %buildroot%_mandir/man1/csh.1
 nroff -me eight-bit.me > eight-bit.txt
@@ -75,6 +77,9 @@ ru russian
 uk ukrainian
 EOF
 
+mkdir -p %buildroot/etc
+install -pm 644 %_sourcedir/csh.{login,cshrc} %buildroot/etc/
+
 %post
 fgrep -qx /bin/csh /etc/shells || echo /bin/csh >> /etc/shells
 fgrep -qx /bin/tcsh /etc/shells || echo /bin/tcsh >> /etc/shells
@@ -87,12 +92,16 @@ fi
 %files
 %defattr(-,root,root)
 %doc NewThings FAQ eight-bit.txt complete.tcsh Fixes tcsh.html
+%config(noreplace) /etc/csh.*
 %_bindir/tcsh
 %_bindir/csh
 %_mandir/*/*
 %_datadir/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
+* Tue Mar 30 2010 Solar Designer <solar-at-owl.openwall.com> 6.17.00-owl2
+- Moved /etc/csh.login and /etc/csh.cshrc from the owl-etc package to this one.
+
 * Fri Mar 05 2010 Solar Designer <solar-at-owl.openwall.com> 6.17.00-owl1
 - Reworked the -tmp patch to always use strings of the regular "char" (not
 "Char") for the temporary files directory and temporary file pathnames.

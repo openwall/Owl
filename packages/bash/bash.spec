@@ -1,20 +1,22 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.46 2010/03/22 21:28:21 solar Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.47 2010/03/30 16:59:14 solar Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
 %define bash_version 3.1
 %define bash_patchlevel 17
 Version: %bash_version.%bash_patchlevel
-Release: owl5
+Release: owl6
 Group: System Environment/Shells
 License: GPL
 # ftp://ftp.gnu.org/gnu/bash/bash-%bash_version.tar.gz
 Source0: bash-%bash_version.tar.bz2
 # ftp://ftp.gnu.org/gnu/bash/bash-doc-%bash_version.tar.gz
 Source1: bash-doc-%bash_version.tar.bz2
-Source2: dot-bashrc
-Source3: dot-bash_profile
-Source4: dot-bash_logout
+Source2: profile
+Source3: bashrc
+Source4: dot-bashrc
+Source5: dot-bash_profile
+Source6: dot-bash_logout
 Patch0: bash-3.1-up-patchlevel.diff
 Patch10: bash-3.1-owl-warnings.diff
 Patch11: bash-3.1-owl-tmp.diff
@@ -215,10 +217,12 @@ cd %buildroot
 # These conflict with real manpages
 rm .%_mandir/man1/{echo,kill,printf,pwd,test}.1
 
-mkdir -p etc/skel
-install -m 644 %_sourcedir/dot-bashrc etc/skel/.bashrc
-install -m 644 %_sourcedir/dot-bash_profile etc/skel/.bash_profile
-install -m 644 %_sourcedir/dot-bash_logout etc/skel/.bash_logout
+mkdir -p etc/{skel,profile.d}
+install -pm 644 %_sourcedir/profile etc/
+install -pm 644 %_sourcedir/bashrc etc/
+install -pm 644 %_sourcedir/dot-bashrc etc/skel/.bashrc
+install -pm 644 %_sourcedir/dot-bash_profile etc/skel/.bash_profile
+install -pm 644 %_sourcedir/dot-bash_logout etc/skel/.bash_logout
 
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
@@ -247,6 +251,9 @@ fi
 
 %files
 %defattr(-,root,root)
+%config(noreplace) /etc/profile
+%dir %attr(755,root,root) /etc/profile.d
+%config(noreplace) /etc/bashrc
 %config(noreplace) /etc/skel/.b*
 %dir %docdir
 %docdir/[A-Z]*
@@ -277,6 +284,10 @@ fi
 %docdir/txt
 
 %changelog
+* Tue Mar 30 2010 Solar Designer <solar-at-owl.openwall.com> 3.1.17-owl6
+- Moved /etc/profile, /etc/profile.d, and /etc/bashrc from the owl-etc package
+to this one.
+
 * Mon Mar 22 2010 Solar Designer <solar-at-owl.openwall.com> 3.1.17-owl5
 - Added upstream fix (introduced in 4.x) to reset the character appended to
 pathnames on completion such that it does not get stuck at '/'.

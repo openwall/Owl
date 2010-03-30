@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.71 2010/01/25 02:50:44 solar Exp $
+# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.72 2010/03/30 16:59:14 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 0.32
+Version: 0.33
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -19,11 +19,7 @@ Source21: services
 Source22: mime.types
 Source30: hosts.allow
 Source31: hosts.deny
-Source40: profile
-Source41: bashrc
-Source42: inputrc
-Source50: csh.login
-Source51: csh.cshrc
+Source40: inputrc
 Obsoletes: setup
 Provides: setup
 AutoReq: false
@@ -38,14 +34,13 @@ Initial set of configuration files to be placed into /etc.
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot/{etc/profile.d,var/log}
+mkdir -p %buildroot/var/log
 cd %buildroot
 touch etc/motd var/log/lastlog
 install -p %_sourcedir/{passwd,shadow,group,fstab} etc/
 install -p %_sourcedir/{securetty,shells,host.conf,nsswitch.conf} etc/
 install -p %_sourcedir/{protocols,services,mime.types,hosts.{allow,deny}} etc/
-install -p %_sourcedir/{profile,bashrc,inputrc} etc/
-install -p %_sourcedir/{csh.{login,cshrc}} etc/
+install -p %_sourcedir/inputrc etc/
 touch etc/{group,passwd,shadow}-
 touch etc/{hosts,mtab,resolv.conf}
 mkdir etc/sysconfig
@@ -154,13 +149,8 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %config /etc/mime.types
 %config(noreplace) /etc/hosts.allow
 %config(noreplace) /etc/hosts.deny
-%config(noreplace) /etc/profile
-%config(noreplace) /etc/bashrc
 %config /etc/inputrc
-%config(noreplace) /etc/csh.login
-%config(noreplace) /etc/csh.cshrc
 %config(noreplace) /etc/motd
-%dir %attr(755,root,root) /etc/profile.d
 %ghost /var/log/lastlog
 %ghost /etc/*-
 %attr(0644,root,root) %config(noreplace,missingok) %ghost /etc/hosts
@@ -169,6 +159,10 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %dir %attr(755,root,root) /etc/sysconfig
 
 %changelog
+* Tue Mar 30 2010 Solar Designer <solar-at-owl.openwall.com> 0.33-owl1
+- Moved profile, profile.d, bashrc, csh.login, and csh.cshrc from owl-etc to
+bash and tcsh packages as appropriate.
+
 * Mon Jan 25 2010 Solar Designer <solar-at-owl.openwall.com> 0.32-owl1
 - Added /etc/mime.types (from Apache httpd 2.2.14 with minor changes).
 
