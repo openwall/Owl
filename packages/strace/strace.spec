@@ -1,13 +1,14 @@
-# $Owl: Owl/packages/strace/strace.spec,v 1.25 2009/10/21 20:41:41 ldv Exp $
+# $Owl: Owl/packages/strace/strace.spec,v 1.26 2010/04/14 20:14:58 ldv Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
-Version: 4.5.19
+Version: 4.5.20
 Release: owl1
 License: BSD
 Group: Development/Debuggers
 URL: http://sourceforge.net/projects/strace/
 Source: http://prdownloads.sourceforge.net/%name/%name-%version.tar.bz2
+# Signature: http://prdownloads.sourceforge.net/%name/%name-%version.tar.bz2.sig
 BuildRequires: automake, autoconf
 BuildRoot: /override/%name-%version
 
@@ -52,6 +53,9 @@ rm -rf %buildroot
 %_bindir/strace-graph
 
 %changelog
+* Wed Apr 14 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.5.20-owl1
+- Updated to 4.5.20.
+
 * Wed Oct 21 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.5.19-owl1
 - Updated to 4.5.19.
 
