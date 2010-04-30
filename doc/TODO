@@ -71,12 +71,8 @@ building Owl for these architectures for a while.  Possibly this is not
 worth the time as it would delay the release.  Maybe it could be done
 post-release, for the stable branch.
 
-Obtain a faster US mirror.  The ibiblio mirror appears to be limited to
-2 Mbps per connection, which is a lot slower than downloading to the US
-from our European mirrors.  Maybe approach the kernel.org folks.
-
 Update the on-demand CD sales setup with Owl-current ISO snapshots
 shortly before making the release, to have the setup ready for being
 updated to the release.  Setup separate "products" for i686 and x86-64.
 
-$Owl: Owl/doc/TODO,v 1.186 2010/03/23 01:07:14 solar Exp $
+$Owl: Owl/doc/TODO,v 1.187 2010/04/30 13:00:02 solar Exp $
