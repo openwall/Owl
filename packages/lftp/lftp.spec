@@ -1,56 +1,40 @@
-# $Owl: Owl/packages/lftp/lftp.spec,v 1.35 2007/03/29 21:23:03 ldv Exp $
+# $Owl: Owl/packages/lftp/lftp.spec,v 1.36 2010/05/04 20:45:47 solar Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
-Version: 3.5.10
+Version: 4.0.7
 Release: owl1
-License: GPL
+License: GPLv3+
 Group: Applications/Internet
 URL: http://lftp.yar.ru
-Source0: ftp://ftp.yars.free.net/pub/source/lftp/lftp-%version.tar.bz2
-Source1: lftpget.1
-Patch0: lftp-3.4.4-owl-n-option.diff
-Patch1: lftp-3.5.9-alt-Makefile.diff
-Prefix: %_prefix
+Source: http://ftp.yars.free.net/pub/source/lftp/lftp-%version.tar.bz2
 Requires: less
 BuildRequires: openssl-devel >= 0.9.7g-owl1, readline-devel >= 0:4.3
 BuildRequires: ncurses-devel, gettext
 BuildRoot: /override/%name-%version
 
 %description
-lftp is a file retrieving tool that supports FTP and HTTP protocols under
-both IPv4 and IPv6.  lftp has an amazing set of features, while preserving
-its interface as simple and easy as possible.
-
-The main two advantages over other ftp clients are reliability and ability
-to perform tasks in background.  It will reconnect and reget the file being
-transferred if the connection broke.  You can start a transfer in background
-and continue browsing the ftp site.  It does this all in one process.  When
-you have started background jobs and feel you are done, you can just exit
-lftp and it automatically moves to nohup mode and completes the transfers.
-It also has such nice features as reput and mirror.  And it can download a
-file faster using multiple connections.
-
-lftp can also be scriptable, it can be used to mirror sites, it lets you
-copy files among remote servers (even between FTP and HTTP).  It has an
-extensive online help.  It supports bookmarks, and connecting to several
-ftp/http sites at the same time.
-
-This package also includes lftpget - a simple non-interactive tool for
-downloading files.
+lftp is sophisticated file transfer program with command-line interface.
+It supports the FTP, HTTP, HTTPS, SFTP, FISH, and BitTorrent protocols,
+advanced and obscure features of the protocols, proxy servers, automatic
+retries on non-fatal errors and timeouts, continuation of interrupted file
+transfers, mirroring, transfer rate throttling, multiple connections and
+background jobs, shell-like command syntax and comprehensive scripting,
+command-line editing (via the GNU Readline library), context-sensitive
+command completion, command history, and a lot more.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
 bzip2 -9k NEWS
 
 %build
-CC=%__cc CXX=%__cxx
-export CC CXX
 # Make sure that all message catalogs are built
 unset LINGUAS || :
-%configure --with-modules --with-openssl --with-pager=less
+%configure \
+	--with-modules --disable-static \
+	--without-gnutls --with-openssl \
+	--with-pager='exec less' \
+	--without-debug
 %__make
 
 %install
@@ -61,9 +45,7 @@ rm -rf %buildroot
 chmod a-x %buildroot%_datadir/%name/{convert-netscape-cookies,verify-file}
 
 # Remove unpackaged files
-find %buildroot%_libdir/ -type f -name '*.la' -delete
-
-install -pm644 %_sourcedir/lftpget.1 %buildroot%_mandir/man1/
+rm %buildroot%_libdir/*.la
 
 %post
 if [ ! -e %_bindir/ftp -a ! -e %_mandir/man1/ftp.1.gz ]; then
@@ -81,7 +63,8 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS BUGS COPYING FAQ FEATURES NEWS.bz2 README* THANKS TODO lftp.lsm
+%doc AUTHORS BUGS COPYING FAQ FEATURES NEWS.bz2 README README.debug-levels
+%doc THANKS TODO lftp.lsm
 %config /etc/lftp.conf
 %_bindir/*
 %_libdir/liblftp*.so*
@@ -91,6 +74,10 @@ fi
 %_datadir/locale/*/LC_MESSAGES/lftp.mo
 
 %changelog
+* Tue May 04 2010 Solar Designer <solar-at-owl.openwall.com> 4.0.7-owl1
+- Updated to 4.0.7.
+- Rewrote the description.
+
 * Thu Mar 29 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.5.10-owl1
 - Updated to 3.5.10.
 
