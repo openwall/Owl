@@ -21,9 +21,9 @@ ftp://ftp.ua.openwall.com/pub/Owl/	(Ukraine)
 ftp://ftp.linux.kiev.ua/pub/Owl/	(Ukraine)
 	http://ftp.linux.kiev.ua/pub/Owl/
 	rsync://ftp.linux.kiev.ua/pub/Owl/
-ftp://gd.tuwien.ac.at/opsys/linux/Owl/	(Austria)
-	http://gd.tuwien.ac.at/opsys/linux/Owl/
-	rsync://gd.tuwien.ac.at/opsys/linux/Owl/
+ftp://gd.tuwien.ac.at/opsys/linux/openwall/Owl/	(Austria)
+	http://gd.tuwien.ac.at/opsys/linux/openwall/Owl/
+	rsync://gd.tuwien.ac.at/opsys/linux/openwall/Owl/
 ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Germany)
 
 There's a subdirectory for each Owl release or branch, with the
@@ -82,4 +82,4 @@ Finally, the CVSweb interface is provided at:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/DOWNLOAD,v 1.44 2010/04/30 11:52:32 solar Exp $
+$Owl: Owl/doc/DOWNLOAD,v 1.45 2010/05/05 12:42:24 solar Exp $
