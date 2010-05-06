@@ -15,8 +15,6 @@ vulnerabilities ourselves.  Luckily, most are not relevant and/or not
 critical, but a few might be.  We'll see what the situation will be
 shortly before our release.)
 
-lftpget fix.
-
 Bring the documentation translations in sync with English (or drop from
 the release).  For example, translations of ARCHITECTURES are currently
 outdated as it relates to i386 vs. i686.
@@ -75,4 +73,4 @@ Update the on-demand CD sales setup with Owl-current ISO snapshots
 shortly before making the release, to have the setup ready for being
 updated to the release.  Setup separate "products" for i686 and x86-64.
 
-$Owl: Owl/doc/TODO,v 1.187 2010/04/30 13:00:02 solar Exp $
+$Owl: Owl/doc/TODO,v 1.188 2010/05/06 12:08:06 solar Exp $
