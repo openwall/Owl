@@ -69,8 +69,12 @@ building Owl for these architectures for a while.  Possibly this is not
 worth the time as it would delay the release.  Maybe it could be done
 post-release, for the stable branch.
 
+Switch the SSH client to use protocol 2 by default, finally.
+
+Consider/implement Perl Safe.pm bypass fixes (update the module?)
+
 Update the on-demand CD sales setup with Owl-current ISO snapshots
 shortly before making the release, to have the setup ready for being
 updated to the release.  Setup separate "products" for i686 and x86-64.
 
-$Owl: Owl/doc/TODO,v 1.188 2010/05/06 12:08:06 solar Exp $
+$Owl: Owl/doc/TODO,v 1.189 2010/05/22 15:26:19 solar Exp $
