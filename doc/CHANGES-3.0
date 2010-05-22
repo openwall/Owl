@@ -47,7 +47,12 @@ clarify the specific issue(s) and their severities in the description.
 	Changes made between Owl 2.0 and Owl-current.
 
 2010/05/04	Package: lftp
-Updated to 4.0.7.
+SECURITY FIX	Severity: high, remote, passive
+Updated to 4.0.7.  This changes the default behavior of lftp(1) and the
+lftpget(1) script to no longer trust and use a possible server-provided
+filename instead of the user-specified download filename.
+Reference:
+http://www.ocert.org/advisories/ocert-2010-001.html
 
 2010/04/14	Package: strace
 Updated to 4.5.20.
@@ -1196,4 +1201,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.243 2010/05/04 20:54:32 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.244 2010/05/22 15:18:54 solar Exp $
