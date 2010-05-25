@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.118 2010/02/27 17:59:24 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.119 2010/05/25 08:05:15 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.5.1
+Version: 1.7.5.2
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,6 +88,10 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Tue May 25 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.5.2-owl1
+- Optional parallelization for the OpenBSD-style Blowfish-based crypt(3)
+(bcrypt) hashes with OpenMP has been added (not enabled in the Owl package).
+
 * Sat Feb 27 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.5.1-owl1
 - Added a new numeric variable to the word mangling rules engine: "p" for
 position of the character last found with the "/" or "%" commands.
