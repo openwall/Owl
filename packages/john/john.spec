@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.119 2010/05/25 08:05:15 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.120 2010/06/11 22:47:26 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.5.2
+Version: 1.7.5.3
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,6 +88,12 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Fri Jun 11 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.5.3-owl1
+- A more suitable version of 32-bit x86 assembly code for Blowfish is now
+chosen on Core i7 and similar CPUs (when they happen to run a 32-bit build).
+- Many other changes to the source code that should not affect the Owl
+package in a significant way were made (these are documented in doc/CHANGES).
+
 * Tue May 25 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.5.2-owl1
 - Optional parallelization for the OpenBSD-style Blowfish-based crypt(3)
 (bcrypt) hashes with OpenMP has been added (not enabled in the Owl package).
