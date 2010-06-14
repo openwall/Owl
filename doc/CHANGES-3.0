@@ -46,6 +46,10 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/06/14	Package: john
+Updated to 1.7.6, including usability improvements relevant to the Owl
+package of John the Ripper.
+
 2010/06/07	Package: tcb
 Updated to 1.0.6.
 
@@ -1204,4 +1208,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.245 2010/06/08 08:50:43 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.246 2010/06/14 03:50:11 solar Exp $
