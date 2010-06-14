@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.121 2010/06/13 01:47:12 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.122 2010/06/14 02:39:36 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.5.4
+Version: 1.7.6
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,7 +88,7 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Sun Jun 13 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.5.4-owl1
+* Mon Jun 14 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.6-owl1
 - Generic crypt(3) support (enabled with "--format=crypt") has been added for
 auditing password hash types supported by the system but not yet supported by
 John's own optimized cryptographic routines.
@@ -96,6 +96,10 @@ John's own optimized cryptographic routines.
 chosen on Core i7 and similar CPUs (when they happen to run a 32-bit build).
 - The loader will now detect password hashes specified on a line on their own,
 not only as part of an /etc/passwd or PWDUMP format file.
+- When run in "--stdin" mode and reading candidate passwords from a terminal
+(to be typed by the user), John will no longer mess with the terminal settings.
+- John will now restore terminal settings not only on normal termination or
+interrupt, but also when forcibly interrupted with two Ctrl-C keypresses.
 - Many other changes to the source code that should not yet affect the Owl
 package in a significant way were made (these are documented in doc/CHANGES).
 
