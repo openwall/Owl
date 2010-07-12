@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.122 2010/06/14 02:39:36 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.123 2010/07/12 02:37:42 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.6
+Version: 1.7.6.1
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,6 +88,12 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Jul 12 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.6.1-owl1
+- Corrected a logic error introduced in JtR 1.7.4.2: in "single crack" mode,
+we need a salt's key buffer even when we have no words corresponding to that
+salt's hashes to base candidate passwords on.  We need this buffer to hold
+other salts' successful guesses for testing against this salt's hashes.
+
 * Mon Jun 14 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.6-owl1
 - Generic crypt(3) support (enabled with "--format=crypt") has been added for
 auditing password hash types supported by the system but not yet supported by
