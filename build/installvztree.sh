@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installvztree.sh,v 1.2 2010/02/06 14:20:38 solar Exp $
+# $Owl: Owl/build/installvztree.sh,v 1.3 2010/07/17 19:22:14 solar Exp $
 
 set -e
 
@@ -43,7 +43,7 @@ cd $HOME
 rmdir -- "$ROOT"
 mkdir -m 755 -- "$ROOT"
 
-FORCE_ROOT="$ROOT" "$HOME/native/$BRANCH/build/installworld.sh"
+FORCE_ROOT="$ROOT" KERNEL_FAKE=yes "$HOME/native/$BRANCH/build/installworld.sh"
 
 mkdir -p logs
 exec 3>&1
@@ -67,13 +67,3 @@ tmpfs		/tmp			tmpfs	nosuid,nodev		0 0
 EOF
 sed -i 's|^[0-9].*mingetty.*tty|#&|' inittab
 echo 'GATEWAYDEV=venet0' > sysconfig/network
-
-log "Installing kernel headers"
-chown -h root:root "$ROOT/usr/src"
-cd "$ROOT/usr/src"
-mkdir linux
-cd linux
-cp -a "$HOME/kernel-work/include" .
-cd "$ROOT/usr/src"
-chown -hR sources:sources .
-chmod -R u=rwX,go=rX .
