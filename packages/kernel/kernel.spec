@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.23 2010/07/17 18:19:32 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.24 2010/07/17 19:43:19 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -75,6 +75,11 @@ cp -a include/{linux,asm,asm-generic,asm-%_arch} \
 %if %BUILD_MODULES
 INSTALL_MOD_PATH=%buildroot %__make modules_install
 %endif
+
+# Remove possible symlinks (or we'd follow them and overwrite files at their
+# destination, which is usually undesired).
+%pre headers
+rm -f %_includedir/{linux,asm,asm-generic,asm-%_arch}
 
 %files
 %defattr(-,root,root)
