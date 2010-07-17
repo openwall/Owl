@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installworld.sh,v 1.32 2010/01/28 16:57:05 solar Exp $
+# $Owl: Owl/build/installworld.sh,v 1.33 2010/07/17 19:28:03 solar Exp $
 
 . installworld.conf
 
@@ -180,6 +180,9 @@ while read PACKAGES; do
 		if [ "$PACKAGE" = owl-cdrom -a "$MAKE_CDROM" != yes ]; then
 			log "Skipping $PACKAGE"
 			continue
+		fi
+		if [ "$PACKAGE" = kernel -a "$KERNEL_FAKE" != no ]; then
+			PACKAGE=kernel-fake
 		fi
 		if [ "$NEED_FAKE" != yes ]; then
 			case "$PACKAGE" in
