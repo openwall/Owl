@@ -15,20 +15,14 @@ vulnerabilities ourselves.  Luckily, most are not relevant and/or not
 critical, but a few might be.  We'll see what the situation will be
 shortly before our release.)
 
+Finalize RPM'ing of the kernel - testing, documentation updates.
+
 Bring the documentation translations in sync with English (or drop from
 the release).  For example, translations of ARCHITECTURES are currently
 outdated as it relates to i386 vs. i686.
 
 
 	Desirable before the next release.
-
-RPM'ed and modular kernel.  We have outgrown the stage of being a "do it
-yourself" system, so it makes sense to have our default kernel RPM'ed,
-finally.  Also, our kernels barely fit on 2.88 MB "floppies" now, which
-means that soon we'll have to start building kernel modules by default
-(and it'd be better to have those in an RPM subpackage), or switch to
-"non-emulated" CD boots (maybe this would be a good thing to do anyway,
-for modern machines?), or fully drop features from default kernel builds.
 
 Start using initrd on our CDs - autodetect CD/DVD drive location, wait
 for USB - or consider alternatives to initrd that would achieve the same.
@@ -77,4 +71,4 @@ Update the on-demand CD sales setup with Owl-current ISO snapshots
 shortly before making the release, to have the setup ready for being
 updated to the release.  Setup separate "products" for i686 and x86-64.
 
-$Owl: Owl/doc/TODO,v 1.189 2010/05/22 15:26:19 solar Exp $
+$Owl: Owl/doc/TODO,v 1.190 2010/07/19 20:46:27 solar Exp $
