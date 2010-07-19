@@ -31,7 +31,6 @@ following contents:
 
 native.tar.gz		CVS tree (our software, patches, build specs)
 sources			source tree (original tarballs to be patched)
-kernel			kernel sources and recommended patches
 Owl.mtree		mtree(8) specification of the above
 i?86, sparc*, alpha*	Owl binary packages
 iso			ISO-9660 images of Owl CDs (live + installable)
@@ -50,7 +49,7 @@ http://www.openwall.com/signatures/
 All of our official CDs and downloadable ISO images include a complete
 live system (usable right off the CD), packages to be installed on a
 hard drive (using the included installer program called "settle"), and
-full source code ("native", "sources", and "kernel").
+full source code ("native" and "sources").
 
 Unless you've opted for the CD or ISO image, you will always need to
 download the CVS tree, -- even if you choose to install binary packages
@@ -82,4 +81,4 @@ Finally, the CVSweb interface is provided at:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/DOWNLOAD,v 1.45 2010/05/05 12:42:24 solar Exp $
+$Owl: Owl/doc/DOWNLOAD,v 1.46 2010/07/19 20:53:22 solar Exp $

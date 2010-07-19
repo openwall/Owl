@@ -31,7 +31,6 @@ ftp://ftp.ibiblio.org/pub/linux/distributions/openwall/Owl/	(США)
 
 native.tar.gz		дерево CVS (программы, наши изменения, сборка)
 sources			исходные архивы (без наших изменений)
-kernel			исходные тексты ядра и рекомендуемые обновления
 Owl.mtree		спецификация mtree(8) для вышеуказанного
 i?86, sparc*, alpha*	готовые (бинарные) пакеты Owl
 iso			ISO-9660 образы компакт-дисков Owl
@@ -74,4 +73,4 @@ CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
 
 Интерфейс CVSweb доступен по адресу http://cvsweb.openwall.com
 
-$Owl: Owl/doc/ru/DOWNLOAD,v 1.33 2010/05/05 12:42:25 solar Exp $
+$Owl: Owl/doc/ru/DOWNLOAD,v 1.34 2010/07/19 20:53:22 solar Exp $

@@ -30,7 +30,6 @@ contenus suivants :
 
 native.tar.gz		l'arbre CVS (nos logiciels, patches, specs de compil)
 sources			l'arbre des sources (archives originales à patcher)
-kernel			les sources du noyau et les patches recommandés
 Owl.mtree		les spécifications mtree(8) pour ci-dessus
 i?86, sparc*, alpha*	les paquets binaires Owl
 iso			les images ISO-9660 des CD Owl
@@ -70,4 +69,4 @@ utiliser la compression avec chaque méthode d'accès au serveur CVS anonyme,
 typiquement en spécifiant l'option -z3 à CVS et/ou "Compression yes" dans le
 fichier de configuration du client SSH.
 
-$Owl: Owl/doc/fr/DOWNLOAD,v 1.28 2010/05/05 12:42:25 solar Exp $
+$Owl: Owl/doc/fr/DOWNLOAD,v 1.29 2010/07/19 20:53:22 solar Exp $
