@@ -1,4 +1,4 @@
-# $Owl: Owl/build/Makefile,v 1.28 2010/01/28 16:57:05 solar Exp $
+# $Owl: Owl/build/Makefile,v 1.29 2010/07/19 20:40:27 solar Exp $
 
 # The Owl branch to build and/or install, specified by its tag in the
 # CVS.  This should only be set to build and/or install a non-current
@@ -27,9 +27,6 @@ buildworld: symlinks
 installworld: symlinks
 	native/$(BRANCH)/build/installworld.sh
 
-buildkernel: symlinks
-	BRANCH=$(BRANCH) native/$(BRANCH)/build/buildkernel.sh
-
 installisotree: symlinks
 	BRANCH=$(BRANCH) native/$(BRANCH)/build/installisotree.sh
 
@@ -52,9 +49,8 @@ clean:
 	test -d RPMS && rm -f RPMS/* || :
 	test -d SRPMS && rm -f SRPMS/* || :
 	test -d archives && rm -f archives/* || :
-	test -d kernel-work && rm -rf kernel-work || :
 
 .PHONY: default checkout symlinks
-.PHONY: buildworld installworld buildkernel installisotree iso iso.gz
+.PHONY: buildworld installworld installisotree iso iso.gz
 .PHONY: installvztree vztemplate
 .PHONY: setup clean
