@@ -73,16 +73,6 @@ new versions of software already in Owl.
 
 	Native (re-)builds.
 
-You need to have a Linux kernel headers tree or a configured Linux
-kernel tree in /usr/src/linux.  Please use the kernel version supplied
-with your branch/version of Owl.  Currently, this would be a 2.6 OpenVZ
-kernel.  If you rebuild the userland with kernel headers of another
-version, a few packages might not build and others might have runtime
-dependencies different from those of our official builds.  A proper
-kernel headers tree is already in place on the live CD systems on our
-official ISOs (yes, you may rebuild the Owl userland while CD-booted),
-and our installer offers to copy it to systems being installed.
-
 As user "build", change directory to /usr/src/world and type:
 
 	make clean && make buildworld
@@ -119,4 +109,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Owl: Owl/doc/BUILD,v 1.41 2009/11/28 02:56:21 solar Exp $
+$Owl: Owl/doc/BUILD,v 1.42 2010/07/19 20:57:03 solar Exp $
