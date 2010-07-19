@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.51 2010/03/22 18:16:29 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.52 2010/07/19 19:50:21 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 1.8
+Version: 1.9
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -90,6 +90,9 @@ fi
 %dir /owl
 
 %changelog
+* Mon Jul 19 2010 Solar Designer <solar-at-owl.openwall.com> 1.9-owl1
+- Updated for RPM'ed kernel.
+
 * Mon Mar 22 2010 Solar Designer <solar-at-owl.openwall.com> 1.8-owl1
 - Updated the configs for 2.6.18-164.15.1.el5.028stab068.5-owl1.
 - Use rootdelay=10 with the non-ide label to allow for booting off USB devices.

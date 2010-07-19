@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.89 2009/05/27 14:42:34 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.90 2010/07/19 19:55:46 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 1.1.13
+Version: 1.2.0
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -34,6 +34,9 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
+* Mon Jul 19 2010 Solar Designer <solar-at-owl.openwall.com> 1.2.0-owl1
+- Updated for RPM'ed kernel.
+
 * Wed May 27 2009 Solar Designer <solar-at-owl.openwall.com> 1.1.13-owl1
 - In calls to variadic functions expecting (const char *) arguments terminated
 with a null pointer, use (const char *)0 rather than just 0 to indicate the end
