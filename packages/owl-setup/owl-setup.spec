@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.90 2010/07/19 19:55:46 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.91 2010/07/19 20:17:46 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -36,6 +36,7 @@ rm -rf %buildroot
 %changelog
 * Mon Jul 19 2010 Solar Designer <solar-at-owl.openwall.com> 1.2.0-owl1
 - Updated for RPM'ed kernel.
+- Added ext4 filesystem support.
 
 * Wed May 27 2009 Solar Designer <solar-at-owl.openwall.com> 1.1.13-owl1
 - In calls to variadic functions expecting (const char *) arguments terminated

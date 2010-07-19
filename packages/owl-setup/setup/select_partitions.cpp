@@ -25,10 +25,11 @@ static void mount_at(OwlInstallInterface *the_iface,
 
     pm->AddItem("ext2", "Format as ext2 filesystem");
     pm->AddItem("ext3", "Format as ext3 filesystem");
+    pm->AddItem("ext4", "Format as ext4 filesystem");
     pm->AddItem("no", "Don't format it, try to mount now");
     pm->AddItem("q", "Quit/cancel");
 
-    pm->SetDefault("ext3");
+    pm->SetDefault("ext4");
 
     ScriptVariable choice = pm->Run();
     delete pm;
@@ -47,16 +48,16 @@ static void mount_at(OwlInstallInterface *the_iface,
         if(!r) return;
     }
 
-    bool format_success = true;
-    if(choice == "ext2" || choice == "ext3") {
+    ScriptVariable fstype = "";
+    if(choice == "ext2" || choice == "ext3" || choice == "ext4") {
         the_iface->ExecWindow("Executing mkfs...");
         ExecAndWait e(the_config->MkfsPath(choice).c_str(), part.c_str(), (const char *)0);
         the_iface->CloseExecWindow();
-        format_success = e.Success();
-    }
-    if(!format_success) {
-        the_iface->Message("Formatting failed");
-        return;
+        if(!e.Success()) {
+            the_iface->Message("Formatting failed");
+            return;
+        }
+        fstype = choice;
     }
 
     ScriptVariable mp(the_config->OwlRoot());
@@ -84,13 +85,25 @@ static void mount_at(OwlInstallInterface *the_iface,
     chmod(mp.c_str(), 0700);
     sync();
     the_iface->ExecWindow("Executing mount...");
-    ExecAndWait mnt(the_config->MountPath().c_str(),
-                    part.c_str(), mp.c_str(), (const char *)0);
-    the_iface->CloseExecWindow();
-
-    if(!mnt.Success()) {
-        the_iface->Message("Mount failed");
+    if (fstype == "") {
+        ExecAndWait mnt(the_config->MountPath().c_str(),
+                        part.c_str(), mp.c_str(), (const char *)0);
+/*
+ * For an ext4 filesystem, the kernel happens to try ext3 instead and fail.
+ * So if we didn't know the fs type for sure, just try ext4 next.
+ */
+        if (!mnt.Success())
+            fstype = "ext4";
     }
+    if (fstype != "") {
+        ExecAndWait mnt(the_config->MountPath().c_str(),
+                        "-t", fstype.c_str(),
+                        part.c_str(), mp.c_str(), (const char *)0);
+        the_iface->CloseExecWindow();
+        if (!mnt.Success())
+            the_iface->Message("Mount failed");
+    } else
+        the_iface->CloseExecWindow();
 }
 
 static void add_mount(OwlInstallInterface *the_iface,
