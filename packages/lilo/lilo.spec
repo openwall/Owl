@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/lilo/lilo.spec,v 1.30 2009/05/27 14:51:44 solar Exp $
+# $Owl: Owl/packages/lilo/lilo.spec,v 1.31 2010/07/19 19:46:28 solar Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
 Version: 22.8
-Release: owl2
+Release: owl3
 License: MIT
 Group: System Environment/Base
 URL: http://lilo.go.dyndns.org/pub/linux/lilo/
@@ -73,7 +73,7 @@ timeout=50
 menu-title="Openwall GNU/*/Linux boot menu"
 menu-scheme=kw:Wb:kw:kw
 
-image=/boot/bzImage
+image=/boot/vmlinuz
 	label=linux
 EOF
 
@@ -122,6 +122,10 @@ fi
 %_mandir/*/*
 
 %changelog
+* Mon Jul 19 2010 Solar Designer <solar-at-owl.openwall.com> 22.8-owl3
+- In the sample config file, call the kernel image vmlinuz, not bzImage, for
+consistency with our RPM'ed kernels.
+
 * Wed May 27 2009 Solar Designer <solar-at-owl.openwall.com> 22.8-owl2
 - Added menu-title and menu-scheme settings to the sample lilo.conf.
 
