@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.52 2010/07/19 19:50:21 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.53 2010/07/19 20:35:53 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -9,10 +9,8 @@ Group: System Environment/Base
 Source0: rc.ramdisk
 Source1: welcome-cdrom.sh
 Source10: lilo.conf
-Source11: dot-config-i686
-Source12: dot-config-x86_64
-Source13: floppy-update.sh
-Source14: message
+Source11: floppy-update.sh
+Source12: message
 Requires: owl-startup >= 0.15-owl1
 ExclusiveArch: %ix86 x86_64
 BuildRoot: /override/%name-%version
@@ -32,11 +30,6 @@ install -m 755 %_sourcedir/welcome-cdrom.sh etc/profile.d/
 install -m 600 %_sourcedir/lilo.conf etc/lilo.conf.bootcd
 install -m 700 %_sourcedir/floppy-update.sh boot/
 install -m 600 %_sourcedir/message boot/
-%ifarch x86_64
-install -m 644 %_sourcedir/dot-config-x86_64 boot/config
-%else
-install -m 644 %_sourcedir/dot-config-i686 boot/config
-%endif
 ln -s ../rom/{dev,etc,home,root,tmp,var,world} ram/
 
 %pre
@@ -82,7 +75,6 @@ fi
 %config /etc/rc.d/rc.ramdisk
 %config /etc/profile.d/welcome-cdrom.sh
 %config /etc/lilo.conf.bootcd
-%config /boot/config
 /boot/floppy-update.sh
 /boot/message
 %dir /rom
