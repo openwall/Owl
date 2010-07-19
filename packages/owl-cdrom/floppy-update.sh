@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-cdrom/Attic/floppy-update.sh,v 1.8 2009/11/21 22:16:25 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/Attic/floppy-update.sh,v 1.9 2010/07/19 19:50:21 solar Exp $
 
 set -e
 
@@ -15,6 +15,6 @@ mkdir -m 700 /mnt/floppy/boot
 if [ -e boot.b ]; then
 	cp -p boot.b /mnt/floppy/boot/
 fi
-cp -p bzImage message /mnt/floppy/boot/
+cp -pP vmlinuz* message /mnt/floppy/boot/
 
 /sbin/lilo -C ../etc/lilo.conf.bootcd

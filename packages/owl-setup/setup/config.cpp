@@ -244,13 +244,13 @@ ScriptVariable OwlInstallConfig::NetworkSysconf() const
 
 
 ScriptVariable OwlInstallConfig::DefaultKernel() const
-{ return "/boot/bzImage"; }
+{ return "/boot/vmlinuz"; }
 
 ScriptVariable OwlInstallConfig::DefaultKernelMap() const
 { return "/boot/System.map"; }
 
 ScriptVariable OwlInstallConfig::TargetKernel() const
-{ return root+"/boot/bzImage"; }
+{ return root+"/boot/vmlinuz"; }
 
 ScriptVariable OwlInstallConfig::TargetKernelMap() const
 { return root+"/boot/System.map"; }

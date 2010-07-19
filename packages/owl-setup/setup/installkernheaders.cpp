@@ -1,4 +1,4 @@
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(KERNEL_COPY) && (defined(__i386__) || defined(__x86_64__))
 
 #include <stdio.h>
 #include <stdlib.h>

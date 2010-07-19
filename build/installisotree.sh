@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installisotree.sh,v 1.11 2010/01/28 18:14:19 solar Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.12 2010/07/19 19:43:06 solar Exp $
 
 set -e
 
@@ -43,7 +43,7 @@ cd $HOME
 rmdir -- "$ROOT"
 mkdir -m 755 -- "$ROOT"
 
-MAKE_CDROM=yes "$HOME/native/$BRANCH/build/installworld.sh"
+MAKE_CDROM=yes KERNEL_FAKE=no "$HOME/native/$BRANCH/build/installworld.sh"
 
 mkdir -p logs
 exec 3>&1
@@ -56,10 +56,14 @@ chroot "$ROOT" rpm -e man-pages-posix bind-doc bash-doc cvs-doc pam-doc db4-doc 
 
 log "Installing kernel"
 cd "$ROOT/boot"
-install -pm644 -oroot -groot "$HOME"/kernel-work/boot/* .
+# Should match exactly one file
+KERNEL_NAME="`echo vmlinuz-*`"
+ln -s "$KERNEL_NAME" vmlinuz
 chroot "$ROOT" sh -c 'cd /boot && ./floppy-update.sh'
-rm bzImage
-ln -s floppy/boot/bzImage
+# We'll mount the floppy image when CD-booted, so there's no need to keep a
+# second copy of the kernel image outside of the floppy image.
+rm "$KERNEL_NAME"
+ln -s floppy/boot/"$KERNEL_NAME"
 mkdir -m700 floppy
 
 log "Updating config files"
@@ -69,20 +73,7 @@ echo -e '/boot/floppy.image /boot/floppy\t\text2\tloop,ro\t\t\t0 0' >> fstab
 sed -i 's|^\(~~:S:wait:\).*|\1/bin/bash --login|' inittab
 sed -i 's/^\(DISK_QUOTA=\)yes$/\1no/' vz/vz.conf
 
-log "Installing kernel source"
-cd "$ROOT/usr/src"
-cp -rpL "$HOME/kernel" .
-chown -hR sources:sources kernel
-chmod -R u=rwX,go=rX kernel
-
-log "Installing kernel headers"
-mkdir linux
-cd linux
-cp -a "$HOME/kernel-work/include" .
-chown -hR sources:sources .
-chmod -R u=rwX,go=rX .
-
-log "Installing userspace sources"
+log "Installing sources"
 cd "$ROOT/rom/world"
 tar -cf- --owner=build --group=sources --exclude Root -C "$HOME" \
 	"native/$BRANCH" Makefile |

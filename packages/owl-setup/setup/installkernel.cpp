@@ -39,6 +39,14 @@ void install_kernel_and_lilo(OwlInstallInterface *the_iface)
                       || boot_dev == OwlInstallInterface::qs_eof)
         return;
 
+#ifndef KERNEL_COPY
+/* RPM'ed kernel - only copy the symlink */
+    the_iface->ExecWindow("Symlinking the default kernel...");
+    ExecAndWait(the_config->CpPath().c_str(),
+                "-pP",
+                the_config->DefaultKernel().c_str(),
+                the_config->TargetKernel().c_str(), (const char *)0);
+#else
     the_iface->ExecWindow("Copying files...");
     ExecAndWait(the_config->CpPath().c_str(),
                 the_config->DefaultKernel().c_str(),
@@ -46,6 +54,7 @@ void install_kernel_and_lilo(OwlInstallInterface *the_iface)
     ExecAndWait(the_config->CpPath().c_str(),
                 the_config->DefaultKernelMap().c_str(),
                 the_config->TargetKernelMap().c_str(), (const char *)0);
+#endif
     the_iface->CloseExecWindow();
 
     FILE* f = fopen(the_config->LiloconfFile().c_str(), "w");
@@ -64,7 +73,7 @@ void install_kernel_and_lilo(OwlInstallInterface *the_iface)
             "menu-title=\"Openwall GNU/*/Linux boot menu\"\n"
             "menu-scheme=kw:Wb:kw:kw\n"
             "\n"
-            "image=/boot/bzImage\n"
+            "image=/boot/vmlinuz\n"
             "\tlabel=linux\n",
             boot_dev.c_str(),
             root_dev.c_str());

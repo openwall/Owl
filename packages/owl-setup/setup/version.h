@@ -1,3 +1,3 @@
 #ifndef SETUP_VERSION
-#define SETUP_VERSION "1.1.13"
+#define SETUP_VERSION "1.2.0"
 #endif
