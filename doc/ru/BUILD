@@ -67,7 +67,6 @@ Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			14:00
 
 	(Пере-)сборка Owl.
 
-Вам потребуется сконфигурированное ядро Linux 2.6 в /usr/src/linux.
 Как пользователь "build", перейдите в /usr/src/world и наберите:
 
 	make clean && make buildworld
@@ -105,4 +104,4 @@ native/Owl/build в /usr/src/world. Предварительно следует удалить
 (SRPM), собираемых с помощью системы сборки Owl, вам следует также
 указать в названии номер версии.
 
-$Owl: Owl/doc/ru/BUILD,v 1.15 2010/03/23 01:04:13 solar Exp $
+$Owl: Owl/doc/ru/BUILD,v 1.16 2010/07/19 20:59:42 solar Exp $
