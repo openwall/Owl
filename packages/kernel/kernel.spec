@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.25 2010/07/17 21:11:03 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.26 2010/07/20 14:51:04 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 194.8.1.el5.028stab070.2
-Release: %ovzversion.owl1
+Release: %ovzversion.owl2
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab070.2
@@ -52,7 +52,8 @@ satisfy possible dependencies of other packages.
 cp %_sourcedir/dot-config-%_target_cpu .config
 
 %build
-yes '' | %__make oldconfig
+#yes '' | %__make oldconfig
+%__make nonint_oldconfig
 %__make bzImage
 %if %BUILD_MODULES
 %__make modules
@@ -101,5 +102,11 @@ done
 %files fake
 
 %changelog
+* Tue Jul 20 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.8.1.el5.028stab070.2.owl2
+- Fixed a bug in drivers/dca/Kconfig that prevented CONFIG_DCA from being set
+to "y" when module support is enabled.
+- Made assorted changes to the kernel configs.
+
+G
 * Sat Jul 17 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.8.1.el5.028stab070.2.owl1
 - RPM'ed the kernel in a way allowing for easy non-RPM'ed builds as well.
