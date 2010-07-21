@@ -1,12 +1,12 @@
 diff -urp linux-2.6.18-194.8.1.el5.028stab070.2/Makefile linux-2.6.18-194.8.1.el5.028stab070.2-owl/Makefile
 --- linux-2.6.18-194.8.1.el5.028stab070.2/Makefile	2010-07-08 16:01:53 +0000
-+++ linux-2.6.18-194.8.1.el5.028stab070.2-owl/Makefile	2010-07-20 14:00:37 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.2-owl/Makefile	2010-07-21 17:45:11 +0000
 @@ -1,7 +1,7 @@
  VERSION = 2
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -194.8.1.el5.028stab070.2
-+EXTRAVERSION = -194.8.1.el5.028stab070.2.owl2
++EXTRAVERSION = -194.8.1.el5.028stab070.2.owl3
  RHEL_MAJOR = 5
  RHEL_MINOR = 5
  NAME=Avast! A bilge rat!
@@ -68,6 +68,185 @@ diff -urp linux-2.6.18-194.8.1.el5.028stab070.2/arch/x86_64/Kconfig linux-2.6.18
  	depends on PCI && !X86_64_XEN
  	help
  	  Support for full DMA access of devices with 32bit memory access only
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.2/drivers/ata/Kconfig linux-2.6.18-194.8.1.el5.028stab070.2-owl/drivers/ata/Kconfig
+--- linux-2.6.18-194.8.1.el5.028stab070.2/drivers/ata/Kconfig	2010-07-08 16:01:25 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.2-owl/drivers/ata/Kconfig	2010-07-21 17:48:59 +0000
+@@ -445,8 +445,10 @@ config PATA_MARVELL
+ 	tristate "Marvell PATA support via legacy mode"
+ 	depends on PCI
+ 	help
+-	  This option enables limited support for the Marvell 88SE6145 ATA
+-	  controller.
++	  This option enables limited support for the Marvell 88SE61xx ATA
++	  controllers. If you wish to use only the SATA ports then select
++	  the AHCI driver alone. If you wish to use the PATA port or both
++	  SATA and PATA include this driver.
+ 
+ 	  If unsure, say N.
+ 
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.2/drivers/ata/ahci.c linux-2.6.18-194.8.1.el5.028stab070.2-owl/drivers/ata/ahci.c
+--- linux-2.6.18-194.8.1.el5.028stab070.2/drivers/ata/ahci.c	2010-07-08 16:01:42 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.2-owl/drivers/ata/ahci.c	2010-07-21 17:47:07 +0000
+@@ -616,6 +616,15 @@ module_param(ahci_em_messages, int, 0444
+ MODULE_PARM_DESC(ahci_em_messages,
+ 	"Set AHCI Enclosure Management Message type (0 = disabled, 1 = LED");
+ 
++#if defined(CONFIG_PATA_MARVELL) || defined(CONFIG_PATA_MARVELL_MODULE)
++static int marvell_enable;
++#else
++static int marvell_enable = 1;
++#endif
++module_param(marvell_enable, int, 0644);
++MODULE_PARM_DESC(marvell_enable, "Marvell SATA via AHCI (1 = enabled)");
++
++
+ static inline int ahci_nr_ports(u32 cap)
+ {
+ 	return (cap & 0x1f) + 1;
+@@ -735,6 +744,8 @@ static void ahci_save_initial_config(str
+ 			   "MV_AHCI HACK: port_map %x -> %x\n",
+ 			   port_map,
+ 			   port_map & mv);
++		dev_printk(KERN_ERR, &pdev->dev,
++			  "Disabling your PATA port on the Marvell SATA/PATA controller, which is unsupported by the AHCI driver. Use the boot option 'ahci.marvell_enable=0' to avoid this and let the likely slower Marvell PATA driver take over, supporting both SATA and PATA ports.\n");
+ 
+ 		port_map &= mv;
+ 	}
+@@ -2568,6 +2579,15 @@ static int ahci_init_one(struct pci_dev 
+ 	if (!printed_version++)
+ 		dev_printk(KERN_DEBUG, &pdev->dev, "version " DRV_VERSION "\n");
+ 
++	/* The AHCI driver can only drive the SATA ports, the PATA driver
++	   can drive them all so if both drivers are selected make sure
++	   AHCI stays out of the way */
++	if (pdev->vendor == PCI_VENDOR_ID_MARVELL && !marvell_enable) {
++		dev_printk(KERN_ERR, &pdev->dev,
++			  "Skipping the Marvell SATA/PATA controller in order to let the Marvell PATA driver take over. Use the boot option 'ahci.marvell_enable=1' to avoid this, likely gaining a bit of performance but losing support for your PATA port.\n");
++		return -ENODEV;
++	}
++
+ 	/* acquire resources */
+ 	rc = pcim_enable_device(pdev);
+ 	if (rc)
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.2/drivers/ata/pata_marvell.c linux-2.6.18-194.8.1.el5.028stab070.2-owl/drivers/ata/pata_marvell.c
+--- linux-2.6.18-194.8.1.el5.028stab070.2/drivers/ata/pata_marvell.c	2010-07-08 16:01:25 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.2-owl/drivers/ata/pata_marvell.c	2010-07-21 17:44:34 +0000
+@@ -5,7 +5,7 @@
+  *	isn't making full use of the device functionality but it is
+  *	easy to get working.
+  *
+- *	(c) 2006 Red Hat  <alan@redhat.com>
++ *	(c) 2006 Red Hat
+  */
+ 
+ #include <linux/kernel.h>
+@@ -20,29 +20,30 @@
+ #include <linux/ata.h>
+ 
+ #define DRV_NAME	"pata_marvell"
+-#define DRV_VERSION	"0.1.4"
++#define DRV_VERSION	"0.1.6"
+ 
+ /**
+- *	marvell_pre_reset	-	check for 40/80 pin
+- *	@link: link
+- *	@deadline: deadline jiffies for the operation
++ *	marvell_pata_active	-	check if PATA is active
++ *	@pdev: PCI device
+  *
+- *	Perform the PATA port setup we need.
++ *	Returns 1 if the PATA port may be active. We know how to check this
++ *	for the 6145 but not the other devices
+  */
+ 
+-static int marvell_pre_reset(struct ata_link *link, unsigned long deadline)
++static int marvell_pata_active(struct pci_dev *pdev)
+ {
+-	struct ata_port *ap = link->ap;
+-	struct pci_dev *pdev = to_pci_dev(ap->host->dev);
++	int i;
+ 	u32 devices;
+ 	void __iomem *barp;
+-	int i;
+ 
+-	/* Check if our port is enabled */
++	/* We don't yet know how to do this for other devices */
++	if (pdev->device != 0x6145)
++		return 1;	
+ 
+ 	barp = pci_iomap(pdev, 5, 0x10);
+ 	if (barp == NULL)
+ 		return -ENOMEM;
++
+ 	printk("BAR5:");
+ 	for(i = 0; i <= 0x0F; i++)
+ 		printk("%02X:%02X ", i, ioread8(barp + i));
+@@ -51,9 +52,27 @@ static int marvell_pre_reset(struct ata_
+ 	devices = ioread32(barp + 0x0C);
+ 	pci_iounmap(pdev, barp);
+ 
+-	if ((pdev->device == 0x6145) && (ap->port_no == 0) &&
+-	    (!(devices & 0x10)))	/* PATA enable ? */
+-		return -ENOENT;
++	if (devices & 0x10)
++		return 1;
++	return 0;
++}
++
++/**
++ *	marvell_pre_reset	-	probe begin
++ *	@link: link
++ *	@deadline: deadline jiffies for the operation
++ *
++ *	Perform the PATA port setup we need.
++ */
++
++static int marvell_pre_reset(struct ata_link *link, unsigned long deadline)
++{
++	struct ata_port *ap = link->ap;
++	struct pci_dev *pdev = to_pci_dev(ap->host->dev);
++
++	if (pdev->device == 0x6145 && ap->port_no == 0 &&
++		!marvell_pata_active(pdev))	/* PATA enable ? */
++			return -ENOENT;
+ 
+ 	return ata_sff_prereset(link, deadline);
+ }
+@@ -107,8 +126,8 @@ static int marvell_init_one (struct pci_
+ 	static const struct ata_port_info info = {
+ 		.flags		= ATA_FLAG_SLAVE_POSS,
+ 
+-		.pio_mask	= 0x1f,
+-		.mwdma_mask	= 0x07,
++		.pio_mask	= ATA_PIO4,
++		.mwdma_mask	= ATA_MWDMA2,
+ 		.udma_mask 	= ATA_UDMA5,
+ 
+ 		.port_ops	= &marvell_ops,
+@@ -117,8 +136,8 @@ static int marvell_init_one (struct pci_
+ 		/* Slave possible as its magically mapped not real */
+ 		.flags		= ATA_FLAG_SLAVE_POSS,
+ 
+-		.pio_mask	= 0x1f,
+-		.mwdma_mask	= 0x07,
++		.pio_mask	= ATA_PIO4,
++		.mwdma_mask	= ATA_MWDMA2,
+ 		.udma_mask 	= ATA_UDMA6,
+ 
+ 		.port_ops	= &marvell_ops,
+@@ -128,6 +147,12 @@ static int marvell_init_one (struct pci_
+ 	if (pdev->device == 0x6101)
+ 		ppi[1] = &ata_dummy_port_info;
+ 
++#if defined(CONFIG_SATA_AHCI) || defined(CONFIG_SATA_AHCI_MODULE)
++	if (!marvell_pata_active(pdev)) {
++		printk(KERN_INFO DRV_NAME ": PATA port not active, deferring to AHCI driver.\n");
++		return -ENODEV;
++	}
++#endif
+ 	return ata_pci_sff_init_one(pdev, ppi, &marvell_sht, NULL);
+ }
+ 
 diff -urp linux-2.6.18-194.8.1.el5.028stab070.2/drivers/char/keyboard.c linux-2.6.18-194.8.1.el5.028stab070.2-owl/drivers/char/keyboard.c
 --- linux-2.6.18-194.8.1.el5.028stab070.2/drivers/char/keyboard.c	2010-07-08 16:01:51 +0000
 +++ linux-2.6.18-194.8.1.el5.028stab070.2-owl/drivers/char/keyboard.c	2010-07-15 11:07:35 +0000
