@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.26 2010/07/20 14:51:04 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.27 2010/07/21 18:19:52 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 194.8.1.el5.028stab070.2
-Release: %ovzversion.owl2
+Release: %ovzversion.owl3
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab070.2
@@ -102,11 +102,16 @@ done
 %files fake
 
 %changelog
+* Wed Jul 21 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.8.1.el5.028stab070.2.owl3
+- Backported the AHCI vs. Marvell PATA driver co-existence fixes from 2.6.34.1,
+made the corresponding messages more verbose.
+- Implemented support of root=/dev/cdrom - a magic root device that corresponds
+to the first CD drive with a valid filesystem (maybe of a specified type).
+
 * Tue Jul 20 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.8.1.el5.028stab070.2.owl2
 - Fixed a bug in drivers/dca/Kconfig that prevented CONFIG_DCA from being set
 to "y" when module support is enabled.
 - Made assorted changes to the kernel configs.
 
-G
 * Sat Jul 17 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.8.1.el5.028stab070.2.owl1
 - RPM'ed the kernel in a way allowing for easy non-RPM'ed builds as well.
