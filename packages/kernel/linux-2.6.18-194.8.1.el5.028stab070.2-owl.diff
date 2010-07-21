@@ -410,7 +410,7 @@ diff -urp linux-2.6.18-194.8.1.el5.028stab070.2/init/do_mounts.c linux-2.6.18-19
 +				if (retries-- <= 0)
 +					return err;
 +				printk(KERN_INFO "Retrying in 1 sec...\n");
-+				ssleep(root_delay);
++				ssleep(1);
 +				goto retry;
 +			}
 +			realname[8]++;
