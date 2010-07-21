@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installisotree.sh,v 1.12 2010/07/19 19:43:06 solar Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.13 2010/07/21 18:45:25 solar Exp $
 
 set -e
 
@@ -65,6 +65,10 @@ chroot "$ROOT" sh -c 'cd /boot && ./floppy-update.sh'
 rm "$KERNEL_NAME"
 ln -s floppy/boot/"$KERNEL_NAME"
 mkdir -m700 floppy
+
+# depmod is normally run on bootup, but /lib/modules is read-only on CD
+log "Pre-generating kernel module dependencies"
+chroot "$ROOT" sh -c 'depmod `cd /lib/modules && echo 2.6.*`'
 
 log "Updating config files"
 cd "$ROOT/etc"
