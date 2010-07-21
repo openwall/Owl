@@ -349,6 +349,93 @@ diff -urp linux-2.6.18-194.8.1.el5.028stab070.2/include/linux/dmar.h linux-2.6.1
  static inline int alloc_irte(struct intel_iommu *iommu, int irq, u16 count)
  {
  	return -1;
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.2/init/do_mounts.c linux-2.6.18-194.8.1.el5.028stab070.2-owl/init/do_mounts.c
+--- linux-2.6.18-194.8.1.el5.028stab070.2/init/do_mounts.c	2006-09-20 03:42:06 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.2-owl/init/do_mounts.c	2010-07-21 17:54:16 +0000
+@@ -13,6 +13,10 @@
+ #include <linux/nfs_fs_sb.h>
+ #include <linux/nfs_mount.h>
+ 
++#ifdef CONFIG_BLK_DEV_IDECD
++#include <linux/ide.h>
++#endif
++
+ #include "do_mounts.h"
+ 
+ extern int get_filesystem_list(char * buf);
+@@ -267,10 +271,62 @@ static void __init get_fs_names(char *pa
+ 
+ static int __init do_mount_root(char *name, char *fs, int flags, void *data)
+ {
+-	int err = sys_mount(name, "/root", fs, flags, data);
++	int err = -ENODEV;
++
++	if (!strcmp(saved_root_name, "/dev/cdrom")) {
++		char realname[10];
++#ifdef CONFIG_BLK_DEV_IDECD
++		int h, unit;
++		for (h = 0; h < MAX_HWIFS; h++) {
++			ide_hwif_t *hwif = &ide_hwifs[h];
++			if (!hwif->present)
++				continue;
++			for (unit = 0; unit < MAX_DRIVES; unit++) {
++				ide_drive_t *drive = &hwif->drives[unit];
++				if (!drive->present ||
++				    drive->media != ide_cdrom)
++					continue;
++				snprintf(realname, sizeof(realname),
++				    "/dev/%s", drive->name);
++				printk(KERN_INFO "Trying to mount %s...\n",
++				    realname);
++				create_dev(name, MKDEV(hwif->major, unit));
++				err = sys_mount(name, "/root", fs, flags, data);
++				if (!err)
++					goto ok;
++			}
++		}
++#endif
++#ifdef CONFIG_BLK_DEV_SR
++		strcpy(realname, "/dev/scd0");
++		while (realname[8] < '8') {
++			int retries = root_delay;
++retry:
++			printk(KERN_INFO "Trying to mount %s...\n", realname);
++			if (retries == root_delay)
++				create_dev(name,
++				    MKDEV(SCSI_CDROM_MAJOR, realname[8] - '0'));
++			err = sys_mount(name, "/root", fs, flags, data);
++			if (!err)
++				goto ok;
++			if (err == -ENXIO || err == -ENODEV) {
++				if (retries-- <= 0)
++					return err;
++				printk(KERN_INFO "Retrying in 1 sec...\n");
++				ssleep(root_delay);
++				goto retry;
++			}
++			realname[8]++;
++		}
++#endif
++		return err;
++	}
++
++	err = sys_mount(name, "/root", fs, flags, data);
+ 	if (err)
+ 		return err;
+ 
++ok:
+ 	sys_chdir("/root");
+ 	ROOT_DEV = current->fs->pwdmnt->mnt_sb->s_dev;
+ 	printk("VFS: Mounted root (%s filesystem)%s.\n",
+@@ -397,7 +453,7 @@ void __init prepare_namespace(void)
+ {
+ 	int is_floppy;
+ 
+-	if (root_delay) {
++	if (root_delay && strcmp(saved_root_name, "/dev/cdrom")) {
+ 		printk(KERN_INFO "Waiting %dsec before mounting root device...\n",
+ 		       root_delay);
+ 		ssleep(root_delay);
 diff -urp linux-2.6.18-194.8.1.el5.028stab070.2/init/do_mounts_md.c linux-2.6.18-194.8.1.el5.028stab070.2-owl/init/do_mounts_md.c
 --- linux-2.6.18-194.8.1.el5.028stab070.2/init/do_mounts_md.c	2006-09-20 03:42:06 +0000
 +++ linux-2.6.18-194.8.1.el5.028stab070.2-owl/init/do_mounts_md.c	2007-10-03 03:57:50 +0000
