@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.53 2010/07/19 20:35:53 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.54 2010/07/21 18:35:02 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 1.9
+Version: 1.10
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -82,6 +82,10 @@ fi
 %dir /owl
 
 %changelog
+* Wed Jul 21 2010 Solar Designer <solar-at-owl.openwall.com> 1.10-owl1
+- Added a new LILO boot target called "autodetect" (making use of the new
+"root=/dev/cdrom" feature of our kernel patch) and made it the default.
+
 * Mon Jul 19 2010 Solar Designer <solar-at-owl.openwall.com> 1.9-owl1
 - Updated for RPM'ed kernel.
 
