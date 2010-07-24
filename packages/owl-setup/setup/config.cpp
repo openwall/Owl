@@ -186,26 +186,42 @@ OwlInstallConfig::PresetSetfontCombinations() const
         PLEASE PLEASE report it to us!
      */
     static PresetFontItem the_table[] = {
-            // from http://linuxgazette.net/issue91/loozzr.html
-        { "lat1-16", 0, "cp437", "Default (cp437, looks like latin1)" },
+            // Wikipedia says that all characters from ISO 8859-1 (Latin 1) are
+            // included in CP850, but we do need a translation table...
+        { "default8x16", "cp850_to_uni.trans", "cp850_to_iso01.trans", "Western European ISO-8859-1 8x16 (25 lines)" },
+        { "default8x9", "cp850_to_uni.trans", "cp850_to_iso01.trans", "Western European ISO-8859-1 8x9 (44 lines)" },
 
 #if 0
-            // from AltLinux
+            // from http://linuxgazette.net/issue91/loozzr.html
+            //    disabled: doesn't fully work as advertised in the article
+        { "lat1-16", 0, "cp437", "Default (cp437, looks like latin1)" },
+#endif
+
+#if 0
+            // from ALT Linux
             //    disabled: our version of kbd doesn't contain the font
         { "UniCyr_8x16",  0, "koi8-r", "Cyrillic koi8-r, using UniCyr" },
 #endif
 
             // recommended by Gremlin
-        { "koi8r-8x16", "koi8-r_to_uni.trans",  0,   "Cyrillic koi8-r" },
+        { "koi8r-8x16", "koi8-r_to_uni.trans", "koi8-r_to_uni.trans", "Cyrillic koi8-r 8x16 (25 lines)" },
 
-            // the one from Owl CD /README file
+            // Revisions of the above
+        { "koi8r-8x14", "koi8-r_to_uni.trans", "koi8-r_to_uni.trans", "Cyrillic koi8-r 8x14 (28 lines)" },
+        { "koi8r-8x8", "koi8-r_to_uni.trans", "koi8-r_to_uni.trans", "Cyrillic koi8-r 8x8 (50 lines)" },
+
+#if 0
+            // These legacy settings would result in no line drawing chars
+
+            // the one from old Owl CD /README file
         { "koi8r-8x16", "/lib/kbd/unimaps/iso01",  0,
-                                         "Cyrillic koi8-r Owl default" },
+                                         "Cyrillic koi8-r Owl old default" },
 
             // legacy is from older Linux distros
         { "alt-8x16", 0, "koi2alt", "Cyrillic koi8-r legacy (with koi2alt)" },
         { "alt-8x14", 0, "koi2alt", "Cyrillic koi8-r legacy, 28 lines" },
         { "alt-8x8",  0, "koi2alt", "Cyrillic koi8-r legacy, 50 lines" },
+#endif
 
         { 0, 0, 0, 0 }
     };
