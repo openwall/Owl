@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.8 2006/02/12 10:58:32 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.9 2010/07/24 21:26:17 solar Exp $
 
 CD=/.Owl-CD-ROM
 VERSION=
@@ -17,8 +17,14 @@ unset CD VERSION
 
 test "`id -u`" = "0" || return 0
 
+QO='"'
+QC='"'
+if test -c /dev/stdout; then
+	QO=`echo -en '\033[1m'`
+	QC=`echo -en '\033[0m'`
+fi
+
 WORLD=/usr/src/world
-KERNEL=/usr/src/kernel
 DOC="`echo $WORLD/native/Owl*/doc | sed 's/^.* \([^ ]*\)$/\1/'`"
 
 HAVE_SRCS=
@@ -29,11 +35,11 @@ test -d $WORLD/RPMS && HAVE_RPMS=yes
 if [ -n "$HAVE_SRCS" -o -n "$HAVE_RPMS" ]; then
 	cd $WORLD
 
-	echo -n 'The Owl userland '
+	echo -n 'The Owl '
 	if [ -n "$HAVE_SRCS" -a -n "$HAVE_RPMS" ]; then
-		echo -n 'sources and binary packages'
+		echo -n 'source code and binary packages'
 	elif [ -n "$HAVE_SRCS" ]; then
-		echo -n 'sources'
+		echo -n 'source code'
 	else
 		echo -n 'binary packages'
 	fi
@@ -42,29 +48,21 @@ if [ -n "$HAVE_SRCS" -o -n "$HAVE_RPMS" ]; then
 	echo
 fi
 
-if [ -d $KERNEL ]; then
-	echo -n "The kernel sources and recommended patches"
-	echo " may be found under $KERNEL:"
-	ls -x $KERNEL
-	echo
-fi
-
 if [ -d $DOC ]; then
 	echo "There's documentation under $DOC:"
 	ls -x -I CVS $DOC
 	if [ -d $DOC/ru ]; then
+		alias setcyrfont='setfont -u koi8-r_to_uni.trans -m koi8-r_to_uni.trans koi8r-8x16 && export LC_CTYPE=ru_RU.KOI8-R'
 		echo
-		echo "To browse Russian documentation, set Cyrillic font with:"
-		echo -n "setfont -u /lib/kbd/unimaps/iso01 koi8r-8x16"
-		echo " && export LC_CTYPE=ru_RU.KOI8-R"
+		echo "To browse the Russian documentation, type ${QO}setcyrfont${QC} to set a Cyrillic font."
 	fi
 	echo
 fi
 
-unset WORLD KERNEL DOC HAVE_SRCS HAVE_RPMS
+unset WORLD DOC HAVE_SRCS HAVE_RPMS
 
-echo 'Type "settle" to install Owl on a hard disk.'
-echo -n 'Type "setup" to configure the live CD system, '
-echo 'then "exit" the shell to boot.'
+echo "Type ${QO}settle${QC} to install Owl on hard disk(s). -OR-"
+echo -n "Type ${QO}setup${QC} to configure the live CD system, "
+echo "then ${QO}exit${QC} the shell to boot."
 echo 'Please refer to INSTALL for more information.'
 echo
