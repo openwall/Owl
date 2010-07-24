@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.54 2010/07/21 18:35:02 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.55 2010/07/24 21:29:28 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 1.10
+Version: 1.11
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -82,6 +82,21 @@ fi
 %dir /owl
 
 %changelog
+* Sat Jul 24 2010 Solar Designer <solar-at-owl.openwall.com> 1.11-owl1
+- Dropped most LILO boot targets, leaving only two: "normal" and "rescue"
+(new names for what was previously known as "autodetect" and "custom").
+- Reduced the LILO menu timeout from 60 to 5 seconds.
+- Updated the boot menu message to reflect the changes to the menu items.
+- Increased the rootdelay= setting from 10 to 30 seconds now that its
+meaning is slightly different with our magic root=/dev/cdrom setting (it's
+the maximum number of 1-second retries, not an initial delay anymore).
+- Revised welcome-cdrom.sh in numerous ways: don't bother looking for kernel
+sources (they won't be found in a separate "top level" directory anymore),
+refer to the source code tree without calling it "userland" (now that it
+contains the kernel as well), provide simpler and more correct instructions
+for setting a Cyrillic font (now via a shell alias), use highlighting of
+command names (instead of double-quotes) when outputting to a terminal.
+
 * Wed Jul 21 2010 Solar Designer <solar-at-owl.openwall.com> 1.10-owl1
 - Added a new LILO boot target called "autodetect" (making use of the new
 "root=/dev/cdrom" feature of our kernel patch) and made it the default.
