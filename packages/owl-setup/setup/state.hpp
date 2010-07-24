@@ -30,8 +30,10 @@ bool root_password_set();
 bool fstab_contains_root();
 bool timezone_selected();
 bool network_configured();
+#if defined(KERNEL_COPY) && (defined(__i386__) || defined(__x86_64__))
 bool can_install_kheaders();
 bool kheaders_installed();
+#endif
 bool kernel_installed();
 
 bool minimal_install_ready();

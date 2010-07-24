@@ -219,6 +219,8 @@ bool network_configured()
     return FileStat(the_config->NetworkSysconf().c_str()).Exists();
 }
 
+#if defined(KERNEL_COPY) && (defined(__i386__) || defined(__x86_64__))
+
 bool can_install_kheaders()
 {
     return
@@ -232,6 +234,8 @@ bool kheaders_installed()
     return FileStat((the_config->KernelHeadersTarget()+
                     the_config->KernelHeadersDirName()).c_str()).Exists();
 }
+
+#endif
 
 bool kernel_installed()
 {
