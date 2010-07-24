@@ -351,7 +351,7 @@ static void configure_screen_font_preset(OwlInstallInterface *the_iface,
     ScriptVector v;
     const OwlInstallConfig::PresetFontItem *presets =
         the_config->PresetSetfontCombinations();
-    hc->AddItem("* NONE *", 0, true);
+    hc->AddItem("Do not override this machine's default font", 0, true);
     for(int i=0; presets[i].comment; i++)
         hc->AddItem(presets[i].comment, presets+i);
     ScriptVector r;
