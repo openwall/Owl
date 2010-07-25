@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/modutils/modutils.spec,v 1.26 2006/10/30 23:17:13 ldv Exp $
+# $Owl: Owl/packages/modutils/modutils.spec,v 1.27 2010/07/25 23:52:54 solar Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
 Version: 2.4.27
-Release: owl4
+Release: owl5
 License: GPL
 Group: System Environment/Kernel
 Source0: ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.4/modutils-%version.tar.bz2
@@ -86,11 +86,13 @@ rm -rf %buildroot
 mkdir -p %buildroot/sbin
 %makeinstall sbindir=%buildroot/sbin
 
+touch %buildroot/etc/modules.conf
+
 %post
 if [ -x /etc/rc.d/init.d/kerneld ]; then
 	/sbin/chkconfig --del kerneld
 fi
-if [ -f /etc/conf.modules -a ! -f /etc/modules.conf ]; then
+if [ -f /etc/conf.modules -a ! -s /etc/modules.conf ]; then
 	mv -f /etc/conf.modules /etc/modules.conf
 fi
 
@@ -99,8 +101,14 @@ fi
 %doc CREDITS ChangeLog.bz2 README TODO example/kallsyms.c include/kallsyms.h
 /sbin/*
 %_mandir/*/*
+/etc/modules.conf
 
 %changelog
+* Mon Jul 26 2010 Solar Designer <solar-at-owl.openwall.com> 2.4.27-owl5
+- Install an empty /etc/modules.conf to make "depmod -A" work right (otherwise
+it'd always assume that the dependencies are out of date), as well as to have
+the file owned by this package.
+
 * Mon Oct 30 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.4.27-owl4
 - Fixed check for verbose flag in insmod, patch from Alexander Kanevskiy.
 - Imported Debian patch that fixes build with recent versions of flex and gcc.
