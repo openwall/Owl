@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.91 2010/07/19 20:17:46 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.92 2010/07/25 00:02:14 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 1.2.0
+Version: 1.2.1
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -34,6 +34,12 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
+* Sun Jul 25 2010 Solar Designer <solar-at-owl.openwall.com> 1.2.1-owl1
+- Disabled several problematic console font/map presets, and introduced more
+correct and tested ones instead.
+- Renamed the menu item for no font/map preset from "* NONE *" to
+"Do not override this machine's default font".
+
 * Mon Jul 19 2010 Solar Designer <solar-at-owl.openwall.com> 1.2.0-owl1
 - Updated for RPM'ed kernel.
 - Added ext4 filesystem support.
