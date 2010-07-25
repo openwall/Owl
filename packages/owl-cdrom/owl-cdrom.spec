@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.55 2010/07/24 21:29:28 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.56 2010/07/25 00:11:58 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
@@ -95,7 +95,9 @@ sources (they won't be found in a separate "top level" directory anymore),
 refer to the source code tree without calling it "userland" (now that it
 contains the kernel as well), provide simpler and more correct instructions
 for setting a Cyrillic font (now via a shell alias), use highlighting of
-command names (instead of double-quotes) when outputting to a terminal.
+command names (instead of double-quotes) when outputting to a terminal, set
+LC_CTYPE=en_US by default (sufficient for browsing the German and French
+documentation translations).
 
 * Wed Jul 21 2010 Solar Designer <solar-at-owl.openwall.com> 1.10-owl1
 - Added a new LILO boot target called "autodetect" (making use of the new

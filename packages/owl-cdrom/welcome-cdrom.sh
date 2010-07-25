@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.9 2010/07/24 21:26:17 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.10 2010/07/25 00:11:58 solar Exp $
 
 CD=/.Owl-CD-ROM
 VERSION=
@@ -14,6 +14,10 @@ echo 'http://www.openwall.com/Owl/'
 echo
 
 unset CD VERSION
+
+if [ -z "$LC_CTYPE" -a -z "$LC_ALL" -a -z "$LANG" ]; then
+	export LC_CTYPE=en_US
+fi
 
 test "`id -u`" = "0" || return 0
 
@@ -66,3 +70,5 @@ echo -n "Type ${QO}setup${QC} to configure the live CD system, "
 echo "then ${QO}exit${QC} the shell to boot."
 echo 'Please refer to INSTALL for more information.'
 echo
+
+unset QO QC
