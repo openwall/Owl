@@ -153,6 +153,8 @@ static void use_tmpfs(OwlInstallInterface *the_iface)
         the_iface->Message("Mount failed");
     }
 
+#if 0
+    // /var/tmp is now a symlink by default (in owl-hier)
     ScriptVariable vt(the_config->OwlRoot() + "/var/tmp");
     FileStat vartmp(vt.c_str(), false /* no symlink dereference */);
     if(!vartmp.Exists() || !vartmp.IsSymlink()) {
@@ -189,6 +191,7 @@ static void use_tmpfs(OwlInstallInterface *the_iface)
             }
         }
     }
+#endif
 }
 
 void unmount_all(OwlInstallInterface *the_iface)
