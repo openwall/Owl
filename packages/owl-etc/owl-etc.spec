@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.74 2010/03/30 17:28:23 solar Exp $
+# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.75 2010/07/26 02:05:03 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 0.33
+Version: 0.34
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -159,6 +159,9 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %dir %attr(755,root,root) /etc/sysconfig
 
 %changelog
+* Mon Jul 26 2010 Solar Designer <solar-at-owl.openwall.com> 0.34-owl1
+- Added an fstab line for sysfs, with "noauto".
+
 * Tue Mar 30 2010 Solar Designer <solar-at-owl.openwall.com> 0.33-owl1
 - Moved profile, bashrc, csh.login, and csh.cshrc from owl-etc to the bash and
 tcsh packages as appropriate.

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.94 2010/07/26 01:19:24 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.95 2010/07/26 02:13:43 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -46,6 +46,7 @@ that the file inherits permissions of the original zoneinfo file (without this
 change, the file's mode would be umask-dependent if the file is created rather
 than overwritten by us).
 - Don't use "nosuid" in fstab if the mount point ends in "/bin" or "/sbin".
+- Added an fstab line for sysfs, with "noauto".
 
 * Mon Jul 19 2010 Solar Designer <solar-at-owl.openwall.com> 1.2.0-owl1
 - Updated for RPM'ed kernel.

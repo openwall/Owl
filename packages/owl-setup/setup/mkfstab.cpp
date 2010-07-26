@@ -27,6 +27,7 @@ static void generate_standard_fstab(
     ScriptVariable entry_proc("proc\t\t/proc\t\t\tproc\tgid=110\t\t\t0 0");
     ScriptVariable entry_devpts(
                     "devpts\t\t/dev/pts\t\tdevpts\tgid=5,mode=620\t\t0 0");
+    ScriptVariable entry_sysfs("sysfs\t\t/sys\t\t\tsysfs\tnoauto\t\t\t0 0");
     ScriptVariable entry_cdrom(
          "/dev/cdrom\t/mnt/cdrom\t\tiso9660\tnoauto,nosuid,owner,ro\t0 0");
     ScriptVariable entry_floppy(
@@ -38,11 +39,14 @@ static void generate_standard_fstab(
         ScriptVariable line;
         while(fstab.ReadLine(line)) {
             ScriptVector entry(line, " \t\r\n");
-            if(entry[0] == "proc")
+            if(entry[2] == "proc")
                 entry_proc = line;
             else
-            if(entry[0] == "devpts")
+            if(entry[2] == "devpts")
                 entry_devpts = line;
+            else
+            if(entry[2] == "sysfs")
+                entry_sysfs = line;
             else
             if(entry[0] == "/dev/cdrom" && entry[1] == "/mnt/cdrom")
                 entry_cdrom = line;
@@ -96,6 +100,7 @@ static void generate_standard_fstab(
 
     fputs(entry_proc  .c_str(), f); fputc('\n', f);
     fputs(entry_devpts.c_str(), f); fputc('\n', f);
+    fputs(entry_sysfs .c_str(), f); fputc('\n', f);
     fputs(entry_cdrom .c_str(), f); fputc('\n', f);
     fputs(entry_floppy.c_str(), f); fputc('\n', f);
 
