@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.25 2010/07/26 01:53:01 solar Exp $
+# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.26 2010/07/26 13:02:51 solar Exp $
 
 repair_fs()
 {
@@ -9,7 +9,7 @@ repair_fs()
 	echo '*** You now have the opportunity to enter a shell and run fsck'
 	echo '*** manually; the system will reboot when you leave the shell.'
 	echo
-	PS1='(Repair filesystem)# ' sulogin
+	PS1='(Repair filesystem)# ' sulogin &> /dev/tty
 	if [ $? -lt 64 -o $? -gt 66 ]; then
 		echo 'Unmounting filesystems'
 		umount -a

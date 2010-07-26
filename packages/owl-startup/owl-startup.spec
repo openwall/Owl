@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.79 2010/07/26 01:53:01 solar Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.80 2010/07/26 13:02:51 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -168,6 +168,8 @@ fi
 
 %changelog
 * Mon Jul 26 2010 Solar Designer <solar-at-owl.openwall.com> 0.36-owl1
+- Connect sulogin's stdout & stderr back to its controlling terminal to
+temporarily bypass logsave (fix suggested by Pavel Kankovsky).
 - Disable the console screensaver such that datacenter staff may see the last
 console messages without connecting a keyboard or even if the system freezes
 (and would not respond to keystrokes).
