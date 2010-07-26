@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installvztree.sh,v 1.3 2010/07/17 19:22:14 solar Exp $
+# $Owl: Owl/build/installvztree.sh,v 1.4 2010/07/26 23:20:01 solar Exp $
 
 set -e
 
@@ -63,7 +63,6 @@ rm ssh/ssh_host_*
 log "Updating config files"
 cat >> fstab << EOF
 simfs		/			simfs	defaults		0 0
-tmpfs		/tmp			tmpfs	nosuid,nodev		0 0
 EOF
 sed -i 's|^[0-9].*mingetty.*tty|#&|' inittab
 echo 'GATEWAYDEV=venet0' > sysconfig/network

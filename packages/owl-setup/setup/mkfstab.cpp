@@ -24,6 +24,8 @@ static ScriptVariable fs_options(ScriptVariable mpoint)
 static void generate_standard_fstab(
     OwlInstallInterface *the_iface, bool scan_std_lines = true)
 {
+    ScriptVariable entry_tmpfs(
+                        "tmpfs\t\t/tmp\t\t\ttmpfs\t\tnosuid,nodev\t\t0 0");
     ScriptVariable entry_proc("proc\t\t/proc\t\t\tproc\tgid=110\t\t\t0 0");
     ScriptVariable entry_devpts(
                     "devpts\t\t/dev/pts\t\tdevpts\tgid=5,mode=620\t\t0 0");
@@ -39,13 +41,16 @@ static void generate_standard_fstab(
         ScriptVariable line;
         while(fstab.ReadLine(line)) {
             ScriptVector entry(line, " \t\r\n");
-            if(entry[2] == "proc")
+            if(entry[1] == "/tmp")
+                entry_tmpfs = line;
+            else
+            if(entry[1] == "/proc")
                 entry_proc = line;
             else
-            if(entry[2] == "devpts")
+            if(entry[1] == "/dev/pts")
                 entry_devpts = line;
             else
-            if(entry[2] == "sysfs")
+            if(entry[1] == "/sys")
                 entry_sysfs = line;
             else
             if(entry[0] == "/dev/cdrom" && entry[1] == "/mnt/cdrom")
@@ -74,6 +79,9 @@ static void generate_standard_fstab(
         if(dirs[i] == "/")
             pri = 1;
 
+        if(dirs[i] == "/tmp")
+            entry_tmpfs = "";
+
         fprintf(f, "%s%s%s\t\t\t%s\t%s\t\t%d %d\n",
                    parts[i].c_str(),
                        parts[i].Length() < 8 ? "\t\t" : "\t",
@@ -98,6 +106,9 @@ static void generate_standard_fstab(
         );
     }
 
+    if (entry_tmpfs != "") {
+        fputs(entry_tmpfs.c_str(), f); fputc('\n', f);
+    }
     fputs(entry_proc  .c_str(), f); fputc('\n', f);
     fputs(entry_devpts.c_str(), f); fputc('\n', f);
     fputs(entry_sysfs .c_str(), f); fputc('\n', f);

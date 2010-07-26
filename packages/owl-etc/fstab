@@ -1,3 +1,4 @@
+tmpfs		/tmp			tmpfs	nosuid,nodev		0 0
 proc		/proc			proc	gid=110			0 0
 devpts		/dev/pts		devpts	gid=5,mode=620		0 0
 sysfs		/sys			sysfs	noauto			0 0

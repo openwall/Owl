@@ -127,6 +127,11 @@ static void add_mount(OwlInstallInterface *the_iface,
     mount_at(the_iface, part, mp);
 }
 
+/*
+ * The use of tmpfs is now the default in both owl-etc and mkfstab.cpp, yet it
+ * makes some sense to also mount tmpfs here for use during the install as well
+ * as to display it in the mounted filesystems list.
+ */
 static void use_tmpfs(OwlInstallInterface *the_iface)
 {
     ScriptVariable mp(the_config->OwlRoot() + "/tmp");
@@ -144,13 +149,13 @@ static void use_tmpfs(OwlInstallInterface *the_iface)
     chmod(mp.c_str(), 01777);
 
     sync();
-    the_iface->ExecWindow("Executing mount...");
+    the_iface->ExecWindow(ScriptVariable("Executing mount on ") + mp + " ...");
     ExecAndWait mnt(the_config->MountPath().c_str(),
                     "tmpfs", "-t", "tmpfs", mp.c_str(), (const char *)0);
     the_iface->CloseExecWindow();
 
     if(!mnt.Success()) {
-        the_iface->Message("Mount failed");
+        the_iface->Message(ScriptVariable("Mount of ") + mp + " failed");
     }
 
 #if 0
@@ -333,7 +338,10 @@ void select_and_mount_partitions(OwlInstallInterface *the_iface)
                 mount_unlisted(the_iface, true);
             } else
                 mount_at(the_iface, choice, "/");
+            use_tmpfs(the_iface);
         } else {
+            if(!mountpoint_mounted(the_config->OwlRoot()+"/tmp"))
+                use_tmpfs(the_iface);
             ScriptVector parts;
             enumerate_available_partitions(parts);
             IfaceSingleChoice *pm = the_iface->CreateSingleChoice();
@@ -346,8 +354,10 @@ void select_and_mount_partitions(OwlInstallInterface *the_iface)
                                            parts[i].c_str()));
             }
             pm->AddItem("n", "Mount uNlisted partition");
+#if 0
             if(!mountpoint_mounted(the_config->OwlRoot()+"/tmp"))
                 pm->AddItem("t", "Use tmpfs for /tmp");
+#endif
             pm->AddItem("u", "Unmount all, select another root");
             pm->AddItem("q", "Done, return to main menu");
             if(parts.Length()>0) {
@@ -369,8 +379,10 @@ void select_and_mount_partitions(OwlInstallInterface *the_iface)
                 unmount_all(the_iface);
             else if(choice=="v")
                 view_tree(the_iface);
+#if 0
             else if(choice=="t")
                 use_tmpfs(the_iface);
+#endif
             else add_mount(the_iface, choice);
         }
     }

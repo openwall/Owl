@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.97 2010/07/26 03:40:27 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.98 2010/07/26 23:20:01 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -49,6 +49,7 @@ change, the file's mode would be umask-dependent if the file is created rather
 than overwritten by us).
 - Don't use "nosuid" in fstab if the mount point ends in "/bin" or "/sbin".
 - Added an fstab line for sysfs, with "noauto".
+- Always mount a tmpfs on /tmp.
 - Disabled the /var/tmp symlinking code (/var/tmp is now a symlink by default
 in the new owl-hier).
 
