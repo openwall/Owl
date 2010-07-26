@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.95 2010/07/26 02:13:43 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.96 2010/07/26 03:18:46 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -35,6 +35,8 @@ rm -rf %buildroot
 
 %changelog
 * Mon Jul 26 2010 Solar Designer <solar-at-owl.openwall.com> 1.2.1-owl1
+- Attempt to guess the boot device name (from the root device name) and offer
+that as the default.
 - Disabled several problematic console font/map presets, and introduced more
 correct and tested ones instead.
 - Renamed the menu item for no font/map preset from "* NONE *" to

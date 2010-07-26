@@ -30,10 +30,16 @@ void install_kernel_and_lilo(OwlInstallInterface *the_iface)
         return;
     }
 
-    the_iface->Notice("Now choose what device will hold your boot loader\n"
-                      "(e.g., /dev/hda for the first IDE disk).");
+    the_iface->Notice("Now choose what device will hold your boot loader - "
+                      "typically /dev/sda for\n"
+                      "the first SATA/SCSI/SAS disk or hardware RAID array or "
+                      "/dev/hda for the first\n"
+                      "IDE disk.");
     ScriptVariable boot_dev =
-        the_iface->QueryString("What is your boot device?", false);
+        root_dev.HasPrefix("/dev/md") ? root_dev :
+        (root_dev.HasPrefix("/dev/hd") ? "/dev/hda" : "/dev/sda");
+    boot_dev =
+        the_iface->QueryString("What is your boot device?", boot_dev, false);
     the_iface->ClearNotices();
     if(boot_dev == "" || boot_dev == OwlInstallInterface::qs_cancel
                       || boot_dev == OwlInstallInterface::qs_eof)
