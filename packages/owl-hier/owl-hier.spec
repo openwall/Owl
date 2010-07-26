@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.28 2010/07/26 02:02:13 solar Exp $
+# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.29 2010/07/26 03:49:49 solar Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
@@ -35,7 +35,8 @@ if [ %_lib != lib ]; then
 	mkdir -m755 %_lib .%_libdir usr/X11R6/%_lib
 	mv lib/security %_lib
 fi
-ln -s ../var/tmp usr/tmp
+ln -s ../tmp usr/tmp
+ln -s ../tmp var/tmp
 ln -s ../X11R6/bin .%_bindir/X11
 ln -s ../X11R6/include/X11 .%_includedir/X11
 ln -s ../X11R6/lib/X11 .%_libdir/X11
