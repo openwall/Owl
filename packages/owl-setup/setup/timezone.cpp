@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
@@ -50,7 +51,8 @@ void select_timezone(OwlInstallInterface *the_iface)
         path += "/";
         path += res.Join("/");
         the_iface->ExecWindow("Copying zone file");
-        ExecAndWait cp(the_config->CpPath().c_str(),
+        unlink(the_config->ZoneinfoFile().c_str());
+        ExecAndWait cp(the_config->CpPath().c_str(), "-p",
                        path.c_str(),
                        the_config->ZoneinfoFile().c_str(),
                        (const char *)0);
