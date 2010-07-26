@@ -15,7 +15,9 @@ static ScriptVariable fs_options(ScriptVariable mpoint)
 {
     if(mpoint == "/") return "defaults";
     if(mpoint == "/dev") return "nosuid";
-    if(mpoint == "/usr") return "nodev";
+    if(mpoint == "/usr" ||
+       mpoint.HasSuffix("/bin") ||
+       mpoint.HasSuffix("/sbin")) return "nodev";
     return "nosuid,nodev";
 }
 
