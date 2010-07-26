@@ -79,6 +79,9 @@ static void generate_standard_fstab(
         if(dirs[i] == "/tmp")
             entry_tmpfs = "";
 
+        if(dirs[i] == "/proc" || dirs[i] == "/dev/pts" || dirs[i] == "/sys")
+            continue;
+
         fprintf(f, "%s%s%s\t\t\t%s\t%s\t\t%d %d\n",
                    parts[i].c_str(),
                        parts[i].Length() < 8 ? "\t\t" : "\t",
