@@ -72,12 +72,9 @@ static void generate_standard_fstab(
     ScriptVector dirs, parts, types;
     enumerate_owl_dirs3(dirs, parts, types);
     for(int i=0; i<dirs.Length(); i++) {
-        int pri = 2;
-        if(parts[i] == "tmpfs")
-            pri = 0;
-        else
-        if(dirs[i] == "/")
-            pri = 1;
+        int pri = 0;
+        if(parts[i].HasPrefix("/"))
+            pri = (dirs[i] == "/") ? 1 : 2;
 
         if(dirs[i] == "/tmp")
             entry_tmpfs = "";
