@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.77 2010/07/26 00:02:39 solar Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.78 2010/07/26 01:43:01 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -169,6 +169,7 @@ fi
 %changelog
 * Mon Jul 26 2010 Solar Designer <solar-at-owl.openwall.com> 0.36-owl1
 - Use "depmod -A" instead of "depmod -a", and don't invoke it at all on LiveCD.
+- Set "vm.mmap_min_addr = 98304" in sysctl.conf.
 
 * Fri Feb 19 2010 Solar Designer <solar-at-owl.openwall.com> 0.35-owl1
 - Enhanced killproc() with support for the "-d" (delay) option, and killproc()
