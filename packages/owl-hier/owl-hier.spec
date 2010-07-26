@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.27 2010/03/30 17:28:24 solar Exp $
+# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.28 2010/07/26 02:02:13 solar Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
-Version: 0.9
+Version: 0.10
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -74,6 +74,9 @@ comm -3 - filelist.remove >> filelist
 %files -f filelist
 
 %changelog
+* Mon Jul 26 2010 Solar Designer <solar-at-owl.openwall.com> 0.10-owl1
+- Added /sys mountpoint, made /var/tmp a symlink to ../tmp.
+
 * Tue Mar 30 2010 Solar Designer <solar-at-owl.openwall.com> 0.9-owl1
 - Added /etc/skel (it was created but not owned by another package) and
 /etc/profile.d (moved from owl-etc).

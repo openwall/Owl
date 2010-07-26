@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-hier/base,v 1.7 2010/03/30 17:28:24 solar Exp $
+# $Owl: Owl/packages/owl-hier/base,v 1.8 2010/07/26 02:02:13 solar Exp $
 
 # /
 /set type=file uname=root gname=root mode=0755
@@ -125,6 +125,12 @@ sbin		type=dir
 ..
 
 
+# /sys
+sys		type=dir
+# /sys
+..
+
+
 # /tmp
 tmp		type=dir mode=01777
 # /tmp
@@ -133,7 +139,7 @@ tmp		type=dir mode=01777
 
 # /usr
 usr		type=dir
-    tmp		type=link link=../var/tmp
+    tmp		type=link link=../tmp
 
 # /usr/X11R6
 X11R6		type=dir
@@ -560,6 +566,7 @@ world		type=dir uname=build gname=sources mode=0750
 var		type=dir
     adm		type=link link=log
     mail	type=link link=spool/mail
+    tmp		type=link link=../tmp
 
 # /var/account
 account		type=dir mode=0700
@@ -690,12 +697,6 @@ misc		type=dir
 ..
 
 # /var/state
-..
-
-
-# /var/tmp
-tmp		type=dir mode=01777
-# /var/tmp
 ..
 
 # /var
