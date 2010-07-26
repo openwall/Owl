@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.23 2006/05/19 13:28:32 galaxy Exp $
+# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.24 2010/07/26 00:02:39 solar Exp $
 
 repair_fs()
 {
@@ -141,9 +141,9 @@ fi
 rm -f /fastboot /forcefsck
 
 # Load modules, if any.
-if [ -x /sbin/depmod -a -d "/lib/modules/`uname -r`" ]; then
+if [ -x /sbin/depmod -a -d "/lib/modules/`uname -r`" -a ! -e /.Owl-CD-ROM ]; then
 	echo "Finding module dependencies"
-	depmod -a
+	depmod -A
 fi
 if [ -e /etc/rc.d/rc.modules ]; then
 	. /etc/rc.d/rc.modules
