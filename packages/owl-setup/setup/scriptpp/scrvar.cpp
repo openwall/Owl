@@ -279,6 +279,8 @@ bool ScriptVariable::HasPrefix(const ScriptVariable& prefix) const
 bool ScriptVariable::HasSuffix(const char *suf) const
 {
     int suflen = strlen(suf);
+    if (suflen > Length())
+        return false;
     for(const char *qq = p->buf + Length() - suflen; *suf; suf++, qq++)
         if(*suf!=*qq) return false;
     return true;
