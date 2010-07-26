@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.93 2010/07/26 00:28:57 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.94 2010/07/26 01:19:24 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -45,6 +45,7 @@ overwrite the symlink target otherwise), and use the "-p" option to cp(1) such
 that the file inherits permissions of the original zoneinfo file (without this
 change, the file's mode would be umask-dependent if the file is created rather
 than overwritten by us).
+- Don't use "nosuid" in fstab if the mount point ends in "/bin" or "/sbin".
 
 * Mon Jul 19 2010 Solar Designer <solar-at-owl.openwall.com> 1.2.0-owl1
 - Updated for RPM'ed kernel.
