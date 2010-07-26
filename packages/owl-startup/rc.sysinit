@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.24 2010/07/26 00:02:39 solar Exp $
+# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.25 2010/07/26 01:53:01 solar Exp $
 
 repair_fs()
 {
@@ -23,6 +23,9 @@ repair_fs()
 	echo 'filesystem check - expect trouble!'
 	sleep 10
 }
+
+# Disable the console screensaver.
+echo -e '\033[9;0]'
 
 # Set the initial default search path for use by startup scripts.
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
