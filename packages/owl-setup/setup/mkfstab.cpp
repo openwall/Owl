@@ -11,14 +11,15 @@
 #include "iface.hpp"
 #include "config.hpp"
 
-static ScriptVariable fs_options(ScriptVariable mpoint)
+static const char *fs_options(ScriptVariable dev, ScriptVariable mpoint)
 {
-    if(mpoint == "/") return "defaults";
-    if(mpoint == "/dev") return "nosuid";
+    if(mpoint == "/") return "noatime";
+    if(mpoint == "/dev") return "nosuid,noatime";
     if(mpoint == "/usr" ||
        mpoint.HasSuffix("/bin") ||
-       mpoint.HasSuffix("/sbin")) return "nodev";
-    return "nosuid,nodev";
+       mpoint.HasSuffix("/sbin")) return "nodev,noatime";
+    if(mpoint.HasSuffix("/tmp") || !dev.HasPrefix("/")) return "nosuid,nodev";
+    return "nosuid,nodev,noatime";
 }
 
 static void generate_standard_fstab(
@@ -87,7 +88,7 @@ static void generate_standard_fstab(
                        parts[i].Length() < 8 ? "\t\t" : "\t",
                    dirs[i].c_str(),
                    types[i].c_str(),
-                   fs_options(dirs[i]).c_str(),
+                   fs_options(parts[i], dirs[i]),
                    0,
                    pri
         );
