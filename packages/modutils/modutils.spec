@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/modutils/modutils.spec,v 1.27 2010/07/25 23:52:54 solar Exp $
+# $Owl: Owl/packages/modutils/modutils.spec,v 1.28 2010/07/26 03:45:57 solar Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
@@ -83,9 +83,8 @@ popd # module-init-tools
 
 %install
 rm -rf %buildroot
-mkdir -p %buildroot/sbin
+mkdir -p %buildroot/{sbin,etc}
 %makeinstall sbindir=%buildroot/sbin
-
 touch %buildroot/etc/modules.conf
 
 %post
