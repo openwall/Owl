@@ -228,8 +228,8 @@ static void mount_unlisted(OwlInstallInterface *the_iface,
     ScriptVariable part;
     do {
         ScriptVariable prompt(
-            "Please enter the device path \n"
-            "(e.g., /dev/hda1 or /dev/sdb2)");
+            "Please enter the device path\n"
+            "(e.g., /dev/sda1 or /dev/md0)");
         part = the_iface->QueryString(prompt, false);
         if(part == "" ||
            part == OwlInstallInterface::qs_cancel ||
