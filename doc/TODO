@@ -15,7 +15,7 @@ vulnerabilities ourselves.  Luckily, most are not relevant and/or not
 critical, but a few might be.  We'll see what the situation will be
 shortly before our release.)
 
-Finalize RPM'ing of the kernel - testing, documentation updates.
+Documentation updates for the new CD boot menu.
 
 Bring the documentation translations in sync with English (or drop from
 the release).  For example, translations of ARCHITECTURES are currently
@@ -23,9 +23,6 @@ outdated as it relates to i386 vs. i686.
 
 
 	Desirable before the next release.
-
-Start using initrd on our CDs - autodetect CD/DVD drive location, wait
-for USB - or consider alternatives to initrd that would achieve the same.
 
 Start to implement security hardening of OpenVZ kernels.
 
@@ -53,11 +50,6 @@ User's Guide - review and edit the draft, identify and add important
 missing chapters (adding/removing users, managing OpenVZ containers,
 maybe something else).
 
-Consider adding support for ext4 into owl-setup.  If so, enable it in
-our default kernel (this will require dealing with the kernel size issue
-mentioned above first).  We already have support in the kernel sources
-and in our e2fsprogs.
-
 SPARC, Alpha - builds, testing, fixes, final builds.  We haven't been
 building Owl for these architectures for a while.  Possibly this is not
 worth the time as it would delay the release.  Maybe it could be done
@@ -67,8 +59,4 @@ Switch the SSH client to use protocol 2 by default, finally.
 
 Consider/implement Perl Safe.pm bypass fixes (update the module?)
 
-Update the on-demand CD sales setup with Owl-current ISO snapshots
-shortly before making the release, to have the setup ready for being
-updated to the release.  Setup separate "products" for i686 and x86-64.
-
-$Owl: Owl/doc/TODO,v 1.190 2010/07/19 20:46:27 solar Exp $
+$Owl: Owl/doc/TODO,v 1.191 2010/07/27 03:53:51 solar Exp $
