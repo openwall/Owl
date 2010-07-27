@@ -156,7 +156,7 @@ void create_fstab(OwlInstallInterface *the_iface)
 
     for(;;) {
         IfaceSingleChoice *m = the_iface->CreateSingleChoice();
-        m->AddItem("edit", "Edit /etc/fstab");
+        m->AddItem("edit", "Edit /etc/fstab (experts only)");
         m->AddItem("reset", "Generate default /etc/fstab "
                             "(changes will be lost)");
         m->AddItem("q", "Done (return to main menu)");

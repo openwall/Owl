@@ -351,7 +351,8 @@ static void configure_screen_font_preset(OwlInstallInterface *the_iface,
     ScriptVector v;
     const OwlInstallConfig::PresetFontItem *presets =
         the_config->PresetSetfontCombinations();
-    hc->AddItem("Do not override this machine's default font", 0, true);
+    hc->AddItem("Do not override this machine's default font (recommended)",
+        0, true);
     for(int i=0; presets[i].comment; i++)
         hc->AddItem(presets[i].comment, presets+i);
     ScriptVector r;
@@ -529,7 +530,7 @@ static void configure_screen_font(OwlInstallInterface *the_iface,
     IfaceSingleChoice *pm = the_iface->CreateSingleChoice();
     pm->SetCaption("Console font settings");
     pm->AddItem("v", "View the current settings");
-    pm->AddItem("p", "Pick a preset combination of parameters");
+    pm->AddItem("p", "Pick a preset combination of parameters (recommended)");
     pm->AddItem("f", "Choose a font file (experts only)");
     pm->AddItem("u", "Choose a unimap file (experts only)");
     pm->AddItem("c", "Choose a charmap/encoding file (experts only)");
@@ -718,9 +719,9 @@ static void configure_locales(OwlInstallInterface *the_iface,
     IfaceSingleChoice *pm = the_iface->CreateSingleChoice();
     pm->SetCaption("Locale settings");
     pm->AddItem("v", "View the current settings");
-    pm->AddItem("d", "Default configuration (LC_ALL only)");
-    pm->AddItem("g", "Geek configuration (LC_CTYPE only)");
-    pm->AddItem("c", "Customize locale variables");
+    pm->AddItem("d", "Default configuration: set LC_ALL");
+    pm->AddItem("g", "Geek configuration: set LC_CTYPE only");
+    pm->AddItem("c", "Customize locale variables (experts only)");
     pm->AddItem("u", "Unset all");
     pm->AddItem("q", "Return to i18n menu");
     do {
@@ -763,9 +764,9 @@ void i18n_settings(OwlInstallInterface *the_iface)
     IfaceSingleChoice *pm = the_iface->CreateSingleChoice();
     pm->SetCaption("Internationalization settings");
     pm->AddItem("v", "View the current settings");
-    pm->AddItem("k", "Select keyboard layout");
-    pm->AddItem("f", "Configure console font and charmap");
-    pm->AddItem("l", "Configure locales");
+    pm->AddItem("k", "Select keyboard layout (optional)");
+    pm->AddItem("f", "Configure console font and charmap (optional)");
+    pm->AddItem("l", "Configure locales (optional)");
     pm->AddItem("s", "Save and return to main menu");
     pm->AddItem("x", "Return to main menu without saving");
     LocalizationInfo info;

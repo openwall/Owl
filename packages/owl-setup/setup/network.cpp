@@ -647,8 +647,8 @@ static void edit_interfaces(OwlInstallInterface* the_iface,
     IfaceSingleChoice *pm = the_iface->CreateSingleChoice();
     pm->SetCaption("Network interfaces configuration");
     pm->AddItem("v", "View interfaces");
-    pm->AddItem("a", "Add interface");
-    pm->AddItem("e", "Edit interface");
+    pm->AddItem("a", "Add interface (normally required at least once)");
+    pm->AddItem("e", "Edit interface (if needed to correct prior inputs)");
     pm->AddItem("r", "Remove interface");
     pm->AddItem("q", "Done, return to network menu");
     do {
@@ -706,8 +706,8 @@ static void edit_nameservers(OwlInstallInterface* the_iface,
     IfaceSingleChoice *pm = the_iface->CreateSingleChoice();
     pm->SetCaption("DNS servers list");
     pm->AddItem("v", "View list");
-    pm->AddItem("a", "Add server");
-    pm->AddItem("c", "Clear list");
+    pm->AddItem("a", "Add server (normally required at least once)");
+    pm->AddItem("c", "Clear list (such as to correct prior inputs)");
     pm->AddItem("q", "Done, return to network menu");
     do {
         ScriptVariable choice = pm->Run();
@@ -752,10 +752,10 @@ void configure_network(OwlInstallInterface *the_iface)
     IfaceSingleChoice *pm = the_iface->CreateSingleChoice();
     pm->SetCaption("Network configuration");
     pm->AddItem("v", "View the current settings");
-    pm->AddItem("h", "Set hostname");
-    pm->AddItem("i", "Edit interfaces");
-    pm->AddItem("g", "Set default gateway");
-    pm->AddItem("n", "Edit DNS servers");
+    pm->AddItem("h", "Set hostname (strongly recommended)");
+    pm->AddItem("i", "Edit interfaces (required for network access)");
+    pm->AddItem("g", "Set default gateway (required for Internet access)");
+    pm->AddItem("n", "Edit DNS servers (strongly recommended)");
 #if 0
     pm->AddItem("f", "Toggle IPv4 forwarding");
 #endif

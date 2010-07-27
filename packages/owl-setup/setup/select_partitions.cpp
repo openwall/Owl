@@ -25,7 +25,7 @@ static void mount_at(OwlInstallInterface *the_iface,
 
     pm->AddItem("ext2", "Format as ext2 filesystem");
     pm->AddItem("ext3", "Format as ext3 filesystem");
-    pm->AddItem("ext4", "Format as ext4 filesystem");
+    pm->AddItem("ext4", "Format as ext4 filesystem (recommended)");
     pm->AddItem("no", "Don't format it, try to mount now");
     pm->AddItem("q", "Quit/cancel");
 
@@ -320,7 +320,7 @@ void select_and_mount_partitions(OwlInstallInterface *the_iface)
                             ScriptVariable(0, "Select %s as your root",
                                               parts[i].c_str()));
             }
-            pm->AddItem("n", "Use uNlisted partition for root");
+            pm->AddItem("n", "Use uNlisted partition for root (experts only)");
             pm->AddItem("q", "Quit/cancel");
             if(parts.Length()>0) {
                 pm->SetDefault(parts[0]);
@@ -353,10 +353,10 @@ void select_and_mount_partitions(OwlInstallInterface *the_iface)
                                            "Attach %s somewhere to the tree",
                                            parts[i].c_str()));
             }
-            pm->AddItem("n", "Mount uNlisted partition");
+            pm->AddItem("n", "Mount uNlisted partition (experts only)");
 #if 0
             if(!mountpoint_mounted(the_config->OwlRoot()+"/tmp"))
-                pm->AddItem("t", "Use tmpfs for /tmp");
+                pm->AddItem("t", "Use tmpfs for /tmp (strongly recommended)");
 #endif
             pm->AddItem("u", "Unmount all, select another root");
             pm->AddItem("q", "Done, return to main menu");

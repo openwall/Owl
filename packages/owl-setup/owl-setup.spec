@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.99 2010/07/26 23:50:53 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.100 2010/07/27 00:57:55 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -34,13 +34,15 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
-* Mon Jul 26 2010 Solar Designer <solar-at-owl.openwall.com> 1.2.1-owl1
+* Tue Jul 27 2010 Solar Designer <solar-at-owl.openwall.com> 1.2.1-owl1
+- Marked many menu items as "optional", "recommended", "strongly recommended",
+"required", "experts only", etc.
 - Attempt to guess the boot device name (from the root device name) and offer
 that as the default.
 - Disabled several problematic console font/map presets, and introduced more
 correct and tested ones instead.
 - Renamed the menu item for no font/map preset from "* NONE *" to
-"Do not override this machine's default font".
+"Do not override this machine's default font (recommended)".
 - When copying the zoneinfo file to /etc/localtime, first unlink the latter
 such that we do not inadvertently follow a possible user-created symlink (we'd
 overwrite the symlink target otherwise), and use the "-p" option to cp(1) such

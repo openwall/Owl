@@ -45,10 +45,10 @@ int main(int argc, char **argv)
         const char *comment;
     };
     MainMenuItem main_menu[] = {
-        { "l", "Configure localization (i18n)" },
-        { "p", "Set root password" },
-        { "z", "Select timezone" },
-        { "n", "Configure network" },
+        { "l", "Configure localization (optional)" },
+        { "p", "Set root password (required)" },
+        { "z", "Select timezone (recommended)" },
+        { "n", "Configure network (strongly recommended)" },
         { "!", "Run shell" },
         { "x", "Exit" },
         { 0,0 }

@@ -82,26 +82,32 @@ int main(int argc, char **argv)
     bool (* const never_done)(void) = (bool(*)(void))(-1);
 
     MainMenuItem main_menu[] = {
-        { "f", "Repartition your hard drive",
+        { "f", "Repartition your hard drive (required)",
             always_true, linux_partition_exists },
-        { "m", "Select & mount install partitions",
+        { "m", "Select & mount install partitions (required)",
             /* linux_partition_exists */ always_true, owl_dir_mounted  },
-        { "s", "Activate swap space", always_true, active_swap_exists },
-        { "i", "Install packages", owl_dir_mounted, packages_installed },
-        { "l", "Configure localization (i18n)",
+        { "s", "Activate swap space (recommended)",
+            always_true, active_swap_exists },
+        { "i", "Install packages (required)",
+            owl_dir_mounted, packages_installed },
+        { "l", "Configure localization (optional)",
             packages_installed, keyboard_selected },
-        { "p", "Set root password", packages_installed, root_password_set },
-        { "t", "Create /etc/fstab", packages_installed, fstab_contains_root },
-        { "z", "Select timezone", packages_installed, timezone_selected },
-        { "n", "Configure network", packages_installed, network_configured },
+        { "p", "Set root password (required)",
+            packages_installed, root_password_set },
+        { "t", "Create /etc/fstab (required)",
+            packages_installed, fstab_contains_root },
+        { "z", "Select timezone (recommended)",
+            packages_installed, timezone_selected },
+        { "n", "Configure network (strongly recommended)",
+            packages_installed, network_configured },
 #if defined(__i386__) || defined(__x86_64__)
 #ifdef KERNEL_COPY
         { "h", "Install kernel headers (optional)",
             can_install_kheaders, kheaders_installed },
-        { "b", "Install kernel and bootloader",
+        { "b", "Install kernel and bootloader (required)",
             packages_installed, kernel_installed },
 #else
-        { "b", "Install bootloader",
+        { "b", "Install bootloader (required)",
             packages_installed, kernel_installed },
 #endif
         { "r", "Reboot to the newly-installed system",
