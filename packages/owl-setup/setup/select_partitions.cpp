@@ -87,7 +87,8 @@ static void mount_at(OwlInstallInterface *the_iface,
     the_iface->ExecWindow("Executing mount...");
     if (fstype == "") {
         ExecAndWait mnt(the_config->MountPath().c_str(),
-                        part.c_str(), mp.c_str(), (const char *)0);
+                        part.c_str(), mp.c_str(), "-onoatime",
+                        (const char *)0);
 /*
  * For an ext4 filesystem, the kernel happens to try ext3 instead and fail.
  * So if we didn't know the fs type for sure, just try ext4 next.
@@ -98,7 +99,8 @@ static void mount_at(OwlInstallInterface *the_iface,
     if (fstype != "") {
         ExecAndWait mnt(the_config->MountPath().c_str(),
                         "-t", fstype.c_str(),
-                        part.c_str(), mp.c_str(), (const char *)0);
+                        part.c_str(), mp.c_str(), "-onoatime",
+                        (const char *)0);
         the_iface->CloseExecWindow();
         if (!mnt.Success())
             the_iface->Message("Mount failed");
