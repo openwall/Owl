@@ -1,27 +1,45 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.26 2010/07/26 13:02:51 solar Exp $
+# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.27 2010/07/27 02:54:39 solar Exp $
 
 repair_fs()
 {
+	local STATUS=$1 REBOOT=$[$1 & 2]
+
 	echo
-	echo '*** The filesystem check reported serious problems.'
+	if [ $STATUS -ge 4 ]; then
+		local HAS='may have'
+		test $[$STATUS & 4] -ne 0 && HAS='has'
+		echo "The filesystem check $HAS left uncorrected errors."
+		echo -n 'You now have the opportunity to enter a shell and '
+		echo 'run fsck manually.'
+	else
+		echo 'You now have the opportunity to enter a shell.'
+	fi
 	echo
-	echo '*** You now have the opportunity to enter a shell and run fsck'
-	echo '*** manually; the system will reboot when you leave the shell.'
+	if [ $REBOOT -ne 0 ]; then
+		echo -n 'Because of the changes made by the filesystem check '
+		echo 'the system needs to reboot.'
+	fi
+	echo -n 'If you choose to login, the system will reboot when you '
+	echo 'leave the shell.'
+	if [ $REBOOT -ne 0 ]; then
+		echo 'Otherwise it will reboot right away.'
+	else
+		echo 'Otherwise it will continue to boot up.'
+	fi
 	echo
-	PS1='(Repair filesystem)# ' sulogin &> /dev/tty
-	if [ $? -lt 64 -o $? -gt 66 ]; then
+	echo 'This prompt will timeout in 1 minute.'
+	echo
+	PS1='(Repair filesystem)# ' sulogin -t 60 &> /dev/tty
+	if [ $REBOOT -ne 0 -o \( $? -ne 65 -a $? -ne 66 \) ]; then
 		echo 'Unmounting filesystems'
 		umount -a
 		mount -n -o remount,ro /
 		echo 'Automatic reboot in progress'
 		reboot -f
 	fi
-	echo 'sulogin failed.'
 	echo
-	echo 'OK, the system will now continue to boot despite the failed'
-	echo 'filesystem check - expect trouble!'
-	sleep 10
+	echo 'OK, the system will now continue to boot up - expect trouble!'
 }
 
 # Disable the console screensaver.
@@ -109,7 +127,7 @@ if [ ! -f /fastboot -a ! -e /.Owl-CD-ROM -o -e /forcefsck ]; then
 fi
 
 if [ $ROOTCHKSTATUS -gt 1 ]; then
-	repair_fs
+	repair_fs $ROOTCHKSTATUS
 fi
 
 if [ ! -e /.Owl-CD-ROM ]; then
@@ -138,7 +156,7 @@ else
 fi
 
 if [ $STATUS -gt 1 ]; then
-	repair_fs
+	repair_fs $STATUS
 fi
 
 rm -f /fastboot /forcefsck

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.80 2010/07/26 13:02:51 solar Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.81 2010/07/27 02:54:39 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -167,7 +167,9 @@ fi
 %doc redhat
 
 %changelog
-* Mon Jul 26 2010 Solar Designer <solar-at-owl.openwall.com> 0.36-owl1
+* Tue Jul 27 2010 Solar Designer <solar-at-owl.openwall.com> 0.36-owl1
+- Interpret more kinds of fsck exit codes to decide on whether to reboot or not
+and to print more specific messages.
 - Connect sulogin's stdout & stderr back to its controlling terminal to
 temporarily bypass logsave (fix suggested by Pavel Kankovsky).
 - Disable the console screensaver such that datacenter staff may see the last
