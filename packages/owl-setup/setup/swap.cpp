@@ -103,6 +103,19 @@ static void swapon(OwlInstallInterface *the_iface, ScriptVariable& part)
 
 void activate_swap(OwlInstallInterface *the_iface)
 {
+    {
+        ScriptVector all;
+        enumerate_swap_partitions(all);
+        if(!all.Length()) {
+            // no swap partitions found
+            the_iface->Message(
+                "No Linux swap partitions (of type 82)\n"
+                "could be found.\n"
+                "\n"
+                "You might want to return to main menu\n"
+                "and create some.");
+        }
+    }
     for(;;) {
         IfaceSingleChoice *sm = the_iface->CreateSingleChoice();
         sm->AddItem("v", "View active swaps");
