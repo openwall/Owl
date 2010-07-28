@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.101 2010/07/27 03:18:19 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.102 2010/07/28 16:25:00 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 1.2.1
+Version: 1.2.2
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -34,6 +34,10 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
+* Wed Jul 28 2010 Solar Designer <solar-at-owl.openwall.com> 1.2.2-owl1
+- Added support for specifying "unlisted" swap partitions like we have for
+filesystem partitions.
+
 * Tue Jul 27 2010 Solar Designer <solar-at-owl.openwall.com> 1.2.1-owl1
 - Marked many menu items as "optional", "recommended", "strongly recommended",
 "required", "experts only", etc.

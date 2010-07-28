@@ -101,6 +101,25 @@ static void swapon(OwlInstallInterface *the_iface, ScriptVariable& part)
         the_iface->Message(ScriptVariable("swapon failed for ") + part);
 }
 
+static void swap_unlisted(OwlInstallInterface *the_iface)
+{
+    ScriptVariable part;
+    do {
+        ScriptVariable prompt(
+            "Please enter the device path\n"
+            "(e.g., /dev/sda1 or /dev/md0)");
+        part = the_iface->QueryString(prompt, false);
+        if(part == "" ||
+           part == OwlInstallInterface::qs_cancel ||
+           part == OwlInstallInterface::qs_escape ||
+           part == OwlInstallInterface::qs_eof)
+        {
+            return;
+        }
+    } while(part[0] != '/');
+    swapon(the_iface, part);
+}
+
 void activate_swap(OwlInstallInterface *the_iface)
 {
     {
@@ -113,7 +132,9 @@ void activate_swap(OwlInstallInterface *the_iface)
                 "could be found.\n"
                 "\n"
                 "You might want to return to main menu\n"
-                "and create some.");
+                "and create some, or specify your\n"
+                "chosen partitions manually using the\n"
+                "``uNlisted'' option.");
         }
     }
     for(;;) {
@@ -126,6 +147,7 @@ void activate_swap(OwlInstallInterface *the_iface)
                         ScriptVariable("Prepare & activate swap partition ") +
                         avail[i]);
         }
+        sm->AddItem("n", "Use uNlisted swap partition (experts only)");
 #if 0
         sm->AddItem("file", "Create/activate a swap file");
 #endif
@@ -147,6 +169,8 @@ void activate_swap(OwlInstallInterface *the_iface)
         {
             return;
         }
+        else if(choice == "n")
+            swap_unlisted(the_iface);
         else if(choice == "v")
             view_active(the_iface);
 #if 0
