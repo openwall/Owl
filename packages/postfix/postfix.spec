@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.48 2010/01/26 17:18:57 solar Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.49 2010/07/28 17:22:44 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
-Version: 2.4.13
-Release: owl2
+Version: 2.4.14
+Release: owl1
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
@@ -38,6 +38,7 @@ Patch15: postfix-2.4.6-alt-owl-defaults.diff
 Patch16: postfix-2.4.6-alt-owl-doc.diff
 Patch17: postfix-2.4.8-owl-safe_open.diff
 Patch18: postfix-2.4.8-owl-postalias-no-hostname.diff
+Patch19: postfix-2.4.14-owl-version.diff
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: owl-startup
@@ -97,6 +98,7 @@ compatible enough to not upset your users.
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
+%patch19 -p1
 
 install -pm644 %_sourcedir/README.Owl README_FILES/
 
@@ -368,6 +370,9 @@ fi
 %attr(666,root,root) %ghost %queue_directory/dev/log
 
 %changelog
+* Wed Jul 28 2010 Solar Designer <solar-at-owl.openwall.com> 1:2.4.14-owl1
+- Updated to 2.4.14.
+
 * Tue Sep 29 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.4.13-owl2
 - Packaged /etc/syslog.d/postfix symlink to configure syslogd to listen
 on %queue_directory/dev/log socket.
