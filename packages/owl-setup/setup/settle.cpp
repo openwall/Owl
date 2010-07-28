@@ -82,7 +82,7 @@ int main(int argc, char **argv)
     bool (* const never_done)(void) = (bool(*)(void))(-1);
 
     MainMenuItem main_menu[] = {
-        { "f", "Repartition your hard drive (required)",
+        { "f", "Repartition hard disk(s) (required)",
             always_true, linux_partition_exists },
         { "m", "Select & mount install partitions (required)",
             /* linux_partition_exists */ always_true, owl_dir_mounted  },

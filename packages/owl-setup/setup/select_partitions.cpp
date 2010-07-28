@@ -306,7 +306,7 @@ void select_and_mount_partitions(OwlInstallInterface *the_iface)
             "You might want to return to main menu\n"
             "and create some, or specify your\n"
             "chosen partitions manually using the\n"
-            "``uNlisted'' option");
+            "``uNlisted'' option.");
     }
     for(;;) {
         if(!owl_dir_mounted()) { // we need the root partition
@@ -323,7 +323,7 @@ void select_and_mount_partitions(OwlInstallInterface *the_iface)
                                               parts[i].c_str()));
             }
             pm->AddItem("n", "Use uNlisted partition for root (experts only)");
-            pm->AddItem("q", "Quit/cancel");
+            pm->AddItem("q", "Quit/cancel, return to main menu");
             if(parts.Length()>0) {
                 pm->SetDefault(parts[0]);
             }

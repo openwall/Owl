@@ -152,7 +152,7 @@ void activate_swap(OwlInstallInterface *the_iface)
         sm->AddItem("file", "Create/activate a swap file");
 #endif
         sm->AddItem("off", "Deactivate all and start again");
-        sm->AddItem("q", "Done (return to main menu)");
+        sm->AddItem("q", "Done, return to main menu");
         if(avail.Length()>0) {
             sm->SetDefault(avail[0]);
         } else {

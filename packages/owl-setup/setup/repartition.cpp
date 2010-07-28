@@ -35,7 +35,7 @@ void repartition_hard_drive(OwlInstallInterface *the_iface,
             dm->AddItem(v[i], ScriptVariable("/dev/")+v[i]);
         defval = v[0];
 #endif
-        dm->AddItem("q", "quit (return to main menu)");
+        dm->AddItem("q", "Quit, return to main menu");
         dm->SetDefault(defval);
     }
     if(select_fdisk) {

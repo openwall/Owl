@@ -159,7 +159,7 @@ void create_fstab(OwlInstallInterface *the_iface)
         m->AddItem("edit", "Edit /etc/fstab (experts only)");
         m->AddItem("reset", "Generate default /etc/fstab "
                             "(changes will be lost)");
-        m->AddItem("q", "Done (return to main menu)");
+        m->AddItem("q", "Done, return to main menu");
 
         m->SetDefault("q");
 
