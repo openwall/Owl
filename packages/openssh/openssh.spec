@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.100 2009/07/07 08:38:06 ldv Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.101 2010/07/28 17:00:19 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl24
+Release: owl25
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -296,6 +296,9 @@ fi
 %attr(0644,root,root) /etc/ssh/blacklist
 
 %changelog
+* Wed Jul 28 2010 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl25
+- Have the SSH client use protocol 2 by default (finally).
+
 * Tue Jul 07 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.6.1p2-owl24
 - Backported upstream fix for syslog inside signal handler (CVE-2008-4109).
 
