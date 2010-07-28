@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installisotree.sh,v 1.13 2010/07/21 18:45:25 solar Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.14 2010/07/28 16:34:59 solar Exp $
 
 set -e
 
@@ -72,6 +72,7 @@ chroot "$ROOT" sh -c 'depmod `cd /lib/modules && echo 2.6.*`'
 
 log "Updating config files"
 cd "$ROOT/etc"
+sed -i '/^tmpfs[[:space:]]/d' fstab
 sed -i 's|^\(/dev/cdrom[[:space:]]*\).*|\1/\t\t\tiso9660\tro\t\t\t0 0|' fstab
 echo -e '/boot/floppy.image /boot/floppy\t\text2\tloop,ro\t\t\t0 0' >> fstab
 sed -i 's|^\(~~:S:wait:\).*|\1/bin/bash --login|' inittab
