@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.49 2010/07/28 17:22:44 solar Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.50 2010/07/28 17:40:10 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -19,7 +19,7 @@ Source6: postfix-lorder.sh
 Source7: postfix-oclosure.sh
 Source8: postqueue.control
 Source9: README.Owl
-Patch0: postfix-2.4.6-owl-sparse-hack.diff
+Patch0: postfix-2.4.14-owl-dotforward-size-check.diff
 Patch1: postfix-2.4.6-mjt-var_command_maxtime.diff
 Patch2: postfix-2.4.6-alt-script.diff
 Patch3: postfix-2.4.6-owl-update-chroot.diff
@@ -372,6 +372,7 @@ fi
 %changelog
 * Wed Jul 28 2010 Solar Designer <solar-at-owl.openwall.com> 1:2.4.14-owl1
 - Updated to 2.4.14.
+- Replaced the .forward sparse file check with a size check.
 
 * Tue Sep 29 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.4.13-owl2
 - Packaged /etc/syslog.d/postfix symlink to configure syslogd to listen

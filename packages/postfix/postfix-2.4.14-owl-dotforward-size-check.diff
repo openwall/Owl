@@ -1,0 +1,21 @@
+diff -urp postfix-2.4.14.orig/src/local/dotforward.c postfix-2.4.14/src/local/dotforward.c
+--- postfix-2.4.14.orig/src/local/dotforward.c	2006-06-26 12:59:19 +0000
++++ postfix-2.4.14/src/local/dotforward.c	2010-07-28 17:35:51 +0000
+@@ -238,6 +238,17 @@ int     deliver_dotforward(LOCAL_STATE s
+ 		msg_warn("file %s is world writable", STR(path));
+ 	    } else if ((fd = open_as(STR(path), O_RDONLY, 0, usr_attr.uid, usr_attr.gid)) < 0) {
+ 		msg_warn("cannot open file %s: %m", STR(path));
++	    } else if (fstat(fd, &st) != 0) {
++		msg_warn("cannot fstat file %s: %m", STR(path));
++		close(fd);
++	    } else if (S_ISREG(st.st_mode) == 0) {
++		msg_warn("file %s is no longer a regular file", STR(path));
++		close(fd);
++	    } else if (st.st_size > 100 * 1024 * 1024) {
++/* XXX: The .forward file size limit should be made configurable.  Also, this
++ * check will not catch a file growing while it is being parsed. */
++		msg_warn("file %s is unreasonably large", STR(path));
++		close(fd);
+ 	    } else {
+ 
+ 		/*
