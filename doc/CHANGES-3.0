@@ -46,6 +46,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/07/29	Package: lftp
+Updated to 4.0.9.
+
 2010/07/28	Package: postfix
 Updated to 2.4.14.
 
@@ -1271,4 +1274,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.250 2010/07/29 00:39:46 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.251 2010/07/29 02:18:39 solar Exp $
