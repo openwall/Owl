@@ -26,6 +26,8 @@ ftp://gd.tuwien.ac.at/opsys/linux/openwall/Owl/	(Österreich)
 	rsync://gd.tuwien.ac.at/opsys/linux/openwall/Owl/
 ftp://ftp.ibiblio.org/pub/linux/distributions/openwall/Owl/	(USA)
 	http://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/
+ftp://mirror.optusnet.com.au/pub/Owl/Owl/	(Australien)
+	http://mirror.optusnet.com.au/pub/Owl/Owl/
 
 Für jedes Release von Owl gibt es ein eigenes Unterverzeichnis mit dem
 folgenden Inhalt:
@@ -36,7 +38,7 @@ sources			Quellcode (Original tar-Archive die gepatcht
 			werden)
 Owl.mtree		Die mtree(8) Spezifikationen des CVS trees und
 			der Quellcodes
-i?86, sparc*, alpha*	Binärpakete zu Owl
+i686, x86_64		Binärpakete zu Owl
 iso			ISO-9660 Images der Owl CDs
 
 Einige der Unterverzeichnisse benutzen symbolische Links zu Dateien, die
@@ -79,4 +81,4 @@ Wir bieten zudem auch ein CVSweb-Interface an:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/de/DOWNLOAD,v 1.40 2010/07/19 20:53:22 solar Exp $
+$Owl: Owl/doc/de/DOWNLOAD,v 1.41 2010/07/29 01:58:59 solar Exp $

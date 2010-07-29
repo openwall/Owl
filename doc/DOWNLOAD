@@ -25,6 +25,8 @@ ftp://gd.tuwien.ac.at/opsys/linux/openwall/Owl/	(Austria)
 	http://gd.tuwien.ac.at/opsys/linux/openwall/Owl/
 	rsync://gd.tuwien.ac.at/opsys/linux/openwall/Owl/
 ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Germany)
+ftp://mirror.optusnet.com.au/pub/Owl/Owl/	(Australia)
+	http://mirror.optusnet.com.au/pub/Owl/Owl/
 
 There's a subdirectory for each Owl release or branch, with the
 following contents:
@@ -32,7 +34,7 @@ following contents:
 native.tar.gz		CVS tree (our software, patches, build specs)
 sources			source tree (original tarballs to be patched)
 Owl.mtree		mtree(8) specification of the above
-i?86, sparc*, alpha*	Owl binary packages
+i686, x86_64, ...	Owl binary packages
 iso			ISO-9660 images of Owl CDs (live + installable)
 vztemplate		pre-created OpenVZ container templates
 
@@ -52,7 +54,7 @@ hard drive (using the included installer program called "settle"), and
 full source code ("native" and "sources").
 
 Unless you've opted for the CD or ISO image, you will always need to
-download the CVS tree, -- even if you choose to install binary packages
+download the CVS tree - even if you choose to install binary packages
 only.  In order to (re-)build Owl from source, you'll need both the CVS
 and the source trees.
 
@@ -81,4 +83,4 @@ Finally, the CVSweb interface is provided at:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/DOWNLOAD,v 1.46 2010/07/19 20:53:22 solar Exp $
+$Owl: Owl/doc/DOWNLOAD,v 1.47 2010/07/29 01:58:59 solar Exp $
