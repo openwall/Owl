@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/lftp/lftp.spec,v 1.36 2010/05/04 20:45:47 solar Exp $
+# $Owl: Owl/packages/lftp/lftp.spec,v 1.37 2010/07/29 02:14:56 solar Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
-Version: 4.0.7
+Version: 4.0.9
 Release: owl1
 License: GPLv3+
 Group: Applications/Internet
@@ -69,11 +69,14 @@ fi
 %_bindir/*
 %_libdir/liblftp*.so*
 %_libdir/lftp
-%_mandir/man1/lftp*
+%_mandir/man?/lftp*
 %_datadir/lftp
 %_datadir/locale/*/LC_MESSAGES/lftp.mo
 
 %changelog
+* Thu Jul 29 2010 Solar Designer <solar-at-owl.openwall.com> 4.0.9-owl1
+- Updated to 4.0.9.
+
 * Tue May 04 2010 Solar Designer <solar-at-owl.openwall.com> 4.0.7-owl1
 - Updated to 4.0.7.
 - Rewrote the description.
