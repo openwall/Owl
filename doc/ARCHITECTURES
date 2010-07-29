@@ -56,15 +56,26 @@ with the only difference being that the i686 packages make use of the
 instructions only available with this newer architecture flavor.
 
 Although the overall performance improvement with the i686 packages is
-small, this is our current default.
+small, this is our current default.  In fact, we do not provide a kernel
+configuration for i386, so the kernel package will only build for i686.
 
 
 	x86-64, also known as AMD64 and EM64T.
 
-There are no flavors.  The identifier for this architecture is x86_64.
+There are no flavors.  The identifier for this architecture is x86_64,
+and it is fully supported.
 
 
 	SPARC.
+
+SPARC was fully supported by the Owl userland up through and including
+the Owl 2.0 release, although we never provided a tested kernel config
+(and in fact a 64-bit kernel required for modern hardware would not
+build on our 32-bit only SPARC userland anyway - one needs to use a
+third-party 64-bit build of gcc for that).  We've last built Owl-current
+for SPARC in October 2006.  After that point, there was no further
+effort to see if the Owl userland builds for SPARC or not - perhaps it
+still mostly does as we did not knowingly break the support.
 
 Two architecture flavors are defined: sparc and sparcv9.  The sparc
 assumes at least a SPARC V8, and both produce packages tuned for an
@@ -76,10 +87,16 @@ except for certain functions in glibc and OpenSSL where SPARC V9
 assembly versions are provided).
 
 sparc64 is not supported at this stage.  It is possible to build Owl
-userland (32-bit) while running a sparc64 kernel, though.
+userland (32-bit) while running a sparc64 kernel, though (we did).
 
 
 	Alpha.
+
+Alpha was fully supported by the Owl userland up through and including
+the Owl 2.0 release, although we never provided a tested kernel config.
+After that point, there was no further effort to see if the Owl userland
+builds for Alpha or not - perhaps it still mostly does as we did not
+knowingly break the support.
 
 Two architecture flavors are defined by default: alpha and alphaev56.
 The choice affects both the use of BWX extensions with alphaev56 and
@@ -90,4 +107,4 @@ built for alphaev56 are tuned for EV56/PCA56 processors (21164A,
 plain alpha packages.  On an EV6+ (21264, 21264A), use the alphaev56
 packages.
 
-$Owl: Owl/doc/ARCHITECTURES,v 1.8 2009/11/28 01:46:57 solar Exp $
+$Owl: Owl/doc/ARCHITECTURES,v 1.9 2010/07/29 01:40:29 solar Exp $
