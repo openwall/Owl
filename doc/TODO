@@ -15,11 +15,12 @@ vulnerabilities ourselves.  Luckily, most are not relevant and/or not
 critical, but a few might be.  We'll see what the situation will be
 shortly before our release.)
 
-Documentation updates for the new CD boot menu.
-
 Bring the documentation translations in sync with English (or drop from
 the release).  For example, translations of ARCHITECTURES are currently
 outdated as it relates to i386 vs. i686.
+
+Documentation updates for the release (e.g., the mentions of Owl-current
+should probably be changed to mention the release instead).
 
 
 	Desirable before the next release.
@@ -55,8 +56,6 @@ building Owl for these architectures for a while.  Possibly this is not
 worth the time as it would delay the release.  Maybe it could be done
 post-release, for the stable branch.
 
-Switch the SSH client to use protocol 2 by default, finally.
-
 Consider/implement Perl Safe.pm bypass fixes (update the module?)
 
-$Owl: Owl/doc/TODO,v 1.191 2010/07/27 03:53:51 solar Exp $
+$Owl: Owl/doc/TODO,v 1.192 2010/07/29 01:43:45 solar Exp $
