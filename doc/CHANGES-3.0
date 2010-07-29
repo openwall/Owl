@@ -46,9 +46,49 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/07/28	Package: postfix
+Updated to 2.4.14.
+
+2010/07/28	Package: openssh
+The SSH client will now use protocol 2 by default (finally).
+
+2010/07/27	Packages: owl-startup, modutils
+/etc/rc.d/rc.sysinit has been enhanced and corrected in numerous ways:
+it will disable the console screensaver (such that datacenter staff may
+see the last console messages without connecting a keyboard or even if
+the system freezes), distinguish more kinds of fsck exit codes and act
+accordingly, and use "depmod -A" instead of "depmod -a" (to avoid
+rebuilding of kernel module dependencies unnecessarily).  The default
+/etc/sysctl.conf will now explicitly set vm.mmap_min_addr to a
+reasonable non-zero value (currently 96 KB), not relying on the kernel
+to have a similar default anymore (although our kernel does).
+
+2010/07/19 -
+2010/07/28	Packages: owl-setup, owl-etc, owl-hier;
+		Owl/build/install{iso,vz}tree.sh
+Added ext4 filesystem support - in fact, "settle" (the Owl installer
+program) will now offer ext4 by default, with ext3 and ext2 still
+available as non-default per-filesystem choices.  Made the menus,
+prompts, and messages of both "settle" and "setup" hopefully more
+intuitive by clearly indicating which steps are optional, required, or
+recommended (and the like), having a bit fewer menu items (where some
+could be dropped or replaced without a loss of functionality for any of
+our users), revising menu item names and hint messages, and offering
+likely-correct inputs as defaults.  Revised the console font/map presets
+for Cyrillic and Western European encodings.  Almost all on-disk
+filesystems are now mounted with "noatime" by default (for better
+performance), and a /sys mountpoint and fstab entry (for sysfs) are now
+created by default (with "noauto").
+
+2010/07/24	Package: owl-cdrom
+Revised the LILO boot menu, leaving only two boot targets: "normal" and
+"rescue".  This makes use of the new kernel's boot CD/DVD drive device
+autodetection.  Revised the "welcome" script to reflect other changes,
+and enhanced it in numerous minor ways.
+
 2010/07/17 -
 2010/07/21	Packages: kernel, lilo, owl-cdrom, owl-setup;
-		Owl/build/*; Owl/doc/*
+		Owl/build/{install*.sh,Makefile}; Owl/doc/*
 SECURITY FIX	Severity: none to high, local, active
 Updated the kernel to OpenVZ's latest from their rhel5 branch
 (2.6.18-194.8.1.el5.028stab070.2) with minor additional changes in Owl.
@@ -63,7 +103,8 @@ RPM-packaged, but in a way allowing for easy non-packaged builds as well
 (there are only two cumulative patch files).  AHCI vs. Marvell PATA
 driver co-existence fixes have been backported from Linux 2.6.34.1.
 Boot CD/DVD drive device autodetection has been implemented (needed to
-locate the root filesystem when booting off a CD/DVD with LILO).
+locate the root filesystem when booting off a CD/DVD with LILO).  ext4
+filesystem support has been enabled.
 References:
 http://wiki.openvz.org/Download/kernel/rhel5/028stab070.2
 http://rhn.redhat.com/errata/RHSA-2010-0504.html
@@ -1230,4 +1271,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.249 2010/07/28 22:21:43 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.250 2010/07/29 00:39:46 solar Exp $
