@@ -12,14 +12,6 @@ Si vous n'avez pas déjà un CD Owl, merci soit d'en commander un soit de voir
 le fichier DOWNLOAD pour les endroits où vous pouvez obtenir les images de
 CD ISO-9660 et les graver sur un CD-R.
 
-Les CD Owl pour x86 sont démarrables, donc si votre machine supporte de
-démarrer depuis un CD alors faites le. Autrement prenez l'image de la
-disquette de démarrage depuis le CD sous boot/floppy.image, copiez la sur
-une disquette 1,44 Mo formatée (avec dd(1) ou un outil équivalent), et
-démarrez depuis la disquette. Dans les deux cas, le gestionnaire de
-démarrage vous demandera le périphérique de votre CD-ROM que le noyau
-utilisera comme système de fichiers racine.
-
 Owl devrait démarrer en mode single user (ndt : utilisateur unique). Au
 prompt du mot de passe de root vous pouvez soit presser simplement sur
 Entrée (puisque celui des CD a un mot de passe vide) ou presser Ctrl-D pour
@@ -66,7 +58,7 @@ de fichiers supplémentaires sur leurs emplacements appropriés sous /owl.
 Pour installer vraiment Owl, changez de répertoire vers /usr/src/world et
 tapez :
 
-	make installworld && make setup
+	KERNEL_FAKE=no make installworld && make setup
 
 S'il y a un problème durant l'étape "installworld" (regardez les lignes
 "Failed"), corrigez leurs causes et re-exécutez la commande.
@@ -89,4 +81,4 @@ Vous pouvez choisir de configurer le chargeur de démarrage disponible avec
 Owl (LILO ou SILO, dépendant de l'architecture), ou vous pouvez utiliser un
 chargeur de démarrage déjà installé sur le système (s'il y en a un).
 
-$Owl: Owl/doc/fr/INSTALL,v 1.9 2010/03/23 01:04:13 solar Exp $
+$Owl: Owl/doc/fr/INSTALL,v 1.10 2010/07/29 01:16:56 solar Exp $
