@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/screen/screen.spec,v 1.43 2006/10/29 21:00:23 ldv Exp $
+# $Owl: Owl/packages/screen/screen.spec,v 1.44 2010/08/16 15:11:16 solar Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
-Version: 4.0.2
-Release: owl9
+Version: 4.0.3
+Release: owl1
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%version.tar.gz
@@ -22,7 +22,6 @@ Patch10: screen-4.0.2-owl-warnings.diff
 Patch11: screen-4.0.2-owl-logging.diff
 Patch12: screen-4.0.2-owl-info.diff
 Patch13: screen-4.0.2-owl-Makefile.diff
-Patch14: screen-4.0.2-up-utf8_handle_comb.diff
 PreReq: /sbin/install-info
 Requires: tcb, pam_userpass, libutempter
 Prefix: %_prefix
@@ -51,7 +50,6 @@ but want to use more than one session.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
-%patch14 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -124,11 +122,13 @@ fi
 %attr(710,root,screen) %dir %_libexecdir/screen
 %ghost %_libexecdir/screen/tcb_chkpwd
 %ghost %_libexecdir/screen/utempter
-# XXX: perhaps we should patch the build environment to find out the location
-#      of the terminfo database at buildtime -- (GM)
 /usr/share/terminfo/s/screen*
 
 %changelog
+* Mon Aug 16 2010 Solar Designer <solar-at-owl.openwall.com> 4.0.3-owl1
+- Updated to 4.0.3 (a no-change update since we already had the only change
+between 4.0.2 and 4.0.3 backported).
+
 * Sun Oct 29 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.0.2-owl9
 - Applied upstream fix for bug in utf8 combining characters handling
 (CVE-2006-4573).
