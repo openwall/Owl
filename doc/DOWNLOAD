@@ -25,6 +25,8 @@ ftp://gd.tuwien.ac.at/opsys/linux/openwall/Owl/	(Austria)
 	http://gd.tuwien.ac.at/opsys/linux/openwall/Owl/
 	rsync://gd.tuwien.ac.at/opsys/linux/openwall/Owl/
 ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Germany)
+ftp://ftp.cc.uoc.gr/mirrors/linux/openwall/Owl/	(Greece)
+	http://ftp.cc.uoc.gr/mirrors/linux/openwall/Owl/
 ftp://mirror.optusnet.com.au/pub/Owl/	(Australia)
 	http://mirror.optusnet.com.au/pub/Owl/
 
@@ -83,4 +85,4 @@ Finally, the CVSweb interface is provided at:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/DOWNLOAD,v 1.48 2010/08/16 15:23:16 solar Exp $
+$Owl: Owl/doc/DOWNLOAD,v 1.49 2010/08/16 15:45:55 solar Exp $
