@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.55 2010/08/17 09:47:31 segoon Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.56 2010/08/17 10:01:51 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -277,8 +277,7 @@ fi
 - Updated to 1.41.12.
 - Dropped -owl-initialize-readline_shutdown patch (fixed in upstream).
 - Fixed compiler warnings.
-- Applied 3 upstream patches (EOFBLOCKS check fix, SEGFAULT fix, type conflicts
-fix)
+- Applied 3 upstream patches.
 
 * Sun Oct 25 2009 Solar Designer <solar-at-owl.openwall.com> 1.41.9-owl2
 - Initialize the readline_shutdown pointer (to NULL) such that

@@ -1,3 +1,5 @@
+http://git.kernel.org/?p=fs/ext2/e2fsprogs.git;a=commitdiff;h=ac92f3cc0443f5980775e6c3e86724ed817587f6
+
 --- a/e2fsck/ea_refcount.c
 +++ b/e2fsck/ea_refcount.c
 @@ -196,9 +196,14 @@ retry:

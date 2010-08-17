@@ -1,3 +1,5 @@
+http://git.kernel.org/?p=fs/ext2/e2fsprogs.git;a=commitdiff;h=effb3442419e50b6352fb13cfc8eea03bebf442e
+
 --- a/lib/ext2fs/fiemap.h
 +++ b/lib/ext2fs/fiemap.h
 @@ -11,8 +11,6 @@
