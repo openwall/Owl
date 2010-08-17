@@ -1,0 +1,20 @@
+--- a/e2fsck/pass1.c.orig	2010-08-17 08:43:20 +0000
++++ b/e2fsck/pass1.c	2010-08-17 08:43:39 +0000
+@@ -405,7 +405,6 @@
+ 	const char		*old_op;
+ 	errcode_t		retval;
+ 	blk_t			blk;
+-	blk64_t			first_dir_blk;
+ 	unsigned int		i, rec_len, not_device = 0;
+ 	int			extent_fs;
+ 
+--- a/misc/mke2fs.c.orig	2010-08-17 08:42:38 +0000
++++ b/misc/mke2fs.c	2010-08-17 08:43:03 +0000
+@@ -17,6 +17,7 @@
+  */
+ 
+ #define _XOPEN_SOURCE 600 /* for inclusion of PATH_MAX in Solaris */
++#define _LARGEFILE64_SOURCE
+ 
+ #include <stdio.h>
+ #include <string.h>

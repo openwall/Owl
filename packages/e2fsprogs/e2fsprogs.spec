@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.54 2010/01/26 17:18:56 solar Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.55 2010/08/17 09:47:31 segoon Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -12,8 +12,8 @@
 
 Summary: Utilities for managing ext2/ext3/ext4 filesystems.
 Name: e2fsprogs
-Version: 1.41.9
-Release: owl2
+Version: 1.41.12
+Release: owl1
 License: GPL
 Group: System Environment/Base
 URL: http://e2fsprogs.sourceforge.net
@@ -26,7 +26,10 @@ Patch1: e2fsprogs-1.41.5-alt-fixes.diff
 Patch2: e2fsprogs-1.41.5-owl-blkid-env.diff
 Patch3: e2fsprogs-1.41.5-owl-tests.diff
 Patch4: e2fsprogs-1.41.9-owl-warnings.diff
-Patch5: e2fsprogs-1.41.9-owl-initialize-readline_shutdown.diff
+Patch5: e2fsprogs-1.41.12-owl-warnings.diff
+Patch6: e2fsprogs-1.41.12-up-EOFBLOCKS-check.diff
+Patch7: e2fsprogs-1.41.12-up-fp-precision.diff
+Patch8: e2fsprogs-1.41.12-up-includes.diff
 PreReq: /sbin/ldconfig
 BuildRequires: gettext, texinfo, automake, autoconf
 BuildRequires: glibc >= 0:2.2, sed >= 0:4.1
@@ -66,6 +69,9 @@ chmod -R u+w .
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
 bzip2 -9k RELEASE-NOTES
 
 # remove these unwanted header files just in case
@@ -79,8 +85,8 @@ find -type f -print0 |
 %{expand:%%define optflags %optflags -Wall}
 
 %build
+export CC="%__cc"
 %configure \
-	--with-cc="%__cc" \
 	--disable-e2initrd-helper \
 	--disable-tls \
 	--disable-uuidd \
@@ -267,6 +273,13 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Mon Aug 16 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.41.12-owl1
+- Updated to 1.41.12.
+- Dropped -owl-initialize-readline_shutdown patch (fixed in upstream).
+- Fixed compiler warnings.
+- Applied 3 upstream patches (EOFBLOCKS check fix, SEGFAULT fix, type conflicts
+fix)
+
 * Sun Oct 25 2009 Solar Designer <solar-at-owl.openwall.com> 1.41.9-owl2
 - Initialize the readline_shutdown pointer (to NULL) such that
 ss_delete_invocation() won't attempt to call a non-existent
