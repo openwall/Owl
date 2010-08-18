@@ -1,0 +1,15 @@
+--- a/src/scan-gram.c.orig        2010-08-18 08:56:57 +0000
++++ b/src/scan-gram.c     2010-08-18 09:08:25 +0000
+@@ -1241,10 +1241,10 @@
+ 
+ 
+   /* Nesting level of the current code in braces.  */
+-  int braces_level IF_LINT (= 0);
++  int braces_level = 0;
+ 
+   /* Parent context state, when applicable.  */
+-  int context_state IF_LINT (= 0);
++  int context_state = 0;
+ 
+   /* Location of most recent identifier, when applicable.  */
+   location id_loc IF_LINT (= empty_location);

@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/bison/bison.spec,v 1.35 2009/09/09 16:45:50 ldv Exp $
+# $Owl: Owl/packages/bison/bison.spec,v 1.36 2010/08/18 17:20:46 segoon Exp $
 
 Summary: A GNU general-purpose parser generator.
 Name: bison
-Version: 2.4.1
+Version: 2.4.3
 Release: owl1
 License: GPLv3+
 Group: Development/Tools
@@ -10,6 +10,7 @@ URL: http://www.gnu.org/software/bison/
 Source: ftp://ftp.gnu.org/gnu/bison/bison-%version.tar.bz2
 # Signature: ftp://ftp.gnu.org/gnu/bison/bison-%version.tar.bz2.sig
 Patch0: bison-2.4.1-owl-info.diff
+Patch1: bison-2.4.3-owl-warnings.diff
 PreReq: /sbin/install-info
 BuildRequires: m4 >= 1.4.6
 BuildRoot: /override/%name-%version
@@ -27,6 +28,7 @@ to be very proficient in C programming to be able to program with Bison.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 bzip2 -9k NEWS
 
 %{expand:%%define optflags %optflags -Wall}
@@ -65,6 +67,10 @@ fi
 %_libdir/liby.a
 
 %changelog
+* Wed Aug 18 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.4.3-owl1
+- Updated to 2.4.3.
+- Fixed compiler warnings.
+
 * Sun Aug 16 2009 Michail Litvak <mci-at-owl.openwall.com> 2.4.1-owl1
 - Updated to 2.4.1.
 
