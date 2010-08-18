@@ -1,19 +1,16 @@
-# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.18 2010/01/26 17:18:56 solar Exp $
+# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.19 2010/08/18 15:25:52 segoon Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
-Version: 2.8.7
+Version: 3.0
 Release: owl1
 License: GPL
 Group: Applications/Text
 URL: http://www.gnu.org/software/diffutils/
-# ftp://alpha.gnu.org/pub/gnu/%name/%name-%version.tar.gz
+# ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.gz
 Source: %name-%version.tar.bz2
 Patch0: diffutils-2.8.7-owl-info.diff
-Patch1: diffutils-2.8.7-rh-warnings.diff
-Patch2: diffutils-2.8.7-alt-tmp.diff
-Patch3: diffutils-2.8.7-alt-i18n.diff
-Patch4: diffutils-2.8.7-alt-backup_suffix.diff
+Patch1: diffutils-2.8.7-alt-tmp.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRequires: texinfo
@@ -35,9 +32,6 @@ to merge two files interactively.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
 
 %build
 # Disable nanoseconds in diff output.
@@ -46,6 +40,9 @@ export ac_cv_struct_st_mtim_nsec=no ac_cv_search_clock_gettime='none required'
 export PR_PROGRAM=%_bindir/pr
 %configure
 make
+
+%check
+make check
 
 %install
 rm -rf %buildroot
@@ -73,6 +70,12 @@ fi
 %exclude %_mandir/man1/diff.*
 
 %changelog
+* Wed Aug 18 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0-owl1
+- Updated to 3.0.
+- Dropped -alt-i18n and -rh-warnings patches (fixed in upstream).
+- Dropped -alt-backup_suffix patch.
+- Updated -alt-tmp patch.
+
 * Tue May 17 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.8.7-owl1
 - Updated to 2.8.7.
 - Imported a bunch of patches from ALT's diffutils-2.8.7-alt1 package.
