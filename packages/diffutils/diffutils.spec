@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.20 2010/08/18 15:27:56 segoon Exp $
+# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.21 2010/08/18 17:28:44 solar Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
@@ -10,7 +10,6 @@ URL: http://www.gnu.org/software/diffutils/
 # ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.gz
 Source: %name-%version.tar.bz2
 Patch0: diffutils-2.8.7-owl-info.diff
-Patch1: diffutils-2.8.7-alt-tmp.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRequires: texinfo
@@ -31,7 +30,6 @@ to merge two files interactively.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 %build
 # Disable nanoseconds in diff output.
