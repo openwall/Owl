@@ -2,15 +2,30 @@
 
 	Solar Designer <solar ПРИ cvs.openwall.com>
 	Michail Litvak <mci ПРИ cvs.openwall.com>
-	Rafal Wojtczuk <nergal ПРИ cvs.openwall.com>
 	(GalaxyMaster) <galaxy ПРИ cvs.openwall.com>
-	Andreas Ericsson <exon ПРИ cvs.openwall.com>
-	Juan M. Bello Rivas <jmbr ПРИ cvs.openwall.com>
 	Dmitry V. Levin <ldv ПРИ cvs.openwall.com>
+	Vasiliy Kulikov <segoon ПРИ cvs.openwall.com>
 
-Почетный участник проекта:
+Почетные участники проекта:
 
 	Alexandr D. Kanevskiy <kad ПРИ cvs.openwall.com>
+	Rafal Wojtczuk <nergal ПРИ cvs.openwall.com>
+	Andreas Ericsson <exon ПРИ cvs.openwall.com>
+	Juan M. Bello Rivas <jmbr ПРИ cvs.openwall.com>
+
+Разработка и поддержка инсталлятора Owl:
+
+	Andrey V. Stolyarov a.k.a. Croco <croco ПРИ cvs.openwall.com>
+
+Передача, проверка и сохранение информации о процессах-отправителях
+записей в syslogd:
+
+	ArkanoiD <ark ПРИ cvs.openwall.com>
+
+Добавление опции --ignore-device-id в tar (теперь заменена на
+--no-check-device и поэтому удалена):
+
+	Grigoriy Strokin <grg ПРИ cvs.openwall.com>
 
 Пакет Mutt:
 
@@ -44,4 +59,4 @@
 
 http://www.openwall.com/donations/
 
-$Owl: Owl/doc/ru/CREDITS,v 1.16 2007/06/15 15:04:58 solar Exp $
+$Owl: Owl/doc/ru/CREDITS,v 1.17 2010/08/18 18:17:53 solar Exp $
