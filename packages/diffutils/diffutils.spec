@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.19 2010/08/18 15:25:52 segoon Exp $
+# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.20 2010/08/18 15:27:56 segoon Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
@@ -74,7 +74,6 @@ fi
 - Updated to 3.0.
 - Dropped -alt-i18n and -rh-warnings patches (fixed in upstream).
 - Dropped -alt-backup_suffix patch.
-- Updated -alt-tmp patch.
 
 * Tue May 17 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.8.7-owl1
 - Updated to 2.8.7.
