@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.23 2009/06/28 17:54:59 mci Exp $
+# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.24 2010/08/19 16:13:39 segoon Exp $
 
 %define posix_version 2003
 %define posix_release a
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
-Version: 3.21
+Version: 3.25
 Release: owl1
 License: distributable
 Group: Documentation
@@ -20,7 +20,7 @@ Source5: locale.1
 Source6: localedef.1
 Source7: sprof.1
 Source8: rpcinfo.8
-Patch0: man-pages-3.21-deb-owl-misc.diff
+Patch0: man-pages-3.25-deb-owl-misc.diff
 Patch1: man-pages-3.21-rh-owl-roff-fixes.diff
 Patch2: man-pages-3.21-owl-cc.diff
 Patch3: man-pages-3.21-owl-uselib.diff
@@ -135,6 +135,10 @@ done
 %_mandir/man?p/*
 
 %changelog
+* Thu Aug 19 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.25-owl1
+- 3.25
+- Updated patch -deb-owl-misc.
+
 * Thu Jun 23 2009 Michail Litvak <mci-at-owl.openwall.com> 3.21-owl1
 - 3.21
 - Updated patches.
