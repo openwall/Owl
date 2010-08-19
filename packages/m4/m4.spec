@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/m4/m4.spec,v 1.22 2009/09/09 16:45:50 ldv Exp $
+# $Owl: Owl/packages/m4/m4.spec,v 1.23 2010/08/19 16:09:36 segoon Exp $
 
 Summary: The GNU macro processor.
 Name: m4
-Version: 1.4.13
+Version: 1.4.14
 Release: owl1
 License: GPLv3+
 Group: Applications/Text
@@ -73,6 +73,9 @@ fi
 %_datadir/aclocal/m4.m4
 
 %changelog
+* Thu Aug 19 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.4.14-owl1
+- Updated to 1.4.14.
+
 * Tue Aug 25 2009 Michail Litvak <mci-at-owl.openwall.com> 1.4.13-owl1
 - Updated to 1.4.13.
 - Removed obsoletes patches.
