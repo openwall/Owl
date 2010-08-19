@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/man/man.spec,v 1.24 2005/12/26 20:39:54 mci Exp $
+# $Owl: Owl/packages/man/man.spec,v 1.25 2010/08/19 16:10:34 segoon Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
-Version: 1.6b
+Version: 1.6f
 Release: owl2
 License: GPL
 Group: System Environment/Base
@@ -10,8 +10,7 @@ URL: http://primates.ximian.com/~flucifredi/man/
 Source: http://primates.ximian.com/~flucifredi/man/%name-%version.tar.gz
 Patch0: man-1.6b-alt-fixes.diff
 Patch1: man-1.6b-owl-latin1.diff
-Patch2: man-1.6b-owl-makewhatis.diff
-Patch3: man-1.6b-owl-gentoo-makewhatis-config.diff
+Patch2: man-1.6f-owl-makewhatis.diff
 Requires: groff, less, gzip, bzip2, coreutils
 # makewhatis
 Requires: gawk, sed, mktemp >= 1:1.3.1
@@ -37,7 +36,6 @@ whatis searches its own database for a complete word.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 %build
 ./configure -default +fhs -fsstnd -confdir /etc
@@ -89,6 +87,11 @@ find /var/cache/man/{,X11R6/,local/}cat[123456789n] -type f -delete
 %attr(0775,root,man) %dir /var/cache/man/local/cat[123456789n]
 
 %changelog
+* Thu Aug 19 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.6f-owl1
+- Updated to 1.6f.
+- Dropped -owl-gentoo-makewhatis-config (fixed in upstream).
+- Updated -owl-makewhatis.
+
 * Thu Dec 25 2005 Michail Litvak <mci-at-owl.openwall.com> 1.6b-owl2
 - Fixed -makewhatis-config patch.
 

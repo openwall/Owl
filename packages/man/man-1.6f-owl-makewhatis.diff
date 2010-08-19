@@ -1,5 +1,5 @@
---- man-1.6b/src/makewhatis.sh.orig	2005-08-20 23:26:06.000000000 +0000
-+++ man-1.6b/src/makewhatis.sh	2005-12-21 23:41:40.000000000 +0000
+--- man-1.6f/src/makewhatis.sh.orig	2010-08-19 07:39:21.000000000 +0000
++++ man-1.6f/src/makewhatis.sh	2010-08-19 14:54:14.000000000 +0000
 @@ -3,6 +3,7 @@
  # Created: Sun Jun 14 10:49:37 1992
  # Revised: Sat Jan  8 14:12:37 1994 by faith@cs.unc.edu
@@ -8,30 +8,34 @@
  # Copyright 1992, 1993, 1994 Rickard E. Faith (faith@cs.unc.edu)
  # May be freely distributed and modified as long as copyright is retained.
  #
-@@ -25,15 +26,19 @@
+@@ -25,11 +26,15 @@
  # 971012 - replaced "test -z" - it doesnt work on SunOS 4.1.3_U1.
- # 980710 - be more careful with TMPFILE
- # 000323 - do not change PATH, better treatment of catpages - Bryan Henderson
+ # 980710 - be more careful with TMPFILE.
+ # 000323 - do not change PATH, better treatment of catpages - Bryan Henderson.
 +# 000810 - use mktemp, keep whatis files consistent while running - solar@owl
 +# 010518 - /usr/share/man is optional - solar@owl
- # 011117 - avoid suspicious filenames
+ # 011117 - avoid suspicious filenames.
 +# 020920 - use the new mktemp -t - solar@owl
  # 030310 - find files only; fix LAPACK cruft; no /usr/man default;
  #	use /dev/stderr instead of /dev/tty; handle files with strange names;
  #	add support for chinese, hungarian, indonesian, japanese, korean,
- #	polish, russian (Thierry Vignaud);
+ #	polish, russian (Thierry Vignaud).
 +# 051024 - mktemp first, set the trap later to not trigger in-shell races
+ #
+ # makewhatis 1.6: Federico Lucifredi
+ # 060608 - Corrected traps.
+@@ -37,7 +42,7 @@
  #
  # Note for Slackware users: "makewhatis -v -w -c" will work.
  #
--# makewhatis aeb 030801 (from %version%)
-+# makewhatis aeb 030801 / Owl 051024 (from %version%)
+-# makewhatis flc 060719 (from @version@)
++# makewhatis flc 060719 / Owl 100819 (from %version%)
  
  program=`basename $0`
  
-@@ -65,24 +70,10 @@
+@@ -69,25 +74,10 @@
  # AWK=/usr/bin/gawk
- AWK=%awk%
+ AWK=@awk@
  
 -# Find a place for our temporary files. If security is not a concern, use
 -#	TMPFILE=/tmp/whatis$$; TMPFILEDIR=none
@@ -41,7 +45,7 @@
 -# in case makewhatis is run as root, by creating a subdirectory of /tmp.
 -
 -TMPFILEDIR=/tmp/whatis.tmp.dir.$$
--rm -rf TMPFILEDIR
+-rm -rf $TMPFILEDIR
 -if ! mkdir -m 0700 $TMPFILEDIR; then
 -    echo Could not create $TMPFILEDIR
 -    exit 1;
@@ -50,15 +54,16 @@
 -
 -# make sure TMPFILEDIR is deleted if program is killed or terminates
 -# (just delete this line if your shell doesnt know about trap)
--trap "rm -rf $TMPFILEDIR" 0 1 2 3 15
+-trap "rm -rf $TMPFILEDIR" 0
+-trap "rm -rf $TMPFILEDIR; exit 255" 1 2 3 15
 +# make sure TMPFILE is deleted if program is killed or terminates
 +TMPFILE="`mktemp -t $program.XXXXXXXXXX`" || exit
-+trap 'rm -f -- "$TMPFILE"' EXIT
-+trap 'trap - EXIT; rm -f -- "$TMPFILE"; exit 1' HUP INT QUIT TERM
++trap "rm -rf -- $TMPFILEDIR" EXIT
++trap "trap - EXIT; rm -rf -- $TMPFILEDIR; exit 1" HUP INT QUIT TERM
  
  # default find arg: no directories, no empty files
  findarg0="-type f -size +0"
-@@ -148,7 +139,7 @@
+@@ -162,7 +152,7 @@
  fi
  catpath=`echo ${catpath} | tr : ' '`
  
@@ -67,7 +72,7 @@
  # then only update - we might visit the same directory twice
  if [ x$update = x ]; then
     for pages in man cat
-@@ -156,7 +147,7 @@
+@@ -170,7 +160,7 @@
        eval path="\$$pages"path
        for mandir in $path
        do
@@ -76,41 +81,42 @@
        done
     done
  fi
-@@ -170,7 +161,7 @@
-      if [ x$verbose != x ]; then
- 	echo "about to enter $mandir" > /dev/stderr
+@@ -212,7 +202,7 @@
+ 	fi
       fi
+ 
 -     if [ -s ${mandir}/whatis -a $pages = man -a x$update = x ]; then
 +     if [ ! -f ${mandir}/whatis.update -a $pages = man -a x$update = x ]; then
  	if [ x$verbose != x ]; then
  	   echo skipping $mandir - we did it already > /dev/stderr
  	fi
-@@ -237,12 +228,12 @@
+@@ -281,14 +271,14 @@
  	      sub(/\..*/, "", progname);
- 	      if (use_zcat || use_bzcat) {
+               if (use_zcat || use_bzcat || use_lzcat) {
  		if (use_zcat) {
 -		  pipe_cmd = "zcat \"" filename "\"";
-+		  pipe_cmd = "zcat '"'"'" filename "'"'"'";
- 		} else {
++		  pipe_cmd = "zcat '"'"'" filename "'"'"'"; 
+                 } else if (use_bzcat) {
 -		  pipe_cmd = "bzcat \"" filename "\"";
 +		  pipe_cmd = "bzcat '"'"'" filename "'"'"'";
- 		}
+                 } else {
+-                  pipe_cmd = "lzcat \"" filename "\"";
++		  pipe_cmd = "lzcat '"'"'" filename "'"'"'";
+                 }
  		# try to avoid suspicious stuff
 -		if (filename ~ /[;&|`$(]/) {
 +		if (filename ~ /[;&|`'"'"'"$(]/) {
  		  print "ignored strange file name " filename " in " curdir > "/dev/stderr";
  		  return;
  		}
-@@ -389,7 +380,7 @@
+@@ -435,22 +425,21 @@
  	    ' pages=$pages section=$section verbose=$verbose curdir=$curdir
  	    cd ..
  	 fi
 -       done > $TMPFILE
 +       done > "$TMPFILE"
  
-        cd $here
- 
-@@ -403,16 +394,15 @@
+        cd "$here"
  
         if [ -f ${mandir1}/whatis ]
         then
