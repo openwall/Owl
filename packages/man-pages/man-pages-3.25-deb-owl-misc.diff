@@ -93,22 +93,6 @@ diff -uNr man-pages-3.25/man2/adjtime.2 man-pages-3.25.new//man2/adjtime.2
 +.SH "SEE ALSO"
 +.BR adjtimex (2),
 +.BR settimeofday (2)
-diff -uNr man-pages-3.25/man2/getgid.2 man-pages-3.25.new//man2/getgid.2
---- man-pages-3.25/man2/getgid.2	2010-06-20 04:44:37.000000000 +0000
-+++ man-pages-3.25.new//man2/getgid.2	2010-08-19 09:42:09.000000000 +0000
-@@ -39,6 +39,12 @@
- 
- .BR getegid ()
- returns the effective group ID of the calling process.
-+
-+When a normal program is executed, the effective and real group ID of
-+the process are set to the group ID of the user executing the file.
-+When a set ID program is executed the real group ID is set to the
-+group of the calling user and the effective user ID corresponds to the
-+set group ID bit on the file being executed.
- .SH ERRORS
- These functions are always successful.
- .SH "CONFORMING TO"
 diff -uNr man-pages-3.25/man2/gettimeofday.2 man-pages-3.25.new//man2/gettimeofday.2
 --- man-pages-3.25/man2/gettimeofday.2	2010-06-20 04:44:37.000000000 +0000
 +++ man-pages-3.25.new//man2/gettimeofday.2	2010-08-19 09:42:09.000000000 +0000
@@ -121,50 +105,6 @@ diff -uNr man-pages-3.25/man2/gettimeofday.2 man-pages-3.25.new//man2/gettimeofd
  .BI "int settimeofday(const struct timeval *" tv \
  ", const struct timezone *" tz );
  
-diff -uNr man-pages-3.25/man2/getuid.2 man-pages-3.25.new//man2/getuid.2
---- man-pages-3.25/man2/getuid.2	2010-06-20 04:44:37.000000000 +0000
-+++ man-pages-3.25.new//man2/getuid.2	2010-08-19 09:42:09.000000000 +0000
-@@ -40,6 +40,12 @@
- 
- .BR geteuid ()
- returns the effective user ID of the calling process.
-+
-+When a normal program is executed, the effective and real user ID of
-+the process are set to the ID of the user executing the file.
-+When a set ID program is executed the real user ID is set to the
-+calling user and the effective user ID corresponds to the set ID bit
-+on the file being executed.
- .SH ERRORS
- These functions are always successful.
- .SH "CONFORMING TO"
-diff -uNr man-pages-3.25/man2/socket.2 man-pages-3.25.new//man2/socket.2
---- man-pages-3.25/man2/socket.2	2010-06-20 04:44:39.000000000 +0000
-+++ man-pages-3.25.new//man2/socket.2	2010-08-19 09:42:09.000000000 +0000
-@@ -364,9 +364,11 @@
- .SH NOTES
- POSIX.1-2001 does not require the inclusion of
- .IR <sys/types.h> ,
--and this header file is not required on Linux.
-+and this header file is not required on Linux (is only required for libc4 or earlier)
- However, some historical (BSD) implementations required this header
- file, and portable applications are probably wise to include it.
-+Some packages, like util-linux, claim portability to all Linux versions and libraries.
-+They certainly need this header file.
- 
- The manifest constants used under 4.x BSD for protocol families
- are
-diff -uNr man-pages-3.25/man3/bsearch.3 man-pages-3.25.new//man3/bsearch.3
---- man-pages-3.25/man3/bsearch.3	2010-06-20 04:44:41.000000000 +0000
-+++ man-pages-3.25.new//man3/bsearch.3	2010-08-19 09:42:09.000000000 +0000
-@@ -83,7 +83,7 @@
-     { 9, "sep" }, {10, "oct" }, {11, "nov" }, {12, "dec" }
- };
- 
--#define nr_of_months (sizeof(months)/sizeof(months[0]))
-+#define nr_of_months (sizeof(months)/sizeof(struct mi))
- 
- static int
- compmi(const void *m1, const void *m2)
 diff -uNr man-pages-3.25/man3/dbopen.3 man-pages-3.25.new//man3/dbopen.3
 --- man-pages-3.25/man3/dbopen.3	2010-06-20 04:44:42.000000000 +0000
 +++ man-pages-3.25.new//man3/dbopen.3	2010-08-19 09:42:09.000000000 +0000
@@ -325,31 +265,6 @@ diff -uNr man-pages-3.25/man3/setnetgrent.3 man-pages-3.25.new//man3/setnetgrent
  is a member of a netgroup.
  The function
  .BR innetgr ()
-diff -uNr man-pages-3.25/man3/system.3 man-pages-3.25.new//man3/system.3
---- man-pages-3.25/man3/system.3	2010-06-20 04:44:51.000000000 +0000
-+++ man-pages-3.25.new//man3/system.3	2010-08-19 09:42:09.000000000 +0000
-@@ -77,6 +77,7 @@
- C89, C99, POSIX.1-2001.
- .SH NOTES
- .PP
-+.\" Rejected upstream, don't forward.
- If the
- .B _XOPEN_SOURCE
- feature test macro is defined, then the macros described in
-@@ -144,6 +145,13 @@
- a sure indication that the
- .BR execve (2)
- call failed.
-+
-+If the
-+.B _XOPEN_SOURCE
-+feature test macro is defined, then the macros described in
-+.BR wait (2)
-+.RB ( WEXITSTATUS (),
-+etc.) are made available when including <stdlib.h>.
- .SH "SEE ALSO"
- .BR sh (1),
- .BR signal (2),
 diff -uNr man-pages-3.25/man3/tsearch.3 man-pages-3.25.new//man3/tsearch.3
 --- man-pages-3.25/man3/tsearch.3	2010-06-20 04:44:52.000000000 +0000
 +++ man-pages-3.25.new//man3/tsearch.3	2010-08-19 09:42:09.000000000 +0000
@@ -362,18 +277,6 @@ diff -uNr man-pages-3.25/man3/tsearch.3 man-pages-3.25.new//man3/tsearch.3
  .PP
  (More commonly, \fBpreorder\fP, \fBpostorder\fP, and \fBendorder\fP
  are known as \fBpreorder\fP, \fBinorder\fP, and \fBpostorder\fP:
-diff -uNr man-pages-3.25/man3/wprintf.3 man-pages-3.25.new//man3/wprintf.3
---- man-pages-3.25/man3/wprintf.3	2010-06-20 04:44:53.000000000 +0000
-+++ man-pages-3.25.new//man3/wprintf.3	2010-08-19 09:42:09.000000000 +0000
-@@ -223,7 +223,7 @@
- .BR fputwc (3),
- .BR fwide (3),
- .BR printf (3),
--.BR snprintf (3)
-+.BR snprintf (3).
- .\" .BR wscanf (3)
- .SH COLOPHON
- This page is part of release 3.25 of the Linux
 diff -uNr man-pages-3.25/man4/console_codes.4 man-pages-3.25.new//man4/console_codes.4
 --- man-pages-3.25/man4/console_codes.4	2010-06-20 04:44:53.000000000 +0000
 +++ man-pages-3.25.new//man4/console_codes.4	2010-08-19 09:42:09.000000000 +0000
@@ -476,88 +379,6 @@ diff -uNr man-pages-3.25/man5/dir_colors.5 man-pages-3.25.new//man5/dir_colors.5
  .SH "SEE ALSO"
  .BR dircolors (1),
  .BR ls (1),
-diff -uNr man-pages-3.25/man5/networks.5 man-pages-3.25.new//man5/networks.5
---- man-pages-3.25/man5/networks.5	2010-06-20 04:44:54.000000000 +0000
-+++ man-pages-3.25.new//man5/networks.5	2010-08-19 09:42:09.000000000 +0000
-@@ -19,6 +19,78 @@
- .\" License along with this manual; if not, write to the Free
- .\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
- .\" USA.
-+.\"
-+.TH NETWORKS 5 2001-12-22 "GNU/Linux" "Linux System Administration"
-+.SH NAME
-+networks \- network name information
-+.SH DESCRIPTION
-+The file
-+.I /etc/networks
-+is a plain ASCII file that describes known DARPA networks and symbolic
-+names for these networks.
-+Each line represents a network and has the following structure:
-+
-+.RS
-+.I name number aliases ...
-+.RE
-+
-+where the fields are delimited by spaces or tabs.
-+Empty lines are ignored.
-+If a line contains a hash mark (#), the hash mark and the remaining
-+part of the line are ignored.
-+
-+The field descriptions are:
-+
-+.TP
-+.I name
-+The symbolic name for the network.
-+.TP
-+.I number
-+The official number for this network in dotted-decimal notation.
-+The trailing ".0" may be omitted.
-+.TP
-+.I aliases
-+Optional aliases for the network.
-+.LP
-+
-+This file is read by
-+.B route
-+or
-+.B netstat
-+utilities.
-+Only Class A, B or C networks are supported, partitioned networks
-+(i.e. network/26 or network/28) are not supported by this facility.
-+.SH FILES
-+.TP
-+.I /etc/networks
-+The networks definition file.
-+.SH "SEE ALSO"
-+.BR getnetbyaddr (3),
-+.BR getnetbyname (3),
-+.BR getnetent (3),
-+.BR route (8),
-+.BR netstat (8)
-+.\" Copyright (c) 2001 Martin Schulze <joey@infodrom.org>
-+.\"
-+.\" This is free documentation; you can redistribute it and/or
-+.\" modify it under the terms of the GNU General Public License as
-+.\" published by the Free Software Foundation; either version 2 of
-+.\" the License, or (at your option) any later version.
-+.\"
-+.\" The GNU General Public License's references to "object code"
-+.\" and "executables" are to be interpreted as the output of any
-+.\" document formatting or typesetting system, including
-+.\" intermediate and printed output.
-+.\"
-+.\" This manual is distributed in the hope that it will be useful,
-+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
-+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+.\" GNU General Public License for more details.
-+.\"
-+.\" You should have received a copy of the GNU General Public
-+.\" License along with this manual; if not, write to the Free
-+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
-+.\" USA.
- .\" 2008-09-04, mtk, taken from Debian downstream, with a few light edits
- .\"
- .TH NETWORKS 5 2008-09-04 "GNU/Linux" "Linux System Administration"
 diff -uNr man-pages-3.25/man5/nsswitch.conf.5 man-pages-3.25.new//man5/nsswitch.conf.5
 --- man-pages-3.25/man5/nsswitch.conf.5	2010-06-20 04:44:54.000000000 +0000
 +++ man-pages-3.25.new//man5/nsswitch.conf.5	2010-08-19 09:42:09.000000000 +0000
@@ -574,21 +395,6 @@ diff -uNr man-pages-3.25/man5/nsswitch.conf.5 man-pages-3.25.new//man5/nsswitch.
  Since most people only put a + at the end of
  .I /etc/passwd
  to include everything from NIS, the switch provides a faster
-@@ -283,6 +289,14 @@
- With Solaris, it isn't possible to link programs using the NSS Service
- statically.
- With Linux, this is no problem.
-+
-+.\" Debian-only note?
-+On a Debian system other mail transport agents may or may not ignore
-+the
-+.I aliases
-+file.  For example, unlike
-+.B sendmail
-+Exim does not ignore it.
- .SH COLOPHON
- This page is part of release 3.25 of the Linux
- .I man-pages
 diff -uNr man-pages-3.25/man5/resolv.conf.5 man-pages-3.25.new//man5/resolv.conf.5
 --- man-pages-3.25/man5/resolv.conf.5	2010-06-20 04:44:54.000000000 +0000
 +++ man-pages-3.25.new//man5/resolv.conf.5	2010-08-19 09:42:09.000000000 +0000
@@ -831,21 +637,3 @@ diff -uNr man-pages-3.25/man7/mdoc.7 man-pages-3.25.new//man7/mdoc.7
  .Pp
  Note that this is not the usual macro package for Linux documentation,
  although it is used for documentation of several widely used programs;
-diff -uNr man-pages-3.25/man8/zdump.8 man-pages-3.25.new//man8/zdump.8
---- man-pages-3.25/man8/zdump.8	2010-06-20 04:44:56.000000000 +0000
-+++ man-pages-3.25.new//man8/zdump.8	2010-08-19 09:42:09.000000000 +0000
-@@ -1,5 +1,3 @@
--.\" This page is in the public domain
--.\"
- .TH ZDUMP 8 2007-05-18 "" "Linux System Administration"
- .SH NAME
- zdump \- timezone dumper
-diff -uNr man-pages-3.25/man8/zic.8 man-pages-3.25.new//man8/zic.8
---- man-pages-3.25/man8/zic.8	2010-06-20 04:44:56.000000000 +0000
-+++ man-pages-3.25.new//man8/zic.8	2010-08-19 09:48:44.000000000 +0000
-@@ -1,5 +1,3 @@
--.\" This page is in the public domain
--.\"
- .TH ZIC 8 2010-02-25 "" "Linux System Administration"
- .SH NAME
- zic \- timezone compiler
