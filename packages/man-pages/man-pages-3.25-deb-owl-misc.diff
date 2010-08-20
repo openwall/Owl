@@ -1,15 +1,3 @@
-diff -uNr man-pages-3.25/man2/gettimeofday.2 man-pages-3.25.new//man2/gettimeofday.2
---- man-pages-3.25/man2/gettimeofday.2	2010-06-20 04:44:37.000000000 +0000
-+++ man-pages-3.25.new//man2/gettimeofday.2	2010-08-19 09:42:09.000000000 +0000
-@@ -45,7 +45,7 @@
- .B #include <sys/time.h>
- 
- .BI "int gettimeofday(struct timeval *" tv ", struct timezone *" tz );
--
-+.br
- .BI "int settimeofday(const struct timeval *" tv \
- ", const struct timezone *" tz );
- 
 diff -uNr man-pages-3.25/man3/dbopen.3 man-pages-3.25.new//man3/dbopen.3
 --- man-pages-3.25/man3/dbopen.3	2010-06-20 04:44:42.000000000 +0000
 +++ man-pages-3.25.new//man3/dbopen.3	2010-08-19 09:42:09.000000000 +0000
@@ -132,18 +120,6 @@ diff -uNr man-pages-3.25/man3/qsort.3 man-pages-3.25.new//man3/qsort.3
  
      for (j = 1; j < argc; j++)
          puts(argv[j]);
-diff -uNr man-pages-3.25/man3/setnetgrent.3 man-pages-3.25.new//man3/setnetgrent.3
---- man-pages-3.25/man3/setnetgrent.3	2010-06-20 04:44:49.000000000 +0000
-+++ man-pages-3.25.new//man3/setnetgrent.3	2010-08-19 09:42:09.000000000 +0000
-@@ -71,7 +71,7 @@
- .BR endnetgrent ().
- .PP
- In most cases you only want to check if the triplet
--.RI ( hostname ", " username ", " domainname )
-+.BR (hostname "," username "," domainname)
- is a member of a netgroup.
- The function
- .BR innetgr ()
 diff -uNr man-pages-3.25/man3/tsearch.3 man-pages-3.25.new//man3/tsearch.3
 --- man-pages-3.25/man3/tsearch.3	2010-06-20 04:44:52.000000000 +0000
 +++ man-pages-3.25.new//man3/tsearch.3	2010-08-19 09:42:09.000000000 +0000
