@@ -29,7 +29,7 @@
  # Note for Slackware users: "makewhatis -v -w -c" will work.
  #
 -# makewhatis flc 060719 (from @version@)
-+# makewhatis flc 060719 / Owl 100819 (from %version%)
++# makewhatis flc 060719 / Owl 100819 (from @version@)
  
  program=`basename $0`
  
