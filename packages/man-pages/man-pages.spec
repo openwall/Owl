@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.25 2010/08/21 00:12:42 solar Exp $
+# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.26 2010/08/21 00:31:49 solar Exp $
 
 %define posix_version 2003
 %define posix_release a
@@ -98,9 +98,6 @@ rm man3/crypt_r.3
 # Part of bind-utils
 rm man5/resolver.5
 
-# Part of shadow-utils
-rm man3/getspnam.3
-
 # Obsolete
 rm man3/infnan.3
 
@@ -137,7 +134,8 @@ done
 * Sat Aug 21 2010 Solar Designer <solar-at-owl.openwall.com> 3.25-owl2
 - Cleaned up and revised the Debian-derived patch (dropped most of it).
 - Enabled packaging of man5/resolv.conf.5 (it is not part of bind-utils,
-contrary to what the comment said).
+contrary to what the comment said) and of man3/getspnam.3 (it is better
+than shadow-utils' version).
 
 * Thu Aug 19 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.25-owl1
 - 3.25

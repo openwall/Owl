@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.56 2006/02/03 22:15:52 ldv Exp $
+# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.57 2010/08/21 00:31:49 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.4.1
-Release: owl11
+Release: owl12
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -194,7 +194,6 @@ fi
 %_mandir/man1/gpasswd.1*
 %_mandir/man1/newgrp.1*
 %_mandir/man1/sg.1*
-%_mandir/man3/getspnam.3*
 %_mandir/man3/shadow.3*
 %_mandir/man5/login.defs.5*
 %_mandir/man5/shadow.5*
@@ -238,6 +237,9 @@ fi
 %exclude %_mandir/man8/mkpasswd*
 
 %changelog
+* Sat Aug 21 2010 Solar Designer <solar-at-owl.openwall.com> 2:4.0.4.1-owl12
+- Don't package getspnam.3* (let the man-pages version of it be installed).
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2:4.0.4.1-owl11
 - Compressed ChangeLog, NEWS and HOWTO files.
 
