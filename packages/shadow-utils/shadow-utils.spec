@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.57 2010/08/21 00:31:49 solar Exp $
+# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.58 2010/08/21 00:42:07 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -226,6 +226,7 @@ fi
 %exclude %_mandir/man1/login*
 %exclude %_mandir/man1/passwd*
 %exclude %_mandir/man1/su*
+%exclude %_mandir/man3/getspnam.3*
 %exclude %_mandir/man5/faillog*
 %exclude %_mandir/man5/limits*
 %exclude %_mandir/man5/login.access*
