@@ -305,5 +305,5 @@
 #define HAVE_DYN_ARRAYS	
 
 #define HOST_SYSTEM "Linux"
-#define CDRKIT_VERSION "1.1.9"
+#define CDRKIT_VERSION "1.1.10"
 /*[$Rev: 467 $]" */

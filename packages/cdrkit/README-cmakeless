@@ -25,7 +25,7 @@ The "-v" option to strace is crucial for this to work.
 From the cmake-enabled build, save two files:
 
 mkdir ../cdrkit-h
-cp -av build/{align,xconfig}.h ../cdrkit-h
+cp -av build/include/{align,xconfig}.h ../cdrkit-h
 
 NB: These files will differ on 32- vs. 64-bit systems!  xconfig.h might
 also differ on little- vs. big-endian.
@@ -56,10 +56,10 @@ rm -rf cdrkit-1.1.9
 tar xzf cdrkit-1.1.9.tar.gz
 cd cdrkit-1.1.9
 
-mkdir build
-cp -av ../cdrkit-h/*.h build/
+mkdir -p build/include
+cp -av ../cdrkit-h/*.h build/include
 CC=gcc AR=ar CFLAGS='-O2 -fomit-frame-pointer' sh ../cdrkit-build
 mkdir ../cdrkit-myinst
 DESTDIR=../cdrkit-myinst BINDIR=/usr/bin SBINDIR=/usr/sbin MANDIR=/usr/share/man sh ../cdrkit-install
 
-$Owl: Owl/packages/cdrkit/README-cmakeless,v 1.2 2009/05/06 20:58:53 solar Exp $
+$Owl: Owl/packages/cdrkit/README-cmakeless,v 1.3 2010/08/23 08:56:51 segoon Exp $

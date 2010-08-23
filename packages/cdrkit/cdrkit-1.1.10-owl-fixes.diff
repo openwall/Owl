@@ -1,7 +1,7 @@
-diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/dump.c cdrkit-1.1.9/genisoimage/diag/dump.c
---- cdrkit-1.1.9.orig/genisoimage/diag/dump.c	2008-02-26 07:59:05 +0000
-+++ cdrkit-1.1.9/genisoimage/diag/dump.c	2009-05-08 22:02:55 +0000
-@@ -368,7 +368,8 @@ main(int argc, char *argv[])
+diff -uNr cdrkit-1.1.10.orig/genisoimage/diag/dump.c cdrkit-1.1.10/genisoimage/diag/dump.c
+--- cdrkit-1.1.10.orig/genisoimage/diag/dump.c	2010-08-21 14:42:44.000000000 +0000
++++ cdrkit-1.1.10/genisoimage/diag/dump.c	2010-08-21 15:07:09.000000000 +0000
+@@ -368,7 +368,8 @@
  	do {
  		if (file_addr < (off_t)0) file_addr = (off_t)0;
  		showblock(1);
@@ -11,7 +11,7 @@ diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/dump.c cdrkit-1.1.9/genisoimage/di
  		if (c == 'a')
  			file_addr -= PAGE;
  		if (c == 'b')
-@@ -376,12 +377,15 @@ main(int argc, char *argv[])
+@@ -376,12 +377,15 @@
  		if (c == 'g') {
  			crsr2(20, 1);
  			printf("Enter new starting block (in hex):");
@@ -29,7 +29,7 @@ diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/dump.c cdrkit-1.1.9/genisoimage/di
  				scanf("%lx", &l); /* FIXME: check return value */
  				file_addr = (off_t)l;
  			}
-@@ -392,8 +396,10 @@ main(int argc, char *argv[])
+@@ -392,8 +396,10 @@
  		if (c == 'f') {
  			crsr2(20, 1);
  			printf("Enter new search string:");
@@ -42,10 +42,10 @@ diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/dump.c cdrkit-1.1.9/genisoimage/di
  				search[strlen((char *)search)-1] = 0;
  			crsr2(20, 1);
  			printf("                                     ");
-diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/isodump.c cdrkit-1.1.9/genisoimage/diag/isodump.c
---- cdrkit-1.1.9.orig/genisoimage/diag/isodump.c	2008-02-26 07:59:05 +0000
-+++ cdrkit-1.1.9/genisoimage/diag/isodump.c	2009-05-08 22:03:58 +0000
-@@ -655,7 +655,8 @@ main(int argc, char *argv[])
+diff -uNr cdrkit-1.1.10.orig/genisoimage/diag/isodump.c cdrkit-1.1.10/genisoimage/diag/isodump.c
+--- cdrkit-1.1.10.orig/genisoimage/diag/isodump.c	2010-08-21 14:42:44.000000000 +0000
++++ cdrkit-1.1.10/genisoimage/diag/isodump.c	2010-08-21 15:07:09.000000000 +0000
+@@ -655,7 +655,8 @@
  		if (file_addr < 0)
  			file_addr = (off_t)0;
  		showblock(1);
@@ -55,7 +55,7 @@ diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/isodump.c cdrkit-1.1.9/genisoimage
  		if (c == 'a')
  			file_addr -= blocksize;
  		if (c == 'b')
-@@ -663,12 +664,15 @@ main(int argc, char *argv[])
+@@ -663,12 +664,15 @@
  		if (c == 'g') {
  			crsr2(20, 1);
  			printf("Enter new starting block (in hex):");
@@ -73,7 +73,7 @@ diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/isodump.c cdrkit-1.1.9/genisoimage
  				scanf("%lx", &l); /* FIXME: check return value */
  				file_addr = (off_t)l;
  			}
-@@ -679,8 +683,10 @@ main(int argc, char *argv[])
+@@ -679,8 +683,10 @@
  		if (c == 'f') {
  			crsr2(20, 1);
  			printf("Enter new search string:");
@@ -86,10 +86,10 @@ diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/isodump.c cdrkit-1.1.9/genisoimage
  				search[strlen((char *)search)-1] = 0;
  			crsr2(20, 1);
  			printf("                                     ");
-diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/isoinfo.c cdrkit-1.1.9/genisoimage/diag/isoinfo.c
---- cdrkit-1.1.9.orig/genisoimage/diag/isoinfo.c	2008-02-26 07:59:05 +0000
-+++ cdrkit-1.1.9/genisoimage/diag/isoinfo.c	2009-05-08 22:28:03 +0000
-@@ -645,13 +645,16 @@ extract_file(struct iso_directory_record
+diff -uNr cdrkit-1.1.10.orig/genisoimage/diag/isoinfo.c cdrkit-1.1.10/genisoimage/diag/isoinfo.c
+--- cdrkit-1.1.10.orig/genisoimage/diag/isoinfo.c	2010-08-21 14:42:44.000000000 +0000
++++ cdrkit-1.1.10/genisoimage/diag/isoinfo.c	2010-08-21 15:07:09.000000000 +0000
+@@ -645,13 +645,16 @@
  		readsecs(extent - sector_offset, buff, ISO_BLOCKS(sizeof (buff)));
  		tlen = (len > sizeof (buff) ? sizeof (buff) : len);
  #else
@@ -107,10 +107,10 @@ diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/isoinfo.c cdrkit-1.1.9/genisoimage
  	}
  }
  
-diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/isovfy.c cdrkit-1.1.9/genisoimage/diag/isovfy.c
---- cdrkit-1.1.9.orig/genisoimage/diag/isovfy.c	2008-02-26 07:59:05 +0000
-+++ cdrkit-1.1.9/genisoimage/diag/isovfy.c	2009-05-08 21:39:26 +0000
-@@ -140,8 +140,10 @@ static int	isonum_733(unsigned char * p)
+diff -uNr cdrkit-1.1.10.orig/genisoimage/diag/isovfy.c cdrkit-1.1.10/genisoimage/diag/isovfy.c
+--- cdrkit-1.1.10.orig/genisoimage/diag/isovfy.c	2010-08-21 14:42:44.000000000 +0000
++++ cdrkit-1.1.10/genisoimage/diag/isovfy.c	2010-08-21 15:07:09.000000000 +0000
+@@ -140,8 +140,10 @@
  static int	parse_rr(unsigned char * pnt, int len, int cont_flag);
  static int	dump_rr(struct iso_directory_record * idr);
  static void	check_tree(off_t file_addr, int file_size, off_t parent_addr);
@@ -121,7 +121,7 @@ diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/isovfy.c cdrkit-1.1.9/genisoimage/
  static void	usage(int excode);
  
  static int
-@@ -575,6 +577,7 @@ struct path_table_info {
+@@ -575,6 +577,7 @@
  	unsigned short	parent;
  };
  
@@ -129,7 +129,7 @@ diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/isovfy.c cdrkit-1.1.9/genisoimage/
  static void
  check_path_tables(int typel_extent, int typem_extent, int path_table_size)
  {
-@@ -650,6 +653,7 @@ check_path_tables(int typel_extent, int 
+@@ -650,6 +653,7 @@
  		printf("%4.4d %4.4d %8.8x %s\n", count++, idx, extent, name);
  	}
  }
@@ -137,7 +137,7 @@ diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/isovfy.c cdrkit-1.1.9/genisoimage/
  
  static void
  usage(int excode)
-@@ -781,7 +785,7 @@ main(int argc, char *argv[])
+@@ -781,7 +785,7 @@
  	path_table_size = isonum_733(ipd.path_table_size);
  
  	/* Enable this to get the dump of the path tables */
@@ -146,10 +146,10 @@ diff -urpN cdrkit-1.1.9.orig/genisoimage/diag/isovfy.c cdrkit-1.1.9/genisoimage/
  	check_path_tables(typel_extent, typem_extent, path_table_size);
  #endif
  
-diff -urpN cdrkit-1.1.9.orig/genisoimage/eltorito.c cdrkit-1.1.9/genisoimage/eltorito.c
---- cdrkit-1.1.9.orig/genisoimage/eltorito.c	2008-02-26 07:59:05 +0000
-+++ cdrkit-1.1.9/genisoimage/eltorito.c	2009-05-08 22:32:07 +0000
-@@ -607,10 +607,10 @@ fill_boot_desc(struct eltorito_defaultbo
+diff -uNr cdrkit-1.1.10.orig/genisoimage/eltorito.c cdrkit-1.1.10/genisoimage/eltorito.c
+--- cdrkit-1.1.10.orig/genisoimage/eltorito.c	2010-08-21 14:42:44.000000000 +0000
++++ cdrkit-1.1.10/genisoimage/eltorito.c	2010-08-21 15:07:09.000000000 +0000
+@@ -607,10 +607,10 @@
  			"Error opening boot image file '%s' for update.\n",
  							de->whole_name);
  #else
@@ -161,7 +161,7 @@ diff -urpN cdrkit-1.1.9.orig/genisoimage/eltorito.c cdrkit-1.1.9/genisoimage/elt
  			exit(1);
  #endif
  		}
-@@ -652,7 +652,19 @@ fill_boot_desc(struct eltorito_defaultbo
+@@ -652,7 +652,19 @@
  #endif
  		}
  		/* End of file, set position to byte 8 */
@@ -182,7 +182,7 @@ diff -urpN cdrkit-1.1.9.orig/genisoimage/eltorito.c cdrkit-1.1.9/genisoimage/elt
  		memset(&bi_table, 0, sizeof (bi_table));
  		/* Is it always safe to assume PVD is at session_start+16? */
  		set_731(bi_table.bi_pvd, session_start + 16);
-@@ -660,7 +672,20 @@ fill_boot_desc(struct eltorito_defaultbo
+@@ -660,7 +672,20 @@
  		set_731(bi_table.bi_length, de->size);
  		set_731(bi_table.bi_csum, bi_checksum);
  
@@ -204,9 +204,20 @@ diff -urpN cdrkit-1.1.9.orig/genisoimage/eltorito.c cdrkit-1.1.9/genisoimage/elt
  		close(bootimage);
  	}
  }/* fill_boot_desc(... */
-diff -urpN cdrkit-1.1.9.orig/genisoimage/jte.c cdrkit-1.1.9/genisoimage/jte.c
---- cdrkit-1.1.9.orig/genisoimage/jte.c	2008-05-25 20:46:17 +0000
-+++ cdrkit-1.1.9/genisoimage/jte.c	2009-05-08 21:28:32 +0000
+diff -uNr cdrkit-1.1.10.orig/genisoimage/genisoimage.c cdrkit-1.1.10/genisoimage/genisoimage.c
+--- cdrkit-1.1.10.orig/genisoimage/genisoimage.c	2010-08-21 14:42:44.000000000 +0000
++++ cdrkit-1.1.10/genisoimage/genisoimage.c	2010-08-21 15:06:39.000000000 +0000
+@@ -53,6 +53,7 @@
+ #include <ctype.h>
+ #include "match.h"
+ #include "exclude.h"
++#include "checksum.h"
+ #include <unls.h>	/* For UNICODE translation */
+ #include <schily.h>
+ #ifdef UDF
+diff -uNr cdrkit-1.1.10.orig/genisoimage/jte.c cdrkit-1.1.10/genisoimage/jte.c
+--- cdrkit-1.1.10.orig/genisoimage/jte.c	2010-08-21 14:42:44.000000000 +0000
++++ cdrkit-1.1.10/genisoimage/jte.c	2010-08-21 15:07:09.000000000 +0000
 @@ -36,6 +36,8 @@
  #include "vms.h"
  #endif
@@ -216,7 +227,7 @@ diff -urpN cdrkit-1.1.9.orig/genisoimage/jte.c cdrkit-1.1.9/genisoimage/jte.c
  /* Different types used in building our state list below */
  #define JTET_FILE_MATCH 1
  #define JTET_NOMATCH    2
-@@ -691,9 +693,9 @@ static void write_compressed_chunk(unsig
+@@ -673,9 +675,9 @@
  		if (!uncomp_buf)
  		{
  #ifdef	USE_LIBSCHILY
@@ -228,10 +239,10 @@ diff -urpN cdrkit-1.1.9.orig/genisoimage/jte.c cdrkit-1.1.9/genisoimage/jte.c
              exit(1);
  #endif
  		}
-diff -urpN cdrkit-1.1.9.orig/icedax/toc.c cdrkit-1.1.9/icedax/toc.c
---- cdrkit-1.1.9.orig/icedax/toc.c	2008-02-26 07:59:05 +0000
-+++ cdrkit-1.1.9/icedax/toc.c	2009-05-08 22:18:11 +0000
-@@ -1071,7 +1071,8 @@ static int handle_userchoice(char *p, un
+diff -uNr cdrkit-1.1.10.orig/icedax/toc.c cdrkit-1.1.10/icedax/toc.c
+--- cdrkit-1.1.10.orig/icedax/toc.c	2010-08-21 14:42:44.000000000 +0000
++++ cdrkit-1.1.10/icedax/toc.c	2010-08-21 15:07:09.000000000 +0000
+@@ -1071,7 +1071,8 @@
  	/* get user response. */
  	do {
  		fprintf(stderr, "please choose one (0-%u): ", nr);
@@ -241,10 +252,10 @@ diff -urpN cdrkit-1.1.9.orig/icedax/toc.c cdrkit-1.1.9/icedax/toc.c
  	} while (user_choice > nr);
  
  	if (user_choice == nr)
-diff -urpN cdrkit-1.1.9.orig/wodim/isosize.c cdrkit-1.1.9/wodim/isosize.c
---- cdrkit-1.1.9.orig/wodim/isosize.c	2008-02-26 07:59:05 +0000
-+++ cdrkit-1.1.9/wodim/isosize.c	2009-05-08 22:24:58 +0000
-@@ -63,19 +63,22 @@ isosize(int f)
+diff -uNr cdrkit-1.1.10.orig/wodim/isosize.c cdrkit-1.1.10/wodim/isosize.c
+--- cdrkit-1.1.10.orig/wodim/isosize.c	2010-08-21 14:42:44.000000000 +0000
++++ cdrkit-1.1.10/wodim/isosize.c	2010-08-21 15:07:09.000000000 +0000
+@@ -63,19 +63,22 @@
  	if (!S_ISREG(mode) && !S_ISBLK(mode) && !S_ISCHR(mode))
  		return ((Llong)-1);
  

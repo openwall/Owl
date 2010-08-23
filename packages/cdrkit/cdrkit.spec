@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.9 2010/01/26 17:18:56 solar Exp $
+# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.10 2010/08/23 08:56:51 segoon Exp $
 
 %{?!BUILD_NETSCSID:	%define BUILD_NETSCSID 0}
 
 Summary: A collection of command-line CD/DVD recording utilities.
 Name: cdrkit
-Version: 1.1.9
-Release: owl3
+Version: 1.1.10
+Release: owl1
 License: GPLv2
 Group: Applications/System
 URL: http://cdrkit.org
@@ -19,7 +19,7 @@ Source10: README.ATAPI.setup
 # README-cmakeless is unused by this package.
 # It is specified here such that it gets included into the .src.rpm file.
 Source99: README-cmakeless
-Patch0: cdrkit-1.1.9-owl-fixes.diff
+Patch0: cdrkit-1.1.10-owl-fixes.diff
 Patch1: cdrkit-1.1.9-owl-tmp.diff
 Patch2: cdrkit-1.1.9-owl-doc.diff
 Patch3: cdrkit-1.1.9-owl-rcfile.diff
@@ -110,6 +110,11 @@ ln -s wodim.1 man1/dvdrecord.1
 %_mandir/man?/*
 
 %changelog
+* Sat Aug 23 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.1.10-owl1
+- Updated to 1.1.10.
+- Updated README-cmakeless.
+- Updated -owl-fixes.
+
 * Mon May 18 2009 Solar Designer <solar-at-owl.openwall.com> 1.1.9-owl3
 - Patched some confusing/erroneous messages from wodim(1).
 - Replaced README.ATAPI.setup with a version more useful on Owl (loosely
