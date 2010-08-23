@@ -1,0 +1,69 @@
+diff -uNr gawk-3.1.8.orig/awklib/eg/network/PostAgent.sh gawk-3.1.8/awklib/eg/network/PostAgent.sh
+--- gawk-3.1.8.orig/awklib/eg/network/PostAgent.sh	2010-08-21 12:48:51.000000000 +0000
++++ gawk-3.1.8/awklib/eg/network/PostAgent.sh	2010-08-22 09:20:12.000000000 +0000
+@@ -1,9 +1,11 @@
+ #!/bin/sh
+-MobAg=/tmp/MobileAgent.$$
++MobAg=`mktemp MobileAgentXXXXXX`
++trap "trap - EXIT; rm -f -- $MobAg; exit 1" TERM INT HUP QUIT PIPE
++trap "rm -f -- $MobAg; exit 1" EXIT
++
+ # direct script to mobile agent file
+ cat > $MobAg
+ # execute agent concurrently
+ gawk -f $MobAg $MobAg > /dev/null &
+ # HTTP header, terminator and body
+ gawk 'BEGIN { print "\r\nAgent started" }'
+-rm $MobAg      # delete script file of agent
+diff -uNr gawk-3.1.8.orig/doc/gawkinet.info gawk-3.1.8/doc/gawkinet.info
+--- gawk-3.1.8.orig/doc/gawkinet.info	2010-08-21 12:48:51.000000000 +0000
++++ gawk-3.1.8/doc/gawkinet.info	2010-08-22 09:20:48.000000000 +0000
+@@ -2810,17 +2810,17 @@
+ access (Version 3.1 or later; verify with `gawk --version').
+ 
+      #!/bin/sh
+-     MobAg=/tmp/MobileAgent.$$
++     MobAg=`mktemp MobileAgentXXXXXX`
++     trap "trap - EXIT; rm -f -- $MobAg; exit 1" TERM INT HUP QUIT PIPE
++     trap "rm -f -- $MobAg; exit 1" EXIT
++     
+      # direct script to mobile agent file
+      cat > $MobAg
+      # execute agent concurrently
+      gawk -f $MobAg $MobAg > /dev/null &
+      # HTTP header, terminator and body
+      gawk 'BEGIN { print "\r\nAgent started" }'
+-     rm $MobAg      # delete script file of agent
+ 
+-   By making its process id (`$$') part of the unique file name, the
+-script avoids conflicts between concurrent instances of the script.
+ First, all lines from standard input (the mobile agent's source code)
+ are copied into this unique file. Then, the agent is started as a
+ concurrent process and a short message reporting this fact is sent to
+diff -uNr gawk-3.1.8.orig/doc/gawkinet.texi gawk-3.1.8/doc/gawkinet.texi
+--- gawk-3.1.8.orig/doc/gawkinet.texi	2010-08-21 12:48:51.000000000 +0000
++++ gawk-3.1.8/doc/gawkinet.texi	2010-08-22 09:20:12.000000000 +0000
+@@ -3615,19 +3615,19 @@
+ @example
+ @c file eg/network/PostAgent.sh
+ #!/bin/sh
+-MobAg=/tmp/MobileAgent.$$
++MobAg=`mktemp MobileAgentXXXXXX`
++trap "trap - EXIT; rm -f -- $MobAg; exit 1" TERM INT HUP QUIT PIPE
++trap "rm -f -- $MobAg; exit 1" EXIT
++
+ # direct script to mobile agent file
+ cat > $MobAg
+ # execute agent concurrently
+ gawk -f $MobAg $MobAg > /dev/null &
+ # HTTP header, terminator and body
+ gawk 'BEGIN @{ print "\r\nAgent started" @}'
+-rm $MobAg      # delete script file of agent
+ @c endfile
+ @end example
+ 
+-By making its process id (@code{$$}) part of the unique @value{FN}, the
+-script avoids conflicts between concurrent instances of the script.
+ First, all lines
+ from standard input (the mobile agent's source code) are copied into
+ this unique file. Then, the agent is started as a concurrent process

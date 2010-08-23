@@ -1,19 +1,20 @@
-# $Owl: Owl/packages/gawk/gawk.spec,v 1.18 2010/01/26 17:18:56 solar Exp $
+# $Owl: Owl/packages/gawk/gawk.spec,v 1.19 2010/08/23 08:41:29 segoon Exp $
 
 %define BUILD_PROFILE 0
 
 Summary: The GNU version of the awk text processing utility.
 Name: gawk
-Version: 3.1.1
-Release: owl4
+Version: 3.1.8
+Release: owl1
 License: GPL
 Group: Applications/Text
-# ftp://ftp.gnu.org/gnu/gawk/gawk-%version.tar.gz
-Source0: gawk-%version.tar.bz2
+Source0: ftp://ftp.gnu.org/gnu/gawk/gawk-%version.tar.bz2
 # ftp://ftp.gnu.org/gnu/gawk/gawk-%version-ps.tar.gz
 Source1: gawk-%version-ps.tar.bz2
-Patch0: gawk-3.1.1-eggert-tmp.diff
-Patch1: gawk-3.1.1-owl-info.diff
+Patch1: gawk-3.1.8-owl-info.diff
+Patch2: gawk-3.1.8-owl-tmp.diff
+Patch3: gawk-3.1.8-owl-warnings.diff
+Patch4: gawk-3.1.8-owl-man.diff
 PreReq: /sbin/install-info
 BuildRequires: texinfo >= 4.2
 BuildRoot: /override/%name-%version
@@ -37,17 +38,16 @@ it creates a profile of your program with line execution counts.
 
 %prep
 %setup -q -b 1
-%patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
 %build
 rm doc/gawk.info awklib/stamp-eg
 %configure
-pushd awklib
-%__make stamp-eg
-popd
 %__make
 
 %check
@@ -72,8 +72,8 @@ ln -sf ../../bin/gawk ../usr/bin/gawk
 mv %buildroot/bin/pgawk %buildroot/usr/bin/
 
 # XXX: (GM): Remove unpackaged files (check later)
-rm %buildroot/bin/gawk-3.1.1
-rm %buildroot/bin/pgawk-3.1.1
+rm %buildroot/bin/gawk-%version
+rm %buildroot/bin/pgawk-%version
 rm %buildroot%_bindir/pgawk
 rm %buildroot%_infodir/gawkinet.info*
 
@@ -88,7 +88,7 @@ fi
 %files
 %defattr(-,root,root)
 %doc README COPYING FUTURES LIMITATIONS NEWS PROBLEMS
-%doc POSIX.STD doc/gawk.ps* doc/awkcard.ps*
+%doc POSIX.STD doc/*.ps.gz
 
 /bin/awk
 /bin/gawk
@@ -99,6 +99,7 @@ fi
 %_infodir/gawk.info*
 %_libexecdir/awk
 %_datadir/awk
+%_datadir/locale/*/LC_MESSAGES/gawk.mo
 
 %if %BUILD_PROFILE
 %files profile
@@ -107,6 +108,13 @@ fi
 %endif
 
 %changelog
+* Sat Aug 21 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.1.8-owl1
+- Updated to 3.1.8.
+- Dropped patch -eggert-tmp (fixed in upstream).
+- Updated patch -owl-info.
+- Patched unsafe temporary file handling in sample PostAgent.sh.
+- Fixed compiler warnings.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.1.1-owl4
 - Corrected info files installation.
 

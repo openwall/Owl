@@ -1,0 +1,32 @@
+Binary files gawk-3.1.8.orig/.dfa.c.swp and gawk-3.1.8/.dfa.c.swp differ
+diff -uNr gawk-3.1.8.orig/dfa.c gawk-3.1.8/dfa.c
+--- gawk-3.1.8.orig/dfa.c	2010-08-21 12:48:51.000000000 +0000
++++ gawk-3.1.8/dfa.c	2010-08-21 13:00:46.000000000 +0000
+@@ -781,6 +781,8 @@
+   int chars_al, range_sts_al, range_ends_al, ch_classes_al,
+     equivs_al, coll_elems_al;
+ 
++  c1 = c2 = EOF;
++  wc1 = wc2 = EOF;
+   chars_al = 1;
+   range_sts_al = range_ends_al = 0;
+   ch_classes_al = equivs_al = coll_elems_al = 0;
+diff -uNr gawk-3.1.8.orig/node.c gawk-3.1.8/node.c
+--- gawk-3.1.8.orig/node.c	2010-08-21 12:48:51.000000000 +0000
++++ gawk-3.1.8/node.c	2010-08-21 12:57:02.000000000 +0000
+@@ -847,6 +847,7 @@
+ 	n->flags &= ~WSTRCUR;
+ }
+ 
++#if 0
+ static void
+ dump_wstr(FILE *fp, const wchar_t *str, size_t len)
+ {
+@@ -856,6 +857,7 @@
+ 	for (; len--; str++)
+ 		putwc(*str, fp);
+ }
++#endif
+ 
+ /* wstrstr --- walk haystack, looking for needle, wide char version */
+ 
