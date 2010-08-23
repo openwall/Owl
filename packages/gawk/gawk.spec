@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gawk/gawk.spec,v 1.19 2010/08/23 08:41:29 segoon Exp $
+# $Owl: Owl/packages/gawk/gawk.spec,v 1.20 2010/08/23 14:19:50 segoon Exp $
 
 %define BUILD_PROFILE 0
 
@@ -62,7 +62,7 @@ rm -rf %buildroot
 
 gzip -9n doc/*.ps
 
-cd %buildroot
+pushd %buildroot
 rm -f .%_infodir/dir
 mkdir -p .%_prefix/bin
 ln -sf gawk.1.gz .%_mandir/man1/awk.1.gz
@@ -76,6 +76,9 @@ rm %buildroot/bin/gawk-%version
 rm %buildroot/bin/pgawk-%version
 rm %buildroot%_bindir/pgawk
 rm %buildroot%_infodir/gawkinet.info*
+popd
+
+%find_lang %name
 
 %post
 /sbin/install-info %_infodir/gawk.info %_infodir/dir
@@ -85,7 +88,7 @@ if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/gawk.info %_infodir/dir
 fi
 
-%files
+%files -f %name.lang
 %defattr(-,root,root)
 %doc README COPYING FUTURES LIMITATIONS NEWS PROBLEMS
 %doc POSIX.STD doc/*.ps.gz
@@ -99,7 +102,6 @@ fi
 %_infodir/gawk.info*
 %_libexecdir/awk
 %_datadir/awk
-%_datadir/locale/*/LC_MESSAGES/gawk.mo
 
 %if %BUILD_PROFILE
 %files profile
