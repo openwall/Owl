@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/diffstat/diffstat.spec,v 1.14 2009/11/18 04:59:38 solar Exp $
+# $Owl: Owl/packages/diffstat/diffstat.spec,v 1.15 2010/08/23 08:29:51 segoon Exp $
 
 Summary: A utility which provides statistics based on the output of diff.
 Name: diffstat
-Version: 1.51
+Version: 1.53
 Release: owl1
 Group: Development/Tools
 License: distributable
@@ -42,6 +42,9 @@ rm -rf %buildroot
 %_mandir/man1/*
 
 %changelog
+* Fri Aug 21 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.53-owl1
+- Updated to 1.53.
+
 * Wed Nov 18 2009 Solar Designer <solar-at-owl.openwall.com> 1.51-owl1
 - Updated to 1.51.
 - Remove the temporary directory on error (introduced in 1.48+).
