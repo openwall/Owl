@@ -1,0 +1,27 @@
+diff -uNr iptables-1.4.9.1.orig/Makefile.am iptables-1.4.9.1/Makefile.am
+--- Makefile.am	2010-08-06 13:28:38.000000000 +0000
++++ Makefile.am	2010-08-20 17:05:34.000000000 +0000
+@@ -11,9 +11,6 @@
+ if ENABLE_LIBIPQ
+ SUBDIRS         += libipq
+ endif
+-if HAVE_LIBNFNETLINK
+-SUBDIRS         += utils
+-endif
+ lib_LTLIBRARIES =
+ 
+ # libiptc
+diff -uNr iptables-1.4.9.1.orig/configure.ac iptables-1.4.9.1/configure.ac
+--- configure.ac	2010-08-06 13:28:38.000000000 +0000
++++ configure.ac	2010-08-20 17:05:34.000000000 +0000
+@@ -68,10 +68,6 @@
+ AM_CONDITIONAL([ENABLE_DEVEL], [test "$enable_devel" = "yes"])
+ AM_CONDITIONAL([ENABLE_LIBIPQ], [test "$enable_libipq" = "yes"])
+ 
+-PKG_CHECK_MODULES([libnfnetlink], [libnfnetlink >= 1.0],
+-	[nfnetlink=1], [nfnetlink=0])
+-AM_CONDITIONAL([HAVE_LIBNFNETLINK], [test "$nfnetlink" = 1])
+-
+ regular_CFLAGS="\
+ 	-D_REENTRANT -Wall -Waggregate-return -Wmissing-declarations \
+ 	-Wmissing-prototypes -Wredundant-decls -Wshadow -Wstrict-prototypes \

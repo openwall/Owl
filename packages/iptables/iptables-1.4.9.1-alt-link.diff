@@ -1,6 +1,7 @@
---- Makefile.am
-+++ Makefile.am
-@@ -41,7 +41,6 @@ iptables_multi_CFLAGS     = ${AM_CFLAGS} -DIPTABLES_MULTI
+diff -uNr iptables-1.4.9.1.orig/Makefile.am iptables-1.4.9.1/Makefile.am
+--- Makefile.am	2010-08-06 13:28:38.000000000 +0000
++++ Makefile.am	2010-08-20 16:12:32.000000000 +0000
+@@ -44,7 +44,6 @@
  if ENABLE_STATIC
  iptables_multi_CFLAGS    += -DALL_INCLUSIVE
  endif
@@ -8,7 +9,7 @@
  iptables_multi_LDADD      = libiptc/libip4tc.la extensions/libext4.a libxtables.la -lm
  
  ip6tables_multi_SOURCES   = ip6tables-multi.c ip6tables-save.c \
-@@ -51,7 +50,6 @@ ip6tables_multi_CFLAGS    = ${AM_CFLAGS} -DIPTABLES_MULTI
+@@ -54,7 +53,6 @@
  if ENABLE_STATIC
  ip6tables_multi_CFLAGS   += -DALL_INCLUSIVE
  endif
@@ -16,9 +17,10 @@
  ip6tables_multi_LDADD     = libiptc/libip6tc.la extensions/libext6.a libxtables.la -lm
  
  sbin_PROGRAMS    =
---- extensions/GNUmakefile.in
-+++ extensions/GNUmakefile.in
-@@ -85,7 +85,7 @@ init%.o: init%.c
+diff -uNr iptables-1.4.9.1.orig/extensions/GNUmakefile.in iptables-1.4.9.1/extensions/GNUmakefile.in
+--- extensions/GNUmakefile.in	2010-08-06 13:28:38.000000000 +0000
++++ extensions/GNUmakefile.in	2010-08-20 16:12:32.000000000 +0000
+@@ -85,7 +85,7 @@
  #	Shared libraries
  #
  lib%.so: lib%.oo
@@ -27,8 +29,9 @@
  
  lib%.oo: ${srcdir}/lib%.c
  	${AM_VERBOSE_CC} ${CC} ${AM_DEPFLAGS} ${AM_CFLAGS} -D_INIT=lib$*_init -DPIC -fPIC ${CFLAGS} -o $@ -c $<;
---- extensions/libipt_DNAT.c
-+++ extensions/libipt_DNAT.c
+diff -uNr iptables-1.4.9.1.orig/extensions/libipt_DNAT.c iptables-1.4.9.1/extensions/libipt_DNAT.c
+--- extensions/libipt_DNAT.c	2010-08-06 13:28:38.000000000 +0000
++++ extensions/libipt_DNAT.c	2010-08-20 16:14:33.000000000 +0000
 @@ -5,7 +5,6 @@
  #include <stdlib.h>
  #include <getopt.h>
@@ -37,10 +40,10 @@
  #include <limits.h> /* INT_MAX in ip_tables.h */
  #include <linux/netfilter_ipv4/ip_tables.h>
  #include <net/netfilter/nf_nat.h>
-@@ -159,9 +158,7 @@ static int DNAT_parse(int c, char **argv, int invert, unsigned int *flags,
+@@ -159,9 +158,7 @@
  				   "Unexpected `!' after --to-destination");
  
- 		if (*flags) {
+ 		if (*flags & IPT_DNAT_OPT_DEST) {
 -			if (!kernel_version)
 -				get_kernel_version();
 -			if (kernel_version > LINUX_VERSION(2, 6, 10))
@@ -48,8 +51,9 @@
  				xtables_error(PARAMETER_PROBLEM,
  					   "Multiple --to-destination not supported");
  		}
---- extensions/libipt_SNAT.c
-+++ extensions/libipt_SNAT.c
+diff -uNr iptables-1.4.9.1.orig/extensions/libipt_SNAT.c iptables-1.4.9.1/extensions/libipt_SNAT.c
+--- extensions/libipt_SNAT.c	2010-08-06 13:28:38.000000000 +0000
++++ extensions/libipt_SNAT.c	2010-08-20 16:12:32.000000000 +0000
 @@ -5,7 +5,6 @@
  #include <stdlib.h>
  #include <getopt.h>
@@ -58,7 +62,7 @@
  #include <limits.h> /* INT_MAX in ip_tables.h */
  #include <linux/netfilter_ipv4/ip_tables.h>
  #include <net/netfilter/nf_nat.h>
-@@ -159,9 +158,7 @@ static int SNAT_parse(int c, char **argv, int invert, unsigned int *flags,
+@@ -159,9 +158,7 @@
  				   "Unexpected `!' after --to-source");
  
  		if (*flags & IPT_SNAT_OPT_SOURCE) {
@@ -69,9 +73,10 @@
  				xtables_error(PARAMETER_PROBLEM,
  					   "Multiple --to-source not supported");
  		}
---- include/iptables.h
-+++ include/iptables.h
-@@ -19,8 +19,6 @@ extern void print_rule(const struct ipt_entry *e,
+diff -uNr iptables-1.4.9.1.orig/include/iptables.h iptables-1.4.9.1/include/iptables.h
+--- include/iptables.h	2010-08-06 13:28:38.000000000 +0000
++++ include/iptables.h	2010-08-20 16:12:32.000000000 +0000
+@@ -19,8 +19,6 @@
  		struct iptc_handle *handle, const char *chain, int counters);
  
  /* kernel revision handling */
@@ -80,9 +85,10 @@
  #define LINUX_VERSION(x,y,z)	(0x10000*(x) + 0x100*(y) + z)
  #define LINUX_VERSION_MAJOR(x)	(((x)>>16) & 0xFF)
  #define LINUX_VERSION_MINOR(x)	(((x)>> 8) & 0xFF)
---- include/xtables.h.in
-+++ include/xtables.h.in
-@@ -243,6 +243,9 @@ extern void
+diff -uNr iptables-1.4.9.1.orig/include/xtables.h.in iptables-1.4.9.1/include/xtables.h.in
+--- include/xtables.h.in	2010-08-06 13:28:38.000000000 +0000
++++ include/xtables.h.in	2010-08-20 16:12:32.000000000 +0000
+@@ -242,6 +242,9 @@
  xtables_parse_interface(const char *arg, char *vianame, unsigned char *mask);
  
  /* this is a special 64bit data type that is 8-byte aligned */
@@ -92,7 +98,7 @@
  #define aligned_u64 u_int64_t __attribute__((aligned(8)))
  
  int xtables_check_inverse(const char option[], int *invert,
-@@ -290,6 +293,13 @@ extern void xtables_save_string(const char *value);
+@@ -289,6 +292,13 @@
  extern const struct xtables_pprot xtables_chain_protos[];
  extern u_int16_t xtables_parse_protocol(const char *s);
  
@@ -106,8 +112,9 @@
  #ifdef XTABLES_INTERNAL
  
  /* Shipped modules rely on this... */
---- iptables.c
-+++ iptables.c
+diff -uNr iptables-1.4.9.1.orig/iptables.c iptables-1.4.9.1/iptables.c
+--- iptables.c	2010-08-06 13:28:38.000000000 +0000
++++ iptables.c	2010-08-20 16:12:32.000000000 +0000
 @@ -39,7 +39,6 @@
  #include <iptables.h>
  #include <xtables.h>
@@ -116,7 +123,7 @@
  #include "xshared.h"
  
  #ifndef TRUE
-@@ -201,8 +200,6 @@ static int inverse_for_options[NUMBER_OF_OPT] =
+@@ -201,8 +200,6 @@
  #define prog_name iptables_globals.program_name
  #define prog_vers iptables_globals.program_version
  
@@ -125,7 +132,7 @@
  /* Primitive headers... */
  /* defined in netinet/in.h */
  #if 0
-@@ -1294,21 +1291,6 @@ static void clear_rule_matches(struct xtables_rule_match **matches)
+@@ -1298,21 +1295,6 @@
  	*matches = NULL;
  }
  
@@ -147,8 +154,9 @@
  int do_command(int argc, char *argv[], char **table, struct iptc_handle **handle)
  {
  	struct ipt_entry fw, *e = NULL;
---- xtables.c
-+++ xtables.c
+diff -uNr iptables-1.4.9.1.orig/xtables.c iptables-1.4.9.1/xtables.c
+--- xtables.c	2010-08-06 13:28:38.000000000 +0000
++++ xtables.c	2010-08-20 16:12:32.000000000 +0000
 @@ -29,6 +29,7 @@
  #include <sys/stat.h>
  #include <sys/types.h>
@@ -157,7 +165,7 @@
  #include <arpa/inet.h>
  
  #include <xtables.h>
-@@ -1718,3 +1719,22 @@ xtables_parse_protocol(const char *s)
+@@ -1714,3 +1715,22 @@
  
  	return proto;
  }
