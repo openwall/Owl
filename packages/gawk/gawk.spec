@@ -1,16 +1,16 @@
-# $Owl: Owl/packages/gawk/gawk.spec,v 1.20 2010/08/23 14:19:50 segoon Exp $
+# $Owl: Owl/packages/gawk/gawk.spec,v 1.21 2010/08/24 16:12:34 solar Exp $
 
 %define BUILD_PROFILE 0
 
 Summary: The GNU version of the awk text processing utility.
 Name: gawk
 Version: 3.1.8
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Text
 Source0: ftp://ftp.gnu.org/gnu/gawk/gawk-%version.tar.bz2
 # ftp://ftp.gnu.org/gnu/gawk/gawk-%version-ps.tar.gz
-Source1: gawk-%version-ps.tar.bz2
+#Source1: gawk-%version-ps.tar.bz2
 Patch1: gawk-3.1.8-owl-info.diff
 Patch2: gawk-3.1.8-owl-tmp.diff
 Patch3: gawk-3.1.8-owl-warnings.diff
@@ -60,7 +60,7 @@ rm -rf %buildroot
 	libexecdir=%buildroot%_libexecdir/awk \
 	datadir=%buildroot%_datadir/awk
 
-gzip -9n doc/*.ps
+#gzip -9n doc/*.ps
 
 pushd %buildroot
 rm -f .%_infodir/dir
@@ -91,7 +91,8 @@ fi
 %files -f %name.lang
 %defattr(-,root,root)
 %doc README COPYING FUTURES LIMITATIONS NEWS PROBLEMS
-%doc POSIX.STD doc/*.ps.gz
+%doc POSIX.STD
+#%doc doc/*.ps.gz
 
 /bin/awk
 /bin/gawk
@@ -110,6 +111,10 @@ fi
 %endif
 
 %changelog
+* Tue Aug 24 2010 Solar Designer <solar-at-owl.openwall.com> 3.1.8-owl2
+- Disabled packaging of PostScript documentation (it is not supplied pre-built
+with recent versions of gawk anymore).
+
 * Sat Aug 21 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.1.8-owl1
 - Updated to 3.1.8.
 - Dropped patch -eggert-tmp (fixed in upstream).
