@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gawk/gawk.spec,v 1.21 2010/08/24 16:12:34 solar Exp $
+# $Owl: Owl/packages/gawk/gawk.spec,v 1.22 2010/08/24 16:16:07 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -37,7 +37,8 @@ it creates a profile of your program with line execution counts.
 %endif
 
 %prep
-%setup -q -b 1
+#%setup -q -b 1
+%setup -q
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
