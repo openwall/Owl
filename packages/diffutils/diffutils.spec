@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.21 2010/08/18 17:28:44 solar Exp $
+# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.22 2010/08/24 11:11:55 segoon Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
 Version: 3.0
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Text
 URL: http://www.gnu.org/software/diffutils/
@@ -64,10 +64,11 @@ fi
 %_mandir/*/*
 %_infodir/diff.info*
 %_datadir/locale/*/LC_MESSAGES/diffutils.mo
-# diff(1) manpage still lives in man-pages package
-%exclude %_mandir/man1/diff.*
 
 %changelog
+* Wed Aug 24 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0-owl2
+- Packaged diff.1 again (man-pages doesn't provide it anymore).
+
 * Wed Aug 18 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0-owl1
 - Updated to 3.0.
 - Dropped -alt-i18n and -rh-warnings patches (fixed in upstream).
