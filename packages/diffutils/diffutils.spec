@@ -1,15 +1,16 @@
-# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.22 2010/08/24 11:11:55 segoon Exp $
+# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.23 2010/08/25 06:23:19 segoon Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
 Version: 3.0
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/Text
 URL: http://www.gnu.org/software/diffutils/
 # ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.gz
 Source: %name-%version.tar.bz2
 Patch0: diffutils-2.8.7-owl-info.diff
+Patch1: diffutils-3.0-owl-nanoseconds.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRequires: texinfo
@@ -30,10 +31,11 @@ to merge two files interactively.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 # Disable nanoseconds in diff output.
-export ac_cv_struct_st_mtim_nsec=no ac_cv_search_clock_gettime='none required'
+#export ac_cv_struct_st_mtim_nsec=no ac_cv_search_clock_gettime='none required'
 # Predefine location of the pr utility.
 export PR_PROGRAM=%_bindir/pr
 %configure
@@ -66,6 +68,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/diffutils.mo
 
 %changelog
+* Wed Aug 25 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0-owl3
+- Do not use nanoseconds in diffs.
+
 * Wed Aug 24 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0-owl2
 - Packaged diff.1 again (man-pages doesn't provide it anymore).
 
