@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/grep/grep.spec,v 1.24 2010/08/26 15:01:46 segoon Exp $
+# $Owl: Owl/packages/grep/grep.spec,v 1.25 2010/08/26 15:11:51 segoon Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
@@ -65,6 +65,8 @@ ln -s grep.1.gz %buildroot%_mandir/man1/pcregrep.1.gz
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
 
+%find_lang %name
+
 %post
 /sbin/install-info %_infodir/grep.info %_infodir/dir
 
@@ -73,13 +75,12 @@ if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/grep.info %_infodir/dir
 fi
 
-%files
+%files -f %name.lang
 %defattr(-,root,root)
 %doc AUTHORS ChangeLog.bz2 NEWS README THANKS TODO
 /bin/*
 %_infodir/*.info*
 %_mandir/*/*
-%_prefix/share/locale/*/*/grep.*
 
 %changelog
 * Thu Aug 26 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:2.6.3-owl1
