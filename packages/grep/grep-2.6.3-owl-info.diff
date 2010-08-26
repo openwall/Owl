@@ -1,0 +1,13 @@
+Binary files grep-2.6.3.orig/doc/.grep.texi.swp and grep-2.6.3/doc/.grep.texi.swp differ
+diff -uNrp grep-2.6.3.orig/doc/grep.texi grep-2.6.3/doc/grep.texi
+--- grep-2.6.3.orig/doc/grep.texi	2010-08-26 10:42:34 +0000
++++ grep-2.6.3/doc/grep.texi	2010-08-26 11:50:36 +0000
+@@ -31,7 +31,7 @@ Texts.  A copy of the license is include
+ 
+ @dircategory Text creation and manipulation
+ @direntry
+-* grep: (grep).                 Print lines matching a pattern.
++* grep: (grep).                                 Print lines matching a pattern.
+ @end direntry
+ 
+ @titlepage

@@ -1,0 +1,26 @@
+Binary files grep-2.6.3.orig/src/.dfa.c.swp and grep-2.6.3/src/.dfa.c.swp differ
+diff -uNrp grep-2.6.3.orig/src/dfa.c grep-2.6.3/src/dfa.c
+--- grep-2.6.3.orig/src/dfa.c	2010-08-26 10:42:34 +0000
++++ grep-2.6.3/src/dfa.c	2010-08-26 10:48:46 +0000
+@@ -477,6 +477,8 @@ parse_bracket_exp (void)
+   int chars_al, range_sts_al, range_ends_al, ch_classes_al,
+     equivs_al, coll_elems_al;
+ 
++  c1 = c2 = EOF;
++  wc1 = wc2 = EOF;
+   chars_al = 1;
+   range_sts_al = range_ends_al = 0;
+   ch_classes_al = equivs_al = coll_elems_al = 0;
+diff -uNrp grep-2.6.3.orig/src/kwset.c grep-2.6.3/src/kwset.c
+--- grep-2.6.3.orig/src/kwset.c	2010-08-26 10:42:34 +0000
++++ grep-2.6.3/src/kwset.c	2010-08-26 10:42:54 +0000
+@@ -598,9 +598,7 @@ cwexec (kwset_t kws, char const *text, s
+   struct tree const *tree;
+   char const *trans;
+ 
+-#ifdef lint
+   accept = NULL;
+-#endif
+ 
+   /* Initialize register copies and look for easy ways out. */
+   kwset = (struct kwset *) kws;
