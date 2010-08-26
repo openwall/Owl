@@ -1,0 +1,36 @@
+diff -uNrp sed-4.2.1.orig/sed/compile.c sed-4.2.1/sed/compile.c
+--- sed-4.2.1.orig/sed/compile.c	2010-08-26 15:51:15 +0000
++++ sed-4.2.1/sed/compile.c	2010-08-26 17:44:05 +0000
+@@ -455,7 +455,7 @@ snarf_char_class(b, cur_stat)
+ {
+   int ch;
+   int state = 0;
+-  int delim;
++  int delim = 0;
+   bool pending_mb = 0;
+   
+   ch = inchar();
+diff -uNrp sed-4.2.1.orig/sed/sed.c sed-4.2.1/sed/sed.c
+--- sed-4.2.1.orig/sed/sed.c	2010-08-26 15:51:15 +0000
++++ sed-4.2.1/sed/sed.c	2010-08-26 17:47:30 +0000
+@@ -146,7 +146,7 @@ Usage: %s [OPTION]... {script-only-if-no
+   fprintf(out, _("  -r, --regexp-extended\n\
+                  use extended regular expressions in the script.\n"));
+ #ifdef REG_PERL
+-  fprintf(out, PERL_HELP);
++  fprintf(out, "%s", PERL_HELP);
+ #endif
+   fprintf(out, _("  -s, --separate\n\
+                  consider files as separate rather than as a single continuous\n\
+diff -uNrp sed-4.2.1.orig/sed/utils.c sed-4.2.1/sed/utils.c
+--- sed-4.2.1.orig/sed/utils.c	2010-08-26 15:51:15 +0000
++++ sed-4.2.1/sed/utils.c	2010-08-26 18:21:09 +0000
+@@ -268,7 +268,7 @@ ck_getline(text, buflen, stream)
+   size_t *buflen;
+   FILE *stream;
+ {
+-  int result;
++  int result = 0;
+   if (!ferror (stream))
+     result = getline (text, buflen, stream);
+ 

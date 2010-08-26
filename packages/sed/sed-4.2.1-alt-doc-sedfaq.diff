@@ -1,0 +1,24 @@
+diff -uNrp sed-4.2.1.orig/doc/sed-in.texi sed-4.2.1/doc/sed-in.texi
+--- sed-4.2.1.orig/doc/sed-in.texi	2010-08-26 15:51:15 +0000
++++ sed-4.2.1/doc/sed-in.texi	2010-08-26 17:34:34 +0000
+@@ -2605,7 +2605,7 @@ shell programming), one can find out mor
+ (including suggestions of a few books) from the FAQ
+ for the @code{sed-users} mailing list, available from:
+ @display
+-@uref{http://sed.sourceforge.net/sedfaq.html}
++@uref{file://@DOCDIR@/sedfaq.html}
+ @end display
+ 
+ Also of interest are
+diff -uNrp sed-4.2.1.orig/doc/sed.x sed-4.2.1/doc/sed.x
+--- sed-4.2.1.orig/doc/sed.x	2010-08-26 15:51:15 +0000
++++ sed-4.2.1/doc/sed.x	2010-08-26 17:33:43 +0000
+@@ -318,7 +318,7 @@ and other sequences.
+ sed.info,
+ any of various books on \*(sd,
+ .na
+-the \*(sd FAQ (http://sed.sf.net/grabbag/tutorials/sedfaq.txt),
++the \*(sd FAQ (@DOCDIR@/sedfaq.txt),
+ http://sed.sf.net/grabbag/.
+ 
+ [BUGS]
