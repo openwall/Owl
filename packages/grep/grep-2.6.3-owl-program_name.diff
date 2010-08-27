@@ -1,0 +1,56 @@
+diff -uNrp grep-2.6.3.orig/lib/progname.c grep-2.6.3/lib/progname.c
+--- grep-2.6.3.orig/lib/progname.c	2010-08-26 11:32:04 +0400
++++ grep-2.6.3/lib/progname.c	2010-08-27 12:55:28 +0400
+@@ -32,6 +32,8 @@
+    To be initialized by main().  */
+ const char *program_name = NULL;
+ 
++const char *program_binary = NULL;
++
+ /* Set program_name, based on argv[0].
+    argv0 must be a string allocated with indefinite extent, and must not be
+    modified after this call.  */
+@@ -57,7 +59,7 @@ set_program_name (const char *argv0)
+     }
+ 
+   slash = strrchr (argv0, '/');
+-  base = (slash != NULL ? slash + 1 : argv0);
++  program_binary = base = (slash != NULL ? slash + 1 : argv0);
+   if (base - argv0 >= 7 && strncmp (base - 7, "/.libs/", 7) == 0)
+     {
+       argv0 = base;
+diff -uNrp grep-2.6.3.orig/lib/progname.h grep-2.6.3/lib/progname.h
+--- grep-2.6.3.orig/lib/progname.h	2010-08-26 11:32:04 +0400
++++ grep-2.6.3/lib/progname.h	2010-08-27 12:55:58 +0400
+@@ -31,6 +31,8 @@ extern "C" {
+ /* String containing name the program is called with.  */
+ extern const char *program_name;
+ 
++extern const char *program_binary;
++
+ /* Set program_name, based on argv[0].
+    argv0 must be a string allocated with indefinite extent, and must not be
+    modified after this call.  */
+diff -uNrp grep-2.6.3.orig/src/grep.c grep-2.6.3/src/grep.c
+--- grep-2.6.3.orig/src/grep.c	2010-08-26 11:32:04 +0400
++++ grep-2.6.3/src/grep.c	2010-08-27 13:07:10 +0400
+@@ -28,6 +28,7 @@ struct matcher const matchers[] = {
+   { "awk",     Acompile, EGexecute },
+   { "fgrep",   Fcompile, Fexecute },
+   { "perl",    Pcompile, Pexecute },
++  { "pcregrep",    Pcompile, Pexecute },
+   { NULL, NULL, NULL },
+ };
+ 
+diff -uNrp grep-2.6.3.orig/src/main.c grep-2.6.3/src/main.c
+--- grep-2.6.3.orig/src/main.c	2010-08-26 11:32:04 +0400
++++ grep-2.6.3/src/main.c	2010-08-27 13:08:36 +0400
+@@ -1773,6 +1773,8 @@ main (int argc, char **argv)
+ 
+   prepend_default_options (getenv ("GREP_OPTIONS"), &argc, &argv);
+   setmatcher (NULL);
++  if (program_binary && strcmp(program_binary, "grep"))
++    setmatcher(program_binary);
+ 
+   while ((opt = get_nondigit_option (argc, argv, &default_context)) != -1)
+     switch (opt)

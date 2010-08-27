@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/grep/grep.spec,v 1.25 2010/08/26 15:11:51 segoon Exp $
+# $Owl: Owl/packages/grep/grep.spec,v 1.26 2010/08/27 09:17:11 segoon Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
@@ -11,7 +11,7 @@ Source: ftp://ftp.gnu.org/gnu/grep/grep-%version.tar.bz2
 Patch25: grep-2.6.3-deb-alt-bigfile.diff
 Patch30: grep-2.6.3-owl-info.diff
 Patch31: grep-2.6.3-owl-fixes.diff
-#Patch32: grep-2.6.3-owl-program_name.diff
+Patch32: grep-2.6.3-owl-program_name.diff
 Patch33: grep-2.6.3-alt-owl-bound.diff
 Patch35: grep-2.6.3-deb-man.diff
 Patch36: grep-2.6.3-deb-mmap.diff
@@ -32,7 +32,7 @@ include grep, egrep, and fgrep.
 %patch25 -p1
 %patch30 -p1
 %patch31 -p1
-#%patch32 -p1
+%patch32 -p1
 %patch33 -p1
 %patch35 -p1
 %patch36 -p1
@@ -57,9 +57,9 @@ rm -rf %buildroot
 %makeinstall bindir=%buildroot/bin LDFLAGS=
 
 # Use symlinks for egrep, fgrep and pcregrep
-#ln -sf grep %buildroot/bin/egrep
-#ln -sf grep %buildroot/bin/fgrep
-#ln -sf grep %buildroot/bin/pcregrep
+ln -sf grep %buildroot/bin/egrep
+ln -sf grep %buildroot/bin/fgrep
+ln -sf grep %buildroot/bin/pcregrep
 ln -s grep.1.gz %buildroot%_mandir/man1/pcregrep.1.gz
 
 # Remove unpackaged files
