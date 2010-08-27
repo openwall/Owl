@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/grep/grep.spec,v 1.26 2010/08/27 09:17:11 segoon Exp $
+# $Owl: Owl/packages/grep/grep.spec,v 1.27 2010/08/27 17:06:11 solar Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
@@ -8,14 +8,14 @@ Epoch: 1
 License: GPL
 Group: Applications/Text
 Source: ftp://ftp.gnu.org/gnu/grep/grep-%version.tar.bz2
-Patch25: grep-2.6.3-deb-alt-bigfile.diff
-Patch30: grep-2.6.3-owl-info.diff
-Patch31: grep-2.6.3-owl-fixes.diff
-Patch32: grep-2.6.3-owl-program_name.diff
-Patch33: grep-2.6.3-alt-owl-bound.diff
-Patch35: grep-2.6.3-deb-man.diff
-Patch36: grep-2.6.3-deb-mmap.diff
-Patch37: grep-2.6.3-deb-xmalloc.diff
+Patch0: grep-2.6.3-deb-alt-bigfile.diff
+Patch1: grep-2.6.3-owl-info.diff
+Patch2: grep-2.6.3-owl-fixes.diff
+Patch3: grep-2.6.3-owl-program_name.diff
+Patch4: grep-2.6.3-alt-owl-bound.diff
+Patch5: grep-2.6.3-deb-man.diff
+Patch6: grep-2.6.3-deb-mmap.diff
+Patch7: grep-2.6.3-deb-xmalloc.diff
 PreReq: /sbin/install-info
 BuildRequires: pcre-devel
 BuildRequires: texinfo, gettext, sed
@@ -29,14 +29,14 @@ include grep, egrep, and fgrep.
 
 %prep
 %setup -q
-%patch25 -p1
-%patch30 -p1
-%patch31 -p1
-%patch32 -p1
-%patch33 -p1
-%patch35 -p1
-%patch36 -p1
-%patch37 -p1
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
 bzip2 -9k ChangeLog
 
 %{expand:%%define optflags %optflags -Wall}
@@ -84,7 +84,7 @@ fi
 
 %changelog
 * Thu Aug 26 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:2.6.3-owl1
-- Updated patches and dropped those are fixed by upstream.
+- Updated patches and dropped those fixed upstream.
 - Added patches from Debian.
 
 * Mon Apr 23 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:2.5.1a-owl4
