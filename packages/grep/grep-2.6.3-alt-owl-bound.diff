@@ -1,4 +1,3 @@
-Binary files grep-2.6.3.orig/src/.main.c.swp and grep-2.6.3/src/.main.c.swp differ
 diff -uNrp grep-2.6.3.orig/src/main.c grep-2.6.3/src/main.c
 --- grep-2.6.3.orig/src/main.c	2010-08-26 10:42:34 +0000
 +++ grep-2.6.3/src/main.c	2010-08-26 13:07:38 +0000
