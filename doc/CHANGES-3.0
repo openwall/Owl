@@ -46,6 +46,12 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/08/27	Package: grep
+Updated to 2.6.3.
+
+2010/08/27	Package: sed
+Updated to 4.2.1.
+
 2010/08/24	Package: iptables
 Updated to 1.4.9.1.
 
@@ -1304,4 +1310,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.255 2010/08/24 16:26:08 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.256 2010/08/27 17:21:40 solar Exp $
