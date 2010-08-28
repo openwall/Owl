@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/ltrace/ltrace.spec,v 1.27 2010/08/28 18:52:19 segoon Exp $
+# $Owl: Owl/packages/ltrace/ltrace.spec,v 1.28 2010/08/28 18:59:13 solar Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace
@@ -7,9 +7,9 @@ Release: owl1
 License: GPL
 Group: Development/Debuggers
 Source: ftp://ftp.debian.org/debian/pool/main/l/ltrace/ltrace_%version.orig.tar.gz
-Patch0: ltrace_0.5.3-deb-2.1.diff
-Patch1: ltrace_0.5.3-owl-iquote.diff
-Patch2: ltrace_0.5.3-owl-ptrace.diff
+Patch0: ltrace-0.5.3-deb-2.1.diff
+Patch1: ltrace-0.5.3-owl-iquote.diff
+Patch2: ltrace-0.5.3-owl-ptrace.diff
 Patch3: ltrace-0.5.3-owl-warnings.diff
 BuildRequires: elfutils-libelf-devel
 ExclusiveArch: %ix86 x86_64 sparc sparcv9
