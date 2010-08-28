@@ -1,0 +1,23 @@
+diff -uNpr ltrace-0.5.3.orig/configure ltrace-0.5.3/configure
+--- ltrace-0.5.3.orig/configure	2010-08-27 23:12:14 +0400
++++ ltrace-0.5.3/configure	2010-08-28 11:19:50 +0400
+@@ -79,7 +79,7 @@ rm -f conftest.c a.out
+ 
+ CC=gcc
+ CPPFLAGS=' -I /usr/include/libelf'
+-CFLAGS='-g -O2'
++CFLAGS='-g -O2 -D_LARGEFILE64_SOURCE'
+ LIBS='-lelf -lsupc++ -liberty '
+ INSTALL='/usr/bin/install -c'
+ iquote='-iquote '
+diff -uNpr ltrace-0.5.3.orig/sysdeps/linux-gnu/events.c ltrace-0.5.3/sysdeps/linux-gnu/events.c
+--- ltrace-0.5.3.orig/sysdeps/linux-gnu/events.c	2010-08-27 23:12:14 +0400
++++ ltrace-0.5.3/sysdeps/linux-gnu/events.c	2010-08-28 11:01:39 +0400
+@@ -8,6 +8,7 @@
+ #include <signal.h>
+ #include <string.h>
+ #include <sys/ptrace.h>
++#include <linux/ptrace.h>
+ 
+ #include "common.h"
+ 

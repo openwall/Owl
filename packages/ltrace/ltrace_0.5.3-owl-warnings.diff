@@ -1,0 +1,12 @@
+diff -uNpr ltrace-0.5.3.orig/elf.c ltrace-0.5.3/elf.c
+--- ltrace-0.5.3.orig/elf.c	2010-08-27 23:12:14 +0400
++++ ltrace-0.5.3/elf.c	2010-08-28 11:35:20 +0400
+@@ -243,7 +243,7 @@ do_init_elf(struct ltelf *lte, const cha
+ 			    && shdr.sh_entsize != 4) {
+ 				error(EXIT_FAILURE, 0,
+ 				      ".gnu.hash sh_entsize in \"%s\" should be 4, but is %llu",
+-				      filename, shdr.sh_entsize);
++				      filename, (unsigned long long)shdr.sh_entsize);
+ 			}
+ 
+ 			data = elf_getdata(scn, NULL);

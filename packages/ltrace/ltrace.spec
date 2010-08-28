@@ -1,14 +1,16 @@
-# $Owl: Owl/packages/ltrace/ltrace.spec,v 1.25 2007/11/18 00:51:19 ldv Exp $
+# $Owl: Owl/packages/ltrace/ltrace.spec,v 1.26 2010/08/28 08:00:33 segoon Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace
-Version: 0.5
+Version: 0.5.3
 Release: owl1
 License: GPL
 Group: Development/Debuggers
 Source: ftp://ftp.debian.org/debian/pool/main/l/ltrace/ltrace_%version.orig.tar.gz
-Patch0: ltrace-0.3.36-alt-install-no-root.diff
-Patch1: ltrace-0.5-deb.diff
+Patch0: ltrace_0.5.3-deb-2.1.diff
+Patch1: ltrace_0.5.3-owl-iquote.diff
+Patch2: ltrace_0.5.3-owl-ptrace.diff
+Patch3: ltrace_0.5.3-owl-warnings.diff
 BuildRequires: elfutils-libelf-devel
 ExclusiveArch: %ix86 x86_64 sparc sparcv9
 BuildRoot: /override/%name-%version
@@ -24,6 +26,8 @@ intercept and print system calls invoked by the process.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
 bzip2 -9k ChangeLog
 
 # Build with -D_GNU_SOURCE to get off64_t definition
@@ -46,6 +50,10 @@ rm -r %buildroot%_docdir
 %config(noreplace) /etc/ltrace.conf
 
 %changelog
+* Fri Aug 27 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 0.5.3-owl1
+- Updated to 0.5.3-2.1.
+- Dropped obsoleted patches (fixed in upstream).
+
 * Sun Nov 18 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.5-owl1
 - Updated to 0.5.
 
