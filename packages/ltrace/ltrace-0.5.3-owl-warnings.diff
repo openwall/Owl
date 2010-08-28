@@ -1,3 +1,14 @@
+diff -uNrp ltrace-0.5.3.orig/handle_event.c ltrace-0.5.3/handle_event.c
+--- ltrace-0.5.3.orig/handle_event.c	2010-08-28 18:34:38 +0000
++++ ltrace-0.5.3/handle_event.c	2010-08-28 18:35:16 +0000
+@@ -171,6 +171,7 @@ pending_new_remove(pid_t pid) {
+ 	debug(DEBUG_FUNCTION, "pending_new_remove(%d)", pid);
+ 
+ 	p = pending_news;
++	pred = NULL; /* never used */
+ 	if (p->pid == pid) {
+ 		pending_news = p->next;
+ 		free(p);
 diff -uNpr ltrace-0.5.3.orig/elf.c ltrace-0.5.3/elf.c
 --- ltrace-0.5.3.orig/elf.c	2010-08-27 23:12:14 +0400
 +++ ltrace-0.5.3/elf.c	2010-08-28 11:35:20 +0400
