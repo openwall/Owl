@@ -1,0 +1,13 @@
+diff -ur mktemp-1.7.orig/mktemp.man mktemp-1.7/mktemp.man
+--- mktemp-1.7.orig/mktemp.man	2010-04-25 13:28:18 +0000
++++ mktemp-1.7/mktemp.man	2010-08-29 19:34:21 +0000
+@@ -16,6 +16,9 @@
+ .\"
+ .\" From: $OpenBSD: mktemp.1,v 1.23 2003/06/17 21:56:25 millert Exp $
+ .\"
++.\" Owl patch: don't let groff use the latin1 8-bit character unnecessarily
++.char \(aa '
++.\"
+ .TH MKTEMP 1 "30 September 2001"
+ .SH NAME
+ \fBmktemp\fP \- make temporary filename (unique)
