@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/hdparm/hdparm.spec,v 1.23 2010/03/20 22:01:40 solar Exp $
+# $Owl: Owl/packages/hdparm/hdparm.spec,v 1.24 2010/08/29 18:18:20 segoon Exp $
 
 Summary: An utility for displaying and/or setting hard disk parameters.
 Name: hdparm
-Version: 9.28
+Version: 9.29
 Release: owl1
 License: BSD-style
 Group: Applications/System
@@ -37,6 +37,9 @@ install -pD -m644 hdparm.8 %buildroot%_mandir/man8/hdparm.8
 %_mandir/man8/hdparm.8*
 
 %changelog
+* Sun Aug 29 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 9.29-owl1
+- Updated to 9.29.
+
 * Sat Mar 20 2010 Solar Designer <solar-at-owl.openwall.com> 9.28-owl1
 - Updated to 9.28.
 
