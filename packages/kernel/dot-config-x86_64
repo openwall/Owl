@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.18-194.8.1.el5.028stab070.2.owl2
-# Tue Jul 20 18:28:49 2010
+# Linux kernel version: 2.6.18-194.8.1.el5.028stab070.4.owl1
+# Mon Aug 30 08:09:51 2010
 #
 CONFIG_X86_64=y
 CONFIG_64BIT=y
@@ -607,7 +607,7 @@ CONFIG_IDEDMA_AUTO=y
 # CONFIG_RAID_ATTRS is not set
 CONFIG_SCSI=y
 CONFIG_SCSI_DMA=y
-# CONFIG_SCSI_NETLINK is not set
+CONFIG_SCSI_NETLINK=y
 CONFIG_SCSI_PROC_FS=y
 
 #
@@ -632,17 +632,19 @@ CONFIG_SCSI_CONSTANTS=y
 # SCSI Transport
 #
 CONFIG_SCSI_SPI_ATTRS=y
-# CONFIG_SCSI_FC_ATTRS is not set
+CONFIG_SCSI_FC_ATTRS=m
 # CONFIG_SCSI_ISCSI_ATTRS is not set
 # CONFIG_SCSI_ISCSI1_ATTRS is not set
 # CONFIG_SCSI_ISCSI2_ATTRS is not set
-# CONFIG_SCSI_SAS_ATTRS is not set
+CONFIG_SCSI_SAS_ATTRS=m
 # CONFIG_SCSI_SAS_LIBSAS is not set
 
 #
 # SCSI low-level drivers
 #
+# CONFIG_LIBFC is not set
 # CONFIG_LIBFCOE is not set
+# CONFIG_FCOE is not set
 # CONFIG_LIBISCSI1 is not set
 # CONFIG_ISCSI_TCP is not set
 # CONFIG_SCSI_CXGB3_ISCSI is not set
@@ -783,10 +785,13 @@ CONFIG_MD_MULTIPATH=m
 #
 # Fusion MPT device support
 #
-# CONFIG_FUSION is not set
-# CONFIG_FUSION_SPI is not set
-# CONFIG_FUSION_FC is not set
-# CONFIG_FUSION_SAS is not set
+CONFIG_FUSION=y
+CONFIG_FUSION_SPI=m
+CONFIG_FUSION_FC=m
+CONFIG_FUSION_SAS=m
+CONFIG_FUSION_MAX_SGE=128
+CONFIG_FUSION_CTL=m
+CONFIG_FUSION_LOGGING=y
 
 #
 # Enable only one of the two stacks, unless you know what you are doing
@@ -850,7 +855,7 @@ CONFIG_MII=y
 # CONFIG_NET_TULIP is not set
 # CONFIG_HP100 is not set
 CONFIG_NET_PCI=y
-# CONFIG_PCNET32 is not set
+CONFIG_PCNET32=m
 # CONFIG_AMD8111_ETH is not set
 # CONFIG_ADAPTEC_STARFIRE is not set
 # CONFIG_B44 is not set

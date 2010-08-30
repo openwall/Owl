@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.30 2010/08/30 04:46:06 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.31 2010/08/30 05:08:48 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -115,6 +115,7 @@ http://www.openwall.com/lists/oss-security/2010/08/30/3
 - Applied upstream's fix to integer overflow flaws in ext4_ext_in_cache() and
 ext4_ext_get_blocks():
 http://www.openwall.com/lists/oss-security/2010/08/16/1
+- Enabled CONFIG_FUSION_* and CONFIG_PCNET32 as modules.
 
 * Wed Jul 21 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.8.1.el5.028stab070.2.owl3
 - Backported the AHCI vs. Marvell PATA driver co-existence fixes from 2.6.34.1,
