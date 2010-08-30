@@ -306,6 +306,19 @@ diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/fs/Kconfig linux-2.6.18-1
  	default m
  	help
  	  This file system is a part of Virtuozzo. It intoduces a fake
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/fs/exec.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/fs/exec.c
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/fs/exec.c	2010-08-27 17:10:52 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/fs/exec.c	2010-08-29 21:17:04 +0000
+@@ -212,7 +212,8 @@ struct page *get_arg_page(struct linux_b
+ 		 *  - the program will have a reasonable amount of stack left
+ 		 *    to work from.
+ 		 */
+-		if (size > rlim[RLIMIT_STACK].rlim_cur / 4) {
++		if (size > rlim[RLIMIT_STACK].rlim_cur / 4 ||
++		    size > TASK_SIZE / 4) {
+ 			put_page(page);
+ 			return NULL;
+ 		}
 diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/fs/proc/base.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/fs/proc/base.c
 --- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/fs/proc/base.c	2010-08-27 17:10:52 +0000
 +++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/fs/proc/base.c	2010-08-29 20:42:55 +0000
