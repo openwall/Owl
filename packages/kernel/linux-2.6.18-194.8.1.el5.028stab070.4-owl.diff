@@ -283,6 +283,57 @@ diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/dca/Kconfig linux
  	depends on DMA_ENGINE_V3 && PCI
  	default m
  	---help---
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/message/fusion/mptsas.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/message/fusion/mptsas.c
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/message/fusion/mptsas.c	2010-08-29 22:03:06 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/message/fusion/mptsas.c	2010-08-30 04:57:02 +0000
+@@ -436,6 +436,23 @@ mptsas_is_end_device(struct mptsas_devin
+ 		return 0;
+ }
+ 
++static inline void
++mptsas_set_rphy(MPT_ADAPTER *ioc, struct mptsas_phyinfo *phy_info, struct sas_rphy *rphy)
++{
++	if (phy_info->port_details) {
++		phy_info->port_details->rphy = rphy;
++		dsaswideprintk(ioc, printk(MYIOC_s_DEBUG_FMT "sas_rphy_add: rphy=%p\n",
++		    ioc->name, rphy));
++	}
++
++	if (rphy) {
++		dsaswideprintk(ioc, dev_printk(KERN_DEBUG,
++		    &rphy->dev, MYIOC_s_FMT "add:", ioc->name));
++		dsaswideprintk(ioc, printk(MYIOC_s_DEBUG_FMT "rphy=%p release=%p\n",
++		    ioc->name, rphy, rphy->dev.release));
++	}
++}
++
+ /* no mutex */
+ static void
+ mptsas_port_delete(MPT_ADAPTER *ioc, struct mptsas_portinfo_details * port_details)
+@@ -474,23 +491,6 @@ mptsas_get_rphy(struct mptsas_phyinfo *p
+ 		return NULL;
+ }
+ 
+-static inline void
+-mptsas_set_rphy(MPT_ADAPTER *ioc, struct mptsas_phyinfo *phy_info, struct sas_rphy *rphy)
+-{
+-	if (phy_info->port_details) {
+-		phy_info->port_details->rphy = rphy;
+-		dsaswideprintk(ioc, printk(MYIOC_s_DEBUG_FMT "sas_rphy_add: rphy=%p\n",
+-		    ioc->name, rphy));
+-	}
+-
+-	if (rphy) {
+-		dsaswideprintk(ioc, dev_printk(KERN_DEBUG,
+-		    &rphy->dev, MYIOC_s_FMT "add:", ioc->name));
+-		dsaswideprintk(ioc, printk(MYIOC_s_DEBUG_FMT "rphy=%p release=%p\n",
+-		    ioc->name, rphy, rphy->dev.release));
+-	}
+-}
+-
+ static inline struct sas_port *
+ mptsas_get_port(struct mptsas_phyinfo *phy_info)
+ {
 diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/parisc/eisa_eeprom.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/parisc/eisa_eeprom.c
 --- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/parisc/eisa_eeprom.c	2006-09-20 03:42:06 +0000
 +++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/parisc/eisa_eeprom.c	2009-08-10 06:51:35 +0000
