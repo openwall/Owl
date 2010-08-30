@@ -308,14 +308,14 @@ diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/fs/Kconfig linux-2.6.18-1
  	  This file system is a part of Virtuozzo. It intoduces a fake
 diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/fs/exec.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/fs/exec.c
 --- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/fs/exec.c	2010-08-27 17:10:52 +0000
-+++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/fs/exec.c	2010-08-29 21:17:04 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/fs/exec.c	2010-08-30 04:34:50 +0000
 @@ -212,7 +212,8 @@ struct page *get_arg_page(struct linux_b
  		 *  - the program will have a reasonable amount of stack left
  		 *    to work from.
  		 */
 -		if (size > rlim[RLIMIT_STACK].rlim_cur / 4) {
 +		if (size > rlim[RLIMIT_STACK].rlim_cur / 4 ||
-+		    size > TASK_SIZE / 4) {
++		    size > MAX_ARG_STACK) {
  			put_page(page);
  			return NULL;
  		}
@@ -406,6 +406,19 @@ diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/fs/proc/base.c linux-2.6.
  #endif
  
  	{0,0,NULL,0}
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/include/linux/binfmts.h linux-2.6.18-194.8.1.el5.028stab070.4-owl/include/linux/binfmts.h
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/include/linux/binfmts.h	2010-08-27 17:10:51 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/include/linux/binfmts.h	2010-08-30 04:34:22 +0000
+@@ -13,7 +13,8 @@ struct pt_regs;
+  */
+ #define MAX_ARG_PAGES 32
+ #define MAX_ARG_STRLEN (PAGE_SIZE * 32)
+-#define MAX_ARG_STRINGS 0x7FFFFFFF
++#define MAX_ARG_STACK (0xC0000000UL / 4)
++#define MAX_ARG_STRINGS (MAX_ARG_STACK / 5)
+ 
+ /* sizeof(linux_binprm->buf) */
+ #define BINPRM_BUF_SIZE 128
 diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/include/linux/dmar.h linux-2.6.18-194.8.1.el5.028stab070.4-owl/include/linux/dmar.h
 --- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/include/linux/dmar.h	2010-08-27 17:10:43 +0000
 +++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/include/linux/dmar.h	2010-08-29 20:42:55 +0000

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.29 2010/08/30 00:19:07 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.30 2010/08/30 04:46:06 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -109,8 +109,9 @@ done
 - Added most post-194.8.1 patches from Red Hat's -194.11.1.
 - Fixed an Owl-specific bug in init/do_mounts.c: do_mount_root() with
 root=/dev/cdrom failing to access CD drives on IDE slaves.
-- Applied Kees Cook's partial fix to fs/exec.c's argv expansion:
+- Applied a variation of Kees Cook's partial fix to fs/exec.c's argv expansion:
 http://www.openwall.com/lists/oss-security/2010/08/27/1
+http://www.openwall.com/lists/oss-security/2010/08/30/3
 - Applied upstream's fix to integer overflow flaws in ext4_ext_in_cache() and
 ext4_ext_get_blocks():
 http://www.openwall.com/lists/oss-security/2010/08/16/1
