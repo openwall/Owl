@@ -1,0 +1,570 @@
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/Makefile linux-2.6.18-194.8.1.el5.028stab070.4-owl/Makefile
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/Makefile	2010-08-27 17:10:53 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/Makefile	2010-08-29 20:42:55 +0000
+@@ -1,7 +1,7 @@
+ VERSION = 2
+ PATCHLEVEL = 6
+ SUBLEVEL = 18
+-EXTRAVERSION = -194.8.1.el5.028stab070.4
++EXTRAVERSION = -194.8.1.el5.028stab070.4.owl0
+ RHEL_MAJOR = 5
+ RHEL_MINOR = 5
+ NAME=Avast! A bilge rat!
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/arch/i386/kernel/cpu/amd.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/arch/i386/kernel/cpu/amd.c
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/arch/i386/kernel/cpu/amd.c	2010-08-27 17:10:45 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/arch/i386/kernel/cpu/amd.c	2010-08-29 20:42:55 +0000
+@@ -45,11 +45,14 @@ static void __cpuinit amd_fixup_dcm(stru
+ 	if (cpu_has(c, X86_FEATURE_AMD_DCM))
+ 		return;
+ 
++#if 0
++/* early_is_k8_nb() is only defined under arch/x86_64/ */
+ 	/* proceed only if there is a valid AMD northbridge
+ 	 * (not in virtualized environments!)
+ 	 */
+ 	if (!early_is_k8_nb(read_pci_config(0, 24, 3, 0x00)))
+ 		return;
++#endif
+ 
+ 	rdmsrl(0xc001100c, value);
+ 
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/arch/i386/kernel/cpu/intel_cacheinfo.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/arch/i386/kernel/cpu/intel_cacheinfo.c
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/arch/i386/kernel/cpu/intel_cacheinfo.c	2010-08-27 17:10:51 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/arch/i386/kernel/cpu/intel_cacheinfo.c	2010-08-29 20:42:55 +0000
+@@ -47,10 +47,12 @@ static void wbinvd_on_cpu(int cpu)
+ 	smp_call_function_single(cpu, __wbinvd, NULL, 0, 1);
+ }
+ 
++#if 0
+ static int wbinvd_on_all_cpus(void)
+ {
+ 	return on_each_cpu(__wbinvd, NULL, 0, 1);
+ }
++#endif
+ 
+ /* from arch/x86/kernel/cpu/amd.c upstream */
+ static int amd_get_nb_id(int cpu)
+@@ -331,9 +333,12 @@ amd_check_l3_disable(int index, struct _
+ 	     (boot_cpu_data.x86_mask  < 0x1)))
+ 		return;
+ 
++#if 0
++/* num_k8_northbridges is only defined under arch/x86_64/ */
+ 	/* not in virtualized environments */
+ 	if (num_k8_northbridges == 0)
+ 		return;
++#endif
+ 
+ 	this_leaf->can_disable = true;
+ 	this_leaf->l3_indices  = amd_calc_l3_indices();
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/arch/x86_64/Kconfig linux-2.6.18-194.8.1.el5.028stab070.4-owl/arch/x86_64/Kconfig
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/arch/x86_64/Kconfig	2010-08-27 17:10:52 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/arch/x86_64/Kconfig	2010-08-29 20:42:55 +0000
+@@ -476,6 +476,7 @@ config IOMMU
+ 	default y
+ 	select SWIOTLB
+ 	select AGP
++	select IOMMU_HELPER
+ 	depends on PCI && !X86_64_XEN
+ 	help
+ 	  Support for full DMA access of devices with 32bit memory access only
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/ata/Kconfig linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/ata/Kconfig
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/ata/Kconfig	2010-08-27 17:10:26 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/ata/Kconfig	2010-08-29 20:42:55 +0000
+@@ -445,8 +445,10 @@ config PATA_MARVELL
+ 	tristate "Marvell PATA support via legacy mode"
+ 	depends on PCI
+ 	help
+-	  This option enables limited support for the Marvell 88SE6145 ATA
+-	  controller.
++	  This option enables limited support for the Marvell 88SE61xx ATA
++	  controllers. If you wish to use only the SATA ports then select
++	  the AHCI driver alone. If you wish to use the PATA port or both
++	  SATA and PATA include this driver.
+ 
+ 	  If unsure, say N.
+ 
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/ata/ahci.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/ata/ahci.c
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/ata/ahci.c	2010-08-27 17:10:41 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/ata/ahci.c	2010-08-29 20:42:55 +0000
+@@ -616,6 +616,15 @@ module_param(ahci_em_messages, int, 0444
+ MODULE_PARM_DESC(ahci_em_messages,
+ 	"Set AHCI Enclosure Management Message type (0 = disabled, 1 = LED");
+ 
++#if defined(CONFIG_PATA_MARVELL) || defined(CONFIG_PATA_MARVELL_MODULE)
++static int marvell_enable;
++#else
++static int marvell_enable = 1;
++#endif
++module_param(marvell_enable, int, 0644);
++MODULE_PARM_DESC(marvell_enable, "Marvell SATA via AHCI (1 = enabled)");
++
++
+ static inline int ahci_nr_ports(u32 cap)
+ {
+ 	return (cap & 0x1f) + 1;
+@@ -735,6 +744,8 @@ static void ahci_save_initial_config(str
+ 			   "MV_AHCI HACK: port_map %x -> %x\n",
+ 			   port_map,
+ 			   port_map & mv);
++		dev_printk(KERN_ERR, &pdev->dev,
++			  "Disabling your PATA port on the Marvell SATA/PATA controller, which is unsupported by the AHCI driver. Use the boot option 'ahci.marvell_enable=0' to avoid this and let the likely slower Marvell PATA driver take over, supporting both SATA and PATA ports.\n");
+ 
+ 		port_map &= mv;
+ 	}
+@@ -2568,6 +2579,15 @@ static int ahci_init_one(struct pci_dev 
+ 	if (!printed_version++)
+ 		dev_printk(KERN_DEBUG, &pdev->dev, "version " DRV_VERSION "\n");
+ 
++	/* The AHCI driver can only drive the SATA ports, the PATA driver
++	   can drive them all so if both drivers are selected make sure
++	   AHCI stays out of the way */
++	if (pdev->vendor == PCI_VENDOR_ID_MARVELL && !marvell_enable) {
++		dev_printk(KERN_ERR, &pdev->dev,
++			  "Skipping the Marvell SATA/PATA controller in order to let the Marvell PATA driver take over. Use the boot option 'ahci.marvell_enable=1' to avoid this, likely gaining a bit of performance but losing support for your PATA port.\n");
++		return -ENODEV;
++	}
++
+ 	/* acquire resources */
+ 	rc = pcim_enable_device(pdev);
+ 	if (rc)
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/ata/pata_marvell.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/ata/pata_marvell.c
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/ata/pata_marvell.c	2010-08-27 17:10:26 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/ata/pata_marvell.c	2010-08-29 20:42:55 +0000
+@@ -5,7 +5,7 @@
+  *	isn't making full use of the device functionality but it is
+  *	easy to get working.
+  *
+- *	(c) 2006 Red Hat  <alan@redhat.com>
++ *	(c) 2006 Red Hat
+  */
+ 
+ #include <linux/kernel.h>
+@@ -20,29 +20,30 @@
+ #include <linux/ata.h>
+ 
+ #define DRV_NAME	"pata_marvell"
+-#define DRV_VERSION	"0.1.4"
++#define DRV_VERSION	"0.1.6"
+ 
+ /**
+- *	marvell_pre_reset	-	check for 40/80 pin
+- *	@link: link
+- *	@deadline: deadline jiffies for the operation
++ *	marvell_pata_active	-	check if PATA is active
++ *	@pdev: PCI device
+  *
+- *	Perform the PATA port setup we need.
++ *	Returns 1 if the PATA port may be active. We know how to check this
++ *	for the 6145 but not the other devices
+  */
+ 
+-static int marvell_pre_reset(struct ata_link *link, unsigned long deadline)
++static int marvell_pata_active(struct pci_dev *pdev)
+ {
+-	struct ata_port *ap = link->ap;
+-	struct pci_dev *pdev = to_pci_dev(ap->host->dev);
++	int i;
+ 	u32 devices;
+ 	void __iomem *barp;
+-	int i;
+ 
+-	/* Check if our port is enabled */
++	/* We don't yet know how to do this for other devices */
++	if (pdev->device != 0x6145)
++		return 1;	
+ 
+ 	barp = pci_iomap(pdev, 5, 0x10);
+ 	if (barp == NULL)
+ 		return -ENOMEM;
++
+ 	printk("BAR5:");
+ 	for(i = 0; i <= 0x0F; i++)
+ 		printk("%02X:%02X ", i, ioread8(barp + i));
+@@ -51,9 +52,27 @@ static int marvell_pre_reset(struct ata_
+ 	devices = ioread32(barp + 0x0C);
+ 	pci_iounmap(pdev, barp);
+ 
+-	if ((pdev->device == 0x6145) && (ap->port_no == 0) &&
+-	    (!(devices & 0x10)))	/* PATA enable ? */
+-		return -ENOENT;
++	if (devices & 0x10)
++		return 1;
++	return 0;
++}
++
++/**
++ *	marvell_pre_reset	-	probe begin
++ *	@link: link
++ *	@deadline: deadline jiffies for the operation
++ *
++ *	Perform the PATA port setup we need.
++ */
++
++static int marvell_pre_reset(struct ata_link *link, unsigned long deadline)
++{
++	struct ata_port *ap = link->ap;
++	struct pci_dev *pdev = to_pci_dev(ap->host->dev);
++
++	if (pdev->device == 0x6145 && ap->port_no == 0 &&
++		!marvell_pata_active(pdev))	/* PATA enable ? */
++			return -ENOENT;
+ 
+ 	return ata_sff_prereset(link, deadline);
+ }
+@@ -107,8 +126,8 @@ static int marvell_init_one (struct pci_
+ 	static const struct ata_port_info info = {
+ 		.flags		= ATA_FLAG_SLAVE_POSS,
+ 
+-		.pio_mask	= 0x1f,
+-		.mwdma_mask	= 0x07,
++		.pio_mask	= ATA_PIO4,
++		.mwdma_mask	= ATA_MWDMA2,
+ 		.udma_mask 	= ATA_UDMA5,
+ 
+ 		.port_ops	= &marvell_ops,
+@@ -117,8 +136,8 @@ static int marvell_init_one (struct pci_
+ 		/* Slave possible as its magically mapped not real */
+ 		.flags		= ATA_FLAG_SLAVE_POSS,
+ 
+-		.pio_mask	= 0x1f,
+-		.mwdma_mask	= 0x07,
++		.pio_mask	= ATA_PIO4,
++		.mwdma_mask	= ATA_MWDMA2,
+ 		.udma_mask 	= ATA_UDMA6,
+ 
+ 		.port_ops	= &marvell_ops,
+@@ -128,6 +147,12 @@ static int marvell_init_one (struct pci_
+ 	if (pdev->device == 0x6101)
+ 		ppi[1] = &ata_dummy_port_info;
+ 
++#if defined(CONFIG_SATA_AHCI) || defined(CONFIG_SATA_AHCI_MODULE)
++	if (!marvell_pata_active(pdev)) {
++		printk(KERN_INFO DRV_NAME ": PATA port not active, deferring to AHCI driver.\n");
++		return -ENODEV;
++	}
++#endif
+ 	return ata_pci_sff_init_one(pdev, ppi, &marvell_sht, NULL);
+ }
+ 
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/char/keyboard.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/char/keyboard.c
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/char/keyboard.c	2010-08-27 17:10:52 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/char/keyboard.c	2010-08-29 20:42:55 +0000
+@@ -1376,7 +1376,7 @@ int __init kbd_init(void)
+ 		kbd_table[i].lockstate = KBD_DEFLOCK;
+ 		kbd_table[i].slockstate = 0;
+ 		kbd_table[i].modeflags = KBD_DEFMODE;
+-		kbd_table[i].kbdmode = VC_UNICODE;
++		kbd_table[i].kbdmode = VC_XLATE;
+ 	}
+ 
+ 	input_register_handler(&kbd_handler);
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/char/vt.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/char/vt.c
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/char/vt.c	2010-08-27 17:10:50 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/char/vt.c	2010-08-29 20:42:55 +0000
+@@ -1497,7 +1497,7 @@ static void reset_terminal(struct vc_dat
+ 	vc->vc_charset		= 0;
+ 	vc->vc_need_wrap	= 0;
+ 	vc->vc_report_mouse	= 0;
+-	vc->vc_utf		= 1;
++	vc->vc_utf		= 0;
+ 	vc->vc_utf_count	= 0;
+ 
+ 	vc->vc_disp_ctrl	= 0;
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/dca/Kconfig linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/dca/Kconfig
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/dca/Kconfig	2010-08-27 17:10:33 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/dca/Kconfig	2010-08-29 20:42:55 +0000
+@@ -3,7 +3,7 @@
+ #
+ 
+ config DCA
+-	tristate
++	tristate "DCA server configuration"
+ 	depends on DMA_ENGINE_V3 && PCI
+ 	default m
+ 	---help---
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/parisc/eisa_eeprom.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/parisc/eisa_eeprom.c
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/drivers/parisc/eisa_eeprom.c	2006-09-20 03:42:06 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/drivers/parisc/eisa_eeprom.c	2009-08-10 06:51:35 +0000
+@@ -54,7 +54,7 @@ static ssize_t eisa_eeprom_read(struct f
+ 	ssize_t ret;
+ 	int i;
+ 	
+-	if (*ppos >= HPEE_MAX_LENGTH)
++	if (*ppos < 0 || *ppos >= HPEE_MAX_LENGTH)
+ 		return 0;
+ 	
+ 	count = *ppos + count < HPEE_MAX_LENGTH ? count : HPEE_MAX_LENGTH - *ppos;
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/fs/Kconfig linux-2.6.18-194.8.1.el5.028stab070.4-owl/fs/Kconfig
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/fs/Kconfig	2010-08-27 17:10:52 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/fs/Kconfig	2010-08-29 20:42:55 +0000
+@@ -473,6 +473,7 @@ config QFMT_V2
+ config SIM_FS
+ 	tristate "VPS filesystem"
+ 	depends on VZ_QUOTA
++	select EXPORTFS
+ 	default m
+ 	help
+ 	  This file system is a part of Virtuozzo. It intoduces a fake
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/fs/proc/base.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/fs/proc/base.c
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/fs/proc/base.c	2010-08-27 17:10:52 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/fs/proc/base.c	2010-08-29 20:42:55 +0000
+@@ -260,10 +260,10 @@ static struct pid_entry tgid_base_stuff[
+ 	  S_IFREG|S_IRUGO|S_IWUSR),
+ #endif
+ #ifdef CONFIG_TASK_IO_ACCOUNTING
+-	E(PROC_TGID_IO,             "io",  S_IFREG|S_IRUGO),
++	E(PROC_TGID_IO,             "io",  S_IFREG|S_IRUSR),
+ #endif
+ #ifdef CONFIG_STACKTRACE_PROC
+-	E(PROC_TGID_STACK,     "stack",   S_IFREG|S_IRUGO),
++	E(PROC_TGID_STACK,     "stack",   S_IFREG|S_IRUSR),
+ #endif
+ 
+ 	{0,0,NULL,0}
+@@ -310,10 +310,10 @@ static struct pid_entry tid_base_stuff[]
+ #endif
+ 	E(PROC_TID_LIMITS, "limits", S_IFREG|S_IRUSR),
+ #ifdef CONFIG_TASK_IO_ACCOUNTING
+-	E(PROC_TID_IO,         "io",      S_IFREG|S_IRUGO),
++	E(PROC_TID_IO,         "io",      S_IFREG|S_IRUSR),
+ #endif
+ #ifdef CONFIG_STACKTRACE_PROC
+-	E(PROC_TID_STACK,      "stack",   S_IFREG|S_IRUGO),
++	E(PROC_TID_STACK,      "stack",   S_IFREG|S_IRUSR),
+ #endif
+ 
+ 	{0,0,NULL,0}
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/include/linux/dmar.h linux-2.6.18-194.8.1.el5.028stab070.4-owl/include/linux/dmar.h
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/include/linux/dmar.h	2010-08-27 17:10:43 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/include/linux/dmar.h	2010-08-29 20:42:55 +0000
+@@ -125,10 +125,6 @@ extern int irq_remapped(int irq);
+ extern struct intel_iommu *map_dev_to_ir(struct pci_dev *dev);
+ extern struct intel_iommu *map_ioapic_to_ir(int apic);
+ #else
+-static inline int enable_drhd_fault_handling(void)
+-{
+-	return -1;
+-}
+ static inline int alloc_irte(struct intel_iommu *iommu, int irq, u16 count)
+ {
+ 	return -1;
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/init/do_mounts.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/init/do_mounts.c
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/init/do_mounts.c	2006-09-20 03:42:06 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/init/do_mounts.c	2010-07-21 17:54:16 +0000
+@@ -13,6 +13,10 @@
+ #include <linux/nfs_fs_sb.h>
+ #include <linux/nfs_mount.h>
+ 
++#ifdef CONFIG_BLK_DEV_IDECD
++#include <linux/ide.h>
++#endif
++
+ #include "do_mounts.h"
+ 
+ extern int get_filesystem_list(char * buf);
+@@ -267,10 +271,62 @@ static void __init get_fs_names(char *pa
+ 
+ static int __init do_mount_root(char *name, char *fs, int flags, void *data)
+ {
+-	int err = sys_mount(name, "/root", fs, flags, data);
++	int err = -ENODEV;
++
++	if (!strcmp(saved_root_name, "/dev/cdrom")) {
++		char realname[10];
++#ifdef CONFIG_BLK_DEV_IDECD
++		int h, unit;
++		for (h = 0; h < MAX_HWIFS; h++) {
++			ide_hwif_t *hwif = &ide_hwifs[h];
++			if (!hwif->present)
++				continue;
++			for (unit = 0; unit < MAX_DRIVES; unit++) {
++				ide_drive_t *drive = &hwif->drives[unit];
++				if (!drive->present ||
++				    drive->media != ide_cdrom)
++					continue;
++				snprintf(realname, sizeof(realname),
++				    "/dev/%s", drive->name);
++				printk(KERN_INFO "Trying to mount %s...\n",
++				    realname);
++				create_dev(name, MKDEV(hwif->major, unit));
++				err = sys_mount(name, "/root", fs, flags, data);
++				if (!err)
++					goto ok;
++			}
++		}
++#endif
++#ifdef CONFIG_BLK_DEV_SR
++		strcpy(realname, "/dev/scd0");
++		while (realname[8] < '8') {
++			int retries = root_delay;
++retry:
++			printk(KERN_INFO "Trying to mount %s...\n", realname);
++			if (retries == root_delay)
++				create_dev(name,
++				    MKDEV(SCSI_CDROM_MAJOR, realname[8] - '0'));
++			err = sys_mount(name, "/root", fs, flags, data);
++			if (!err)
++				goto ok;
++			if (err == -ENXIO || err == -ENODEV) {
++				if (retries-- <= 0)
++					return err;
++				printk(KERN_INFO "Retrying in 1 sec...\n");
++				ssleep(1);
++				goto retry;
++			}
++			realname[8]++;
++		}
++#endif
++		return err;
++	}
++
++	err = sys_mount(name, "/root", fs, flags, data);
+ 	if (err)
+ 		return err;
+ 
++ok:
+ 	sys_chdir("/root");
+ 	ROOT_DEV = current->fs->pwdmnt->mnt_sb->s_dev;
+ 	printk("VFS: Mounted root (%s filesystem)%s.\n",
+@@ -397,7 +453,7 @@ void __init prepare_namespace(void)
+ {
+ 	int is_floppy;
+ 
+-	if (root_delay) {
++	if (root_delay && strcmp(saved_root_name, "/dev/cdrom")) {
+ 		printk(KERN_INFO "Waiting %dsec before mounting root device...\n",
+ 		       root_delay);
+ 		ssleep(root_delay);
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/init/do_mounts_md.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/init/do_mounts_md.c
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/init/do_mounts_md.c	2006-09-20 03:42:06 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/init/do_mounts_md.c	2007-10-03 03:57:50 +0000
+@@ -122,6 +122,7 @@ static void __init md_setup_drive(void)
+ 
+ 	for (ent = 0; ent < md_setup_ents ; ent++) {
+ 		int fd;
++		int disknum = 0;
+ 		int err = 0;
+ 		char *devname;
+ 		mdu_disk_info_t dinfo;
+@@ -144,7 +145,7 @@ static void __init md_setup_drive(void)
+ 
+ 			p = strchr(devname, ',');
+ 			if (p)
+-				*p++ = 0;
++				*p = 0;
+ 
+ 			dev = name_to_dev_t(devname);
+ 			if (strncmp(devname, "/dev/", 5) == 0)
+@@ -154,17 +155,22 @@ static void __init md_setup_drive(void)
+ 			if (rdev)
+ 				dev = new_decode_dev(rdev);
+ 			if (!dev) {
+-				printk(KERN_WARNING "md: Unknown device name: %s\n", devname);
+-				break;
++				printk(KERN_WARNING "md: Skipping unknown device name: %s\n", devname);
++				if (p)
++					*p++ = ',';
++				devname = p;
++				continue;
+ 			}
+ 
+-			devices[i] = dev;
++			devices[disknum++] = dev;
+ 
++			if (p)
++				*p++ = ',';
+ 			devname = p;
+ 		}
+-		devices[i] = 0;
++		devices[disknum] = 0;
+ 
+-		if (!i)
++		if (!disknum)
+ 			continue;
+ 
+ 		printk(KERN_INFO "md: Loading md%s%d: %s\n",
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/kernel/panic.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/kernel/panic.c
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/kernel/panic.c	2010-08-27 17:10:52 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/kernel/panic.c	2010-08-29 20:42:55 +0000
+@@ -20,7 +20,7 @@
+ #include <linux/kexec.h>
+ #include <linux/debug_locks.h>
+ 
+-int panic_on_oops = 1;
++int panic_on_oops;
+ int tainted = 1;
+ static int pause_on_oops;
+ static int pause_on_oops_flag;
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/kernel/printk.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/kernel/printk.c
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/kernel/printk.c	2010-08-27 17:10:52 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/kernel/printk.c	2010-08-29 20:42:55 +0000
+@@ -249,10 +249,6 @@ int do_syslog(int type, char __user *buf
+ 	if (!ve_is_super(get_exec_env()) && (type == 6 || type == 7))
+ 		goto out;
+ 
+-	error = security_syslog(type);
+-	if (error)
+-		return error;
+-
+ 	switch (type) {
+ 	case 0:		/* Close log */
+ 		break;
+@@ -384,6 +380,12 @@ out:
+ 
+ asmlinkage long sys_syslog(int type, char __user *buf, int len)
+ {
++	int error = 0;
++
++	error = security_syslog(type);
++	if (error)
++		return error;
++		
+ 	return do_syslog(type, buf, len);
+ }
+ 
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/net/llc/af_llc.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/net/llc/af_llc.c
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/net/llc/af_llc.c	2006-09-20 03:42:06 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/net/llc/af_llc.c	2009-08-26 10:16:29 +0000
+@@ -155,6 +155,9 @@ static int llc_ui_create(struct socket *
+ 	struct sock *sk;
+ 	int rc = -ESOCKTNOSUPPORT;
+ 
++	if (!capable(CAP_NET_RAW))
++		return -EPERM;
++
+ 	if (likely(sock->type == SOCK_DGRAM || sock->type == SOCK_STREAM)) {
+ 		rc = -ENOMEM;
+ 		sk = llc_sk_alloc(PF_LLC, GFP_KERNEL, &llc_proto);
+@@ -911,6 +914,7 @@ static int llc_ui_getname(struct socket 
+ 	struct llc_sock *llc = llc_sk(sk);
+ 	int rc = 0;
+ 
++	memset(&sllc, 0, sizeof(sllc));
+ 	lock_sock(sk);
+ 	if (sock_flag(sk, SOCK_ZAPPED))
+ 		goto out;
+diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/scripts/mkcompile_h linux-2.6.18-194.8.1.el5.028stab070.4-owl/scripts/mkcompile_h
+--- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/scripts/mkcompile_h	2006-09-20 03:42:06 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/scripts/mkcompile_h	2009-03-01 05:35:12 +0000
+@@ -47,17 +47,9 @@ UTS_TRUNCATE="sed -e s/\(.\{1,$UTS_LEN\}
+   echo \#define UTS_VERSION \"`echo $UTS_VERSION | $UTS_TRUNCATE`\"
+ 
+   echo \#define LINUX_COMPILE_TIME \"`LC_ALL=C LANG=C date +%T`\"
+-  echo \#define LINUX_COMPILE_BY \"`whoami`\"
+-  echo \#define LINUX_COMPILE_HOST \"`hostname | $UTS_TRUNCATE`\"
+-
+-  if [ -x /bin/dnsdomainname ]; then
+-    echo \#define LINUX_COMPILE_DOMAIN \"`dnsdomainname | $UTS_TRUNCATE`\"
+-  elif [ -x /bin/domainname ]; then
+-    echo \#define LINUX_COMPILE_DOMAIN \"`domainname | $UTS_TRUNCATE`\"
+-  else
+-    echo \#define LINUX_COMPILE_DOMAIN
+-  fi
+-
++  echo \#define LINUX_COMPILE_BY \"sources\"
++  echo \#define LINUX_COMPILE_HOST \"${ARCH}.example.org\"
++  echo \#define LINUX_COMPILE_DOMAIN \"\"
+   echo \#define LINUX_COMPILER \"`$CC -v 2>&1 | tail -n 1`\"
+ ) > .tmpcompile
+ 
