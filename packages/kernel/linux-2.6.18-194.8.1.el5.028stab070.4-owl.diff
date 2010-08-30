@@ -351,7 +351,7 @@ diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/include/linux/dmar.h linu
  	return -1;
 diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/init/do_mounts.c linux-2.6.18-194.8.1.el5.028stab070.4-owl/init/do_mounts.c
 --- linux-2.6.18-194.8.1.el5.028stab070.4-redhat/init/do_mounts.c	2006-09-20 03:42:06 +0000
-+++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/init/do_mounts.c	2010-07-21 17:54:16 +0000
++++ linux-2.6.18-194.8.1.el5.028stab070.4-owl/init/do_mounts.c	2010-08-29 20:46:04 +0000
 @@ -13,6 +13,10 @@
  #include <linux/nfs_fs_sb.h>
  #include <linux/nfs_mount.h>
@@ -363,7 +363,7 @@ diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/init/do_mounts.c linux-2.
  #include "do_mounts.h"
  
  extern int get_filesystem_list(char * buf);
-@@ -267,10 +271,62 @@ static void __init get_fs_names(char *pa
+@@ -267,10 +271,63 @@ static void __init get_fs_names(char *pa
  
  static int __init do_mount_root(char *name, char *fs, int flags, void *data)
  {
@@ -387,7 +387,8 @@ diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/init/do_mounts.c linux-2.
 +				    "/dev/%s", drive->name);
 +				printk(KERN_INFO "Trying to mount %s...\n",
 +				    realname);
-+				create_dev(name, MKDEV(hwif->major, unit));
++				create_dev(name,
++				    MKDEV(hwif->major, unit << PARTN_BITS));
 +				err = sys_mount(name, "/root", fs, flags, data);
 +				if (!err)
 +					goto ok;
@@ -427,7 +428,7 @@ diff -urp linux-2.6.18-194.8.1.el5.028stab070.4-redhat/init/do_mounts.c linux-2.
  	sys_chdir("/root");
  	ROOT_DEV = current->fs->pwdmnt->mnt_sb->s_dev;
  	printk("VFS: Mounted root (%s filesystem)%s.\n",
-@@ -397,7 +453,7 @@ void __init prepare_namespace(void)
+@@ -397,7 +454,7 @@ void __init prepare_namespace(void)
  {
  	int is_floppy;
  
