@@ -46,6 +46,23 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/08/30	Package: vsftpd
+Updated to 2.3.2.
+
+2010/08/30	Package: kernel
+SECURITY FIX	Severity: low to medium, local, active
+Updated the kernel to OpenVZ's latest from their rhel5 branch
+(2.6.18-194.8.1.el5.028stab070.4), added most post-194.8.1 patches from
+Red Hat's -194.11.1, applied some additional bugfixes, and of course
+preserved our usual changes.  Enabled CONFIG_FUSION_* and CONFIG_PCNET32
+(as modules) for easier Owl installation into VMware and VirtualBox VMs.
+References:
+http://wiki.openvz.org/Download/kernel/rhel5/028stab070.4
+https://rhn.redhat.com/errata/RHSA-2010-0610.html
+http://www.openwall.com/lists/oss-security/2010/08/16/1
+http://www.openwall.com/lists/oss-security/2010/08/27/1
+http://www.openwall.com/lists/oss-security/2010/08/30/3
+
 2010/08/29	Package: mktemp
 Updated to 1.7.
 
@@ -1319,4 +1336,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.259 2010/08/29 19:44:10 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.260 2010/08/30 16:51:52 solar Exp $
