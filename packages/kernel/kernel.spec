@@ -1,23 +1,24 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.28 2010/07/23 13:54:11 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.29 2010/08/30 00:19:07 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 194.8.1.el5.028stab070.2
-Release: %ovzversion.owl3
+%define ovzversion 194.8.1.el5.028stab070.4
+Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab070.2
+URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab070.4
 Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.bz2
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab070.2/patches/patch-194.8.1.el5.028stab070.2-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab070.2/patches/patch-194.8.1.el5.028stab070.2-combined.gz.asc
-Patch1: linux-%version-%ovzversion-owl.diff
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab070.4/patches/patch-194.8.1.el5.028stab070.4-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab070.4/patches/patch-194.8.1.el5.028stab070.4-combined.gz.asc
+Patch1: linux-%version-%ovzversion-redhat.diff
+Patch2: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
 ExclusiveArch: i686 x86_64
@@ -49,6 +50,7 @@ satisfy possible dependencies of other packages.
 %setup -q -n linux-%version
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 cp %_sourcedir/dot-config-%_target_cpu .config
 
 %build
@@ -102,6 +104,17 @@ done
 %files fake
 
 %changelog
+* Mon Aug 30 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.8.1.el5.028stab070.4-owl1
+- Updated to 2.6.18-194.8.1.el5.028stab070.4.
+- Added most post-194.8.1 patches from Red Hat's -194.11.1.
+- Fixed an Owl-specific bug in init/do_mounts.c: do_mount_root() with
+root=/dev/cdrom failing to access CD drives on IDE slaves.
+- Applied Kees Cook's partial fix to fs/exec.c's argv expansion:
+http://www.openwall.com/lists/oss-security/2010/08/27/1
+- Applied upstream's fix to integer overflow flaws in ext4_ext_in_cache() and
+ext4_ext_get_blocks():
+http://www.openwall.com/lists/oss-security/2010/08/16/1
+
 * Wed Jul 21 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.8.1.el5.028stab070.2.owl3
 - Backported the AHCI vs. Marvell PATA driver co-existence fixes from 2.6.34.1,
 made the corresponding messages more verbose.
