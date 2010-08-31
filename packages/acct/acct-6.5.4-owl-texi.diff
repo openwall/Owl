@@ -1,0 +1,12 @@
+diff -uNrp acct-6.5.4.orig/accounting.texi acct-6.5.4/accounting.texi
+--- acct-6.5.4.orig/accounting.texi	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/accounting.texi	2010-08-31 12:07:31 +0000
+@@ -331,7 +331,7 @@ A total is also printed out.
+ The accounting file @code{wtmp} is maintained by @code{init}
+ and @code{login}.  Neither of these programs creates the file; if the
+ file is not there, no accounting is done.  To begin accounting, create
+-the file with a length of zero. @strong{NOTE:} the
++the file with a length of zero. Note that the
+ @code{wtmp} file can get really big, really fast.  You might
+ want to trim it every once and a while.
+ 

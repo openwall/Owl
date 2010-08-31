@@ -1,6 +1,6 @@
-diff -uNr acct-6.4-pre1.orig/ac.1 acct-6.4-pre1/ac.1
---- acct-6.4-pre1.orig/ac.1	2003-06-05 16:46:12 +0000
-+++ acct-6.4-pre1/ac.1	2006-05-19 08:07:39 +0000
+diff -uNrp acct-6.5.4.orig/ac.1 acct-6.5.4/ac.1
+--- acct-6.5.4.orig/ac.1	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/ac.1	2010-08-31 10:40:51 +0000
 @@ -1,6 +1,6 @@
 -.TH AC 1 "1995 October 31"
 +.TH AC 1 "2002 March 23"
@@ -10,7 +10,7 @@ diff -uNr acct-6.4-pre1.orig/ac.1 acct-6.4-pre1/ac.1
  .SH SYNOPSIS
  .hy 0
  .na
-@@ -38,18 +38,18 @@
+@@ -38,18 +38,18 @@ ac \-  print statistics about users' con
  .B \-\-all-days
  ]
  .br
@@ -33,7 +33,7 @@ diff -uNr acct-6.4-pre1.orig/ac.1 acct-6.4-pre1/ac.1
  ]
  [
  .B \-\-compatibility
-@@ -76,59 +76,39 @@
+@@ -76,53 +76,33 @@ ac \-  print statistics about users' con
  [
  .B \-V
  |
@@ -64,9 +64,7 @@ diff -uNr acct-6.4-pre1.orig/ac.1 acct-6.4-pre1/ac.1
 -and
 -.BR login (1).
 -Neither 
-+Although
-+GNU
- .B ac
+-.B ac
 -nor
 -.B login
 -creates the 
@@ -86,6 +84,8 @@ diff -uNr acct-6.4-pre1.orig/ac.1 acct-6.4-pre1/ac.1
 -though it's a little
 -smarter in several ways.  You should therefore expect differences in
 -the output of GNU 
++Although
++GNU
 +works nearly the same as
 +.BR ac 's
 +on other systems, it is a little smarter in several ways.
@@ -99,13 +99,7 @@ diff -uNr acct-6.4-pre1.orig/ac.1 acct-6.4-pre1/ac.1
  on other systems.
  Use the command
  .BI info " accounting"
- to get additional information.
- .SH OPTIONS
--\..PD 0
- .TP
- .B \-d, \-\-daily-totals
- Print totals for each day rather than just one big total at the
-@@ -150,21 +130,21 @@
+@@ -150,21 +130,21 @@ everything-lumped-into-one value.  It lo
  .TP
  .I people
  Print out the sum total of the connect time used by all of the
@@ -133,7 +127,7 @@ diff -uNr acct-6.4-pre1.orig/ac.1 acct-6.4-pre1/ac.1
  .I wtmp
  file has a problem (a time-warp, missing record, or
  whatever), print out an appropriate error.
-@@ -173,14 +153,14 @@
+@@ -173,14 +153,14 @@ whatever), print out an appropriate erro
  Reboot records are NOT written at the time of a reboot, but when
  the system restarts; therefore, it is impossible to know exactly
  when the reboot occurred.  Users may have been logged into the
@@ -154,7 +148,7 @@ diff -uNr acct-6.4-pre1.orig/ac.1 acct-6.4-pre1/ac.1
  .B ac
  compatibility, include this flag.*
  .TP
-@@ -191,8 +171,8 @@
+@@ -191,8 +171,8 @@ you want to include the time from the us
  login on the terminal (though probably incorrect), include this
  you want to include the time from the user's login to the next
  login on the terminal (though probably incorrect), include this
@@ -165,7 +159,7 @@ diff -uNr acct-6.4-pre1.orig/ac.1 acct-6.4-pre1/ac.1
  .B ac
  compatibility, include this flag.*
  .TP
-@@ -216,9 +196,9 @@
+@@ -216,9 +196,9 @@ this flag, time accrued during those int
  the next day where there is login activity.
  .TP
  .BI \-\-tw-leniency " num"
@@ -178,7 +172,7 @@ diff -uNr acct-6.4-pre1.orig/ac.1 acct-6.4-pre1/ac.1
  .I wtmp
  files might be slightly out of order (most notably when two logins
  occur within a one-second period - the second one gets written first).
-@@ -228,8 +208,8 @@
+@@ -228,8 +208,8 @@ problem, time is not assigned to users u
  flag is used.
  .TP
  .BI \-\-tw-suspicious " num"
@@ -189,7 +183,7 @@ diff -uNr acct-6.4-pre1.orig/ac.1 acct-6.4-pre1/ac.1
  seconds.  If two records in the
  .I wtmp
  file are farther than this number of seconds apart, there is a problem
-@@ -251,7 +231,7 @@
+@@ -251,7 +231,7 @@ The default is to suppress printing.
  Print verbose internal information.
  .TP
  .B \-V, \-\-version
@@ -198,7 +192,7 @@ diff -uNr acct-6.4-pre1.orig/ac.1 acct-6.4-pre1/ac.1
  .B ac
  to standard output and quit.
  .TP
-@@ -261,17 +241,19 @@
+@@ -261,17 +241,19 @@ standard output and exits.
  .SH FILES
  .I wtmp
  .RS
@@ -222,10 +216,10 @@ diff -uNr acct-6.4-pre1.orig/ac.1 acct-6.4-pre1/ac.1
 +.BR accton (8),
  .BR init (8),
  .BR sa (8)
-diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
---- acct-6.4-pre1.orig/accounting.texi	2006-01-07 22:46:25 +0000
-+++ acct-6.4-pre1/accounting.texi	2006-05-19 08:27:45 +0000
-@@ -61,7 +61,7 @@
+diff -uNrp acct-6.5.4.orig/accounting.texi acct-6.5.4/accounting.texi
+--- acct-6.5.4.orig/accounting.texi	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/accounting.texi	2010-08-31 10:22:51 +0000
+@@ -70,7 +70,7 @@ approved by the Foundation.
  @node Top, Preface, (dir), (dir)
  
  Welcome to the GNU Accounting Utilities!  If you don't have a clue about
@@ -234,16 +228,16 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  information about any of the applications, see the chapter with the
  program's name.
  
-@@ -106,7 +106,7 @@
- 
- The accounting utilities were born.
+@@ -130,7 +130,7 @@ making a stand. However, sadly enogh, th
+ meaning. You cannot buy yourself free from guilt; A new revival had
+ come for the GNU acccounting utilities and so a POSIX-standard.
  
 -Seriously though, the accouting utilities can provide a system
 +Seriously though, the accounting utilities can provide a system
  administrator with useful information about system usage---connections,
  programs executed, and utilization of system resources.
  
-@@ -145,13 +145,12 @@
+@@ -169,13 +169,12 @@ the run state of each command.  With @co
  @item sa
  summarizes the information in the @code{acct} file into the
  @code{savacct} and @code{usracct} file.  It also
@@ -258,7 +252,7 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  @end table
  
  For more detailed information on any of these programs, check the
-@@ -165,7 +164,7 @@
+@@ -189,7 +188,7 @@ and have different names for every varia
  process accounting file might be @code{acct} or @code{pacct} on your
  system.  To find the actual locations and names of these files on your
  system, specify the @code{--help} flag to any of the programs in this
@@ -267,7 +261,7 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  
  Regardless of the names and locations of files on your system, this
  manual will refer to the login accounting file as @code{wtmp} and the
-@@ -242,7 +241,7 @@
+@@ -266,7 +265,7 @@ Original Linux kernel accounting patches
  @item Scott Crosby <root@@hypercube.res.cmu.edu>
  Suggested idea behind @code{--sort-real-time} for @code{sa}.
  
@@ -276,7 +270,7 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  Added code for @code{--ahz} flag in @code{lastcomm} and @code{sa}.
  
  @item Dirk Eddelbuettel <edd@@miles.econ.queensu.ca>
-@@ -274,7 +273,7 @@
+@@ -298,7 +297,7 @@ Noticed missing GNU-standard makefile ru
  Noticed install target was missing, and corrected a typo for prefix in
  Makefile.in.
  
@@ -285,7 +279,7 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  Tracked down miscellaneous bugs in sa.c under Linux.  Added Debian
  package maintenance files.
  
-@@ -311,7 +310,7 @@
+@@ -335,7 +334,7 @@ the file with a length of zero. @strong{
  @code{wtmp} file can get really big, really fast.  You might
  want to trim it every once and a while.
  
@@ -294,7 +288,7 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  smarter in its printing out of daily totals---it actually prints
  @emph{every} day, rather than skipping to the date of the next entry in
  the @code{wtmp} file.
-@@ -448,7 +447,7 @@
+@@ -472,7 +471,7 @@ standard output.
  For no fault of @code{ac}'s, if two logins occur at the same time
  (within a second of each other), each @code{login} process will try to
  write an entry to the @code{wtmp} file.  With file system
@@ -303,7 +297,7 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  wrong order.  GNU @code{ac} automatically compensates for this, but some
  other @code{ac}s may not...  beware.
  
-@@ -501,8 +500,8 @@
+@@ -525,8 +524,8 @@ largest timewarp was 45.
  
  Some @code{ac}'s on System V machines (I've tried SGI Indigo & SGI Indy)
  forget to pay attention to the @code{ut_type} field in a @code{struct
@@ -314,7 +308,7 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  
  @noindent
  @strong{TANGIBLE RESULT:} The amount of total time reported by the
-@@ -529,7 +528,6 @@
+@@ -553,7 +552,6 @@ accounting.
  @section Flags
  
  @table @code
@@ -322,7 +316,7 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  @item -V
  @itemx --version
  Print @code{accton}'s version number.
-@@ -538,7 +536,6 @@
+@@ -562,7 +560,6 @@ Print @code{accton}'s version number.
  @itemx --help
  Print @code{accton}'s usage string and default locations of system files
  to standard output.
@@ -330,7 +324,7 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  @end table
  
  @c ----------------------------------------------------------------------
-@@ -815,14 +812,16 @@
+@@ -839,14 +836,16 @@ The output fields are labeled as follows
  
  @table @code
  
@@ -351,7 +345,7 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  
  @item avio
  average number of I/O operations per execution
-@@ -831,23 +830,24 @@
+@@ -855,23 +854,24 @@ average number of I/O operations per exe
  total number of I/O operations
  
  @item k*sec
@@ -383,7 +377,7 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  
  @section Flags
  
-@@ -862,7 +862,6 @@
+@@ -886,7 +886,6 @@ version of @code{sa} will not support th
  In short, all of these flags may not be available on your machine.
  
  @table @code
@@ -391,7 +385,7 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  @item -a
  @itemx --list-all-names
  Force @code{sa} not to sort those command names with unprintable
-@@ -902,16 +901,16 @@
+@@ -926,16 +925,16 @@ call.
  
  @item -k
  @itemx --sort-cpu-avmem
@@ -411,7 +405,7 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  
  @item -m
  @itemx --user-summary
-@@ -945,7 +944,7 @@
+@@ -969,7 +968,7 @@ Merge the summarized accounting data int
  @itemx --print-ratio
  For each entry, print the ratio of real time to the sum of system and
  user times.  If the sum of system and user times is too small to
@@ -420,7 +414,7 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  
  @item -u
  @itemx --print-users
-@@ -966,13 +965,7 @@
+@@ -990,13 +989,7 @@ whether or not that command forked.  The
  information together unless this option is specified.
  
  @item --sort-real-time
@@ -435,7 +429,7 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  
  @item --debug
  Print verbose internal information.
-@@ -985,6 +978,24 @@
+@@ -1009,6 +1002,24 @@ Print @code{sa}'s version number.
  @itemx --help
  Print @code{sa}'s usage string and default locations of system files to
  standard output.
@@ -460,7 +454,7 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  @end table
  
  @strong{Note}: if more than one sorting option is specified, the list
-@@ -1002,7 +1013,7 @@
+@@ -1026,7 +1037,7 @@ out commands when combined with the @cod
  @code{--print-users} flags.  GNU @code{sa} pays attention to these flags
  if they are applicable.
  
@@ -469,7 +463,7 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  
  The average memory use is stored as a short rather than a double, so we
  suffer from round-off errors.  GNU @code{sa} uses double the whole way
-@@ -1116,9 +1127,9 @@
+@@ -1140,9 +1151,9 @@ setting.
  @c ----------------------------------------------------------------------
  @c @node Index,  , dump-acct, Top
  @c @unnumbered Index
@@ -481,19 +475,18 @@ diff -uNr acct-6.4-pre1.orig/accounting.texi acct-6.4-pre1/accounting.texi
  
  @contents
  
-diff -uNr acct-6.4-pre1.orig/accton.8 acct-6.4-pre1/accton.8
---- acct-6.4-pre1.orig/accton.8	2003-06-05 16:46:12 +0000
-+++ acct-6.4-pre1/accton.8	2006-05-19 08:33:11 +0000
+diff -uNrp acct-6.5.4.orig/accton.8 acct-6.5.4/accton.8
+--- acct-6.5.4.orig/accton.8	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/accton.8	2010-08-31 10:32:28 +0000
 @@ -1,6 +1,6 @@
--.TH ACCTON 8 "1995 October 31"
-+.TH ACCTON 8 "2002 March 23"
+ .TH ACCTON 8 "2008 November 24"
  .SH NAME
 -accton \-  turns process accounting on or off
 +accton \- turns process accounting on or off
  .SH SYNOPSIS
  .hy 0
  .na
-@@ -9,7 +9,7 @@
+@@ -13,13 +13,15 @@ accton \-  turns process accounting on o
  [
  .B \-V
  |
@@ -502,20 +495,15 @@ diff -uNr acct-6.4-pre1.orig/accton.8 acct-6.4-pre1/accton.8
  ]
  [
  .B \-h
-@@ -19,6 +19,8 @@
- [
- .I filename
+ |
+ .B \-\-help
  ]
 +.ad b
 +.hy 1
  .SH DESCRIPTION
  .LP
  .B accton
-@@ -26,12 +28,11 @@
- turns on process accounting.  If called with no arguments,
- it will, by default, stop process accounting.
- .SH OPTIONS
--\..PD 0
+@@ -31,8 +33,8 @@ it will, by default, stop process accoun
  .TP
  .TP
  .B \-V, \-\-version
@@ -526,7 +514,7 @@ diff -uNr acct-6.4-pre1.orig/accton.8 acct-6.4-pre1/accton.8
  to standard output and quit.
  .TP
  .B \-h, \-\-help
-@@ -39,17 +40,20 @@
+@@ -40,17 +42,20 @@ Prints the usage string and default loca
  standard output and exits.
  .SH FILES
  .TP
@@ -552,9 +540,9 @@ diff -uNr acct-6.4-pre1.orig/accton.8 acct-6.4-pre1/accton.8
  .BR acct (5),
 -.BR ac (8)
 +.BR sa (8)
-diff -uNr acct-6.4-pre1.orig/last.1 acct-6.4-pre1/last.1
---- acct-6.4-pre1.orig/last.1	2003-06-05 16:46:12 +0000
-+++ acct-6.4-pre1/last.1	2006-05-19 08:50:55 +0000
+diff -uNrp acct-6.5.4.orig/last.1 acct-6.5.4/last.1
+--- acct-6.5.4.orig/last.1	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/last.1	2010-08-31 10:22:51 +0000
 @@ -1,13 +1,13 @@
  .\" Man page by Dirk Eddelbuettel
 -.TH LAST 1 "1997 August 19"
@@ -572,7 +560,7 @@ diff -uNr acct-6.4-pre1.orig/last.1 acct-6.4-pre1/last.1
  .BI \- "num"
  |
  .BI \-n " num"
-@@ -19,14 +19,14 @@
+@@ -19,14 +19,14 @@ last \- list logins on the system
  .BI \-f " filename"
  |
  .BI \-\-file " filename"
@@ -590,7 +578,7 @@ diff -uNr acct-6.4-pre1.orig/last.1 acct-6.4-pre1/last.1
  .br
  [
  .B \-\-complain
-@@ -94,72 +94,69 @@
+@@ -94,72 +94,69 @@ last \- list logins on the system
  .ad b
  .SH DESCRIPTION
  .B last
@@ -687,7 +675,7 @@ diff -uNr acct-6.4-pre1.orig/last.1 acct-6.4-pre1/last.1
  .I wtmp
  files might be slightly out of order (most notably when two logins
  occur within a one-second period - the second one gets written first).
-@@ -169,8 +166,8 @@
+@@ -169,8 +166,8 @@ problem, time is not assigned to users u
  flag is used.
  .TP
  .BI \-\-tw-suspicious " num"
@@ -698,7 +686,7 @@ diff -uNr acct-6.4-pre1.orig/last.1 acct-6.4-pre1/last.1
  seconds.  If two records in the
  .I wtmp
  file are farther than this number of seconds apart, there is a problem
-@@ -180,15 +177,15 @@
+@@ -180,15 +177,15 @@ file (or your machine hasn't been used i
  notices this problem, time is not assigned to users unless the
  .B \-\-timewarps
  flag is used.
@@ -718,7 +706,7 @@ diff -uNr acct-6.4-pre1.orig/last.1 acct-6.4-pre1/last.1
  .B \-a, \-\-all-records
  Print out all records in the
  .I wtmp
-@@ -221,8 +218,8 @@
+@@ -221,8 +218,8 @@ Print seconds when displaying dates.
  Print year when displaying dates.
  .TP
  .B \-V, \-\-version
@@ -729,7 +717,7 @@ diff -uNr acct-6.4-pre1.orig/last.1 acct-6.4-pre1/last.1
  version number.
  .TP
  .B \-h, \-\-help
-@@ -231,13 +228,20 @@
+@@ -231,13 +228,20 @@ standard output and exits.
  .SH FILES
  .I wtmp
  .RS
@@ -753,9 +741,9 @@ diff -uNr acct-6.4-pre1.orig/last.1 acct-6.4-pre1/last.1
 +.BR accton (8),
 +.BR init (8),
 +.BR sa (8)
-diff -uNr acct-6.4-pre1.orig/lastcomm.1 acct-6.4-pre1/lastcomm.1
---- acct-6.4-pre1.orig/lastcomm.1	2006-01-07 21:55:07 +0000
-+++ acct-6.4-pre1/lastcomm.1	2006-05-19 09:01:39 +0000
+diff -uNrp acct-6.5.4.orig/lastcomm.1 acct-6.5.4/lastcomm.1
+--- acct-6.5.4.orig/lastcomm.1	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/lastcomm.1	2010-08-31 10:37:50 +0000
 @@ -1,6 +1,6 @@
 -.TH LASTCOMM 1 "1995 October 31"
 +.TH LASTCOMM 1 "2002 March 23"
@@ -765,7 +753,7 @@ diff -uNr acct-6.4-pre1.orig/lastcomm.1 acct-6.4-pre1/lastcomm.1
  .SH SYNOPSIS
  .hy 0
  .na
-@@ -18,7 +18,7 @@
+@@ -18,7 +18,7 @@ lastcomm \-  print out information about
  .I terminal-name ...
  ]
  .br
@@ -774,7 +762,7 @@ diff -uNr acct-6.4-pre1.orig/lastcomm.1 acct-6.4-pre1/lastcomm.1
  .B \-\-strict-match
  ]
  .br
-@@ -55,12 +55,12 @@
+@@ -59,12 +59,12 @@ lastcomm \-  print out information about
  [
  .B \-V
  |
@@ -789,7 +777,7 @@ diff -uNr acct-6.4-pre1.orig/lastcomm.1 acct-6.4-pre1/lastcomm.1
  ]
  .ad b
  .hy 1
-@@ -68,31 +68,31 @@
+@@ -72,31 +72,31 @@ lastcomm \-  print out information about
  .LP
  .B lastcomm
  prints out information about previously executed
@@ -830,22 +818,14 @@ diff -uNr acct-6.4-pre1.orig/lastcomm.1 acct-6.4-pre1/lastcomm.1
 +you want to find only items that match *all* of the arguments on the command
 +line, you must use the '\-strict-match' option.  For example, to list
 +all of the executions of command
-+.IR a.out " by user " root " on terminal " tty0 ,
++.IR a.out " by user " root " on terminal " tty0,
  type:
 -.ce 
 +.ce
- lastcomm \-\-strict-match a.out root tty0
+ lastcomm \-\-strict-match \-\-command a.out \-\-user root \-\-tty tty0
  .ce 0
  .LP
-@@ -109,7 +109,6 @@
-    + the name of the user who ran the process
-    + time the process exited
- .SH OPTIONS
--\. .PD 0
- .TP
- .B \-\-strict-match
- Print only entries that match *all* of the arguments on the command
-@@ -117,25 +116,24 @@
+@@ -121,19 +121,18 @@ line.
  .TP
  .BI \-\-user " name"
  List records for user with
@@ -867,19 +847,23 @@ diff -uNr acct-6.4-pre1.orig/lastcomm.1 acct-6.4-pre1/lastcomm.1
 -.I name.
 +.IR name .
  .TP
--.BI \-f " filename, " \-\-file " filename"
+ .BI \-\-forwards
+ Read file forwards instead of backwards. This avoids trying to seek on the file
+@@ -142,10 +141,10 @@ and can be used to read from a pipe. Thi
+ arguments.
+ .TP
+ .BI \-f " filename, " \-\-file " filename"
 -Read from the file 
 -.I filename 
-+.BI \-f " filename" ", \-\-file " filename
 +Read from the file
 +.I filename
  instead of
--.I acct
+-.I acct.
 +.IR acct .
- .TP
- .BI \-\-ahz " hz"
- Use this flag to tell the program what
-@@ -145,7 +143,7 @@
+ A filename of "-" will result in reading from stdin. This must either be the
+ first
+ .BI \-f
+@@ -163,7 +162,7 @@ an
  .I acct
  file created on another machine which has the same byte order and file
  format as your current machine, but has a different value for
@@ -888,7 +872,7 @@ diff -uNr acct-6.4-pre1.orig/lastcomm.1 acct-6.4-pre1/lastcomm.1
  .TP
  .B \-p, \-\-show\-paging
  Print paging statistics
-@@ -155,28 +153,27 @@
+@@ -173,28 +172,27 @@ Print verbose internal information.
  .TP
  .B \-V, \-\-version
  Print the version number of
@@ -925,9 +909,9 @@ diff -uNr acct-6.4-pre1.orig/lastcomm.1 acct-6.4-pre1/lastcomm.1
 +.BR acct (5),
 +.BR accton (8),
 +.BR sa (8)
-diff -uNr acct-6.4-pre1.orig/sa.8 acct-6.4-pre1/sa.8
---- acct-6.4-pre1.orig/sa.8	2006-01-07 21:55:07 +0000
-+++ acct-6.4-pre1/sa.8	2006-05-19 09:30:09 +0000
+diff -uNrp acct-6.5.4.orig/sa.8 acct-6.5.4/sa.8
+--- acct-6.5.4.orig/sa.8	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/sa.8	2010-08-31 10:22:51 +0000
 @@ -1,6 +1,6 @@
 -.TH SA 8 "1997 August 19"
 +.TH SA 8 "2002 March 23"
@@ -937,7 +921,7 @@ diff -uNr acct-6.4-pre1.orig/sa.8 acct-6.4-pre1/sa.8
  .SH SYNOPSIS
  .hy 0
  .na
-@@ -15,7 +15,7 @@
+@@ -15,7 +15,7 @@ sa \-  summarizes accounting information
  [
  .B \-b
  |
@@ -946,7 +930,7 @@ diff -uNr acct-6.4-pre1.orig/sa.8 acct-6.4-pre1/sa.8
  ]
  .br
  [
-@@ -132,15 +132,12 @@
+@@ -132,15 +132,12 @@ sa \-  summarizes accounting information
  [
  .B \-h
  |
@@ -963,7 +947,7 @@ diff -uNr acct-6.4-pre1.orig/sa.8 acct-6.4-pre1/sa.8
  .br
  [
  .BI "\-\-other-savacct-file " filename
-@@ -148,104 +145,127 @@
+@@ -148,104 +145,127 @@ sa \-  summarizes accounting information
  .br
  [
  [
@@ -1133,7 +1117,7 @@ diff -uNr acct-6.4-pre1.orig/sa.8 acct-6.4-pre1/sa.8
  .B struct acct
  doesn't have the `ac_mem' field, the installed
  version of
-@@ -255,12 +275,11 @@
+@@ -255,12 +275,11 @@ will not support the `\-\-sort-cpu-avmem
  .LP
  In short, all of these flags may not be available on your machine.
  .TP
@@ -1150,7 +1134,7 @@ diff -uNr acct-6.4-pre1.orig/sa.8 acct-6.4-pre1/sa.8
  .I ***other
  group.
  .TP
-@@ -291,14 +310,14 @@
+@@ -291,14 +310,14 @@ file.
  Instead of printing total minutes for each category, print seconds per call.
  .TP
  .B \-k, \-\-sort-cpu-avmem
@@ -1168,7 +1152,7 @@ diff -uNr acct-6.4-pre1.orig/sa.8 acct-6.4-pre1/sa.8
  .TP
  .B \-m, \-\-user-summary
  Print the number of processes and number of CPU minutes on a
-@@ -321,81 +340,81 @@
+@@ -321,81 +340,81 @@ Sort output items in reverse order.
  Merge the summarized accounting data into the summary files
  .I savacct
  and
@@ -1281,7 +1265,7 @@ diff -uNr acct-6.4-pre1.orig/sa.8 acct-6.4-pre1/sa.8
  .BR acct (5)
  (or
  .BR pacct (5))
-@@ -406,22 +425,20 @@
+@@ -406,22 +425,20 @@ A summary of system process accounting s
  .TP
  .I usracct
  A summary of system process accounting sorted by user ID.

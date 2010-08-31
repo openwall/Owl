@@ -1,0 +1,143 @@
+diff -uNrp acct-6.5.4.orig/ac.c acct-6.5.4/ac.c
+--- acct-6.5.4.orig/ac.c	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/ac.c	2010-08-31 09:19:31 +0000
+@@ -21,6 +21,7 @@ MA 02139, USA.
+ 
+ #include "config.h"
+ #include <stdio.h>
++#include <errno.h>
+ 
+ #ifdef HAVE_STDLIB_H
+ #include <stdlib.h>
+@@ -173,7 +174,7 @@ int main(int argc, char *argv[])
+   int other_wtmp_file_specified = 0; /* nonzero if the user used the
+ 					`-f' or `--other-file' flags */
+ 
+-  program_name = argv[0];
++  program_name = program_invocation_short_name;
+ 
+   /* Init the utmp reader for reading forwards in the files. */
+ 
+diff -uNrp acct-6.5.4.orig/accton.c acct-6.5.4/accton.c
+--- acct-6.5.4.orig/accton.c	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/accton.c	2010-08-31 09:19:24 +0000
+@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
+   int c, status_acct, number_args;
+   char *acct_file = NULL;
+ 
+-  program_name = argv[0];
++  program_name = program_invocation_short_name;
+ 
+ 
+   /* deal with options */
+diff -uNrp acct-6.5.4.orig/configure.ac acct-6.5.4/configure.ac
+--- acct-6.5.4.orig/configure.ac	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/configure.ac	2010-08-31 09:05:48 +0000
+@@ -13,6 +13,7 @@ AM_MAINTAINER_MODE
+ AC_CONFIG_HEADERS([config.h])
+ AC_CONFIG_MACRO_DIR([m4])
+ 
++AC_GNU_SOURCE
+ AC_PROG_CC
+ 
+ dnl GNUlib
+diff -uNrp acct-6.5.4.orig/dump-acct.c acct-6.5.4/dump-acct.c
+--- acct-6.5.4.orig/dump-acct.c	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/dump-acct.c	2010-08-31 09:21:02 +0000
+@@ -22,6 +22,7 @@ MA 02139, USA.
+ /* print an acct/pacct file in human-readable format. */
+ 
+ #include "config.h"
++#include <errno.h>
+ 
+ #include <stdio.h>
+ 
+@@ -68,7 +69,7 @@ int main(int argc, char *argv[])
+   static struct acct buf;
+ #endif
+ 
+-  program_name = argv[0];
++  program_name = program_invocation_short_name;
+ 
+   while (1)
+     {
+diff -uNrp acct-6.5.4.orig/dump-utmp.c acct-6.5.4/dump-utmp.c
+--- acct-6.5.4.orig/dump-utmp.c	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/dump-utmp.c	2010-08-31 09:21:02 +0000
+@@ -22,6 +22,7 @@ MA 02139, USA.
+ /* print a utmp file in human-readable format. */
+ 
+ #include "config.h"
++#include <errno.h>
+ 
+ #include <stdio.h>
+ 
+@@ -58,7 +59,7 @@ int main(int argc, char *argv[])
+   long num_lines_to_print = -1;	/* -1 means all */
+   int raw = 0;
+ 
+-  program_name = argv[0];
++  program_name = program_invocation_short_name;
+ 
+   while (1)
+     {
+diff -uNrp acct-6.5.4.orig/last.c acct-6.5.4/last.c
+--- acct-6.5.4.orig/last.c	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/last.c	2010-08-31 09:21:02 +0000
+@@ -21,6 +21,7 @@ MA 02139, USA.
+ 
+ #include "config.h"
+ #include <stdio.h>
++#include <errno.h>
+ 
+ #ifdef HAVE_STDLIB_H
+ #include <stdlib.h>
+@@ -175,7 +176,7 @@ int main(int argc, char *argv[])
+   int other_wtmp_file_specified = 0; /* nonzero if the user used the
+ 					`-f' or `--file' flags */
+ 
+-  program_name = argv[0];
++  program_name = program_invocation_short_name;
+ 
+   /* Tell the utmp reader that we want to do things backwards! */
+ 
+diff -uNrp acct-6.5.4.orig/lastcomm.c acct-6.5.4/lastcomm.c
+--- acct-6.5.4.orig/lastcomm.c	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/lastcomm.c	2010-08-31 09:21:02 +0000
+@@ -19,6 +19,7 @@ MA 02139, USA.  */
+ 
+ #include "config.h"
+ #include <stdio.h>
++#include <errno.h>
+ 
+ #ifdef HAVE_STDLIB_H
+ #include <stdlib.h>
+@@ -102,7 +103,7 @@ int main(int argc, char *argv[])
+ 
+   hzval = sysconf(_SC_CLK_TCK);
+ 
+-  program_name = argv[0];
++  program_name = program_invocation_short_name;
+ 
+   while (1)
+     {
+diff -uNrp acct-6.5.4.orig/sa.c acct-6.5.4/sa.c
+--- acct-6.5.4.orig/sa.c	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/sa.c	2010-08-31 09:21:02 +0000
+@@ -22,6 +22,7 @@ MA 02139, USA.
+ */
+ 
+ #include "config.h"
++#include <errno.h>
+ 
+ /* AIX requires this to be the first thing in the file.  */
+ #ifdef __GNUC__
+@@ -281,7 +282,7 @@ int main(int argc, char *argv[])
+   int c;
+ 
+   static unsigned int hzval;
+-  program_name = argv[0];
++  program_name = program_invocation_short_name;
+ 
+   /* Cache the page size of the machine for the PAGES_TO_KB macro */
+   system_page_size = (double) getpagesize () / 1024.0;

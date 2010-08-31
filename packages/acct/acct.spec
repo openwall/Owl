@@ -1,23 +1,25 @@
-# $Owl: Owl/packages/acct/acct.spec,v 1.37 2007/10/07 20:48:20 ldv Exp $
+# $Owl: Owl/packages/acct/acct.spec,v 1.38 2010/08/31 12:29:18 segoon Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
-Version: 6.4
-Release: owl0.5
+Version: 6.5.4
+Release: owl1
 License: GPL
 Group: Applications/System
-Source0: http://www.physik3.uni-rostock.de/tim/kernel/utils/acct/%name-%version-pre1.tar.gz
+Source0: http://www.physik3.uni-rostock.de/tim/kernel/utils/acct/%name-%version.tar.gz
 Source1: dump-acct.8
-Source2: dump-utmp.8
+#Source2: dump-utmp.8
 Source3: acct.init
 Source4: acct.logrotate
-Patch0: acct-6.4pre1-owl-doc.diff
-Patch1: acct-6.4pre1-owl-devpts.diff
-Patch2: acct-6.4pre1-owl-sa-help.diff
+Patch0: acct-6.5.4-owl-doc.diff
+Patch1: acct-6.5.4-owl-devpts.diff
+Patch2: acct-6.5.4-owl-sa-help.diff
 Patch3: acct-6.4pre1-owl-info.diff
-Patch4: acct-6.4pre1-alt-time_t.diff
-Patch5: acct-6.4pre1-alt-program_name.diff
-Patch6: acct-6.4pre1-alt-owl-warnings.diff
+Patch4: acct-6.5.4-alt-time_t.diff
+Patch5: acct-6.5.4-alt-program_name.diff
+Patch6: acct-6.5.4-alt-owl-warnings.diff
+Patch7: acct-6.5.4-owl-gettext.diff
+Patch8: acct-6.5.4-owl-texi.diff
 PreReq: /sbin/install-info, grep, coreutils >= 5.3.0, sed >= 4.0.9
 Provides: psacct
 Obsoletes: psacct
@@ -33,8 +35,8 @@ The accton command turns process accounting on or off.  The sa command
 summarizes information about previously executed commands.
 
 %prep
-%setup -q -n %name-%version-pre1
-rm *.info getopt*
+%setup -q
+rm *.info
 sed -i 's/\<getopt[1]\?\.[hc]\>//g' Makefile.am
 %patch0 -p1
 %patch1 -p1
@@ -43,6 +45,8 @@ sed -i 's/\<getopt[1]\?\.[hc]\>//g' Makefile.am
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
+%patch8 -p1
 
 %build
 autoreconf -fis

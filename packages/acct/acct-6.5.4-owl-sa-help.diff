@@ -1,0 +1,12 @@
+diff -uNrp acct-6.5.4.orig/sa.c acct-6.5.4/sa.c
+--- acct-6.5.4.orig/sa.c	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/sa.c	2010-08-31 10:10:45 +0000
+@@ -727,7 +727,7 @@ give_usage (void)
+ #ifdef HAVE_ACETIME
+                " [--sort-real-time]"
+ #endif
+-               "\n"
++               " [--ahz hz]\n"
+ #ifdef HAVE_PAGING
+                "       [--show-paging] [--show-paging-avg]\n"
+ #endif

@@ -1,0 +1,25 @@
+diff -uNrp acct-6.5.4.orig/configure.ac acct-6.5.4/configure.ac
+--- acct-6.5.4.orig/configure.ac	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/configure.ac	2010-08-31 11:35:41 +0000
+@@ -26,7 +26,7 @@ fi
+ AC_HEADER_STDC
+ AC_PROG_CC_STDC
+ AC_PROG_CPP
+-AC_PROG_CC_C89
++dnl AC_PROG_CC_C89
+ AC_PROG_GCC_TRADITIONAL
+ AC_PROG_INSTALL
+ LT_PREREQ([2.2.6])
+diff -uNrp acct-6.5.4.orig/m4/gnulib-comp.m4 acct-6.5.4/m4/gnulib-comp.m4
+--- acct-6.5.4.orig/m4/gnulib-comp.m4	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/m4/gnulib-comp.m4	2010-08-31 11:33:39 +0000
+@@ -51,9 +51,6 @@ AC_SUBST([LTALLOCA])
+   gl_DOUBLE_SLASH_ROOT
+   AC_REQUIRE([gl_HEADER_ERRNO_H])
+   gl_ERROR
+-  m4_ifdef([AM_XGETTEXT_OPTION],
+-    [AM_XGETTEXT_OPTION([--flag=error:3:c-format])
+-     AM_XGETTEXT_OPTION([--flag=error_at_line:5:c-format])])
+   gl_EXITFAIL
+   gl_FUNC_FTELLO
+   gl_STDIO_MODULE_INDICATOR([ftello])

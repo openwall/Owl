@@ -1,0 +1,37 @@
+diff -uNrp acct-6.5.4.orig/dev_hash.c acct-6.5.4/dev_hash.c
+--- acct-6.5.4.orig/dev_hash.c	2010-08-30 13:53:38 +0000
++++ acct-6.5.4/dev_hash.c	2010-08-31 10:19:42 +0000
+@@ -150,7 +150,8 @@ static void setup_devices(char *dirname)
+                                          + 1) * sizeof (char));
+ 
+       (void)sprintf (fullname, "%s/%s", dirname, dp->d_name);
+-      (void)stat (fullname, &sp);
++      if (stat (fullname, &sp))
++        continue;
+ 
+       if ((sp.st_mode & S_IFMT) != S_IFCHR)     /* skip if not a tty */
+         continue;
+@@ -198,6 +199,8 @@ char *dev_gnu_name(long dev_num)
+       setup_devices ("/dev");	   /* most certainly */
+       setup_devices ("/dev/pty");  /* perhaps */
+       setup_devices ("/dev/ptym"); /* perhaps */
++      /* This will catch only currently active devices, so we prefer
++       * to calculate the device name manually if we have the major. */
+       setup_devices ("/dev/pts");  /* perhaps */
+     }
+ 
+@@ -208,6 +211,14 @@ char *dev_gnu_name(long dev_num)
+       struct dev_data *dd = hashtab_get_value (he);
+       return dd->name;
+     }
++#ifdef UNIX98_PTY_SLAVE_MAJOR
++  if ((dev_num >> 8) == UNIX98_PTY_SLAVE_MAJOR)
++    {
++      snprintf(dev_name, sizeof(dev_name), "pts/%ld", dev_num & 0xff);
++      return dev_name;
++    }
++#endif
++
+ 
+   /* didn't find it, return it as [maj,min] */
+ 
