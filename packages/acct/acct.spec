@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/acct/acct.spec,v 1.40 2010/09/01 00:37:29 solar Exp $
+# $Owl: Owl/packages/acct/acct.spec,v 1.41 2010/09/01 00:44:59 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.5.4
 Release: owl1
-License: GPL
+License: GPLv3+
 Group: Applications/System
 Source0: ftp://ftp.gnu.org/gnu/acct/%name-%version.tar.gz
 Source1: dump-acct.8
