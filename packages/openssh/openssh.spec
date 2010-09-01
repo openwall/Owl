@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.101 2010/07/28 17:00:19 solar Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.102 2010/09/01 21:14:58 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl25
+Release: owl26
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -238,7 +238,7 @@ elif [ -f /var/run/sshd.pid ]; then
 fi
 rm -f /var/run/sshd.restart
 if [ "`%_sbindir/control sftp`" = off ]; then
-	echo -n "SFTP server not enabled by default, use "
+	echo -n "SFTP server is not currently enabled, use "
 	echo "\"control sftp on\" to enable"
 fi
 
@@ -296,6 +296,9 @@ fi
 %attr(0644,root,root) /etc/ssh/blacklist
 
 %changelog
+* Wed Sep 01 2010 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl26
+- Have SFTP enabled by default.
+
 * Wed Jul 28 2010 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl25
 - Have the SSH client use protocol 2 by default (finally).
 
