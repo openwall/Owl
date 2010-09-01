@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/acct/acct.spec,v 1.38 2010/08/31 12:29:18 segoon Exp $
+# $Owl: Owl/packages/acct/acct.spec,v 1.39 2010/09/01 00:31:40 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
@@ -6,11 +6,10 @@ Version: 6.5.4
 Release: owl1
 License: GPL
 Group: Applications/System
-Source0: http://www.physik3.uni-rostock.de/tim/kernel/utils/acct/%name-%version.tar.gz
+Source0: ftp://ftp.gnu.org/gnu/acct/%name-%version.tar.gz
 Source1: dump-acct.8
-#Source2: dump-utmp.8
-Source3: acct.init
-Source4: acct.logrotate
+Source2: acct.init
+Source3: acct.logrotate
 Patch0: acct-6.5.4-owl-doc.diff
 Patch1: acct-6.5.4-owl-devpts.diff
 Patch2: acct-6.5.4-owl-sa-help.diff
@@ -60,7 +59,6 @@ mkdir -p %buildroot{/sbin,%_bindir,%_sbindir,%_mandir}
 mkdir -p %buildroot%_var/account
 %makeinstall
 install -m 644 %_sourcedir/dump-acct.8 %buildroot%_mandir/man8/
-install -m 644 %_sourcedir/dump-utmp.8 %buildroot%_mandir/man8/
 install -m 755 %_sourcedir/acct.init %buildroot/etc/rc.d/init.d/acct
 install -m 644 %_sourcedir/acct.logrotate \
 	%buildroot/etc/logrotate.d/acct
