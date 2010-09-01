@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/file/file.spec,v 1.23 2010/09/01 17:30:05 segoon Exp $
+# $Owl: Owl/packages/file/file.spec,v 1.24 2010/09/01 17:43:56 segoon Exp $
 
 Summary: A utility for determining file types.
 Name: file
@@ -15,7 +15,6 @@ Patch2: file-5.04-alt-magic.diff
 Patch3: file-5.04-deb-magic.diff
 Patch4: file-5.04-deb-owl-man.diff
 Patch5: file-5.04-deb-doc-manpages-typo.diff
-Patch6: file-5.04-deb-conglomeration.diff
 Prefix: %_prefix
 Requires: libmagic = %version-%release
 BuildRequires: zlib-devel, automake, autoconf
@@ -51,7 +50,6 @@ magic files.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
 
 %{expand:%%define optflags %optflags -D_GNU_SOURCE -Wall}
 
