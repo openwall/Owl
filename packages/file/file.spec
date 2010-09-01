@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/file/file.spec,v 1.24 2010/09/01 17:43:56 segoon Exp $
+# $Owl: Owl/packages/file/file.spec,v 1.25 2010/09/01 18:38:12 solar Exp $
 
 Summary: A utility for determining file types.
 Name: file
@@ -74,6 +74,7 @@ rm %buildroot%_libdir/*.la
 
 %files
 %defattr(-,root,root)
+%doc COPYING ChangeLog README TODO
 %config(noreplace) /etc/magic
 %_bindir/*
 %_datadir/misc/magic*
