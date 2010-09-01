@@ -1,0 +1,52 @@
+diff -Naurp file.orig/src/fsmagic.c file/src/fsmagic.c
+--- file.orig/src/fsmagic.c	2008-02-14 20:14:52 +0000
++++ file/src/fsmagic.c	2008-04-07 08:32:13 +0000
+@@ -110,7 +110,8 @@ file_fsmagic(struct magic_set *ms, const
+ 		if (file_printf(ms, "cannot open `%s' (%s)",
+ 		    fn, strerror(errno)) == -1)
+ 			return -1;
+-		return 1;
++		ms->event_flags |= EVENT_HAD_ERR;
++		return -1;
+ 	}
+ 
+ 	if (mime) {
+diff -uNrp file-5.04.orig/src/file.c file-5.04/src/file.c
+--- file-5.04.orig/src/file.c	2010-09-01 15:05:24 +0000
++++ file-5.04/src/file.c	2010-09-01 16:44:26 +0000
+@@ -250,9 +250,8 @@ main(int argc, char *argv[])
+ 		case 'v':
+ 			if (magicfile == NULL) 
+ 				magicfile = magic_getpath(magicfile, action);
+-			(void)fprintf(stderr, "%s-%d.%.2d\n", progname,
+-				       FILE_VERSION_MAJOR, patchlevel);
+-			(void)fprintf(stderr, "magic file from %s\n",
++			(void) fprintf(stderr, "%s-"VERSION"\n", progname);
++			(void) fprintf(stderr, "magic file from %s\n",
+ 				       magicfile);
+ 			return 1;
+ 		case 'z':
+diff -uNrp file-5.04.orig/src/Makefile.am file-5.04/src/Makefile.am
+--- file-5.04.orig/src/Makefile.am	2010-09-01 15:05:24 +0000
++++ file-5.04/src/Makefile.am	2010-09-01 16:39:51 +0000
+@@ -4,7 +4,7 @@ include_HEADERS = magic.h
+ 
+ bin_PROGRAMS = file
+ 
+-AM_CPPFLAGS = -DMAGIC='"$(MAGIC)"'
++AM_CPPFLAGS = -DMAGIC='"/etc/magic:$(MAGIC)"'
+ AM_CFLAGS = @WARNINGS@
+ 
+ libmagic_la_SOURCES = magic.c apprentice.c softmagic.c ascmagic.c \
+diff -uNrp file-5.04.orig/src/Makefile.in file-5.04/src/Makefile.in
+--- file-5.04.orig/src/Makefile.in	2010-09-01 15:05:24 +0000
++++ file-5.04/src/Makefile.in	2010-09-01 16:40:08 +0000
+@@ -203,7 +203,7 @@ top_srcdir = @top_srcdir@
+ MAGIC = $(pkgdatadir)/magic
+ lib_LTLIBRARIES = libmagic.la
+ include_HEADERS = magic.h
+-AM_CPPFLAGS = -DMAGIC='"$(MAGIC)"'
++AM_CPPFLAGS = -DMAGIC='"/etc/magic:$(MAGIC)"'
+ AM_CFLAGS = @WARNINGS@
+ libmagic_la_SOURCES = magic.c apprentice.c softmagic.c ascmagic.c \
+ 	encoding.c compress.c is_tar.c readelf.c print.c fsmagic.c \

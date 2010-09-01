@@ -1,0 +1,17 @@
+Author: Adam Buchbinder <adam.buchbinder@gmail.com>
+Description:
+ A spacing error causes a reference to the hexdump manpage to show up as
+ "hexdump(1,)" rather than "hexdump(1),"; this patch fixes it (Closes: #515761).
+
+diff -Naurp file.orig/doc/file.man file/doc/file.man
+--- file.orig/doc/file.man	2009-03-21 09:20:04.000000000 +0000
++++ file/doc/file.man	2009-03-21 16:57:49.000000000 +0000
+@@ -341,7 +341,7 @@ options.
+ .Xr magic __FSECTION__ ,
+ .Xr strings 1 ,
+ .Xr od 1 ,
+-.Xr hexdump 1,
++.Xr hexdump 1 ,
+ .Xr file 1posix
+ .Sh STANDARDS CONFORMANCE
+ This program is believed to exceed the System V Interface Definition

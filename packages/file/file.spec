@@ -1,23 +1,21 @@
-# $Owl: Owl/packages/file/file.spec,v 1.22 2007/05/22 15:03:16 ldv Exp $
+# $Owl: Owl/packages/file/file.spec,v 1.23 2010/09/01 17:30:05 segoon Exp $
 
 Summary: A utility for determining file types.
 Name: file
-Version: 4.16
-Release: owl4
+Version: 5.04
+Release: owl1
 License: distributable
 Group: Applications/File
 URL: http://www.darwinsys.com/file/
 Source0: ftp://ftp.astron.com/pub/file/file-%version.tar.gz
 Source1: magic.local
-Patch0: file-4.16-rh-alt-compress.diff
-Patch1: file-4.16-rh-alt-elf.diff
-Patch2: file-4.16-deb-owl-fixes.diff
-Patch3: file-4.16-rh-order.diff
-Patch4: file-4.16-rh-selinux.diff
-Patch5: file-4.16-alt-magic.diff
-Patch6: file-4.16-deb-magic.diff
-Patch7: file-4.16-deb-owl-man.diff
-Patch8: file-4.16-owl-bound.diff
+Patch0: file-5.04-rh-alt-compress.diff
+Patch1: file-5.04-deb-owl-fixes.diff
+Patch2: file-5.04-alt-magic.diff
+Patch3: file-5.04-deb-magic.diff
+Patch4: file-5.04-deb-owl-man.diff
+Patch5: file-5.04-deb-doc-manpages-typo.diff
+Patch6: file-5.04-deb-conglomeration.diff
 Prefix: %_prefix
 Requires: libmagic = %version-%release
 BuildRequires: zlib-devel, automake, autoconf
@@ -54,8 +52,6 @@ magic files.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
-%patch8 -p1
 
 %{expand:%%define optflags %optflags -D_GNU_SOURCE -Wall}
 
@@ -82,8 +78,7 @@ rm %buildroot%_libdir/*.la
 %defattr(-,root,root)
 %config(noreplace) /etc/magic
 %_bindir/*
-%_datadir/magic*
-%_datadir/file/
+%_datadir/misc/magic*
 %_mandir/man1/*
 %_mandir/man5/*
 
@@ -99,6 +94,13 @@ rm %buildroot%_libdir/*.la
 %_mandir/man3/*
 
 %changelog
+* Wed Sep 01 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.04-owl1
+- Updated to 5.04.
+- Updated patches.
+- Dropped patches rh-selinux, rh-alt-elf, owl-bound (fixed in upstream).
+- Dropped patch rh-order.
+- Imported patch from debian (doc-manpages-typo).
+
 * Tue May 22 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.16-owl4
 - Fixed integer overflow check in file_printf function, reported by
 Colin Percival.

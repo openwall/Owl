@@ -1,23 +1,24 @@
---- file-4.16/src/compress.c.orig	2005-03-09 19:02:50.000000000 +0000
-+++ file-4.16/src/compress.c	2005-10-21 09:35:54.000000000 +0000
-@@ -316,6 +316,7 @@
+diff -uNrp file-5.04.orig/src/compress.c file-5.04/src/compress.c
+--- file-5.04.orig/src/compress.c	2010-09-01 15:05:24 +0000
++++ file-5.04/src/compress.c	2010-09-01 15:57:55 +0000
+@@ -373,6 +373,7 @@ uncompressbuf(struct magic_set *ms, int 
      const unsigned char *old, unsigned char **newch, size_t n)
  {
  	int fdin[2], fdout[2];
 +	pid_t pid1 = -1, pid2 = -1;
- 	int r;
+ 	ssize_t r;
  
- #ifdef HAVE_LIBZ
-@@ -329,7 +330,7 @@
+ #ifdef BUILTIN_DECOMPRESS
+@@ -387,7 +388,7 @@ uncompressbuf(struct magic_set *ms, int 
  		file_error(ms, errno, "cannot create pipe");	
- 		return 0;
+ 		return NODATA;
  	}
 -	switch (fork()) {
 +	switch ((pid1=fork())) {
  	case 0:	/* child */
  		(void) close(0);
  		if (fd != -1) {
-@@ -370,7 +371,7 @@
+@@ -428,7 +429,7 @@ uncompressbuf(struct magic_set *ms, int 
  			 * fork again, to avoid blocking because both
  			 * pipes filled
  			 */
@@ -25,8 +26,8 @@
 +			switch ((pid2=fork())) {
  			case 0: /* child */
  				(void)close(fdout[0]);
- 				if (swrite(fdin[1], old, n) != n) {
-@@ -425,12 +426,8 @@
+ 				if (swrite(fdin[1], old, n) != (ssize_t)n) {
+@@ -483,12 +484,8 @@ err:
  		if (fdin[1] != -1)
  			(void) close(fdin[1]);
  		(void) close(fdout[0]);
@@ -38,6 +39,6 @@
 -#endif
 +		waitpid(pid1, NULL, 0);
 +		waitpid(pid2, NULL, 0);
+ 		(void) close(fdin[0]);
+ 	    
  		return n;
- 	}
- }

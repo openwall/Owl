@@ -1,0 +1,16 @@
+Author: Michael Piefel <piefel@debian.org>
+Description: Needs to be broken out (FIXME).
+
+diff -Naurp file.orig/src/fsmagic.c file/src/fsmagic.c
+--- file.orig/src/fsmagic.c	2008-02-14 20:14:52.000000000 +0000
++++ file/src/fsmagic.c	2008-04-07 08:32:13.000000000 +0000
+@@ -110,7 +110,8 @@ file_fsmagic(struct magic_set *ms, const
+ 		if (file_printf(ms, "cannot open `%s' (%s)",
+ 		    fn, strerror(errno)) == -1)
+ 			return -1;
+-		return 1;
++		ms->event_flags |= EVENT_HAD_ERR;
++		return -1;
+ 	}
+ 
+ 	if (mime) {

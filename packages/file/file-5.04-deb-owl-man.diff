@@ -1,0 +1,27 @@
+diff -uNrp file-5.04.orig/doc/file.man file-5.04/doc/file.man
+--- file-5.04.orig/doc/file.man	2010-09-01 15:05:24 +0000
++++ file-5.04/doc/file.man	2010-09-01 15:51:31 +0000
+@@ -99,7 +99,9 @@ The concept of a
+ has been applied by extension to data files.
+ Any file with some invariant identifier at a small fixed
+ offset into the file can usually be described in this way.
+-The information identifying these files is read from the compiled
++The information identifying these files is read from
++.I /etc/magic
++and the compiled
+ magic file
+ .Pa __MAGIC__.mgc ,
+ or the files in the directory
+@@ -404,12 +406,6 @@ will be distributed periodically.
+ The order of entries in the magic file is significant.
+ Depending on what system you are using, the order that
+ they are put together may be incorrect.
+-If your old
+-.Nm
+-command uses a magic file,
+-keep the old magic file around for comparison purposes
+-(rename it to
+-.Pa __MAGIC__.orig ).
+ .Sh EXAMPLES
+ .Bd -literal -offset indent
+ $ file file.c file /dev/{wd0a,hda}

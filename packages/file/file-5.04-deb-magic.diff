@@ -1,0 +1,64 @@
+diff -uNrp file-5.04.orig/magic/Header file-5.04/magic/Header
+--- file-5.04.orig/magic/Header	2010-09-01 15:05:24 +0000
++++ file-5.04/magic/Header	2010-09-01 15:16:17 +0000
+@@ -1,5 +1,5 @@
+-# Magic
+ # Magic data for file(1) command.
+-# Machine-generated from src/cmd/file/magdir/*; edit there only!
+-# Format is described in magic(files), where:
+-# files is 5 on V7 and BSD, 4 on SV, and ?? in the SVID.
++# Format is described in magic(5).
++# Don't edit this file, edit /etc/magic or send your suggested inclusions to
++# this file as a wishlist bug against file (using the reportbug utility).
++
+diff -uNrp file-5.04.orig/magic/Magdir/compress file-5.04/magic/Magdir/compress
+--- file-5.04.orig/magic/Magdir/compress	2010-09-01 15:05:24 +0000
++++ file-5.04/magic/Magdir/compress	2010-09-01 15:34:34 +0000
+@@ -10,7 +10,7 @@
+ # because it tries to uncompress it to figure out what's inside.
+ 
+ # standard unix compress
+-0	string		\037\235	compress'd data
++#0	string		\037\235	compress'd data
+ !:mime	application/x-compress
+ !:apple	LZIVZIVU
+ >2	byte&0x80	>0		block compressed
+diff -uNrp file-5.04.orig/magic/Magdir/hp file-5.04/magic/Magdir/hp
+--- file-5.04.orig/magic/Magdir/hp	2010-09-01 15:05:24 +0000
++++ file-5.04/magic/Magdir/hp	2010-09-01 15:16:17 +0000
+@@ -286,6 +286,23 @@
+ >7	string		J		(ASCII Vector specification)
+ >7	string		K		(wildcard)
+ 
++0	string		HP3		HP
++>3	string		8		38
++>3	string		9		39
++>4	string		Bin		binary
++>4	string		Asc		ASCII
++>7	string		A		(Directory List)
++>7	string		B		(Zaplet)
++>7	string		C		(Note)
++>7	string		D		(Program)
++>7	string		E		(Variable)
++>7	string		F		(List)
++>7	string		G		(Matrix)
++>7	string		H		(Library)
++>7	string		I		(Target List)
++>7	string		J		(ASCII Vector specification)
++>7	string		K		(wildcard)
++
+ # hpBSD magic numbers
+ 0	beshort		200		hp200 (68010) BSD
+ >2	beshort		0407		impure binary
+diff -uNrp file-5.04.orig/magic/Magdir/revision file-5.04/magic/Magdir/revision
+--- file-5.04.orig/magic/Magdir/revision	2010-09-01 15:05:24 +0000
++++ file-5.04/magic/Magdir/revision	2010-09-01 15:30:18 +0000
+@@ -18,3 +18,8 @@
+ 0	string	HG10		Mercurial bundle,
+ >4	string	UN		uncompressed
+ >4	string	BZ		bzip2 compressed
++
++# Subversion (SVN) dumps
++# Uwe Zeisberger <zeisberg@informatik.uni-freiburg.de>
++0       string  SVN-fs-dump-format-version:     Subversion dumpfile
++>28     string  >\0                             (version: %s)
