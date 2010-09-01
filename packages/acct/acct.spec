@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/acct/acct.spec,v 1.39 2010/09/01 00:31:40 solar Exp $
+# $Owl: Owl/packages/acct/acct.spec,v 1.40 2010/09/01 00:37:29 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
@@ -115,6 +115,9 @@ fi
 %_infodir/*
 
 %changelog
+* Wed Sep 01 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 6.5.4-owl1
+- Updated to 6.5.4.
+
 * Sun Oct 07 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.4-owl0.5
 - Fixed compilation warnings.
 
