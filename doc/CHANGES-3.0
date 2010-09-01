@@ -46,6 +46,12 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/09/01	Package: m4
+Updated to 1.4.15.
+
+2010/09/01	Package: file
+Updated to 5.04.
+
 2010/09/01	Package: acct
 Updated to 6.5.4.
 
@@ -1339,4 +1345,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.262 2010/09/01 00:47:50 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.263 2010/09/01 18:19:18 segoon Exp $
