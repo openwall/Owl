@@ -33,8 +33,8 @@ void install_kernel_and_lilo(OwlInstallInterface *the_iface)
     the_iface->Notice("Now choose what device will hold your boot loader - "
                       "typically /dev/sda for\n"
                       "the first SATA/SCSI/SAS disk or hardware RAID array or "
-                      "/dev/hda for the first\n"
-                      "IDE disk.");
+                      "/dev/hda for the\n"
+                      "first IDE disk.");
     ScriptVariable boot_dev =
         root_dev.HasPrefix("/dev/md") ? root_dev :
         (root_dev.HasPrefix("/dev/hd") ? "/dev/hda" : "/dev/sda");
