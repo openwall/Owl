@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.80 2010/03/30 15:43:13 solar Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.81 2010/09/02 20:56:13 solar Exp $
 
 %define WITH_PYTHON 0
 
@@ -8,7 +8,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl22
+Release: owl23
 License: GPL
 Group: System Environment/Base
 # ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -390,13 +390,13 @@ fi
 
 %postun -p /sbin/ldconfig
 
+%triggerpostun -- %name < 4.2-owl22
 # Remove __db.00? files that look like they're pre-NPTL.  We may be removing
 # files that are opened and/or memory-mapped by us (by the rpm process that
 # installs the new rpm package), but that's OK.  The next invocation of rpm
 # will recreate the files.  4.2-owl22 is when we added this trigger, and we
 # were already using NPTL at the time, so there is no need to perform the
 # size check and possibly remove the files when upgrading from newer versions.
-%triggerpostun -- %name < 4.2-owl22
 RPMDBDIR=/var/lib/rpm
 if [ -f $RPMDBDIR/__db.001 -a "`wc -c < $RPMDBDIR/__db.001`" -le 8192 ]; then
 	rm -f $RPMDBDIR/__db.00?
@@ -508,6 +508,11 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 4.2-owl23
+- Moved a relevant comment to inside %%triggerpostun such that it does not
+affect RPM's processing of the preceding "%%postun -p /sbin/ldconfig".
+Thanks to Pavel Kankovsky for figuring this out.
+
 * Tue Mar 30 2010 Solar Designer <solar-at-owl.openwall.com> 4.2-owl22
 - Added a trigger to remove __db.00? files that look like they're pre-NPTL.
 
