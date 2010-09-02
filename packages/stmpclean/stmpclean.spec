@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/stmpclean/stmpclean.spec,v 1.15 2009/04/23 08:11:54 solar Exp $
+# $Owl: Owl/packages/stmpclean/stmpclean.spec,v 1.16 2010/09/02 21:30:07 solar Exp $
 
 Summary: A safe temporary directory cleaner.
 Name: stmpclean
 Version: 0.3
-Release: owl4
+Release: owl5
 License: BSD
 Group: System Environment/Base
 URL: http://shlang.com/stmpclean/
@@ -42,6 +42,9 @@ install -m 700 %_sourcedir/stmpclean.cron etc/cron.daily/stmpclean
 /etc/cron.daily/stmpclean
 
 %changelog
+* Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 0.3-owl5
+- Only run stmpclean on /var/tmp if it is not a symlink to /tmp.
+
 * Mon Nov 08 2004 Michail Litvak <mci-at-owl.openwall.com> 0.3-owl4
 - Updated stmpclean.cron according to FHS 2.2 man pages cache location.
 
