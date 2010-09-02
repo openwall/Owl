@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.81 2010/07/27 02:54:39 solar Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.82 2010/09/02 20:11:06 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.36
+Version: 0.37
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -167,6 +167,9 @@ fi
 %doc redhat
 
 %changelog
+* Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 0.37-owl1
+- Create /tmp/.private at bootup.
+
 * Tue Jul 27 2010 Solar Designer <solar-at-owl.openwall.com> 0.36-owl1
 - Interpret more kinds of fsck exit codes to decide on whether to reboot or not
 and to print more specific messages.

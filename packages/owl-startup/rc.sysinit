@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.27 2010/07/27 02:54:39 solar Exp $
+# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.28 2010/09/02 20:11:06 solar Exp $
 
 repair_fs()
 {
@@ -151,7 +151,7 @@ if [ ! -f /fastboot -a ! -e /.Owl-CD-ROM -o -e /forcefsck ]; then
 	echo "Checking filesystems"
 	fsck -aTC -AR $FSCKOPTS
 	STATUS=$?
-else 
+else
 	STATUS=0
 fi
 
@@ -173,6 +173,9 @@ fi
 # Mount all local filesystems.
 echo "Mounting local filesystems"
 mount -a -t nonfs,smbfs,ncpfs,proc
+
+# Create /tmp/.private (likely on a tmpfs filesystem we've just created).
+mkdir -p -m 711 /tmp/.private
 
 # Enable swapping into files.
 swapon -a
