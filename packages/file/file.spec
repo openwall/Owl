@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/file/file.spec,v 1.26 2010/09/02 19:31:19 segoon Exp $
+# $Owl: Owl/packages/file/file.spec,v 1.27 2010/09/02 21:00:23 solar Exp $
 
 Summary: A utility for determining file types.
 Name: file
@@ -99,14 +99,14 @@ rm %buildroot%_libdir/*.la
 %_mandir/man3/*
 
 %changelog
-* Wed Sep 02 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.04-owl2
-- Silenced incorrect 'from' field message, patch from fedora
-  (https://bugzilla.redhat.com/show_bug.cgi?id=599695).
-- Fixed segfault, patch from fedora, additionally silenced compiler warning
-  (https://bugzilla.redhat.com/show_bug.cgi?id=533245).
-- Do not trim 'from' field of core files, debian patch
-  (https://bugzilla.redhat.com/show_bug.cgi?id=566305,
-   http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=422524).
+* Thu Sep 02 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.04-owl2
+- Silenced incorrect 'from' field message, patch from Fedora:
+https://bugzilla.redhat.com/show_bug.cgi?id=599695
+- Fixed segfault, patch from Fedora, additionally silenced a compiler warning:
+https://bugzilla.redhat.com/show_bug.cgi?id=533245
+- Do not trim 'from' field of core files, Debian patch:
+https://bugzilla.redhat.com/show_bug.cgi?id=566305
+http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=422524
 
 * Wed Sep 01 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.04-owl1
 - Updated to 5.04.
