@@ -42,7 +42,7 @@ MAXVT=8
 #---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#---#
 
 procfs=/proc
-procfs_rel2dev=..${procfs}
+procfs_rel2dev=${procfs}
 
 opt_v=
 opt_d=

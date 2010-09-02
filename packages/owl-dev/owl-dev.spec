@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.27 2010/01/28 16:19:39 solar Exp $
+# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.28 2010/09/02 04:43:42 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
-Version: 0.13
-Release: owl2
+Version: 0.14
+Release: owl1
 License: public domain
 Group: System Environment/Base
 Source0: MAKEDEV
@@ -63,6 +63,11 @@ grep -q ^radio: /etc/group || groupadd -g 122 radio
 %files -f filelist
 
 %changelog
+* Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 0.14-owl1
+- Make the /dev/core and /dev/fd symlinks to under /proc absolute such that
+they're not broken when /dev is moved in owl-cdrom (this reverts the change
+made in 0.10-owl1).
+
 * Thu Jan 28 2010 Solar Designer <solar-at-owl.openwall.com> 0.13-owl2
 - Don't "PreReq: shadow-utils" again (this was broken with 0.13-owl1).
 
