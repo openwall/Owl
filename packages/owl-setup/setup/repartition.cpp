@@ -32,6 +32,16 @@ void repartition_hard_drive(OwlInstallInterface *the_iface,
 #else
         ScriptVector v;
         scan_proc_partitions(v);
+        if(!v.Length()) {
+            the_iface->Message("No suitable devices found.\n"
+                               "This may be because you do not in fact have "
+                               "any hard disks or similar\n"
+                               "devices connected, or it may be because you "
+                               "do not have drivers for the\n"
+                               "appropriate controllers "
+                               "loaded into the kernel.");
+            return;
+        }
         for(int i=0; i<v.Length(); i++)
             dm->AddItem(v[i], ScriptVariable("/dev/")+v[i]);
         defval = v[0];
@@ -83,7 +93,7 @@ void repartition_hard_drive(OwlInstallInterface *the_iface,
                                "It is strongly recommended that you cancel "
                                "and " +
                                (dev_m ? "unmount your filesystem" :
-                               "deactivate your swap") + "(s).\n");
+                               "deactivate your swap") + "(s).");
         ScriptVariable fds = use_cfdisk ?
             the_config->CfdiskPath() : the_config->FdiskPath();
         ScriptVariable msg = ScriptVariable("Invoking ") +
@@ -99,11 +109,11 @@ void repartition_hard_drive(OwlInstallInterface *the_iface,
         the_iface->CloseExecWindow();
         if (!fdisk.Success())
             the_iface->Message(ScriptVariable("The fdisk program indicates "
-                               "that an error occurred.\n") +
+                               "that an error occurred.") +
                                ((dev_m || dev_s) ?
-                               "If you have updated the partition table "
+                               "\nIf you have updated the partition table "
                                "despite of the device being in use,\n"
-                               "you need to reboot now.\n" : ""));
+                               "you need to reboot now." : ""));
     }
     delete dm;
 }
