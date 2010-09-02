@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2002,2005 by Solar Designer. See LICENSE.
+ * Written in 2000-2010 by Solar Designer.  See LICENSE.
  */
 
 #include <stdio.h>
@@ -11,7 +11,21 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-#ifdef __linux__
+#if defined(__linux__) && defined(USE_APPEND_FL)
+/*
+ * We may want to use the append-only flag on /tmp/.private such that
+ * tmpwatch(8) does not remove users' temporary file directories and
+ * /tmp/.private itself.  This would be a security problem because a malicious
+ * user would then be able to create a directory of this name and thus violate
+ * reasonable assumptions of temporary file using programs of other users that
+ * had TMPDIR set by pam_mktemp previously.
+ *
+ * stmpclean(8), which we have in Owl, does not enter root-owned directories,
+ * so we do not need this workaround on Owl.  Since the append-only flag posed
+ * a usability problem (it was not immediatly clear to many how to remove an
+ * Owl userland tree) and since it did not apply to tmpfs filesystems anyway,
+ * we now have this disabled by default.
+ */
 # include <fcntl.h>
 # include <sys/ioctl.h>
 # ifndef _LINUX_EXT2_FS_SB
@@ -32,7 +46,7 @@
 
 #define PRIVATE_PREFIX			"/tmp/.private"
 
-#ifdef __linux__
+#if defined(__linux__) && defined(USE_APPEND_FL)
 static int ext2fs_chflags(const char *name, int set, int reset)
 {
 	int fd, flags;
@@ -112,8 +126,8 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 		if (!strcmp(user, gr->gr_name)) usergroups = 1;
 	}
 
-/* This directory should be created at system installation time and never
- * removed, or there's the obvious DoS possibility here. */
+/* This directory should be created at system installation or bootup time and
+ * never removed, or there's the obvious DoS possibility here. */
 	if (mkdir(PRIVATE_PREFIX, 0711) && errno != EEXIST)
 		return PAM_SESSION_ERR;
 
@@ -127,11 +141,11 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 
 /*
  * At this point we have a directory which is only writable by root, and
- * is itself in a root-owned +t directory (/tmp). Thus, only root can do
+ * is itself in a root-owned +t directory (/tmp).  Thus, only root can do
  * anything in the directory or rename/unlink it and we can play safely.
  */
 
-#ifdef __linux__
+#if defined(__linux__) && defined(USE_APPEND_FL)
 	ext2fs_chflags(PRIVATE_PREFIX, EXT2_APPEND_FL, 0);
 #endif
 
@@ -144,7 +158,7 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 	if (mkdir(userdir, 01700) && errno != EEXIST)
 		return PAM_SESSION_ERR;
 
-#ifdef __linux__
+#if defined(__linux__) && defined(USE_APPEND_FL)
 	/* Don't let the append-only flag get inherited from the parent
 	 * directory. */
 	if (ext2fs_chflags(userdir, 0, EXT2_APPEND_FL) && errno != EOPNOTSUPP)
@@ -171,7 +185,7 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 PAM_EXTERN int pam_sm_close_session(pam_handle_t *pamh, int flags,
 	int argc, const char **argv)
 {
-/* There're good reasons to NOT remove the directory here, not even when
+/* There are good reasons to NOT remove the directory here, not even when
  * it is empty. */
 	return PAM_SUCCESS;
 }
