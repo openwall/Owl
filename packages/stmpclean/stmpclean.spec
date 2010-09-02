@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/stmpclean/stmpclean.spec,v 1.16 2010/09/02 21:30:07 solar Exp $
+# $Owl: Owl/packages/stmpclean/stmpclean.spec,v 1.17 2010/09/02 21:31:57 solar Exp $
 
 Summary: A safe temporary directory cleaner.
 Name: stmpclean
@@ -11,6 +11,7 @@ Source0: http://shlang.com/stmpclean/%name-%version.tar.gz
 Source1: stmpclean.cron
 Patch0: stmpclean-0.3-owl-fixes.diff
 PreReq: /etc/cron.daily
+Requires: /bin/readlink
 Provides: tmpwatch
 Obsoletes: tmpwatch
 BuildRoot: /override/%name-%version
