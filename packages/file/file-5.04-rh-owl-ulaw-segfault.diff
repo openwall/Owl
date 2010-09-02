@@ -1,0 +1,11 @@
+diff -up file-5.04/src/softmagic.c.segfault file-5.04/src/softmagic.c
+--- file-5.04/src/softmagic.c.segfault	2009-10-19 15:10:20.000000000 +0200
++++ file-5.04/src/softmagic.c	2010-01-28 15:28:20.000000000 +0100
+@@ -946,6 +946,7 @@ mcopy(struct magic_set *ms, union VALUET
+ 			end = last = (const char *)s + nbytes;
+ 			/* mget() guarantees buf <= last */
+ 			for (lines = linecnt, b = buf; lines &&
++			     b < end &&
+ 			     ((b = CAST(const char *,
+ 				 memchr(c = b, '\n', CAST(size_t, (end - b)))))
+ 			     || (b = CAST(const char *,

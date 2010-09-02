@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/file/file.spec,v 1.25 2010/09/01 18:38:12 solar Exp $
+# $Owl: Owl/packages/file/file.spec,v 1.26 2010/09/02 19:31:19 segoon Exp $
 
 Summary: A utility for determining file types.
 Name: file
 Version: 5.04
-Release: owl1
+Release: owl2
 License: distributable
 Group: Applications/File
 URL: http://www.darwinsys.com/file/
@@ -15,6 +15,9 @@ Patch2: file-5.04-alt-magic.diff
 Patch3: file-5.04-deb-magic.diff
 Patch4: file-5.04-deb-owl-man.diff
 Patch5: file-5.04-deb-doc-manpages-typo.diff
+Patch6: file-5.04-rh-owl-ulaw-segfault.diff
+Patch7: file-5.04-rh-core-prpsinfo.diff
+Patch8: file-5.04-deb-core-trim.diff
 Prefix: %_prefix
 Requires: libmagic = %version-%release
 BuildRequires: zlib-devel, automake, autoconf
@@ -50,6 +53,9 @@ magic files.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
 
 %{expand:%%define optflags %optflags -D_GNU_SOURCE -Wall}
 
@@ -93,6 +99,15 @@ rm %buildroot%_libdir/*.la
 %_mandir/man3/*
 
 %changelog
+* Wed Sep 02 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.04-owl2
+- Silenced incorrect 'from' field message, patch from fedora
+  (https://bugzilla.redhat.com/show_bug.cgi?id=599695).
+- Fixed segfault, patch from fedora, additionally silenced compiler warning
+  (https://bugzilla.redhat.com/show_bug.cgi?id=533245).
+- Do not trim 'from' field of core files, debian patch
+  (https://bugzilla.redhat.com/show_bug.cgi?id=566305,
+   http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=422524).
+
 * Wed Sep 01 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.04-owl1
 - Updated to 5.04.
 - Updated patches.
