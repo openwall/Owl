@@ -1,24 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.31 2010/08/30 05:08:48 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.32 2010/09/02 23:18:28 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 194.8.1.el5.028stab070.4
+%define ovzversion 194.11.3.el5.028stab071.3
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab070.4
+URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab071.3
 Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.bz2
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab070.4/patches/patch-194.8.1.el5.028stab070.4-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab070.4/patches/patch-194.8.1.el5.028stab070.4-combined.gz.asc
-Patch1: linux-%version-%ovzversion-redhat.diff
-Patch2: linux-%version-%ovzversion-owl.diff
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab071.3/patches/patch-194.11.3.el5.028stab071.3-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab071.3/patches/patch-194.11.3.el5.028stab071.3-combined.gz.asc
+Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
 ExclusiveArch: i686 x86_64
@@ -40,7 +39,7 @@ The Linux kernel header files.
 %package fake
 Summary: A fake Linux kernel package for use in OpenVZ containers and the like.
 Group: System Environment/Base
-Provides: kernel = %version, kernel-drm = 4.3.0
+Provides: kernel = %version-%release, kernel-drm = 4.3.0
 
 %description fake
 A fake Linux kernel package for use in OpenVZ containers and the like to
@@ -50,7 +49,6 @@ satisfy possible dependencies of other packages.
 %setup -q -n linux-%version
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 cp %_sourcedir/dot-config-%_target_cpu .config
 
 %build
@@ -104,6 +102,9 @@ done
 %files fake
 
 %changelog
+* Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.11.3.el5.028stab071.3-owl1
+- Updated to 2.6.18-194.11.3.el5.028stab071.3.
+
 * Mon Aug 30 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.8.1.el5.028stab070.4-owl1
 - Updated to 2.6.18-194.8.1.el5.028stab070.4.
 - Added most post-194.8.1 patches from Red Hat's -194.11.1.
