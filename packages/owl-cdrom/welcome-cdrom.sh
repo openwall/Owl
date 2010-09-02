@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.10 2010/07/25 00:11:58 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/welcome-cdrom.sh,v 1.11 2010/09/02 05:04:16 solar Exp $
 
 CD=/.Owl-CD-ROM
 VERSION=
@@ -17,6 +17,10 @@ unset CD VERSION
 
 if [ -z "$LC_CTYPE" -a -z "$LC_ALL" -a -z "$LANG" ]; then
 	export LC_CTYPE=en_US
+fi
+
+if [ "$HOME" = "/" ]; then
+	export HOME=/root
 fi
 
 test "`id -u`" = "0" || return 0

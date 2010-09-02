@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.56 2010/07/25 00:11:58 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.57 2010/09/02 05:04:16 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 1.11
+Version: 1.12
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -82,6 +82,10 @@ fi
 %dir /owl
 
 %changelog
+* Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 1.12-owl1
+- Set HOME=/root (via the welcome script) when it would have been "/" (in
+single-user mode).
+
 * Sat Jul 24 2010 Solar Designer <solar-at-owl.openwall.com> 1.11-owl1
 - Dropped most LILO boot targets, leaving only two: "normal" and "rescue"
 (new names for what was previously known as "autodetect" and "custom").
