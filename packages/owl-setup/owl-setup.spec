@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.102 2010/07/28 16:25:00 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.103 2010/09/02 04:28:57 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 1.2.2
+Version: 1.2.3
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -34,6 +34,9 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
+* Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 1.2.3-owl1
+- When running fdisk, detect and warn about in-use devices.
+
 * Wed Jul 28 2010 Solar Designer <solar-at-owl.openwall.com> 1.2.2-owl1
 - Added support for specifying "unlisted" swap partitions like we have for
 filesystem partitions.

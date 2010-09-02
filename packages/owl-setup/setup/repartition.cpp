@@ -3,6 +3,7 @@
 
 #include "iface.hpp"
 #include "cmd.hpp"
+#include "state.hpp"
 #include "config.hpp"
 
 // defined in part_scan.cpp
@@ -65,10 +66,28 @@ void repartition_hard_drive(OwlInstallInterface *the_iface,
         {
             return;
         }
+        ScriptVariable dev = ScriptVariable("/dev/") + choice;
+        bool dev_m = is_device_mounted(dev);
+        bool dev_s = !dev_m && is_device_swap(dev);
+        if(dev_m || dev_s)
+            the_iface->Message(dev + " appears to have " +
+                               (dev_m ? "mounted" : "active swap") +
+                               " partitions.\n"
+                               "If you apply any changes to its partition "
+                               "table now, those will likely\n"
+                               "not take effect until reboot.  The fdisk "
+                               "program will indicate this error,\n"
+                               "and you'd be required to reboot "
+                               "before you're able to reliably create\n"
+                               "filesystems and so on.\n"
+                               "It is strongly recommended that you cancel "
+                               "and " +
+                               (dev_m ? "unmount your filesystem" :
+                               "deactivate your swap") + "(s).\n");
         ScriptVariable fds = use_cfdisk ?
             the_config->CfdiskPath() : the_config->FdiskPath();
         ScriptVariable msg = ScriptVariable("Invoking ") +
-                             fds + " /dev/" + choice + "\n";
+                             fds + " " + dev + "\n";
         if(use_cfdisk) {
         } else {
             msg += "When you're done, type \"w\" to save changes \n"
@@ -76,8 +95,15 @@ void repartition_hard_drive(OwlInstallInterface *the_iface,
         }
 
         the_iface->ExecWindow(msg);
-        ExecAndWait(fds.c_str(), (ScriptVariable("/dev/")+choice).c_str(), (const char *)0);
+        ExecAndWait fdisk(fds.c_str(), dev.c_str(), (const char *)0);
         the_iface->CloseExecWindow();
+        if (!fdisk.Success())
+            the_iface->Message(ScriptVariable("The fdisk program indicates "
+                               "that an error occurred.\n") +
+                               ((dev_m || dev_s) ?
+                               "If you have updated the partition table "
+                               "despite of the device being in use,\n"
+                               "you need to reboot now.\n" : ""));
     }
     delete dm;
 }

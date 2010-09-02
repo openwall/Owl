@@ -144,6 +144,27 @@ bool is_mounted(class ScriptVariable &part)
     return false;
 }
 
+bool is_device_mounted(class ScriptVariable &dev)
+{
+    ReadText rt(the_config->ProcMounts().c_str());
+    ScriptVector v;
+    while(rt.ReadLine(v,2)) {
+        if(v[0].HasPrefix(dev)) return true;
+    }
+    return false;
+}
+
+bool is_device_swap(class ScriptVariable &dev)
+{
+    ReadText rt(the_config->ProcSwaps().c_str());
+    ScriptVector v;
+    rt.ReadLine(v,1); // skip header
+    while(rt.ReadLine(v,4)) {
+        if(v[0].HasPrefix(dev)) return true;
+    }
+    return false;
+}
+
 bool packages_installed()
 {
     ScriptVector files;

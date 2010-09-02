@@ -24,6 +24,9 @@ void enumerate_swap_partitions(class ScriptVector &parts);
 
 bool is_mounted(class ScriptVariable &part);
 
+bool is_device_mounted(class ScriptVariable &dev);
+bool is_device_swap(class ScriptVariable &dev);
+
 bool packages_installed();
 bool keyboard_selected();
 bool root_password_set();
