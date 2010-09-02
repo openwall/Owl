@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.82 2010/09/02 20:11:06 solar Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.83 2010/09/02 21:13:22 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.37
+Version: 0.38
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -77,6 +77,7 @@ install -m 644 %_sourcedir/functions etc/rc.d/init.d/
 install -m 700 %_sourcedir/{halt,single,clock} etc/rc.d/init.d/
 install -m 755 %_sourcedir/service sbin/
 install -m 700 /dev/null etc/rc.d/rc.local
+install -m 700 /dev/null etc/rc.d/rc.modules
 install -m 600 %_sourcedir/sysctl.conf etc/
 
 ln -s ../init.d/halt etc/rc.d/rc0.d/S01halt
@@ -142,6 +143,7 @@ fi
 %config(missingok) /etc/rc.d/init.d/network
 %config(missingok) /etc/rc.d/init.d/netfs
 %config(noreplace) /etc/rc.d/rc.local
+%config(noreplace) /etc/rc.d/rc.modules
 %config(noreplace) /etc/sysctl.conf
 %config /etc/profile.d/lang.*
 %dir /etc/sysconfig/network-scripts
@@ -167,6 +169,10 @@ fi
 %doc redhat
 
 %changelog
+* Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 0.38-owl1
+- Package /etc/rc.d/rc.modules (empty), which was already supported by our
+rc.sysinit.
+
 * Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 0.37-owl1
 - Create /tmp/.private at bootup.
 
