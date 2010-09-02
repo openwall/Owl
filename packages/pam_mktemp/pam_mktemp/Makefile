@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2000,2003 by Solar Designer. See LICENSE.
+# Written in 2000 and 2003 by Solar Designer.  See LICENSE.
 #
 
 CC = gcc

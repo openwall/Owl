@@ -1,9 +1,16 @@
-You're allowed to do whatever you like with this software (including
-re-distribution in source and/or binary form, with or without
-modification), provided that credit is given where it is due and any
-modified versions are marked as such.  There's absolutely no warranty.
+The pam_mktemp module (hereinafter "the software") was written in 2000
+and revised in subsequent years by Alexander Peslyak, better known as
+Solar Designer <solar at openwall.com>.
 
-Note that you don't have to re-distribute this software under these
-same relaxed terms.  In particular, you're free to place modified
-versions under (L)GPL, thus disallowing further re-distribution in
-binary-only form.
+No copyright is claimed, and the software is hereby placed in the public
+domain.  In case this attempt to disclaim copyright and place the software in
+the public domain is deemed null and void, then the software is
+Copyright (c) 2000-2010 Alexander Peslyak and it is hereby released to the
+general public under the following terms:
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted.
+
+There's ABSOLUTELY NO WARRANTY, express or implied.
+
+(This is a heavily cut-down "BSD license".)
