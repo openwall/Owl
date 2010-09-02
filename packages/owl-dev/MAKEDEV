@@ -581,6 +581,12 @@ do
 		major=`Major misc 10` || continue
 		makedev rtc c $major 135 $private
 		makedev openprom c $major 139 $private
+		if [ "$opt_d" ]; then
+			test -d net && rmdir net
+		else
+			mkdir -p -m 755 net
+		fi
+		makedev net/tun c $major 200 $private
 		;;
 	kbd)
 		major=`Major kbd 11` || continue
