@@ -1,4 +1,4 @@
-Author: Adam Buchbinder <adam.buchbinder@gmail.com>
+Author: Adam Buchbinder <adam.buchbinder at gmail.com>
 Description:
  A spacing error causes a reference to the hexdump manpage to show up as
  "hexdump(1,)" rather than "hexdump(1),"; this patch fixes it (Closes: #515761).
