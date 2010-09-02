@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.23 2006/04/03 22:35:32 ldv Exp $
+# $Owl: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.24 2010/09/02 19:59:48 solar Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
-Version: 1.0.3
+Version: 1.0.4
 Release: owl1
-License: relaxed BSD and (L)GPL-compatible
+License: public domain
 Group: System Environment/Base
 URL: http://www.openwall.com/pam/
 Source: ftp://ftp.openwall.com/pub/projects/pam/modules/%name/%name-%version.tar.gz
@@ -29,10 +29,13 @@ make install DESTDIR=%buildroot SECUREDIR=/%_lib/security
 %post
 mkdir -p -m 711 /tmp/.private
 
+%if 0
+# Disabled.  See the comment in pam_mktemp.c for the rationale.
 %triggerin -- e2fsprogs
 if [ -d /tmp/.private -a -O /tmp/.private ]; then
 	chattr +a /tmp/.private 2> /dev/null || :
 fi
+%endif
 
 %files
 %defattr(-,root,root)
@@ -40,6 +43,12 @@ fi
 /%_lib/security/pam_mktemp.so
 
 %changelog
+* Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 1.0.4-owl1
+- No longer set the append-only flag on /tmp/.private (see the comment in
+pam_mktemp.c for the rationale).
+- Placed the module into the public domain with fallback to a heavily cut-down
+BSD license.
+
 * Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.3-owl1
 - Restricted list of global symbols exported by the PAM module
 to standard set of six pam_sm_* functions.
