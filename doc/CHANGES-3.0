@@ -46,6 +46,25 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/08/30 -
+2010/09/03	Package: kernel
+SECURITY FIX	Severity: low to high, local, active
+Updated the kernel to OpenVZ's latest from their "RHEL5 testing" branch
+(2.6.18-194.11.3.el5.028stab071.3), applied some additional bugfixes,
+and of course preserved our usual changes.  Enabled CONFIG_FUSION_* and
+CONFIG_PCNET32 (as modules) for easier Owl installation into VMware and
+VirtualBox VMs.
+References:
+http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab071.3
+http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab071.2
+http://wiki.openvz.org/Download/kernel/rhel5/028stab070.4
+http://rhn.redhat.com/errata/RHSA-2010-0661.html
+http://rhn.redhat.com/errata/RHSA-2010-0610.html
+http://www.openwall.com/lists/oss-security/2010/08/16/1
+http://www.openwall.com/lists/oss-security/2010/08/27/1
+http://www.openwall.com/lists/oss-security/2010/08/30/3
+
+2010/08/19 -
 2010/09/01	Package: m4
 Updated to 1.4.15.
 
@@ -57,20 +76,6 @@ Updated to 6.5.4.
 
 2010/08/30	Package: vsftpd
 Updated to 2.3.2.
-
-2010/08/30	Package: kernel
-SECURITY FIX	Severity: low to medium, local, active
-Updated the kernel to OpenVZ's latest from their rhel5 branch
-(2.6.18-194.8.1.el5.028stab070.4), added most post-194.8.1 patches from
-Red Hat's -194.11.1, applied some additional bugfixes, and of course
-preserved our usual changes.  Enabled CONFIG_FUSION_* and CONFIG_PCNET32
-(as modules) for easier Owl installation into VMware and VirtualBox VMs.
-References:
-http://wiki.openvz.org/Download/kernel/rhel5/028stab070.4
-http://rhn.redhat.com/errata/RHSA-2010-0610.html
-http://www.openwall.com/lists/oss-security/2010/08/16/1
-http://www.openwall.com/lists/oss-security/2010/08/27/1
-http://www.openwall.com/lists/oss-security/2010/08/30/3
 
 2010/08/29	Package: mktemp
 Updated to 1.7.
@@ -104,9 +109,6 @@ Updated to 1.6f.
 
 2010/08/19	Package: man-pages
 Updated to 3.25.
-
-2010/08/19	Package: m4
-Updated to 1.4.14.
 
 2010/08/18	Package: bison
 Updated to 2.4.3.
@@ -1345,4 +1347,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.263 2010/09/01 18:19:18 segoon Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.264 2010/09/03 00:57:07 solar Exp $
