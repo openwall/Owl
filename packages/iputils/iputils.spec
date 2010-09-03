@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/iputils/iputils.spec,v 1.28 2010/01/04 00:02:04 solar Exp $
+# $Owl: Owl/packages/iputils/iputils.spec,v 1.29 2010/09/03 00:45:06 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
 Version: ss020927
-Release: owl7
+Release: owl8
 License: mostly BSD, some GPL
 Group: Applications/Internet
 Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%version.tar.gz
@@ -83,7 +83,8 @@ fi
 if [ $1 -ge 2 ]; then
 	%_sbindir/control-restore ping ping6
 else
-	%_sbindir/control ping public
+	echo -n "ping not enabled for non-root by default, use "
+	echo "\"control ping public\" to enable"
 fi
 
 %files
@@ -102,6 +103,9 @@ fi
 /etc/control.d/facilities/ping6
 
 %changelog
+* Fri Sep 03 2010 Solar Designer <solar-at-owl.openwall.com> ss020927-owl8
+- Install ping as "restricted" by default.
+
 * Mon Jan 04 2010 Solar Designer <solar-at-owl.openwall.com> ss020927-owl7
 - Added a patch by Simon Baker to make ping6 and tracepath6 work with our new
 kernel version.  As a side effect, this breaks builds with Linux 2.4 kernel
