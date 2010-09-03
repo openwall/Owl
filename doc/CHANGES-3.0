@@ -46,6 +46,13 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/09/01 -
+2010/09/03	Packages: openssh, owl-cdrom, owl-dev, owl-setup,
+		owl-startup, pam_mktemp, rpm, iputils
+Assorted minor improvements have been made and/or bugfixes applied to
+these Owl packages (as usual, more detail is available in the packages'
+change logs).
+
 2010/08/30 -
 2010/09/03	Package: kernel
 SECURITY FIX	Severity: low to high, local, active
@@ -1347,4 +1354,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.264 2010/09/03 00:57:07 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.265 2010/09/03 01:05:41 solar Exp $
