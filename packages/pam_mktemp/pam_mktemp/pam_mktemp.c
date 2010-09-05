@@ -11,7 +11,13 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-#if defined(__linux__) && defined(USE_APPEND_FL)
+#ifndef HAVE_APPEND_FL
+# ifdef __linux__
+#  define HAVE_APPEND_FL 1
+# endif /* __linux__ */
+#endif /* ! HAVE_APPEND_FL */
+
+#ifdef HAVE_APPEND_FL
 /*
  * We may want to use the append-only flag on /tmp/.private such that
  * tmpwatch(8) does not remove users' temporary file directories and
@@ -29,7 +35,9 @@
 # include <fcntl.h>
 # include <sys/ioctl.h>
 # include <ext2fs/ext2_fs.h>
-#endif
+#else
+# undef USE_APPEND_FL
+#endif /* HAVE_APPEND_FL */
 
 #define PAM_SM_SESSION
 #include <security/pam_modules.h>
@@ -43,7 +51,7 @@
 
 #define PRIVATE_PREFIX			"/tmp/.private"
 
-#if defined(__linux__) && defined(USE_APPEND_FL)
+#ifdef HAVE_APPEND_FL
 static int ext2fs_chflags(const char *name, int set, int reset)
 {
 	int fd, flags;
@@ -69,7 +77,7 @@ static int ext2fs_chflags(const char *name, int set, int reset)
 		retval = -1;
 	return retval;
 }
-#endif
+#endif /* HAVE_APPEND_FL */
 
 static int assign(pam_handle_t *pamh, const char *name, const char *value)
 {
@@ -142,9 +150,9 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
  * anything in the directory or rename/unlink it and we can play safely.
  */
 
-#if defined(__linux__) && defined(USE_APPEND_FL)
+#ifdef USE_APPEND_FL
 	ext2fs_chflags(PRIVATE_PREFIX, EXT2_APPEND_FL, 0);
-#endif
+#endif /* USE_APPEND_FL */
 
 	userdir = alloca(strlen(PRIVATE_PREFIX) + strlen(user) + 2);
 	if (!userdir)
@@ -152,15 +160,18 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 
 	sprintf(userdir, "%s/%s", PRIVATE_PREFIX, user);
 
-	if (mkdir(userdir, 01700) && errno != EEXIST)
-		return PAM_SESSION_ERR;
-
-#if defined(__linux__) && defined(USE_APPEND_FL)
-	/* Don't let the append-only flag get inherited from the parent
-	 * directory. */
-	if (ext2fs_chflags(userdir, 0, EXT2_APPEND_FL) && errno != EOPNOTSUPP)
-		return PAM_SESSION_ERR;
-#endif
+	if (mkdir(userdir, 01700)) {
+		if (errno != EEXIST)
+			return PAM_SESSION_ERR;
+#ifdef HAVE_APPEND_FL
+	} else {
+		/* Don't let the append-only flag get inherited
+		 * from the parent directory. */
+		if (ext2fs_chflags(userdir, 0, EXT2_APPEND_FL) &&
+		    errno != EOPNOTSUPP)
+			return PAM_SESSION_ERR;
+#endif /* HAVE_APPEND_FL */
+	}
 
 	if (usergroups) {
 		if (chown(userdir, 0, pw->pw_gid) ||
