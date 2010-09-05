@@ -52,15 +52,15 @@
 #define PRIVATE_PREFIX			"/tmp/.private"
 
 #ifdef HAVE_APPEND_FL
-static int ext2fs_chflags(const char *name, int set, int reset)
+static int ext2fs_chflags(const char *name, int set, int clear)
 {
-	int fd, flags;
-	int retval;
+	int fd, old_flags, new_flags;
+	int retval = 0;
 
 	if ((fd = open(name, O_RDONLY)) < 0)
 		return -1;
 
-	if (ioctl(fd, EXT2_IOC_GETFLAGS, &flags)) {
+	if (ioctl(fd, EXT2_IOC_GETFLAGS, &old_flags)) {
 		if ((errno == ENOTTY) /* Inappropriate ioctl for device */
 		    || (errno == ENOSYS)) /* Function not implemented */
 			errno = EOPNOTSUPP;
@@ -68,10 +68,9 @@ static int ext2fs_chflags(const char *name, int set, int reset)
 		return -1;
 	}
 
-	flags |= set;
-	flags &= ~reset;
-
-	retval = ioctl(fd, EXT2_IOC_SETFLAGS, &flags);
+	new_flags = (old_flags | set) & ~clear;
+	if (new_flags != old_flags)
+		retval = ioctl(fd, EXT2_IOC_SETFLAGS, &new_flags);
 
 	if (close(fd))
 		retval = -1;
