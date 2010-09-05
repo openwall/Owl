@@ -81,14 +81,16 @@ static int ext2fs_chflags(const char *name, int set, int clear)
 static int assign(pam_handle_t *pamh, const char *name, const char *value)
 {
 	char *string;
+	int rc;
 
-	string = alloca(strlen(name) + strlen(value) + 2);
-	if (string) {
-		sprintf(string, "%s=%s", name, value);
-		return pam_putenv(pamh, string);
-	}
+	string = malloc(strlen(name) + strlen(value) + 2);
+	if (!string)
+		return PAM_BUF_ERR;
 
-	return -1;
+	sprintf(string, "%s=%s", name, value);
+	rc = pam_putenv(pamh, string);
+	free(string);
+	return rc;
 }
 
 PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
@@ -99,7 +101,7 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 	struct stat st;
 	const void *item;
 	const char *user;
-	char *userdir;
+	char *userdir = NULL;
 	int usergroups;
 	int status;
 
@@ -110,6 +112,8 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 	if (status != PAM_SUCCESS)
 		return status;
 	user = item;
+
+	status = PAM_SESSION_ERR;
 
 /* "Can't happen" (the user should have been authenticated by now) */
 	if (user[0] == '.' || strchr(user, '/'))
@@ -153,40 +157,44 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 	ext2fs_chflags(PRIVATE_PREFIX, EXT2_APPEND_FL, 0);
 #endif /* USE_APPEND_FL */
 
-	userdir = alloca(strlen(PRIVATE_PREFIX) + strlen(user) + 2);
-	if (!userdir)
-		return PAM_SESSION_ERR;
-
+	userdir = malloc(strlen(PRIVATE_PREFIX) + strlen(user) + 2);
+	if (!userdir) {
+		status = PAM_BUF_ERR;
+		goto out;
+	}
 	sprintf(userdir, "%s/%s", PRIVATE_PREFIX, user);
 
 	if (mkdir(userdir, 01700)) {
 		if (errno != EEXIST)
-			return PAM_SESSION_ERR;
+			goto out;
 #ifdef HAVE_APPEND_FL
 	} else {
 		/* Don't let the append-only flag get inherited
 		 * from the parent directory. */
 		if (ext2fs_chflags(userdir, 0, EXT2_APPEND_FL) &&
 		    errno != EOPNOTSUPP)
-			return PAM_SESSION_ERR;
+			goto out;
 #endif /* HAVE_APPEND_FL */
 	}
 
 	if (usergroups) {
 		if (chown(userdir, 0, pw->pw_gid) ||
 		    chmod(userdir, 01770))
-			return PAM_SESSION_ERR;
+			goto out;
 	} else {
 		if (chmod(userdir, 01700) ||
 		    chown(userdir, pw->pw_uid, pw->pw_gid))
-			return PAM_SESSION_ERR;
+			goto out;
 	}
 
-	if (assign(pamh, "TMPDIR", userdir) ||
-	    assign(pamh, "TMP", userdir))
-		return PAM_SESSION_ERR;
+	if ((status = assign(pamh, "TMPDIR", userdir)) != PAM_SUCCESS ||
+	    (status = assign(pamh, "TMP", userdir)) != PAM_SUCCESS)
+		goto out;
 
-	return PAM_SUCCESS;
+out:
+	free(userdir);
+
+	return status;
 }
 
 PAM_EXTERN int pam_sm_close_session(pam_handle_t *pamh, int flags,
