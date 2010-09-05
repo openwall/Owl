@@ -28,10 +28,7 @@
  */
 # include <fcntl.h>
 # include <sys/ioctl.h>
-# ifndef _LINUX_EXT2_FS_SB
-#  define _LINUX_EXT2_FS_SB
-# endif
-# include <linux/ext2_fs.h>
+# include <ext2fs/ext2_fs.h>
 #endif
 
 #define PAM_SM_SESSION
