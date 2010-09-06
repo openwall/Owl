@@ -1,13 +1,15 @@
-# $Owl: Owl/packages/lftp/lftp.spec,v 1.37 2010/07/29 02:14:56 solar Exp $
+# $Owl: Owl/packages/lftp/lftp.spec,v 1.38 2010/09/06 15:45:57 segoon Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
-Version: 4.0.9
+Version: 4.0.10
 Release: owl1
 License: GPLv3+
 Group: Applications/Internet
 URL: http://lftp.yar.ru
 Source: http://ftp.yars.free.net/pub/source/lftp/lftp-%version.tar.bz2
+Patch0: lftp-4.0.10-owl-sentinel.diff
+Patch1: lftp-4.0.10-owl-warnings.diff
 Requires: less
 BuildRequires: openssl-devel >= 0.9.7g-owl1, readline-devel >= 0:4.3
 BuildRequires: ncurses-devel, gettext
@@ -25,6 +27,8 @@ command completion, command history, and a lot more.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
 bzip2 -9k NEWS
 
 %build
@@ -42,10 +46,7 @@ rm -rf %buildroot
 %makeinstall
 
 # Avoid unwanted perl dependencies.
-chmod a-x %buildroot%_datadir/%name/{convert-netscape-cookies,verify-file}
-
-# Remove unpackaged files
-rm %buildroot%_libdir/*.la
+chmod a-x %buildroot%_datadir/%name/{convert-mozilla-cookies,verify-file}
 
 %post
 if [ ! -e %_bindir/ftp -a ! -e %_mandir/man1/ftp.1.gz ]; then
@@ -68,12 +69,17 @@ fi
 %config /etc/lftp.conf
 %_bindir/*
 %_libdir/liblftp*.so*
+%exclude %_libdir/*.la
 %_libdir/lftp
 %_mandir/man?/lftp*
 %_datadir/lftp
 %_datadir/locale/*/LC_MESSAGES/lftp.mo
 
 %changelog
+* Sat Sep 06 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4.0.10-owl1
+- Updated to 4.0.10.
+- Silenced compiler warnings.
+
 * Thu Jul 29 2010 Solar Designer <solar-at-owl.openwall.com> 4.0.9-owl1
 - Updated to 4.0.9.
 
