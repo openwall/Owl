@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.24 2010/09/02 19:59:48 solar Exp $
+# $Owl: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.25 2010/09/06 21:42:37 ldv Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
-Version: 1.0.4
+Version: 1.0.5
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -43,6 +43,14 @@ fi
 /%_lib/security/pam_mktemp.so
 
 %changelog
+* Tue Sep 07 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.5-owl1
+- Use ext2fs/ext2_fs.h instead of linux/ext2_fs.h to avoid potential
+build problems with fresh kernel headers.
+- Clear append-only flag from user directory iff the directory was
+actually created.
+- Replaced unsafe alloca(3) with malloc(3).
+- Imported SELinux support from Sisyphus.
+
 * Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 1.0.4-owl1
 - No longer set the append-only flag on /tmp/.private (see the comment in
 pam_mktemp.c for the rationale).
