@@ -21,6 +21,11 @@ DESTDIR =
 OBJS = pam_mktemp.o
 MAP = pam_mktemp.map
 
+ifeq ($(USE_SELINUX),1)
+	override CFLAGS += -DUSE_SELINUX=1
+	override LDLIBS += -lselinux
+endif
+
 all: $(LIBSHARED)
 
 pam_mktemp.so: $(OBJS) $(MAP)

@@ -10,6 +10,9 @@
 #include <grp.h>
 #include <errno.h>
 #include <sys/stat.h>
+#ifdef USE_SELINUX
+#include <selinux/selinux.h>
+#endif /* USE_SELINUX */
 
 #ifndef HAVE_APPEND_FL
 # ifdef __linux__
@@ -50,6 +53,7 @@
 #endif
 
 #define PRIVATE_PREFIX			"/tmp/.private"
+#define	USERDIR_MODE(ug)	((ug) ? 01770 : 01700)
 
 #ifdef HAVE_APPEND_FL
 static int ext2fs_chflags(const char *name, int set, int clear)
@@ -78,6 +82,21 @@ static int ext2fs_chflags(const char *name, int set, int clear)
 }
 #endif /* HAVE_APPEND_FL */
 
+#ifdef USE_SELINUX
+static int check_scontext(const security_context_t scontext, const char *file)
+{
+	security_context_t fscon = NULL;
+	int ret;
+
+	if (getfilecon(file, &fscon) < 0)
+		return -1;
+	ret = selinux_file_context_cmp(scontext, fscon);
+	freecon(fscon);
+
+	return ret;
+}
+#endif /* USE_SELINUX */
+
 static int assign(pam_handle_t *pamh, const char *name, const char *value)
 {
 	char *string;
@@ -104,6 +123,10 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 	char *userdir = NULL;
 	int usergroups;
 	int status;
+#ifdef USE_SELINUX
+	security_context_t scontext = NULL;
+	int selinux_enabled;
+#endif /* USE_SELINUX */
 
 	if (geteuid() != 0)
 		return PAM_SESSION_ERR;
@@ -134,18 +157,43 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 		if (!strcmp(user, gr->gr_name)) usergroups = 1;
 	}
 
+#ifdef USE_SELINUX
+/* Load SELinux file contexts configuration.
+ * In case of any error reported by SELinux functions, the error
+ * itself will be ignored (it is not a problem of the PAM module), but
+ * selinux_enabled will be reset to 0, to skip subsequent SELinux
+ * function calls. */
+	selinux_enabled = is_selinux_enabled() > 0;
+	if (selinux_enabled && matchpathcon_init_prefix(NULL, PRIVATE_PREFIX))
+		selinux_enabled = 0;
+
+	/* Set file creation context before mkdir() call */
+	if (selinux_enabled) {
+		if (matchpathcon(PRIVATE_PREFIX, S_IFDIR, &scontext) ||
+		    setfscreatecon(scontext))
+			selinux_enabled = 0;
+	}
+#endif /* USE_SELINUX */
+
 /* This directory should be created at system installation or bootup time and
  * never removed, or there's the obvious DoS possibility here. */
 	if (mkdir(PRIVATE_PREFIX, 0711) && errno != EEXIST)
-		return PAM_SESSION_ERR;
+		goto out;
 
 	if (lstat(PRIVATE_PREFIX, &st) ||
 	    !S_ISDIR(st.st_mode) ||
 	    st.st_uid != 0)
-		return PAM_SESSION_ERR;
+		goto out;
 
 	if ((st.st_mode & 0777) != 0711 && chmod(PRIVATE_PREFIX, 0711))
-		return PAM_SESSION_ERR;
+		goto out;
+
+#ifdef USE_SELINUX
+	if (selinux_enabled &&
+	    check_scontext(scontext, PRIVATE_PREFIX) &&
+	    setfilecon(PRIVATE_PREFIX, scontext))
+		selinux_enabled = 0;
+#endif /* USE_SELINUX */
 
 /*
  * At this point we have a directory which is only writable by root, and
@@ -164,6 +212,16 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 	}
 	sprintf(userdir, "%s/%s", PRIVATE_PREFIX, user);
 
+#ifdef USE_SELINUX
+	if (selinux_enabled) {
+		freecon(scontext);
+		scontext = NULL;
+		if (matchpathcon(userdir, USERDIR_MODE(usergroups), &scontext) ||
+		    setfscreatecon(scontext))
+			selinux_enabled = 0;
+	}
+#endif /* USE_SELINUX */
+
 	if (mkdir(userdir, 01700)) {
 		if (errno != EEXIST)
 			goto out;
@@ -179,19 +237,28 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 
 	if (usergroups) {
 		if (chown(userdir, 0, pw->pw_gid) ||
-		    chmod(userdir, 01770))
+		    chmod(userdir, USERDIR_MODE(usergroups)))
 			goto out;
 	} else {
-		if (chmod(userdir, 01700) ||
+		if (chmod(userdir, USERDIR_MODE(usergroups)) ||
 		    chown(userdir, pw->pw_uid, pw->pw_gid))
 			goto out;
 	}
+
+#ifdef USE_SELINUX
+	if (selinux_enabled && check_scontext(scontext, userdir))
+		setfilecon(userdir, scontext);
+#endif /* USE_SELINUX */
 
 	if ((status = assign(pamh, "TMPDIR", userdir)) != PAM_SUCCESS ||
 	    (status = assign(pamh, "TMP", userdir)) != PAM_SUCCESS)
 		goto out;
 
 out:
+#ifdef USE_SELINUX
+	freecon(scontext);
+	matchpathcon_fini();
+#endif /* USE_SELINUX */
 	free(userdir);
 
 	return status;
