@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.83 2010/09/06 19:25:56 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.84 2010/09/06 19:44:09 ldv Exp $
 
 %define WITH_PYTHON 0
 
@@ -8,7 +8,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl23
+Release: owl24
 License: GPL
 Group: System Environment/Base
 # ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -513,6 +513,10 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Mon Sep 06 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl24
+- Backported xz/lzma support in %%setup and %%patch macros.
+- Backported xz/lzma payload support.
+
 * Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 4.2-owl23
 - Moved a relevant comment to inside %%triggerpostun such that it does not
 affect RPM's processing of the preceding "%%postun -p /sbin/ldconfig".
