@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.82 2010/09/06 11:09:27 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.83 2010/09/06 19:25:56 ldv Exp $
 
 %define WITH_PYTHON 0
 
@@ -61,6 +61,7 @@ Patch36: rpm-4.2-cvs-20050827-check-prereqs.diff
 Patch37: rpm-4.2-cvs-20061030-showQueryPackage.diff
 Patch38: rpm-4.2-rh-owl-build-tar.diff
 Patch39: rpm-4.2-owl-xz-macros.diff
+Patch40: rpm-4.2-owl-xz-payload.diff
 
 PreReq: /sbin/ldconfig
 PreReq: sh-utils, fileutils, mktemp, gawk
@@ -68,6 +69,7 @@ Requires: findutils, diffutils, gzip
 BuildRequires: libtool >= 1.5.2, automake >= 1.8.3, autoconf >= 2.59
 BuildRequires: gettext >= 0.14.1
 BuildRequires: elfutils-libelf-devel >= 0:0.108-owl3
+BuildRequires: xz-devel
 BuildRoot: /override/%name-%rpm_version
 
 %description
@@ -177,6 +179,7 @@ rm -r tests
 %patch37 -p0
 %patch38 -p1
 %patch39 -p1
+%patch40 -p1
 
 bzip2 -9k CHANGES
 
