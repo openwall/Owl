@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/buildworld.sh,v 1.48 2010/09/02 20:22:59 solar Exp $
+# $Owl: Owl/build/buildworld.sh,v 1.49 2010/09/06 00:11:50 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -295,10 +295,10 @@ detect_proc()
 detect()
 {
 	test -n "$ARCHITECTURE" || detect_arch
+	test -n "$PROCESSORS" || detect_proc
 	if [ -n "$PACKAGE" ]; then
+		test -n "$MAKEFLAGS" || MAKEFLAGS="-j $PROCESSORS"
 		PROCESSORS=1
-	else
-		test -n "$PROCESSORS" || detect_proc
 	fi
 	test -n "$BUILDHOST" || BUILDHOST="`hostname -f`"
 	test -n "$BUILDHOST" || BUILDHOST="localhost.localdomain"
