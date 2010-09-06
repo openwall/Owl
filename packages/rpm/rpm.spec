@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.81 2010/09/02 20:56:13 solar Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.82 2010/09/06 11:09:27 ldv Exp $
 
 %define WITH_PYTHON 0
 
@@ -60,6 +60,7 @@ Patch35: rpm-4.2-cvs-20030515-parseSpec.diff
 Patch36: rpm-4.2-cvs-20050827-check-prereqs.diff
 Patch37: rpm-4.2-cvs-20061030-showQueryPackage.diff
 Patch38: rpm-4.2-rh-owl-build-tar.diff
+Patch39: rpm-4.2-owl-xz-macros.diff
 
 PreReq: /sbin/ldconfig
 PreReq: sh-utils, fileutils, mktemp, gawk
@@ -175,6 +176,7 @@ rm -r tests
 %patch36 -p0
 %patch37 -p0
 %patch38 -p1
+%patch39 -p1
 
 bzip2 -9k CHANGES
 

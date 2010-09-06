@@ -1,0 +1,374 @@
+--- rpm-4.2/build/parsePrep.c
++++ rpm-4.2/build/parsePrep.c
+@@ -70,9 +70,9 @@ static int checkOwners(const char * urlf
+ 	/*@globals rpmGlobalMacroContext, fileSystem, internalState @*/
+ 	/*@modifies rpmGlobalMacroContext, fileSystem, internalState @*/
+ {
+-    const char *fn, *urlfn;
++    const char *fn, *urlfn, *patcher;
+     static char buf[BUFSIZ];
+-    char args[BUFSIZ];
++    char args[BUFSIZ], cmd[BUFSIZ];
+     struct Source *sp;
+     rpmCompressedMagic compressed = COMPRESSED_NOT;
+     int urltype;
+@@ -87,9 +87,7 @@ static int checkOwners(const char * urlf
+ 	return NULL;
+     }
+ 
+-    urlfn = rpmGetPath("%{_sourcedir}/", sp->source, NULL);
+-
+-    args[0] = '\0';
++    sprintf(args, "-p%d -s", strip);
+     if (db) {
+ #if HAVE_OLDPATCH_21 == 0
+ 	strcat(args, "-b ");
+@@ -104,6 +102,8 @@ static int checkOwners(const char * urlf
+ 	strcat(args, " -E");
+     }
+ 
++    urlfn = rpmGetPath("%{_sourcedir}/", sp->source, NULL);
++
+     /* XXX On non-build parse's, file cannot be stat'd or read */
+     if (!spec->force && (isCompressed(urlfn, &compressed) || checkOwners(urlfn))) {
+ 	urlfn = _free(urlfn);
+@@ -124,29 +124,37 @@ static int checkOwners(const char * urlf
+ 	/*@notreached@*/ break;
+     }
+ 
+-    if (compressed) {
+-	const char *zipper = rpmGetPath(
+-	    (compressed == COMPRESSED_BZIP2 ? "%{_bzip2bin}" : "%{_gzipbin}"),
+-	    NULL);
+-
+-	sprintf(buf,
+-		"echo \"Patch #%d (%s):\"\n"
+-		"%s -d < %s | patch -p%d %s -s\n"
+-		"STATUS=$?\n"
+-		"if [ $STATUS -ne 0 ]; then\n"
+-		"  exit $STATUS\n"
+-		"fi",
+-		c, /*@-unrecog@*/ (const char *) basename(fn), /*@=unrecog@*/
+-		zipper,
+-		fn, strip, args);
++    patcher = rpmGetPath("%__patch", NULL);
++    if (compressed != COMPRESSED_NOT) {
++	const char *t, *zipper;
++
++	switch (compressed) {
++	    default:	/* XXX can't happen */
++	    case COMPRESSED_OTHER:
++		t = "%__gzip -dc";
++		break;
++	    case COMPRESSED_BZIP2:
++		t = "%__bzip2 -dc";
++		break;
++	    case COMPRESSED_ZIP:
++		t = "%__unzip -qq -p";
++		break;
++	    case COMPRESSED_LZMA:
++		t = "%__lzma -dc";
++		break;
++	    case COMPRESSED_XZ:
++		t = "%__xz -dc";
++		break;
++	}
++	zipper = rpmGetPath(t, NULL);
++	sprintf(cmd, "%s '%s' | %s %s\n", zipper, fn, patcher, args);
+ 	zipper = _free(zipper);
+     } else {
+-	sprintf(buf,
+-		"echo \"Patch #%d (%s):\"\n"
+-		"patch -p%d %s -s < %s", c, (const char *) basename(fn),
+-		strip, args, fn);
++	sprintf(cmd, "%s %s < '%s'\n", patcher, args, fn);
+     }
++    patcher = _free(patcher);
+ 
++    sprintf(buf, "echo 'Patch #%d (%s):'\n%s", c, basename(fn), cmd);
+     urlfn = _free(urlfn);
+     return buf;
+ }
+@@ -164,10 +172,9 @@ static int checkOwners(const char * urlf
+ 	/*@globals rpmGlobalMacroContext, fileSystem, internalState @*/
+ 	/*@modifies rpmGlobalMacroContext, fileSystem, internalState @*/
+ {
+-    const char *fn, *urlfn;
++    const char *fn, *urlfn, *tar, *t;
+     static char buf[BUFSIZ];
+-    char *taropts;
+-    char *t = NULL;
++    char cmd[BUFSIZ];
+     struct Source *sp;
+     rpmCompressedMagic compressed = COMPRESSED_NOT;
+     int urltype;
+@@ -184,10 +191,6 @@ static int checkOwners(const char * urlf
+ 
+     urlfn = rpmGetPath("%{_sourcedir}/", sp->source, NULL);
+ 
+-    /*@-internalglobs@*/ /* FIX: shrug */
+-    taropts = ((rpmIsVerbose() && !quietly) ? "-xvvf" : "-xf");
+-    /*@=internalglobs@*/
+-
+ #ifdef AUTOFETCH_NOT	/* XXX don't expect this code to be enabled */
+     /* XXX
+      * XXX If nosource file doesn't exist, try to fetch from url.
+@@ -228,47 +231,50 @@ static int checkOwners(const char * urlf
+ 	/*@notreached@*/ break;
+     }
+ 
++    if (rpmIsVerbose() && !quietly)
++	t = "%{__tar} -xvvf";
++    else
++	t = "%{__tar} -xf";
++    tar = rpmGetPath(t, NULL);
++
+     if (compressed != COMPRESSED_NOT) {
+ 	const char *zipper;
+ 	int needtar = 1;
+ 
+ 	switch (compressed) {
+-	case COMPRESSED_NOT:	/* XXX can't happen */
+-	case COMPRESSED_OTHER:
+-	    t = "%{_gzipbin} -dc";
+-	    break;
+-	case COMPRESSED_BZIP2:
+-	    t = "%{_bzip2bin} -dc";
+-	    break;
+-	case COMPRESSED_ZIP:
+-	    if (rpmIsVerbose() && !quietly)
+-		t = "%{_unzipbin}";
+-	    else
+-		t = "%{_unzipbin} -qq";
+-	    needtar = 0;
+-	    break;
++	    default:	/* XXX can't happen */
++	    case COMPRESSED_OTHER:
++		t = "%__gzip -dc";
++		break;
++	    case COMPRESSED_BZIP2:
++		t = "%__bzip2 -dc";
++		break;
++	    case COMPRESSED_ZIP:
++		if (rpmIsVerbose() && !quietly)
++		    t = "%__unzip";
++		else
++		    t = "%__unzip -qq";
++		needtar = 0;
++		break;
++	    case COMPRESSED_LZMA:
++		t = "%__lzma -dc";
++		break;
++	    case COMPRESSED_XZ:
++		t = "%{__xz} -dc";
++		break;
+ 	}
+ 	zipper = rpmGetPath(t, NULL);
+-	buf[0] = '\0';
+-	t = stpcpy(buf, zipper);
+-	zipper = _free(zipper);
+-	*t++ = ' ';
+-	t = stpcpy(t, fn);
+ 	if (needtar)
+-	    t = stpcpy( stpcpy( stpcpy(t, " | tar "), taropts), " -");
+-	t = stpcpy(t,
+-		"\n"
+-		"STATUS=$?\n"
+-		"if [ $STATUS -ne 0 ]; then\n"
+-		"  exit $STATUS\n"
+-		"fi");
++	    sprintf(cmd, "%s '%s' | %s -\n", zipper, fn, tar);
++	else
++	    sprintf(cmd, "%s '%s'\n", zipper, fn);
++	zipper = _free(zipper);
+     } else {
+-	buf[0] = '\0';
+-	t = stpcpy( stpcpy(buf, "tar "), taropts);
+-	*t++ = ' ';
+-	t = stpcpy(t, fn);
++	sprintf(cmd, "%s '%s'\n", tar, fn);
+     }
++    tar = _free(tar);
+ 
++    sprintf(buf, "echo 'Source #%d (%s):'\n%s", c, basename(fn), cmd);
+     urlfn = _free(urlfn);
+     return buf;
+ }
+--- rpm-4.2/configure.ac
++++ rpm-4.2/configure.ac
+@@ -238,18 +238,23 @@ fi
+ dnl
+ dnl Find some common programs
+ dnl
+-AC_PATH_PROG(BZIP2BIN, bzip2, /usr/bin/bzip2, $MYPATH)
+ AC_PATH_PROG(__CAT, cat, /bin/cat, $MYPATH)
+ AC_PATH_PROG(__CHGRP, chgrp, /bin/chgrp, $MYPATH)
+ AC_PATH_PROG(__CHMOD, chmod, /bin/chmod, $MYPATH)
+ AC_PATH_PROG(__CHOWN, chown, /bin/chown, $MYPATH)
+ AC_PATH_PROG(__CP, cp, /bin/cp, $MYPATH)
+-AC_PATH_PROG(__CPIO, cpio, /bin/cpio, $MYPATH)
+ AC_PATH_PROG(__FILE, file, /usr/bin/file, $MYPATH)
+ AC_PATH_PROG(__GPG, gpg, /usr/bin/gpg, $MYPATH)
+ AC_PATH_PROG(__GREP, grep, /bin/grep, $MYPATH)
+-AC_PATH_PROG(GZIPBIN, gzip, /bin/gzip, $MYPATH)
+-AC_PATH_PROG(UNZIPBIN, unzip, /usr/bin/unzip, $MYPATH)
++
++dnl Archiving and compression programs
++AC_PATH_PROG(__CPIO, cpio, /bin/cpio, $MYPATH)
++AC_PATH_PROG(__TAR, tar, /bin/tar, $MYPATH)
++AC_PATH_PROG(__BZIP2, bzip2, /usr/bin/bzip2, $MYPATH)
++AC_PATH_PROG(__GZIP, gzip, /bin/gzip, $MYPATH)
++AC_PATH_PROG(__UNZIP, unzip, /usr/bin/unzip, $MYPATH)
++AC_PATH_PROG(__LZMA, lzms, /usr/bin/lzma, $MYPATH)
++AC_PATH_PROG(__XZ, xz, /usr/bin/xz, $MYPATH)
+ 
+ AC_PATH_PROG(__ID, id, /usr/bin/id, $MYPATH)
+ AC_MSG_CHECKING(checking whether id supports -u)
+@@ -286,7 +291,6 @@ AC_PATH_PROG(__RM, rm, /bin/rm, $MYPATH)
+ AC_PATH_PROG(__RSH, rsh, /usr/bin/rsh, $MYPATH)
+ AC_PATH_PROG(__SED, sed, /bin/sed, $MYPATH)
+ AC_PATH_PROG(__SSH, ssh, /usr/bin/ssh, $MYPATH)
+-AC_PATH_PROG(__TAR, tar, /bin/tar, $MYPATH)
+ 
+ AC_PATH_PROG(__LD, ld, /usr/bin/ld, $MYPATH)
+ AC_PATH_PROG(__NM, nm, /usr/bin/nm, $MYPATH)
+--- rpm-4.2/macros.in
++++ rpm-4.2/macros.in
+@@ -34,17 +34,14 @@
+ # ---- Generally useful path macros.
+ #
+ %__awk			@AWK@
+-%__bzip2		@BZIP2BIN@
+ %__cat			@__CAT@
+ %__chgrp		@__CHGRP@
+ %__chmod		@__CHMOD@
+ %__chown		@__CHOWN@
+ %__cp			@__CP@
+-%__cpio			@__CPIO@
+ %__file			@__FILE@
+ %__gpg			@__GPG@
+ %__grep			@__GREP@
+-%__gzip			@GZIPBIN@
+ %__id			@__ID@
+ %__install		@__INSTALL@
+ %__ln_s			@LN_S@
+@@ -60,8 +57,17 @@
+ %__rsh			@__RSH@
+ %__sed			@__SED@
+ %__ssh			@__SSH@
++
++#==============================================================================
++# ---- Archiving and compression programs.
++#
++%__cpio			@__CPIO@
+ %__tar			@__TAR@
+-%__unzip		@UNZIPBIN@
++%__bzip2		@__BZIP2@
++%__gzip			@__GZIP@
++%__unzip		@__UNZIP@
++%__lzma			@__LZMA@
++%__xz			@__XZ@
+ 
+ #==============================================================================
+ # ---- Build system path macros.
+--- rpm-4.2/rpmio/macro.c
++++ rpm-4.2/rpmio/macro.c
+@@ -1105,17 +1105,23 @@ doFoo(MacroBuf mb, int negate, const cha
+ #endif
+ 	switch(compressed) {
+ 	default:
+-	case 0:	/* COMPRESSED_NOT */
+-	    sprintf(be, "%%_cat %s", b);
++	case COMPRESSED_NOT:
++	    sprintf(be, "%%__cat '%s'", b);
+ 	    break;
+-	case 1:	/* COMPRESSED_OTHER */
+-	    sprintf(be, "%%_gzip -dc %s", b);
++	case COMPRESSED_OTHER:
++	    sprintf(be, "%%__gzip -dc '%s'", b);
+ 	    break;
+-	case 2:	/* COMPRESSED_BZIP2 */
+-	    sprintf(be, "%%_bzip2 %s", b);
++	case COMPRESSED_BZIP2:
++	    sprintf(be, "%%__bzip2 -dc '%s'", b);
+ 	    break;
+-	case 3:	/* COMPRESSED_ZIP */
+-	    sprintf(be, "%%_unzip %s", b);
++	case COMPRESSED_ZIP:
++	    sprintf(be, "%%__unzip -qq -p '%s'", b);
++	    break;
++	case COMPRESSED_LZMA:
++	    sprintf(be, "%%__lzma -dc '%s'", b);
++	    break;
++	case COMPRESSED_XZ:
++	    sprintf(be, "%%__xz -dc '%s'", b);
+ 	    break;
+ 	}
+ 	b = be;
+@@ -1689,7 +1695,7 @@ int isCompressed(const char * file, rpmC
+     FD_t fd;
+     ssize_t nb;
+     int rc = -1;
+-    unsigned char magic[4];
++    unsigned char magic[8];
+ 
+     *compressed = COMPRESSED_NOT;
+ 
+@@ -1705,7 +1711,7 @@ int isCompressed(const char * file, rpmC
+ 	rpmError(RPMERR_BADSPEC, _("File %s: %s\n"), file, Fstrerror(fd));
+ 	rc = 1;
+     } else if (nb < sizeof(magic)) {
+-	rpmError(RPMERR_BADSPEC, _("File %s is smaller than %u bytes\n"),
++	rpmMessage(RPMMESS_WARNING, _("File %s is smaller than %u bytes\n"),
+ 		file, (unsigned)sizeof(magic));
+ 	rc = 0;
+     }
+@@ -1715,18 +1721,23 @@ int isCompressed(const char * file, rpmC
+ 
+     rc = 0;
+ 
+-    if ((magic[0] == 'B') && (magic[1] == 'Z')) {
+-	*compressed = COMPRESSED_BZIP2;
+-    } else if ((magic[0] == 0120) && (magic[1] == 0113) &&
+-	 (magic[2] == 0003) && (magic[3] == 0004)) {	/* pkzip */
+-	*compressed = COMPRESSED_ZIP;
+-    } else if (((magic[0] == 0037) && (magic[1] == 0213)) || /* gzip */
+-	((magic[0] == 0037) && (magic[1] == 0236)) ||	/* old gzip */
+-	((magic[0] == 0037) && (magic[1] == 0036)) ||	/* pack */
+-	((magic[0] == 0037) && (magic[1] == 0240)) ||	/* SCO lzh */
+-	((magic[0] == 0037) && (magic[1] == 0235))	/* compress */
+-	) {
+-	*compressed = COMPRESSED_OTHER;
++#define BT(s,t) \
++    if (memcmp(s,magic,sizeof(s)-1)==0) \
++	{ *compressed = COMPRESSED_##t; return 0; }
++    BT("BZh", BZIP2);
++    BT("\3757zXZ\0", XZ);
++    BT("PK\003\004", ZIP); // pkzip
++    BT("\037\213", OTHER); // gzip
++    BT("\037\236", OTHER); // old gzip
++    BT("\037\036", OTHER); // pack
++    BT("\037\240", OTHER); // SCO lzh
++    BT("\037\235", OTHER); // compress
++#undef BT
++    /* old LZMA has no magic */
++    if (magic[0] < 0xE1 && magic[1] == 0) {
++	const char *ext = strrchr(file, '.');
++	if (ext && (strcmp(ext, ".lzma") == 0 || strcmp(ext, ".tlz") == 0))
++	    *compressed = COMPRESSED_LZMA;
+     }
+ 
+     return rc;
+--- rpm-4.2/rpmio/rpmmacro.h
++++ rpm-4.2/rpmio/rpmmacro.h
+@@ -152,7 +152,9 @@ typedef enum rpmCompressedMagic_e {
+     COMPRESSED_NOT		= 0,	/*!< not compressed */
+     COMPRESSED_OTHER		= 1,	/*!< gzip can handle */
+     COMPRESSED_BZIP2		= 2,	/*!< bzip2 can handle */
+-    COMPRESSED_ZIP		= 3	/*!< unzip can handle */
++    COMPRESSED_ZIP		= 3,	/*!< unzip can handle */
++    COMPRESSED_LZMA		= 4,	/*!< lzma can handle */
++    COMPRESSED_XZ		= 5	/*!< xz can handle */
+ } rpmCompressedMagic;
+ 
+ /**
