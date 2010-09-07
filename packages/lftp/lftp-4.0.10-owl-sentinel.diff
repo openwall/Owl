@@ -1,10 +1,14 @@
 diff -uNrp lftp-4.0.10.orig/src/xstring.h lftp-4.0.10/src/xstring.h
---- lftp-4.0.10.orig/src/xstring.h	2010-09-04 12:47:58.000000000 +0000
-+++ lftp-4.0.10/src/xstring.h	2010-09-06 15:31:45.000000000 +0000
-@@ -46,6 +46,17 @@
+--- lftp-4.0.10.orig/src/xstring.h	2010-09-04 12:47:58 +0000
++++ lftp-4.0.10/src/xstring.h	2010-09-07 15:36:41 +0000
+@@ -46,6 +46,21 @@
  # endif
  #endif
  
++#ifndef GCC_VERSION
++#define GCC_VERSION (__GNUC__ * 1000 + __GNUC_MINOR__)
++#endif /* GCC_VERSION */
++
 +/* Attribute `sentinel' was valid as of gcc 3.5.  */
 +#ifdef __GNUC__
 +#ifndef ATTRIBUTE_SENTINEL
@@ -19,7 +23,7 @@ diff -uNrp lftp-4.0.10.orig/src/xstring.h lftp-4.0.10/src/xstring.h
  #include <stdarg.h>
  #include <unistd.h>
  
-@@ -104,7 +115,7 @@ public:
+@@ -104,7 +119,7 @@ public:
     const char *set(const char *s) { return xstrset(buf,s); }
     const char *nset(const char *s,int n) { return xstrset(buf,s,n); }
     const char *set_allocated(char *s) { xfree(buf); return buf=s; }
@@ -28,7 +32,7 @@ diff -uNrp lftp-4.0.10.orig/src/xstring.h lftp-4.0.10/src/xstring.h
     void truncate(size_t n) { if(buf) buf[n]=0; }
     char *borrow() { return replace_value(buf,(char*)0); }
     bool eq(const char *s) { return !xstrcmp(buf,s); }
-@@ -164,8 +175,8 @@ public:
+@@ -164,8 +179,8 @@ public:
     xstring& append(const xstring &s) { return append(s.get(),s.length()); }
     xstring& append_padding(int len,char ch);
     xstring& vappend(va_list);
@@ -39,7 +43,7 @@ diff -uNrp lftp-4.0.10.orig/src/xstring.h lftp-4.0.10/src/xstring.h
     xstring& vsetf(const char *fmt, va_list ap) { truncate(0); return vappendf(fmt,ap); }
     xstring& setf(const char *fmt,...) PRINTF_LIKE(2,3);
     xstring& vappendf(const char *fmt, va_list ap);
-@@ -175,7 +186,7 @@ public:
+@@ -175,7 +190,7 @@ public:
     static xstring& get_tmp(const char *s,int n) { return get_tmp().nset(s,n); }
     static xstring& vformat(const char *fmt,va_list ap) { return get_tmp().vsetf(fmt,ap); }
     static xstring& format(const char *fmt,...) PRINTF_LIKE(1,2);
