@@ -31,11 +31,18 @@
  * reasonable assumptions of temporary file using programs of other users that
  * had TMPDIR set by pam_mktemp previously.
  *
- * stmpclean(8), which we have in Owl, does not enter root-owned directories,
- * so we do not need this workaround on Owl.  Since the append-only flag posed
- * a usability problem (it was not immediatly clear to many how to remove an
- * Owl userland tree) and since it did not apply to tmpfs filesystems anyway,
- * we now have this disabled by default.
+ * stmpclean(8), which we have in Owl, does not remove root-owned directories
+ * (so it won't remove /tmp/.private) and switches to each directory's owner
+ * euid when it tries to remove other directories (so it won't actually remove
+ * subdirectories of /tmp/.private).  Thus, we do not need the append-only flag
+ * on /tmp/.private on Owl.
+ *
+ * Since the append-only flag posed a usability problem (it was not immediately
+ * clear to many how to remove an Owl userland tree) and since it did not apply
+ * to tmpfs filesystems anyway, we now have this disabled by default.  However,
+ * if /tmp/.private is already set to append-only (perhaps by an older version
+ * of pam_mktemp), we take care of resetting this flag for subdirectories of
+ * /tmp/.private (we don't let it get inherited, which would be the default).
  */
 # include <fcntl.h>
 # include <sys/ioctl.h>
