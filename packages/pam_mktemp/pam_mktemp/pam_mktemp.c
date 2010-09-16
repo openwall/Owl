@@ -1,5 +1,7 @@
 /*
- * Written in 2000-2010 by Solar Designer.  See LICENSE.
+ * Copyright (c) 2000-2002,2005,2010 by Solar Designer
+ * Copyright (c) 2005,2006,2010 by Dmitry V. Levin
+ * See LICENSE
  */
 
 #include <stdio.h>
