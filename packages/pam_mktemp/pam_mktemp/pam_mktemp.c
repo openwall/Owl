@@ -53,7 +53,6 @@
 #endif
 
 #define PRIVATE_PREFIX			"/tmp/.private"
-#define	USERDIR_MODE(ug)	((ug) ? 01770 : 01700)
 
 #ifdef HAVE_APPEND_FL
 static int ext2fs_chflags(const char *name, int set, int clear)
@@ -216,7 +215,7 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 	if (selinux_enabled) {
 		freecon(scontext);
 		scontext = NULL;
-		if (matchpathcon(userdir, USERDIR_MODE(usergroups), &scontext) ||
+		if (matchpathcon(userdir, S_IFDIR, &scontext) ||
 		    setfscreatecon(scontext))
 			selinux_enabled = 0;
 	}
@@ -237,10 +236,10 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 
 	if (usergroups) {
 		if (chown(userdir, 0, pw->pw_gid) ||
-		    chmod(userdir, USERDIR_MODE(usergroups)))
+		    chmod(userdir, 01770))
 			goto out;
 	} else {
-		if (chmod(userdir, USERDIR_MODE(usergroups)) ||
+		if (chmod(userdir, 01700) ||
 		    chown(userdir, pw->pw_uid, pw->pw_gid))
 			goto out;
 	}
