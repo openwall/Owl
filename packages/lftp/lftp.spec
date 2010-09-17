@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/lftp/lftp.spec,v 1.39 2010/09/07 03:25:48 solar Exp $
+# $Owl: Owl/packages/lftp/lftp.spec,v 1.40 2010/09/17 23:59:51 solar Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
@@ -7,7 +7,7 @@ Release: owl1
 License: GPLv3+
 Group: Applications/Internet
 URL: http://lftp.yar.ru
-Source: http://ftp.yars.free.net/pub/source/lftp/lftp-%version.tar.bz2
+Source: http://ftp.yars.free.net/pub/source/lftp/lftp-%version.tar.xz
 Patch0: lftp-4.0.10-owl-sentinel.diff
 Patch1: lftp-4.0.10-owl-warnings.diff
 Requires: less
