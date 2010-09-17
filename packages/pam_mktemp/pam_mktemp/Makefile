@@ -35,6 +35,10 @@ ifeq ($(USE_SELINUX),1)
 	override LDLIBS += -lselinux
 endif
 
+ifeq ($(USE_APPEND_FL),1)
+	override CFLAGS += -DUSE_APPEND_FL=1
+endif
+
 all: $(LIBSHARED)
 
 pam_mktemp.so: $(OBJS) $(MAP)
