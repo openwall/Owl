@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.28 2010/09/17 22:32:42 solar Exp $
+# $Owl: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.29 2010/09/17 23:11:25 ldv Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
-Version: 1.1.0
+Version: 1.1.1
 Release: owl1
 License: BSD-compatible
 Group: System Environment/Base
@@ -43,6 +43,9 @@ fi
 /%_lib/security/pam_mktemp.so
 
 %changelog
+* Sat Sep 18 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1.1-owl1
+- In SELinux support, save and restore file creation context.
+
 * Fri Sep 17 2010 Solar Designer <solar-at-owl.openwall.com> 1.1.0-owl1
 - Documented the USE_SELINUX and USE_APPEND_FL compile-time settings.
 - Added Solaris support (but GNU make and gcc are required by our Makefile).

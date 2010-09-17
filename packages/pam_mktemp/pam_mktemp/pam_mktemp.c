@@ -148,8 +148,8 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 	int usergroups;
 	int status;
 #ifdef USE_SELINUX
-	security_context_t scontext = NULL;
-	int selinux_enabled;
+	security_context_t old_fscreatecon, new_fscreatecon = NULL;
+	int fscreatecon_saved = 0, selinux_enabled;
 #endif /* USE_SELINUX */
 
 	if (geteuid() != 0)
@@ -191,10 +191,17 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 	if (selinux_enabled && matchpathcon_init_prefix(NULL, PRIVATE_PREFIX))
 		selinux_enabled = 0;
 
-	/* Set file creation context before mkdir() call */
+	/* Save current file creation context. */
 	if (selinux_enabled) {
-		if (matchpathcon(PRIVATE_PREFIX, S_IFDIR, &scontext) ||
-		    setfscreatecon(scontext))
+		if (getfscreatecon(&old_fscreatecon))
+			selinux_enabled = 0;
+		else
+			fscreatecon_saved = 1;
+	}
+	/* Set file creation context before mkdir() call. */
+	if (selinux_enabled) {
+		if (matchpathcon(PRIVATE_PREFIX, S_IFDIR, &new_fscreatecon) ||
+		    setfscreatecon(new_fscreatecon))
 			selinux_enabled = 0;
 	}
 #endif /* USE_SELINUX */
@@ -214,8 +221,8 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 
 #ifdef USE_SELINUX
 	if (selinux_enabled &&
-	    check_scontext(scontext, PRIVATE_PREFIX) &&
-	    setfilecon(PRIVATE_PREFIX, scontext))
+	    check_scontext(new_fscreatecon, PRIVATE_PREFIX) &&
+	    setfilecon(PRIVATE_PREFIX, new_fscreatecon))
 		selinux_enabled = 0;
 #endif /* USE_SELINUX */
 
@@ -238,10 +245,10 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 
 #ifdef USE_SELINUX
 	if (selinux_enabled) {
-		freecon(scontext);
-		scontext = NULL;
-		if (matchpathcon(userdir, S_IFDIR, &scontext) ||
-		    setfscreatecon(scontext))
+		freecon(new_fscreatecon);
+		new_fscreatecon = NULL;
+		if (matchpathcon(userdir, S_IFDIR, &new_fscreatecon) ||
+		    setfscreatecon(new_fscreatecon))
 			selinux_enabled = 0;
 	}
 #endif /* USE_SELINUX */
@@ -270,8 +277,8 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 	}
 
 #ifdef USE_SELINUX
-	if (selinux_enabled && check_scontext(scontext, userdir))
-		setfilecon(userdir, scontext);
+	if (selinux_enabled && check_scontext(new_fscreatecon, userdir))
+		setfilecon(userdir, new_fscreatecon);
 #endif /* USE_SELINUX */
 
 	if ((status = assign(pamh, "TMPDIR", userdir)) != PAM_SUCCESS ||
@@ -280,7 +287,12 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 
 out:
 #ifdef USE_SELINUX
-	freecon(scontext);
+	if (fscreatecon_saved) {
+		if (setfscreatecon(old_fscreatecon) && status == PAM_SUCCESS)
+			status = PAM_SESSION_ERR;
+		freecon(old_fscreatecon);
+	}
+	freecon(new_fscreatecon);
 	matchpathcon_fini();
 #endif /* USE_SELINUX */
 	free(userdir);
