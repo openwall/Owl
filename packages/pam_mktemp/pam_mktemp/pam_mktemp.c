@@ -52,9 +52,16 @@
 #endif /* HAVE_APPEND_FL */
 
 #define PAM_SM_SESSION
-#include <security/pam_modules.h>
 #if !defined(__LIBPAM_VERSION) && !defined(__LINUX_PAM__)
 # include <security/pam_appl.h>
+#endif
+#include <security/pam_modules.h>
+
+#if !defined(__LIBPAM_VERSION) && !defined(__LINUX_PAM__) && !defined(_OPENPAM)
+/* Sun's PAM doesn't use const here, while Linux-PAM and OpenPAM do */
+#define lo_const
+#else
+#define lo_const			const
 #endif
 
 #if !defined(PAM_EXTERN) && !defined(PAM_STATIC)
@@ -126,7 +133,7 @@ PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags,
 	struct passwd *pw;
 	struct group *gr;
 	struct stat st;
-	const void *item;
+	lo_const void *item;
 	const char *user;
 	char *userdir = NULL;
 	int usergroups;
