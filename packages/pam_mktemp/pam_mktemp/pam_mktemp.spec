@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.26 2010/09/17 21:02:46 solar Exp $
+# $Owl: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.27 2010/09/17 21:04:24 solar Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
-Version: 1.0.5
-Release: owl2
+Version: 1.0.6
+Release: owl1
 License: BSD-compatible
 Group: System Environment/Base
 URL: http://www.openwall.com/pam/
@@ -43,7 +43,7 @@ fi
 /%_lib/security/pam_mktemp.so
 
 %changelog
-* Fri Sep 17 2010 Solar Designer <solar-at-owl.openwall.com> 1.0.5-owl2
+* Fri Sep 17 2010 Solar Designer <solar-at-owl.openwall.com> 1.0.6-owl1
 - Updated the authorship, copyright, and licensing statements to use the
 cut-down BSD license only (no public domain with a license fallback anymore,
 which would be too cumbersome with significant contributions by two authors).
