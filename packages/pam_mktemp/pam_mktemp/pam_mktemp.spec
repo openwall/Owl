@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.25 2010/09/06 21:42:37 ldv Exp $
+# $Owl: Owl/packages/pam_mktemp/pam_mktemp/pam_mktemp.spec,v 1.26 2010/09/17 21:02:46 solar Exp $
 
 Summary: Pluggable private /tmp space support for interactive (shell) sessions.
 Name: pam_mktemp
 Version: 1.0.5
-Release: owl1
-License: public domain
+Release: owl2
+License: BSD-compatible
 Group: System Environment/Base
 URL: http://www.openwall.com/pam/
 Source: ftp://ftp.openwall.com/pub/projects/pam/modules/%name/%name-%version.tar.gz
@@ -43,6 +43,11 @@ fi
 /%_lib/security/pam_mktemp.so
 
 %changelog
+* Fri Sep 17 2010 Solar Designer <solar-at-owl.openwall.com> 1.0.5-owl2
+- Updated the authorship, copyright, and licensing statements to use the
+cut-down BSD license only (no public domain with a license fallback anymore,
+which would be too cumbersome with significant contributions by two authors).
+
 * Tue Sep 07 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.5-owl1
 - Use ext2fs/ext2_fs.h instead of linux/ext2_fs.h to avoid potential
 build problems with fresh kernel headers.
