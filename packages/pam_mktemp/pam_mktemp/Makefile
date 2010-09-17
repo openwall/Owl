@@ -13,6 +13,13 @@ CFLAGS = -Wall -O2 -fPIC
 LDFLAGS = -s --shared -Wl,--version-script,$(MAP)
 LDLIBS = -lpam
 
+# This requires GNU make
+ifeq ($(shell uname -s),SunOS)
+# We support Sun's older /usr/ucb/install, but not the newer /usr/sbin/install
+	override INSTALL = /usr/ucb/install -c
+	override LDFLAGS = -G
+endif
+
 TITLE = pam_mktemp
 PAM_SO_SUFFIX =
 LIBSHARED = $(TITLE).so$(PAM_SO_SUFFIX)
