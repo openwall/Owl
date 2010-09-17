@@ -12,7 +12,16 @@
 #include <grp.h>
 #include <errno.h>
 #include <sys/stat.h>
+
 #ifdef USE_SELINUX
+/*
+ * According to some "out of the box" SELinux policies, /tmp/.private and
+ * /tmp/.private/USER directories created by this module running from
+ * processes like login and sshd would inherit a login process context instead
+ * of /tmp directory or user context.  As a result, user processes would have
+ * problems creating files in such "login-owned" directories.  When the module
+ * is built with SELinux support, it creates directories in the proper context.
+ */
 #include <selinux/selinux.h>
 #endif /* USE_SELINUX */
 
