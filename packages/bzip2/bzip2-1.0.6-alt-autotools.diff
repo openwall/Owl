@@ -1,5 +1,5 @@
---- bzip2-1.0.4.orig/Makefile.am	1970-01-01 00:00:00 +0000
-+++ bzip2-1.0.4/Makefile.am	2005-04-09 22:29:21 +0000
+--- /dev/null
++++ bzip2/Makefile.am
 @@ -0,0 +1,43 @@
 +AUTOMAKE_OPTIONS = 1.4 foreign
 +
@@ -24,7 +24,7 @@
 +	compress.c \
 +	decompress.c \
 +	bzlib.c
-+libbz2_la_LDFLAGS = -version-info 1:4:0
++libbz2_la_LDFLAGS = -version-info 1:6:0
 +
 +check-local: samples.sh bzip2
 +	./samples.sh
@@ -44,8 +44,8 @@
 +	echo '.so man1/bzgrep.1' >$(DESTDIR)$(mandir)/man1/bzegrep.1
 +	echo '.so man1/bzgrep.1' >$(DESTDIR)$(mandir)/man1/bzfgrep.1
 +	echo '.so man1/bzmore.1' >$(DESTDIR)$(mandir)/man1/bzless.1
---- bzip2-1.0.4.orig/bzip2.c	2007-01-03 02:00:55 +0000
-+++ bzip2-1.0.4/bzip2.c	2007-01-10 21:57:27 +0000
+--- bzip2/bzip2.c
++++ bzip2/bzip2.c
 @@ -47,6 +47,10 @@
    Some stuff for all platforms.
  --*/
@@ -57,8 +57,8 @@
  #include <stdio.h>
  #include <stdlib.h>
  #include <string.h>
---- bzip2-1.0.4.orig/bzip2recover.c	2007-01-03 02:00:55 +0000
-+++ bzip2-1.0.4/bzip2recover.c	2007-01-10 16:32:35 +0000
+--- bzip2/bzip2recover.c
++++ bzip2/bzip2recover.c
 @@ -20,6 +20,10 @@
  /* This program is a complete hack and should be rewritten properly.
  	 It isn't very complicated. */
@@ -70,8 +70,8 @@
  #include <stdio.h>
  #include <errno.h>
  #include <stdlib.h>
---- bzip2-1.0.4.orig/bzlib_private.h	2007-01-03 02:00:55 +0000
-+++ bzip2-1.0.4/bzlib_private.h	2007-01-10 16:32:35 +0000
+--- bzip2/bzlib_private.h
++++ bzip2/bzlib_private.h
 @@ -22,6 +22,10 @@
  #ifndef _BZLIB_PRIVATE_H
  #define _BZLIB_PRIVATE_H
@@ -83,11 +83,11 @@
  #include <stdlib.h>
  
  #ifndef BZ_NO_STDIO
---- bzip2-1.0.4.orig/configure.ac	1970-01-01 00:00:00 +0000
-+++ bzip2-1.0.4/configure.ac	2005-04-09 22:29:21 +0000
+--- /dev/null
++++ bzip2/configure.ac
 @@ -0,0 +1,18 @@
 +AC_PREREQ(2.53)
-+AC_INIT([bzip2],[1.0.3],[Julian Seward <jseward@bzip.org>])
++AC_INIT([bzip2],[1.0.6],[Julian Seward <jseward@bzip.org>])
 +AC_CONFIG_SRCDIR([bzlib.c])
 +AM_CONFIG_HEADER([config.h])
 +
@@ -104,8 +104,8 @@
 +
 +AC_CONFIG_FILES([Makefile])
 +AC_OUTPUT
---- bzip2-1.0.4.orig/dlltest.c	2007-01-03 02:00:55 +0000
-+++ bzip2-1.0.4/dlltest.c	2007-01-10 16:32:35 +0000
+--- bzip2/dlltest.c
++++ bzip2/dlltest.c
 @@ -7,6 +7,10 @@
     usage: minibz2 [-d] [-{1,2,..9}] [[srcfilename] destfilename]
  */
@@ -117,8 +117,8 @@
  #define BZ_IMPORT
  #include <stdio.h>
  #include <stdlib.h>
---- bzip2-1.0.4.orig/mk251.c	2007-01-03 02:00:55 +0000
-+++ bzip2-1.0.4/mk251.c	2007-01-10 16:32:35 +0000
+--- bzip2/mk251.c
++++ bzip2/mk251.c
 @@ -20,6 +20,10 @@
     ------------------------------------------------------------------ */
  
@@ -130,20 +130,20 @@
  #include <stdio.h>
  
  int main ()
---- bzip2-1.0.4.orig/samples.sh	1970-01-01 00:00:00 +0000
-+++ bzip2-1.0.4/samples.sh	2005-04-09 22:29:21 +0000
+--- /dev/null
++++ bzip2/samples.sh
 @@ -0,0 +1,9 @@
 +#!/bin/sh -ex
 +
 +cat words1
-+./bzip2 -1  < sample1.ref > sample1.rb2 && cmp sample1.bz2 sample1.rb2 
++./bzip2 -1  < sample1.ref > sample1.rb2 && cmp sample1.bz2 sample1.rb2
 +./bzip2 -2  < sample2.ref > sample2.rb2 && cmp sample2.bz2 sample2.rb2
 +./bzip2 -3  < sample3.ref > sample3.rb2 && cmp sample3.bz2 sample3.rb2
 +./bzip2 -d  < sample1.bz2 > sample1.tst && cmp sample1.tst sample1.ref
 +./bzip2 -d  < sample2.bz2 > sample2.tst && cmp sample2.tst sample2.ref
 +./bzip2 -ds < sample3.bz2 > sample3.tst && cmp sample3.tst sample3.ref
---- bzip2-1.0.4.orig/spewG.c	2007-01-03 02:00:55 +0000
-+++ bzip2-1.0.4/spewG.c	2007-01-10 16:32:35 +0000
+--- bzip2/spewG.c
++++ bzip2/spewG.c
 @@ -24,7 +24,9 @@
  	 ------------------------------------------------------------------ */
  
@@ -155,8 +155,8 @@
  
  #include <stdio.h>
  #include <stdlib.h>
---- bzip2-1.0.4.orig/unzcrash.c	2007-01-03 02:00:55 +0000
-+++ bzip2-1.0.4/unzcrash.c	2007-01-10 16:32:35 +0000
+--- bzip2/unzcrash.c
++++ bzip2/unzcrash.c
 @@ -28,6 +28,10 @@
     ------------------------------------------------------------------ */
  

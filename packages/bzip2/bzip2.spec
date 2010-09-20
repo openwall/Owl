@@ -1,21 +1,21 @@
-# $Owl: Owl/packages/bzip2/bzip2.spec,v 1.31 2009/09/09 16:45:50 ldv Exp $
+# $Owl: Owl/packages/bzip2/bzip2.spec,v 1.32 2010/09/20 17:27:05 ldv Exp $
 
 Summary: An extremely powerful file compression utility.
 Name: bzip2
-Version: 1.0.5
+Version: 1.0.6
 Release: owl1
 License: BSD-style
 Group: Applications/File
 URL: http://www.bzip.org
 Source0: http://www.bzip.org/%version/%name-%version.tar.gz
 Source1: bzip2.texi
-Patch0: bzip2-1.0.4-alt-autotools.diff
-Patch1: bzip2-1.0.4-owl-Makefile.diff
-Patch2: bzip2-1.0.4-alt-owl-versioning.diff
-Patch3: bzip2-1.0.4-owl-bzdiff-tmp.diff
-Patch4: bzip2-1.0.4-alt-owl-fopen.diff
-Patch5: bzip2-1.0.4-alt-const.diff
-Patch6: bzip2-1.0.4-alt-progname.diff
+Patch0: bzip2-1.0.6-alt-autotools.diff
+Patch1: bzip2-1.0.6-owl-Makefile.diff
+Patch2: bzip2-1.0.6-alt-owl-versioning.diff
+Patch3: bzip2-1.0.6-owl-bzdiff-tmp.diff
+Patch4: bzip2-1.0.6-alt-owl-fopen.diff
+Patch5: bzip2-1.0.6-alt-const.diff
+Patch6: bzip2-1.0.6-alt-progname.diff
 PreReq: /sbin/ldconfig
 Requires: mktemp >= 1:1.3.1
 %ifnarch x86_64
@@ -109,6 +109,9 @@ fi
 %_infodir/bzip2.*
 
 %changelog
+* Mon Sep 20 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.6-owl1
+- Updated to 1.0.6 (fixes CVE-2010-0405).
+
 * Thu Mar 20 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.5-owl1
 - Updated to 1.0.5 (fixes CVE-2008-1372).
 

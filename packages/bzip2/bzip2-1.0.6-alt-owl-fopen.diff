@@ -1,8 +1,8 @@
 --- bzip2/bzip2recover.c
 +++ bzip2/bzip2recover.c
-@@ -20,10 +20,20 @@
- /* This program is a complete hack and should be rewritten properly.
- 	 It isn't very complicated. */
+@@ -24,10 +24,20 @@
+ #include <config.h>
+ #endif
  
 +#define BZ_UNIX      1
 +#if defined(_WIN32) && !defined(__CYGWIN__)
@@ -21,7 +21,7 @@
  
  
  /* This program records bit locations in the file to be recovered.
-@@ -270,6 +280,33 @@ static Bool endsInBz2 ( Char* name )
+@@ -274,6 +284,33 @@ static Bool endsInBz2 ( Char* name )
  }
  
  
@@ -55,7 +55,7 @@
  /*---------------------------------------------------*/
  /*---                                             ---*/
  /*---------------------------------------------------*/
-@@ -486,7 +523,7 @@ Int32 main ( Int32 argc, Char** argv )
+@@ -490,7 +527,7 @@ Int32 main ( Int32 argc, Char** argv )
           fprintf ( stderr, "   writing block %d to `%s' ...\n",
                             wrBlock+1, outFileName );
  

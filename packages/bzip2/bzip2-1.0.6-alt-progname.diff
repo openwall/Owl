@@ -1,5 +1,5 @@
---- bzip2-1.0.4.orig/bzip2.c	2007-01-10 22:05:04 +0000
-+++ bzip2-1.0.4/bzip2.c	2007-01-10 22:06:38 +0000
+--- bzip2/bzip2.c
++++ bzip2/bzip2.c
 @@ -209,8 +209,7 @@ Int32   longestFileName;
  Char    inName [FILE_NAME_LEN];
  Char    outName[FILE_NAME_LEN];
@@ -10,7 +10,7 @@
  FILE    *outputHandleJustInCase;
  Int32   workFactor;
  
-@@ -1795,7 +1794,6 @@ void addFlagsFromEnvVar ( Cell** argList
+@@ -1795,7 +1794,6 @@ void addFlagsFromEnvVar ( Cell** argList, const Char* varName )
  IntNative main ( IntNative argc, Char *argv[] )
  {
     Int32  i, j;
@@ -18,7 +18,7 @@
     Cell   *argList;
     Cell   *aa;
     Bool   decode;
-@@ -1834,10 +1832,7 @@ IntNative main ( IntNative argc, Char *a
+@@ -1834,10 +1832,7 @@ IntNative main ( IntNative argc, Char *argv[] )
     copyFileName ( inName,  (Char*)"(none)" );
     copyFileName ( outName, (Char*)"(none)" );
  
@@ -30,9 +30,9 @@
  
  
     /*-- Copy flags from env var BZIP2, and 
---- bzip2-1.0.4.orig/bzip2recover.c	2007-01-10 22:05:04 +0000
-+++ bzip2-1.0.4/bzip2recover.c	2007-01-10 22:06:38 +0000
-@@ -67,7 +67,7 @@ typedef  unsigned char  Bool;
+--- bzip2/bzip2recover.c
++++ bzip2/bzip2recover.c
+@@ -75,7 +75,7 @@ typedef  unsigned char  Bool;
  
  Char inFileName[BZ_MAX_FILENAME];
  Char outFileName[BZ_MAX_FILENAME];
@@ -41,7 +41,7 @@
  
  MaybeUInt64 bytesOut = 0;
  MaybeUInt64 bytesIn  = 0;
-@@ -333,7 +333,7 @@ Int32 main ( Int32 argc, Char** argv )
+@@ -350,7 +350,7 @@ Int32 main ( Int32 argc, Char** argv )
     UInt32      buffHi, buffLo, blockCRC;
     Char*       p;
  

@@ -5,9 +5,9 @@
 # processing any more options.
 # Trim usage text to bare minimum.
 
---- bzip2-1.0.4.orig/bzip2.c	2007-01-10 22:04:48 +0000
-+++ bzip2-1.0.4/bzip2.c	2007-01-10 22:05:04 +0000
-@@ -221,8 +221,11 @@ static void    configError           ( v
+--- bzip2/bzip2.c
++++ bzip2/bzip2.c
+@@ -221,8 +221,11 @@ static void    configError           ( void )        NORETURN;
  static void    crcError              ( void )        NORETURN;
  static void    cleanUpAndFail        ( Int32 )       NORETURN;
  static void    compressedStreamEOF   ( void )        NORETURN;
@@ -38,7 +38,7 @@
  {
     if ( strlen(from) > FILE_NAME_LEN-10 )  {
        fprintf (
-@@ -941,7 +944,7 @@ void copyFileName ( Char* to, Char* from
+@@ -941,7 +944,7 @@ void copyFileName ( Char* to, Char* from )
  
  /*---------------------------------------------*/
  static 
@@ -56,7 +56,7 @@
  {
  #  if BZ_UNIX
     FILE*     fp;
-@@ -982,7 +985,7 @@ FILE* fopen_output_safely ( Char* name, 
+@@ -982,7 +985,7 @@ FILE* fopen_output_safely ( Char* name, const char* mode )
    if in doubt, return True
  --*/
  static 
@@ -83,7 +83,7 @@
  {
  #  if BZ_UNIX
     IntNative retVal;
-@@ -1051,7 +1054,7 @@ void saveInputFileMetaInfo ( Char *srcNa
+@@ -1051,7 +1054,7 @@ void saveInputFileMetaInfo ( Char *srcName )
  
  
  static 
@@ -92,7 +92,7 @@
  {
  #  if BZ_UNIX
     IntNative      retVal;
-@@ -1084,7 +1087,7 @@ void applySavedFileAttrToOutputFile ( In
+@@ -1084,7 +1087,7 @@ void applySavedFileAttrToOutputFile ( IntNative fd )
  
  /*---------------------------------------------*/
  static 
@@ -110,7 +110,7 @@
  {
     Int32 ns = strlen(s);
     Int32 nx = strlen(suffix);
-@@ -1134,7 +1137,7 @@ Bool mapSuffix ( Char* name, 
+@@ -1134,7 +1137,7 @@ Bool mapSuffix ( Char* name,
  
  /*---------------------------------------------*/
  static 
@@ -206,7 +206,7 @@
  {
     if (root == NULL) {
        Cell *tmp = mkCell();
-@@ -1748,7 +1763,7 @@ Cell *snocString ( Cell *root, Char *nam
+@@ -1748,7 +1763,7 @@ Cell *snocString ( Cell *root, Char *name )
  
  /*---------------------------------------------*/
  static 
@@ -215,7 +215,7 @@
  {
     Int32 i, j, k;
     Char *envbase, *p;
-@@ -1896,13 +1911,11 @@ IntNative main ( IntNative argc, Char *a
+@@ -1896,13 +1911,11 @@ IntNative main ( IntNative argc, Char *argv[] )
                 case 'V':
                 case 'L': license();            break;
                 case 'v': verbosity++; break;
@@ -230,7 +230,7 @@
                           break;
              }
           }
-@@ -1928,12 +1941,11 @@ IntNative main ( IntNative argc, Char *a
+@@ -1928,12 +1941,11 @@ IntNative main ( IntNative argc, Char *argv[] )
        if (ISFLAG("--fast"))              blockSize100k = 1;          else
        if (ISFLAG("--best"))              blockSize100k = 9;          else
        if (ISFLAG("--verbose"))           verbosity++;                else

@@ -1,5 +1,5 @@
---- bzip2-1.0.4/bzdiff.orig	2007-01-10 16:00:19 +0000
-+++ bzip2-1.0.4/bzdiff	2007-01-10 16:09:48 +0000
+--- bzip2/bzdiff
++++ bzip2/bzdiff
 @@ -12,7 +12,10 @@
  # necessary) and fed to cmp or diff.  The exit status from cmp
  # or diff is preserved.
