@@ -1,21 +1,20 @@
-# $Owl: Owl/packages/grep/grep.spec,v 1.27 2010/08/27 17:06:11 solar Exp $
+# $Owl: Owl/packages/grep/grep.spec,v 1.28 2010/09/21 18:22:02 segoon Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
-Version: 2.6.3
+Version: 2.7
 Release: owl1
 Epoch: 1
 License: GPL
 Group: Applications/Text
-Source: ftp://ftp.gnu.org/gnu/grep/grep-%version.tar.bz2
-Patch0: grep-2.6.3-deb-alt-bigfile.diff
+Source: ftp://ftp.gnu.org/gnu/grep/grep-%version.tar.xz
+Patch0: grep-2.7-deb-alt-bigfile.diff
 Patch1: grep-2.6.3-owl-info.diff
 Patch2: grep-2.6.3-owl-fixes.diff
 Patch3: grep-2.6.3-owl-program_name.diff
-Patch4: grep-2.6.3-alt-owl-bound.diff
+Patch4: grep-2.7-alt-owl-bound.diff
 Patch5: grep-2.6.3-deb-man.diff
-Patch6: grep-2.6.3-deb-mmap.diff
-Patch7: grep-2.6.3-deb-xmalloc.diff
+Patch6: grep-2.7-owl-warning.diff
 PreReq: /sbin/install-info
 BuildRequires: pcre-devel
 BuildRequires: texinfo, gettext, sed
@@ -36,7 +35,6 @@ include grep, egrep, and fgrep.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
 bzip2 -9k ChangeLog
 
 %{expand:%%define optflags %optflags -Wall}
@@ -83,6 +81,12 @@ fi
 %_mandir/*/*
 
 %changelog
+* Tue Sep 21 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:2.7-owl1
+- Updated to 2.7.
+- Dropped -deb-mmap and -deb-xmalloc patches (fixed in upstream).
+- Updated -deb-alt-bigfile patch.
+- Silenced compiler warning.
+
 * Thu Aug 26 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:2.6.3-owl1
 - Updated patches and dropped those fixed upstream.
 - Added patches from Debian.

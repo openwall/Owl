@@ -1,0 +1,40 @@
+diff -uNrpa grep-2.7.old/src/main.c grep-2.7/src/main.c
+--- grep-2.7.old/src/main.c	2010-09-21 16:03:48 +0000
++++ grep-2.7/src/main.c	2010-09-21 16:05:41 +0000
+@@ -880,10 +880,10 @@ prpending (char const *lim)
+       size_t match_size;
+       --pending;
+       if (outleft
+-          || ((execute(lastout, nl + 1 - lastout,
++          || ((execute(lastout, (nl?:lim) + 1 - lastout,
+                        &match_size, NULL) == (size_t) -1)
+               == !out_invert))
+-        prline (lastout, nl + 1, SEP_CHAR_REJECTED);
++        prline (lastout, (nl?:lim) + 1, SEP_CHAR_REJECTED);
+       else
+         pending = 0;
+     }
+@@ -928,7 +928,10 @@ prtext (char const *beg, char const *lim
+       while (p < beg)
+         {
+           char const *nl = memchr (p, eol, beg - p);
+-          nl++;
++          if (nl)
++            nl++;
++          else
++            nl = beg;
+           prline (p, nl, SEP_CHAR_REJECTED);
+           p = nl;
+         }
+@@ -940,7 +943,10 @@ prtext (char const *beg, char const *lim
+       for (n = 0; p < lim && n < outleft; n++)
+         {
+           char const *nl = memchr (p, eol, lim - p);
+-          nl++;
++          if (nl)
++            nl++;
++          else
++            nl = lim;
+           if (!out_quiet)
+             prline (p, nl, SEP_CHAR_SELECTED);
+           p = nl;

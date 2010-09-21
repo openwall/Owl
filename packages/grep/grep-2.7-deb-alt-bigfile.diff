@@ -1,7 +1,7 @@
-diff -uNrp grep-2.6.3.orig/src/main.c grep-2.6.3/src/main.c
---- grep-2.6.3.orig/src/main.c	2010-08-26 10:42:34 +0000
-+++ grep-2.6.3/src/main.c	2010-08-26 14:43:38 +0000
-@@ -266,6 +266,13 @@ static struct exclude *excluded_director
+diff -uNrpa grep-2.7.old/src/main.c grep-2.7/src/main.c
+--- grep-2.7.old/src/main.c	2010-09-21 16:03:48 +0000
++++ grep-2.7/src/main.c	2010-09-21 16:29:41 +0000
+@@ -274,6 +274,13 @@ static struct exclude *excluded_director
  static char const short_options[] =
  "0123456789A:B:C:D:EFGHIPTUVX:abcd:e:f:hiKLlm:noqRrsuvwxyZz";
  
@@ -15,20 +15,20 @@ diff -uNrp grep-2.6.3.orig/src/main.c grep-2.6.3/src/main.c
  /* Non-boolean long options that have no corresponding short equivalents.  */
  enum
  {
-@@ -489,7 +496,10 @@ fillbuf (size_t save, struct stats const
+@@ -509,7 +516,10 @@ fillbuf (size_t save, struct stats const
        /* Grow newsize until it is at least as great as minsize.  */
        for (newsize = bufalloc - pagesize - 1; newsize < minsize; newsize *= 2)
- 	if (newsize * 2 < newsize || newsize * 2 + pagesize + 1 < newsize * 2)
--	  xalloc_die ();
+         if (newsize * 2 < newsize || newsize * 2 + pagesize + 1 < newsize * 2)
+-          xalloc_die ();
 +	  {
 +	    errno = ENOMEM;
 +	    return 0;
 +	  }
  
        /* Try not to allocate more memory than the file size indicates,
- 	 as that might cause unnecessary memory exhaustion if the file
-@@ -511,7 +521,9 @@ fillbuf (size_t save, struct stats const
- 	 for byte sentinels fore and aft.  */
+          as that might cause unnecessary memory exhaustion if the file
+@@ -531,7 +541,9 @@ fillbuf (size_t save, struct stats const
+          for byte sentinels fore and aft.  */
        newalloc = newsize + pagesize + 1;
  
 -      newbuf = bufalloc < newalloc ? xmalloc (bufalloc = newalloc) : buffer;
@@ -38,7 +38,7 @@ diff -uNrp grep-2.6.3.orig/src/main.c grep-2.6.3/src/main.c
        readbuf = ALIGN_TO (newbuf + 1 + save, pagesize);
        bufbeg = readbuf - save;
        memmove (bufbeg, buffer + saved_offset, save);
-@@ -1739,6 +1751,7 @@ main (int argc, char **argv)
+@@ -1759,6 +1771,7 @@ main (int argc, char **argv)
    int opt, cc, status;
    int default_context;
    FILE *fp;
@@ -46,7 +46,7 @@ diff -uNrp grep-2.6.3.orig/src/main.c grep-2.6.3/src/main.c
  
    initialize_main (&argc, &argv);
    set_program_name (argv[0]);
-@@ -2154,29 +2167,29 @@ There is NO WARRANTY, to the extent perm
+@@ -2163,29 +2176,29 @@ main (int argc, char **argv)
    if (max_count == 0)
      exit (EXIT_FAILURE);
  
@@ -56,24 +56,24 @@ diff -uNrp grep-2.6.3.orig/src/main.c grep-2.6.3/src/main.c
 +  status = 1;
 +  while (1)
      {
--	status = 1;
--	do
--	{
--	  char *file = argv[optind];
--	  if ((included_patterns || excluded_patterns)
--	      && !isdir (file))
--	    {
--	      if (included_patterns &&
--		  ! excluded_file_name (included_patterns, file))
--		continue;
--	      if (excluded_patterns &&
--		  excluded_file_name (excluded_patterns, file))
--		continue;
--	    }
--	  status &= grepfile (strcmp (file, "-") == 0 ? (char *) NULL : file,
--			      &stats_base);
--	}
--	while ( ++optind < argc);
+-        status = 1;
+-        do
+-        {
+-          char *file = argv[optind];
+-          if ((included_patterns || excluded_patterns)
+-              && !isdir (file))
+-            {
+-              if (included_patterns
+-                  && excluded_file_name (included_patterns, file))
+-                continue;
+-              if (excluded_patterns
+-                  && excluded_file_name (excluded_patterns, file))
+-                continue;
+-            }
+-          status &= grepfile (STREQ (file, "-") ? (char *) NULL : file,
+-                              &stats_base);
+-        }
+-        while ( ++optind < argc);
 +      char *file = *file_list++;
 +
 +      if (file == NULL)
@@ -82,14 +82,14 @@ diff -uNrp grep-2.6.3.orig/src/main.c grep-2.6.3/src/main.c
 +      if ((included_patterns || excluded_patterns)
 +         && !isdir (file))
 +       {
-+         if (included_patterns &&
-+             ! excluded_file_name (included_patterns, file))
++         if (included_patterns
++             && excluded_file_name (included_patterns, file))
 +           continue;
-+         if (excluded_patterns &&
-+             excluded_file_name (excluded_patterns, file))
++         if (excluded_patterns
++             && excluded_file_name (excluded_patterns, file))
 +           continue;
 +       }
-+      status &= grepfile (strcmp (file, "-") == 0
++      status &= grepfile (STREQ (file, "-")
 +                         ? (char *) NULL : file, &stats_base);
      }
 -  else

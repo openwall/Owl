@@ -1,0 +1,12 @@
+diff -uNrpa grep-2.7.old/lib/trim.c grep-2.7/lib/trim.c
+--- grep-2.7.old/lib/trim.c	2010-09-21 16:03:48 +0000
++++ grep-2.7/lib/trim.c	2010-09-21 16:56:43 +0000
+@@ -66,7 +66,7 @@ trim2 (const char *s, int how)
+       if (how != TRIM_LEADING)
+         {
+           int state = 0;
+-          char *r IF_LINT (= NULL); /* used only while state = 2 */
++          char *r = NULL; /* used only while state = 2 */
+ 
+           mbi_init (i, d, strlen (d));
+ 
