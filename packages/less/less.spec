@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/less/less.spec,v 1.18 2009/06/18 21:48:37 solar Exp $
+# $Owl: Owl/packages/less/less.spec,v 1.19 2010/09/22 10:46:53 segoon Exp $
 
 Summary: A text file browser similar to more, but better.
 Name: less
 Version: 358
-Release: owl7
+Release: owl8
 License: GPL
 Group: Applications/Text
 URL: http://www.greenwoodsoftware.com/less/
@@ -46,6 +46,9 @@ install -m 755 %_sourcedir/less.{sh,csh} %buildroot/etc/profile.d/
 %_mandir/man1/*
 
 %changelog
+* Wed Sep 22 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 358-owl8
+- Handle lzma and xz suffixes in lesspipe.sh.
+
 * Sun Jul 07 2002 Solar Designer <solar-at-owl.openwall.com> 358-owl7
 - Use grep -q in lesspipe.sh.
 

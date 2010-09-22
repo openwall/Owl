@@ -11,9 +11,14 @@ lesspipe() {
   *.tar.bz2) bzip2 -dc "$1" | tar tvvf - 2>/dev/null ;;
   *.tar.Z) tar tzvvf "$1" 2>/dev/null ;;
   *.tar.z) tar tzvvf "$1" 2>/dev/null ;;
+  *.tar.lzma) lzma -dc "$1" | tar tvvf - 2>/dev/null ;;
+  *.tar.xz) xz -dc "$1" | tar tvvf - 2>/dev/null ;;
+  *.txz) xz -dc "$1" | tar tvvf - 2>/dev/null ;;
   *.Z) gzip -dc "$1" 2>/dev/null ;; # View compressed files correctly
   *.z) gzip -dc "$1" 2>/dev/null ;;
   *.zip) unzip -l "$1" 2>/dev/null ;;
+  *.lzma) lzma -dc "$1" ;;
+  *.xz) xz -dc "$1" ;;
   *.rpm) rpm -qpivl "$1" 2>/dev/null ;; # view contents of .rpm files
   *.1|*.2|*.3|*.4|*.5|*.6|*.7|*.8|*.9|*.n|*.man)
     if file -L - < "$1" | grep -q troff; then
