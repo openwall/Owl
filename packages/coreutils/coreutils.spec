@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.30 2010/03/26 04:00:43 solar Exp $
+# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.31 2010/09/22 10:45:58 segoon Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
 Version: 5.97
-Release: owl4
+Release: owl5
 License: GPL
 Group: System Environment/Base
 URL: http://www.gnu.org/software/%name/
@@ -38,7 +38,7 @@ Patch8: coreutils-8.1-owl-tests-touch.diff
 
 # Owl/ALT specific
 Patch10: coreutils-5.92-owl-info-true-false.diff
-Patch11: coreutils-5.91-alt-owl-dircolors.diff
+Patch11: coreutils-5.97-alt-owl-dircolors.diff
 Patch12: coreutils-5.3.0-alt-without-su-uptime.diff
 Patch13: coreutils-5.3.1-alt-ls-dir-vdir.diff
 Patch14: coreutils-5.91-alt-posix2_version.diff
@@ -256,6 +256,9 @@ fi
 %doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
+* Wed Sep 22 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.97-owl5
+- Added .lzma, .txz and .xz suffixes to DIR_COLORS.
+
 * Mon Mar 22 2010 Solar Designer <solar-at-owl.openwall.com> 5.97-owl4
 - In exit.c, invoke the syscall via the _syscall1() macro rather than via the
 glibc wrapper when we're compiling for 32-bit x86, because our current glibc
