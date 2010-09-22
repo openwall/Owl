@@ -46,6 +46,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/09/21	Package: grep
+Updated to 2.7.
+
 2010/09/21	Package: bzip2
 SECURITY FIX	Severity: high, local, passive
 Updated to 1.0.6.  This release fixes an integer overflow vulnerability
@@ -1382,4 +1385,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.267 2010/09/21 11:43:59 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.268 2010/09/22 08:52:38 segoon Exp $
