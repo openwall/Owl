@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/grep/grep.spec,v 1.28 2010/09/21 18:22:02 segoon Exp $
+# $Owl: Owl/packages/grep/grep.spec,v 1.29 2010/09/22 09:22:00 solar Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
@@ -14,7 +14,7 @@ Patch2: grep-2.6.3-owl-fixes.diff
 Patch3: grep-2.6.3-owl-program_name.diff
 Patch4: grep-2.7-alt-owl-bound.diff
 Patch5: grep-2.6.3-deb-man.diff
-Patch6: grep-2.7-owl-warning.diff
+Patch6: grep-2.7-owl-warnings.diff
 PreReq: /sbin/install-info
 BuildRequires: pcre-devel
 BuildRequires: texinfo, gettext, sed
