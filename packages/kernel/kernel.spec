@@ -1,22 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.32 2010/09/02 23:18:28 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.33 2010/09/24 20:50:52 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 194.11.3.el5.028stab071.3
+%define ovzversion 194.11.3.el5.028stab071.5
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab071.3
-Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
+URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab071.5
+Source0: linux-2.6.18.tar.xz
+# Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
-Patch0: patch-%ovzversion-combined.bz2
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab071.3/patches/patch-194.11.3.el5.028stab071.3-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab071.3/patches/patch-194.11.3.el5.028stab071.3-combined.gz.asc
+Patch0: patch-%ovzversion-combined.xz
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab071.5/patches/patch-194.11.3.el5.028stab071.5-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab071.5/patches/patch-194.11.3.el5.028stab071.5-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -102,6 +103,18 @@ done
 %files fake
 
 %changelog
+* Fri Sep 24 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.11.3.el5.028stab071.5-owl1
+- Updated to 2.6.18-194.11.3.el5.028stab071.5.
+- Added a fix for CVE-2010-3081 from 028stab070.5 (the same as Red Hat's
+linux-2.6-misc-make-compat_alloc_user_space-incorporate-the-access_ok.patch
+from their -194.11.4 kernel, but adjusted to apply on top of OpenVZ).
+- Restricted permissions on /proc/kallsyms (0444 to 0400).
+- Enabled building of DRBD as a module (also enabled connector and HMAC).
+- Set CONFIG_FUSION_SPI=y and CONFIG_PCNET32=y (these were at =m before) to run
+under VMware out of the box, but switched CONFIG_IXGBE and CONFIG_IXGB (large
+10G Ethernet drivers) from =y to =m (have to fit on a 2.88 MB "floppy").
+- Switched to using xz-compressed source tarball and OpenVZ patch.
+
 * Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.11.3.el5.028stab071.3-owl1
 - Updated to 2.6.18-194.11.3.el5.028stab071.3.
 
