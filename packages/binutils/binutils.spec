@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/binutils/binutils.spec,v 1.22 2006/04/04 00:28:34 ldv Exp $
+# $Owl: Owl/packages/binutils/binutils.spec,v 1.23 2010/09/30 18:48:37 segoon Exp $
 
 %define BUILD_HJL 1
 
@@ -8,8 +8,8 @@
 
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.15.94.0.2.2
-Release: owl4
+Version: 2.20.51.0.11
+Release: owl1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils/
@@ -18,21 +18,8 @@ Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%version.tar.bz2
 %else
 Source: ftp://ftp.gnu.org/gnu/binutils/binutils-%version.tar.gz
 %endif
-Patch0: binutils-2.15.94.0.2-rh-script-as-needed.diff
-Patch1: binutils-2.15.94.0.2-rh-strip-dynamic.diff
-Patch2: binutils-2.15.93.0.2-rh-readelf-bound.diff
-Patch3: binutils-2.15.94.0.2-rh-gcc4.diff
-Patch4: binutils-2.15.94.0.2-rh-arhdr.diff
-Patch5: binutils-2.15.94.0.2-rh-ld-speedup.diff
-Patch6: binutils-2.15.94.0.2-rh-robustify.diff
-Patch7: binutils-2.15.94.0.2-rh-robustify2.diff
-Patch8: binutils-2.15.94.0.2-rh-robustify3.diff
-Patch9: binutils-2.15.94.0.2-rh-robustify4.diff
-Patch10: binutils-2.15.94.0.2-rh-robustify5.diff
-Patch11: binutils-2.15.94.0.2-rh-robustify6.diff
-Patch12: binutils-2.15.94.0.2-alt-strings-mem.diff
-Patch13: binutils-2.15.94.0.2-owl-searchpath.diff
-Patch14: binutils-2.14.90.0.8-owl-info.diff
+Patch0: binutils-2.20.51.0.11-owl-info.diff
+Patch1: binutils-2.20.51.0.11-rh-robustify3.diff
 PreReq: /sbin/ldconfig, /sbin/install-info
 ExcludeArch: ia64
 BuildRequires: texinfo, gettext, flex, bison, libtool
@@ -55,24 +42,12 @@ addresses to file and line).
 
 %prep
 %setup -q
-%patch0 -p0
-%patch1 -p0
-%patch2 -p0
-%patch3 -p0
-%patch4 -p0
-%patch5 -p0
-%patch6 -p0
-%patch7 -p0
-%patch8 -p0
-%patch9 -p0
-%patch10 -p0
-%patch11 -p0
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
+%patch0 -p1
+%patch1 -p1
 
 # Apply additional Linux patches.
-%_buildshell patches/README
+#( cd bfd && make headers )
+#%_buildshell patches/README
 
 %build
 mkdir build-%_target_platform
@@ -119,7 +94,7 @@ CFLAGS="%optflags" ../configure \
 	--infodir=%_infodir \
 	--enable-shared \
 	$ADDITIONAL_TARGETS
-%__make tooldir=%_prefix all info
+%__make -j1 tooldir=%_prefix all info
 
 %install
 rm -rf %buildroot
@@ -174,6 +149,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/*.mo
 
 %changelog
+* Thu Sep 30 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.20.51.0.11-owl1
+- Updated to 2.20.51.0.11.
+
 * Wed Jan 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.15.94.0.2.2-owl4
 - Imported further bfd, readelf and binutils robustification patches from FC4.
 

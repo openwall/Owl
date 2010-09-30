@@ -1,0 +1,17 @@
+diff -uNrp binutils-2.20.1.orig/binutils/readelf.c binutils-2.20.1/binutils/readelf.c
+--- binutils-2.20.1.orig/binutils/readelf.c	2010-01-14 10:48:23 +0000
++++ binutils-2.20.1/binutils/readelf.c	2010-08-31 15:31:07 +0000
+@@ -4712,6 +4712,12 @@ process_section_groups (FILE * file)
+ 			 entry, i, elf_header.e_shnum - 1);
+ 		  continue;
+ 		}
++              else if (entry >= SHN_LORESERVE && entry <= SHN_HIRESERVE)
++                {
++                  error (_("invalid section [%5u] in group section [%5u]\n"),
++                         entry, i);
++                  continue;
++                }
+ 
+ 	      if (section_headers_groups [entry] != NULL)
+ 		{
+Двоичные файлы binutils-2.20.1.orig/binutils/.readelf.c.swp и binutils-2.20.1/binutils/.readelf.c.swp различаются
