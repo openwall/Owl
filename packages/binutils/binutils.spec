@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/binutils/binutils.spec,v 1.24 2010/09/30 18:53:41 segoon Exp $
+# $Owl: Owl/packages/binutils/binutils.spec,v 1.25 2010/09/30 20:01:57 segoon Exp $
 
 %define BUILD_HJL 1
 
@@ -14,7 +14,7 @@ License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils/
 %if %BUILD_HJL
-Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%version.tar.bz2
+Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%version.tar.xz
 %else
 Source: ftp://ftp.gnu.org/gnu/binutils/binutils-%version.tar.gz
 %endif
