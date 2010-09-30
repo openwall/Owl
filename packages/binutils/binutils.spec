@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/binutils/binutils.spec,v 1.23 2010/09/30 18:48:37 segoon Exp $
+# $Owl: Owl/packages/binutils/binutils.spec,v 1.24 2010/09/30 18:53:41 segoon Exp $
 
 %define BUILD_HJL 1
 
@@ -151,6 +151,8 @@ fi
 %changelog
 * Thu Sep 30 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.20.51.0.11-owl1
 - Updated to 2.20.51.0.11.
+- Dropped almost all patches (fixed in HJL's version).
+- Updated owl-info and rh-robustify3 patches.
 
 * Wed Jan 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.15.94.0.2.2-owl4
 - Imported further bfd, readelf and binutils robustification patches from FC4.
