@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.115 2010/03/30 12:46:59 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.116 2010/10/03 18:39:12 segoon Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -78,6 +78,7 @@ Patch409: glibc-2.3.3-owl-tmp-scripts.diff
 Patch410: glibc-2.3.3-owl-rpcgen-cpp.diff
 Patch411: glibc-2.3.5-owl-alt-sanitize-env.diff
 Patch412: glibc-2.3.6-owl-crypt-wb.diff
+Patch413: glibc-2.3.6-owl-rh-pld-linker.diff
 
 Requires: /etc/nsswitch.conf
 Provides: glibc-crypt_blowfish = %crypt_bf_version, ldconfig
@@ -249,6 +250,8 @@ install -pm644 %_sourcedir/crypt_freesec.[ch] crypt/
 %patch411 -p1
 # add atomic_write_barrier() before setting the UFC crypt() "initialized" flag
 %patch412 -p1
+# allow binutils v2.2x
+%patch413 -p1
 
 # XXX: check sparcv9 builds and probably fix this.
 #%ifarch sparcv9
@@ -465,6 +468,9 @@ fi
 %endif
 
 %changelog
+* Sun Oct 03 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.3.6-owl11
+- Fixed build with binutils 2.20.x.
+
 * Tue Mar 30 2010 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl10
 - Added atomic_write_barrier() before setting the "initialized" flag in
 crypt/crypt_util.c: __init_des_r() (upstream code), as well as in
