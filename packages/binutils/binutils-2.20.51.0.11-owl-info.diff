@@ -66,7 +66,6 @@ diff -uNrp binutils-2.20.51.0.11.old/binutils/doc/binutils.texi binutils-2.20.51
  @end direntry
  
  @titlepage
-Двоичные файлы binutils-2.20.51.0.11.old/binutils/doc/.binutils.texi.swp и binutils-2.20.51.0.11/binutils/doc/.binutils.texi.swp различаются
 diff -uNrp binutils-2.20.51.0.11.old/etc/standards.texi binutils-2.20.51.0.11/etc/standards.texi
 --- binutils-2.20.51.0.11.old/etc/standards.texi	2010-09-30 16:55:34 +0000
 +++ binutils-2.20.51.0.11/etc/standards.texi	2010-09-30 17:06:26 +0000

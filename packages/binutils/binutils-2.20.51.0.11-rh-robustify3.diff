@@ -14,4 +14,3 @@ diff -uNrp binutils-2.20.1.orig/binutils/readelf.c binutils-2.20.1/binutils/read
  
  	      if (section_headers_groups [entry] != NULL)
  		{
-Двоичные файлы binutils-2.20.1.orig/binutils/.readelf.c.swp и binutils-2.20.1/binutils/.readelf.c.swp различаются
