@@ -46,6 +46,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/10/04	Package: binutils
+Updated to 2.20.51.0.11.
+
 2010/09/24	Package: hdparm
 Updated to 9.32.
 
@@ -1404,4 +1407,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.271 2010/10/04 00:43:23 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.272 2010/10/04 19:58:30 segoon Exp $
