@@ -35,32 +35,32 @@ diff -uNrp binutils-2.20.51.0.11.old/binutils/doc/binutils.texi binutils-2.20.51
 -* elfedit: (binutils)elfedit.     Update the ELF header of ELF files.
 -* windmc: (binutils)windmc.	  Generator for Windows message resources.
 -* windres: (binutils)windres.	  Manipulate Windows resources.
-+* addr2line: (binutils)addr2line.               Convert addresses to file an
++* addr2line: (binutils)addr2line.               Convert addresses to file and
 +                                                line
-+* ar: (binutils)ar.                             Create, modify, and extract fro
++* ar: (binutils)ar.                             Create, modify, and extract from
 +                                                archives
 +* c++filt: (binutils)c++filt.                   Filter to demangle encoded C+
 +                                                symbols
 +* cxxfilt: (binutils)c++filt.                   MS-DOS name for c++filt
-+* dlltool: (binutils)dlltool.                   Create files needed to buil
++* dlltool: (binutils)dlltool.                   Create files needed to build
 +                                                and use DLLs
-+* nlmconv: (binutils)nlmconv.                   Converts object code into an NL
++* nlmconv: (binutils)nlmconv.                   Converts object code into an NLM
 +* nm: (binutils)nm.                             List symbols from object files
 +* objcopy: (binutils)objcopy.                   Copy and translate object files
-+* objdump: (binutils)objdump.                   Display information from objec
++* objdump: (binutils)objdump.                   Display information from object
 +                                                files
-+* ranlib: (binutils)ranlib.                     Generate index to archiv
++* ranlib: (binutils)ranlib.                     Generate index to archive
 +                                                contents
-+* readelf: (binutils)readelf.                   Display the contents of EL
++* readelf: (binutils)readelf.                   Display the contents of ELF
 +                                                format files
-+* size: (binutils)size.                         List section sizes and tota
++* size: (binutils)size.                         List section sizes and total
 +                                                size
-+* strings: (binutils)strings.                   List printable strings fro
++* strings: (binutils)strings.                   List printable strings from
 +                                                files
 +* strip: (binutils)strip.                       Discard symbols
-+* elfedit: (binutils)elfedit.                   Update the ELF header of EL
++* elfedit: (binutils)elfedit.                   Update the ELF header of ELF
 +                                                files
-+* windmc: (binutils)windmc.                     Generator for Windows messag
++* windmc: (binutils)windmc.                     Generator for Windows message
 +                                                resources
 +* windres: (binutils)windres.                   Manipulate Windows resources
  @end direntry
