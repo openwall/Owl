@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/binutils/binutils.spec,v 1.25 2010/09/30 20:01:57 segoon Exp $
+# $Owl: Owl/packages/binutils/binutils.spec,v 1.26 2010/10/04 19:54:43 segoon Exp $
 
 %define BUILD_HJL 1
 
@@ -9,7 +9,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.20.51.0.11
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils/
@@ -20,6 +20,7 @@ Source: ftp://ftp.gnu.org/gnu/binutils/binutils-%version.tar.gz
 %endif
 Patch0: binutils-2.20.51.0.11-owl-info.diff
 Patch1: binutils-2.20.51.0.11-rh-robustify3.diff
+Patch2: binutils-2.20.51.0.11-owl-tmp.diff
 PreReq: /sbin/ldconfig, /sbin/install-info
 ExcludeArch: ia64
 BuildRequires: texinfo, gettext, flex, bison, libtool
@@ -44,6 +45,7 @@ addresses to file and line).
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 # Apply additional Linux patches.
 #( cd bfd && make headers )
@@ -94,7 +96,8 @@ CFLAGS="%optflags" ../configure \
 	--infodir=%_infodir \
 	--enable-shared \
 	$ADDITIONAL_TARGETS
-%__make -j1 tooldir=%_prefix all info
+%__make tooldir=%_prefix all
+%__make tooldir=%_prefix info
 
 %install
 rm -rf %buildroot
@@ -149,6 +152,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/*.mo
 
 %changelog
+* Mon Oct 04 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.20.51.0.11-owl2
+- Fix temporary file handling.
+
 * Thu Sep 30 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.20.51.0.11-owl1
 - Updated to 2.20.51.0.11.
 - Dropped almost all patches (fixed in HJL's version).
