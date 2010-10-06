@@ -1,15 +1,15 @@
-# $Owl: Owl/packages/ed/ed.spec,v 1.24 2009/09/09 16:45:50 ldv Exp $
+# $Owl: Owl/packages/ed/ed.spec,v 1.25 2010/10/06 19:04:55 segoon Exp $
 
 Summary: The GNU line-oriented text editor.
 Name: ed
-Version: 1.4
+Version: 1.5
 Release: owl1
 License: GPLv3+
 Group: Applications/Text
 URL: http://www.gnu.org/software/ed/
 Source: ftp://ftp.gnu.org/gnu/ed/ed-%version.tar.gz
 # Signature: ftp://ftp.gnu.org/gnu/ed/ed-%version.tar.gz.sig
-Patch0: ed-1.4-owl-alt-progname.diff
+Patch0: ed-1.5-owl-alt-progname.diff
 Patch1: ed-1.4-alt-owl-info.diff
 Patch2: ed-1.4-owl-man.diff
 PreReq: /sbin/install-info
@@ -60,6 +60,10 @@ fi
 %_mandir/man1/*ed.*
 
 %changelog
+* Wed Oct 06 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.5-owl1
+- Updated to 1.5.
+- Updated owl-alt-progname patch.
+
 * Tue Aug 25 2009 Michail Litvak <mci-at-owl.openwall.com> 1.4-owl1
 - Updated to 1.4.
 - Removed outdated patches (there was significant source changes).
