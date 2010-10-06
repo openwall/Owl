@@ -1,0 +1,1035 @@
+diff -uNrp man-pages-3.28.old/man3/dbopen.3 man-pages-3.28/man3/dbopen.3
+--- man-pages-3.28.old/man3/dbopen.3	2010-10-06 15:53:35 +0000
++++ man-pages-3.28/man3/dbopen.3	2010-10-06 15:55:35 +0000
+@@ -40,6 +40,7 @@ dbopen \- database access methods
+ .B #include <sys/types.h>
+ .B #include <limits.h>
+ .B #include <db.h>
++.B #include <fcntl.h>
+ 
+ .BI "DB *dbopen(const char *" file ", int " flags ", int " mode \
+ ", DBTYPE " type ,
+diff -uNrp man-pages-3.28.old/man3/fgetpwent.3 man-pages-3.28/man3/fgetpwent.3
+--- man-pages-3.28.old/man3/fgetpwent.3	2010-10-06 15:53:35 +0000
++++ man-pages-3.28/man3/fgetpwent.3	2010-10-06 15:55:35 +0000
+@@ -67,7 +67,7 @@ The \fIpasswd\fP structure is defined in
+ .nf
+ struct passwd {
+     char   *pw_name;       /* username */
+-    char   *pw_passwd;     /* user password */
++    char   *pw_passwd;     /* user password hash or a placeholder */
+     uid_t   pw_uid;        /* user ID */
+     gid_t   pw_gid;        /* group ID */
+     char   *pw_gecos;      /* real name */
+diff -uNrp man-pages-3.28.old/man3/getpw.3 man-pages-3.28/man3/getpw.3
+--- man-pages-3.28.old/man3/getpw.3	2010-10-06 15:53:35 +0000
++++ man-pages-3.28/man3/getpw.3	2010-10-06 15:55:35 +0000
+@@ -55,7 +55,7 @@ The \fIpasswd\fP structure is defined in
+ .nf
+ struct passwd {
+     char   *pw_name;       /* username */
+-    char   *pw_passwd;     /* user password */
++    char   *pw_passwd;     /* user password hash or a placeholder */
+     uid_t   pw_uid;        /* user ID */
+     gid_t   pw_gid;        /* group ID */
+     char   *pw_gecos;      /* real name */
+diff -uNrp man-pages-3.28.old/man3/getpwent.3 man-pages-3.28/man3/getpwent.3
+--- man-pages-3.28.old/man3/getpwent.3	2010-10-06 15:53:35 +0000
++++ man-pages-3.28/man3/getpwent.3	2010-10-06 15:55:35 +0000
+@@ -86,7 +86,7 @@ The \fIpasswd\fP structure is defined in
+ .nf
+ struct passwd {
+     char   *pw_name;       /* username */
+-    char   *pw_passwd;     /* user password */
++    char   *pw_passwd;     /* user password hash or a placeholder */
+     uid_t   pw_uid;        /* user ID */
+     gid_t   pw_gid;        /* group ID */
+     char   *pw_gecos;      /* real name */
+@@ -95,6 +95,17 @@ struct passwd {
+ };
+ .fi
+ .in
++.PP
++When
++.BR shadow (5)
++passwords are enabled, which is almost always the case on modern systems,
++.I pw_passwd
++does not actually contain a password hash.
++In such a case the actual password hashes may be obtained with functions
++such as
++.BR getspent (3)
++and
++.BR getspnam (3).
+ .SH "RETURN VALUE"
+ The
+ .BR getpwent ()
+@@ -155,7 +166,10 @@ SVr4, 4.3BSD, POSIX.1-2001.
+ .BR getpwnam (3),
+ .BR getpwuid (3),
+ .BR putpwent (3),
+-.BR passwd (5)
++.BR getspent (3),
++.BR getspnam (3),
++.BR passwd (5),
++.BR shadow (5)
+ .SH COLOPHON
+ This page is part of release 3.28 of the Linux
+ .I man-pages
+diff -uNrp man-pages-3.28.old/man3/getpwent.3.orig man-pages-3.28/man3/getpwent.3.orig
+--- man-pages-3.28.old/man3/getpwent.3.orig	1970-01-01 00:00:00 +0000
++++ man-pages-3.28/man3/getpwent.3.orig	2010-10-04 03:04:35 +0000
+@@ -0,0 +1,166 @@
++.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
++.\"
++.\" Permission is granted to make and distribute verbatim copies of this
++.\" manual provided the copyright notice and this permission notice are
++.\" preserved on all copies.
++.\"
++.\" Permission is granted to copy and distribute modified versions of this
++.\" manual under the conditions for verbatim copying, provided that the
++.\" entire resulting derived work is distributed under the terms of a
++.\" permission notice identical to this one.
++.\"
++.\" Since the Linux kernel and libraries are constantly changing, this
++.\" manual page may be incorrect or out-of-date.  The author(s) assume no
++.\" responsibility for errors or omissions, or for damages resulting from
++.\" the use of the information contained herein.  The author(s) may not
++.\" have taken the same level of care in the production of this manual,
++.\" which is licensed free of charge, as they might when working
++.\" professionally.
++.\"
++.\" Formatted or processed versions of this manual, if unaccompanied by
++.\" the source, must acknowledge the copyright and authors of this work.
++.\"
++.\" References consulted:
++.\"     Linux libc source code
++.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
++.\"     386BSD man pages
++.\"
++.\" Modified Sat Jul 24 19:22:14 1993 by Rik Faith (faith@cs.unc.edu)
++.\" Modified Mon May 27 21:37:47 1996 by Martin Schulze (joey@linux.de)
++.\"
++.TH GETPWENT 3  2010-09-20 "GNU" "Linux Programmer's Manual"
++.SH NAME
++getpwent, setpwent, endpwent \- get password file entry
++.SH SYNOPSIS
++.nf
++.B #include <sys/types.h>
++.B #include <pwd.h>
++.sp
++.B struct passwd *getpwent(void);
++.sp
++.B void setpwent(void);
++.sp
++.B void endpwent(void);
++.fi
++.sp
++.in -4n
++Feature Test Macro Requirements for glibc (see
++.BR feature_test_macros (7)):
++.in
++.sp
++.ad l
++.BR getpwent (),
++.BR setpwent (),
++.BR endpwent ():
++.RS 4
++_BSD_SOURCE || _SVID_SOURCE || _XOPEN_SOURCE\ >=\ 500 ||
++_XOPEN_SOURCE\ &&\ _XOPEN_SOURCE_EXTENDED
++.RE
++.ad b
++.SH DESCRIPTION
++The
++.BR getpwent ()
++function returns a pointer to a structure containing
++the broken-out fields of a record from the password database
++(e.g., the local password file
++.IR /etc/passwd ,
++NIS, and LDAP).
++The first time
++.BR getpwent ()
++is called, it returns the first entry; thereafter, it returns successive
++entries.
++.PP
++The
++.BR setpwent ()
++function rewinds to the beginning
++of the password database.
++.PP
++The
++.BR endpwent ()
++function is used to close the password database
++after all processing has been performed.
++.PP
++The \fIpasswd\fP structure is defined in \fI<pwd.h>\fP as follows:
++.sp
++.in +4n
++.nf
++struct passwd {
++    char   *pw_name;       /* username */
++    char   *pw_passwd;     /* user password */
++    uid_t   pw_uid;        /* user ID */
++    gid_t   pw_gid;        /* group ID */
++    char   *pw_gecos;      /* real name */
++    char   *pw_dir;        /* home directory */
++    char   *pw_shell;      /* shell program */
++};
++.fi
++.in
++.SH "RETURN VALUE"
++The
++.BR getpwent ()
++function returns a pointer to a
++.I passwd
++structure, or NULL if
++there are no more entries or an error occurs.
++If an error occurs,
++.I errno
++is set appropriately.
++If one wants to check
++.I errno
++after the call, it should be set to zero before the call.
++
++The return value may point to a static area, and may be overwritten
++by subsequent calls to
++.BR getpwent (),
++.BR getpwnam (3),
++or
++.BR getpwuid (3).
++(Do not pass the returned pointer to
++.BR free (3).)
++.SH ERRORS
++.TP
++.B EINTR
++A signal was caught.
++.TP
++.B EIO
++I/O error.
++.TP
++.B EMFILE
++The maximum number
++.RB ( OPEN_MAX )
++of files was open already in the calling process.
++.TP
++.B ENFILE
++The maximum number of files was open already in the system.
++.TP
++.B ENOMEM
++.\" not in POSIX
++Insufficient memory to allocate
++.I passwd
++structure.
++.\" to allocate the passwd structure, or to allocate buffers
++.TP
++.B ERANGE
++Insufficient buffer space supplied.
++.SH FILES
++.TP
++.I /etc/passwd
++local password database file
++.SH "CONFORMING TO"
++SVr4, 4.3BSD, POSIX.1-2001.
++.SH "SEE ALSO"
++.BR fgetpwent (3),
++.BR getpw (3),
++.BR getpwent_r (3),
++.BR getpwnam (3),
++.BR getpwuid (3),
++.BR putpwent (3),
++.BR passwd (5)
++.SH COLOPHON
++This page is part of release 3.28 of the Linux
++.I man-pages
++project.
++A description of the project,
++and information about reporting bugs,
++can be found at
++http://www.kernel.org/doc/man-pages/.
+diff -uNrp man-pages-3.28.old/man3/getpwent_r.3 man-pages-3.28/man3/getpwent_r.3
+--- man-pages-3.28.old/man3/getpwent_r.3	2010-10-06 15:53:35 +0000
++++ man-pages-3.28/man3/getpwent_r.3	2010-10-06 15:55:35 +0000
+@@ -68,7 +68,7 @@ as follows:
+ .nf
+ struct passwd {
+     char    *pw_name;      /* username */
+-    char    *pw_passwd;    /* user password */
++    char    *pw_passwd;    /* user password hash or a placeholder */
+     uid_t    pw_uid;       /* user ID */
+     gid_t    pw_gid;       /* group ID */
+     char    *pw_gecos;     /* real name */
+diff -uNrp man-pages-3.28.old/man3/getpwnam.3 man-pages-3.28/man3/getpwnam.3
+--- man-pages-3.28.old/man3/getpwnam.3	2010-10-06 15:53:35 +0000
++++ man-pages-3.28/man3/getpwnam.3	2010-10-06 15:55:35 +0000
+@@ -109,7 +109,7 @@ The \fIpasswd\fP structure is defined in
+ .nf
+ struct passwd {
+     char   *pw_name;       /* username */
+-    char   *pw_passwd;     /* user password */
++    char   *pw_passwd;     /* user password hash or a placeholder */
+     uid_t   pw_uid;        /* user ID */
+     gid_t   pw_gid;        /* group ID */
+     char   *pw_gecos;      /* real name */
+@@ -125,6 +125,17 @@ can be found using
+ .BR sysconf (3)
+ with the argument
+ .BR _SC_GETPW_R_SIZE_MAX .
++.PP
++When
++.BR shadow (5)
++passwords are enabled, which is almost always the case on modern systems,
++.I pw_passwd
++does not actually contain a password hash.
++In such a case the actual password hashes may be obtained with functions
++such as
++.BR getspent (3)
++and
++.BR getspnam (3).
+ .SH "RETURN VALUE"
+ The
+ .BR getpwnam ()
+@@ -195,10 +206,18 @@ structure.
+ .TP
+ .B ERANGE
+ Insufficient buffer space supplied.
++.SH NOTE
++The user password database mostly refers to \fI/etc/passwd\fP.
++However, with recent systems it also refers to network wide databases
++using NIS, LDAP and other local files as configured in
++\fI/etc/nsswitch.conf\fP.
+ .SH FILES
+ .TP
+ .I /etc/passwd
+ local password database file
++.TP
++.I /etc/nsswitch.conf
++System Databases and Name Service Switch configuration file
+ .SH "CONFORMING TO"
+ SVr4, 4.3BSD, POSIX.1-2001.
+ .SH NOTES
+@@ -301,7 +320,9 @@ main(int argc, char *argv[])
+ .BR getspnam (3),
+ .BR putpwent (3),
+ .BR setpwent (3),
+-.BR passwd (5)
++.BR nsswitch.conf (5),
++.BR passwd (5),
++.BR shadow (5)
+ .SH COLOPHON
+ This page is part of release 3.28 of the Linux
+ .I man-pages
+diff -uNrp man-pages-3.28.old/man3/getpwnam.3.orig man-pages-3.28/man3/getpwnam.3.orig
+--- man-pages-3.28.old/man3/getpwnam.3.orig	1970-01-01 00:00:00 +0000
++++ man-pages-3.28/man3/getpwnam.3.orig	2010-10-04 03:04:35 +0000
+@@ -0,0 +1,312 @@
++.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
++.\" and Copyright 2008, Linux Foundation, written by Michael Kerrisk
++.\"     <mtk.manpages@gmail.com>
++.\"
++.\" Permission is granted to make and distribute verbatim copies of this
++.\" manual provided the copyright notice and this permission notice are
++.\" preserved on all copies.
++.\"
++.\" Permission is granted to copy and distribute modified versions of this
++.\" manual under the conditions for verbatim copying, provided that the
++.\" entire resulting derived work is distributed under the terms of a
++.\" permission notice identical to this one.
++.\"
++.\" Since the Linux kernel and libraries are constantly changing, this
++.\" manual page may be incorrect or out-of-date.  The author(s) assume no
++.\" responsibility for errors or omissions, or for damages resulting from
++.\" the use of the information contained herein.  The author(s) may not
++.\" have taken the same level of care in the production of this manual,
++.\" which is licensed free of charge, as they might when working
++.\" professionally.
++.\"
++.\" Formatted or processed versions of this manual, if unaccompanied by
++.\" the source, must acknowledge the copyright and authors of this work.
++.\"
++.\" References consulted:
++.\"     Linux libc source code
++.\"     Lewine's "POSIX Programmer's Guide" (O'Reilly & Associates, 1991)
++.\"     386BSD man pages
++.\"
++.\" Modified 1993-07-24 by Rik Faith (faith@cs.unc.edu)
++.\" Modified 1996-05-27 by Martin Schulze (joey@linux.de)
++.\" Modified 2003-11-15 by aeb
++.\" 2008-11-07, mtk, Added an example program for getpwnam_r().
++.\"
++.TH GETPWNAM 3  2009-03-30 "GNU" "Linux Programmer's Manual"
++.SH NAME
++getpwnam, getpwnam_r, getpwuid, getpwuid_r \- get password file entry
++.SH SYNOPSIS
++.nf
++.B #include <sys/types.h>
++.B #include <pwd.h>
++.sp
++.BI "struct passwd *getpwnam(const char *" name );
++.sp
++.BI "struct passwd *getpwuid(uid_t " uid );
++.sp
++.BI "int getpwnam_r(const char *" name ", struct passwd *" pwd ,
++.br
++.BI "            char *" buf ", size_t " buflen ", struct passwd **" result );
++.sp
++.BI "int getpwuid_r(uid_t " uid ", struct passwd *" pwd ,
++.br
++.BI "            char *" buf ", size_t " buflen ", struct passwd **" result );
++.fi
++.sp
++.in -4n
++Feature Test Macro Requirements for glibc (see
++.BR feature_test_macros (7)):
++.in
++.sp
++.ad l
++.BR getpwnam_r (),
++.BR getpwuid_r ():
++.RS 4
++_POSIX_C_SOURCE\ >=\ 1 || _XOPEN_SOURCE || _BSD_SOURCE ||
++_SVID_SOURCE || _POSIX_SOURCE
++.RE
++.ad b
++.SH DESCRIPTION
++The
++.BR getpwnam ()
++function returns a pointer to a structure containing
++the broken-out fields of the record in the password database
++(e.g., the local password file
++.IR /etc/passwd ,
++NIS, and LDAP)
++that matches the username
++.IR name .
++.PP
++The
++.BR getpwuid ()
++function returns a pointer to a structure containing
++the broken-out fields of the record in the password database
++that matches the user ID
++.IR uid .
++.PP
++The
++.BR getpwnam_r ()
++and
++.BR getpwuid_r ()
++functions obtain the same information, but store the retrieved
++.I passwd
++structure in the space pointed to by
++.IR pwd .
++This
++.I passwd
++structure contains pointers to strings, and these strings
++are stored in the buffer
++.I buf
++of size
++.IR buflen .
++A pointer to the result (in case of success) or NULL (in case no entry
++was found or an error occurred) is stored in
++.IR *result .
++.PP
++The \fIpasswd\fP structure is defined in \fI<pwd.h>\fP as follows:
++.sp
++.in +4n
++.nf
++struct passwd {
++    char   *pw_name;       /* username */
++    char   *pw_passwd;     /* user password */
++    uid_t   pw_uid;        /* user ID */
++    gid_t   pw_gid;        /* group ID */
++    char   *pw_gecos;      /* real name */
++    char   *pw_dir;        /* home directory */
++    char   *pw_shell;      /* shell program */
++};
++.fi
++.in
++.PP
++The maximum needed size for
++.I buf
++can be found using
++.BR sysconf (3)
++with the argument
++.BR _SC_GETPW_R_SIZE_MAX .
++.SH "RETURN VALUE"
++The
++.BR getpwnam ()
++and
++.BR getpwuid ()
++functions return a pointer to a
++.I passwd
++structure, or NULL if the matching entry is not found or
++an error occurs.
++If an error occurs,
++.I errno
++is set appropriately.
++If one wants to check
++.I errno
++after the call, it should be set to zero before the call.
++.LP
++The return value may point to a static area, and may be overwritten
++by subsequent calls to
++.BR getpwent (3),
++.BR getpwnam (),
++or
++.BR getpwuid ().
++(Do not pass the returned pointer to
++.BR free (3).)
++.LP
++On success,
++.BR getpwnam_r ()
++and
++.BR getpwuid_r ()
++return zero, and set
++.IR *result
++to
++.IR pwd .
++If no matching password record was found,
++these functions return 0 and store NULL in
++.IR *result .
++In case of error, an error number is returned, and NULL is stored in
++.IR *result .
++.SH ERRORS
++.TP
++.BR 0 " or " ENOENT " or " ESRCH " or " EBADF " or " EPERM " or ... "
++The given
++.I name
++or
++.I uid
++was not found.
++.TP
++.B EINTR
++A signal was caught.
++.TP
++.B EIO
++I/O error.
++.TP
++.B EMFILE
++The maximum number
++.RB ( OPEN_MAX )
++of files was open already in the calling process.
++.TP
++.B ENFILE
++The maximum number of files was open already in the system.
++.TP
++.B ENOMEM
++.\" not in POSIX
++Insufficient memory to allocate
++.I passwd
++structure.
++.\" This structure is static, allocated 0 or 1 times. No memory leak. (libc45)
++.TP
++.B ERANGE
++Insufficient buffer space supplied.
++.SH FILES
++.TP
++.I /etc/passwd
++local password database file
++.SH "CONFORMING TO"
++SVr4, 4.3BSD, POSIX.1-2001.
++.SH NOTES
++The formulation given above under "RETURN VALUE" is from POSIX.1-2001.
++It does not call "not found" an error, and hence does not specify what value
++.I errno
++might have in this situation.
++But that makes it impossible to recognize
++errors.
++One might argue that according to POSIX
++.I errno
++should be left unchanged if an entry is not found.
++Experiments on various
++Unix-like systems show that lots of different values occur in this
++situation: 0, ENOENT, EBADF, ESRCH, EWOULDBLOCK, EPERM and probably others.
++.\" more precisely:
++.\" AIX 5.1 - gives ESRCH
++.\" OSF1 4.0g - gives EWOULDBLOCK
++.\" libc, glibc up to version 2.6, Irix 6.5 - give ENOENT
++.\" glibc since version 2.7 - give 0
++.\" FreeBSD 4.8, OpenBSD 3.2, NetBSD 1.6 - give EPERM
++.\" SunOS 5.8 - gives EBADF
++.\" Tru64 5.1b, HP-UX-11i, SunOS 5.7 - give 0
++
++The
++.I pw_dir
++field contains the name of the initial working directory of the user.
++Login programs use the value of this field to initialize the
++.B HOME
++environment variable for the login shell.
++An application that wants to determine its user's home directory
++should inspect the value of
++.B HOME
++(rather than the value
++.IR getpwuid(getuid())\->pw_dir )
++since this allows the user to modify their notion of
++"the home directory" during a login session.
++To determine the (initial) home directory of another user,
++it is necessary to use
++.I getpwnam("username")\->pw_dir
++or similar.
++.SH EXAMPLE
++The program below demonstrates the use of
++.BR getpwnam_r ()
++to find the full username and user ID for the username
++supplied as a command-line argument.
++
++.nf
++#include <pwd.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <errno.h>
++
++int
++main(int argc, char *argv[])
++{
++    struct passwd pwd;
++    struct passwd *result;
++    char *buf;
++    size_t bufsize;
++    int s;
++
++    if (argc != 2) {
++        fprintf(stderr, "Usage: %s username\\n", argv[0]);
++        exit(EXIT_FAILURE);
++    }
++
++    bufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
++    if (bufsize == \-1)          /* Value was indeterminate */
++        bufsize = 16384;        /* Should be more than enough */
++
++    buf = malloc(bufsize);
++    if (buf == NULL) {
++        perror("malloc");
++        exit(EXIT_FAILURE);
++    }
++
++    s = getpwnam_r(argv[1], &pwd, buf, bufsize, &result);
++    if (result == NULL) {
++        if (s == 0)
++            printf("Not found\\n");
++        else {
++            errno = s;
++            perror("getpwnam_r");
++        }
++        exit(EXIT_FAILURE);
++    }
++
++    printf("Name: %s; UID: %ld\\n", pwd.pw_gecos, (long) pwd.pw_uid);
++    exit(EXIT_SUCCESS);
++}
++.fi
++.SH "SEE ALSO"
++.BR endpwent (3),
++.BR fgetpwent (3),
++.BR getgrnam (3),
++.BR getpw (3),
++.BR getpwent (3),
++.BR getspnam (3),
++.BR putpwent (3),
++.BR setpwent (3),
++.BR passwd (5)
++.SH COLOPHON
++This page is part of release 3.28 of the Linux
++.I man-pages
++project.
++A description of the project,
++and information about reporting bugs,
++can be found at
++http://www.kernel.org/doc/man-pages/.
+diff -uNrp man-pages-3.28.old/man3/nl_langinfo.3 man-pages-3.28/man3/nl_langinfo.3
+--- man-pages-3.28.old/man3/nl_langinfo.3	2010-10-06 15:53:35 +0000
++++ man-pages-3.28/man3/nl_langinfo.3	2010-10-06 15:55:35 +0000
+@@ -29,6 +29,8 @@ in a more flexible way than
+ does.
+ Individual and additional elements of the locale categories can
+ be queried.
++.BR setlocale (3)
++needs to be executed with proper arguments before.
+ .PP
+ Examples for the locale elements that can be specified in \fIitem\fP
+ using the constants defined in \fI<langinfo.h>\fP are:
+diff -uNrp man-pages-3.28.old/man3/putpwent.3 man-pages-3.28/man3/putpwent.3
+--- man-pages-3.28.old/man3/putpwent.3	2010-10-06 15:53:35 +0000
++++ man-pages-3.28/man3/putpwent.3	2010-10-06 15:55:35 +0000
+@@ -56,7 +56,7 @@ The \fIpasswd\fP structure is defined in
+ .nf
+ struct passwd {
+     char    *pw_name;        /* username */
+-    char    *pw_passwd;      /* user password */
++    char    *pw_passwd;      /* user password hash or a placeholder */
+     uid_t    pw_uid;         /* user ID */
+     gid_t    pw_gid;         /* group ID */
+     char    *pw_gecos;       /* real name */
+diff -uNrp man-pages-3.28.old/man3/qsort.3 man-pages-3.28/man3/qsort.3
+--- man-pages-3.28.old/man3/qsort.3	2010-10-06 15:53:35 +0000
++++ man-pages-3.28/man3/qsort.3	2010-10-06 15:55:35 +0000
+@@ -106,7 +106,7 @@ main(int argc, char *argv[])
+ 	exit(EXIT_FAILURE);
+     }
+ 
+-    qsort(&argv[1], argc \- 1, sizeof(char *), cmpstringp);
++    qsort(&argv[1], argc \- 1, sizeof(argv[1]), cmpstringp);
+ 
+     for (j = 1; j < argc; j++)
+         puts(argv[j]);
+diff -uNrp man-pages-3.28.old/man3/tsearch.3 man-pages-3.28/man3/tsearch.3
+--- man-pages-3.28.old/man3/tsearch.3	2010-10-06 15:53:35 +0000
++++ man-pages-3.28/man3/tsearch.3	2010-10-06 15:55:35 +0000
+@@ -112,6 +112,8 @@ visit to a leaf node.
+ (These symbols are defined in \fI<search.h>\fP.)
+ The third argument is the depth of the node, with
+ zero being the root.
++You should not modify the tree while traversing it
++as the the results would be undefined.
+ .PP
+ (More commonly, \fBpreorder\fP, \fBpostorder\fP, and \fBendorder\fP
+ are known as \fBpreorder\fP, \fBinorder\fP, and \fBpostorder\fP:
+diff -uNrp man-pages-3.28.old/man4/console_codes.4 man-pages-3.28/man4/console_codes.4
+--- man-pages-3.28.old/man4/console_codes.4	2010-10-06 15:53:35 +0000
++++ man-pages-3.28/man4/console_codes.4	2010-10-06 15:55:35 +0000
+@@ -17,6 +17,7 @@
+ .\" Tiny correction, aeb, 961107.
+ .\"
+ .\" 2006-05-27, Several corrections - Thomas E. Dickey
++.\" Modified Thu Dec 13 23:23:41 2001 by Martin Schulze <joey@infodrom.org>
+ .\"
+ .TH CONSOLE_CODES 4 2008-01-01 "Linux" "Linux Programmer's Manual"
+ .SH NAME
+@@ -545,8 +546,11 @@ ESC m		Memory unlock (per HP terminals).
+ ESC n	LS2	Invoke the G2 character set.
+ ESC o	LS3	Invoke the G3 character set.
+ ESC |	LS3R	Invoke the G3 character set as GR.
++		Has no visible effect in xterm.
+ ESC }	LS2R	Invoke the G2 character set as GR.
++		Has no visible effect in xterm.
+ ESC ~	LS1R	Invoke the G1 character set as GR.
++		Has no visible effect in xterm.
+ .TE
+ .PP
+ It also recognizes ESC % and provides a more complete UTF-8
+diff -uNrp man-pages-3.28.old/man5/dir_colors.5 man-pages-3.28/man5/dir_colors.5
+--- man-pages-3.28.old/man5/dir_colors.5	2010-10-06 15:53:35 +0000
++++ man-pages-3.28/man5/dir_colors.5	2010-10-06 15:55:35 +0000
+@@ -356,6 +356,15 @@ definitions, which are used by ISO 6429 
+ The default
+ .B ENDCODE
+ is undefined.
++.SH FILES
++.TP
++.I /etc/DIR_COLORS
++System-wide configuration file.
++Processed by /etc/profile.d/colorls.* scripts.
++.TP
++.IR ~/.dircolors " or " ~/.dir_colors
++Per-user configuration file.
++Processed by /etc/profile.d/colorls.* scripts.
+ .SH "SEE ALSO"
+ .BR dircolors (1),
+ .BR ls (1),
+diff -uNrp man-pages-3.28.old/man5/nsswitch.conf.5 man-pages-3.28/man5/nsswitch.conf.5
+--- man-pages-3.28.old/man5/nsswitch.conf.5	2010-10-06 15:53:35 +0000
++++ man-pages-3.28/man5/nsswitch.conf.5	2010-10-06 15:55:35 +0000
+@@ -225,6 +225,12 @@ you could have entries of the form +user
+ \-user or \-@netgroup (exclude the specified user),
+ and + (include every user, except the excluded ones, from the NIS
+ passwd map).
++
++You can override certain passwd fields for a particular user from the
++NIS passwd map by using the extended form of +user:::::: in
++.IR /etc/passwd .
++Non-empty fields override information in the NIS passwd map.
++
+ Since most people only put a + at the end of
+ .I /etc/passwd
+ to include everything from NIS, the switch provides a faster
+diff -uNrp man-pages-3.28.old/man5/resolv.conf.5 man-pages-3.28/man5/resolv.conf.5
+--- man-pages-3.28.old/man5/resolv.conf.5	2010-10-06 15:53:35 +0000
++++ man-pages-3.28/man5/resolv.conf.5	2010-10-06 15:55:35 +0000
+@@ -34,8 +34,8 @@ by the resolver routines the first time 
+ The file is designed to be human readable and contains a list of
+ keywords with values that provide various types of resolver information.
+ .LP
+-On a normally configured system this file should not be necessary.
+-The only name server to be queried will be on the local machine;
++If this file doesn't exist
++the only name server to be queried will be on the local machine;
+ the domain name is determined from the hostname
+ and the domain search path is constructed from the domain name.
+ .LP
+@@ -198,6 +198,8 @@ This has the effect of trying a AAAA que
+ .BR gethostbyname (3)
+ function, and of mapping IPv4 responses in IPv6 "tunneled form"
+ if no AAAA records are found but an A record set exists.
++
++Some programs behave strangely when this option is turned on.
+ .TP
+ .BR ip6-bytestring " (since glibc 2.3.4)"
+ sets
+diff -uNrp man-pages-3.28.old/man5/tzfile.5 man-pages-3.28/man5/tzfile.5
+--- man-pages-3.28.old/man5/tzfile.5	2010-10-06 15:53:35 +0000
++++ man-pages-3.28/man5/tzfile.5	2010-10-06 16:00:36 +0000
+@@ -3,9 +3,9 @@
+ .\" 1996-06-05 by Arthur David Olson <arthur_david_olson@nih.gov>.
+ .TH TZFILE 5 2010-08-31 "" "Linux Programmer's Manual"
+ .SH NAME
+-tzfile \- timezone information
++tzfile \- timezone information files
+ .SH SYNOPSIS
+-.B #include <tzfile.h>
++/usr/share/zoneinfo/*
+ .SH DESCRIPTION
+ The timezone information files used by
+ .BR tzset (3)
+@@ -146,7 +146,14 @@ POSIX-TZ-environment-variable-style stri
+ after the last transition time stored in the file
+ (with nothing between the newlines if there is no POSIX representation for
+ such instants).
++.SH NOTES
++The data structures described in here are defined in the
++.I timezone/tzfile.h
++header file inside the glibc source tree.
+ .SH SEE ALSO
++.BR time (3),
++.BR gettimeofday (3),
++.BR tzset (3),
+ .BR ctime (3)
+ .SH COLOPHON
+ This page is part of release 3.28 of the Linux
+diff -uNrp man-pages-3.28.old/man5/tzfile.5.orig man-pages-3.28/man5/tzfile.5.orig
+--- man-pages-3.28.old/man5/tzfile.5.orig	1970-01-01 00:00:00 +0000
++++ man-pages-3.28/man5/tzfile.5.orig	2010-10-04 03:04:37 +0000
+@@ -0,0 +1,158 @@
++.\" @(#)tzfile.5	7.11
++.\" This file is in the public domain, so clarified as of
++.\" 1996-06-05 by Arthur David Olson <arthur_david_olson@nih.gov>.
++.TH TZFILE 5 2010-08-31 "" "Linux Programmer's Manual"
++.SH NAME
++tzfile \- timezone information
++.SH SYNOPSIS
++.B #include <tzfile.h>
++.SH DESCRIPTION
++The timezone information files used by
++.BR tzset (3)
++begin with the magic characters "TZif" to identify then as
++timezone information files,
++followed by a character identifying the version of the file's format
++(as of 2005, either an ASCII NUL ('\\0') or a '2')
++followed by fifteen bytes containing zeroes reserved for future use,
++followed by six four-byte values of type
++.IR long ,
++written in a "standard" byte order
++(the high-order byte of the value is written first).
++These values are,
++in order:
++.TP
++.I tzh_ttisgmtcnt
++The number of UTC/local indicators stored in the file.
++.TP
++.I tzh_ttisstdcnt
++The number of standard/wall indicators stored in the file.
++.TP
++.I tzh_leapcnt
++The number of leap seconds for which data is stored in the file.
++.TP
++.I tzh_timecnt
++The number of "transition times" for which data is stored
++in the file.
++.TP
++.I tzh_typecnt
++The number of "local time types" for which data is stored
++in the file (must not be zero).
++.TP
++.I tzh_charcnt
++The number of characters of "timezone abbreviation strings"
++stored in the file.
++.PP
++The above header is followed by
++.I tzh_timecnt
++four-byte values of type
++.IR long ,
++sorted in ascending order.
++These values are written in "standard" byte order.
++Each is used as a transition time (as returned by
++.BR time (2))
++at which the rules for computing local time change.
++Next come
++.I tzh_timecnt
++one-byte values of type
++.IR "unsigned char" ;
++each one tells which of the different types of "local time" types
++described in the file is associated with the same-indexed transition time.
++These values serve as indices into an array of
++.I ttinfo
++structures (with
++.I tzh_typecnt
++entries) that appear next in the file;
++these structures are defined as follows:
++.in +4n
++.sp
++.nf
++struct ttinfo {
++    long         tt_gmtoff;
++    int          tt_isdst;
++    unsigned int tt_abbrind;
++};
++.in
++.fi
++.sp
++Each structure is written as a four-byte value for
++.I tt_gmtoff
++of type
++.IR long ,
++in a standard byte order, followed by a one-byte value for
++.I tt_isdst
++and a one-byte value for
++.IR tt_abbrind .
++In each structure,
++.I tt_gmtoff
++gives the number of seconds to be added to UTC,
++.I tt_isdst
++tells whether
++.I tm_isdst
++should be set by
++.BR localtime (3),
++and
++.I tt_abbrind
++serves as an index into the array of timezone abbreviation characters
++that follow the
++.I ttinfo
++structure(s) in the file.
++.PP
++Then there are
++.I tzh_leapcnt
++pairs of four-byte values, written in standard byte order;
++the first value of each pair gives the time
++(as returned by
++.BR time (2))
++at which a leap second occurs;
++the second gives the
++.I total
++number of leap seconds to be applied after the given time.
++The pairs of values are sorted in ascending order by time.
++.PP
++Then there are
++.I tzh_ttisstdcnt
++standard/wall indicators, each stored as a one-byte value;
++they tell whether the transition times associated with local time types
++were specified as standard time or wall clock time,
++and are used when a timezone file is used in handling POSIX-style
++timezone environment variables.
++.PP
++Finally, there are
++.I tzh_ttisgmtcnt
++UTC/local indicators, each stored as a one-byte value;
++they tell whether the transition times associated with local time types
++were specified as UTC or local time,
++and are used when a timezone file is used in handling POSIX-style
++timezone environment variables.
++.PP
++.BR localtime (3)
++uses the first standard-time
++.I ttinfo
++structure in the file
++(or simply the first
++.I ttinfo
++structure in the absence of a standard-time structure)
++if either
++.I tzh_timecnt
++is zero or the time argument is less than the first transition time recorded
++in the file.
++.PP
++For version-2-format timezone files,
++the above header and data is followed by a second header and data,
++identical in format except that
++eight bytes are used for each transition time or leap-second time.
++After the second header and data comes a newline-enclosed,
++POSIX-TZ-environment-variable-style string for use in handling instants
++after the last transition time stored in the file
++(with nothing between the newlines if there is no POSIX representation for
++such instants).
++.SH SEE ALSO
++.BR ctime (3)
++.SH COLOPHON
++This page is part of release 3.28 of the Linux
++.I man-pages
++project.
++A description of the project,
++and information about reporting bugs,
++can be found at
++http://www.kernel.org/doc/man-pages/.
+diff -uNrp man-pages-3.28.old/man7/AF_LOCAL.7 man-pages-3.28/man7/AF_LOCAL.7
+--- man-pages-3.28.old/man7/AF_LOCAL.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.28/man7/AF_LOCAL.7	2010-10-06 15:55:35 +0000
+@@ -0,0 +1 @@
++.so man7/unix.7
+diff -uNrp man-pages-3.28.old/man7/AF_UNIX.7 man-pages-3.28/man7/AF_UNIX.7
+--- man-pages-3.28.old/man7/AF_UNIX.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.28/man7/AF_UNIX.7	2010-10-06 15:55:35 +0000
+@@ -0,0 +1 @@
++.so man7/unix.7
+diff -uNrp man-pages-3.28.old/man7/IPPROTO_ICMP.7 man-pages-3.28/man7/IPPROTO_ICMP.7
+--- man-pages-3.28.old/man7/IPPROTO_ICMP.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.28/man7/IPPROTO_ICMP.7	2010-10-06 15:55:35 +0000
+@@ -0,0 +1 @@
++.so man7/icmp.7
+diff -uNrp man-pages-3.28.old/man7/man.7 man-pages-3.28/man7/man.7
+--- man-pages-3.28.old/man7/man.7	2010-10-06 15:53:35 +0000
++++ man-pages-3.28/man7/man.7	2010-10-06 15:55:35 +0000
+@@ -553,6 +553,7 @@ is not implemented.
+ .BR groff (1),
+ .BR man (1),
+ .BR man2html (1),
++.BR groff_mdoc (7),
+ .BR whatis (1),
+ .BR groff_man (7),
+ .BR groff_www (7),
+diff -uNrp man-pages-3.28.old/man7/mdoc.7 man-pages-3.28/man7/mdoc.7
+--- man-pages-3.28.old/man7/mdoc.7	2010-10-06 15:53:35 +0000
++++ man-pages-3.28/man7/mdoc.7	2010-10-06 15:55:35 +0000
+@@ -59,7 +59,8 @@ man pages.
+ The macro names and their meanings are
+ listed below for quick reference; for
+ a detailed explanation on using the package,
+-see the tutorial sampler
++see the tutorial samplers
++.Xr groff_mdoc 7 or
+ .Xr mdoc.samples 7 .
+ .Pp
+ Note that this is not the usual macro package for Linux documentation,
+diff -uNrp man-pages-3.28.old/man7/NETLINK_ROUTE.7 man-pages-3.28/man7/NETLINK_ROUTE.7
+--- man-pages-3.28.old/man7/NETLINK_ROUTE.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.28/man7/NETLINK_ROUTE.7	2010-10-06 15:55:35 +0000
+@@ -0,0 +1 @@
++.so man7/rtnetlink.7
+diff -uNrp man-pages-3.28.old/man7/PF_INET6.7 man-pages-3.28/man7/PF_INET6.7
+--- man-pages-3.28.old/man7/PF_INET6.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.28/man7/PF_INET6.7	2010-10-06 15:55:35 +0000
+@@ -0,0 +1 @@
++.so man7/ipv6.7
+diff -uNrp man-pages-3.28.old/man7/PF_LOCAL.7 man-pages-3.28/man7/PF_LOCAL.7
+--- man-pages-3.28.old/man7/PF_LOCAL.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.28/man7/PF_LOCAL.7	2010-10-06 15:55:35 +0000
+@@ -0,0 +1 @@
++.so man7/unix.7
+diff -uNrp man-pages-3.28.old/man7/PF_NETLINK.7 man-pages-3.28/man7/PF_NETLINK.7
+--- man-pages-3.28.old/man7/PF_NETLINK.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.28/man7/PF_NETLINK.7	2010-10-06 15:55:35 +0000
+@@ -0,0 +1 @@
++.so man7/netlink.7
+diff -uNrp man-pages-3.28.old/man7/PF_PACKET.7 man-pages-3.28/man7/PF_PACKET.7
+--- man-pages-3.28.old/man7/PF_PACKET.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.28/man7/PF_PACKET.7	2010-10-06 15:55:35 +0000
+@@ -0,0 +1 @@
++.so man7/packet.7
+diff -uNrp man-pages-3.28.old/man7/PF_UNIX.7 man-pages-3.28/man7/PF_UNIX.7
+--- man-pages-3.28.old/man7/PF_UNIX.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.28/man7/PF_UNIX.7	2010-10-06 15:55:35 +0000
+@@ -0,0 +1 @@
++.so man7/unix.7
+diff -uNrp man-pages-3.28.old/man7/PF_X25.7 man-pages-3.28/man7/PF_X25.7
+--- man-pages-3.28.old/man7/PF_X25.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.28/man7/PF_X25.7	2010-10-06 15:55:35 +0000
+@@ -0,0 +1 @@
++.so man7/x25.7
+diff -uNrp man-pages-3.28.old/man7/SOCK_RAW.7 man-pages-3.28/man7/SOCK_RAW.7
+--- man-pages-3.28.old/man7/SOCK_RAW.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.28/man7/SOCK_RAW.7	2010-10-06 15:55:35 +0000
+@@ -0,0 +1 @@
++.so man7/raw.7

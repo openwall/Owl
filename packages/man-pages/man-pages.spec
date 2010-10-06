@@ -1,12 +1,12 @@
-# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.26 2010/08/21 00:31:49 solar Exp $
+# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.27 2010/10/06 16:42:41 segoon Exp $
 
 %define posix_version 2003
 %define posix_release a
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
-Version: 3.25
-Release: owl2
+Version: 3.28
+Release: owl1
 License: distributable
 Group: Documentation
 Source0: http://www.kernel.org/pub/linux/docs/manpages/man-pages-%version.tar.bz2
@@ -20,7 +20,7 @@ Source5: locale.1
 Source6: localedef.1
 Source7: sprof.1
 Source8: rpcinfo.8
-Patch0: man-pages-3.25-deb-owl-misc.diff
+Patch0: man-pages-3.28-deb-owl-misc.diff
 Patch1: man-pages-3.21-rh-owl-roff-fixes.diff
 Patch2: man-pages-3.21-owl-cc.diff
 Patch3: man-pages-3.21-owl-uselib.diff
@@ -131,6 +131,10 @@ done
 %_mandir/man?p/*
 
 %changelog
+* Wed Oct 06 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.28-owl1
+- Updated to 3.28.
+- Updated deb-owl-misc patch.
+
 * Sat Aug 21 2010 Solar Designer <solar-at-owl.openwall.com> 3.25-owl2
 - Cleaned up and revised the Debian-derived patch (dropped most of it).
 - Enabled packaging of man5/resolv.conf.5 (it is not part of bind-utils,
