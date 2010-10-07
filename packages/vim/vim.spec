@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.35 2010/03/09 02:33:11 ldv Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.36 2010/10/07 09:29:42 segoon Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -7,12 +7,12 @@
 Summary: The VIM editor.
 Name: vim
 %define major 7
-%define minor 2
+%define minor 3
 %define alpha %nil
-%define patchlevel 351
+%define patchlevel 019
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl2
+Release: owl1
 License: Charityware
 Group: Applications/Editors
 URL: http://www.vim.org
@@ -25,11 +25,11 @@ Source5: gvim.desktop
 Source6: README
 Patch0: vim-6.4-rh-owl-spec-syntax.diff
 Patch1: vim-6.4-rh-paths.diff
-Patch2: vim-7.2-deb-fixes.diff
-Patch3: vim-7.2-owl-tmp.diff
-Patch4: vim-7.2-rh-fix-keys.diff
-Patch5: vim-7.2-rh-owl-vim-not-vi.diff
-Patch6: vim-7.2-rh-owl-xxd-locale.diff
+Patch2: vim-7.2-owl-tmp.diff
+Patch3: vim-7.2-rh-fix-keys.diff
+Patch4: vim-7.2-rh-owl-vim-not-vi.diff
+Patch5: vim-7.2-rh-owl-xxd-locale.diff
+Patch6: vim-7.3-owl-configure.diff
 Requires: mktemp >= 1:1.3.1
 BuildRequires: libtermcap-devel, ncurses-devel, perl
 BuildRequires: sed >= 4.0.9
@@ -285,7 +285,6 @@ chmod 644 ../runtime/doc/vim2html.pl
 /bin/rvi
 /bin/vi
 /bin/vitmp
-%_mandir/man1/ex.*
 %_mandir/man1/rvi.*
 %_mandir/man1/vi.*
 %_mandir/man1/vitmp.*
@@ -297,9 +296,7 @@ chmod 644 ../runtime/doc/vim2html.pl
 %_bindir/view
 %_bindir/vim
 %_bindir/vimdiff
-%_mandir/man1/rview.*
 %_mandir/man1/rvim.*
-%_mandir/man1/view.*
 %_mandir/man1/vimdiff.*
 %_mandir/fr*/man1/vimdiff.*
 %_mandir/it*/man1/vimdiff.*
@@ -345,6 +342,11 @@ chmod 644 ../runtime/doc/vim2html.pl
 %endif
 
 %changelog
+* Wed Oct 06 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 7.3.019-owl1
+- Updated to 7.3 patchlevel 019.
+- Dropped deb-fixes patch (fixed in upstream).
+- Fixed build bug with old autoconf.
+
 * Tue Mar 09 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 7.2.351-owl2
 - vitmp: Updated vi commands required to disable backups in modern VIM.
 

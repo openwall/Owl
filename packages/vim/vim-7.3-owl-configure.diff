@@ -1,0 +1,20 @@
+diff -uNrp vim73.old/src/configure.in vim73/src/configure.in
+--- vim73.old/src/configure.in	2010-10-06 09:22:18 +0000
++++ vim73/src/configure.in	2010-10-06 09:52:55 +0000
+@@ -1795,7 +1795,7 @@ dnl
+ dnl AM_PATH_GTK([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]]])
+ dnl Test for GTK, and define GTK_CFLAGS, GTK_LIBDIR and GTK_LIBS
+ dnl
+-AC_DEFUN(AM_PATH_GTK,
++AC_DEFUN([AM_PATH_GTK],
+ [
+   if test "X$GTK_CONFIG" != "Xno" -o "X$PKG_CONFIG" != "Xno"; then
+   {
+@@ -2447,7 +2447,6 @@ AC_TYPE_OFF_T
+ AC_TYPE_PID_T
+ AC_TYPE_SIZE_T
+ AC_TYPE_UID_T
+-AC_TYPE_UINT32_T
+ 
+ AC_HEADER_TIME
+ AC_CHECK_TYPE(ino_t, long)
