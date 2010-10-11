@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/binutils/binutils.spec,v 1.26 2010/10/04 19:54:43 segoon Exp $
+# $Owl: Owl/packages/binutils/binutils.spec,v 1.27 2010/10/11 11:50:12 segoon Exp $
 
 %define BUILD_HJL 1
 
@@ -9,7 +9,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.20.51.0.11
-Release: owl2
+Release: owl3
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils/
@@ -119,6 +119,15 @@ rm %buildroot%_libdir/*.la
 
 cd ..
 
+mv binutils/NEWS binutils-NEWS
+mv gas/CONTRIBUTORS gas-CONTRIBUTORS
+mv gas/NEWS gas-NEWS
+mv ld/NEWS ld-NEWS
+
+#mv gold/README gold-README
+#mv gold/TODO gold-TODO
+#mv gold/NEWS gold-NEWS
+
 %post
 /sbin/ldconfig
 /sbin/install-info --info-dir=%_infodir %_infodir/as.info
@@ -142,7 +151,9 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc README
+%doc COPYING COPYING.LIB COPYING3 COPYING3.LIB 
+%doc binutils-NEWS gas-CONTRIBUTORS gas-NEWS ld-NEWS
+#%doc gold-README gold-TODO gold-NEWS
 %_bindir/*
 %_mandir/man1/*
 %_includedir/*
@@ -152,8 +163,11 @@ fi
 %_datadir/locale/*/LC_MESSAGES/*.mo
 
 %changelog
+* Mon Oct 11 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.20.51.0.11-owl3
+- Packaged new documentation files.
+
 * Mon Oct 04 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.20.51.0.11-owl2
-- Fix temporary file handling.
+- Fixed temporary file handling.
 
 * Thu Sep 30 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.20.51.0.11-owl1
 - Updated to 2.20.51.0.11.
