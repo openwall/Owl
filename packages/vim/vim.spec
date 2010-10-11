@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.36 2010/10/07 09:29:42 segoon Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.37 2010/10/11 22:47:05 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -9,15 +9,17 @@ Name: vim
 %define major 7
 %define minor 3
 %define alpha %nil
-%define patchlevel 019
+%define patchlevel 021
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
 Release: owl1
 License: Charityware
 Group: Applications/Editors
 URL: http://www.vim.org
-Source0: ftp://ftp.vim.org/pub/vim/unix/vim-%major.%minor%alpha.tar.bz2
-Source1: vim-%major.%minor-%version.bz2
+Source0: vim-%major.%minor%alpha.tar.xz
+# ftp://ftp.vim.org/pub/vim/unix/vim-%major.%minor%alpha.tar.bz2
+Source1: vim-%major.%minor-%version.xz
+# ftp://ftp.vim.org/pub/vim/patches/%major.%minor/
 Source2: vitmp.c
 Source3: vitmp.1
 Source4: vimrc
@@ -342,6 +344,10 @@ chmod 644 ../runtime/doc/vim2html.pl
 %endif
 
 %changelog
+* Mon Oct 11 2010 Solar Designer <solar-at-owl.openwall.com> 7.3.021-owl1
+- Patchlevel 021.
+- Use xz-compressed Source files.
+
 * Wed Oct 06 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 7.3.019-owl1
 - Updated to 7.3 patchlevel 019.
 - Dropped deb-fixes patch (fixed in upstream).
