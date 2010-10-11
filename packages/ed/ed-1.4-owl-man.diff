@@ -37,7 +37,7 @@
 -.IR sh (1).
 +.IR sh (1),
 +.IR sed (1),
-+.IR vi (1),
++.IR vi (1).
  
  USD:12-13
  
