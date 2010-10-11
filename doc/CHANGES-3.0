@@ -46,16 +46,16 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
-2010/10/07      Package: man-pages
+2010/10/11	Package: vim
+Updated to 7.3 patchlevel 21.
+
+2010/10/07	Package: man-pages
 Updated to 3.28.
 
-2010/10/07      Package: ed
+2010/10/07	Package: ed
 Updated to 1.5.
 
-2010/10/07      Package: vim
-Updated to 7.3 patchlevel 19.
-
-2010/10/07      Package: hdparm
+2010/10/07	Package: hdparm
 Updated to 9.33.
 
 2010/10/04	Package: binutils
@@ -1419,4 +1419,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.273 2010/10/07 09:33:49 segoon Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.274 2010/10/11 23:07:45 solar Exp $
