@@ -1,15 +1,13 @@
-# $Owl: Owl/packages/diffstat/diffstat.spec,v 1.15 2010/08/23 08:29:51 segoon Exp $
+# $Owl: Owl/packages/diffstat/diffstat.spec,v 1.16 2010/10/11 15:17:11 segoon Exp $
 
 Summary: A utility which provides statistics based on the output of diff.
 Name: diffstat
-Version: 1.53
+Version: 1.54
 Release: owl1
 Group: Development/Tools
 License: distributable
 URL: http://invisible-island.net/diffstat/
 Source: ftp://dickey.his.com/diffstat/%name-%version.tgz
-Patch0: diffstat-1.47-owl-man.diff
-Patch1: diffstat-1.51-owl-tmp.diff
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
 
@@ -21,8 +19,6 @@ to provide a summary of the changes in large, complex patch files.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
 
 %build
 %configure --with-warnings
@@ -42,6 +38,10 @@ rm -rf %buildroot
 %_mandir/man1/*
 
 %changelog
+* Mon Oct 11 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.54-owl1
+- Updated to 1.54.
+- Dropped owl-man and owl-tmp patches (fixed in upstream).
+
 * Fri Aug 21 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.53-owl1
 - Updated to 1.53.
 
