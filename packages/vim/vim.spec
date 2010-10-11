@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.37 2010/10/11 22:47:05 solar Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.38 2010/10/11 22:57:27 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -18,20 +18,20 @@ Group: Applications/Editors
 URL: http://www.vim.org
 Source0: vim-%major.%minor%alpha.tar.xz
 # ftp://ftp.vim.org/pub/vim/unix/vim-%major.%minor%alpha.tar.bz2
-Source1: vim-%major.%minor-%version.xz
+Source10: vitmp.c
+Source11: vitmp.1
+Source12: vimrc
+Source13: gvim.desktop
+Source14: README
+Patch0: vim-%major.%minor-%version.xz
 # ftp://ftp.vim.org/pub/vim/patches/%major.%minor/
-Source2: vitmp.c
-Source3: vitmp.1
-Source4: vimrc
-Source5: gvim.desktop
-Source6: README
-Patch0: vim-6.4-rh-owl-spec-syntax.diff
-Patch1: vim-6.4-rh-paths.diff
-Patch2: vim-7.2-owl-tmp.diff
-Patch3: vim-7.2-rh-fix-keys.diff
-Patch4: vim-7.2-rh-owl-vim-not-vi.diff
-Patch5: vim-7.2-rh-owl-xxd-locale.diff
-Patch6: vim-7.3-owl-configure.diff
+Patch10: vim-6.4-rh-owl-spec-syntax.diff
+Patch11: vim-6.4-rh-paths.diff
+Patch12: vim-7.2-owl-tmp.diff
+Patch13: vim-7.2-rh-fix-keys.diff
+Patch14: vim-7.2-rh-owl-vim-not-vi.diff
+Patch15: vim-7.2-rh-owl-xxd-locale.diff
+Patch16: vim-7.3-owl-configure.diff
 Requires: mktemp >= 1:1.3.1
 BuildRequires: libtermcap-devel, ncurses-devel, perl
 BuildRequires: sed >= 4.0.9
@@ -128,17 +128,14 @@ This subpackage contains Vim tutorial files in many different languages.
 
 %prep
 %setup -q -n %vimdir
-{
-	bzcat %SOURCE1 || touch failed
-} | patch -p0
-test ! -e failed
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
+%patch0 -p0
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
 rm src/auto/configure
 install -pm644 %_sourcedir/README .
 
