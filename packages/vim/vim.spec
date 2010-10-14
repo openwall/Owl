@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.38 2010/10/11 22:57:27 solar Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.39 2010/10/14 08:32:20 segoon Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -12,7 +12,7 @@ Name: vim
 %define patchlevel 021
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl1
+Release: owl2
 License: Charityware
 Group: Applications/Editors
 URL: http://www.vim.org
@@ -227,7 +227,7 @@ ln -s vi bin/ex
 ln -s vim .%_bindir/rvim
 ln -s vim .%_bindir/vimdiff
 sed -i "s,%buildroot,," .%_mandir/man1/{vim,vimtutor}.1
-rm .%_mandir/man1/rvim.1
+#rm .%_mandir/man1/rvim.1
 ln -s vim.1 .%_mandir/man1/vi.1
 ln -s vim.1 .%_mandir/man1/rvi.1
 ln -s vim.1 .%_mandir/man1/rvim.1
@@ -254,6 +254,13 @@ rm -r .%_mandir/ru*/man1/evim.1*
 %endif
 
 install -pm644 %_sourcedir/vimrc .%_datadir/vim/
+sed -i 's!VIMDIR!%_datadir/vim/%vimdir!' .%_datadir/vim/vimrc
+
+# Compress documentation
+pushd .%_datadir/vim/%vimdir/doc/
+gzip *.txt
+sed -i 's/\t\([a-zA-Z0-9\._-]\+\).txt/\t\1.txt.gz/' tags
+popd
 
 # Dependency cleanups
 chmod 644 .%_datadir/vim/%vimdir/{doc/vim2html.pl,tools/{*.pl,vim132}}
@@ -341,6 +348,10 @@ chmod 644 ../runtime/doc/vim2html.pl
 %endif
 
 %changelog
+* Wed Oct 13 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 7.3.021-owl2
+- Use gzip-compressed doc/* files.
+- Removed 'augroup gzip' section from vimrc (we have gzip plugin for this).
+
 * Mon Oct 11 2010 Solar Designer <solar-at-owl.openwall.com> 7.3.021-owl1
 - Patchlevel 021.
 - Use xz-compressed Source files.
