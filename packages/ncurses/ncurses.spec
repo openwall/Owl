@@ -1,7 +1,7 @@
-# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.35 2010/10/14 08:33:35 segoon Exp $
+# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.36 2010/10/14 21:44:59 solar Exp $
 
 %define major 5
-%define oldmajor 7
+%define oldmajor 4
 
 %define BUILD_CXX 0
 %define BUILD_GPM 0
@@ -9,20 +9,19 @@
 Summary: A CRT screen handling and optimization package.
 Name: ncurses
 Version: 5.7
-Release: owl1
+Release: owl2
 License: distributable
 Group: System Environment/Libraries
 URL: http://dickey.his.com/ncurses/ncurses.html
+Source0: %name-%version.tar.xz
 # ftp://invisible-island.net/%name/%name-%version.tar.gz
-# Signature: ftp://invisible-island.net/%name/%name-%version.tar.gz.sig
 # ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.gz
-Source0: %name-%version.tar.bz2
+# Signature: ftp://invisible-island.net/%name/%name-%version.tar.gz.sig
 Source1: ncurses-linux
 Source2: ncurses-linux-m
 Source3: ncurses-resetall.sh
-Patch10: ncurses-5.7-owl-glibc-enable_secure.diff
-Patch11: ncurses-5.7-owl-fixes.diff
-Patch12: ncurses-5.7-owl-warnings.diff
+Patch0: ncurses-5.7-owl-glibc-enable_secure.diff
+Patch1: ncurses-5.7-owl-warnings.diff
 PreReq: /sbin/ldconfig
 BuildRoot: /override/%name-%version
 
@@ -61,9 +60,8 @@ built against Red Hat Linux 6.2.
 %prep
 %setup -q
 rm -r doc/html/ada
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
+%patch0 -p1
+%patch1 -p1
 bzip2 -9k NEWS
 
 %build
@@ -202,6 +200,12 @@ rm %buildroot%_datadir/terminfo/s/screen{,-bce,-s}
 %endif
 
 %changelog
+* Fri Oct 15 2010 Solar Designer <solar-at-owl.openwall.com> 5.7-owl2
+- Dropped the erroneous owl-fixes patch (TermType is a pointer, not an array).
+- Corrected oldmajor (it was broken with the previous change, which was never
+made public).
+- Use xz-compressed Source tarball.
+
 * Mon Oct 11 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.7-owl1
 - Updated to 5.7.
 - Updated owl-fixes and owl-glibc-enable_secure patches.
