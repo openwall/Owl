@@ -1,0 +1,12 @@
+diff -uNrp ncurses-5.7.old/ncurses/tinfo/comp_error.c ncurses-5.7/ncurses/tinfo/comp_error.c
+--- ncurses-5.7.old/ncurses/tinfo/comp_error.c	2010-10-11 14:52:29 +0000
++++ ncurses-5.7/ncurses/tinfo/comp_error.c	2010-10-11 14:53:16 +0000
+@@ -70,7 +70,7 @@ _nc_set_type(const char *const name)
+     if (TermType != 0) {
+ 	TermType[0] = '\0';
+ 	if (name)
+-	    strncat(TermType, name, MAX_NAME_SIZE);
++	    strncat(TermType, name, sizeof(TermType) - 1);
+     }
+ }
+ 

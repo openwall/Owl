@@ -1,28 +1,28 @@
-# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.34 2010/01/26 17:18:57 solar Exp $
+# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.35 2010/10/14 08:33:35 segoon Exp $
 
 %define major 5
-%define oldmajor 4
+%define oldmajor 7
 
 %define BUILD_CXX 0
 %define BUILD_GPM 0
 
 Summary: A CRT screen handling and optimization package.
 Name: ncurses
-Version: 5.4
-Release: owl3
+Version: 5.7
+Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://dickey.his.com/ncurses/ncurses.html
 # ftp://invisible-island.net/%name/%name-%version.tar.gz
+# Signature: ftp://invisible-island.net/%name/%name-%version.tar.gz.sig
+# ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.gz
 Source0: %name-%version.tar.bz2
 Source1: ncurses-linux
 Source2: ncurses-linux-m
 Source3: ncurses-resetall.sh
-Patch0: ftp://invisible-island.net/%name/%version/ncurses-5.4-20040424-patch.sh.bz2
-Patch1: ftp://invisible-island.net/%name/%version/ncurses-5.4-20040501.patch.gz
-Patch2: ftp://invisible-island.net/%name/%version/ncurses-5.4-20040508.patch.gz
-Patch10: ncurses-5.4-owl-glibc-enable_secure.diff
-Patch11: ncurses-5.4-owl-fixes.diff
+Patch10: ncurses-5.7-owl-glibc-enable_secure.diff
+Patch11: ncurses-5.7-owl-fixes.diff
+Patch12: ncurses-5.7-owl-warnings.diff
 PreReq: /sbin/ldconfig
 BuildRoot: /override/%name-%version
 
@@ -59,13 +59,11 @@ built against Red Hat Linux 6.2.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
-%setup -q -n ncurses-%version
+%setup -q
 rm -r doc/html/ada
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 bzip2 -9k NEWS
 
 %build
@@ -123,9 +121,6 @@ mkdir -p %buildroot%_prefix/lib
 %makeinstall \
 	includedir=%buildroot%_includedir/%name \
 	ticdir=%buildroot%_datadir/terminfo
-
-# Clean up after make install - tack man page lands into the wrong place
-mv %buildroot%_mandir/tack.1* %buildroot%_mandir/man1/
 
 ln -s ../l/linux %buildroot%_datadir/terminfo/c/console
 ln -s ncurses/curses.h %buildroot%_includedir/ncurses.h
@@ -191,6 +186,7 @@ rm %buildroot%_datadir/terminfo/s/screen{,-bce,-s}
 %files devel
 %defattr(-,root,root)
 %doc doc/html/{hackguide,ncurses-intro}.html
+%doc AUTHORS
 %if %BUILD_CXX
 %doc c++/demo.cc
 %endif
@@ -206,6 +202,12 @@ rm %buildroot%_datadir/terminfo/s/screen{,-bce,-s}
 %endif
 
 %changelog
+* Mon Oct 11 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.7-owl1
+- Updated to 5.7.
+- Updated owl-fixes and owl-glibc-enable_secure patches.
+- Fixed compiler warnings.
+- Packaged AUTHORS file.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.4-owl3
 - Compressed NEWS file.
 

@@ -1,0 +1,20 @@
+diff -uNrp ncurses-5.7.old/progs/tset.c ncurses-5.7/progs/tset.c
+--- ncurses-5.7.old/progs/tset.c	2010-10-11 14:52:29 +0000
++++ ncurses-5.7/progs/tset.c	2010-10-12 16:32:41 +0000
+@@ -281,14 +281,14 @@ typedef struct map {
+     const char *porttype;	/* Port type, or "" for any. */
+     const char *type;		/* Terminal type to select. */
+     int conditional;		/* Baud rate conditionals bitmask. */
+-    int speed;			/* Baud rate to compare against. */
++    unsigned int speed;			/* Baud rate to compare against. */
+ } MAP;
+ 
+ static MAP *cur, *maplist;
+ 
+ typedef struct speeds {
+     const char *string;
+-    int speed;
++    unsigned int speed;
+ } SPEEDS;
+ 
+ static const SPEEDS speeds[] =

@@ -1,16 +1,15 @@
---- ncurses-5.4/ncurses/tinfo/access.c.orig	Sat Jul  5 19:31:28 2003
-+++ ncurses-5.4/ncurses/tinfo/access.c	Fri Mar  5 23:35:36 2004
-@@ -30,6 +30,9 @@
-  *  Author: Thomas E. Dickey <dickey@clark.net> 1998,2000,2001              *
+diff -uNrp ncurses-5.7.old/ncurses/tinfo/access.c ncurses-5.7/ncurses/tinfo/access.c
+--- ncurses-5.7.old/ncurses/tinfo/access.c	2010-10-11 14:52:29 +0000
++++ ncurses-5.7/ncurses/tinfo/access.c	2010-10-12 16:37:01 +0000
+@@ -30,6 +30,7 @@
+  *  Author: Thomas E. Dickey                                                *
   ****************************************************************************/
  
-+#define _GNU_SOURCE
 +#include <unistd.h>
-+
  #include <curses.priv.h>
- #include <tic.h>
- #include <nc_alloc.h>
-@@ -112,6 +115,9 @@
+ 
+ #include <ctype.h>
+@@ -156,6 +157,9 @@ _nc_is_file_path(const char *path)
  }
  
  #ifndef USE_ROOT_ENVIRON
@@ -20,7 +19,7 @@
  /*
   * Returns true if we allow application to use environment variables that are
   * used for searching lists of directories, etc.
-@@ -119,6 +125,8 @@
+@@ -163,6 +167,8 @@ _nc_is_file_path(const char *path)
  NCURSES_EXPORT(int)
  _nc_env_access(void)
  {
