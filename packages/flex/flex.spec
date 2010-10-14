@@ -1,14 +1,17 @@
-# $Owl: Owl/packages/flex/flex.spec,v 1.15 2009/08/03 20:33:14 solar Exp $
+# $Owl: Owl/packages/flex/flex.spec,v 1.16 2010/10/14 08:35:01 segoon Exp $
 
 Summary: A tool for creating scanners (text pattern recognizers).
 Name: flex
-Version: 2.5.4a
-Release: owl14
+Version: 2.5.35
+Release: owl1
 License: GPL
 Group: Development/Tools
 URL: http://flex.sourceforge.net
-Source: flex-%version.tar.gz
+Source: flex-%version.tar.bz2
 Patch0: flex-2.5.4a-rh-skel.diff
+Patch1: flex-2.5.35-alt-YY_STATE_BUF_SIZE.diff
+Patch2: flex-2.5.35-suse-pic.diff
+Patch3: flex-2.5.35-alt-texinfo.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
@@ -25,28 +28,38 @@ both Yacc and Bison, and is used by many programs as part of their
 build process.
 
 %prep
-%setup -q -n flex-2.5.4
+%setup -q
 %patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
 
 %build
 autoconf
 %configure
-make
+%__make
+
+%check
+%__make check
 
 %install
 rm -rf %buildroot
 
-%makeinstall mandir=%buildroot%_mandir/man1
+%makeinstall
 
 pushd %buildroot
 ln -sf flex .%_bindir/lex
+ln -sf flex .%_bindir/flex++
+ln -s libfl.a .%_libdir/libl.a
+ln -s libfl.a .%_libdir/libfl_pic.a
 ln -s flex.1 .%_mandir/man1/lex.1
 ln -s flex.1 .%_mandir/man1/flex++.1
-ln -s libfl.a .%_libdir/libl.a
 popd
 
-mkdir %buildroot%_infodir
-install -m 644 MISC/texinfo/flex.info %buildroot%_infodir/
+#mkdir %buildroot%_infodir
+#install -m 644 MISC/texinfo/flex.info %buildroot%_infodir/
+
+%find_lang %name
 
 %post
 /sbin/install-info %_infodir/flex.info %_infodir/dir \
@@ -57,9 +70,10 @@ if [ $1 -eq 0 ]; then
 		--entry="* Flex: (flex).                                 A fast scanner generator."
 fi
 
-%files
+%files -f %name.lang
 %defattr(-,root,root)
 %doc COPYING NEWS README
+%doc AUTHORS ChangeLog ONEWS THANKS
 %_bindir/lex
 %_bindir/flex
 %_bindir/flex++
@@ -67,9 +81,18 @@ fi
 %_infodir/flex.*
 %_libdir/libl.a
 %_libdir/libfl.a
+%_libdir/libfl_pic.a
 %_prefix/include/FlexLexer.h
+%exclude %_infodir/dir
 
 %changelog
+* Mon Oct 11 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.5.35-owl1
+- Updated to 2.5.35.
+- Imported patches from ALT Linux and Suse.
+- Added documentation files.
+- Introduced %find_lang.
+- Introduced %check.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.5.4a-owl14
 - Corrected info files installation.
 

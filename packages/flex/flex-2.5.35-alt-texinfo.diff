@@ -1,0 +1,15 @@
+--- flex-2.5.35/doc/flex.texi
++++ flex-2.5.35/doc/flex.texi
+@@ -8,9 +8,10 @@
+ @defindex hk
+ @c  "Options" index
+ @defindex op
+-@dircategory Programming
++@dircategory Software development
+ @direntry
+-* flex: (flex).      Fast lexical analyzer generator (lex replacement).
++* flex: (flex).                                 Fast lexical analyzer generator
++                                                (lex replacement).
+ @end direntry
+ @c %**end of header
+ 

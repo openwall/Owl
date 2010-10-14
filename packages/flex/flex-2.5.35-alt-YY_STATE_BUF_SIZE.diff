@@ -1,0 +1,11 @@
+--- flex-2.5.35/flex.skl
++++ flex-2.5.35/flex.skl
+@@ -1500,7 +1500,7 @@ yyFlexLexer::yyFlexLexer( std::istream* arg_yyin, std::ostream* arg_yyout )
+ 
+ m4_ifdef( [[M4_YY_USES_REJECT]],
+ [[
+-	yy_state_buf = new yy_state_type[YY_STATE_BUF_SIZE];
++	yy_state_buf = new yy_state_type[YY_BUF_SIZE + 2];
+ ]],
+ [[
+ 	yy_state_buf = 0;
