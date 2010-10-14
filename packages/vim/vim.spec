@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.39 2010/10/14 08:32:20 segoon Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.40 2010/10/14 22:06:27 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -227,7 +227,6 @@ ln -s vi bin/ex
 ln -s vim .%_bindir/rvim
 ln -s vim .%_bindir/vimdiff
 sed -i "s,%buildroot,," .%_mandir/man1/{vim,vimtutor}.1
-#rm .%_mandir/man1/rvim.1
 ln -s vim.1 .%_mandir/man1/vi.1
 ln -s vim.1 .%_mandir/man1/rvi.1
 ln -s vim.1 .%_mandir/man1/rvim.1
@@ -258,7 +257,7 @@ sed -i 's!VIMDIR!%_datadir/vim/%vimdir!' .%_datadir/vim/vimrc
 
 # Compress documentation
 pushd .%_datadir/vim/%vimdir/doc/
-gzip *.txt
+gzip -9n *.txt
 sed -i 's/\t\([a-zA-Z0-9\._-]\+\).txt/\t\1.txt.gz/' tags
 popd
 
