@@ -1,7 +1,9 @@
-# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.36 2010/10/14 21:44:59 solar Exp $
+# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.37 2010/10/15 20:22:55 segoon Exp $
 
 %define major 5
 %define oldmajor 4
+
+%define patchlevel 20101009
 
 %define BUILD_CXX 0
 %define BUILD_GPM 0
@@ -9,11 +11,11 @@
 Summary: A CRT screen handling and optimization package.
 Name: ncurses
 Version: 5.7
-Release: owl2
+Release: owl3
 License: distributable
 Group: System Environment/Libraries
 URL: http://dickey.his.com/ncurses/ncurses.html
-Source0: %name-%version.tar.xz
+Source0: %name-%version-%patchlevel.tar.xz
 # ftp://invisible-island.net/%name/%name-%version.tar.gz
 # ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.gz
 # Signature: ftp://invisible-island.net/%name/%name-%version.tar.gz.sig
@@ -58,7 +60,7 @@ built against Red Hat Linux 6.2.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
-%setup -q
+%setup -q -n %name-%version-%patchlevel
 rm -r doc/html/ada
 %patch0 -p1
 %patch1 -p1
@@ -200,6 +202,9 @@ rm %buildroot%_datadir/terminfo/s/screen{,-bce,-s}
 %endif
 
 %changelog
+* Fri Oct 15 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.7-owl3
+- Updated to 5.7-20101009.
+
 * Fri Oct 15 2010 Solar Designer <solar-at-owl.openwall.com> 5.7-owl2
 - Dropped the erroneous owl-fixes patch (TermType is a pointer, not an array).
 - Corrected oldmajor (it was broken with the previous change, which was never
