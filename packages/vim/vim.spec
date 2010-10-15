@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.41 2010/10/14 22:18:29 solar Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.42 2010/10/15 14:42:21 segoon Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -32,6 +32,7 @@ Patch13: vim-7.2-rh-fix-keys.diff
 Patch14: vim-7.2-rh-owl-vim-not-vi.diff
 Patch15: vim-7.2-rh-owl-xxd-locale.diff
 Patch16: vim-7.3-owl-configure.diff
+Patch17: vim-7.3-owl-makefile.diff
 Requires: mktemp >= 1:1.3.1
 BuildRequires: libtermcap-devel, ncurses-devel, perl
 BuildRequires: sed >= 4.0.9
@@ -136,6 +137,7 @@ This subpackage contains Vim tutorial files in many different languages.
 %patch14 -p1
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
 rm src/auto/configure
 install -pm644 %_sourcedir/README .
 
@@ -221,16 +223,14 @@ install -pm644 %_sourcedir/vitmp.1 %buildroot%_mandir/man1/
 pushd %buildroot
 mv bin/vim bin/vi
 mv bin/rview bin/view bin/vimtutor .%_bindir/
-rm bin/ex bin/rvim
+rm bin/ex
+mv bin/rvim .%_bindir/
 ln -s vi bin/rvi
 ln -s vi bin/ex
-ln -s vim .%_bindir/rvim
 ln -s vim .%_bindir/vimdiff
 sed -i "s,%buildroot,," .%_mandir/man1/{vim,vimtutor}.1
-rm .%_mandir/man1/rvim.1
 ln -s vim.1 .%_mandir/man1/vi.1
 ln -s vim.1 .%_mandir/man1/rvi.1
-ln -s vim.1 .%_mandir/man1/rvim.1
 
 %if %BUILD_USE_X
 ln -s gvim .%_prefix/X11R6/bin/vimx
@@ -348,6 +348,11 @@ chmod 644 ../runtime/doc/vim2html.pl
 %endif
 
 %changelog
+* Fri Oct 15 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 7.3.021-owl3
+- Fixed parallel build.
+- Fixed vimrc bug.
+- Do not recreate already existing symlinks.
+
 * Wed Oct 13 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 7.3.021-owl2
 - Use gzip-compressed doc/* files.
 - Removed 'augroup gzip' section from vimrc (we have gzip plugin for this).
