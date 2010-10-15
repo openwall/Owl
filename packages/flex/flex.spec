@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/flex/flex.spec,v 1.16 2010/10/14 08:35:01 segoon Exp $
+# $Owl: Owl/packages/flex/flex.spec,v 1.17 2010/10/15 00:35:19 solar Exp $
 
 Summary: A tool for creating scanners (text pattern recognizers).
 Name: flex
@@ -7,11 +7,11 @@ Release: owl1
 License: GPL
 Group: Development/Tools
 URL: http://flex.sourceforge.net
-Source: flex-%version.tar.bz2
+Source: flex-%version.tar.xz
 Patch0: flex-2.5.4a-rh-skel.diff
 Patch1: flex-2.5.35-alt-YY_STATE_BUF_SIZE.diff
 Patch2: flex-2.5.35-suse-pic.diff
-Patch3: flex-2.5.35-alt-texinfo.diff
+Patch3: flex-2.5.35-alt-info.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
@@ -88,7 +88,7 @@ fi
 %changelog
 * Mon Oct 11 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.5.35-owl1
 - Updated to 2.5.35.
-- Imported patches from ALT Linux and Suse.
+- Imported patches from ALT Linux and SuSE.
 - Added documentation files.
 - Introduced %find_lang.
 - Introduced %check.
