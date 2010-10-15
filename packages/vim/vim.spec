@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.42 2010/10/15 14:42:21 segoon Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.43 2010/10/15 14:43:43 segoon Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -12,7 +12,7 @@ Name: vim
 %define patchlevel 021
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl2
+Release: owl3
 License: Charityware
 Group: Applications/Editors
 URL: http://www.vim.org
