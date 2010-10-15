@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/flex/flex.spec,v 1.17 2010/10/15 00:35:19 solar Exp $
+# $Owl: Owl/packages/flex/flex.spec,v 1.18 2010/10/15 01:02:47 solar Exp $
 
 Summary: A tool for creating scanners (text pattern recognizers).
 Name: flex
@@ -72,8 +72,8 @@ fi
 
 %files -f %name.lang
 %defattr(-,root,root)
-%doc COPYING NEWS README
-%doc AUTHORS ChangeLog ONEWS THANKS
+%doc AUTHORS COPYING NEWS README THANKS
+# XXX: Consider packaging doc/flex.pdf and examples/ (in some form).
 %_bindir/lex
 %_bindir/flex
 %_bindir/flex++
