@@ -1,6 +1,7 @@
---- vim73.old/src/Makefile	2010-10-06 13:22:18 +0400
-+++ vim73/src/Makefile	2010-10-15 17:00:04 +0400
-@@ -2165,7 +2165,7 @@ INSTALLMLARGS = $(VIMNAME) $(VIMDIFFNAME
+diff -ur vim73.orig/src/Makefile vim73/src/Makefile
+--- vim73.orig/src/Makefile	2010-08-15 12:56:15 +0000
++++ vim73/src/Makefile	2010-10-16 21:19:54 +0000
+@@ -2165,7 +2165,7 @@
  		$(GVIMNAME) $(GVIEWNAME) $(RGVIMNAME) $(RGVIEWNAME) \
  		$(GVIMDIFFNAME) $(EVIEWNAME)
  

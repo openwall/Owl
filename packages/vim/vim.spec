@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.43 2010/10/15 14:43:43 segoon Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.44 2010/10/16 21:24:22 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -32,7 +32,7 @@ Patch13: vim-7.2-rh-fix-keys.diff
 Patch14: vim-7.2-rh-owl-vim-not-vi.diff
 Patch15: vim-7.2-rh-owl-xxd-locale.diff
 Patch16: vim-7.3-owl-configure.diff
-Patch17: vim-7.3-owl-makefile.diff
+Patch17: vim-7.3-owl-Makefile.diff
 Requires: mktemp >= 1:1.3.1
 BuildRequires: libtermcap-devel, ncurses-devel, perl
 BuildRequires: sed >= 4.0.9
