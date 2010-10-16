@@ -46,14 +46,15 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
-2010/10/15	Package: flex
-Updated to 2.5.35.
+2010/10/06 -
+2010/10/16	Package: vim
+Updated to 7.3 patchlevel 21, made numerous changes to the package.
 
 2010/10/15	Package: ncurses
-Updated to 5.7.
+Updated to 5.7-20101009.
 
-2010/10/11	Package: vim
-Updated to 7.3 patchlevel 21.
+2010/10/15	Package: flex
+Updated to 2.5.35.
 
 2010/10/11	Package: diffstat
 Updated to 1.54.
@@ -1428,4 +1429,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.276 2010/10/15 01:25:15 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.277 2010/10/16 21:33:41 solar Exp $
