@@ -1,6 +1,9 @@
-# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.37 2010/10/15 20:22:55 segoon Exp $
+# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.38 2010/10/17 11:13:55 segoon Exp $
 
 %define major 5
+%define minor 7
+%define basic_version %major.%minor
+
 %define oldmajor 4
 
 %define patchlevel 20101009
@@ -10,12 +13,12 @@
 
 Summary: A CRT screen handling and optimization package.
 Name: ncurses
-Version: 5.7
+Version: %basic_version%{?patchlevel:.%patchlevel}
 Release: owl3
 License: distributable
 Group: System Environment/Libraries
 URL: http://dickey.his.com/ncurses/ncurses.html
-Source0: %name-%version-%patchlevel.tar.xz
+Source0: %name-%basic_version%{?patchlevel:-%patchlevel}.tar.xz
 # ftp://invisible-island.net/%name/%name-%version.tar.gz
 # ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.gz
 # Signature: ftp://invisible-island.net/%name/%name-%version.tar.gz.sig
@@ -60,14 +63,13 @@ built against Red Hat Linux 6.2.
 %{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
 
 %prep
-%setup -q -n %name-%version-%patchlevel
+%setup -q -n %name-%basic_version%{?patchlevel:-%patchlevel}
 rm -r doc/html/ada
 %patch0 -p1
 %patch1 -p1
 bzip2 -9k NEWS
 
 %build
-export ac_cv_func_mkstemp=yes \
 %configure \
 	--program-transform-name= \
 	--with-normal \
@@ -105,7 +107,7 @@ export ac_cv_func_mkstemp=yes \
 %if %BUILD_CXX
 # Build C++ shared library
 pushd lib
-g++ -shared -Wl,-soname,libncurses++.so.5 -o libncurses++.so.%version \
+g++ -shared -Wl,-soname,libncurses++.so.5 -o libncurses++.so.%basic_version \
 	-Wl,-whole-archive libncurses++.a -Wl,-no-whole-archive \
 	-L. -lform -lmenu -lpanel -lncurses -ltinfo
 popd
@@ -139,9 +141,9 @@ install -m 644 %_sourcedir/ncurses-linux-m \
 
 %if %BUILD_CXX
 # Install C++ shared library
-install -p -m 755 lib/libncurses++.so.%version %buildroot%_libdir/
-ln -s libncurses++.so.%version %buildroot%_libdir/libncurses++.so.5
-ln -s libncurses++.so.5 %buildroot%_libdir/libncurses++.so
+install -p -m 755 lib/libncurses++.so.%basic_version %buildroot%_libdir/
+ln -s libncurses++.so.%version %buildroot%_libdir/libncurses++.so.%major
+ln -s libncurses++.so.%major %buildroot%_libdir/libncurses++.so
 
 # Prepare C++ doc directory
 mkdir -p rpm-doc/c++
@@ -154,10 +156,10 @@ install -m 755 %_sourcedir/ncurses-resetall.sh \
 
 %ifnarch x86_64
 # compat links
-ln -s libform.so.%version %buildroot%_libdir/libform.so.%oldmajor
-ln -s libmenu.so.%version %buildroot%_libdir/libmenu.so.%oldmajor
-ln -s libncurses.so.%version %buildroot%_libdir/libncurses.so.%oldmajor
-ln -s libpanel.so.%version %buildroot%_libdir/libpanel.so.%oldmajor
+ln -s libform.so.%basic_version %buildroot%_libdir/libform.so.%oldmajor
+ln -s libmenu.so.%basic_version %buildroot%_libdir/libmenu.so.%oldmajor
+ln -s libncurses.so.%basic_version %buildroot%_libdir/libncurses.so.%oldmajor
+ln -s libpanel.so.%basic_version %buildroot%_libdir/libpanel.so.%oldmajor
 %endif
 
 # remove terminfo entries for screen, since the screen package provides
@@ -202,6 +204,9 @@ rm %buildroot%_datadir/terminfo/s/screen{,-bce,-s}
 %endif
 
 %changelog
+* Sun Oct 17 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.7.20101009-owl1
+- Patchlevel is used as version suffix.
+
 * Fri Oct 15 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.7-owl3
 - Updated to 5.7-20101009.
 
