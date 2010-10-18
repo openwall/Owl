@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.117 2010/10/03 18:52:28 segoon Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.118 2010/10/18 23:02:32 ldv Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 1.0.4
-Release: owl11
+Release: owl12
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
@@ -290,7 +290,7 @@ ln -s SUPPORTED.NO-UTF-8 localedata/SUPPORTED
 %build
 mkdir build-%_target_cpu-linux
 pushd build-%_target_cpu-linux
-CFLAGS="-g %optflags -DNDEBUG=1 -finline-limit=2000" \
+CFLAGS="-g %optflags -finline-limit=2000" \
 ../configure \
 	--build=%_target_platform --target=%_target_platform \
 	--prefix=%_prefix \
@@ -468,6 +468,13 @@ fi
 %endif
 
 %changelog
+* Mon Oct 18 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.6-owl12
+- Build glibc without NDEBUG.  Disabling of assertion checks does not
+provide significant performance advantage, but it may expose some security
+problems.  Those asserts, which NDEBUG removes, might in fact reduce the
+impact of the surrounding code not matching the programmers' intent and
+expectations.  Proposed by Solar Designer.
+
 * Sun Oct 03 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.3.6-owl11
 - Fixed build with binutils 2.20.x.
 
