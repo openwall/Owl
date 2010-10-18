@@ -1,29 +1,31 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.59 2009/10/10 23:34:55 solar Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.60 2010/10/18 22:37:01 ldv Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
-Version: 1.1.0
-Release: owl2
+Version: 1.1.2
+Release: owl1
 %define rh_version 0.99.10-1
 License: GPLv2+ or BSD-style
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
 Source0: ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%version.tar.bz2
+# Signature: ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%version.tar.bz2.sign
 Source1: ftp://ftp.kernel.org/pub/linux/libs/pam/documentation/Linux-PAM-%version-docs.tar.bz2
+# Signature: ftp://ftp.kernel.org/pub/linux/libs/pam/documentation/Linux-PAM-%version-docs.tar.bz2.sign
 Source2: pam-redhat-%rh_version.tar.bz2
 Source3: pam_listfile.c
 Source4: other.pam
 Source5: system-auth.pam
-Patch0: Linux-PAM-1.1.0-up-20090626-bug2809661.diff
-Patch1: Linux-PAM-1.1.0-alt-const.diff
-Patch2: Linux-PAM-1.1.0-owl-pam_limits-acct.diff
-Patch3: Linux-PAM-1.1.0-alt-pam_mkhomedir-fixes.diff
-Patch4: Linux-PAM-1.1.0-owl-pam_mkhomedir-acct.diff
-Patch5: Linux-PAM-1.1.0-owl-pam_wheel-use_uid.diff
-Patch6: Linux-PAM-1.1.0-alt-pam_xauth-check_acl.diff
-Patch7: Linux-PAM-1.1.0-owl-pam_get_authtok.diff
-Patch8: Linux-PAM-1.1.0-alt-pam_chroot.diff
-Patch9: Linux-PAM-1.1.0-owl-pam_stack.diff
+Patch0: Linux-PAM-1.1.2-up-20101011.diff
+Patch1: Linux-PAM-1.1.2-owl-Makefile.diff
+Patch2: Linux-PAM-1.1.2-alt-const.diff
+Patch3: Linux-PAM-1.1.2-alt-pam_mkhomedir-fixes.diff
+Patch4: Linux-PAM-1.1.2-owl-pam_mkhomedir-acct.diff
+Patch5: Linux-PAM-1.1.2-owl-pam_limits-acct.diff
+Patch6: Linux-PAM-1.1.2-owl-pam_wheel-use_uid.diff
+Patch7: Linux-PAM-1.1.2-owl-pam_get_authtok.diff
+Patch8: Linux-PAM-1.1.2-alt-pam_chroot.diff
+Patch9: Linux-PAM-1.1.2-owl-pam_stack.diff
 PreReq: /sbin/ldconfig
 Requires: glibc-crypt_blowfish
 # Just to make sure no one misses pam_unix and pam_pwdb, which are now
@@ -289,6 +291,10 @@ rm %buildroot%docdir/*.pdf
 %docdir/[^ACNm]*
 
 %changelog
+* Wed Oct 13 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1.2-owl1
+- Updated Linux-PAM to 1.1.2+ snapshot 20101011 (fixes privilege switching in
+pam_env, pam_mail and pam_xauth: CVE-2010-3316, CVE-2010-3430, CVE-2010-3431).
+
 * Mon Sep 28 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1.0-owl2
 - In system-auth, changed pam_passwdqc options to use /etc/passwdqc.conf file.
 

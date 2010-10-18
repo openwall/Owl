@@ -1,9 +1,9 @@
 --- Linux-PAM/libpam/libpam.map
 +++ Linux-PAM/libpam/libpam.map
-@@ -55,3 +55,14 @@ LIBPAM_MODUTIL_1.1 {
-   global:
-     pam_modutil_audit_write;
- } LIBPAM_MODUTIL_1.0;
+@@ -67,3 +67,14 @@ LIBPAM_MODUTIL_1.1.3 {
+     pam_modutil_drop_priv;
+     pam_modutil_regain_priv;
+ } LIBPAM_MODUTIL_1.1;
 +
 +LIBPAM_PRIVATE_1.0 {
 +  global:

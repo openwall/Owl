@@ -2,7 +2,7 @@
 
 --- Linux-PAM/modules/pam_mkhomedir/pam_mkhomedir.c
 +++ Linux-PAM/modules/pam_mkhomedir/pam_mkhomedir.c
-@@ -242,6 +242,18 @@ int pam_sm_close_session (pam_handle_t * pamh UNUSED, int flags UNUSED,
+@@ -256,6 +256,18 @@ int pam_sm_close_session (pam_handle_t * pamh UNUSED, int flags UNUSED,
  }
  
  #ifdef PAM_STATIC
@@ -21,7 +21,7 @@
  
  /* static module data */
  struct pam_module _pam_mkhomedir_modstruct =
-@@ -249,7 +275,7 @@ struct pam_module _pam_mkhomedir_modstruct =
+@@ -263,7 +275,7 @@ struct pam_module _pam_mkhomedir_modstruct =
     "pam_mkhomedir",
     NULL,
     NULL,

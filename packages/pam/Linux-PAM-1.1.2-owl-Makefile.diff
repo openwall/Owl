@@ -1,0 +1,30 @@
+--- Linux-PAM/libpam/Makefile.in
++++ Linux-PAM/libpam/Makefile.in
+@@ -85,7 +85,8 @@
+ 	pam_modutil_getpwnam.lo pam_modutil_ioloop.lo \
+ 	pam_modutil_getgrgid.lo pam_modutil_getpwuid.lo \
+ 	pam_modutil_getgrnam.lo pam_modutil_getspnam.lo \
+-	pam_modutil_getlogin.lo pam_modutil_ingroup.lo
++	pam_modutil_getlogin.lo pam_modutil_ingroup.lo \
++	pam_modutil_priv.lo
+ libpam_la_OBJECTS = $(am_libpam_la_OBJECTS)
+ libpam_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+ 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+@@ -296,7 +297,8 @@
+ 	pam_vprompt.c pam_syslog.c pam_dynamic.c pam_audit.c \
+ 	pam_modutil_cleanup.c pam_modutil_getpwnam.c pam_modutil_ioloop.c \
+ 	pam_modutil_getgrgid.c pam_modutil_getpwuid.c pam_modutil_getgrnam.c \
+-	pam_modutil_getspnam.c pam_modutil_getlogin.c  pam_modutil_ingroup.c
++	pam_modutil_getspnam.c pam_modutil_getlogin.c pam_modutil_ingroup.c \
++	pam_modutil_priv.c
+ 
+ all: all-am
+ 
+@@ -389,6 +391,7 @@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pam_modutil_getspnam.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pam_modutil_ingroup.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pam_modutil_ioloop.Plo@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pam_modutil_priv.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pam_password.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pam_prelude.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pam_session.Plo@am__quote@
