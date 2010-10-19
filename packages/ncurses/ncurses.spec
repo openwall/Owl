@@ -1,20 +1,20 @@
-# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.38 2010/10/17 11:13:55 segoon Exp $
-
-%define major 5
-%define minor 7
-%define basic_version %major.%minor
-
-%define oldmajor 4
-
-%define patchlevel 20101009
+# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.39 2010/10/19 12:06:39 solar Exp $
 
 %define BUILD_CXX 0
 %define BUILD_GPM 0
 
+%define major 5
+%define minor 7
+%define patchlevel 20101009
+
+%define basic_version %major.%minor
+
+%define oldmajor 4
+
 Summary: A CRT screen handling and optimization package.
 Name: ncurses
 Version: %basic_version%{?patchlevel:.%patchlevel}
-Release: owl3
+Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://dickey.his.com/ncurses/ncurses.html
