@@ -48,12 +48,15 @@ clarify the specific issue(s) and their severities in the description.
 
 2010/10/18	Package: pam
 SECURITY FIX	Severity: none to medium, local, active
-Updated to 1.1.2+ snapshot 20101011.  This build fixes privilege
-switching in pam_env, pam_mail, and pam_xauth.
+Updated to 1.1.2+ snapshot 20101011.  This code revision introduces the
+proper privilege switching into pam_env, pam_mail, and pam_xauth.  None
+of these modules are in use on default installs of Owl, and they never
+were, hence there was no impact for default installs.
 References:
 http://www.openwall.com/lists/oss-security/2010/08/16/2
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3316
 http://www.openwall.com/lists/oss-security/2010/09/21/3
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3435
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3430
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3431
 
@@ -1440,4 +1443,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.279 2010/10/19 12:44:15 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.280 2010/10/19 20:34:51 solar Exp $
