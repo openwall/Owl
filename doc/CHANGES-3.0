@@ -47,13 +47,13 @@ clarify the specific issue(s) and their severities in the description.
 	Changes made between Owl 2.0 and Owl-current.
 
 2010/10/18	Package: pam
-SECURITY FIX	Severity: none to low, local, active/passive
+SECURITY FIX	Severity: none to medium, local, active
 Updated to 1.1.2+ snapshot 20101011.  This build fixes privilege
-switching in pam_env, pam_mail and pam_xauth.
+switching in pam_env, pam_mail, and pam_xauth.
 References:
-http://openwall.com/lists/oss-security/2010/08/16/2
+http://www.openwall.com/lists/oss-security/2010/08/16/2
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3316
-http://openwall.com/lists/oss-security/2010/09/21/3
+http://www.openwall.com/lists/oss-security/2010/09/21/3
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3430
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3431
 
@@ -105,7 +105,7 @@ https://access.redhat.com/kb/docs/DOC-40265
 Updated to 2.7.
 
 2010/09/21	Package: bzip2
-SECURITY FIX	Severity: high, local, passive
+SECURITY FIX	Severity: high, indirect, passive
 Updated to 1.0.6.  This release fixes an integer overflow vulnerability
 discovered by Mikolaj Izdebski in the BZ2_decompress function in
 bzip2/libbz2.  An attacker could use the vulnerability to crash bzip2 or
@@ -1440,4 +1440,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.278 2010/10/18 22:54:48 ldv Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.279 2010/10/19 12:44:15 solar Exp $
