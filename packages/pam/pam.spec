@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.60 2010/10/18 22:37:01 ldv Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.61 2010/10/19 12:20:46 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
@@ -8,11 +8,13 @@ Release: owl1
 License: GPLv2+ or BSD-style
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
-Source0: ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%version.tar.bz2
+Source0: Linux-PAM-%version.tar.xz
+# ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%version.tar.bz2
 # Signature: ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%version.tar.bz2.sign
-Source1: ftp://ftp.kernel.org/pub/linux/libs/pam/documentation/Linux-PAM-%version-docs.tar.bz2
+Source1: Linux-PAM-%version-docs.tar.xz
+# ftp://ftp.kernel.org/pub/linux/libs/pam/documentation/Linux-PAM-%version-docs.tar.bz2
 # Signature: ftp://ftp.kernel.org/pub/linux/libs/pam/documentation/Linux-PAM-%version-docs.tar.bz2.sign
-Source2: pam-redhat-%rh_version.tar.bz2
+Source2: pam-redhat-%rh_version.tar.xz
 Source3: pam_listfile.c
 Source4: other.pam
 Source5: system-auth.pam
