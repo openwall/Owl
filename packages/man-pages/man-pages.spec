@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.27 2010/10/06 16:42:41 segoon Exp $
+# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.28 2010/10/23 10:14:01 segoon Exp $
 
 %define posix_version 2003
 %define posix_release a
 
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
-Version: 3.28
+Version: 3.29
 Release: owl1
 License: distributable
 Group: Documentation
@@ -131,6 +131,9 @@ done
 %_mandir/man?p/*
 
 %changelog
+* Sat Oct 23 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.29-owl1
+- Updated to 3.29.
+
 * Wed Oct 06 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.28-owl1
 - Updated to 3.28.
 - Updated deb-owl-misc patch.
