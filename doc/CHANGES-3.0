@@ -46,6 +46,12 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/10/27	Package: man-pages
+Updated to 3.29.
+
+2010/10/27	Package: hdparm
+Updated to 9.35.
+
 2010/10/18	Package: pam
 SECURITY FIX	Severity: none to medium, local, active
 Updated to 1.1.2+ snapshot 20101011.  This code revision introduces the
@@ -1443,4 +1449,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.280 2010/10/19 20:34:51 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.281 2010/10/27 12:19:37 segoon Exp $
