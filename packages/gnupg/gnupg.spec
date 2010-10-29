@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.45 2009/09/09 20:58:20 ldv Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.46 2010/10/29 17:55:48 segoon Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.4.10
+Version: 1.4.11
 Release: owl1
 License: GPL
 Group: Applications/Cryptography
@@ -10,11 +10,12 @@ URL: http://www.gnupg.org
 Source0: ftp://ftp.gnupg.org/gcrypt/gnupg/%name-%version.tar.bz2
 Source1: gpgsplit.1
 Source2: lspgpot.1
-Patch0: gnupg-1.4.10-alt-ru.po.diff
+Patch0: gnupg-1.4.11-alt-ru.po.diff
 Patch1: gnupg-1.4.3-alt-always-trust.diff
 Patch2: gnupg-1.4.2-alt-cp1251.diff
 Patch3: gnupg-1.4.2-fw-secret-key-checks.diff
-Patch4: gnupg-1.4.6-alt-owl-info.diff
+Patch4: gnupg-1.4.11-alt-owl-info.diff
+Patch5: gnupg-1.4.11-owl-setuid.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
 BuildRequires: zlib-devel, bzip2-devel, texinfo, readline-devel >= 0:4.3
@@ -36,6 +37,7 @@ only IDEA for symmetric-key encryption, which is patented worldwide).
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 bzip2 -9k NEWS doc/{DETAILS,FAQ}
 
 %build
@@ -78,7 +80,7 @@ fi
 %files
 %defattr(-,root,root)
 %doc AUTHORS COPYING NEWS.bz2 PROJECTS README THANKS TODO
-%doc doc/{DETAILS.bz2,FAQ.bz2,HACKING,OpenPGP,*.html}
+%doc doc/{DETAILS.bz2,FAQ.bz2,HACKING,OpenPGP}
 %doc tools/convert-from-106
 
 %_bindir/gpg
@@ -96,9 +98,12 @@ fi
 %dir %_datadir/gnupg
 %config(noreplace) %_datadir/gnupg/options.skel
 %exclude %_datadir/gnupg/FAQ
-%exclude %_datadir/gnupg/faq.html
 
 %changelog
+* Fri Oct 29 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.4.11-owl1
+- Updated to 1.4.11.
+- Introduced setuid() return code check.
+
 * Wed Sep 09 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.10-owl1
 - Updated to 1.4.10.
 

@@ -1,0 +1,13 @@
+diff -uNrp gnupg-1.4.11.orig/cipher/rndunix.c gnupg-1.4.11/cipher/rndunix.c
+--- gnupg-1.4.11.orig/cipher/rndunix.c	2008-12-11 16:40:06 +0000
++++ gnupg-1.4.11/cipher/rndunix.c	2010-10-29 17:24:55 +0000
+@@ -405,7 +405,8 @@ my_popen(struct RI *entry)
+ 	    (passwd = getpwnam("nobody")) != NULL)
+ 	    gatherer_uid = passwd->pw_uid;
+ 
+-	setuid(gatherer_uid);
++	if (setuid(gatherer_uid))
++            exit(127);
+ 
+ 	/* Close the pipe descriptors. */
+ 	close(pipedes[STDIN_FILENO]);

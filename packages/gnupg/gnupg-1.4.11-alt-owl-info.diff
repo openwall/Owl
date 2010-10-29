@@ -1,0 +1,12 @@
+diff -uNrp gnupg-1.4.11.orig/doc/gnupg1.texi gnupg-1.4.11/doc/gnupg1.texi
+--- gnupg-1.4.11.orig/doc/gnupg1.texi	2010-01-29 09:10:00 +0000
++++ gnupg-1.4.11/doc/gnupg1.texi	2010-10-29 16:36:11 +0000
+@@ -48,7 +48,7 @@ section entitled ``Copying''.
+ 
+ @dircategory GNU Utilities
+ @direntry
+-* gpg: (gnupg1).            OpenPGP encryption and signing tool (v1).
++* gpg: (gnupg1).                                OpenPGP encryption and signing tool (v1).
+ @end direntry
+ 
+ 
