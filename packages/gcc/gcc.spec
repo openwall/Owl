@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.59 2009/11/20 10:57:33 solar Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.60 2010/10/31 04:12:40 solar Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -45,12 +45,14 @@ Epoch: 1
 License: GPL
 Group: Development/Languages
 URL: http://gcc.gnu.org
-Source0: ftp://ftp.gnu.org/gnu/gcc/gcc-%version/gcc-core-%version.tar.bz2
+Source0: gcc-core-%version.tar.xz
+# ftp://ftp.gnu.org/gnu/gcc/gcc-%version/gcc-core-%version.tar.bz2
 %if %BUILD_ADA
 Source1: ftp://ftp.gnu.org/gnu/gcc/gcc-%version/gcc-ada-%version.tar.bz2
 %endif
 %if %BUILD_GXX
-Source2: ftp://ftp.gnu.org/gnu/gcc/gcc-%version/gcc-g++-%version.tar.bz2
+Source2: gcc-g++-%version.tar.xz
+# ftp://ftp.gnu.org/gnu/gcc/gcc-%version/gcc-g++-%version.tar.bz2
 %endif
 %if %BUILD_G77
 Source3: ftp://ftp.gnu.org/gnu/gcc/gcc-%version/gcc-g77-%version.tar.bz2
@@ -72,7 +74,7 @@ Source7: libstdc++-compat.tar.bz2
 Source8: libstdc++-compat-2.95.3-i386.tar.bz2
 %endif
 %if %BUILD_CXX_COMPAT_V5
-Source9: libstdc++-compat-3.2.2-i386.tar.bz2
+Source9: libstdc++-compat-3.2.2-i386.tar.xz
 %endif
 %endif
 

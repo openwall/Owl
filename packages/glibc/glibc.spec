@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.118 2010/10/18 23:02:32 ldv Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.119 2010/10/31 04:14:14 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -15,9 +15,11 @@ Release: owl12
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
-Source0: ftp://ftp.gnu.org/gnu/%name/glibc-%basevers%{?snapshot:-%snapshot}.tar.bz2
+Source0: glibc-%basevers%{?snapshot:-%snapshot}.tar.xz
+# ftp://ftp.gnu.org/gnu/%name/glibc-%basevers%{?snapshot:-%snapshot}.tar.bz2
 %if %{?snapshot:0}%{!?snapshot:1}
-Source1: ftp://ftp.gnu.org/gnu/%name/glibc-libidn-%basevers.tar.bz2
+Source1: glibc-libidn-%basevers.tar.xz
+# ftp://ftp.gnu.org/gnu/%name/glibc-libidn-%basevers.tar.bz2
 %endif
 Source3: crypt_blowfish-%crypt_bf_version.tar.gz
 Source4: crypt_freesec.c

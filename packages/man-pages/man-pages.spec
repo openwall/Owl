@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.28 2010/10/23 10:14:01 segoon Exp $
+# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.29 2010/10/31 03:36:34 solar Exp $
 
 %define posix_version 2003
 %define posix_release a
@@ -9,9 +9,11 @@ Version: 3.29
 Release: owl1
 License: distributable
 Group: Documentation
-Source0: http://www.kernel.org/pub/linux/docs/manpages/man-pages-%version.tar.bz2
+Source0: man-pages-%version.tar.xz
+# http://www.kernel.org/pub/linux/docs/manpages/man-pages-%version.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/docs/manpages/man-pages-%version.tar.bz2.sign
-Source1: http://www.kernel.org/pub/linux/docs/man-pages/man-pages-posix/man-pages-posix-%posix_version-%posix_release.tar.bz2
+Source1: man-pages-posix-%posix_version-%posix_release.tar.xz
+# http://www.kernel.org/pub/linux/docs/man-pages/man-pages-posix/man-pages-posix-%posix_version-%posix_release.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/docs/man-pages/man-pages-posix/man-pages-posix-%posix_version-%posix_release.tar.bz2.sign
 Source2: rpcgen.1
 Source3: getent.1
