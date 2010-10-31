@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gdb/gdb.spec,v 1.27 2006/10/31 00:54:29 ldv Exp $
+# $Owl: Owl/packages/gdb/gdb.spec,v 1.28 2010/10/31 04:22:02 solar Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
@@ -7,7 +7,8 @@ Release: owl4
 License: GPL
 Group: Development/Debuggers
 URL: http://www.gnu.org/software/gdb/
-Source: ftp://ftp.gnu.org/gnu/gdb/gdb-%version.tar.bz2
+Source: gdb-%version.tar.xz
+# ftp://ftp.gnu.org/gnu/gdb/gdb-%version.tar.bz2
 Patch0: gdb-6.3-alt-readline.diff
 Patch1: gdb-6.3-owl-info.diff
 Patch2: gdb-6.3-deb-thread-db.diff

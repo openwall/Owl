@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.42 2010/01/28 13:32:08 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.43 2010/10/31 04:20:02 solar Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -13,13 +13,13 @@ License: GPL
 Group: Applications/System
 URL: http://nmap.org
 %define srcname nmap-%version
-Source: %srcname-stripped-for-owl-1.tar.bz2
+Source: %srcname-stripped-for-owl-1.tar.xz
 # The following subdirectories have been removed from the above tarball:
 # mswin32 macosx zenmap libpcap libpcre
 # and a README-stripped file has been added.
-# The .tar.bz2 file was created with:
-# tar cjf %SOURCE0 --owner=root --group=root `find %srcname ! -type d | sort -i -t / -k 3 | sort -i -t . -k 3`
-# The size reduced from 9.6 MB to 2.9 MB.
+# The .tar.xz file was created with:
+# tar cJf %SOURCE0 --owner=root --group=root `find %srcname ! -type d | sort -i -t / -k 3 | sort -i -t . -k 3`
+# The size reduced from 9.6 MB to 2.5 MB.
 # Source: http://nmap.org/dist/%srcname.tar.bz2
 # Signature: http://nmap.org/dist/sigs/%srcname.tar.bz2.asc
 Patch0: nmap-5.20-owl-nse_ldflags.diff

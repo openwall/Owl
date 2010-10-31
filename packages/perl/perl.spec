@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.56 2009/09/09 16:42:24 ldv Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.57 2010/10/31 04:25:48 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -28,7 +28,8 @@ Release: owl5
 Epoch: 4
 License: GPL
 Group: Development/Languages
-Source: ftp://ftp.perl.org/pub/CPAN/src/perl-%version.tar.bz2
+Source: perl-%version.tar.xz
+# ftp://ftp.perl.org/pub/CPAN/src/perl-%version.tar.bz2
 Patch0: perl-5.8.3-owl-disable-suidperl.diff
 Patch1: perl-5.8.8-owl-tmp.diff
 Patch2: perl-5.8.3-owl-vitmp.diff

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.46 2010/10/29 17:55:48 segoon Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.47 2010/10/31 03:38:36 solar Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
@@ -7,7 +7,9 @@ Release: owl1
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
-Source0: ftp://ftp.gnupg.org/gcrypt/gnupg/%name-%version.tar.bz2
+Source0: %name-%version.tar.xz
+# ftp://ftp.gnupg.org/gcrypt/gnupg/%name-%version.tar.bz2
+# Signature: ftp://ftp.gnupg.org/gcrypt/gnupg/%name-%version.tar.bz2.sig
 Source1: gpgsplit.1
 Source2: lspgpot.1
 Patch0: gnupg-1.4.11-alt-ru.po.diff
