@@ -1,16 +1,16 @@
-# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.10 2010/08/23 08:56:51 segoon Exp $
+# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.11 2010/11/03 11:53:52 segoon Exp $
 
 %{?!BUILD_NETSCSID:	%define BUILD_NETSCSID 0}
 
 Summary: A collection of command-line CD/DVD recording utilities.
 Name: cdrkit
-Version: 1.1.10
+Version: 1.1.11
 Release: owl1
 License: GPLv2
 Group: Applications/System
 URL: http://cdrkit.org
 # http://cdrkit.org/releases/cdrkit-%version.tar.gz
-Source0: cdrkit-%version.tar.bz2
+Source0: cdrkit-%version.tar.xz
 Source1: cdrkit-build
 Source2: cdrkit-install
 Source3: align.h
@@ -26,6 +26,8 @@ Patch3: cdrkit-1.1.9-owl-rcfile.diff
 Patch4: cdrkit-1.1.9-owl-privacy.diff
 Patch5: cdrkit-1.1.9-rh-bound.diff
 Patch6: cdrkit-1.1.9-owl-messages.diff
+Patch7: cdrkit-1.1.9-rh-buffer_overflow.diff
+Patch8: cdrkit-1.1.9-alt-format.diff
 Provides: cdrecord = 9:2.01-12, dvdrecord = 0:0.1.5.1
 Obsoletes: cdrecord, dvdrecord
 Provides: mkisofs = 9:2.01-12
@@ -55,6 +57,8 @@ an independent project.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
+%patch8 -p1
 sed -i '/^require v5\.8\.1;$/d' 3rd-party/dirsplit/dirsplit
 sed -i '1s,/usr/local,/usr,' doc/icedax/tracknames.pl
 chmod -x doc/icedax/tracknames.pl
@@ -110,6 +114,10 @@ ln -s wodim.1 man1/dvdrecord.1
 %_mandir/man?/*
 
 %changelog
+* Mon Nov 01 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.1.11-owl1
+- Updated to 1.1.11.
+- Imported rh-buffer_overflow and alt-format patches.
+
 * Sat Aug 23 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.1.10-owl1
 - Updated to 1.1.10.
 - Updated README-cmakeless.
