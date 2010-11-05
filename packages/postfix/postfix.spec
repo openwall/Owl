@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.50 2010/07/28 17:40:10 solar Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.51 2010/11/05 21:01:11 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
 Version: 2.4.14
-Release: owl1
+Release: owl2
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
@@ -370,6 +370,10 @@ fi
 %attr(666,root,root) %ghost %queue_directory/dev/log
 
 %changelog
+* Fri Nov 05 2010 Solar Designer <solar-at-owl.openwall.com> 1:2.4.14-owl2
+- In postfix-script, use $INFO instead of $WARN for the chroot jail update
+messages, which do not indicate any problem.  Suggested by Vasiliy Kulikov.
+
 * Wed Jul 28 2010 Solar Designer <solar-at-owl.openwall.com> 1:2.4.14-owl1
 - Updated to 2.4.14.
 - Replaced the .forward sparse file check with a size check.

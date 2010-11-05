@@ -10,7 +10,7 @@
 +		test -e "$src" || continue
 +		dst="${queue_directory}${src}"
 +		cmp -s "$src" "$dst" && continue
-+		$WARN "updating $dst"
++		$INFO "updating $dst"
 +		install -p -m644 -o root -g root "$src" "${dst}.tmp"
 +		mv -f "${dst}.tmp" "$dst"
 +	done
