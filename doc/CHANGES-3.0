@@ -46,6 +46,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/11/05	Package: cdrkit
+Updated to 1.1.11.
+
 2010/10/31	Package: gnupg
 Updated to 1.4.11.
 
@@ -1452,4 +1455,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.282 2010/10/31 03:56:25 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.283 2010/11/05 21:23:21 solar Exp $
