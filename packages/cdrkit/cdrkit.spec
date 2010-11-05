@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.11 2010/11/03 11:53:52 segoon Exp $
+# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.12 2010/11/05 21:13:11 solar Exp $
 
 %{?!BUILD_NETSCSID:	%define BUILD_NETSCSID 0}
 
@@ -26,8 +26,7 @@ Patch3: cdrkit-1.1.9-owl-rcfile.diff
 Patch4: cdrkit-1.1.9-owl-privacy.diff
 Patch5: cdrkit-1.1.9-rh-bound.diff
 Patch6: cdrkit-1.1.9-owl-messages.diff
-Patch7: cdrkit-1.1.9-rh-buffer_overflow.diff
-Patch8: cdrkit-1.1.9-alt-format.diff
+Patch7: cdrkit-1.1.9-alt-format.diff
 Provides: cdrecord = 9:2.01-12, dvdrecord = 0:0.1.5.1
 Obsoletes: cdrecord, dvdrecord
 Provides: mkisofs = 9:2.01-12
@@ -58,7 +57,6 @@ an independent project.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
 sed -i '/^require v5\.8\.1;$/d' 3rd-party/dirsplit/dirsplit
 sed -i '1s,/usr/local,/usr,' doc/icedax/tracknames.pl
 chmod -x doc/icedax/tracknames.pl
