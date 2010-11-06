@@ -27,14 +27,6 @@ should probably be changed to mention the release instead).
 
 Start to implement security hardening of OpenVZ kernels.
 
-Make ping(1) working as non-root, likely with "ICMP sockets" to be
-introduced into the kernel (preferably restricted to a sysctl'able group).
-This will get rid of the very last SUID program in our default install,
-hence it is pretty important.
-
-Introduce new /etc/sysconfig/ settings for unattended machines (force
-"yes" to fsck, msulogin timeout, disable console screensaver, ...)
-
 Debug and fix sysklogd-1.4.2-owl-syslogd-unixcred.diff, which is
 currently confused by many kinds of kernel messages (especially with
 CONFIG_PRINTK_TIME, but not only in that case).
@@ -43,9 +35,6 @@ Replace our hybrid 2.4+2.6 modutils with plain module-init-tools.
 
 Update whatever packages we manage to, but don't break RHEL 4 compatibility
 (we'll break it after the release).
-
-Package xz utils - easy, but it'd be nice to have at least a quick look
-at the code first (vulnerabilities are expected).
 
 User's Guide - review and edit the draft, identify and add important
 missing chapters (adding/removing users, managing OpenVZ containers,
@@ -58,4 +47,4 @@ post-release, for the stable branch.
 
 Consider/implement Perl Safe.pm bypass fixes (update the module?)
 
-$Owl: Owl/doc/TODO,v 1.192 2010/07/29 01:43:45 solar Exp $
+$Owl: Owl/doc/TODO,v 1.193 2010/11/06 16:44:04 solar Exp $
