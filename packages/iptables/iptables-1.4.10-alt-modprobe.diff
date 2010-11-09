@@ -1,6 +1,7 @@
---- xtables.c
-+++ xtables.c
-@@ -287,25 +287,26 @@ static char *get_modprobe(void)
+diff -uNrp iptables-1.4.10.orig/xtables.c iptables-1.4.10/xtables.c
+--- xtables.c	2010-10-29 18:37:22 +0400
++++ xtables.c	2010-11-08 16:40:00 +0300
+@@ -279,25 +279,26 @@ static char *get_modprobe(void)
  {
  	int procfile;
  	char *ret;
@@ -11,7 +12,7 @@
  	if (procfile < 0)
  		return NULL;
  
--	ret = (char *) malloc(PROCFILE_BUFSIZ);
+-	ret = malloc(PROCFILE_BUFSIZ);
 +	ret = malloc(PATH_MAX);
  	if (ret) {
 -		memset(ret, 0, PROCFILE_BUFSIZ);
@@ -26,7 +27,7 @@
 +			else
 +				ret[count] = '\0';
 +			close(procfile);
-+			return ret;
++			return NULL;
  		}
 -		if (ret[strlen(ret)-1]=='\n') 
 -			ret[strlen(ret)-1]=0;

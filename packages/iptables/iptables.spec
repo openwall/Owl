@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/iptables/iptables.spec,v 1.26 2010/08/24 15:22:03 segoon Exp $
+# $Owl: Owl/packages/iptables/iptables.spec,v 1.27 2010/11/09 18:19:19 segoon Exp $
 
 %define BUILD_IPV6 0
 
 Summary: Tools for managing Netfilter/iptables packet filtering rules.
 Name: iptables
-Version: 1.4.9.1
+Version: 1.4.10
 Release: owl1
 License: GPLv2+
 Group: System Environment/Base
@@ -12,12 +12,12 @@ URL: http://www.netfilter.org/projects/iptables/
 Source0: ftp://ftp.netfilter.org/pub/iptables/%name-%version.tar.bz2
 Source1: iptables.init
 Source2: iptables-config
-Patch1: iptables-1.4.9.1-alt-link.diff
-Patch2: iptables-1.4.5-alt-modprobe.diff
+Patch1: iptables-1.4.10-alt-link.diff
+Patch2: iptables-1.4.10-alt-modprobe.diff
 Patch3: iptables-1.4.9.1-alt-configure.diff
 Patch4: iptables-1.4.5-rh-alt-eperm.diff
-Patch6: iptables-1.4.5-owl-Makefile.diff
-Patch7: iptables-1.4.9.1-owl-nfnetlink.diff
+Patch5: iptables-1.4.10-owl-Makefile.diff
+Patch6: iptables-1.4.9.1-owl-nfnetlink.diff
 PreReq: chkconfig
 Requires: coreutils, grep, mktemp
 BuildRequires: kernel-headers >= 2.4.4
@@ -52,8 +52,8 @@ iptables-based filtering is used on Linux 2.4.x and newer kernels.
 %patch2 -p0
 %patch3 -p0
 %patch4 -p0
+%patch5 -p1
 %patch6 -p0
-%patch7 -p0
 
 %define _libdir /%_lib
 %{expand:%%define optflags %optflags -fno-strict-aliasing}
@@ -144,6 +144,10 @@ fi
 %endif
 
 %changelog
+* Tue Nov 09 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.4.10-owl1
+- Updated to 1.4.10.
+- Updated patches alt-link, alt-modprobe and owl-Makefile.
+
 * Sat Aug 21 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.4.9.1-owl1
 - Updated to 1.4.9.1.
 - Updated patches -alt-link and -alt-configure.

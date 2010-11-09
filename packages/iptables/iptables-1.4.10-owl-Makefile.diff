@@ -1,0 +1,35 @@
+diff -uNrp iptables-1.4.10.orig/libiptc.pc.in iptables-1.4.10/libiptc.pc.in
+diff -uNrp iptables-1.4.10.orig/Makefile.am iptables-1.4.10/Makefile.am
+--- iptables-1.4.10.orig/Makefile.am	2010-10-29 14:37:22 +0000
++++ iptables-1.4.10/Makefile.am	2010-11-08 14:18:21 +0000
+@@ -17,9 +17,15 @@ endif
+ lib_LTLIBRARIES =
+ 
+ # libiptc
+-lib_LTLIBRARIES           += libiptc/libip4tc.la libiptc/libip6tc.la libiptc/libiptc.la
++lib_LTLIBRARIES           += libiptc/libip4tc.la 
++if ENABLE_IPV6
++lib_LTLIBRARIES           += libiptc/libip6tc.la
++endif
+ libiptc_libiptc_la_SOURCES  =
+-libiptc_libiptc_la_LIBADD   = libiptc/libip4tc.la libiptc/libip6tc.la
++libiptc_libiptc_la_LIBADD   = libiptc/libip4tc.la
++if ENABLE_IPV6
++libiptc_libiptc_la_LIBADD   += libiptc/libip6tc.la
++endif
+ libiptc_libiptc_la_LDFLAGS  = -version-info 0:0:0 ${libiptc_LDFLAGS2}
+ libiptc_libip4tc_la_SOURCES = libiptc/libip4tc.c
+ libiptc_libip4tc_la_LDFLAGS = -version-info 0:0:0
+@@ -59,8 +65,10 @@ ip6tables_multi_LDADD     = libiptc/libi
+ 
+ sbin_PROGRAMS    =
+ man_MANS         = iptables.8 iptables-restore.8 iptables-save.8 \
+-                   iptables-xml.8 ip6tables.8 ip6tables-restore.8 \
+-                   ip6tables-save.8
++                   iptables-xml.8
++if ENABLE_IPV6
++man_MANS         += ip6tables.8 ip6tables-restore.8 ip6tables-save.8
++endif
+ CLEANFILES       = iptables.8 ip6tables.8
+ 
+ if ENABLE_IPV4
