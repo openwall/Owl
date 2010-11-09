@@ -1,6 +1,6 @@
 diff -urp sysklogd-1.4.1-pre-unixcred/syslogd.c sysklogd-1.4.1/syslogd.c
 --- sysklogd-1.4.1-pre-unixcred/syslogd.c	2010-11-09 11:27:11 +0000
-+++ sysklogd-1.4.1/syslogd.c	2010-11-09 11:28:06 +0000
++++ sysklogd-1.4.1/syslogd.c	2010-11-09 11:36:56 +0000
 @@ -480,6 +480,9 @@ static char sccsid[] = "@(#)syslogd.c	5.
   *	restart code, so that subsequent SIGHUPs are able to set it
   *	again and cause a new restart.  This fixes a race condition
@@ -298,7 +298,7 @@ diff -urp sysklogd-1.4.1-pre-unixcred/syslogd.c sysklogd-1.4.1/syslogd.c
  
  #ifdef __gnu_linux__
  	sigemptyset(&mask);
-@@ -1787,6 +1867,81 @@ void logmsg(pri, msg, from, flags)
+@@ -1787,6 +1867,82 @@ void logmsg(pri, msg, from, flags)
  	(void) time(&now);
  	timestamp = ctime(&now) + 4;
  
@@ -311,8 +311,8 @@ diff -urp sysklogd-1.4.1-pre-unixcred/syslogd.c sysklogd-1.4.1/syslogd.c
 +	 * as '-' sign is quite common) and spaces (LPRng daemons are said
 +	 * to have space in the name).
 +	 */
-+	if (from->flags & SINFO_HAVECRED) {
-+		char tag[32 + 10]; /* rfc3164 tag+brackets+pid+space+colon+0 */
++	if (from->flags & SINFO_HAVECRED) { /* XXX: should log error on no creds? */
++		char tag[32 + 10]; /* rfc3164 tag+brackets+pid+colon+space+0 */
 +		char *p;
 +		char *oldpid;
 +
@@ -321,9 +321,10 @@ diff -urp sysklogd-1.4.1-pre-unixcred/syslogd.c sysklogd-1.4.1/syslogd.c
 +		tag[0] = '\0';
 +		strncat(tag, msg, sizeof(tag) - 1);
 +
-+		if (!(oldpid = strchr(tag, '['))) {
++		p = strchr(tag, ':');
++		if (!(oldpid = strchr(tag, '[')) || (p && p < oldpid)) {
 +			/* We do not have valid pid in tag, skip to tag end */
-+			if ((p = strchr(tag, ':')) || (p = strchr(tag, ' '))) {
++			if (p || (p = strchr(tag, ' '))) {
 +				*p = '\0';
 +				msg += (p + 1 - tag);
 +				while (*msg == ' ')
@@ -380,7 +381,7 @@ diff -urp sysklogd-1.4.1-pre-unixcred/syslogd.c sysklogd-1.4.1/syslogd.c
  	/* extract facility and priority level */
  	if (flags & MARK)
  		fac = LOG_NFACILITIES;
-@@ -1801,7 +1956,7 @@ void logmsg(pri, msg, from, flags)
+@@ -1801,7 +1957,7 @@ void logmsg(pri, msg, from, flags)
  
  		if (f->f_file >= 0) {
  			untty();
@@ -389,7 +390,7 @@ diff -urp sysklogd-1.4.1-pre-unixcred/syslogd.c sysklogd-1.4.1/syslogd.c
  			(void) close(f->f_file);
  			f->f_file = -1;
  		}
-@@ -1838,7 +1993,7 @@ void logmsg(pri, msg, from, flags)
+@@ -1838,7 +1994,7 @@ void logmsg(pri, msg, from, flags)
  		 */
  		if ((flags & MARK) == 0 && msglen == f->f_prevlen &&
  		    !strcmp(msg, f->f_prevline) &&
@@ -398,7 +399,7 @@ diff -urp sysklogd-1.4.1-pre-unixcred/syslogd.c sysklogd-1.4.1/syslogd.c
  			(void) strncpy(f->f_lasttime, timestamp, 15);
  			f->f_prevcount++;
  			dprintf("msg repeated %d times, %ld sec of %ld.\n",
-@@ -1851,29 +2006,33 @@ void logmsg(pri, msg, from, flags)
+@@ -1851,29 +2007,33 @@ void logmsg(pri, msg, from, flags)
  			 * in the future.
  			 */
  			if (now > REPEATTIME(f)) {
@@ -437,7 +438,7 @@ diff -urp sysklogd-1.4.1-pre-unixcred/syslogd.c sysklogd-1.4.1/syslogd.c
  #ifdef __gnu_linux__
  	sigprocmask(SIG_UNBLOCK, &mask, NULL);
  #else
-@@ -2304,12 +2463,16 @@ void domark()
+@@ -2304,12 +2464,16 @@ void domark()
  #ifdef SYSV
  	int lognum;
  #endif
@@ -455,7 +456,7 @@ diff -urp sysklogd-1.4.1-pre-unixcred/syslogd.c sysklogd-1.4.1/syslogd.c
  		MarkSeq = 0;
  	}
  
-@@ -2348,6 +2511,11 @@ void logerror(type)
+@@ -2348,6 +2512,11 @@ void logerror(type)
  	char *type;
  {
  	char buf[100];
@@ -467,7 +468,7 @@ diff -urp sysklogd-1.4.1-pre-unixcred/syslogd.c sysklogd-1.4.1/syslogd.c
  
  	dprintf("Called logerr, msg: %s\n", type);
  
-@@ -2356,7 +2524,7 @@ void logerror(type)
+@@ -2356,7 +2525,7 @@ void logerror(type)
  	else
  		(void) snprintf(buf, sizeof(buf), "syslogd: %s: %s", type, strerror(errno));
  	errno = 0;
@@ -476,7 +477,7 @@ diff -urp sysklogd-1.4.1-pre-unixcred/syslogd.c sysklogd-1.4.1/syslogd.c
  	return;
  }
  
-@@ -2370,6 +2538,11 @@ void die(sig)
+@@ -2370,6 +2539,11 @@ void die(sig)
  	int lognum;
  	int i;
  	int was_initialized = Initialized;
@@ -488,7 +489,7 @@ diff -urp sysklogd-1.4.1-pre-unixcred/syslogd.c sysklogd-1.4.1/syslogd.c
  
  	Initialized = 0;	/* Don't log SIGCHLDs in case we
  				   receive one during exiting */
-@@ -2386,7 +2559,7 @@ void die(sig)
+@@ -2386,7 +2560,7 @@ void die(sig)
  		dprintf("syslogd: exiting on signal %d\n", sig);
  		(void) snprintf(buf, sizeof(buf), "exiting on signal %d", sig);
  		errno = 0;
@@ -497,7 +498,7 @@ diff -urp sysklogd-1.4.1-pre-unixcred/syslogd.c sysklogd-1.4.1/syslogd.c
  	}
  
  	/* Close the UNIX sockets. */
-@@ -2440,6 +2613,11 @@ void init()
+@@ -2440,6 +2614,11 @@ void init()
  	char cline[BUFSIZ];
  #endif
  	struct servent *sp;
@@ -509,7 +510,7 @@ diff -urp sysklogd-1.4.1-pre-unixcred/syslogd.c sysklogd-1.4.1/syslogd.c
  
  	sp = getservbyname("syslog", "udp");
  	if (sp == NULL) {
-@@ -2646,20 +2824,20 @@ void init()
+@@ -2646,20 +2825,20 @@ void init()
  	if ( AcceptRemote )
  #ifdef DEBRELEASE
  		logmsg(LOG_SYSLOG|LOG_INFO, "syslogd " VERSION "." PATCHLEVEL "#" DEBRELEASE \
