@@ -1,0 +1,39 @@
+diff -urp sysklogd-1.4.1/syslogd.c sysklogd-1.4.1-no-printsys/syslogd.c
+--- sysklogd-1.4.1/syslogd.c	2010-11-09 12:00:23 +0000
++++ sysklogd-1.4.1-no-printsys/syslogd.c	2010-11-09 12:00:41 +0000
+@@ -489,7 +489,9 @@ static char sccsid[] = "@(#)syslogd.c	5.
+ #define	MAXLINE		1024		/* maximum line length */
+ #define	MAXSVLINE	240		/* maximum saved line length */
+ #define DEFUPRI		(LOG_USER|LOG_NOTICE)
++#if 0
+ #define DEFSPRI		(LOG_KERN|LOG_CRIT)
++#endif
+ #define TIMERINTVL	30		/* interval for checking flush, mark */
+ 
+ #define CONT_LINE	1		/* Allow continuation lines */
+@@ -814,7 +816,9 @@ int usage(void);
+ void untty(void);
+ void printchopped(const struct sourceinfo* const, char *msg, size_t len, int fd);
+ void printline(const struct sourceinfo* const, char *msg);
++#if 0
+ void printsys(char *msg);
++#endif
+ void logmsg(int pri, char *msg, const struct sourceinfo* const, int flags);
+ void fprintlog(register struct filed *f, char *from, int flags, char *msg);
+ void endtty();
+@@ -1746,6 +1750,7 @@ void printline(source, msg)
+ 
+ 
+ 
++#if 0
+ /*
+  * Take a raw input line from /dev/klog, split and format similar to syslog().
+  */
+@@ -1789,6 +1794,7 @@ void printsys(msg)
+ 	}
+ 	return;
+ }
++#endif
+ 
+ /*
+  * Decode a priority into textual information like auth.emerg.
