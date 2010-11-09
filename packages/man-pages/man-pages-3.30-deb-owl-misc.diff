@@ -1,0 +1,388 @@
+diff -uNrp man-pages-3.30/man3/dbopen.3 man-pages-3.30.new/man3/dbopen.3
+--- man-pages-3.30/man3/dbopen.3	2010-11-01 17:55:39 +0300
++++ man-pages-3.30.new/man3/dbopen.3	2010-11-06 20:54:06 +0300
+@@ -40,6 +40,7 @@ dbopen \- database access methods
+ .B #include <sys/types.h>
+ .B #include <limits.h>
+ .B #include <db.h>
++.B #include <fcntl.h>
+ 
+ .BI "DB *dbopen(const char *" file ", int " flags ", int " mode \
+ ", DBTYPE " type ,
+diff -uNrp man-pages-3.30/man3/fgetpwent.3 man-pages-3.30.new/man3/fgetpwent.3
+--- man-pages-3.30/man3/fgetpwent.3	2010-11-01 17:55:39 +0300
++++ man-pages-3.30.new/man3/fgetpwent.3	2010-11-06 20:54:06 +0300
+@@ -67,7 +67,7 @@ The \fIpasswd\fP structure is defined in
+ .nf
+ struct passwd {
+     char   *pw_name;       /* username */
+-    char   *pw_passwd;     /* user password */
++    char   *pw_passwd;     /* user password hash or a placeholder */
+     uid_t   pw_uid;        /* user ID */
+     gid_t   pw_gid;        /* group ID */
+     char   *pw_gecos;      /* real name */
+diff -uNrp man-pages-3.30/man3/getpw.3 man-pages-3.30.new/man3/getpw.3
+--- man-pages-3.30/man3/getpw.3	2010-11-01 17:55:39 +0300
++++ man-pages-3.30.new/man3/getpw.3	2010-11-06 20:54:06 +0300
+@@ -55,7 +55,7 @@ The \fIpasswd\fP structure is defined in
+ .nf
+ struct passwd {
+     char   *pw_name;       /* username */
+-    char   *pw_passwd;     /* user password */
++    char   *pw_passwd;     /* user password hash or a placeholder */
+     uid_t   pw_uid;        /* user ID */
+     gid_t   pw_gid;        /* group ID */
+     char   *pw_gecos;      /* user information */
+diff -uNrp man-pages-3.30/man3/getpwent.3 man-pages-3.30.new/man3/getpwent.3
+--- man-pages-3.30/man3/getpwent.3	2010-11-01 17:55:39 +0300
++++ man-pages-3.30.new/man3/getpwent.3	2010-11-06 20:56:39 +0300
+@@ -86,7 +86,7 @@ The \fIpasswd\fP structure is defined in
+ .nf
+ struct passwd {
+     char   *pw_name;       /* username */
+-    char   *pw_passwd;     /* user password */
++    char   *pw_passwd;     /* user password hash or a placeholder */
+     uid_t   pw_uid;        /* user ID */
+     gid_t   pw_gid;        /* group ID */
+     char   *pw_gecos;      /* user information */
+@@ -96,8 +96,16 @@ struct passwd {
+ .fi
+ .in
+ .PP
+-For more information about the fields of this structure, see
+-.BR passwd (5).
++When
++.BR shadow (5)
++passwords are enabled, which is almost always the case on modern systems,
++.I pw_passwd
++does not actually contain a password hash.
++In such a case the actual password hashes may be obtained with functions
++such as
++.BR getspent (3)
++and
++.BR getspnam (3).
+ .SH "RETURN VALUE"
+ The
+ .BR getpwent ()
+@@ -161,7 +169,10 @@ field is not specified in POSIX, but is 
+ .BR getpwnam (3),
+ .BR getpwuid (3),
+ .BR putpwent (3),
+-.BR passwd (5)
++.BR getspent (3),
++.BR getspnam (3),
++.BR passwd (5),
++.BR shadow (5)
+ .SH COLOPHON
+ This page is part of release 3.30 of the Linux
+ .I man-pages
+diff -uNrp man-pages-3.30/man3/getpwent_r.3 man-pages-3.30.new/man3/getpwent_r.3
+--- man-pages-3.30/man3/getpwent_r.3	2010-11-01 17:55:39 +0300
++++ man-pages-3.30.new/man3/getpwent_r.3	2010-11-06 20:54:06 +0300
+@@ -68,7 +68,7 @@ as follows:
+ .nf
+ struct passwd {
+     char    *pw_name;      /* username */
+-    char    *pw_passwd;    /* user password */
++    char    *pw_passwd;    /* user password hash or a placeholder */
+     uid_t    pw_uid;       /* user ID */
+     gid_t    pw_gid;       /* group ID */
+     char    *pw_gecos;     /* user information */
+diff -uNrp man-pages-3.30/man3/getpwnam.3 man-pages-3.30.new/man3/getpwnam.3
+--- man-pages-3.30/man3/getpwnam.3	2010-11-01 17:55:39 +0300
++++ man-pages-3.30.new/man3/getpwnam.3	2010-11-06 20:54:06 +0300
+@@ -90,7 +90,7 @@ The \fIpasswd\fP structure is defined in
+ .nf
+ struct passwd {
+     char   *pw_name;       /* username */
+-    char   *pw_passwd;     /* user password */
++    char   *pw_passwd;     /* user password hash or a placeholder */
+     uid_t   pw_uid;        /* user ID */
+     gid_t   pw_gid;        /* group ID */
+     char   *pw_gecos;      /* user information */
+@@ -132,6 +132,17 @@ can be found using
+ .BR sysconf (3)
+ with the argument
+ .BR _SC_GETPW_R_SIZE_MAX .
++.PP
++When
++.BR shadow (5)
++passwords are enabled, which is almost always the case on modern systems,
++.I pw_passwd
++does not actually contain a password hash.
++In such a case the actual password hashes may be obtained with functions
++such as
++.BR getspent (3)
++and
++.BR getspnam (3).
+ .SH "RETURN VALUE"
+ The
+ .BR getpwnam ()
+@@ -202,10 +213,18 @@ structure.
+ .TP
+ .B ERANGE
+ Insufficient buffer space supplied.
++.SH NOTE
++The user password database mostly refers to \fI/etc/passwd\fP.
++However, with recent systems it also refers to network wide databases
++using NIS, LDAP and other local files as configured in
++\fI/etc/nsswitch.conf\fP.
+ .SH FILES
+ .TP
+ .I /etc/passwd
+ local password database file
++.TP
++.I /etc/nsswitch.conf
++System Databases and Name Service Switch configuration file
+ .SH "CONFORMING TO"
+ SVr4, 4.3BSD, POSIX.1-2001.
+ The
+@@ -311,7 +330,9 @@ main(int argc, char *argv[])
+ .BR getspnam (3),
+ .BR putpwent (3),
+ .BR setpwent (3),
+-.BR passwd (5)
++.BR nsswitch.conf (5),
++.BR passwd (5),
++.BR shadow (5)
+ .SH COLOPHON
+ This page is part of release 3.30 of the Linux
+ .I man-pages
+diff -uNrp man-pages-3.30/man3/nl_langinfo.3 man-pages-3.30.new/man3/nl_langinfo.3
+--- man-pages-3.30/man3/nl_langinfo.3	2010-11-01 17:55:40 +0300
++++ man-pages-3.30.new/man3/nl_langinfo.3	2010-11-06 20:54:06 +0300
+@@ -29,6 +29,8 @@ in a more flexible way than
+ does.
+ Individual and additional elements of the locale categories can
+ be queried.
++.BR setlocale (3)
++needs to be executed with proper arguments before.
+ .PP
+ Examples for the locale elements that can be specified in \fIitem\fP
+ using the constants defined in \fI<langinfo.h>\fP are:
+diff -uNrp man-pages-3.30/man3/putpwent.3 man-pages-3.30.new/man3/putpwent.3
+--- man-pages-3.30/man3/putpwent.3	2010-11-01 17:55:40 +0300
++++ man-pages-3.30.new/man3/putpwent.3	2010-11-06 20:54:06 +0300
+@@ -56,7 +56,7 @@ The \fIpasswd\fP structure is defined in
+ .nf
+ struct passwd {
+     char    *pw_name;        /* username */
+-    char    *pw_passwd;      /* user password */
++    char    *pw_passwd;      /* user password hash or a placeholder */
+     uid_t    pw_uid;         /* user ID */
+     gid_t    pw_gid;         /* group ID */
+     char    *pw_gecos;       /* real name */
+diff -uNrp man-pages-3.30/man3/qsort.3 man-pages-3.30.new/man3/qsort.3
+--- man-pages-3.30/man3/qsort.3	2010-11-01 17:55:40 +0300
++++ man-pages-3.30.new/man3/qsort.3	2010-11-06 20:54:06 +0300
+@@ -106,7 +106,7 @@ main(int argc, char *argv[])
+ 	exit(EXIT_FAILURE);
+     }
+ 
+-    qsort(&argv[1], argc \- 1, sizeof(char *), cmpstringp);
++    qsort(&argv[1], argc \- 1, sizeof(argv[1]), cmpstringp);
+ 
+     for (j = 1; j < argc; j++)
+         puts(argv[j]);
+diff -uNrp man-pages-3.30/man3/tsearch.3 man-pages-3.30.new/man3/tsearch.3
+--- man-pages-3.30/man3/tsearch.3	2010-11-01 17:55:40 +0300
++++ man-pages-3.30.new/man3/tsearch.3	2010-11-06 20:54:06 +0300
+@@ -112,6 +112,8 @@ visit to a leaf node.
+ (These symbols are defined in \fI<search.h>\fP.)
+ The third argument is the depth of the node, with
+ zero being the root.
++You should not modify the tree while traversing it
++as the the results would be undefined.
+ .PP
+ (More commonly, \fBpreorder\fP, \fBpostorder\fP, and \fBendorder\fP
+ are known as \fBpreorder\fP, \fBinorder\fP, and \fBpostorder\fP:
+diff -uNrp man-pages-3.30/man4/console_codes.4 man-pages-3.30.new/man4/console_codes.4
+--- man-pages-3.30/man4/console_codes.4	2010-11-01 17:55:41 +0300
++++ man-pages-3.30.new/man4/console_codes.4	2010-11-06 20:54:06 +0300
+@@ -17,6 +17,7 @@
+ .\" Tiny correction, aeb, 961107.
+ .\"
+ .\" 2006-05-27, Several corrections - Thomas E. Dickey
++.\" Modified Thu Dec 13 23:23:41 2001 by Martin Schulze <joey@infodrom.org>
+ .\"
+ .TH CONSOLE_CODES 4 2008-01-01 "Linux" "Linux Programmer's Manual"
+ .SH NAME
+@@ -545,8 +546,11 @@ ESC m		Memory unlock (per HP terminals).
+ ESC n	LS2	Invoke the G2 character set.
+ ESC o	LS3	Invoke the G3 character set.
+ ESC |	LS3R	Invoke the G3 character set as GR.
++		Has no visible effect in xterm.
+ ESC }	LS2R	Invoke the G2 character set as GR.
++		Has no visible effect in xterm.
+ ESC ~	LS1R	Invoke the G1 character set as GR.
++		Has no visible effect in xterm.
+ .TE
+ .PP
+ It also recognizes ESC % and provides a more complete UTF-8
+diff -uNrp man-pages-3.30/man5/dir_colors.5 man-pages-3.30.new/man5/dir_colors.5
+--- man-pages-3.30/man5/dir_colors.5	2010-11-01 17:55:41 +0300
++++ man-pages-3.30.new/man5/dir_colors.5	2010-11-06 20:54:06 +0300
+@@ -356,6 +356,15 @@ definitions, which are used by ISO 6429 
+ The default
+ .B ENDCODE
+ is undefined.
++.SH FILES
++.TP
++.I /etc/DIR_COLORS
++System-wide configuration file.
++Processed by /etc/profile.d/colorls.* scripts.
++.TP
++.IR ~/.dircolors " or " ~/.dir_colors
++Per-user configuration file.
++Processed by /etc/profile.d/colorls.* scripts.
+ .SH "SEE ALSO"
+ .BR dircolors (1),
+ .BR ls (1),
+diff -uNrp man-pages-3.30/man5/nsswitch.conf.5 man-pages-3.30.new/man5/nsswitch.conf.5
+--- man-pages-3.30/man5/nsswitch.conf.5	2010-11-01 17:55:41 +0300
++++ man-pages-3.30.new/man5/nsswitch.conf.5	2010-11-06 20:54:06 +0300
+@@ -225,6 +225,12 @@ you could have entries of the form +user
+ \-user or \-@netgroup (exclude the specified user),
+ and + (include every user, except the excluded ones, from the NIS
+ passwd map).
++
++You can override certain passwd fields for a particular user from the
++NIS passwd map by using the extended form of +user:::::: in
++.IR /etc/passwd .
++Non-empty fields override information in the NIS passwd map.
++
+ Since most people only put a + at the end of
+ .I /etc/passwd
+ to include everything from NIS, the switch provides a faster
+diff -uNrp man-pages-3.30/man5/resolv.conf.5 man-pages-3.30.new/man5/resolv.conf.5
+--- man-pages-3.30/man5/resolv.conf.5	2010-11-01 17:55:41 +0300
++++ man-pages-3.30.new/man5/resolv.conf.5	2010-11-06 20:54:06 +0300
+@@ -34,8 +34,8 @@ by the resolver routines the first time 
+ The file is designed to be human readable and contains a list of
+ keywords with values that provide various types of resolver information.
+ .LP
+-On a normally configured system this file should not be necessary.
+-The only name server to be queried will be on the local machine;
++If this file doesn't exist
++the only name server to be queried will be on the local machine;
+ the domain name is determined from the hostname
+ and the domain search path is constructed from the domain name.
+ .LP
+@@ -198,6 +198,8 @@ This has the effect of trying a AAAA que
+ .BR gethostbyname (3)
+ function, and of mapping IPv4 responses in IPv6 "tunneled form"
+ if no AAAA records are found but an A record set exists.
++
++Some programs behave strangely when this option is turned on.
+ .TP
+ .BR ip6-bytestring " (since glibc 2.3.4)"
+ sets
+diff -uNrp man-pages-3.30/man5/tzfile.5 man-pages-3.30.new/man5/tzfile.5
+--- man-pages-3.30/man5/tzfile.5	2010-11-01 17:55:41 +0300
++++ man-pages-3.30.new/man5/tzfile.5	2010-11-06 20:54:06 +0300
+@@ -3,9 +3,9 @@
+ .\" 1996-06-05 by Arthur David Olson <arthur_david_olson@nih.gov>.
+ .TH TZFILE 5 2010-08-31 "" "Linux Programmer's Manual"
+ .SH NAME
+-tzfile \- timezone information
++tzfile \- timezone information files
+ .SH SYNOPSIS
+-.B #include <tzfile.h>
++/usr/share/zoneinfo/*
+ .SH DESCRIPTION
+ The timezone information files used by
+ .BR tzset (3)
+@@ -146,7 +146,14 @@ POSIX-TZ-environment-variable-style stri
+ after the last transition time stored in the file
+ (with nothing between the newlines if there is no POSIX representation for
+ such instants).
++.SH NOTES
++The data structures described in here are defined in the
++.I timezone/tzfile.h
++header file inside the glibc source tree.
+ .SH SEE ALSO
++.BR time (3),
++.BR gettimeofday (3),
++.BR tzset (3),
+ .BR ctime (3)
+ .SH COLOPHON
+ This page is part of release 3.30 of the Linux
+diff -uNrp man-pages-3.30/man7/AF_LOCAL.7 man-pages-3.30.new/man7/AF_LOCAL.7
+--- man-pages-3.30/man7/AF_LOCAL.7	1970-01-01 03:00:00 +0300
++++ man-pages-3.30.new/man7/AF_LOCAL.7	2010-11-06 20:54:06 +0300
+@@ -0,0 +1 @@
++.so man7/unix.7
+diff -uNrp man-pages-3.30/man7/AF_UNIX.7 man-pages-3.30.new/man7/AF_UNIX.7
+--- man-pages-3.30/man7/AF_UNIX.7	1970-01-01 03:00:00 +0300
++++ man-pages-3.30.new/man7/AF_UNIX.7	2010-11-06 20:54:06 +0300
+@@ -0,0 +1 @@
++.so man7/unix.7
+diff -uNrp man-pages-3.30/man7/IPPROTO_ICMP.7 man-pages-3.30.new/man7/IPPROTO_ICMP.7
+--- man-pages-3.30/man7/IPPROTO_ICMP.7	1970-01-01 03:00:00 +0300
++++ man-pages-3.30.new/man7/IPPROTO_ICMP.7	2010-11-06 20:54:06 +0300
+@@ -0,0 +1 @@
++.so man7/icmp.7
+diff -uNrp man-pages-3.30/man7/man.7 man-pages-3.30.new/man7/man.7
+--- man-pages-3.30/man7/man.7	2010-11-01 17:55:41 +0300
++++ man-pages-3.30.new/man7/man.7	2010-11-06 20:54:06 +0300
+@@ -553,6 +553,7 @@ is not implemented.
+ .BR groff (1),
+ .BR man (1),
+ .BR man2html (1),
++.BR groff_mdoc (7),
+ .BR whatis (1),
+ .BR groff_man (7),
+ .BR groff_www (7),
+diff -uNrp man-pages-3.30/man7/mdoc.7 man-pages-3.30.new/man7/mdoc.7
+--- man-pages-3.30/man7/mdoc.7	2010-11-01 17:55:41 +0300
++++ man-pages-3.30.new/man7/mdoc.7	2010-11-06 20:54:06 +0300
+@@ -59,7 +59,8 @@ man pages.
+ The macro names and their meanings are
+ listed below for quick reference; for
+ a detailed explanation on using the package,
+-see the tutorial sampler
++see the tutorial samplers
++.Xr groff_mdoc 7 or
+ .Xr mdoc.samples 7 .
+ .Pp
+ Note that this is not the usual macro package for Linux documentation,
+diff -uNrp man-pages-3.30/man7/NETLINK_ROUTE.7 man-pages-3.30.new/man7/NETLINK_ROUTE.7
+--- man-pages-3.30/man7/NETLINK_ROUTE.7	1970-01-01 03:00:00 +0300
++++ man-pages-3.30.new/man7/NETLINK_ROUTE.7	2010-11-06 20:54:06 +0300
+@@ -0,0 +1 @@
++.so man7/rtnetlink.7
+diff -uNrp man-pages-3.30/man7/PF_INET6.7 man-pages-3.30.new/man7/PF_INET6.7
+--- man-pages-3.30/man7/PF_INET6.7	1970-01-01 03:00:00 +0300
++++ man-pages-3.30.new/man7/PF_INET6.7	2010-11-06 20:54:06 +0300
+@@ -0,0 +1 @@
++.so man7/ipv6.7
+diff -uNrp man-pages-3.30/man7/PF_LOCAL.7 man-pages-3.30.new/man7/PF_LOCAL.7
+--- man-pages-3.30/man7/PF_LOCAL.7	1970-01-01 03:00:00 +0300
++++ man-pages-3.30.new/man7/PF_LOCAL.7	2010-11-06 20:54:06 +0300
+@@ -0,0 +1 @@
++.so man7/unix.7
+diff -uNrp man-pages-3.30/man7/PF_NETLINK.7 man-pages-3.30.new/man7/PF_NETLINK.7
+--- man-pages-3.30/man7/PF_NETLINK.7	1970-01-01 03:00:00 +0300
++++ man-pages-3.30.new/man7/PF_NETLINK.7	2010-11-06 20:54:06 +0300
+@@ -0,0 +1 @@
++.so man7/netlink.7
+diff -uNrp man-pages-3.30/man7/PF_PACKET.7 man-pages-3.30.new/man7/PF_PACKET.7
+--- man-pages-3.30/man7/PF_PACKET.7	1970-01-01 03:00:00 +0300
++++ man-pages-3.30.new/man7/PF_PACKET.7	2010-11-06 20:54:06 +0300
+@@ -0,0 +1 @@
++.so man7/packet.7
+diff -uNrp man-pages-3.30/man7/PF_UNIX.7 man-pages-3.30.new/man7/PF_UNIX.7
+--- man-pages-3.30/man7/PF_UNIX.7	1970-01-01 03:00:00 +0300
++++ man-pages-3.30.new/man7/PF_UNIX.7	2010-11-06 20:54:06 +0300
+@@ -0,0 +1 @@
++.so man7/unix.7
+diff -uNrp man-pages-3.30/man7/PF_X25.7 man-pages-3.30.new/man7/PF_X25.7
+--- man-pages-3.30/man7/PF_X25.7	1970-01-01 03:00:00 +0300
++++ man-pages-3.30.new/man7/PF_X25.7	2010-11-06 20:54:06 +0300
+@@ -0,0 +1 @@
++.so man7/x25.7
+diff -uNrp man-pages-3.30/man7/SOCK_RAW.7 man-pages-3.30.new/man7/SOCK_RAW.7
+--- man-pages-3.30/man7/SOCK_RAW.7	1970-01-01 03:00:00 +0300
++++ man-pages-3.30.new/man7/SOCK_RAW.7	2010-11-06 20:54:06 +0300
+@@ -0,0 +1 @@
++.so man7/raw.7
