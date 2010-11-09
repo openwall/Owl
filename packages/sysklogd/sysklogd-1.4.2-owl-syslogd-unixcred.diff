@@ -1,7 +1,7 @@
-diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
---- sysklogd-1.4.1.orig/syslogd.c	2005-08-18 14:51:39 +0000
-+++ sysklogd-1.4.1/syslogd.c	2007-10-31 16:24:54 +0000
-@@ -474,6 +474,9 @@ static char sccsid[] = "@(#)syslogd.c	5.
+diff -urp sysklogd-1.4.1-pre-unixcred/syslogd.c sysklogd-1.4.1/syslogd.c
+--- sysklogd-1.4.1-pre-unixcred/syslogd.c	2010-11-09 11:27:11 +0000
++++ sysklogd-1.4.1/syslogd.c	2010-11-09 11:28:06 +0000
+@@ -480,6 +480,9 @@ static char sccsid[] = "@(#)syslogd.c	5.
   *	restart code, so that subsequent SIGHUPs are able to set it
   *	again and cause a new restart.  This fixes a race condition
   *	when somebody sends tons of HUP signals.
@@ -11,7 +11,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
   */
  
  
-@@ -763,6 +766,19 @@ struct code	FacNames[] = {
+@@ -769,6 +772,19 @@ struct code	FacNames[] = {
  	{NULL,           -1},
  };
  
@@ -31,7 +31,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  int	Debug;			/* debug flag */
  char	LocalHostName[MAXHOSTNAMELEN+1];	/* our hostname */
  char	*LocalDomain;		/* our local domain name */
-@@ -790,10 +806,10 @@ int main(int argc, char **argv);
+@@ -796,10 +812,10 @@ int main(int argc, char **argv);
  char **crunch_list(char *list);
  int usage(void);
  void untty(void);
@@ -45,7 +45,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  void fprintlog(register struct filed *f, char *from, int flags, char *msg);
  void endtty();
  void wallmsg(register struct filed *f, struct iovec *iov);
-@@ -824,6 +840,50 @@ static int create_unix_socket(const char
+@@ -830,6 +846,50 @@ static int create_unix_socket(const char
  static int create_inet_socket();
  #endif
  
@@ -96,7 +96,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  static int set_nonblock_flag(int desc)
  {
  	int flags = fcntl(desc, F_GETFL, 0);
-@@ -952,7 +1012,6 @@ int main(argc, argv)
+@@ -958,7 +1018,6 @@ int main(argc, argv)
  	int	fd;
  #ifdef  SYSLOG_INET
  	struct sockaddr_in frominet;
@@ -104,7 +104,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  #endif
  	pid_t ppid = getpid();
  #endif
-@@ -1293,32 +1352,43 @@ int main(argc, argv)
+@@ -1299,32 +1358,43 @@ int main(argc, argv)
  #ifdef SYSLOG_UNIXAF
  		for (i = 0; i < nfunix; i++) {
  		    if ((fd = funix[i]) != -1 && FD_ISSET(fd, &readfds)) {
@@ -153,7 +153,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  				/*
  				 * Here we could check if the host is permitted
  				 * to send us syslog messages. We just have to
-@@ -1328,7 +1398,7 @@ int main(argc, argv)
+@@ -1334,7 +1404,7 @@ int main(argc, argv)
  				 * letters so we could match them against whatever.
  				 *  -Joey
  				 */
@@ -162,7 +162,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
   					     i + 2,  finet);
  			} else if (i < 0 && errno != EINTR && errno != EAGAIN) {
  				dprintf("INET socket error: %d = %s.\n", \
-@@ -1344,11 +1414,13 @@ int main(argc, argv)
+@@ -1350,11 +1420,13 @@ int main(argc, argv)
  		if ( FD_ISSET(fileno(stdin), &readfds) ) {
  			dprintf("Message from stdin.\n");
  			memset(line, '\0', sizeof(line));
@@ -177,7 +177,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  		  	} else if (i < 0) {
  		    		if (errno != EINTR) {
  		      			logerror("stdin");
-@@ -1374,6 +1446,8 @@ static int create_unix_socket(const char
+@@ -1380,6 +1452,8 @@ static int create_unix_socket(const char
  	struct sockaddr_un sunx;
  	int fd;
  	char line[MAXLINE +1];
@@ -186,7 +186,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  
  	if (path[0] == '\0')
  		return -1;
-@@ -1396,6 +1470,7 @@ static int create_unix_socket(const char
+@@ -1402,6 +1476,7 @@ static int create_unix_socket(const char
  #endif
  		return -1;
  	}
@@ -194,7 +194,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	return fd;
  }
  #endif
-@@ -1543,8 +1618,8 @@ void untty()
+@@ -1549,8 +1624,8 @@ void untty()
   * than one message.
   */
  
@@ -205,7 +205,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	char *msg;
  	size_t len;
  	int fd;
-@@ -1567,7 +1642,7 @@ void printchopped(hname, msg, len, fd)
+@@ -1573,7 +1648,7 @@ void printchopped(hname, msg, len, fd)
  		if ( (strlen(msg) + strlen(tmpline)) > MAXLINE )
  		{
  			logerror("Cannot glue message parts together");
@@ -214,7 +214,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  			start = msg;
  		}
  		else
-@@ -1575,7 +1650,7 @@ void printchopped(hname, msg, len, fd)
+@@ -1581,7 +1656,7 @@ void printchopped(hname, msg, len, fd)
  			dprintf("Previous: %s\n", tmpline);
  			dprintf("Next: %s\n", msg);
  			strcat(tmpline, msg);	/* length checked above */
@@ -223,7 +223,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  			if ( (strlen(msg) + 1) == len )
  				return;
  			else
-@@ -1602,7 +1677,7 @@ void printchopped(hname, msg, len, fd)
+@@ -1608,7 +1683,7 @@ void printchopped(hname, msg, len, fd)
  
  	do {
  		end = strchr(start + 1, '\0');
@@ -232,7 +232,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  		start = end + 1;
  	} while ( *start != '\0' );
  
-@@ -1616,8 +1691,8 @@ void printchopped(hname, msg, len, fd)
+@@ -1622,8 +1697,8 @@ void printchopped(hname, msg, len, fd)
   * on the appropriate log files.
   */
  
@@ -243,7 +243,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	char *msg;
  {
  	register char *p, *q;
-@@ -1659,7 +1734,7 @@ void printline(hname, msg)
+@@ -1665,7 +1740,7 @@ void printline(hname, msg)
  	}
  	*q = '\0';
  
@@ -252,7 +252,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	return;
  }
  
-@@ -1677,7 +1752,11 @@ void printsys(msg)
+@@ -1683,7 +1758,11 @@ void printsys(msg)
  	char line[MAXLINE + 1];
  	int pri, flags;
  	char *lp;
@@ -264,7 +264,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	(void) snprintf(line, sizeof(line), "vmunix: ");
  	lp = line + strlen(line);
  	for (p = msg; *p != '\0'; ) {
-@@ -1700,7 +1779,7 @@ void printsys(msg)
+@@ -1706,7 +1785,7 @@ void printsys(msg)
  		    q < &line[MAXLINE])
  			*q++ = c;
  		*q = '\0';
@@ -273,7 +273,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	}
  	return;
  }
-@@ -1732,13 +1811,14 @@ time_t	now;
+@@ -1738,13 +1817,14 @@ time_t	now;
  void logmsg(pri, msg, from, flags)
  	int pri;
  	char *msg;
@@ -289,7 +289,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  #ifdef __gnu_linux__
  	sigset_t mask;
  #else
-@@ -1747,7 +1827,7 @@ void logmsg(pri, msg, from, flags)
+@@ -1753,7 +1833,7 @@ void logmsg(pri, msg, from, flags)
  #endif
  #endif
  
@@ -298,7 +298,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  
  #ifdef __gnu_linux__
  	sigemptyset(&mask);
-@@ -1781,6 +1861,81 @@ void logmsg(pri, msg, from, flags)
+@@ -1787,6 +1867,81 @@ void logmsg(pri, msg, from, flags)
  	(void) time(&now);
  	timestamp = ctime(&now) + 4;
  
@@ -380,7 +380,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	/* extract facility and priority level */
  	if (flags & MARK)
  		fac = LOG_NFACILITIES;
-@@ -1795,7 +1950,7 @@ void logmsg(pri, msg, from, flags)
+@@ -1801,7 +1956,7 @@ void logmsg(pri, msg, from, flags)
  
  		if (f->f_file >= 0) {
  			untty();
@@ -389,7 +389,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  			(void) close(f->f_file);
  			f->f_file = -1;
  		}
-@@ -1832,7 +1987,7 @@ void logmsg(pri, msg, from, flags)
+@@ -1838,7 +1993,7 @@ void logmsg(pri, msg, from, flags)
  		 */
  		if ((flags & MARK) == 0 && msglen == f->f_prevlen &&
  		    !strcmp(msg, f->f_prevline) &&
@@ -398,7 +398,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  			(void) strncpy(f->f_lasttime, timestamp, 15);
  			f->f_prevcount++;
  			dprintf("msg repeated %d times, %ld sec of %ld.\n",
-@@ -1845,29 +2000,33 @@ void logmsg(pri, msg, from, flags)
+@@ -1851,29 +2006,33 @@ void logmsg(pri, msg, from, flags)
  			 * in the future.
  			 */
  			if (now > REPEATTIME(f)) {
@@ -437,7 +437,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  #ifdef __gnu_linux__
  	sigprocmask(SIG_UNBLOCK, &mask, NULL);
  #else
-@@ -2298,12 +2457,16 @@ void domark()
+@@ -2304,12 +2463,16 @@ void domark()
  #ifdef SYSV
  	int lognum;
  #endif
@@ -455,7 +455,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  		MarkSeq = 0;
  	}
  
-@@ -2342,6 +2505,11 @@ void logerror(type)
+@@ -2348,6 +2511,11 @@ void logerror(type)
  	char *type;
  {
  	char buf[100];
@@ -467,7 +467,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  
  	dprintf("Called logerr, msg: %s\n", type);
  
-@@ -2350,7 +2518,7 @@ void logerror(type)
+@@ -2356,7 +2524,7 @@ void logerror(type)
  	else
  		(void) snprintf(buf, sizeof(buf), "syslogd: %s: %s", type, strerror(errno));
  	errno = 0;
@@ -476,7 +476,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	return;
  }
  
-@@ -2364,6 +2532,11 @@ void die(sig)
+@@ -2370,6 +2538,11 @@ void die(sig)
  	int lognum;
  	int i;
  	int was_initialized = Initialized;
@@ -488,7 +488,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  
  	Initialized = 0;	/* Don't log SIGCHLDs in case we
  				   receive one during exiting */
-@@ -2380,7 +2553,7 @@ void die(sig)
+@@ -2386,7 +2559,7 @@ void die(sig)
  		dprintf("syslogd: exiting on signal %d\n", sig);
  		(void) snprintf(buf, sizeof(buf), "exiting on signal %d", sig);
  		errno = 0;
@@ -497,7 +497,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  	}
  
  	/* Close the UNIX sockets. */
-@@ -2434,6 +2607,11 @@ void init()
+@@ -2440,6 +2613,11 @@ void init()
  	char cline[BUFSIZ];
  #endif
  	struct servent *sp;
@@ -509,7 +509,7 @@ diff -urp sysklogd-1.4.1.orig/syslogd.c sysklogd-1.4.1/syslogd.c
  
  	sp = getservbyname("syslog", "udp");
  	if (sp == NULL) {
-@@ -2640,20 +2818,20 @@ void init()
+@@ -2646,20 +2824,20 @@ void init()
  	if ( AcceptRemote )
  #ifdef DEBRELEASE
  		logmsg(LOG_SYSLOG|LOG_INFO, "syslogd " VERSION "." PATCHLEVEL "#" DEBRELEASE \
