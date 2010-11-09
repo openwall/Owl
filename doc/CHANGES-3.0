@@ -45,6 +45,7 @@ clarify the specific issue(s) and their severities in the description.
 
 
 	Changes made between Owl 2.0 and Owl-current.
+
 2010/11/09	Package: man-pages
 Updated to 3.30.
 
@@ -1460,4 +1461,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.284 2010/11/09 18:22:44 segoon Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.285 2010/11/09 18:43:57 solar Exp $
