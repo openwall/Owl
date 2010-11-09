@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/sysklogd/sysklogd.spec,v 1.26 2009/09/21 14:11:06 ldv Exp $
+# $Owl: Owl/packages/sysklogd/sysklogd.spec,v 1.27 2010/11/09 12:15:11 solar Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.4.1
-Release: owl13
+Release: owl14
 License: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 URL: http://www.infodrom.org/projects/sysklogd/
@@ -30,6 +30,7 @@ Patch14: sysklogd-1.4.2-alt-syslogd-funix_dir.diff
 Patch15: sysklogd-1.4.2-owl-syslogd-unixcred.diff
 Patch16: sysklogd-1.4.2-up-SO_BSDCOMPAT.diff
 Patch17: sysklogd-1.4.2-owl-ksym_mod-linux.diff
+Patch18: sysklogd-1.4.2-owl-syslogd-no-printsys.diff
 PreReq: shadow-utils, grep, fileutils, /sbin/chkconfig
 Requires: logrotate, /var/empty
 BuildRoot: /override/%name-%version
@@ -60,6 +61,7 @@ places according to a configuration file.
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
+%patch18 -p1
 
 %build
 %__make CFLAGS='%optflags -Wall -DSYSV $(shell getconf LFS_CFLAGS)'
@@ -128,6 +130,12 @@ fi
 %_mandir/*/*
 
 %changelog
+* Tue Nov 09 2010 Solar Designer <solar-at-owl.openwall.com> 1.4.1-owl14
+- In the unixcred patch, stop the search for a PID at the colon.
+- In the unixcred patch, don't log the UID on klogd's messages as long as they
+don't claim to be other than from the kernel.
+- Dropped printsys() from syslogd.c (it was dead code).
+
 * Sun Sep 20 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.1-owl13
 - Updated to post-1.4.1 cvs snapshot 20060928.
 - Fixed build with linux kernel 2.6.x headers.
