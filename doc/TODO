@@ -27,10 +27,6 @@ should probably be changed to mention the release instead).
 
 Start to implement security hardening of OpenVZ kernels.
 
-Debug and fix sysklogd-1.4.2-owl-syslogd-unixcred.diff, which is
-currently confused by many kinds of kernel messages (especially with
-CONFIG_PRINTK_TIME, but not only in that case).
-
 Replace our hybrid 2.4+2.6 modutils with plain module-init-tools.
 
 Update whatever packages we manage to, but don't break RHEL 4 compatibility
@@ -47,4 +43,4 @@ post-release, for the stable branch.
 
 Consider/implement Perl Safe.pm bypass fixes (update the module?)
 
-$Owl: Owl/doc/TODO,v 1.193 2010/11/06 16:44:04 solar Exp $
+$Owl: Owl/doc/TODO,v 1.194 2010/11/09 13:24:10 solar Exp $
