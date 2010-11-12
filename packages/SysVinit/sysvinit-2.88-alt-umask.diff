@@ -1,0 +1,11 @@
+--- sysvinit/src/init.c
++++ sysvinit/src/init.c
+@@ -2802,7 +2802,7 @@ int main(int argc, char **argv)
+ #endif
+ 
+ 	/* Common umask */
+-	umask(022);
++	umask(umask(077) | 022);
+ 
+ 	/* Quick check */
+ 	if (geteuid() != 0) {

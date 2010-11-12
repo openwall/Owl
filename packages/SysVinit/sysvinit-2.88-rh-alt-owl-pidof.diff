@@ -1,0 +1,88 @@
+--- sysvinit/src/killall5.c
++++ sysvinit/src/killall5.c
+@@ -66,6 +66,7 @@ char *Version = "@(#)killall5 2.86 31-Jul-2004 miquels@cistron.nl";
+ 
+ /* Info about a process. */
+ typedef struct proc {
++	char *pathname;		/* full path to executable        */
+ 	char *argv0;		/* Name as found out from argv[0] */
+ 	char *argv0base;	/* `basename argv[1]`		  */
+ 	char *argv1;		/* Name as found out from argv[1] */
+@@ -475,6 +476,7 @@ int readproc(int do_stat)
+ 		if (p->argv0) free(p->argv0);
+ 		if (p->argv1) free(p->argv1);
+ 		if (p->statname) free(p->statname);
++		free(p->pathname);
+ 		free(p);
+ 	}
+ 	plist = NULL;
+@@ -512,6 +514,7 @@ int readproc(int do_stat)
+ 					if (p->argv0) free(p->argv0);
+ 					if (p->argv1) free(p->argv1);
+ 					if (p->statname) free(p->statname);
++					free(p->pathname);
+ 					free(p);
+ 					continue;
+ 				}
+@@ -538,6 +541,7 @@ int readproc(int do_stat)
+ 				if (p->argv0) free(p->argv0);
+ 				if (p->argv1) free(p->argv1);
+ 				if (p->statname) free(p->statname);
++				free(p->pathname);
+ 				free(p);
+ 				continue;
+ 			}
+@@ -549,6 +553,7 @@ int readproc(int do_stat)
+ 			if (p->argv0) free(p->argv0);
+ 			if (p->argv1) free(p->argv1);
+ 			if (p->statname) free(p->statname);
++			free(p->pathname);
+ 			free(p);
+ 			continue;
+ 		}
+@@ -596,6 +601,7 @@ int readproc(int do_stat)
+ 			if (p->argv0) free(p->argv0);
+ 			if (p->argv1) free(p->argv1);
+ 			if (p->statname) free(p->statname);
++			free(p->pathname);
+ 			free(p);
+ 			continue;
+ 		}
+@@ -612,6 +618,16 @@ int readproc(int do_stat)
+ 		case DO_STAT:
+ 			if (stat(path, &st) != 0)
+ 				break;
++			else {
++				char buf[PATH_MAX];
++
++				f = readlink(path, buf, sizeof buf);
++				if (f > 0) {
++					p->pathname = (char *)xmalloc(f + 1);
++					memcpy(p->pathname, buf, f);
++					p->pathname[f] = '\0';
++				}
++			}
+ 			p->dev = st.st_dev;
+ 			p->ino = st.st_ino;
+ 		default:
+@@ -750,6 +766,20 @@ PIDQ_HEAD *pidof(char *prog)
+ 
+ 	/* If we didn't find a match based on dev/ino, try the name. */
+ 	if (!foundone) for (p = plist; p; p = p->next) {
++		if (prog[0] == '/') {
++			if (!p->pathname)
++				continue;
++			if (strcmp(prog, p->pathname)) {
++				int len = strlen(prog);
++				if (strncmp(prog, p->pathname, len))
++					continue;
++				if (strcmp(" (deleted)", p->pathname + len))
++					continue;
++			}
++			add_pid_to_q(q, p);
++			continue;
++		}
++
+ 		ok = 0;
+ 
+ 		/*             matching        nonmatching

@@ -1,20 +1,25 @@
-# $Owl: Owl/packages/SysVinit/SysVinit.spec,v 1.28 2006/11/19 21:24:16 ldv Exp $
+# $Owl: Owl/packages/SysVinit/SysVinit.spec,v 1.29 2010/11/12 16:52:16 segoon Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
-Version: 2.86
-Release: owl2
+Version: 2.88dsf
+Release: owl1
 License: GPL
 Group: System Environment/Base
-Source: ftp://ftp.cistron.nl/pub/people/miquels/sysvinit/sysvinit-%version.tar.gz
-Patch0: sysvinit-2.86-alt-progname-umask.diff
-Patch1: sysvinit-2.85-alt-owl-start-stop-daemon.diff
-Patch2: sysvinit-2.86-owl-mount_proc-single-mount.diff
-Patch3: sysvinit-2.85-owl-multiline-string-fix.diff
-Patch4: sysvinit-2.86-rh-alt-owl-pidof.diff
-Patch5: sysvinit-2.86-owl-initcmd_setenv.diff
-Patch6: sysvinit-2.86-owl-save-env.diff
-Patch7: sysvinit-2.86-owl-warnings.diff
+Source: http://download.savannah.gnu.org/releases/sysvinit/sysvinit-%version.tar.bz2
+# Signature: http://download.savannah.gnu.org/releases/sysvinit/sysvinit-%version.tar.bz2.sig
+Patch0: sysvinit-2.88-alt-progname.diff
+Patch1: sysvinit-2.88-alt-umask.diff
+Patch2: sysvinit-2.88-alt-owl-start-stop-daemon.diff
+Patch3: sysvinit-2.86-owl-mount_proc-single-mount.diff
+Patch4: sysvinit-2.85-owl-multiline-string-fix.diff
+Patch5: sysvinit-2.88-rh-alt-owl-pidof.diff
+Patch6: sysvinit-2.86-owl-initcmd_setenv.diff
+Patch7: sysvinit-2.86-deb-killall-sched.diff
+Patch8: sysvinit-2.88-alt-signedness.diff
+Patch9: sysvinit-2.88-alt-wur.diff
+Patch10: sysvinit-2.88-deb-init-selinux.diff
+Patch11: sysvinit-2.88-suse-SETSIG.diff
 Requires: /sbin/sulogin
 BuildRoot: /override/%name-%version
 
@@ -36,6 +41,10 @@ rm man/sulogin.8
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
 
 %{expand:%%define optflags %optflags -Wall -D_GNU_SOURCE}
 
@@ -96,8 +105,10 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc doc/sysvinit-%version.lsm
-%doc contrib/start-stop-daemon.README doc/bootlogd.README
+# XXX: v2.88dsf includes misnamed .lsm - segoon
+#%doc doc/sysvinit-%version.lsm
+%doc doc/sysvinit-2.86.lsm
+%doc contrib/start-stop-daemon.README doc/bootlogd.README COPYING
 %defattr(0700,root,root)
 /sbin/halt
 /sbin/init
@@ -105,6 +116,7 @@ fi
 /sbin/reboot
 /sbin/shutdown
 /sbin/telinit
+/sbin/fstab-decode
 /sbin/bootlogd
 %defattr(0755,root,root)
 /sbin/killall5
@@ -119,6 +131,13 @@ fi
 %attr(0600,root,root) /dev/initctl
 
 %changelog
+* Fri Nov 12 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.88dsf-owl1
+- Updated to 2.88dsf.
+- Updated all the patches.
+- Dropped owl-save-env patch (fixed in upstream).
+- Imported deb-killall-sched, alt-signedness, alt-wur, deb-init-selinux,
+suse-SETSIG patches.
+
 * Sun Nov 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.86-owl2
 - Merged ALT's patch for start-stop-daemon to recognize deleted
 executables when kernel adds "(deleted) " name prefix in addition to

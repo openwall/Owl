@@ -1,0 +1,10 @@
+--- sysvinit/src/init.c
++++ sysvinit/src/init.c
+@@ -89,6 +89,7 @@
+ /* Set a signal handler. */
+ #define SETSIG(sa, sig, fun, flags) \
+ 		do { \
++			memset(&sa, 0, sizeof(sa)); \
+ 			sa.sa_handler = fun; \
+ 			sa.sa_flags = flags; \
+ 			sigemptyset(&sa.sa_mask); \

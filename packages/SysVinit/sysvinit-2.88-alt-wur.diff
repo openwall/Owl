@@ -1,0 +1,236 @@
+--- sysvinit/src/halt.c
++++ sysvinit/src/halt.c
+@@ -236,7 +236,10 @@ int main(int argc, char **argv)
+ 		exit(1);
+ 	}
+ 
+-	(void)chdir("/");
++	if (chdir("/")) {
++		fprintf(stderr, "%s: chdir(/): %m\n", progname);
++		exit(1);
++	}
+ 
+ 	if (!do_hard && !do_nothing) {
+ 		/*
+--- sysvinit/src/init.c
++++ sysvinit/src/init.c
+@@ -807,6 +807,24 @@ void console_stty(void)
+ 	(void) close(fd);
+ }
+ 
++static  ssize_t
++write_loop(int fd, const char *buffer, size_t count)
++{
++	ssize_t offset = 0;
++
++	while (count > 0) {
++		ssize_t block = write(fd, &buffer[offset], count);
++
++		if (block < 0 && errno == EINTR)
++			continue;
++		if (block <= 0)
++			return offset ? offset : block;
++		offset += block;
++		count -= block;
++	}
++	return offset;
++}
++
+ /*
+  *	Print to the system console
+  */
+@@ -815,7 +833,7 @@ void print(char *s)
+ 	int fd;
+ 
+ 	if ((fd = console_open(O_WRONLY|O_NOCTTY|O_NDELAY)) >= 0) {
+-		write(fd, s, strlen(s));
++		write_loop(fd, s, strlen(s));
+ 		close(fd);
+ 	}
+ }
+@@ -1670,9 +1688,9 @@ int ask_runlevel(void)
+ 	if (fd < 0) return('S');
+ 
+ 	while(!strchr("0123456789S", lvl)) {
+-  		write(fd, prompt, sizeof(prompt) - 1);
+-		buf[0] = 0;
+-  		read(fd, buf, sizeof(buf));
++		write_loop(fd, prompt, sizeof(prompt) - 1);
++		if (read(fd, buf, sizeof(buf)) <= 0)
++			buf[0] = 0;
+   		if (buf[0] != 0 && (buf[1] == '\r' || buf[1] == '\n'))
+ 			lvl = buf[0];
+ 		if (islower(lvl)) lvl = toupper(lvl);
+@@ -1957,12 +1975,15 @@ int make_pipe(int fd)
+ {
+ 	int fds[2];
+ 
+-	pipe(fds);
++	if (pipe(fds)) {
++		initlog(L_VB, "pipe: %m");
++		return -1;
++	}
+ 	dup2(fds[0], fd);
+ 	close(fds[0]);
+ 	fcntl(fds[1], F_SETFD, 1);
+ 	fcntl(fd, F_SETFD, 0);
+-	write(fds[1], Signature, 8);
++	write_loop(fds[1], Signature, 8);
+ 
+ 	return fds[1];
+ }
+@@ -1992,7 +2013,10 @@ void re_exec(void)
+ 	/*
+ 	 *	construct a pipe fd --> STATE_PIPE and write a signature
+ 	 */
+-	fd = make_pipe(STATE_PIPE);
++	if ((fd = make_pipe(STATE_PIPE)) < 0) {
++		sigprocmask(SIG_SETMASK, &oldset, NULL);
++		initlog(L_CO, "Attempt to re-exec failed");
++	}
+ 
+ 	/* 
+ 	 * It's a backup day today, so I'm pissed off.  Being a BOFH, however, 
+@@ -2036,10 +2060,10 @@ void re_exec(void)
+ 	 *	We shouldn't be here, something failed. 
+ 	 *	Bitch, close the state pipe, unblock signals and return.
+ 	 */
++	init_freeenv(env);
+ 	close(fd);
+ 	close(STATE_PIPE);
+ 	sigprocmask(SIG_SETMASK, &oldset, NULL);
+-	init_freeenv(env);
+ 	initlog(L_CO, "Attempt to re-exec failed");
+ }
+ 
+@@ -2410,8 +2434,8 @@ void process_signals()
+ 	/* See _what_ kind of SIGPWR this is. */
+ 	pwrstat = 0;
+ 	if ((fd = open(PWRSTAT, O_RDONLY)) >= 0) {
+-		c = 0;
+-		read(fd, &c, 1);
++		if (read(fd, &c, 1) != 1)
++			c = 0;
+ 		pwrstat = c;
+ 		close(fd);
+ 		unlink(PWRSTAT);
+@@ -2419,8 +2443,8 @@ void process_signals()
+ 		/* Path changed 2010-03-20.  Look for the old path for a while. */
+ 		initlog(L_VB, "warning: found obsolete path %s, use %s instead",
+ 			PWRSTAT_OLD, PWRSTAT);
+-		c = 0;
+-		read(fd, &c, 1);
++		if (read(fd, &c, 1) != 1)
++			c = 0;
+ 		pwrstat = c;
+ 		close(fd);
+ 		unlink(PWRSTAT_OLD);
+@@ -2537,7 +2561,7 @@ void init_main(void)
+ 		while((rc = wait(&st)) != f)
+ 			if (rc < 0 && errno == ECHILD)
+ 				break;
+-		write(1, killmsg, sizeof(killmsg) - 1);
++		write_loop(1, killmsg, sizeof(killmsg) - 1);
+ 		while(1) pause();
+ 	}
+ #endif
+--- sysvinit/src/killall5.c
++++ sysvinit/src/killall5.c
+@@ -496,13 +496,21 @@ int readproc(int do_stat)
+ 
+ 		/* Read SID & statname from it. */
+ 		if ((fp = fopen(path, "r")) != NULL) {
+-			buf[0] = 0;
+-			fgets(buf, sizeof(buf), fp);
++			if (!fgets(buf, sizeof(buf), fp))
++				buf[0] = '\0';
++
++			if (buf[0] == '\0') {
++				nsyslog(LOG_ERR,
++					"can't read from %s\n", path);
++				fclose(fp);
++				free(p);
++				continue;
++			}
+ 
+ 			/* See if name starts with '(' */
+ 			s = buf;
+-			while (*s != ' ') s++;
+-			s++;
++			while (*s && *s != ' ') s++;
++			if (*s) s++;
+ 			if (*s == '(') {
+ 				/* Read program name. */
+ 				q = strrchr(buf, ')');
+@@ -511,6 +519,7 @@ int readproc(int do_stat)
+ 					nsyslog(LOG_ERR,
+ 					"can't get program name from /proc/%s\n",
+ 						path);
++					fclose(fp);
+ 					if (p->argv0) free(p->argv0);
+ 					if (p->argv1) free(p->argv1);
+ 					if (p->statname) free(p->statname);
+@@ -521,9 +530,9 @@ int readproc(int do_stat)
+ 				s++;
+ 			} else {
+ 				q = s;
+-				while (*q != ' ') q++;
++				while (*q && *q != ' ') q++;
+ 			}
+-			*q++ = 0;
++			if (*q) *q++ = 0;
+ 			while (*q == ' ') q++;
+ 			p->statname = (char *)xmalloc(strlen(s)+1);
+ 			strcpy(p->statname, s);
+@@ -538,6 +547,7 @@ int readproc(int do_stat)
+ 				p->sid = 0;
+ 				nsyslog(LOG_ERR, "can't read sid from %s\n",
+ 					path);
++				fclose(fp);
+ 				if (p->argv0) free(p->argv0);
+ 				if (p->argv1) free(p->argv1);
+ 				if (p->statname) free(p->statname);
+--- sysvinit/src/shutdown.c
++++ sysvinit/src/shutdown.c
+@@ -287,7 +287,8 @@ int spawn(int noerr, char *prog, ...)
+ 	argv[i] = NULL;
+ 	va_end(ap);
+ 
+-	chdir("/");
++	if (chdir("/"))
++		exit(1);
+ 	environ = clean_env;
+ 
+ 	execvp(argv[0], argv);
+@@ -628,7 +629,8 @@ int main(int argc, char **argv)
+ 
+ 	/* Read pid of running shutdown from a file */
+ 	if ((fp = fopen(SDPID, "r")) != NULL) {
+-		fscanf(fp, "%d", &pid);
++		if (fscanf(fp, "%d", &pid) != 1)
++			pid = 0;
+ 		fclose(fp);
+ 	}
+ 
+@@ -693,6 +695,12 @@ int main(int argc, char **argv)
+ 			break;
+ 	}
+ 
++	/* Go to the root directory */
++	if (chdir("/")) {
++		fprintf(stderr, "shutdown: chdir(/): %m\n");
++		exit(1);
++	}
++
+ 	/* Create a new PID file. */
+ 	unlink(SDPID);
+ 	umask(022);
+@@ -716,8 +724,6 @@ int main(int argc, char **argv)
+ 	sa.sa_handler = stopit;
+ 	sigaction(SIGINT, &sa, NULL);
+ 
+-	/* Go to the root directory */
+-	chdir("/");
+ 	if (fastboot)  close(open(FASTBOOT,  O_CREAT | O_RDWR, 0644));
+ 	if (forcefsck) close(open(FORCEFSCK, O_CREAT | O_RDWR, 0644));
+ 

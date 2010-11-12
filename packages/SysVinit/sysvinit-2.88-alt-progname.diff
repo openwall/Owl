@@ -1,0 +1,118 @@
+--- sysvinit/src/halt.c
++++ sysvinit/src/halt.c
+@@ -55,6 +55,7 @@
+ #include <time.h>
+ #include <signal.h>
+ #include <stdio.h>
++#include <errno.h>
+ #include <getopt.h>
+ #include "reboot.h"
+ 
+@@ -59,7 +60,7 @@
+ #include "reboot.h"
+ 
+ char *Version = "@(#)halt  2.86  31-Jul-2004 miquels@cistron.nl";
+-char *progname;
++const char *progname;
+ 
+ #define KERNEL_MONITOR	1 /* If halt() puts you into the kernel monitor. */
+ #define RUNLVL_PICKY	0 /* Be picky about the runlevel */
+@@ -188,12 +189,9 @@ int main(int argc, char **argv)
+ 	/*
+ 	 *	Find out who we are
+ 	 */
++	progname = program_invocation_short_name;
+ 	/* Remove dash passed on in argv[0] when used as login shell. */
+-	if (argv[0][0] == '-') argv[0]++;
+-	if ((progname = strrchr(argv[0], '/')) != NULL)
+-		progname++;
+-	else
+-		progname = argv[0];
++	if (progname[0] == '-') progname++;
+ 
+ 	if (!strcmp(progname, "reboot")) do_reboot = 1;
+ 	if (!strcmp(progname, "poweroff")) do_poweroff = 1;
+--- sysvinit/src/init.c
++++ sysvinit/src/init.c
+@@ -2792,25 +2792,19 @@ int telinit(char *progname, int argc, char **argv)
+  */
+ int main(int argc, char **argv)
+ {
+-	char			*p;
+ 	int			f;
+ 	int			isinit;
+ #ifdef WITH_SELINUX
+ 	int			enforce = 0;
+ #endif
+ 
+-	/* Get my own name */
+-	if ((p = strrchr(argv[0], '/')) != NULL)
+-  		p++;
+-	else
+-  		p = argv[0];
+-
+ 	/* Common umask */
+ 	umask(022);
+ 
+ 	/* Quick check */
+ 	if (geteuid() != 0) {
+-		fprintf(stderr, "%s: must be superuser.\n", p);
++		fprintf(stderr, "%s: must be superuser.\n",
++			program_invocation_short_name);
+ 		exit(1);
+ 	}
+ 
+@@ -2824,7 +2818,8 @@ int main(int argc, char **argv)
+ 			break;
+ 		}
+ 	}
+-	if (!isinit) exit(telinit(p, argc, argv));
++	if (!isinit)
++		exit(telinit(program_invocation_short_name, argc, argv));
+ 
+ 	/*
+ 	 *	Check for re-exec
+--- sysvinit/src/killall5.c
++++ sysvinit/src/killall5.c
+@@ -130,7 +130,7 @@ int sent_sigstop;
+ 
+ int scripts_too = 0;
+ 
+-char *progname;	/* the name of the running program */
++#define progname program_invocation_short_name
+ #ifdef __GNUC__
+ __attribute__ ((format (printf, 2, 3)))
+ #endif
+@@ -994,12 +994,6 @@ int main(int argc, char **argv)
+ 	/* return non-zero if no process was killed */
+ 	int		retval = 2;
+ 
+-	/* Get program name. */
+-	if ((progname = strrchr(argv[0], '/')) == NULL)
+-		progname = argv[0];
+-	else
+-		progname++;
+-
+ 	/* Now connect to syslog. */
+ 	openlog(progname, LOG_CONS|LOG_PID, LOG_DAEMON);
+ 
+--- sysvinit/src/last.c
++++ sysvinit/src/last.c
+@@ -86,7 +86,7 @@ int oldfmt = 0;		/* Use old libc5 format? */
+ char **show = NULL;	/* What do they want us to show */
+ char *ufile;		/* Filename of this file */
+ time_t lastdate;	/* Last date we've seen */
+-char *progname;		/* Name of this program */
++#define progname program_invocation_short_name
+ #if CHOP_DOMAIN
+ char hostname[256];	/* For gethostbyname() */
+ char *domainname;	/* Our domainname. */
+@@ -602,8 +602,6 @@ int main(int argc, char **argv)
+ 
+   time_t until = 0;	/* at what time to stop parsing the file */
+ 
+-  progname = mybasename(argv[0]);
+-
+   /* Process the arguments. */
+   while((c = getopt(argc, argv, "f:n:RxadFiot:0123456789w")) != EOF)
+     switch(c) {

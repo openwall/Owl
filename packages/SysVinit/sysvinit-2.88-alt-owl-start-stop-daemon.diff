@@ -1,6 +1,6 @@
-diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-2.85/contrib/start-stop-daemon.c
---- sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c	Tue Apr 22 21:31:25 2003
-+++ sysvinit-2.85/contrib/start-stop-daemon.c	Sun Apr 27 04:50:04 2003
+diff -uNrp sysvinit-2.88dsf.old/contrib/start-stop-daemon.c sysvinit-2.88dsf/contrib/start-stop-daemon.c
+--- sysvinit-2.88dsf.old/contrib/start-stop-daemon.c	2009-09-10 08:28:49 +0000
++++ sysvinit-2.88dsf/contrib/start-stop-daemon.c	2010-10-23 13:22:42 +0000
 @@ -12,13 +12,14 @@
  #include <stdarg.h>
  #include <signal.h>
@@ -13,11 +13,11 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  #include <pwd.h>
  
 -#define VERSION "version 0.3, 1996-06-05"
-+#define VERSION "Version 0.3+ALT/OW, 2003-04-27"
++#define VERSION "version 0.3+ALT/OW, 2010-10-22"
  
  static int testmode = 0;
  static int quietmode = 0;
-@@ -44,53 +45,39 @@ struct pid_list {
+@@ -44,42 +45,6 @@ struct pid_list {
  static struct pid_list *found = NULL;
  static struct pid_list *killed = NULL;
  
@@ -45,58 +45,56 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
 -
 -static void
 -fatal(const char *format, ...)
-+static void *
-+xmalloc (size_t size)
- {
+-{
 -	va_list arglist;
-+	void   *r = malloc (size);
- 
--	fprintf(stderr, "%s: ", __progname);
+-
+-	fprintf(stderr, "%s: ", progname);
 -	va_start(arglist, format);
 -	vfprintf(stderr, format, arglist);
 -	va_end(arglist);
 -	putc('\n', stderr);
 -	exit(2);
-+	if (!r)
-+		error (2, errno, "malloc");
-+	return r;
- }
- 
+-}
 -
--static void *
--xmalloc(int size)
+-
+ static void *
+ xmalloc(int size)
+ {
+@@ -88,9 +53,32 @@ xmalloc(int size)
+ 	ptr = malloc(size);
+ 	if (ptr)
+ 		return ptr;
+-	fatal("malloc(%d) failed", size);
++	error(2, errno, "malloc");
++}
++
 +static char *
 +xstrdup (const char *s)
- {
--	void *ptr;
-+	char   *r = strdup (s);
- 
--	ptr = malloc(size);
--	if (ptr)
--		return ptr;
--	fatal("malloc(%d) failed", size);
-+	if (!r)
-+		error (2, errno, "strdup");
-+	return r;
++{
++       char   *r = strdup (s);
++
++       if (!r)
++               error (2, errno, "strdup");
++       return r;
  }
  
 +static char *
 +__attribute__ ((__format__ (__printf__, 2, 3)))
 +xasprintf (char **ptr, const char *fmt, ...)
 +{
-+	va_list arg;
++       va_list arg;
 +
-+	va_start (arg, fmt);
-+	if (vasprintf (ptr, fmt, arg) < 0)
-+		error (2, errno, "vasprintf");
-+	va_end (arg);
++       va_start (arg, fmt);
++       if (vasprintf (ptr, fmt, arg) < 0)
++               error (2, errno, "vasprintf");
++       va_end (arg);
 +
-+	return *ptr;
++       return *ptr;
 +}
  
  static void
  push(struct pid_list **list, int pid)
-@@ -108,7 +95,7 @@ static void
+@@ -108,7 +96,7 @@ static void
  do_help(void)
  {
  	printf("\
@@ -105,15 +103,15 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  Marek Michalkiewicz <marekm@i17linuxb.ists.pwr.wroc.pl>, public domain.\n"
  VERSION "\n\
  \n\
-@@ -134,6 +121,7 @@ Exit status:  0 = done  1 = nothing done
+@@ -134,6 +122,7 @@ Exit status:  0 = done  1 = nothing done
  
  
  static void
-+__attribute__((noreturn))
++__attribute((noreturn))
  badusage(const char *msg)
  {
  	if (msg && *msg)
-@@ -234,15 +222,50 @@ parse_options(int argc, char * const *ar
+@@ -234,15 +223,49 @@ parse_options(int argc, char * const *ar
  
  
  static int
@@ -124,15 +122,14 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  	char buf[32];
 +	char value[PATH_MAX];
 +	int rc;
- 
--	sprintf(buf, "/proc/%d/exe", pid);
--	if (stat(buf, &sb) != 0)
++	
 +	if (!esb || !exec)
- 		return 0;
++		return 0;
+ 
+ 	sprintf(buf, "/proc/%d/exe", pid);
+-	if (stat(buf, &sb) != 0)
+-		return 0;
 -	return (sb.st_dev == esb->st_dev && sb.st_ino == esb->st_ino);
-+
-+	sprintf(buf, "/proc/%d/exe", pid);
-+
 +	if (stat(buf, &sb) == 0 &&
 +	    sb.st_dev == esb->st_dev && sb.st_ino == esb->st_ino)
 +		return 1;
@@ -168,7 +165,7 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  }
  
  
-@@ -287,7 +299,7 @@ pid_is_cmd(int pid, const char *name)
+@@ -287,7 +310,7 @@ pid_is_cmd(int pid, const char *name)
  static void
  check(int pid)
  {
@@ -177,7 +174,7 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  		return;
  	if (userspec && !pid_is_user(pid, user_id))
  		return;
-@@ -321,7 +333,7 @@ do_procfs(void)
+@@ -321,7 +344,7 @@ do_procfs(void)
  
  	procdir = opendir("/proc");
  	if (!procdir)
@@ -186,7 +183,7 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  
  	foundany = 0;
  	while ((entry = readdir(procdir)) != NULL) {
-@@ -332,26 +344,26 @@ do_procfs(void)
+@@ -332,26 +355,26 @@ do_procfs(void)
  	}
  	closedir(procdir);
  	if (!foundany)
@@ -220,18 +217,18 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  
  	if (!found) {
  		if (quietmode <= 0)
-@@ -365,8 +377,8 @@ do_stop(void)
+@@ -365,8 +388,8 @@ do_stop(void)
  		else if (kill(p->pid, signal_nr) == 0)
  			push(&killed, p->pid);
  		else
 -			printf("%s: warning: failed to kill %d: %s\n",
--			       __progname, p->pid, strerror(errno));
+-			       progname, p->pid, strerror(errno));
 +			error(0, errno, "warning: failed to send signal %d to %d",
-+			      signal_nr, p->pid);
++			       signal_nr, p->pid);
  	}
  	if (quietmode < 0 && killed) {
  		printf("stopped %s (pid", what);
-@@ -374,6 +386,8 @@ do_stop(void)
+@@ -374,6 +397,8 @@ do_stop(void)
  			printf(" %d", p->pid);
  		printf(").\n");
  	}
@@ -240,7 +237,7 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  }
  
  
-@@ -387,14 +401,14 @@ main(int argc, char **argv)
+@@ -387,14 +412,14 @@ main(int argc, char **argv)
  	argv += optind;
  
  	if (execname && stat(execname, &exec_stat))
@@ -253,11 +250,11 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
  		pw = getpwnam(userspec);
  		if (!pw)
 -			fatal("user `%s' not found\n", userspec);
-+			error(2, 0, "user `%s' not found", userspec);
++			error(2, errno, "user `%s' not found", userspec);
  
  		user_id = pw->pw_uid;
  	}
-@@ -425,6 +439,6 @@ main(int argc, char **argv)
+@@ -425,6 +450,7 @@ main(int argc, char **argv)
  		printf("starting %s ...\n", startas);
  	*--argv = startas;
  	execv(startas, argv);
@@ -265,4 +262,4 @@ diff -urp sysvinit-2.85-alt-progname-umask/contrib/start-stop-daemon.c sysvinit-
 +	error(2, errno, "execv: %s", startas);
 +	return 2;
  }
--
+ 
