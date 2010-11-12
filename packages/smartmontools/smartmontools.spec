@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/smartmontools/smartmontools.spec,v 1.2 2006/06/12 22:16:51 ldv Exp $
+# $Owl: Owl/packages/smartmontools/smartmontools.spec,v 1.3 2010/11/12 17:04:16 segoon Exp $
 
 Summary: Control and monitor storage systems using S.M.A.R.T.
 Name: smartmontools
-Version: 5.36
+Version: 5.40
 Release: owl1
 License: GPL
 Group: System Environment/Daemons
@@ -10,11 +10,6 @@ URL: http://smartmontools.sourceforge.net/
 Source0: http://prdownloads.sourceforge.net/smartmontools/smartmontools-%version.tar.gz
 Source1: smartd.init
 Source2: smartd.sysconfig
-Patch0: smartmontools-5.36-cvs-20060414-wd-attr-190.diff
-Patch1: smartmontools-5.36-cvs-20060415-vpd-page-0x83-size.diff
-Patch2: smartmontools-5.36-cvs-20060415-libata-2.6.17-id.diff
-Patch3: smartmontools-5.36-cvs-20060609-seagate-momentus.diff
-Patch4: smartmontools-5.36-deb-cciss.diff
 PreReq: /sbin/chkconfig
 Requires: mailx
 BuildRequires: sed >= 4.1
@@ -29,18 +24,14 @@ and includes support for ATA/ATAPI-5 disks.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
 fgrep -lZ /usr/local/bin/mail *.in |
 	xargs -r0 sed -i 's,/usr/local/bin/mail,/bin/mail,g' --
 
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-%configure
+%configure \
+  --with-docdir=%buildroot/%_docdir/%name-%version
 %__make
 
 %install
@@ -55,10 +46,6 @@ install -pD -m700 %_sourcedir/smartd.init \
 	%buildroot/etc/rc.d/init.d/smartd
 install -pD -m600 %_sourcedir/smartd.sysconfig \
 	%buildroot/etc/sysconfig/smartd
-
-%define docdir %_docdir/%name-%version
-bzip2 -9 %buildroot%docdir/CHANGELOG
-rm %buildroot%docdir/INSTALL
 
 %pre
 rm -f /var/run/smartd.restart
@@ -85,12 +72,20 @@ fi
 %files
 %defattr(-,root,root)
 %_sbindir/*
+%exclude %_sbindir/update-smart-drivedb
 %_mandir/man?/*
 %config /etc/rc.d/init.d/smartd
 %config(noreplace) /etc/smartd.conf
 %config(noreplace) /etc/sysconfig/smartd
-%docdir
+%_datadir/%name/
+%_docdir/%name-%version/
+%exclude %_docdir/%name-%version/CHANGELOG
+%exclude %_docdir/%name-%version/INSTALL
 
 %changelog
+* Fri Nov 12 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.40-owl1
+- Updated to 5.40.
+- Dropped all patches (fixed in upstream).
+
 * Mon Jun 12 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.36-owl1
 - Initial revision, based on smartmontools-5.36-alt2 package from Sisyphus.
