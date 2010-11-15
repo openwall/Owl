@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/SysVinit/SysVinit.spec,v 1.29 2010/11/12 16:52:16 segoon Exp $
+# $Owl: Owl/packages/SysVinit/SysVinit.spec,v 1.30 2010/11/15 21:38:02 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
@@ -15,11 +15,10 @@ Patch3: sysvinit-2.86-owl-mount_proc-single-mount.diff
 Patch4: sysvinit-2.85-owl-multiline-string-fix.diff
 Patch5: sysvinit-2.88-rh-alt-owl-pidof.diff
 Patch6: sysvinit-2.86-owl-initcmd_setenv.diff
-Patch7: sysvinit-2.86-deb-killall-sched.diff
-Patch8: sysvinit-2.88-alt-signedness.diff
-Patch9: sysvinit-2.88-alt-wur.diff
-Patch10: sysvinit-2.88-deb-init-selinux.diff
-Patch11: sysvinit-2.88-suse-SETSIG.diff
+Patch7: sysvinit-2.88-alt-signedness.diff
+Patch8: sysvinit-2.88-alt-wur.diff
+Patch9: sysvinit-2.88-deb-init-selinux.diff
+Patch10: sysvinit-2.88-suse-SETSIG.diff
 Requires: /sbin/sulogin
 BuildRoot: /override/%name-%version
 
@@ -44,7 +43,6 @@ rm man/sulogin.8
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
-%patch11 -p1
 
 %{expand:%%define optflags %optflags -Wall -D_GNU_SOURCE}
 
