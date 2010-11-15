@@ -71,25 +71,25 @@ diff -uNrp sysvinit-2.88dsf.old/contrib/start-stop-daemon.c sysvinit-2.88dsf/con
 +static char *
 +xstrdup (const char *s)
 +{
-+       char   *r = strdup (s);
++	char   *r = strdup (s);
 +
-+       if (!r)
-+               error (2, errno, "strdup");
-+       return r;
++	if (!r)
++		error (2, errno, "strdup");
++	return r;
  }
  
 +static char *
 +__attribute__ ((__format__ (__printf__, 2, 3)))
 +xasprintf (char **ptr, const char *fmt, ...)
 +{
-+       va_list arg;
++	va_list arg;
 +
-+       va_start (arg, fmt);
-+       if (vasprintf (ptr, fmt, arg) < 0)
-+               error (2, errno, "vasprintf");
-+       va_end (arg);
++	va_start (arg, fmt);
++	if (vasprintf (ptr, fmt, arg) < 0)
++		error (2, errno, "vasprintf");
++	va_end (arg);
 +
-+       return *ptr;
++	return *ptr;
 +}
  
  static void
@@ -107,7 +107,7 @@ diff -uNrp sysvinit-2.88dsf.old/contrib/start-stop-daemon.c sysvinit-2.88dsf/con
  
  
  static void
-+__attribute((noreturn))
++__attribute__((noreturn))
  badusage(const char *msg)
  {
  	if (msg && *msg)
