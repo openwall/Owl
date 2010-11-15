@@ -1,0 +1,34 @@
+Linux megaraid: Fix segfault on non-data commands (Ticket #78).
+
+--- trunk/smartmontools/os_linux.cpp	2010/11/05 22:48:26	3203
++++ trunk/smartmontools/os_linux.cpp	2010/11/12 20:31:32	3204
+@@ -1091,17 +1091,21 @@
+   pthru->cdb_len = cdbLen;
+   pthru->timeout = 0;
+   pthru->flags = MFI_FRAME_DIR_READ;
+-  pthru->sge_count = 1;
+-  pthru->data_xfer_len = dataLen;
+-  pthru->sgl.sge32[0].phys_addr = (intptr_t)data;
+-  pthru->sgl.sge32[0].length = (uint32_t)dataLen;
++  if (dataLen > 0) {
++    pthru->sge_count = 1;
++    pthru->data_xfer_len = dataLen;
++    pthru->sgl.sge32[0].phys_addr = (intptr_t)data;
++    pthru->sgl.sge32[0].length = (uint32_t)dataLen;
++  }
+   memcpy(pthru->cdb, cdb, cdbLen);
+ 
+   uio.host_no = m_hba;
+-  uio.sge_count = 1;
+-  uio.sgl_off = offsetof(struct megasas_pthru_frame, sgl);
+-  uio.sgl[0].iov_base = data;
+-  uio.sgl[0].iov_len = dataLen;
++  if (dataLen > 0) {
++    uio.sge_count = 1;
++    uio.sgl_off = offsetof(struct megasas_pthru_frame, sgl);
++    uio.sgl[0].iov_base = data;
++    uio.sgl[0].iov_len = dataLen;
++  }
+ 
+   rc = 0;
+   errno = 0;

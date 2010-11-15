@@ -1,15 +1,17 @@
-# $Owl: Owl/packages/smartmontools/smartmontools.spec,v 1.3 2010/11/12 17:04:16 segoon Exp $
+# $Owl: Owl/packages/smartmontools/smartmontools.spec,v 1.4 2010/11/15 21:50:30 solar Exp $
 
 Summary: Control and monitor storage systems using S.M.A.R.T.
 Name: smartmontools
 Version: 5.40
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Daemons
 URL: http://smartmontools.sourceforge.net/
-Source0: http://prdownloads.sourceforge.net/smartmontools/smartmontools-%version.tar.gz
+Source0: smartmontools-%version.tar.xz
+# http://prdownloads.sourceforge.net/smartmontools/smartmontools-%version.tar.gz
 Source1: smartd.init
 Source2: smartd.sysconfig
+Patch0: smartmontools-5.40-up-megaraid-segfault.diff
 PreReq: /sbin/chkconfig
 Requires: mailx
 BuildRequires: sed >= 4.1
@@ -24,6 +26,7 @@ and includes support for ATA/ATAPI-5 disks.
 
 %prep
 %setup -q
+%patch0 -p2
 fgrep -lZ /usr/local/bin/mail *.in |
 	xargs -r0 sed -i 's,/usr/local/bin/mail,/bin/mail,g' --
 
@@ -31,7 +34,7 @@ fgrep -lZ /usr/local/bin/mail *.in |
 
 %build
 %configure \
-  --with-docdir=%buildroot/%_docdir/%name-%version
+	--with-docdir=%buildroot/%_docdir/%name-%version
 %__make
 
 %install
@@ -83,6 +86,10 @@ fi
 %exclude %_docdir/%name-%version/INSTALL
 
 %changelog
+* Mon Nov 15 2010 Solar Designer <solar-at-owl.openwall.com> 5.40-owl2
+- Added upstream's change:
+"Linux megaraid: Fix segfault on non-data commands (Ticket #78)".
+
 * Fri Nov 12 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.40-owl1
 - Updated to 5.40.
 - Dropped all patches (fixed in upstream).
