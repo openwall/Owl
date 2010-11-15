@@ -250,7 +250,7 @@ diff -uNrp sysvinit-2.88dsf.old/contrib/start-stop-daemon.c sysvinit-2.88dsf/con
  		pw = getpwnam(userspec);
  		if (!pw)
 -			fatal("user `%s' not found\n", userspec);
-+			error(2, errno, "user `%s' not found", userspec);
++			error(2, 0, "user `%s' not found", userspec);
  
  		user_id = pw->pw_uid;
  	}
