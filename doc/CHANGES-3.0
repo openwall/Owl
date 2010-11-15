@@ -46,6 +46,15 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/11/15	Package: man-pages
+Updated to 3.31.
+
+2010/11/15	Package: smartmontools
+Updated to 5.40.
+
+2010/11/15	Package: SysVinit
+Updated to 2.88dsf.
+
 2010/11/09	Package: man-pages
 Updated to 3.30.
 
@@ -1461,4 +1470,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.285 2010/11/09 18:43:57 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.286 2010/11/15 22:09:51 solar Exp $
