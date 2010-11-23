@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/lftp/lftp.spec,v 1.40 2010/09/17 23:59:51 solar Exp $
+# $Owl: Owl/packages/lftp/lftp.spec,v 1.41 2010/11/23 16:04:19 segoon Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
-Version: 4.0.10
+Version: 4.1.0
 Release: owl1
 License: GPLv3+
 Group: Applications/Internet
@@ -76,6 +76,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/lftp.mo
 
 %changelog
+* Tue Nov 23 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4.1.0-owl1
+- Updated to 4.1.0.
+
 * Mon Sep 06 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4.0.10-owl1
 - Updated to 4.0.10.
 - Silenced compiler warnings.
