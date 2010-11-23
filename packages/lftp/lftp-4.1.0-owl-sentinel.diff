@@ -1,29 +1,22 @@
-diff -uNrp lftp-4.0.10.orig/src/xstring.h lftp-4.0.10/src/xstring.h
---- lftp-4.0.10.orig/src/xstring.h	2010-09-04 12:47:58 +0000
-+++ lftp-4.0.10/src/xstring.h	2010-09-07 15:36:41 +0000
-@@ -46,6 +46,21 @@
+diff -ur lftp-4.1.0.orig/src/xstring.h lftp-4.1.0/src/xstring.h
+--- lftp-4.1.0.orig/src/xstring.h	2010-06-07 09:11:03 +0000
++++ lftp-4.1.0/src/xstring.h	2010-11-23 21:52:37 +0000
+@@ -46,6 +46,14 @@
  # endif
  #endif
  
-+#ifndef GCC_VERSION
-+#define GCC_VERSION (__GNUC__ * 1000 + __GNUC_MINOR__)
-+#endif /* GCC_VERSION */
-+
 +/* Attribute `sentinel' was valid as of gcc 3.5.  */
-+#ifdef __GNUC__
-+#ifndef ATTRIBUTE_SENTINEL
-+# if (GCC_VERSION >= 3005)
-+#  define ATTRIBUTE_SENTINEL __attribute__ ((__sentinel__))
-+# else
-+#  define ATTRIBUTE_SENTINEL
-+# endif /* GNUC >= 3.5 */
-+#endif /* ATTRIBUTE_SENTINEL */
++#if defined(__GNUC__) && \
++    (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 5))
++# define ATTRIBUTE_SENTINEL __attribute__ ((__sentinel__))
++#else
++# define ATTRIBUTE_SENTINEL
 +#endif
 +
  #include <stdarg.h>
  #include <unistd.h>
  
-@@ -104,7 +119,7 @@ public:
+@@ -104,7 +112,7 @@
     const char *set(const char *s) { return xstrset(buf,s); }
     const char *nset(const char *s,int n) { return xstrset(buf,s,n); }
     const char *set_allocated(char *s) { xfree(buf); return buf=s; }
@@ -32,7 +25,7 @@ diff -uNrp lftp-4.0.10.orig/src/xstring.h lftp-4.0.10/src/xstring.h
     void truncate(size_t n) { if(buf) buf[n]=0; }
     char *borrow() { return replace_value(buf,(char*)0); }
     bool eq(const char *s) { return !xstrcmp(buf,s); }
-@@ -164,8 +179,8 @@ public:
+@@ -164,8 +172,8 @@
     xstring& append(const xstring &s) { return append(s.get(),s.length()); }
     xstring& append_padding(int len,char ch);
     xstring& vappend(va_list);
@@ -43,7 +36,7 @@ diff -uNrp lftp-4.0.10.orig/src/xstring.h lftp-4.0.10/src/xstring.h
     xstring& vsetf(const char *fmt, va_list ap) { truncate(0); return vappendf(fmt,ap); }
     xstring& setf(const char *fmt,...) PRINTF_LIKE(2,3);
     xstring& vappendf(const char *fmt, va_list ap);
-@@ -175,7 +190,7 @@ public:
+@@ -175,7 +183,7 @@
     static xstring& get_tmp(const char *s,int n) { return get_tmp().nset(s,n); }
     static xstring& vformat(const char *fmt,va_list ap) { return get_tmp().vsetf(fmt,ap); }
     static xstring& format(const char *fmt,...) PRINTF_LIKE(1,2);
