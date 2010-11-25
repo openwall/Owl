@@ -1,16 +1,19 @@
-# $Owl: Owl/packages/xz/xz.spec,v 1.1 2010/09/06 19:40:21 ldv Exp $
+# $Owl: Owl/packages/xz/xz.spec,v 1.2 2010/11/25 12:05:43 segoon Exp $
 
 Summary: XZ/LZMA data compression library and tools.
 Name: xz
-Version: 4.999.9
+Version: 5.0.0
 Release: owl1
 License: Public Domain
 Group: Applications/File
 URL: http://tukaani.org/xz/
-%define snapshot xz-4.999.9beta-172-ge6ad
+#%define snapshot xz-4.999.9beta-172-ge6ad
 # http://tukaani.org/xz/%snapshot.tar.gz
-Source: %snapshot.tar.bz2
+#Source: %snapshot.tar.bz2
+Source: http://tukaani.org/%name/%name-%version.tar.bz2
 BuildRoot: /override/%name-%version
+%define compat_sonames liblzma.so.0.0.0 liblzma.so.0
+Provides: %(test %_lib = lib64 && s='()(64bit)' || s=; for n in %compat_sonames; do echo -n "$n$s "; done)
 
 %description
 This package provides data compression library and a set of gzip-style
@@ -27,7 +30,7 @@ Requires: %name = %version-%release
 This package provides liblzma development library and header files.
 
 %prep
-%setup -q -n %snapshot
+%setup -q
 sed -i '/SUBDIRS/ s/ scripts//' src/Makefile*
 
 %build
@@ -36,9 +39,15 @@ make
 
 %install
 rm -rf %buildroot
-make install DESTDIR=%buildroot docdir=
+%makeinstall \
+        docdir=
+
 rm %buildroot%_libdir/*.la
 %find_lang %name
+
+for n in %compat_sonames; do 
+    ln -s liblzma.so.%version %buildroot%_libdir/$n
+done
 
 %check
 LD_LIBRARY_PATH=$PWD/src/liblzma/.libs make check
@@ -65,5 +74,9 @@ rm -rf %buildroot
 %_libdir/pkgconfig/*.pc
 
 %changelog
+* Thu Nov 25 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.0.0-owl1
+- Updated to 5.0.0.
+- Provided compatibility symlinks for liblzma.so.
+
 * Mon Sep 06 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.999.9-owl1
 - Initial build of xz-4.999.9beta-172-ge6ad for Openwall GNU/*/Linux.
