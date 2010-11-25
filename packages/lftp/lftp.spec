@@ -1,15 +1,13 @@
-# $Owl: Owl/packages/lftp/lftp.spec,v 1.42 2010/11/23 21:57:48 solar Exp $
+# $Owl: Owl/packages/lftp/lftp.spec,v 1.43 2010/11/25 14:24:27 segoon Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
-Version: 4.1.0
+Version: 4.1.1
 Release: owl1
 License: GPLv3+
 Group: Applications/Internet
 URL: http://lftp.yar.ru
 Source: http://ftp.yars.free.net/pub/source/lftp/lftp-%version.tar.xz
-Patch0: lftp-4.1.0-owl-sentinel.diff
-Patch1: lftp-4.0.10-owl-warnings.diff
 Requires: less
 BuildRequires: openssl-devel >= 0.9.7g-owl1, readline-devel >= 0:4.3
 BuildRequires: ncurses-devel, gettext
@@ -27,8 +25,6 @@ command completion, command history, and a lot more.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
 bzip2 -9k NEWS
 
 %build
@@ -76,6 +72,10 @@ fi
 %_datadir/locale/*/LC_MESSAGES/lftp.mo
 
 %changelog
+* Thu Nov 25 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4.1.1-owl1
+- Updated to 4.1.1.
+- Dropped owl-warnings and owl-sentinel patches (fixed in upstream).
+
 * Tue Nov 23 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4.1.0-owl1
 - Updated to 4.1.0.
 
