@@ -46,8 +46,11 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
-2010/11/23	Package: lftp
-Updated to 4.1.0
+2010/11/25	Package: xz
+Updated to 5.0.0.
+
+2010/11/25	Package: lftp
+Updated to 4.1.1.
 
 2010/11/15	Package: man-pages
 Updated to 3.31.
@@ -1473,4 +1476,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.287 2010/11/23 16:06:09 segoon Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.288 2010/11/25 14:26:54 segoon Exp $
