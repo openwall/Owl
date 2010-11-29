@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.119 2010/10/31 04:14:14 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.120 2010/11/29 03:22:01 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -261,7 +261,7 @@ install -pm644 %_sourcedir/crypt_freesec.[ch] crypt/
 #%endif
 
 # Compile source test files with -fPIC for -shared.
-sed -i 's/-shared -/-fPIC &/' configure*
+sed -i 's/-shared -/-fPIC &/' configure.in configure
 
 cat > find_provides.sh << EOF
 #!/bin/sh
