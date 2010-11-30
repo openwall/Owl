@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/xz/xz.spec,v 1.3 2010/11/26 17:24:58 segoon Exp $
+# $Owl: Owl/packages/xz/xz.spec,v 1.4 2010/11/30 18:50:00 segoon Exp $
 
 Summary: XZ/LZMA data compression library and tools.
 Name: xz
@@ -35,7 +35,7 @@ This package provides liblzma development library and header files.
 sed -i '/SUBDIRS/ s/ scripts//' src/Makefile*
 
 %build
-%configure --enable-dynamic
+%configure
 make
 
 %install
