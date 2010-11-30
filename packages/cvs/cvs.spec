@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/cvs/cvs.spec,v 1.35 2009/09/09 16:45:50 ldv Exp $
+# $Owl: Owl/packages/cvs/cvs.spec,v 1.36 2010/11/30 21:11:07 segoon Exp $
 
 Summary: A version control system.
 Name: cvs
 Version: 1.11.23
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Tools
 URL: http://www.nongnu.org/cvs/
@@ -35,6 +35,7 @@ Patch23: cvs-1.11.23-deb-alt-LocalKeyword-KeywordExpand.diff
 Patch24: cvs-1.11.23-alt-noreadlock.diff
 Patch25: cvs-1.11.23-alt-ssh.diff
 Patch26: cvs-1.11.23-alt-testsuit-log.diff
+Patch27: cvs-1.11.23-up-cve-2010-3846.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRequires: mktemp >= 1:1.3.1, sed >= 4.1.1, zlib-devel
@@ -113,6 +114,7 @@ unset r
 %patch24 -p1
 %patch25 -p1
 %patch26 -p1
+%patch27 -p0
 
 sed -i 's/AC_PREREQ(2\.6.*)/AC_PREREQ(2\.59)/' configure.in
 
@@ -191,6 +193,9 @@ fi
 %_datadir/cvs
 
 %changelog
+* Tue Nov 30 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.11.23-owl2-owl1
+- Backported upstream fix for a remote privilege escalation (CVE-2010-3846).
+
 * Sat May 10 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.11.23-owl1
 - Updated to 1.11.23.
 
