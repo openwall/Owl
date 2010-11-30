@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.47 2010/10/31 03:38:36 solar Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.48 2010/11/30 18:55:11 segoon Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
@@ -44,7 +44,7 @@ bzip2 -9k NEWS doc/{DETAILS,FAQ}
 
 %build
 %configure \
-	--with-static-rnd=linux \
+	--enable-static-rnd=linux \
 	--with-mailprog=/usr/sbin/sendmail \
 	--enable-noexecstack
 %__make
