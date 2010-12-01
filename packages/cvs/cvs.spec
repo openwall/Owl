@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/cvs/cvs.spec,v 1.36 2010/11/30 21:11:07 segoon Exp $
+# $Owl: Owl/packages/cvs/cvs.spec,v 1.37 2010/12/01 07:11:23 solar Exp $
 
 Summary: A version control system.
 Name: cvs
@@ -35,7 +35,7 @@ Patch23: cvs-1.11.23-deb-alt-LocalKeyword-KeywordExpand.diff
 Patch24: cvs-1.11.23-alt-noreadlock.diff
 Patch25: cvs-1.11.23-alt-ssh.diff
 Patch26: cvs-1.11.23-alt-testsuit-log.diff
-Patch27: cvs-1.11.23-up-cve-2010-3846.diff
+Patch27: cvs-1.11.23-up-CVE-2010-3846.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRequires: mktemp >= 1:1.3.1, sed >= 4.1.1, zlib-devel
@@ -193,7 +193,7 @@ fi
 %_datadir/cvs
 
 %changelog
-* Tue Nov 30 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.11.23-owl2-owl1
+* Tue Nov 30 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.11.23-owl2
 - Backported upstream fix for a remote privilege escalation (CVE-2010-3846).
 
 * Sat May 10 2008 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.11.23-owl1
