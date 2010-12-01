@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.60 2010/10/31 04:12:40 solar Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.61 2010/12/01 09:44:47 segoon Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -40,7 +40,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: 3.4.5
-Release: owl4
+Release: owl5
 Epoch: 1
 License: GPL
 Group: Development/Languages
@@ -77,6 +77,7 @@ Source8: libstdc++-compat-2.95.3-i386.tar.bz2
 Source9: libstdc++-compat-3.2.2-i386.tar.xz
 %endif
 %endif
+Patch0: gcc-3.4.5-configure-ld.diff
 
 PreReq: /sbin/install-info
 # XXX: the following line uses RPM4 syntax. I've commented it for now. -- (GM)
@@ -316,6 +317,7 @@ rm compat/i386/libstdc++.so.2.9.dummy
 %endif
 
 %{?_with_test:%setup -q -T -D -b 6}
+%patch0 -p0
 
 %build
 # Rebuild configure(s) and Makefile(s) if templates are newer...
@@ -788,6 +790,9 @@ fi
 %endif
 
 %changelog
+* Wed Dec 01 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:3.4.5-owl5
+- Fixed build bug with binutils 2.20.
+
 * Fri Nov 20 2009 Solar Designer <solar-at-owl.openwall.com> 1:3.4.5-owl4
 - Disabled building of V2 and V3 compat subpackages (gcc 2.x'ish libstdc++).
 
