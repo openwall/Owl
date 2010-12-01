@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.43 2010/10/31 04:20:02 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.44 2010/12/01 09:25:35 segoon Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -82,14 +82,20 @@ bzip2 -9 CHANGELOG ncat/ChangeLog docs/TODO*
 
 %if !%BUILD_NSE_ENABLED
 %define nseflag --without-liblua
+%else
+%define nseflag %{nil}
 %endif
 
 %if !%BUILD_NCAT
 %define ncatflag --without-ncat
+%else
+%define ncatflag %{nil}
 %endif
 
 %if %BUILD_NDIFF
 %define ndiff_flag --with-ndiff
+%else
+%define ndiff_flag %{nil}
 %endif
 
 %build
