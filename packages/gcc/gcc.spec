@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.61 2010/12/01 09:44:47 segoon Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.62 2010/12/03 22:02:45 solar Exp $
 
 # The only supported frontend for now is GXX.
 # G77, JAVA, and OBJC frontends build, but were not tested.
@@ -77,7 +77,7 @@ Source8: libstdc++-compat-2.95.3-i386.tar.bz2
 Source9: libstdc++-compat-3.2.2-i386.tar.xz
 %endif
 %endif
-Patch0: gcc-3.4.5-configure-ld.diff
+Patch0: gcc-3.4.5-owl-configure-ld.diff
 
 PreReq: /sbin/install-info
 # XXX: the following line uses RPM4 syntax. I've commented it for now. -- (GM)
