@@ -47,15 +47,15 @@ clarify the specific issue(s) and their severities in the description.
 	Changes made between Owl 2.0 and Owl-current.
 
 2010/11/30	Package: cvs
-SECURITY FIX	Severity: high, remote, passive
+SECURITY FIX	Severity: none to medium, local, passive to active
 Applied upstream's fix to an array index error, leading to a heap-based
 buffer overflow, found in the way CVS applied certain delta fragment
-changes from input files in the RCS (Revision Control System file)
+changes from input files in the RCS (Revision Control System) file
 format.  If an attacker in control of a CVS repository stored a
-specially-crafted RCS file in that repository, and then tricked a remote
-victim into checking out (updating their CVS repository tree) a revision
-containing that file, it could lead to arbitrary code execution with the
-privileges of the CVS client process on the user's system.
+specially-crafted RCS file in that repository, this could result in
+arbitrary code execution with the privileges of the CVS server process
+on the system hosting the CVS repository when a remote user eventually
+checks out a revision of the affected file.
 References:
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3846
 http://cvs.savannah.gnu.org/viewvc/cvs/ccvs/src/rcs.c?r1=1.262.4.65&r2=1.262.4.66
@@ -1491,4 +1491,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.290 2010/12/01 07:24:09 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.291 2010/12/03 22:18:18 solar Exp $
