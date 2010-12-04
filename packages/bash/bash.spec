@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.48 2010/03/30 17:28:23 solar Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.49 2010/12/04 01:35:23 solar Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
 %define bash_version 3.1
 %define bash_patchlevel 17
 Version: %bash_version.%bash_patchlevel
-Release: owl6
+Release: owl7
 Group: System Environment/Shells
 License: GPL
 # ftp://ftp.gnu.org/gnu/bash/bash-%bash_version.tar.gz
@@ -283,6 +283,9 @@ fi
 %docdir/txt
 
 %changelog
+* Sat Dec 04 2010 Solar Designer <solar-at-owl.openwall.com> 3.1.17-owl7
+- Revised the default shell prompt per gremlin@'s suggestion.
+
 * Tue Mar 30 2010 Solar Designer <solar-at-owl.openwall.com> 3.1.17-owl6
 - Moved /etc/profile and /etc/bashrc from the owl-etc package to this one.
 

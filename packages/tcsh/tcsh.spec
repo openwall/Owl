@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.26 2010/03/30 16:59:14 solar Exp $
+# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.27 2010/12/04 01:35:23 solar Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
 Version: 6.17.00
-Release: owl2
+Release: owl3
 License: BSD
 Group: System Environment/Shells
 URL: http://www.tcsh.org/Home
@@ -99,6 +99,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
+* Sat Dec 04 2010 Solar Designer <solar-at-owl.openwall.com> 6.17.00-owl3
+- Revised the default shell prompt per gremlin@'s suggestion.
+
 * Tue Mar 30 2010 Solar Designer <solar-at-owl.openwall.com> 6.17.00-owl2
 - Moved /etc/csh.login and /etc/csh.cshrc from the owl-etc package to this one.
 

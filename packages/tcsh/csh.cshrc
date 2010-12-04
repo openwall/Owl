@@ -1,9 +1,8 @@
-# $Owl: Owl/packages/tcsh/csh.cshrc,v 1.3 2005/11/16 13:21:54 solar Exp $
+# $Owl: Owl/packages/tcsh/csh.cshrc,v 1.4 2010/12/04 01:35:23 solar Exp $
 
-if ($?prompt) then
-	if ($?tcsh) then
-		set prompt='%m\\!%n:%c\$ ' 
-	else
-		set prompt=`hostname -s`\\!`id -nu`\$\ 
-	endif
+if ($?prompt && $?tcsh) then
+	set prompt='%n@%m:%~ %# '
+# Alternatives:
+#	set prompt='%n@%m:%c09 %# '
+#	set prompt='%m\\!%n:%c%# '
 endif
