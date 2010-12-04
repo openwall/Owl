@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.53 2010/12/04 02:30:19 solar Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.54 2010/12/04 03:28:57 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -153,7 +153,7 @@ SYSLIBS="-lnsl -lresolv"
 pushd src
 
 # 0. Prepare.
-%__make	-C .. tidy makefiles \
+%__make	-j1 -C .. tidy makefiles \
 	SYSLIBS="$SYSLIBS" \
 	AUXLIBS= \
 	CCARGS="$CCARGS $DICT_ARGS -UUSE_TLS" \
@@ -228,7 +228,7 @@ popd # src
 for d in proto man html; do
 	%__make -C $d -f Makefile.in clobber README=
 done
-%__make manpages README=
+%__make -j1 manpages README=
 
 # The alias file is clobbered during build, install it now.
 install -pm644 %_sourcedir/aliases conf/
