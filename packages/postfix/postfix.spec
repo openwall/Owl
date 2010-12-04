@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.51 2010/11/05 21:01:11 solar Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.52 2010/12/04 02:28:13 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
-Version: 2.4.14
-Release: owl2
+Version: 2.4.15
+Release: owl1
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
@@ -38,7 +38,7 @@ Patch15: postfix-2.4.6-alt-owl-defaults.diff
 Patch16: postfix-2.4.6-alt-owl-doc.diff
 Patch17: postfix-2.4.8-owl-safe_open.diff
 Patch18: postfix-2.4.8-owl-postalias-no-hostname.diff
-Patch19: postfix-2.4.14-owl-version.diff
+Patch19: postfix-2.4.15-owl-version.diff
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: owl-startup
@@ -370,6 +370,9 @@ fi
 %attr(666,root,root) %ghost %queue_directory/dev/log
 
 %changelog
+* Sat Dec 04 2010 Solar Designer <solar-at-owl.openwall.com> 1:2.4.15-owl1
+- Updated to 2.4.15.
+
 * Fri Nov 05 2010 Solar Designer <solar-at-owl.openwall.com> 1:2.4.14-owl2
 - In postfix-script, use $INFO instead of $WARN for the chroot jail update
 messages, which do not indicate any problem.  Suggested by Vasiliy Kulikov.

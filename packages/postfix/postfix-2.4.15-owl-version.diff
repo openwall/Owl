@@ -1,0 +1,12 @@
+diff -ur postfix-2.4.15.orig/src/global/mail_version.h postfix-2.4.15/src/global/mail_version.h
+--- postfix-2.4.15.orig/src/global/mail_version.h	2010-11-23 16:24:38 +0000
++++ postfix-2.4.15/src/global/mail_version.h	2010-12-04 02:23:30 +0000
+@@ -20,7 +20,7 @@
+   * Patches change both the patchlevel and the release date. Snapshots have no
+   * patchlevel; they change the release date only.
+   */
+-#define MAIL_RELEASE_DATE	"20091123"
++#define MAIL_RELEASE_DATE	"20101123"
+ #define MAIL_VERSION_NUMBER	"2.4.15"
+ 
+ #ifdef SNAPSHOT
