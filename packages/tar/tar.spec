@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.53 2010/03/21 07:51:48 solar Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.54 2010/12/04 05:51:44 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.23
-Release: owl3
+Release: owl4
 License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
@@ -95,6 +95,10 @@ fi
 %doc AUTHORS COPYING NEWS.bz2 README THANKS
 
 %changelog
+* Sat Dec 04 2010 Solar Designer <solar-at-owl.openwall.com> 1.23-owl4
+- Adjusted tests/truncate.at for its inherent yet undesirable race condition to
+be less likely triggered, and to use less disk space (2 MB instead of 500 MB).
+
 * Sun Mar 21 2010 Solar Designer <solar-at-owl.openwall.com> 1.23-owl3
 - Fixed a couple of bugs in tests/extrac07.at.
 - Updated the documentation on --rsh-command to reflect the lack of default.

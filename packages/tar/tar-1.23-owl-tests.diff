@@ -12,3 +12,23 @@ diff -ur tar-1.23.orig/tests/extrac07.at tar-1.23/tests/extrac07.at
  
  AT_CLEANUP
  
+diff -ur tar-1.23.orig/tests/truncate.at tar-1.23/tests/truncate.at
+--- tar-1.23.orig/tests/truncate.at	2010-01-26 11:30:21 +0000
++++ tar-1.23/tests/truncate.at	2010-12-04 05:38:58 +0000
+@@ -30,13 +30,12 @@
+ AT_KEYWORDS([truncate filechange])
+ 
+ AT_TAR_CHECK([
+-genfile --file foo --length 50000k
++genfile --file foo --length 200k
+ genfile --file baz
+-genfile --run --checkpoint 10 --length 49995k --truncate foo -- tar --checkpoint -vcf bar foo baz
++genfile --run --checkpoint 10 --length 195k --truncate foo -- tar --checkpoint --checkpoint-action=echo --checkpoint-action=sleep=1 -vcf bar foo baz
+ echo Exit status: $?
+ echo separator
+-sleep 1
+-genfile --file foo --seek 49995k --length 5k --pattern=zeros
++genfile --file foo --seek 195k --length 5k --pattern=zeros
+ tar dvf bar],
+ [1],
+ [foo
