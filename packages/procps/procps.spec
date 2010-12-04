@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/procps/Attic/procps.spec,v 1.32 2010/12/01 10:35:07 segoon Exp $
+# $Owl: Owl/packages/procps/Attic/procps.spec,v 1.33 2010/12/04 01:53:23 solar Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
 Version: 3.2.5
-Release: owl8
+Release: owl9
 License: GPL and LGPL
 Group: System Environment/Base
 URL: http://procps.sf.net
@@ -89,7 +89,7 @@ rm -rf %buildroot
 
 %changelog
 * Wed Dec 01 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.2.5-owl9
-- Fixed warnings in ps(1) and top(1).
+- Fixed parsing warnings of ps(1) and top(1) man pages.
 
 * Mon Nov 23 2009 Solar Designer <solar-at-owl.openwall.com> 3.2.5-owl8
 - Temporarily #define __KERNEL__ when including <asm/page.h> to get PAGE_SIZE.
