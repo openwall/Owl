@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/buildworld.sh,v 1.49 2010/09/06 00:11:50 solar Exp $
+# $Owl: Owl/build/buildworld.sh,v 1.50 2010/12/04 12:43:58 segoon Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -20,6 +20,9 @@ FOREIGN=$HOME/foreign
 
 RPMQ=rpm
 RPMB=rpm
+
+# Expand here %sparc, %alpha, etc. if you can build for it
+ARCH_EXPAND='s/%ix86/i386 i486 i586 i686 pentium3 pentium4 athlon geode/g'
 
 log()
 {
@@ -44,6 +47,24 @@ spec()
 		test -n "$SPEC" && SPEC="$DIR/$SPEC"
 	elif [ -f $DIR/$PACKAGE.spec ]; then
 		SPEC=$DIR/$PACKAGE.spec
+	fi
+
+	if [ -n "$SPEC" ]; then
+		ARCH_INC=`sed -nr "$ARCH_EXPAND; /^ExclusiveArch/Ip" "$SPEC"`
+		if [ -n "$ARCH_INC" ]; then
+			if ! echo "$ARCH_INC" | fgrep -q $ARCHITECTURE; then
+				SPEC=
+			fi
+		fi
+	fi
+
+	if [ -n "$SPEC" ]; then
+		ARCH_EXC=`sed -nr "$ARCH_EXPAND; /^ExcludeArch/Ip" "$SPEC"`
+		if [ -n "$ARCH_EXC" ]; then
+			if echo "$ARCH_EXC" | fgrep -q $ARCHITECTURE; then
+				SPEC=
+			fi
+		fi
 	fi
 
 	echo "$SPEC"
@@ -149,6 +170,7 @@ build_native()
 		rm -rf $WORK/RPMS/*
 		test "$BUILDSOURCE" = "yes" && rm -rf $WORK/SRPMS/*
 		log "#$NUMBER: Failed $PACKAGE"
+		touch $HOME/native-work/failed
 	fi
 	rm -rf $WORK/buildroot
 	rm -rf $WORK/BUILD/*
@@ -202,6 +224,7 @@ builder()
 		touch .${SOURCE}/$NUMBER
 		if [ -n "$PACKAGE" ]; then
 			if [ "$SOURCE" = "$PACKAGE" ]; then
+				touch $HOME/rpm-work-$NUMBER/built
 				build_native $NUMBER $SOURCE
 			fi
 		elif built $SPEC $SOURCE; then
@@ -210,6 +233,10 @@ builder()
 			build_native $NUMBER $SOURCE
 		fi
 	done
+	if [ -n "$PACKAGE" -a ! -e "$HOME/rpm-work-$NUMBER/built" ]; then
+		log "#$NUMBER: Failed $PACKAGE (no such package)"
+		touch $HOME/native-work/failed
+	fi
 
 	log "#$NUMBER: Scanning foreign"
 
@@ -438,7 +465,14 @@ cd $HOME || exit 1
 
 wait
 
+RESULT=0
+if [ -e $HOME/native-work/failed ]; then
+	RESULT=1
+	log "Some packages failed to build."
+fi
+
 log "Removing temporary files"
 rm -rf tmp-work native-work foreign-work
 
 echo "`date '+%Y %b %e %H:%M:%S'`: Finished" >> logs/buildworld
+exit $RESULT
