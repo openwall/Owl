@@ -52,7 +52,7 @@ of "make buildworld" and "make installworld".
 Here are some build times (hours:minutes) for Owl-current, so that you
 know what to expect:
 
-Core 2 Duo E6550, 2.33 GHz, 2 GB				0:51
+Core 2 Duo E6550, 2.33 GHz, 2 GB				0:55
 
 These are for the default set of tests ("RUN_TESTS=" in buildworld.conf
 commented out, missing, or set to an empty string).  The build times
@@ -110,4 +110,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Owl: Owl/doc/BUILD,v 1.43 2010/09/01 19:02:21 solar Exp $
+$Owl: Owl/doc/BUILD,v 1.44 2010/12/04 03:32:56 solar Exp $
