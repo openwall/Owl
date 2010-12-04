@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installworld.sh,v 1.33 2010/07/17 19:28:03 solar Exp $
+# $Owl: Owl/build/installworld.sh,v 1.34 2010/12/04 12:42:11 segoon Exp $
 
 . installworld.conf
 
@@ -207,7 +207,8 @@ while read PACKAGES; do
 	log "Installing $PACKAGES ($FILES)"
 	$RPM $RPM_FLAGS --root $ROOT --define "home $HOME" $FLAGS $FILES && \
 		continue
-	STATUS=1
+	mkdir -p $HOME/tmp-work/failures/
+	touch $HOME/tmp-work/failures/$PACKAGE
 	log "Failed $PACKAGES"
 done
 
@@ -220,9 +221,16 @@ if [ "$NEED_FAKE" = yes ]; then
 	done
 fi
 
+FAILED="`cd $HOME/tmp-work/failures/ 2>/dev/null && ls`"
+
 log "Removing temporary files"
 rm -rf $HOME/tmp-work $ROOT/$HOME/tmp-work
 
 echo "`date '+%Y %b %e %H:%M:%S'`: Finished" >> $HOME/logs/installworld
+
+if [ -n "$FAILED" ]; then
+	STATUS=1
+	log "Failed to install: $FAILED"
+fi
 
 exit $STATUS
