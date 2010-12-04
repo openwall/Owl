@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.44 2010/10/16 21:24:22 solar Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.45 2010/12/04 12:58:07 segoon Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -12,7 +12,7 @@ Name: vim
 %define patchlevel 021
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl3
+Release: owl4
 License: Charityware
 Group: Applications/Editors
 URL: http://www.vim.org
@@ -23,6 +23,7 @@ Source11: vitmp.1
 Source12: vimrc
 Source13: gvim.desktop
 Source14: README
+Source15: filelist.syntax-base.rel
 Patch0: vim-%major.%minor-%version.xz
 # ftp://ftp.vim.org/pub/vim/patches/%major.%minor/
 Patch10: vim-6.4-rh-owl-spec-syntax.diff
@@ -119,6 +120,22 @@ Requires: vim-common
 This subpackage contains dictionaries for vim spell checking in
 many different languages.
 
+%package lang
+Summary: Language files.  This package is optional.
+Group: Applications/Editors
+Requires: vim-common
+
+%description lang
+This subpackage contains translation files for many different languages.
+
+%package syntax
+Summary: Extra syntax files for vim.  This package is optional.
+Group: Applications/Editors
+Requires: vim-enhanced
+
+%description syntax
+This subpackage contains extra syntax files for vim.
+
 %package tutor
 Summary: Vim tutorial.  This package is optional.
 Group: Applications/Editors
@@ -209,7 +226,7 @@ mkdir -p %buildroot%_datadir/vim
 mkdir -p %buildroot%_prefix/X11R6/bin
 %endif
 
-cd src
+pushd src
 %makeinstall installmacros BINDIR=/bin DESTDIR=%buildroot
 mv %buildroot/bin/xxd %buildroot%_bindir
 install -m755 vim-enhanced %buildroot%_bindir/vim
@@ -266,12 +283,26 @@ popd
 chmod 644 .%_datadir/vim/%vimdir/{doc/vim2html.pl,tools/{*.pl,vim132}}
 popd
 chmod 644 ../runtime/doc/vim2html.pl
+popd
+
+
+# filelist.syntax-base.rel MUST NOT contain blank lines
+# otherwise the whole syntax/ directory is packaged in -enhanced
+sed -e 's,^,%_datadir/%name/%name%major%minor/syntax/,' \
+	%_sourcedir/filelist.syntax-base.rel | sort >filelist.syntax-base
+
+find %buildroot/%_datadir/%name/%name%major%minor/syntax/ -type f | sed \
+	-e "s,^%buildroot/,," | sort >filelist.syntax-all
+
+comm -3 filelist.syntax-base filelist.syntax-all >filelist.syntax-rest
 
 %files common
 %defattr(-,root,root)
 %doc README
 %_bindir/xxd
 %_datadir/vim
+%exclude %_datadir/%name/vim*/syntax
+%exclude %_datadir/%name/vim*/lang
 %exclude %_datadir/%name/vim*/spell
 %exclude %_datadir/%name/vim*/tutor
 %_mandir/man1/vim.*
@@ -295,7 +326,7 @@ chmod 644 ../runtime/doc/vim2html.pl
 %_mandir/man1/vi.*
 %_mandir/man1/vitmp.*
 
-%files enhanced
+%files enhanced -f filelist.syntax-base
 %defattr(-,root,root)
 %_bindir/rview
 %_bindir/rvim
@@ -308,11 +339,17 @@ chmod 644 ../runtime/doc/vim2html.pl
 %_mandir/it*/man1/vimdiff.*
 %_mandir/pl*/man1/vimdiff.*
 %_mandir/ru*/man1/vimdiff.*
+%dir %_datadir/%name/vim*/syntax/
 
 %files spell
 %defattr(-,root,root)
 %dir %_datadir/%name/vim*/spell
 %_datadir/%name/vim*/spell/*
+
+%files lang
+%_datadir/%name/vim*/lang
+
+%files syntax -f filelist.syntax-rest
 
 %files tutor
 %defattr(-,root,root)
@@ -348,6 +385,9 @@ chmod 644 ../runtime/doc/vim2html.pl
 %endif
 
 %changelog
+* Sat Dec 04 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 7.3.021-owl4
+- Introduced new subpackages -syntax and -lang.
+
 * Fri Oct 15 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 7.3.021-owl3
 - Fixed parallel build.
 - Fixed vimrc bug.
