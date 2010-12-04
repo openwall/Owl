@@ -46,6 +46,10 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/12/04	Packages: bash, tcsh
+The default shell prompts have been revised to be directly reusable on
+ssh and scp command-lines.
+
 2010/11/30	Package: cvs
 SECURITY FIX	Severity: none to medium, local, passive to active
 Applied upstream's fix to an array index error, leading to a heap-based
@@ -1491,4 +1495,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.291 2010/12/03 22:18:18 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.292 2010/12/04 01:46:47 solar Exp $
