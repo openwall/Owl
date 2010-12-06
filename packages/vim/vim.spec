@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.46 2010/12/06 05:26:19 solar Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.47 2010/12/06 05:52:13 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -9,10 +9,10 @@ Name: vim
 %define major 7
 %define minor 3
 %define alpha %nil
-%define patchlevel 021
+%define patchlevel 075
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl4
+Release: owl1
 License: Charityware
 Group: Applications/Editors
 URL: http://www.vim.org
@@ -26,6 +26,7 @@ Source14: README
 Source15: filelist.syntax-base.rel
 Patch0: vim-%major.%minor-%version.xz
 # ftp://ftp.vim.org/pub/vim/patches/%major.%minor/
+# cat %major.%minor.* | xz > vim-%major.%minor-%version.xz
 Patch10: vim-6.4-rh-owl-spec-syntax.diff
 Patch11: vim-6.4-rh-paths.diff
 Patch12: vim-7.2-owl-tmp.diff
@@ -384,6 +385,9 @@ comm -13 filelist.syntax-base filelist.syntax-all > filelist.syntax-rest
 %endif
 
 %changelog
+* Mon Dec 06 2010 Solar Designer <solar-at-owl.openwall.com> 7.3.075-owl1
+- Updated to patchlevel 075.
+
 * Sat Dec 04 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 7.3.021-owl4
 - Introduced new subpackages -syntax and -lang.
 
