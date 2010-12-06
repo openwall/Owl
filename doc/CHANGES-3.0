@@ -46,6 +46,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/12/06	Package: vim
+Updated to 7.3 patchlevel 75.
+
 2010/12/06	Package: man-pages
 Updated to 3.32.
 
@@ -1501,4 +1504,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.294 2010/12/06 04:38:23 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.295 2010/12/06 05:58:45 solar Exp $
