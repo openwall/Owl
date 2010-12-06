@@ -1,0 +1,39 @@
+diff -urp vzctl-3.0.23.orig/etc/cron.d/vz.in vzctl-3.0.23/etc/cron.d/vz.in
+--- vzctl-3.0.23.orig/etc/cron.d/vz.in	2008-10-30 13:24:43 +0000
++++ vzctl-3.0.23/etc/cron.d/vz.in	2010-12-06 11:36:58 +0000
+@@ -26,7 +26,16 @@
+ 
+ 
+ # Clean containers' network rules (arp,route,iptables)
+-*/5 * * * * root @PKGDATADIR@/scripts/vpsnetclean
++4,9,14,19,24,29,34,39,44,49,54,59 * * * * root @PKGDATADIR@/scripts/vpsnetclean
+ 
+ # Start containers marked as rebooted.
+-*/5 * * * * root @PKGDATADIR@/scripts/vpsreboot
++3,8,13,18,23,28,33,38,43,48,53,58 * * * * root @PKGDATADIR@/scripts/vpsreboot
++
++# Update /var/vzquota/quota.* files, which is desirable such that the
++# containers' recorded disk usage is closer to the actual one and, even more
++# importantly, such that any per-user and per-group quotas are recorded (not
++# only usage, but also the quotas themselves).  Without a cron job like this,
++# if the server crashes, then not only the recorded usage will be way off, but
++# also any manually set per-user and per-group quotas inside the containers
++# will be lost.
++2,7,12,17,22,27,32,37,42,47,52,57 * * * * root /usr/sbin/vzlist -H -o veid | xargs -r -n1 /usr/sbin/vzquota stat > /dev/null
+diff -urp vzctl-3.0.23.orig/etc/init.d/vz-redhat.in vzctl-3.0.23/etc/init.d/vz-redhat.in
+--- vzctl-3.0.23.orig/etc/init.d/vz-redhat.in	2008-10-30 13:24:43 +0000
++++ vzctl-3.0.23/etc/init.d/vz-redhat.in	2010-12-06 11:26:35 +0000
+@@ -129,8 +129,11 @@ setup_cron()
+ 	check_old_cron_files
+ 	[ -z "$SRC_CRONSCRIPT_DIR" ] && return
+ 	[ -d "$SRC_CRONSCRIPT_DIR" ] || return
+-	cat $SRC_CRONSCRIPT_DIR/vz* > $DST_CRONSCRIPT_DIR/vz &&
+-		chmod 644 $DST_CRONSCRIPT_DIR/vz
++# We expect that the file .vz~ will be ignored by crond, which is desirable
++# because the file is incomplete while it is being written to.  Also, we rely
++# on at least the mv command changing the mtime on the directory.
++	cat $SRC_CRONSCRIPT_DIR/vz* > $DST_CRONSCRIPT_DIR/.vz~ &&
++		mv $DST_CRONSCRIPT_DIR/{.vz~,vz}
+ }
+ 
+ remove_cron()

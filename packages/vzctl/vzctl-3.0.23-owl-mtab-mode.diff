@@ -1,0 +1,44 @@
+diff -urp vzctl-3.0.23.orig/etc/dists/scripts/arch-set_ugid_quota.sh vzctl-3.0.23/etc/dists/scripts/arch-set_ugid_quota.sh
+--- vzctl-3.0.23.orig/etc/dists/scripts/arch-set_ugid_quota.sh	2008-10-30 13:24:43 +0000
++++ vzctl-3.0.23/etc/dists/scripts/arch-set_ugid_quota.sh	2010-12-06 10:54:15 +0000
+@@ -39,6 +39,7 @@ mnt=`grep -v " / " /proc/mounts`
+ if [ $? == 0 ]; then
+ 	echo "$mnt" >> /etc/mtab
+ fi
++chmod 644 /etc/mtab
+ quotaon -aug
+ ' > ${SCRIPTANAME} || {
+ 	echo "Unable to create ${SCRIPTNAME}"
+diff -urp vzctl-3.0.23.orig/etc/dists/scripts/gentoo-set_ugid_quota.sh vzctl-3.0.23/etc/dists/scripts/gentoo-set_ugid_quota.sh
+--- vzctl-3.0.23.orig/etc/dists/scripts/gentoo-set_ugid_quota.sh	2008-10-30 13:24:43 +0000
++++ vzctl-3.0.23/etc/dists/scripts/gentoo-set_ugid_quota.sh	2010-12-06 10:54:45 +0000
+@@ -42,6 +42,7 @@ start() {
+         if [ $? == 0 ]; then
+                 echo "$mnt" >> /etc/mtab
+         fi
++	chmod 644 /etc/mtab
+ 	quotaon -aug
+         return
+ }
+diff -urp vzctl-3.0.23.orig/etc/dists/scripts/set_ugid_quota.sh vzctl-3.0.23/etc/dists/scripts/set_ugid_quota.sh
+--- vzctl-3.0.23.orig/etc/dists/scripts/set_ugid_quota.sh	2008-10-30 13:24:43 +0000
++++ vzctl-3.0.23/etc/dists/scripts/set_ugid_quota.sh	2010-12-06 10:53:33 +0000
+@@ -36,6 +36,7 @@ start() {
+ 	if [ $? == 0 ]; then
+ 		echo "$mnt" >> /etc/mtab
+ 	fi
++	chmod 644 /etc/mtab
+ 	quotaon -aug
+ }
+ case "$1" in
+diff -urp vzctl-3.0.23.orig/etc/dists/scripts/slackware-set_ugid_quota.sh vzctl-3.0.23/etc/dists/scripts/slackware-set_ugid_quota.sh
+--- vzctl-3.0.23.orig/etc/dists/scripts/slackware-set_ugid_quota.sh	2008-10-30 13:24:43 +0000
++++ vzctl-3.0.23/etc/dists/scripts/slackware-set_ugid_quota.sh	2010-12-06 10:53:57 +0000
+@@ -36,6 +36,7 @@ start() {
+ 	if [ $? == 0 ]; then
+ 		echo "$mnt" >> /etc/mtab
+ 	fi
++	chmod 644 /etc/mtab
+ 	quotaon -aug
+ }
+ case "$1" in

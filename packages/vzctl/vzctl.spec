@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/vzctl/vzctl.spec,v 1.5 2009/11/30 12:49:00 ldv Exp $
+# $Owl: Owl/packages/vzctl/vzctl.spec,v 1.6 2010/12/06 11:57:24 solar Exp $
 
 Summary: OpenVZ containers control utility.
 Name: vzctl
 Version: 3.0.23
-Release: owl5
+Release: owl6
 License: GPLv2+
 Group: System Environment/Kernel
 URL: http://openvz.org/
@@ -13,6 +13,9 @@ Patch1: vzctl-3.0.23-owl-config.diff
 Patch2: vzctl-3.0.23-owl-startup.diff
 Patch3: vzctl-3.0.23-owl-veip.diff
 Patch4: vzctl-3.0.23-alt-postcreate.diff
+Patch5: vzctl-3.0.23-owl-cron.diff
+Patch6: vzctl-3.0.23-owl-mtab-mode.diff
+Patch7: vzctl-3.0.23-owl-vps-create.diff
 PreReq: /sbin/chkconfig
 Requires: vzquota
 BuildRoot: /override/%name-%version
@@ -28,6 +31,9 @@ i.e. create, start, shutdown, set various options and limits etc.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
 
 %{expand:%%define optflags %optflags -fno-strict-aliasing}
 
@@ -77,6 +83,18 @@ fi
 %dev(c,126,0) %attr(600,root,root) /dev/vzctl
 
 %changelog
+* Mon Dec 06 2010 Solar Designer <solar-at-owl.openwall.com> 3.0.23-owl6
+- Corrected the way /etc/cron.d/vz is created such that /etc/cron.d's mtime
+is changed, which is needed for our crond to actually notice the file.
+- Added a cron job to update quota files (in case the system crashes).
+- Staggered the cron jobs (don't run more than one on a given minute).
+- When creating a new container, pass the "--numeric-owner -Sp" options to tar
+extracting the template, in addition to the options that were used previously.
+- Set the new container's root directory permissions to 755 regardless of the
+current umask and of permissions for "." or "/" that might be in the tarball.
+- In *set_ugid_quota.sh scripts, set the permissions on /etc/mtab to 644
+regardless of the current umask.
+
 * Mon Nov 30 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0.23-owl5
 - Imported ALT's enhancements to the postcreate.sh script.
 

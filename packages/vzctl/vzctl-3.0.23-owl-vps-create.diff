@@ -1,0 +1,16 @@
+diff -urp vzctl-3.0.23.orig/scripts/vps-create.in vzctl-3.0.23/scripts/vps-create.in
+--- vzctl-3.0.23.orig/scripts/vps-create.in	2008-10-30 13:24:43 +0000
++++ vzctl-3.0.23/scripts/vps-create.in	2010-12-06 11:15:14 +0000
+@@ -49,8 +49,10 @@ create_prvt()
+ 	fi
+ 	[ "$AVAIL" -ge "$NEEDED" ] ||
+ 		vzerror "Insufficient disk space in $VE_PRVT; available: $AVAIL, needed: $NEEDED" ${VZ_FS_NO_DISK_SPACE}
+-	tar -C "$VE_PRVT" ${TAR_OPT} ${OPT} -xf "$PRIVATE_TEMPLATE" ||
+-		vzerror "Error in tar ${TAR_OPT} ${OPT} -xf $PRIVATE_TEMPLATE" ${VZ_FS_NEW_VE_PRVT}
++	chmod 700 "$VE_PRVT"
++	tar -C "$VE_PRVT" ${TAR_OPT} ${OPT} --numeric-owner -xSpf "$PRIVATE_TEMPLATE" ||
++		vzerror "Error in tar -C $VE_PRVT ${TAR_OPT} ${OPT} --numeric-owner -xSpf $PRIVATE_TEMPLATE" ${VZ_FS_NEW_VE_PRVT}
++	chmod 755 "$VE_PRVT"
+ }
+ 
+ create_prvt
