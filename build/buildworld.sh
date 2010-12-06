@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/buildworld.sh,v 1.50 2010/12/04 12:43:58 segoon Exp $
+# $Owl: Owl/build/buildworld.sh,v 1.51 2010/12/06 05:32:41 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -465,9 +465,9 @@ cd $HOME || exit 1
 
 wait
 
-RESULT=0
+STATUS=0
 if [ -e $HOME/native-work/failed ]; then
-	RESULT=1
+	STATUS=1
 	log "Some packages failed to build."
 fi
 
@@ -475,4 +475,4 @@ log "Removing temporary files"
 rm -rf tmp-work native-work foreign-work
 
 echo "`date '+%Y %b %e %H:%M:%S'`: Finished" >> logs/buildworld
-exit $RESULT
+exit $STATUS
