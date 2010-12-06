@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.45 2010/12/04 12:58:07 segoon Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.46 2010/12/06 05:26:19 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -121,7 +121,7 @@ This subpackage contains dictionaries for vim spell checking in
 many different languages.
 
 %package lang
-Summary: Language files.  This package is optional.
+Summary: Language files for Vim.  This package is optional.
 Group: Applications/Editors
 Requires: vim-common
 
@@ -129,12 +129,12 @@ Requires: vim-common
 This subpackage contains translation files for many different languages.
 
 %package syntax
-Summary: Extra syntax files for vim.  This package is optional.
+Summary: Extra syntax files for Vim.  This package is optional.
 Group: Applications/Editors
 Requires: vim-enhanced
 
 %description syntax
-This subpackage contains extra syntax files for vim.
+This subpackage contains extra syntax highlighting files for Vim.
 
 %package tutor
 Summary: Vim tutorial.  This package is optional.
@@ -285,16 +285,15 @@ popd
 chmod 644 ../runtime/doc/vim2html.pl
 popd
 
-
 # filelist.syntax-base.rel MUST NOT contain blank lines
 # otherwise the whole syntax/ directory is packaged in -enhanced
 sed -e 's,^,%_datadir/%name/%name%major%minor/syntax/,' \
-	%_sourcedir/filelist.syntax-base.rel | sort >filelist.syntax-base
+	%_sourcedir/filelist.syntax-base.rel | sort > filelist.syntax-base
 
 find %buildroot/%_datadir/%name/%name%major%minor/syntax/ -type f | sed \
-	-e "s,^%buildroot/,," | sort >filelist.syntax-all
+	-e 's,^%buildroot/,,' | sort > filelist.syntax-all
 
-comm -3 filelist.syntax-base filelist.syntax-all >filelist.syntax-rest
+comm -13 filelist.syntax-base filelist.syntax-all > filelist.syntax-rest
 
 %files common
 %defattr(-,root,root)
