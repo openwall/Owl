@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.47 2010/12/06 05:52:13 solar Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.48 2010/12/06 06:20:17 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -347,9 +347,11 @@ comm -13 filelist.syntax-base filelist.syntax-all > filelist.syntax-rest
 %_datadir/%name/vim*/spell/*
 
 %files lang
+%defattr(-,root,root)
 %_datadir/%name/vim*/lang
 
 %files syntax -f filelist.syntax-rest
+%defattr(-,root,root)
 
 %files tutor
 %defattr(-,root,root)
