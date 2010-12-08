@@ -1159,3 +1159,47 @@ diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/security/commoncap.c linux-2.6.
  	if ((type != 3 && type != 10) && !capable(CAP_VE_SYS_ADMIN))
  		return -EPERM;
  	return 0;
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/sound/core/control.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/sound/core/control.c
+--- linux-2.6.18-194.26.1.el5.028stab079.1/sound/core/control.c	2010-11-30 12:26:38 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/sound/core/control.c	2010-12-08 06:14:00 +0000
+@@ -33,6 +33,7 @@
+ 
+ /* max number of user-defined controls */
+ #define MAX_USER_CONTROLS	32
++#define MAX_CONTROL_COUNT	1028
+ 
+ struct snd_kctl_ioctl {
+ 	struct list_head list;		/* list of all ioctls */
+@@ -190,6 +191,10 @@ static struct snd_kcontrol *snd_ctl_new(
+ 	
+ 	snd_assert(control != NULL, return NULL);
+ 	snd_assert(control->count > 0, return NULL);
++
++	if (control->count > MAX_CONTROL_COUNT)
++		return NULL;
++
+ 	kctl = kzalloc(sizeof(*kctl) + sizeof(struct snd_kcontrol_volatile) * control->count, GFP_KERNEL);
+ 	if (kctl == NULL) {
+ 		snd_printk(KERN_ERR "Cannot allocate control instance\n");
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/sound/pci/rme9652/hdsp.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/sound/pci/rme9652/hdsp.c
+--- linux-2.6.18-194.26.1.el5.028stab079.1/sound/pci/rme9652/hdsp.c	2010-11-30 12:25:56 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/sound/pci/rme9652/hdsp.c	2010-12-08 06:14:04 +0000
+@@ -4519,6 +4519,7 @@ static int snd_hdsp_hwdep_ioctl(struct s
+ 			snd_printk(KERN_ERR "Hammerfall-DSP: Firmware needs to be uploaded to the card.\n");	
+ 			return -EINVAL;
+ 		}
++		memset(&info, 0, sizeof(info));
+ 		spin_lock_irqsave(&hdsp->lock, flags);
+ 		info.pref_sync_ref = (unsigned char)hdsp_pref_sync_ref(hdsp);
+ 		info.wordclock_sync_check = (unsigned char)hdsp_wc_sync_check(hdsp);
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/sound/pci/rme9652/hdspm.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/sound/pci/rme9652/hdspm.c
+--- linux-2.6.18-194.26.1.el5.028stab079.1/sound/pci/rme9652/hdspm.c	2010-11-30 12:25:56 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/sound/pci/rme9652/hdspm.c	2010-12-08 06:14:04 +0000
+@@ -4082,6 +4082,7 @@ static int snd_hdspm_hwdep_ioctl(struct 
+ 
+ 	case SNDRV_HDSPM_IOCTL_GET_CONFIG_INFO:
+ 
++		memset(&info, 0, sizeof(info));
+ 		spin_lock_irq(&hdspm->lock);
+ 		info.pref_sync_ref =
+ 		    (unsigned char) hdspm_pref_sync_ref(hdspm);
