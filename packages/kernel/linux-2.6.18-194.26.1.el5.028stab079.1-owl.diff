@@ -334,18 +334,6 @@ diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/drivers/message/fusion/mptsas.c
  static inline struct sas_port *
  mptsas_get_port(struct mptsas_phyinfo *phy_info)
  {
-diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/drivers/parisc/eisa_eeprom.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/drivers/parisc/eisa_eeprom.c
---- linux-2.6.18-194.26.1.el5.028stab079.1/drivers/parisc/eisa_eeprom.c	2006-09-20 03:42:06 +0000
-+++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/drivers/parisc/eisa_eeprom.c	2009-08-10 06:51:35 +0000
-@@ -54,7 +54,7 @@ static ssize_t eisa_eeprom_read(struct f
- 	ssize_t ret;
- 	int i;
- 	
--	if (*ppos >= HPEE_MAX_LENGTH)
-+	if (*ppos < 0 || *ppos >= HPEE_MAX_LENGTH)
- 		return 0;
- 	
- 	count = *ppos + count < HPEE_MAX_LENGTH ? count : HPEE_MAX_LENGTH - *ppos;
 diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/fs/Kconfig linux-2.6.18-194.26.1.el5.028stab079.1-owl/fs/Kconfig
 --- linux-2.6.18-194.26.1.el5.028stab079.1/fs/Kconfig	2010-11-30 12:26:53 +0000
 +++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/fs/Kconfig	2010-12-08 03:31:52 +0000
@@ -399,42 +387,6 @@ diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/fs/proc/base.c linux-2.6.18-194
  #endif
  
  	{0,0,NULL,0}
-diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/include/asm-mips/compat.h linux-2.6.18-194.26.1.el5.028stab079.1-owl/include/asm-mips/compat.h
---- linux-2.6.18-194.26.1.el5.028stab079.1/include/asm-mips/compat.h	2006-09-20 03:42:06 +0000
-+++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/include/asm-mips/compat.h	2010-09-24 17:51:03 +0000
-@@ -138,7 +138,7 @@ static inline compat_uptr_t ptr_to_compa
- 	return (u32)(unsigned long)uptr;
- }
- 
--static inline void __user *compat_alloc_user_space(long len)
-+static inline void __user *arch_compat_alloc_user_space(long len)
- {
- 	struct pt_regs *regs = (struct pt_regs *)
- 		((unsigned long) current_thread_info() + THREAD_SIZE - 32) - 1;
-diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/include/asm-parisc/compat.h linux-2.6.18-194.26.1.el5.028stab079.1-owl/include/asm-parisc/compat.h
---- linux-2.6.18-194.26.1.el5.028stab079.1/include/asm-parisc/compat.h	2006-09-20 03:42:06 +0000
-+++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/include/asm-parisc/compat.h	2010-09-24 17:51:03 +0000
-@@ -144,7 +144,7 @@ static inline compat_uptr_t ptr_to_compa
- 	return (u32)(unsigned long)uptr;
- }
- 
--static __inline__ void __user *compat_alloc_user_space(long len)
-+static __inline__ void __user *arch_compat_alloc_user_space(long len)
- {
- 	struct pt_regs *regs = &current->thread.regs;
- 	return (void __user *)regs->gr[30];
-diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/include/asm-sparc64/compat.h linux-2.6.18-194.26.1.el5.028stab079.1-owl/include/asm-sparc64/compat.h
---- linux-2.6.18-194.26.1.el5.028stab079.1/include/asm-sparc64/compat.h	2006-09-20 03:42:06 +0000
-+++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/include/asm-sparc64/compat.h	2010-09-24 17:51:03 +0000
-@@ -164,7 +164,7 @@ static inline compat_uptr_t ptr_to_compa
- 	return (u32)(unsigned long)uptr;
- }
- 
--static __inline__ void __user *compat_alloc_user_space(long len)
-+static __inline__ void __user *arch_compat_alloc_user_space(long len)
- {
- 	struct pt_regs *regs = current_thread_info()->kregs;
- 	unsigned long usp = regs->u_regs[UREG_I6];
 diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/include/linux/binfmts.h linux-2.6.18-194.26.1.el5.028stab079.1-owl/include/linux/binfmts.h
 --- linux-2.6.18-194.26.1.el5.028stab079.1/include/linux/binfmts.h	2010-11-30 12:26:48 +0000
 +++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/include/linux/binfmts.h	2010-12-08 03:31:52 +0000
