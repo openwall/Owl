@@ -1,23 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.33 2010/09/24 20:50:52 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.34 2010/12/08 07:08:01 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 194.11.3.el5.028stab071.5
+%define ovzversion 194.26.1.el5.028stab079.1
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab071.5
+URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab079.1
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab071.5/patches/patch-194.11.3.el5.028stab071.5-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab071.5/patches/patch-194.11.3.el5.028stab071.5-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab079.1/patches/patch-194.26.1.el5.028stab079.1-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab079.1/patches/patch-194.26.1.el5.028stab079.1-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -71,7 +71,7 @@ install -m 644 System.map \
 install -m 644 .config \
 	%buildroot/boot/config-%version-%release
 
-cp -a include/{linux,asm,asm-generic,asm-%_arch} \
+cp -a include/{linux,asm,asm-generic,asm-%_arch,ub} \
 	%buildroot%_includedir/
 
 %if %BUILD_MODULES
@@ -80,7 +80,8 @@ INSTALL_MOD_PATH=%buildroot %__make modules_install
 
 # Remove possible symlinks that we're replacing with directories (or we'd
 # follow the symlinks and replace files at their destination).
-# Note that "asm" will remain a symlink, so we don't remove it here.
+# Note that "asm" will remain a symlink and "ub" was never a symlink, so we
+# don't remove these two here.
 %pre headers
 for f in %_includedir/{linux,asm-generic,asm-%_arch}; do
 	test -L $f && rm -v $f || :
@@ -103,6 +104,22 @@ done
 %files fake
 
 %changelog
+* Wed Dec 08 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.26.1.el5.028stab079.1-owl1
+- Updated to 2.6.18-194.26.1.el5.028stab079.1.
+- Fixed "Dangerous interaction between clear_child_tid, set_fs(), and kernel
+oopses" (CVE-2010-4258).  Problem discovered and fix proposed by Nelson Elhage
+of Ksplice:
+http://www.openwall.com/lists/oss-security/2010/12/02/3
+http://www.openwall.com/lists/oss-security/2010/12/02/7
+http://www.openwall.com/lists/oss-security/2010/12/08/4
+- Merged many security-relevant patches from 2.6.18-236.el5 (mostly for
+infoleaks discovered by Dan Rosenberg, as well as his patch introducing
+the dmesg_restrict sysctl and CONFIG_SECURITY_DMESG_RESTRICT).
+- Set CONFIG_SECURITY_DMESG_RESTRICT=y in our default configs.
+- Package include/ub/, which is needed for external kernel module builds
+against OpenVZ kernel headers (ub/ files are included from the "regular" linux/
+header files, so even a non-OpenVZ-specific module ends up needing them).
+
 * Fri Sep 24 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.11.3.el5.028stab071.5-owl1
 - Updated to 2.6.18-194.11.3.el5.028stab071.5.
 - Added a fix for CVE-2010-3081 from 028stab070.5 (the same as Red Hat's
