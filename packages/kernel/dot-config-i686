@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.18-194.11.3.el5.028stab071.5.owl1
-# Fri Sep 24 20:13:37 2010
+# Linux kernel version: 2.6.18-194.26.1.el5.028stab079.1.owl1
+# Wed Dec  8 09:15:21 2010
 #
 CONFIG_X86_32=y
 CONFIG_GENERIC_TIME=y
@@ -1752,6 +1752,7 @@ CONFIG_VZ_EVENT=m
 #
 # CONFIG_GRKERNSEC is not set
 # CONFIG_KEYS is not set
+CONFIG_SECURITY_DMESG_RESTRICT=y
 
 #
 # Cryptographic options
