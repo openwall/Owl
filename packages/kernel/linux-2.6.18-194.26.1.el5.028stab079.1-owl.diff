@@ -365,6 +365,17 @@ diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/drivers/message/fusion/mptsas.c
  static inline struct sas_port *
  mptsas_get_port(struct mptsas_phyinfo *phy_info)
  {
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/drivers/serial/serial_core.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/drivers/serial/serial_core.c
+--- linux-2.6.18-194.26.1.el5.028stab079.1/drivers/serial/serial_core.c	2010-11-30 12:26:26 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/drivers/serial/serial_core.c	2010-12-08 06:12:16 +0000
+@@ -1046,6 +1046,7 @@ static int uart_get_count(struct uart_st
+ 	struct uart_icount cnow;
+ 	struct uart_port *port = state->port;
+ 
++	memset(&icount, 0, sizeof(struct serial_icounter_struct));
+ 	spin_lock_irq(&port->lock);
+ 	memcpy(&cnow, &port->icount, sizeof(struct uart_icount));
+ 	spin_unlock_irq(&port->lock);
 diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/fs/Kconfig linux-2.6.18-194.26.1.el5.028stab079.1-owl/fs/Kconfig
 --- linux-2.6.18-194.26.1.el5.028stab079.1/fs/Kconfig	2010-11-30 12:26:53 +0000
 +++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/fs/Kconfig	2010-12-08 03:31:52 +0000
@@ -689,6 +700,81 @@ diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/init/do_mounts_md.c linux-2.6.1
  			continue;
  
  		printk(KERN_INFO "md: Loading md%s%d: %s\n",
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/ipc/compat.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/ipc/compat.c
+--- linux-2.6.18-194.26.1.el5.028stab079.1/ipc/compat.c	2010-11-30 12:25:51 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/ipc/compat.c	2010-12-08 06:11:38 +0000
+@@ -242,6 +242,8 @@ long compat_sys_semctl(int first, int se
+ 	struct semid64_ds __user *up64;
+ 	int version = compat_ipc_parse_version(&third);
+ 
++	memset(&s64, 0, sizeof(s64));
++
+ 	if (!uptr)
+ 		return -EINVAL;
+ 	if (get_user(pad, (u32 __user *) uptr))
+@@ -422,6 +424,8 @@ long compat_sys_msgctl(int first, int se
+ 	int version = compat_ipc_parse_version(&second);
+ 	void __user *p;
+ 
++	memset(&m64, 0, sizeof(m64));
++
+ 	switch (second & (~IPC_64)) {
+ 	case IPC_INFO:
+ 	case IPC_RMID:
+@@ -595,6 +599,8 @@ long compat_sys_shmctl(int first, int se
+ 	int err, err2;
+ 	int version = compat_ipc_parse_version(&second);
+ 
++	memset(&s64, 0, sizeof(s64));
++
+ 	switch (second & (~IPC_64)) {
+ 	case IPC_RMID:
+ 	case SHM_LOCK:
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/ipc/compat_mq.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/ipc/compat_mq.c
+--- linux-2.6.18-194.26.1.el5.028stab079.1/ipc/compat_mq.c	2006-09-20 03:42:06 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/ipc/compat_mq.c	2010-12-08 06:11:38 +0000
+@@ -53,6 +53,9 @@ asmlinkage long compat_sys_mq_open(const
+ 	void __user *p = NULL;
+ 	if (u_attr && oflag & O_CREAT) {
+ 		struct mq_attr attr;
++
++		memset(&attr, 0, sizeof(attr));
++
+ 		p = compat_alloc_user_space(sizeof(attr));
+ 		if (get_compat_mq_attr(&attr, u_attr) ||
+ 		    copy_to_user(p, &attr, sizeof(attr)))
+@@ -127,6 +130,8 @@ asmlinkage long compat_sys_mq_getsetattr
+ 	struct mq_attr __user *p = compat_alloc_user_space(2 * sizeof(*p));
+ 	long ret;
+ 
++	memset(&mqstat, 0, sizeof(mqstat));
++
+ 	if (u_mqstat) {
+ 		if (get_compat_mq_attr(&mqstat, u_mqstat) ||
+ 		    copy_to_user(p, &mqstat, sizeof(mqstat)))
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/ipc/sem.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/ipc/sem.c
+--- linux-2.6.18-194.26.1.el5.028stab079.1/ipc/sem.c	2010-11-30 12:26:53 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/ipc/sem.c	2010-12-08 06:11:48 +0000
+@@ -541,6 +541,8 @@ static unsigned long copy_semid_to_user(
+ 	    {
+ 		struct semid_ds out;
+ 
++		memset(&out, 0, sizeof(out));
++
+ 		ipc64_perm_to_ipc_perm(&in->sem_perm, &out.sem_perm);
+ 
+ 		out.sem_otime	= in->sem_otime;
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/ipc/shm.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/ipc/shm.c
+--- linux-2.6.18-194.26.1.el5.028stab079.1/ipc/shm.c	2010-11-30 12:26:53 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/ipc/shm.c	2010-12-08 06:11:42 +0000
+@@ -456,6 +456,7 @@ static inline unsigned long copy_shmid_t
+ 	    {
+ 		struct shmid_ds out;
+ 
++		memset(&out, 0, sizeof(out));
+ 		ipc64_perm_to_ipc_perm(&in->shm_perm, &out.shm_perm);
+ 		out.shm_segsz	= in->shm_segsz;
+ 		out.shm_atime	= in->shm_atime;
 diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/kernel/exit.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/kernel/exit.c
 --- linux-2.6.18-194.26.1.el5.028stab079.1/kernel/exit.c	2010-11-30 12:26:53 +0000
 +++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/kernel/exit.c	2010-12-08 04:52:38 +0000
@@ -792,6 +878,207 @@ diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/kernel/sysctl.c linux-2.6.18-19
  		.ctl_name	= KERN_NGROUPS_MAX,
  		.procname	= "ngroups_max",
  		.data		= &ngroups_max,
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/net/core/filter.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/net/core/filter.c
+--- linux-2.6.18-194.26.1.el5.028stab079.1/net/core/filter.c	2010-11-30 12:26:53 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/net/core/filter.c	2010-12-08 06:12:08 +0000
+@@ -77,39 +77,41 @@ static inline void *load_pointer(struct 
+  */
+ unsigned int sk_run_filter(struct sk_buff *skb, struct sock_filter *filter, int flen)
+ {
+-	struct sock_filter *fentry;	/* We walk down these */
+ 	void *ptr;
+ 	u32 A = 0;			/* Accumulator */
+ 	u32 X = 0;			/* Index Register */
+ 	u32 mem[BPF_MEMWORDS];		/* Scratch Memory Store */
++	unsigned long memvalid = 0;
+ 	u32 tmp;
+ 	int k;
+ 	int pc;
+ 
++	BUILD_BUG_ON(BPF_MEMWORDS > BITS_PER_LONG);
+ 	/*
+ 	 * Process array of filter instructions.
+ 	 */
+ 	for (pc = 0; pc < flen; pc++) {
+-		fentry = &filter[pc];
+-			
++		const struct sock_filter *fentry = &filter[pc];
++		u32 f_k = fentry->k;
++
+ 		switch (fentry->code) {
+ 		case BPF_ALU|BPF_ADD|BPF_X:
+ 			A += X;
+ 			continue;
+ 		case BPF_ALU|BPF_ADD|BPF_K:
+-			A += fentry->k;
++			A += f_k;
+ 			continue;
+ 		case BPF_ALU|BPF_SUB|BPF_X:
+ 			A -= X;
+ 			continue;
+ 		case BPF_ALU|BPF_SUB|BPF_K:
+-			A -= fentry->k;
++			A -= f_k;
+ 			continue;
+ 		case BPF_ALU|BPF_MUL|BPF_X:
+ 			A *= X;
+ 			continue;
+ 		case BPF_ALU|BPF_MUL|BPF_K:
+-			A *= fentry->k;
++			A *= f_k;
+ 			continue;
+ 		case BPF_ALU|BPF_DIV|BPF_X:
+ 			if (X == 0)
+@@ -117,49 +119,49 @@ unsigned int sk_run_filter(struct sk_buf
+ 			A /= X;
+ 			continue;
+ 		case BPF_ALU|BPF_DIV|BPF_K:
+-			A /= fentry->k;
++			A /= f_k;
+ 			continue;
+ 		case BPF_ALU|BPF_AND|BPF_X:
+ 			A &= X;
+ 			continue;
+ 		case BPF_ALU|BPF_AND|BPF_K:
+-			A &= fentry->k;
++			A &= f_k;
+ 			continue;
+ 		case BPF_ALU|BPF_OR|BPF_X:
+ 			A |= X;
+ 			continue;
+ 		case BPF_ALU|BPF_OR|BPF_K:
+-			A |= fentry->k;
++			A |= f_k;
+ 			continue;
+ 		case BPF_ALU|BPF_LSH|BPF_X:
+ 			A <<= X;
+ 			continue;
+ 		case BPF_ALU|BPF_LSH|BPF_K:
+-			A <<= fentry->k;
++			A <<= f_k;
+ 			continue;
+ 		case BPF_ALU|BPF_RSH|BPF_X:
+ 			A >>= X;
+ 			continue;
+ 		case BPF_ALU|BPF_RSH|BPF_K:
+-			A >>= fentry->k;
++			A >>= f_k;
+ 			continue;
+ 		case BPF_ALU|BPF_NEG:
+ 			A = -A;
+ 			continue;
+ 		case BPF_JMP|BPF_JA:
+-			pc += fentry->k;
++			pc += f_k;
+ 			continue;
+ 		case BPF_JMP|BPF_JGT|BPF_K:
+-			pc += (A > fentry->k) ? fentry->jt : fentry->jf;
++			pc += (A > f_k) ? fentry->jt : fentry->jf;
+ 			continue;
+ 		case BPF_JMP|BPF_JGE|BPF_K:
+-			pc += (A >= fentry->k) ? fentry->jt : fentry->jf;
++			pc += (A >= f_k) ? fentry->jt : fentry->jf;
+ 			continue;
+ 		case BPF_JMP|BPF_JEQ|BPF_K:
+-			pc += (A == fentry->k) ? fentry->jt : fentry->jf;
++			pc += (A == f_k) ? fentry->jt : fentry->jf;
+ 			continue;
+ 		case BPF_JMP|BPF_JSET|BPF_K:
+-			pc += (A & fentry->k) ? fentry->jt : fentry->jf;
++			pc += (A & f_k) ? fentry->jt : fentry->jf;
+ 			continue;
+ 		case BPF_JMP|BPF_JGT|BPF_X:
+ 			pc += (A > X) ? fentry->jt : fentry->jf;
+@@ -174,7 +176,7 @@ unsigned int sk_run_filter(struct sk_buf
+ 			pc += (A & X) ? fentry->jt : fentry->jf;
+ 			continue;
+ 		case BPF_LD|BPF_W|BPF_ABS:
+-			k = fentry->k;
++			k = f_k;
+ load_w:
+ 			ptr = load_pointer(skb, k, 4, &tmp);
+ 			if (ptr != NULL) {
+@@ -183,7 +185,7 @@ load_w:
+ 			}
+ 			break;
+ 		case BPF_LD|BPF_H|BPF_ABS:
+-			k = fentry->k;
++			k = f_k;
+ load_h:
+ 			ptr = load_pointer(skb, k, 2, &tmp);
+ 			if (ptr != NULL) {
+@@ -192,7 +194,7 @@ load_h:
+ 			}
+ 			break;
+ 		case BPF_LD|BPF_B|BPF_ABS:
+-			k = fentry->k;
++			k = f_k;
+ load_b:
+ 			ptr = load_pointer(skb, k, 1, &tmp);
+ 			if (ptr != NULL) {
+@@ -207,32 +209,34 @@ load_b:
+ 			X = skb->len;
+ 			continue;
+ 		case BPF_LD|BPF_W|BPF_IND:
+-			k = X + fentry->k;
++			k = X + f_k;
+ 			goto load_w;
+ 		case BPF_LD|BPF_H|BPF_IND:
+-			k = X + fentry->k;
++			k = X + f_k;
+ 			goto load_h;
+ 		case BPF_LD|BPF_B|BPF_IND:
+-			k = X + fentry->k;
++			k = X + f_k;
+ 			goto load_b;
+ 		case BPF_LDX|BPF_B|BPF_MSH:
+-			ptr = load_pointer(skb, fentry->k, 1, &tmp);
++			ptr = load_pointer(skb, f_k, 1, &tmp);
+ 			if (ptr != NULL) {
+ 				X = (*(u8 *)ptr & 0xf) << 2;
+ 				continue;
+ 			}
+ 			return 0;
+ 		case BPF_LD|BPF_IMM:
+-			A = fentry->k;
++			A = f_k;
+ 			continue;
+ 		case BPF_LDX|BPF_IMM:
+-			X = fentry->k;
++			X = f_k;
+ 			continue;
+ 		case BPF_LD|BPF_MEM:
+-			A = mem[fentry->k];
++			A = (memvalid & (1UL << f_k)) ?
++				mem[f_k] : 0;
+ 			continue;
+ 		case BPF_LDX|BPF_MEM:
+-			X = mem[fentry->k];
++			X = (memvalid & (1UL << f_k)) ?
++				mem[f_k] : 0;
+ 			continue;
+ 		case BPF_MISC|BPF_TAX:
+ 			X = A;
+@@ -241,14 +245,16 @@ load_b:
+ 			A = X;
+ 			continue;
+ 		case BPF_RET|BPF_K:
+-			return fentry->k;
++			return f_k;
+ 		case BPF_RET|BPF_A:
+ 			return A;
+ 		case BPF_ST:
+-			mem[fentry->k] = A;
++			memvalid |= 1UL << f_k;
++			mem[f_k] = A;
+ 			continue;
+ 		case BPF_STX:
+-			mem[fentry->k] = X;
++			memvalid |= 1UL << f_k;
++			mem[f_k] = X;
+ 			continue;
+ 		default:
+ 			WARN_ON(1);
 diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/net/llc/af_llc.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/net/llc/af_llc.c
 --- linux-2.6.18-194.26.1.el5.028stab079.1/net/llc/af_llc.c	2006-09-20 03:42:06 +0000
 +++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/net/llc/af_llc.c	2009-08-26 10:16:29 +0000
