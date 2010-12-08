@@ -1,3 +1,34 @@
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/Documentation/sysctl/kernel.txt linux-2.6.18-194.26.1.el5.028stab079.1-owl/Documentation/sysctl/kernel.txt
+--- linux-2.6.18-194.26.1.el5.028stab079.1/Documentation/sysctl/kernel.txt	2010-11-30 12:25:58 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/Documentation/sysctl/kernel.txt	2010-12-08 05:54:43 +0000
+@@ -22,6 +22,7 @@ show up in /proc/sys/kernel:
+ - core_uses_pid
+ - ctrl-alt-del
+ - dentry-state
++- dmesg_restrict
+ - domainname
+ - hostname
+ - hotplug
+@@ -133,6 +134,19 @@ to decide what to do with it.
+ 
+ ==============================================================
+ 
++dmesg_restrict:
++
++This toggle indicates whether unprivileged users are prevented from using
++dmesg(8) to view messages from the kernel's log buffer.  When
++dmesg_restrict is set to (0) there are no restrictions.  When
++dmesg_restrict is set set to (1), users must have CAP_SYS_ADMIN to use
++dmesg(8).
++
++The kernel config option CONFIG_SECURITY_DMESG_RESTRICT sets the default
++value of dmesg_restrict.
++
++==============================================================
++
+ domainname & hostname:
+ 
+ These files can be used to set the NIS/YP domainname and the
 diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/Makefile linux-2.6.18-194.26.1.el5.028stab079.1-owl/Makefile
 --- linux-2.6.18-194.26.1.el5.028stab079.1/Makefile	2010-11-30 12:26:54 +0000
 +++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/Makefile	2010-12-08 03:31:52 +0000
@@ -347,7 +378,7 @@ diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/fs/Kconfig linux-2.6.18-194.26.
  	  This file system is a part of Virtuozzo. It intoduces a fake
 diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/fs/exec.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/fs/exec.c
 --- linux-2.6.18-194.26.1.el5.028stab079.1/fs/exec.c	2010-11-30 12:26:53 +0000
-+++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/fs/exec.c	2010-12-08 03:31:52 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/fs/exec.c	2010-12-08 05:54:37 +0000
 @@ -214,7 +214,8 @@ struct page *get_arg_page(struct linux_b
  		 *  - the program will have a reasonable amount of stack left
  		 *    to work from.
@@ -358,6 +389,82 @@ diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/fs/exec.c linux-2.6.18-194.26.1
  			put_page(page);
  			return NULL;
  		}
+@@ -621,6 +622,11 @@ int setup_arg_pages(struct linux_binprm 
+ #else
+ 	stack_top = arch_align_stack(stack_top);
+ 	stack_top = PAGE_ALIGN(stack_top);
++
++	if (unlikely(stack_top < mmap_min_addr) ||
++	    unlikely(vma->vm_end - vma->vm_start >= stack_top - mmap_min_addr))
++		return -ENOMEM;
++
+ 	stack_shift = vma->vm_end - stack_top;
+ 
+ 	bprm->p -= stack_shift;
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/fs/ext4/ext4.h linux-2.6.18-194.26.1.el5.028stab079.1-owl/fs/ext4/ext4.h
+--- linux-2.6.18-194.26.1.el5.028stab079.1/fs/ext4/ext4.h	2010-11-30 12:26:49 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/fs/ext4/ext4.h	2010-12-08 05:53:59 +0000
+@@ -904,7 +904,7 @@ struct ext4_sb_info {
+ 	struct percpu_counter s_freeinodes_counter;
+ 	struct percpu_counter s_dirs_counter;
+ 	struct percpu_counter s_dirtyblocks_counter;
+-	struct blockgroup_lock s_blockgroup_lock;
++	struct blockgroup_lock *s_blockgroup_lock;
+ 	struct proc_dir_entry *s_proc;
+ 	struct kobject s_kobj;
+ 	struct completion s_kobj_unregister;
+@@ -1650,7 +1650,7 @@ bgl_lock_ptr(struct blockgroup_lock *bgl
+ static inline spinlock_t *ext4_group_lock_ptr(struct super_block *sb,
+ 					      ext4_group_t group)
+ {
+-	return bgl_lock_ptr(&EXT4_SB(sb)->s_blockgroup_lock, group);
++	return bgl_lock_ptr(EXT4_SB(sb)->s_blockgroup_lock, group);
+ }
+ 
+ /*
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/fs/ext4/super.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/fs/ext4/super.c
+--- linux-2.6.18-194.26.1.el5.028stab079.1/fs/ext4/super.c	2010-11-30 12:26:54 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/fs/ext4/super.c	2010-12-08 05:53:59 +0000
+@@ -669,6 +669,7 @@ static void ext4_put_super(struct super_
+ 	wait_for_completion(&sbi->s_kobj_unregister);
+ 	lock_super(sb);
+ 	lock_kernel();
++	kfree(sbi->s_blockgroup_lock);
+ 	kfree(sbi);
+ }
+ 
+@@ -2354,6 +2355,13 @@ static int ext4_fill_super(struct super_
+ 	sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
+ 	if (!sbi)
+ 		return -ENOMEM;
++
++	sbi->s_blockgroup_lock =
++		kzalloc(sizeof(struct blockgroup_lock), GFP_KERNEL);
++	if (!sbi->s_blockgroup_lock) {
++		kfree(sbi);
++		return -ENOMEM;
++	}
+ 	sb->s_fs_info = sbi;
+ 	sbi->s_mount_opt = 0;
+ 	sbi->s_resuid = EXT4_DEF_RESUID;
+@@ -2660,7 +2668,7 @@ static int ext4_fill_super(struct super_
+ 		sbi->s_proc = proc_mkdir(sb->s_id, ext4_proc_root);
+ #endif
+ 
+-	bgl_lock_init(&sbi->s_blockgroup_lock);
++	bgl_lock_init(sbi->s_blockgroup_lock);
+ 
+ 	for (i = 0; i < db_count; i++) {
+ 		block = descriptor_loc(sb, logical_sb_block, i);
+@@ -2976,7 +2984,7 @@ failed_mount:
+ 	brelse(bh);
+ out_fail:
+ 	sb->s_fs_info = NULL;
+-	kfree(&sbi->s_blockgroup_lock);
++	kfree(sbi->s_blockgroup_lock);
+ 	kfree(sbi);
+ 	lock_kernel();
+ 	return ret;
 diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/fs/proc/base.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/fs/proc/base.c
 --- linux-2.6.18-194.26.1.el5.028stab079.1/fs/proc/base.c	2010-11-30 12:26:53 +0000
 +++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/fs/proc/base.c	2010-12-08 03:31:52 +0000
@@ -424,6 +531,28 @@ diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/include/linux/dmar.h linux-2.6.
  static inline int alloc_irte(struct intel_iommu *iommu, int irq, u16 count)
  {
  	return -1;
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/include/linux/kernel.h linux-2.6.18-194.26.1.el5.028stab079.1-owl/include/linux/kernel.h
+--- linux-2.6.18-194.26.1.el5.028stab079.1/include/linux/kernel.h	2010-11-30 12:26:53 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/include/linux/kernel.h	2010-12-08 05:54:43 +0000
+@@ -184,6 +184,7 @@ asmlinkage int ve_printk(int, const char
+ 	__attribute__ ((format (printf, 2, 3)));
+ void prepare_printk(void);
+ extern void log_buf_kexec_setup(void);
++extern int dmesg_restrict;
+ #else
+ static inline int vprintk(const char *s, va_list args)
+ 	__attribute__ ((format (printf, 1, 0)));
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/include/linux/sysctl.h linux-2.6.18-194.26.1.el5.028stab079.1-owl/include/linux/sysctl.h
+--- linux-2.6.18-194.26.1.el5.028stab079.1/include/linux/sysctl.h	2010-11-30 12:26:53 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/include/linux/sysctl.h	2010-12-08 05:54:43 +0000
+@@ -47,6 +47,7 @@ struct __sysctl_args {
+ /* For internal pattern-matching use only: */
+ #ifdef __KERNEL__
+ #define CTL_ANY		-1	/* Matches any name */
++#define CTL_UNNUMBERED	-2
+ #define CTL_NONE	0
+ #endif
+ 
 diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/init/do_mounts.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/init/do_mounts.c
 --- linux-2.6.18-194.26.1.el5.028stab079.1/init/do_mounts.c	2006-09-20 03:42:06 +0000
 +++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/init/do_mounts.c	2010-08-29 20:46:04 +0000
@@ -605,8 +734,21 @@ diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/kernel/panic.c linux-2.6.18-194
  static int pause_on_oops_flag;
 diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/kernel/printk.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/kernel/printk.c
 --- linux-2.6.18-194.26.1.el5.028stab079.1/kernel/printk.c	2010-11-30 12:26:53 +0000
-+++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/kernel/printk.c	2010-12-08 03:31:52 +0000
-@@ -249,10 +249,6 @@ int do_syslog(int type, char __user *buf
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/kernel/printk.c	2010-12-08 05:54:43 +0000
+@@ -224,6 +224,12 @@ static void boot_delay_msec(int millisec
+ 
+ #endif
+ 
++#ifdef CONFIG_SECURITY_DMESG_RESTRICT
++int dmesg_restrict = 1;
++#else
++int dmesg_restrict;
++#endif
++
+ /*
+  * Commands to do_syslog:
+  *
+@@ -249,10 +255,6 @@ int do_syslog(int type, char __user *buf
  	if (!ve_is_super(get_exec_env()) && (type == 6 || type == 7))
  		goto out;
  
@@ -617,7 +759,7 @@ diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/kernel/printk.c linux-2.6.18-19
  	switch (type) {
  	case 0:		/* Close log */
  		break;
-@@ -384,6 +380,12 @@ out:
+@@ -384,6 +386,12 @@ out:
  
  asmlinkage long sys_syslog(int type, char __user *buf, int len)
  {
@@ -630,6 +772,26 @@ diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/kernel/printk.c linux-2.6.18-19
  	return do_syslog(type, buf, len);
  }
  
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/kernel/sysctl.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/kernel/sysctl.c
+--- linux-2.6.18-194.26.1.el5.028stab079.1/kernel/sysctl.c	2010-11-30 12:26:53 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/kernel/sysctl.c	2010-12-08 05:54:43 +0000
+@@ -919,6 +919,16 @@ static ctl_table kern_table[] = {
+ 		.proc_handler	= &proc_dointvec,
+ 	},
+ 	{
++		.ctl_name	= CTL_UNNUMBERED,
++		.procname       = "dmesg_restrict",
++		.data           = &dmesg_restrict,
++		.maxlen         = sizeof(int),
++		.mode           = 0644,
++		.proc_handler   = &proc_dointvec_minmax,
++		.extra1         = &zero,
++		.extra2         = &one,
++	},
++	{
+ 		.ctl_name	= KERN_NGROUPS_MAX,
+ 		.procname	= "ngroups_max",
+ 		.data		= &ngroups_max,
 diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/net/llc/af_llc.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/net/llc/af_llc.c
 --- linux-2.6.18-194.26.1.el5.028stab079.1/net/llc/af_llc.c	2006-09-20 03:42:06 +0000
 +++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/net/llc/af_llc.c	2009-08-26 10:16:29 +0000
@@ -675,3 +837,38 @@ diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/scripts/mkcompile_h linux-2.6.1
    echo \#define LINUX_COMPILER \"`$CC -v 2>&1 | tail -n 1`\"
  ) > .tmpcompile
  
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/security/Kconfig linux-2.6.18-194.26.1.el5.028stab079.1-owl/security/Kconfig
+--- linux-2.6.18-194.26.1.el5.028stab079.1/security/Kconfig	2010-11-30 12:26:53 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/security/Kconfig	2010-12-08 05:54:43 +0000
+@@ -41,6 +41,18 @@ config KEYS_DEBUG_PROC_KEYS
+ 
+ 	  If you are unsure as to whether this is required, answer N.
+ 
++config SECURITY_DMESG_RESTRICT
++	bool "Restrict unprivileged access to the kernel syslog"
++	default n
++	help
++	  This enforces restrictions on unprivileged users reading the kernel
++	  syslog via dmesg(8).
++
++	  If this option is not selected, no restrictions will be enforced
++	  unless the dmesg_restrict sysctl is explicitly set to (1).
++
++	  If you are unsure how to answer this question, answer N.
++
+ config SECURITY
+ 	bool "Enable different security models"
+ 	depends on SYSFS && !VE
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/security/commoncap.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/security/commoncap.c
+--- linux-2.6.18-194.26.1.el5.028stab079.1/security/commoncap.c	2010-11-30 12:26:53 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/security/commoncap.c	2010-12-08 05:58:07 +0000
+@@ -315,6 +315,9 @@ void cap_task_reparent_to_init (struct t
+ 
+ int cap_syslog (int type)
+ {
++	if (dmesg_restrict && !capable(CAP_VE_SYS_ADMIN))
++		return -EPERM;
++
+ 	if ((type != 3 && type != 10) && !capable(CAP_VE_SYS_ADMIN))
+ 		return -EPERM;
+ 	return 0;
