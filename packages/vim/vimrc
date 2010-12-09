@@ -69,4 +69,4 @@ set errorformat=%f:%l:%m
 set modelines=0
 
 " Use compressed docs
-set helpfile=VIMDIR/doc/help.txt.gz
+"set helpfile=VIMDIR/doc/help.txt.gz

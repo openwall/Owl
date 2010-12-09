@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.48 2010/12/06 06:20:17 solar Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.49 2010/12/09 22:07:22 solar Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -12,7 +12,7 @@ Name: vim
 %define patchlevel 075
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl1
+Release: owl2
 License: Charityware
 Group: Applications/Editors
 URL: http://www.vim.org
@@ -275,10 +275,10 @@ install -pm644 %_sourcedir/vimrc .%_datadir/vim/
 sed -i 's!VIMDIR!%_datadir/vim/%vimdir!' .%_datadir/vim/vimrc
 
 # Compress documentation
-pushd .%_datadir/vim/%vimdir/doc/
-gzip -9n *.txt
-sed -i 's/\t\([a-zA-Z0-9\._-]\+\).txt/\t\1.txt.gz/' tags
-popd
+#pushd .%_datadir/vim/%vimdir/doc/
+#gzip -9n *.txt
+#sed -i 's/\t\([a-zA-Z0-9\._-]\+\).txt/\t\1.txt.gz/' tags
+#popd
 
 # Dependency cleanups
 chmod 644 .%_datadir/vim/%vimdir/{doc/vim2html.pl,tools/{*.pl,vim132}}
@@ -387,6 +387,11 @@ comm -13 filelist.syntax-base filelist.syntax-all > filelist.syntax-rest
 %endif
 
 %changelog
+* Thu Dec 09 2010 Solar Designer <solar-at-owl.openwall.com> 7.3.075-owl2
+- Don't compress doc/* files yet because this is not supported by our "small"
+build of Vim (/bin/vi), yet is expected to work by our "settle" program (the
+"edit /etc/fstab" feature).  This reverts the change made in 7.3.021-owl2.
+
 * Mon Dec 06 2010 Solar Designer <solar-at-owl.openwall.com> 7.3.075-owl1
 - Updated to patchlevel 075.
 
