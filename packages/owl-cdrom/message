@@ -1,5 +1,5 @@
 To continue booting this CD's live + installable system, press Enter or just
-wait a few seconds.
+wait a few seconds.  If this fails, try selecting "safe" (limits use of ACPI).
 
 To boot an arbitrary Linux userland along with this CD's kernel (such as to
 rescue an installed system), select "rescue" AND TYPE " root=/dev/..."

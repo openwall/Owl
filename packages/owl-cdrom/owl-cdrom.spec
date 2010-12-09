@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.57 2010/09/02 05:04:16 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.58 2010/12/09 16:42:56 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 1.12
+Version: 1.13
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -82,6 +82,9 @@ fi
 %dir /owl
 
 %changelog
+* Thu Dec 09 2010 Solar Designer <solar-at-owl.openwall.com> 1.13-owl1
+- Added the "safe" boot label (uses "acpi=ht").
+
 * Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 1.12-owl1
 - Set HOME=/root (via the welcome script) when it would have been "/" (in
 single-user mode).
