@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.105 2010/12/09 15:54:18 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.106 2010/12/09 16:25:18 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -35,7 +35,7 @@ rm -rf %buildroot
 
 %changelog
 * Thu Dec 09 2010 Solar Designer <solar-at-owl.openwall.com> 1.2.5-owl1
-- Propagate some kernel parameters (acpi=*, no*) from the running system into
+- Propagate some kernel parameters (acpi*, no*) from the running system into
 the new lilo.conf.
 
 * Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 1.2.4-owl1

@@ -31,7 +31,7 @@ static ScriptVariable get_kernel_params()
     ScriptVariable res;
     int i;
     for(i = 0; i < v.Length(); i++)
-        if(v[i].HasPrefix("acpi=") || v[i].HasPrefix("no")) {
+        if(v[i].HasPrefix("acpi") || v[i].HasPrefix("no")) {
             if(res != "") res += " ";
             res += v[i];
         }
