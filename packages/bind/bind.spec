@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bind/bind.spec,v 1.28 2010/01/26 17:18:56 solar Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.29 2010/12/09 13:22:49 solar Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -7,7 +7,7 @@
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.5
-Release: owl6
+Release: owl7
 License: BSD-style
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -349,6 +349,12 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Thu Dec 09 2010 Solar Designer <solar-at-owl.openwall.com> 9.3.5-owl7
+- Disallow zone transfers by default and provide more comments and samples for
+other settings in options.conf (suggested by galaxy@ and gremlin@).
+- Added a comment on our "chroot by default" into the startup script (suggested
+by gremlin@).
+
 * Tue Jul 28 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 9.3.5-owl6
 - Backported upstream fix for a remote DoS bug (CVE-2009-0696).
 
