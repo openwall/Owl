@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.34 2010/12/08 07:08:01 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.35 2010/12/09 09:58:30 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 194.26.1.el5.028stab079.1
-Release: %ovzversion.owl1
+Release: %ovzversion.owl2
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab079.1
@@ -104,6 +104,11 @@ done
 %files fake
 
 %changelog
+* Thu Dec 09 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.26.1.el5.028stab079.1-owl2
+- In the CVE-2010-4258 fix, moved the in_interrupt() check to be done before
+the newly added set_fs() call.  Rationale:
+http://www.openwall.com/lists/oss-security/2010/12/09/4
+
 * Wed Dec 08 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.26.1.el5.028stab079.1-owl1
 - Updated to 2.6.18-194.26.1.el5.028stab079.1.
 - Fixed "Dangerous interaction between clear_child_tid, set_fs(), and kernel

@@ -777,11 +777,20 @@ diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/ipc/shm.c linux-2.6.18-194.26.1
  		out.shm_atime	= in->shm_atime;
 diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/kernel/exit.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/kernel/exit.c
 --- linux-2.6.18-194.26.1.el5.028stab079.1/kernel/exit.c	2010-11-30 12:26:53 +0000
-+++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/kernel/exit.c	2010-12-08 04:52:38 +0000
-@@ -949,6 +949,15 @@ fastcall NORET_TYPE void do_exit(long co
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/kernel/exit.c	2010-12-09 09:49:18 +0000
+@@ -949,12 +949,28 @@ fastcall NORET_TYPE void do_exit(long co
  	int group_dead;
  	unsigned int mycpu;
  
++	/*
++	 * Check this first since set_fs() below depends on
++	 * current_thread_info(), which we better not access when we're in
++	 * interrupt context.  Other than that, we want to do the set_fs()
++	 * as early as possible.
++	 */
++	if (unlikely(in_interrupt()))
++		panic("Aiee, killing interrupt handler!");
++
 +	/*
 +	 * If do_exit is called because this process Oops'ed, it's possible
 +	 * that get_fs() was left as KERNEL_DS, so reset it to USER_DS before
@@ -794,6 +803,12 @@ diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/kernel/exit.c linux-2.6.18-194.
  	profile_task_exit(tsk);
  
  	WARN_ON(atomic_read(&tsk->fs_excl));
+ 
+-	if (unlikely(in_interrupt()))
+-		panic("Aiee, killing interrupt handler!");
+ 	if (unlikely(!tsk->pid))
+ 		panic("Attempted to kill the idle task!");
+ #ifdef CONFIG_VE
 diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/kernel/kallsyms.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/kernel/kallsyms.c
 --- linux-2.6.18-194.26.1.el5.028stab079.1/kernel/kallsyms.c	2010-11-30 12:26:53 +0000
 +++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/kernel/kallsyms.c	2010-12-08 03:31:52 +0000
