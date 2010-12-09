@@ -1201,6 +1201,21 @@ diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/security/commoncap.c linux-2.6.
  	if ((type != 3 && type != 10) && !capable(CAP_VE_SYS_ADMIN))
  		return -EPERM;
  	return 0;
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/security/min_addr.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/security/min_addr.c
+--- linux-2.6.18-194.26.1.el5.028stab079.1/security/min_addr.c	2010-11-30 12:26:53 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/security/min_addr.c	2010-12-09 17:15:12 +0000
+@@ -5,9 +5,9 @@
+ #include <linux/sysctl.h>
+ 
+ /* amount of vm to protect from userspace access by both DAC and the LSM*/
+-unsigned long mmap_min_addr;
++unsigned long mmap_min_addr = 98304;
+ /* amount of vm to protect from userspace using CAP_SYS_RAWIO (DAC) */
+-unsigned long dac_mmap_min_addr = 4096;
++unsigned long dac_mmap_min_addr = 98304;
+ /* amount of vm to protect from userspace using the LSM = CONFIG_LSM_MMAP_MIN_ADDR */
+ 
+ /*
 diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/sound/core/control.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/sound/core/control.c
 --- linux-2.6.18-194.26.1.el5.028stab079.1/sound/core/control.c	2010-11-30 12:26:38 +0000
 +++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/sound/core/control.c	2010-12-08 06:14:00 +0000
