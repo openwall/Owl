@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.87 2010/12/09 14:12:21 solar Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.88 2010/12/09 18:49:26 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -128,7 +128,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%config /etc/inittab
+%config(noreplace) /etc/inittab
 %config /etc/rc.d/rc.sysinit
 %config /etc/rc.d/rc
 /etc/rc.d/init.d/functions
