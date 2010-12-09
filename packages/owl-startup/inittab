@@ -1,5 +1,5 @@
 # /etc/inittab: init(8) configuration.
-# $Owl: Owl/packages/owl-startup/inittab,v 1.3 2005/11/16 13:21:54 solar Exp $
+# $Owl: Owl/packages/owl-startup/inittab,v 1.4 2010/12/09 13:51:54 solar Exp $
 
 # The default runlevel.
 id:3:initdefault:
@@ -46,7 +46,7 @@ po::powerokwait:/etc/rc.d/rc.powerfail stop
 #
 # Format:
 #  <id>:<runlevels>:<action>:<process>
-1:2345:respawn:/sbin/mingetty tty1
+1:2345:respawn:/sbin/mingetty --noclear tty1
 2:23:respawn:/sbin/mingetty tty2
 3:23:respawn:/sbin/mingetty tty3
 4:23:respawn:/sbin/mingetty tty4
