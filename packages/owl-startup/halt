@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-startup/halt,v 1.6 2010/12/09 14:07:47 solar Exp $
+# $Owl: Owl/packages/owl-startup/halt,v 1.7 2010/12/09 14:12:21 solar Exp $
 #
 # This file is based on several Debian scripts by Miquel van Smoorenburg.
 #
@@ -28,9 +28,6 @@ killall5 "-`kill -l KILL`"
 # Write a reboot record to /var/log/wtmp before unmounting.
 halt -w
 
-echo "Turning off swap"
-swapoff -a
-
 if [ -x /sbin/accton ]; then
 	/sbin/accton off
 fi
@@ -45,6 +42,9 @@ umount -f -a -r
 
 echo "Remounting root filesystem read-only"
 mount -n -o remount,ro /
+
+echo "Turning off swap"
+swapoff -a
 
 echo -n "$MESSAGE"
 $COMMAND -d -f -i
