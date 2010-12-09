@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.83 2010/09/02 21:13:22 solar Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.84 2010/12/09 13:31:21 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.38
+Version: 0.39
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -169,6 +169,10 @@ fi
 %doc redhat
 
 %changelog
+* Thu Dec 09 2010 Solar Designer <solar-at-owl.openwall.com> 0.39-owl1
+- Dropped the "-e /proc/lvm" check from rc.sysinit.  Rationale:
+http://www.openwall.com/lists/owl-users/2010/12/06/1
+
 * Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 0.38-owl1
 - Package /etc/rc.d/rc.modules (empty), which was already supported by our
 rc.sysinit.

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.28 2010/09/02 20:11:06 solar Exp $
+# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.29 2010/12/09 13:31:21 solar Exp $
 
 repair_fs()
 {
@@ -141,7 +141,7 @@ mount -f /
 test "$PROCFS" = "yes" && mount -f /proc
 
 # Activate LVM volumegroups.
-if [ -e /proc/lvm -a -x /sbin/vgchange -a -s /etc/lvmtab ]; then
+if [ -x /sbin/vgchange -a -s /etc/lvmtab ]; then
 	echo "Setting up logical volume management"
 	/sbin/vgscan > /dev/null && /sbin/vgchange -a y
 fi
