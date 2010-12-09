@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.35 2010/12/09 09:58:30 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.36 2010/12/09 17:47:51 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -108,6 +108,13 @@ done
 - In the CVE-2010-4258 fix, moved the in_interrupt() check to be done before
 the newly added set_fs() call.  Rationale:
 http://www.openwall.com/lists/oss-security/2010/12/09/4
+- Added mmap_min_addr checks into install_special_mapping() and
+__bprm_mm_init().  The problem was discovered and a similar patch proposed by
+Tavis Ormandy of Google Security Team:
+http://www.openwall.com/lists/oss-security/2010/12/09/12
+- Set the default mmap_min_addr to 98304, just like we do in our sysctl.conf.
+- Merged linux-2.6-net-limit-sendto-recvfrom-iovec-total-length-to-int_max.patch
+from 2.6.18-236.el5.
 
 * Wed Dec 08 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.26.1.el5.028stab079.1-owl1
 - Updated to 2.6.18-194.26.1.el5.028stab079.1.
