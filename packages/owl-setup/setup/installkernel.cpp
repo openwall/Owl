@@ -22,6 +22,22 @@ static ScriptVariable get_root_device()
     return "";
 }
 
+static ScriptVariable get_kernel_params()
+{
+    ReadText cmdline("/proc/cmdline");
+    ScriptVector v;
+    if(!cmdline.ReadLine(v))
+        return "";
+    ScriptVariable res;
+    int i;
+    for(i = 0; i < v.Length(); i++)
+        if(v[i].HasPrefix("acpi=") || v[i].HasPrefix("no")) {
+            if(res != "") res += " ";
+            res += v[i];
+        }
+    return res;
+}
+
 void install_kernel_and_lilo(OwlInstallInterface *the_iface)
 {
     ScriptVariable root_dev = get_root_device();
@@ -63,6 +79,8 @@ void install_kernel_and_lilo(OwlInstallInterface *the_iface)
 #endif
     the_iface->CloseExecWindow();
 
+    ScriptVariable kernel_params = get_kernel_params();
+
     FILE* f = fopen(the_config->LiloconfFile().c_str(), "w");
     if(!f) {
         the_iface->Message(ScriptVariable("Failed to open ") +
@@ -78,11 +96,13 @@ void install_kernel_and_lilo(OwlInstallInterface *the_iface)
             "timeout=50\n"
             "menu-title=\"Openwall GNU/*/Linux boot menu\"\n"
             "menu-scheme=kw:Wb:kw:kw\n"
-            "\n"
+            "%s\n"
             "image=/boot/vmlinuz\n"
             "\tlabel=linux\n",
             boot_dev.c_str(),
-            root_dev.c_str());
+            root_dev.c_str(),
+            kernel_params == "" ? "" :
+            (ScriptVariable("\nappend=\"") + kernel_params + "\"\n").c_str());
     fclose(f);
 
     the_iface->ExecWindow(ScriptVariable("Invoking ") +
