@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/bind/bind.init,v 1.6 2007/10/07 21:47:51 ldv Exp $
+# $Owl: Owl/packages/bind/bind.init,v 1.7 2010/12/09 13:21:58 solar Exp $
 #
 # named           This shell script takes care of starting and stopping
 #                 named (BIND DNS server).
@@ -37,6 +37,8 @@ case "$1" in
 
 		rndc_keygen
 
+# On Owl, named chroot()s to /var/lib/bind by default.  This may be adjusted
+# with the "-t" option.  Please refer to the named(8) man page.
 		daemon --expect-user named -- named
 		;;
 	stop)
@@ -62,4 +64,3 @@ case "$1" in
 esac
 
 exit $?
-
