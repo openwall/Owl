@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-startup/clock,v 1.3 2005/11/16 13:21:54 solar Exp $
+# $Owl: Owl/packages/owl-startup/clock,v 1.4 2010/12/09 14:07:47 solar Exp $
 
 # Setup some sane defaults.
 UTC=true
@@ -15,6 +15,11 @@ test "$UTC" = "false" -o "$UTC" = "no" && FLAGS="$FLAGS --localtime"
 test "$ARC" = "true" -o "$ARC" = "yes" && FLAGS="$FLAGS -A"
 test "$SRM" = "true" -o "$SRM" = "yes" && FLAGS="$FLAGS -S"
 
-echo -n "Setting the system time: "
-/sbin/hwclock --hctosys $FLAGS
+if [ "$1" != "save" ]; then
+	echo -n "Setting the system time: "
+	/sbin/hwclock --hctosys $FLAGS
+else
+	echo -n "Saving the system time to the hardware clock: "
+	/sbin/hwclock --systohc $FLAGS
+fi
 date
