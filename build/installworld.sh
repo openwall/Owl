@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installworld.sh,v 1.35 2010/12/13 10:30:11 solar Exp $
+# $Owl: Owl/build/installworld.sh,v 1.36 2010/12/13 18:23:06 solar Exp $
 
 . installworld.conf
 
@@ -170,6 +170,20 @@ else
 	$RPMD $RPM_FLAGS --root $ROOT --rebuilddb || exit 1
 
 	NEED_FAKE=no
+fi
+
+# owl-hier prior to 0.10-owl1 provided /var/tmp as a directory, even though
+# owl-setup (the settle program) then offered to optionally make it a symlink
+# to /tmp.  owl-hier 0.10-owl1 switched to packaging the symlink right away.
+# Unfortunately, RPM can't handle this change on upgrade on its own.  Moreover,
+# we can't do it from owl-hier's scriptlets because owl-hier is installed
+# before we install the shell.  Hence, we try to remove the directory here.
+if [ ! -L $ROOT/var/tmp -a -d $ROOT/var/tmp ]; then
+	if mv $ROOT/var/tmp{,-}; then
+# If we fail to remove the old /var/tmp directory, have a message printed (the
+# error message from rmdir) and leave the directory as /var/tmp-, mode 700.
+		rmdir $ROOT/var/tmp- || chmod 700 $ROOT/var/tmp-
+	fi
 fi
 
 export MAKE_CDROM

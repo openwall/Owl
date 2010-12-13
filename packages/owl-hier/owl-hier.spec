@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.33 2010/12/13 14:12:57 solar Exp $
+# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.34 2010/12/13 18:23:06 solar Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
-Version: 0.10
-Release: owl2
+Version: 1.0
+Release: owl1
 License: public domain
 Group: System Environment/Base
 Source: base
@@ -72,29 +72,13 @@ done | sort > filelist.remove
 sort filelist.mtree |
 comm -3 - filelist.remove >> filelist
 
-%pre
-if [ ! -L /var/tmp -a -d /var/tmp ]; then
-	mv /var/tmp{,-}
-# We can't remove the /var/tmp- directory just yet because it holds a temporary
-# file with this very scriptlet.  Instead, we create a symlink to the directory
-# such that RPM can remove its temporary file when the scriptlet exits.  The
-# symlink then gets replaced by one found in this package.
-	ln -s /var/tmp{-,}
-fi
-
-%post
-if [ -d /var/tmp- ]; then
-# If we fail to remove the old /var/tmp directory, have a message printed (the
-# error message from rmdir) and leave the directory as /var/tmp-, mode 700.
-	rmdir /var/tmp- || chmod 700 /var/tmp-
-fi
-
 %files -f filelist
 
 %changelog
-* Mon Dec 13 2010 Solar Designer <solar-at-owl.openwall.com> 0.10-owl2
-- Rename and try to remove the old /var/tmp if it's a directory, for upgrades
-from owl-hier older than 0.10-owl1.  Problem discovered by Vasiliy Kulikov.
+* Mon Dec 13 2010 Solar Designer <solar-at-owl.openwall.com> 1.0-owl1
+- Set version to 1.0 for Owl 3.0 release as well as to skip over 0.10-owl2,
+which existed for a few hours until the changes were reverted and moved to
+installworld.sh instead.
 
 * Mon Jul 26 2010 Solar Designer <solar-at-owl.openwall.com> 0.10-owl1
 - Added /sys mountpoint, made /var/tmp a symlink to ../tmp.
