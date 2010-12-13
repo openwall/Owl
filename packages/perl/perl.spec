@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.57 2010/10/31 04:25:48 solar Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.58 2010/12/13 13:49:15 solar Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -24,7 +24,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.8
-Release: owl5
+Release: owl6
 Epoch: 4
 License: GPL
 Group: Development/Languages
@@ -46,6 +46,9 @@ Patch23: perl-5.8.3-rh-lpthread.diff
 Patch24: perl-5.8.3-alt-configure-no-perl.diff
 Patch25: perl-5.8.6-alt-File-Copy-preserve.diff
 Patch26: perl-5.8.6-alt-pod-vendor-dirs-perlbug34500.diff
+Patch27: perl-5.8.8-up-rh-CVE-2008-1927.diff
+Patch28: perl-5.8.8-up-rh-Safe.diff
+Patch29: perl-5.8.8-up-rh-rmtree.diff
 Provides: perl(:WITH_PERLIO)
 %if %BUILD_THREADS
 %define thread_arch -thread-multi
@@ -113,6 +116,9 @@ introduce security holes.
 %patch24 -p1
 %patch25 -p1
 %patch26 -p1
+%patch27 -p1
+%patch28 -p1
+%patch29 -p1
 
 find . -name '*.orig' -delete
 
@@ -295,6 +301,12 @@ chmod -R u+w %buildroot
 %endif
 
 %changelog
+* Mon Dec 13 2010 Solar Designer <solar-at-owl.openwall.com> 4:5.8.8-owl6
+- Added security fix backports found in Red Hat's 5.8.8-32.el5.2.  These are
+for a double-free bug triggerable via malicious regexps with UTF-8 characters
+(CVE-2008-1927), Safe.pm restrictions bypass (CVE-2010-1168), and race
+conditions in the rmtree function in File::Path (CVE-2008-5302, CVE-2008-5303).
+
 * Wed Mar 21 2007 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4:5.8.8-owl5
 - applied a fix to run tests without a need for network access.
 - disabled the hostent checks - this helps to build the package inside

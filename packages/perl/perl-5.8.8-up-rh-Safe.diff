@@ -1,0 +1,1333 @@
+diff -up perl-5.8.8/ext/Opcode/Safe.pm.old perl-5.8.8/ext/Opcode/Safe.pm
+--- perl-5.8.8/ext/Opcode/Safe.pm.old	2006-01-13 10:21:44.000000000 +0100
++++ perl-5.8.8/ext/Opcode/Safe.pm	2010-05-12 12:12:34.000000000 +0200
+@@ -2,8 +2,9 @@ package Safe;
+ 
+ use 5.003_11;
+ use strict;
++use Scalar::Util qw(reftype);
+ 
+-$Safe::VERSION = "2.12";
++$Safe::VERSION = "2.27";
+ 
+ # *** Don't declare any lexicals above this point ***
+ #
+@@ -26,7 +27,21 @@ sub lexless_anon_sub {
+ }
+ 
+ use Carp;
+-use Carp::Heavy;
++BEGIN { eval q{
++    use Carp::Heavy;
++} }
++
++use B ();
++BEGIN {
++    no strict 'refs';
++    if (defined &B::sub_generation) {
++        *sub_generation = \&B::sub_generation;
++    }
++    else {
++        # fake sub generation changing for perls < 5.8.9
++        my $sg; *sub_generation = sub { ++$sg };
++    }
++}
+ 
+ use Opcode 1.01, qw(
+     opset opset_to_ops opmask_add
+@@ -36,9 +51,92 @@ use Opcode 1.01, qw(
+ 
+ *ops_to_opset = \&opset;   # Temporary alias for old Penguins
+ 
++# Regular expressions and other unicode-aware code may need to call
++# utf8->SWASHNEW (via perl's utf8.c).  That will fail unless we share the
++# SWASHNEW method.
++# Sadly we can't just add utf8::SWASHNEW to $default_share because perl's
++# utf8.c code does a fetchmethod on SWASHNEW to check if utf8.pm is loaded,
++# and sharing makes it look like the method exists.
++# The simplest and most robust fix is to ensure the utf8 module is loaded when
++# Safe is loaded. Then we can add utf8::SWASHNEW to $default_share.
++require utf8;
++# we must ensure that utf8_heavy.pl, where SWASHNEW is defined, is loaded
++# but without depending on knowledge of that implementation detail.
++# This code (//i on a unicode string) ensures utf8 is fully loaded
++# and also loads the ToFold SWASH.
++# (Swashes are cached internally by perl in PL_utf8_* variables
++# independent of being inside/outside of Safe. So once loaded they can be)
++do { my $a = pack('U',0xC4); my $b = chr 0xE4; utf8::upgrade $b; $a =~ /$b/i };
++# now we can safely include utf8::SWASHNEW in $default_share defined below.
+ 
+ my $default_root  = 0;
+-my $default_share = ['*_']; #, '*main::'];
++# share *_ and functions defined in universal.c
++# Don't share stuff like *UNIVERSAL:: otherwise code from the
++# compartment can 0wn functions in UNIVERSAL
++my $default_share = [qw[
++    *_
++    &PerlIO::get_layers
++    &UNIVERSAL::isa
++    &UNIVERSAL::can
++    &UNIVERSAL::VERSION
++    &utf8::is_utf8
++    &utf8::valid
++    &utf8::encode
++    &utf8::decode
++    &utf8::upgrade
++    &utf8::downgrade
++    &utf8::native_to_unicode
++    &utf8::unicode_to_native
++    &utf8::SWASHNEW
++    $version::VERSION
++    $version::CLASS
++    $version::STRICT
++    $version::LAX
++    @version::ISA
++], ($] < 5.010 && qw[
++    &utf8::SWASHGET
++]), ($] >= 5.008001 && qw[
++    &Regexp::DESTROY
++]), ($] >= 5.010 && qw[
++    &re::is_regexp
++    &re::regname
++    &re::regnames
++    &re::regnames_count
++    &Tie::Hash::NamedCapture::FETCH
++    &Tie::Hash::NamedCapture::STORE
++    &Tie::Hash::NamedCapture::DELETE
++    &Tie::Hash::NamedCapture::CLEAR
++    &Tie::Hash::NamedCapture::EXISTS
++    &Tie::Hash::NamedCapture::FIRSTKEY
++    &Tie::Hash::NamedCapture::NEXTKEY
++    &Tie::Hash::NamedCapture::SCALAR
++    &Tie::Hash::NamedCapture::flags
++    &UNIVERSAL::DOES
++    &version::()
++    &version::new
++    &version::(""
++    &version::stringify
++    &version::(0+
++    &version::numify
++    &version::normal
++    &version::(cmp
++    &version::(<=>
++    &version::vcmp
++    &version::(bool
++    &version::boolean
++    &version::(nomethod
++    &version::noop
++    &version::is_alpha
++    &version::qv
++    &version::vxs::declare
++    &version::vxs::qv
++    &version::vxs::_VERSION
++    &version::vxs::stringify
++    &version::vxs::new
++    &version::vxs::parse
++]), ($] >= 5.011 && qw[
++    &re::regexp_pattern
++])];
+ 
+ sub new {
+     my($class, $root, $mask) = @_;
+@@ -182,20 +280,19 @@ sub share_from {
+ 	unless keys %{"$pkg\::"};
+     my $arg;
+     foreach $arg (@$vars) {
+-	# catch some $safe->share($var) errors:
+-	croak("'$arg' not a valid symbol table name")
+-	    unless $arg =~ /^[\$\@%*&]?\w[\w:]*$/
+-	    	or $arg =~ /^\$\W$/;
+-	my ($var, $type);
+-	$type = $1 if ($var = $arg) =~ s/^(\W)//;
+-	# warn "share_from $pkg $type $var";
+-	*{$root."::$var"} = (!$type)       ? \&{$pkg."::$var"}
+-			  : ($type eq '&') ? \&{$pkg."::$var"}
+-			  : ($type eq '$') ? \${$pkg."::$var"}
+-			  : ($type eq '@') ? \@{$pkg."::$var"}
+-			  : ($type eq '%') ? \%{$pkg."::$var"}
+-			  : ($type eq '*') ?  *{$pkg."::$var"}
+-			  : croak(qq(Can't share "$type$var" of unknown type));
++        # catch some $safe->share($var) errors:
++        my ($var, $type);
++        $type = $1 if ($var = $arg) =~ s/^(\W)//;
++        # warn "share_from $pkg $type $var";
++        for (1..2) { # assign twice to avoid any 'used once' warnings
++            *{$root."::$var"} = (!$type)   ? \&{$pkg."::$var"}
++                          : ($type eq '&') ? \&{$pkg."::$var"}
++                          : ($type eq '$') ? \${$pkg."::$var"}
++                          : ($type eq '@') ? \@{$pkg."::$var"}
++                          : ($type eq '%') ? \%{$pkg."::$var"}
++                          : ($type eq '*') ?  *{$pkg."::$var"}
++                          : croak(qq(Can't share "$type$var" of unknown type));
++        }
+     }
+     $obj->share_record($pkg, $vars) unless $no_record or !$vars;
+ }
+@@ -227,22 +324,113 @@ sub varglob {
+     return *{$obj->root()."::$var"};
+ }
+ 
++sub _clean_stash {
++    my ($root, $saved_refs) = @_;
++    $saved_refs ||= [];
++    no strict 'refs';
++    foreach my $hook (qw(DESTROY AUTOLOAD), grep /^\(/, keys %$root) {
++        push @$saved_refs, \*{$root.$hook};
++        delete ${$root}{$hook};
++    }
++
++    for (grep /::$/, keys %$root) {
++        next if \%{$root.$_} eq \%$root;
++        _clean_stash($root.$_, $saved_refs);
++    }
++}
+ 
+ sub reval {
+     my ($obj, $expr, $strict) = @_;
+     my $root = $obj->{Root};
+ 
+-    my $evalsub = lexless_anon_sub($root,$strict, $expr);
+-    return Opcode::_safe_call_sv($root, $obj->{Mask}, $evalsub);
++    my $evalsub = lexless_anon_sub($root, $strict, $expr);
++    # propagate context
++    my $sg = sub_generation();
++    my @subret = (wantarray)
++               ?        Opcode::_safe_call_sv($root, $obj->{Mask}, $evalsub)
++               : scalar Opcode::_safe_call_sv($root, $obj->{Mask}, $evalsub);
++    _clean_stash($root.'::') if $sg != sub_generation();
++    $obj->wrap_code_refs_within(@subret);
++    return (wantarray) ? @subret : $subret[0];
+ }
+ 
++
++sub wrap_code_refs_within {
++    my $obj = shift;
++
++    $obj->_find_code_refs('wrap_code_ref', @_);
++}
++
++
++sub _find_code_refs {
++    my $obj = shift;
++    my $visitor = shift;
++
++    for my $item (@_) {
++        my $reftype = $item && reftype $item
++            or next;
++        if ($reftype eq 'ARRAY') {
++            $obj->_find_code_refs($visitor, @$item);
++        }
++        elsif ($reftype eq 'HASH') {
++            $obj->_find_code_refs($visitor, values %$item);
++        }
++        # XXX GLOBs?
++        elsif ($reftype eq 'CODE') {
++            $item = $obj->$visitor($item);
++        }
++    }
++}
++
++
++sub wrap_code_ref {
++    my ($obj, $sub) = @_;
++
++    # wrap code ref $sub with _safe_call_sv so that, when called, the
++    # execution will happen with the compartment fully 'in effect'.
++
++    croak "Not a CODE reference"
++        if reftype $sub ne 'CODE';
++
++    my $ret = sub {
++        my @args = @_; # lexical to close over
++        my $sub_with_args = sub { $sub->(@args) };
++
++        my @subret;
++        my $error;
++        do {
++            local $@;  # needed due to perl_call_sv(sv, G_EVAL|G_KEEPERR)
++            my $sg = sub_generation();
++            @subret = (wantarray)
++                ?        Opcode::_safe_call_sv($obj->{Root}, $obj->{Mask}, $sub_with_args)
++                : scalar Opcode::_safe_call_sv($obj->{Root}, $obj->{Mask}, $sub_with_args);
++            $error = $@;
++            _clean_stash($obj->{Root}.'::') if $sg != sub_generation();
++        };
++        if ($error) { # rethrow exception
++            $error =~ s/\t\(in cleanup\) //; # prefix added by G_KEEPERR
++            die $error;
++        }
++        return (wantarray) ? @subret : $subret[0];
++    };
++
++    return $ret;
++}
++
++
+ sub rdo {
+     my ($obj, $file) = @_;
+     my $root = $obj->{Root};
+ 
++    my $sg = sub_generation();
+     my $evalsub = eval
+-	    sprintf('package %s; sub { @_ = (); do $file }', $root);
+-    return Opcode::_safe_call_sv($root, $obj->{Mask}, $evalsub);
++            sprintf('package %s; sub { @_ = (); do $file }', $root);
++    my @subret = (wantarray)
++               ?        Opcode::_safe_call_sv($root, $obj->{Mask}, $evalsub)
++               : scalar Opcode::_safe_call_sv($root, $obj->{Mask}, $evalsub);
++    _clean_stash($root.'::') if $sg != sub_generation();
++    $obj->wrap_code_refs_within(@subret);
++    return (wantarray) ? @subret : $subret[0];
+ }
+ 
+ 
+@@ -419,17 +607,26 @@ type characters) are supplied as an arra
+ 
+     $safe->share_from('main', [ '$foo', '%bar', 'func' ]);
+ 
++Names can include package names, which are relative to the specified PACKAGE.
++So these two calls have the same effect:
++
++    $safe->share_from('Scalar::Util', [ 'reftype' ]);
++    $safe->share_from('main', [ 'Scalar::Util::reftype' ]);
+ 
+-=item varglob (VARNAME)
++=head2 varglob (VARNAME)
+ 
+ This returns a glob reference for the symbol table entry of VARNAME in
+ the package of the compartment. VARNAME must be the B<name> of a
+-variable without any leading type marker. For example,
++variable without any leading type marker. For example:
++
++    ${$cpt->varglob('foo')} = "Hello world";
++
++has the same effect as:
+ 
+     $cpt = new Safe 'Root';
+     $Root::foo = "Hello world";
+-    # Equivalent version which doesn't need to know $cpt's package name:
+-    ${$cpt->varglob('foo')} = "Hello world";
++
++but avoids the need to know $cpt's package name.
+ 
+ 
+ =item reval (STRING)
+@@ -455,9 +652,13 @@ expression evaluated, or a return statem
+ subroutines and B<eval()>. The context (list or scalar) is determined
+ by the caller as usual.
+ 
+-This behaviour differs from the beta distribution of the Safe extension
+-where earlier versions of perl made it hard to mimic the return
+-behaviour of the eval() command and the context was always scalar.
++If the return value of reval() is (or contains) any code reference,
++those code references are wrapped to be themselves executed always
++in the compartment. See L</wrap_code_refs_within>.
++
++The formerly undocumented STRICT argument sets strictness: if true
++'use strict;' is used, otherwise it uses 'no strict;'. B<Note>: if
++STRICT is omitted 'no strict;' is the default.
+ 
+ Some points to note:
+ 
+@@ -519,14 +720,34 @@ the compartment.
+ With the MASK argument present, it sets the operator mask for the
+ compartment (equivalent to calling the deny_only method).
+ 
+-=back
++=head2 wrap_code_ref (CODEREF)
++
++Returns a reference to an anonymous subroutine that, when executed, will call
++CODEREF with the Safe compartment 'in effect'.  In other words, with the
++package namespace adjusted and the opmask enabled.
++
++Note that the opmask doesn't affect the already compiled code, it only affects
++any I<further> compilation that the already compiled code may try to perform.
++
++This is particularly useful when applied to code references returned from reval().
+ 
++(It also provides a kind of workaround for RT#60374: "Safe.pm sort {} bug with
++-Dusethreads". See L<http://rt.perl.org/rt3//Public/Bug/Display.html?id=60374>
++for I<much> more detail.)
+ 
+-=head2 Some Safety Issues
++=head2 wrap_code_refs_within (...)
+ 
+-This section is currently just an outline of some of the things code in
+-a compartment might do (intentionally or unintentionally) which can
+-have an effect outside the compartment.
++Wraps any CODE references found within the arguments by replacing each with the
++result of calling L</wrap_code_ref> on the CODE reference. Any ARRAY or HASH
++references in the arguments are inspected recursively.
++
++Returns nothing.
++
++=head1 RISKS
++
++This section is just an outline of some of the things code in a compartment
++might do (intentionally or unintentionally) which can have an effect outside
++the compartment.
+ 
+ =over 8
+ 
+@@ -564,13 +785,13 @@ but more subtle effect.
+ 
+ =back
+ 
+-=head2 AUTHOR
++=head1 AUTHOR
++
++Originally designed and implemented by Malcolm Beattie.
+ 
+-Originally designed and implemented by Malcolm Beattie,
+-mbeattie@sable.ox.ac.uk.
++Reworked to use the Opcode module and other changes added by Tim Bunce.
+ 
+-Reworked to use the Opcode module and other changes added by Tim Bunce
+-E<lt>F<Tim.Bunce@ig.co.uk>E<gt>.
++Currently maintained by the Perl 5 Porters, <perl5-porters@perl.org>.
+ 
+ =cut
+ 
+diff -urN perl-5.8.8/ext/Opcode/t.old/safe1.t perl-5.8.8/ext/Opcode/t/safe1.t
+--- perl-5.8.8/ext/Opcode/t.old/safe1.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.8.8/ext/Opcode/t/safe1.t	2010-04-29 22:35:30.000000000 +0200
+@@ -0,0 +1,67 @@
++#!./perl -w
++$|=1;
++BEGIN {
++    require Config; import Config;
++    if ($Config{'extensions'} !~ /\bOpcode\b/ && $Config{'osname'} ne 'VMS') {
++        print "1..0\n";
++        exit 0;
++    }
++
++}
++
++# Tests Todo:
++#	'main' as root
++
++package test;	# test from somewhere other than main
++
++use vars qw($bar);
++
++use Opcode 1.00, qw(opdesc opset opset_to_ops opset_to_hex
++	opmask_add full_opset empty_opset opcodes opmask define_optag);
++
++use Safe 1.00;
++
++my $last_test; # initalised at end
++print "1..$last_test\n";
++
++my $t = 1;
++my $cpt;
++# create and destroy some automatic Safe compartments first
++$cpt = new Safe or die;
++$cpt = new Safe or die;
++$cpt = new Safe or die;
++
++$cpt = new Safe "Root" or die;
++
++foreach(1..3) {
++	$foo = 42;
++
++	$cpt->share(qw($foo));
++
++	print ${$cpt->varglob('foo')}       == 42 ? "ok $t\n" : "not ok $t\n"; $t++;
++
++	${$cpt->varglob('foo')} = 9;
++
++	print $foo == 9	? "ok $t\n" : "not ok $t\n"; $t++;
++
++	print $cpt->reval('$foo')       == 9	? "ok $t\n" : "not ok $t\n"; $t++;
++	# check 'main' has been changed:
++	print $cpt->reval('$::foo')     == 9	? "ok $t\n" : "not ok $t\n"; $t++;
++	print $cpt->reval('$main::foo') == 9	? "ok $t\n" : "not ok $t\n"; $t++;
++	# check we can't see our test package:
++	print $cpt->reval('$test::foo')     	? "not ok $t\n" : "ok $t\n"; $t++;
++	print $cpt->reval('${"test::foo"}')		? "not ok $t\n" : "ok $t\n"; $t++;
++
++	$cpt->erase;	# erase the compartment, e.g., delete all variables
++
++	print $cpt->reval('$foo') ? "not ok $t\n" : "ok $t\n"; $t++;
++
++	# Note that we *must* use $cpt->varglob here because if we used
++	# $Root::foo etc we would still see the original values!
++	# This seems to be because the compiler has created an extra ref.
++
++	print ${$cpt->varglob('foo')} ? "not ok $t\n" : "ok $t\n"; $t++;
++}
++
++print "ok $last_test\n";
++BEGIN { $last_test = 28 }
+diff -urN perl-5.8.8/ext/Opcode/t.old/safe2.t perl-5.8.8/ext/Opcode/t/safe2.t
+--- perl-5.8.8/ext/Opcode/t.old/safe2.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.8.8/ext/Opcode/t/safe2.t	2010-04-29 22:35:30.000000000 +0200
+@@ -0,0 +1,153 @@
++#!./perl -w
++$|=1;
++BEGIN {
++    require Config; import Config;
++    if ($Config{'extensions'} !~ /\bOpcode\b/ && $Config{'osname'} ne 'VMS') {
++        print "1..0\n";
++        exit 0;
++    }
++}
++
++# Tests Todo:
++#	'main' as root
++
++use vars qw($bar);
++
++use Opcode 1.00, qw(opdesc opset opset_to_ops opset_to_hex
++	opmask_add full_opset empty_opset opcodes opmask define_optag);
++
++use Safe 1.00;
++
++my $last_test; # initalised at end
++print "1..$last_test\n";
++
++# Set up a package namespace of things to be visible to the unsafe code
++$Root::foo = "visible";
++$bar = "invisible";
++
++# Stop perl from moaning about identifies which are apparently only used once
++$Root::foo .= "";
++
++my $cpt;
++# create and destroy a couple of automatic Safe compartments first
++$cpt = new Safe or die;
++$cpt = new Safe or die;
++
++$cpt = new Safe "Root";
++
++$cpt->permit(qw(:base_io));
++
++$cpt->reval(q{ system("echo not ok 1"); });
++if ($@ =~ /^'?system'? trapped by operation mask/) {
++    print "ok 1\n";
++} else {
++    print "#$@" if $@;
++    print "not ok 1\n";
++}
++
++$cpt->reval(q{
++    print $foo eq 'visible'		? "ok 2\n" : "not ok 2\n";
++    print $main::foo  eq 'visible'	? "ok 3\n" : "not ok 3\n";
++    print defined($bar)			? "not ok 4\n" : "ok 4\n";
++    print defined($::bar)		? "not ok 5\n" : "ok 5\n";
++    print defined($main::bar)		? "not ok 6\n" : "ok 6\n";
++});
++print $@ ? "not ok 7\n#$@" : "ok 7\n";
++
++$foo = "ok 8\n";
++%bar = (key => "ok 9\n");
++@baz = (); push(@baz, "o", "10"); $" = 'k ';
++$glob = "ok 11\n";
++@glob = qw(not ok 16);
++
++sub sayok { print "ok @_\n" }
++
++$cpt->share(qw($foo %bar @baz *glob sayok));
++$cpt->share('$"') unless $Config{use5005threads};
++
++$cpt->reval(q{
++    package other;
++    sub other_sayok { print "ok @_\n" }
++    package main;
++    print $foo ? $foo : "not ok 8\n";
++    print $bar{key} ? $bar{key} : "not ok 9\n";
++    (@baz) ? print "@baz\n" : print "not ok 10\n";
++    print $glob;
++    other::other_sayok(12);
++    $foo =~ s/8/14/;
++    $bar{new} = "ok 15\n";
++    @glob = qw(ok 16);
++});
++print $@ ? "not ok 13\n#$@" : "ok 13\n";
++$" = ' ';
++print $foo, $bar{new}, "@glob\n";
++
++$Root::foo = "not ok 17";
++@{$cpt->varglob('bar')} = qw(not ok 18);
++${$cpt->varglob('foo')} = "ok 17";
++@Root::bar = "ok";
++push(@Root::bar, "18"); # Two steps to prevent "Identifier used only once..."
++
++print "$Root::foo\n";
++print "@{$cpt->varglob('bar')}\n";
++
++use strict;
++
++print 1 ? "ok 19\n" : "not ok 19\n";
++print 1 ? "ok 20\n" : "not ok 20\n";
++
++my $m1 = $cpt->mask;
++$cpt->trap("negate");
++my $m2 = $cpt->mask;
++my @masked = opset_to_ops($m1);
++print $m2 eq opset("negate", @masked) ? "ok 21\n" : "not ok 21\n";
++
++print eval { $cpt->mask("a bad mask") } ? "not ok 22\n" : "ok 22\n";
++
++print $cpt->reval("2 + 2") == 4 ? "ok 23\n" : "not ok 23\n";
++
++$cpt->mask(empty_opset);
++my $t_scalar = $cpt->reval('print wantarray ? "not ok 24\n" : "ok 24\n"');
++print $cpt->reval('@ary=(6,7,8);@ary') == 3 ? "ok 25\n" : "not ok 25\n";
++my @t_array  = $cpt->reval('print wantarray ? "ok 26\n" : "not ok 26\n"; (2,3,4)');
++print $t_array[2] == 4 ? "ok 27\n" : "not ok 27\n";
++
++my $t_scalar2 = $cpt->reval('die "foo bar"; 1');
++print defined $t_scalar2 ? "not ok 28\n" : "ok 28\n";
++print $@ =~ /foo bar/ ? "ok 29\n" : "not ok 29\n";
++
++# --- rdo
++  
++my $t = 30;
++$! = 0;
++my $nosuch = '/non/existant/file.name';
++open(NOSUCH, $nosuch);
++if ($@) {
++    my $errno  = $!;
++    die "Eek! Attempting to open $nosuch failed, but \$! is still 0" unless $!;
++    $! = 0;
++    $cpt->rdo($nosuch);
++    print $! == $errno ? "ok $t\n" : sprintf "not ok $t # \"$!\" is %d (expected %d)\n", $!, $errno; $t++;
++} else {
++    die "Eek! Didn't expect $nosuch to be there.";
++}
++close(NOSUCH);
++
++# test #31 is gone.
++print "ok $t\n"; $t++;
++  
++#my $rdo_file = "tmp_rdo.tpl";
++#if (open X,">$rdo_file") {
++#    print X "999\n";
++#    close X;
++#    $cpt->permit_only('const', 'leaveeval');
++#    print  $cpt->rdo($rdo_file) == 999 ? "ok $t\n" : "not ok $t\n"; $t++;
++#    unlink $rdo_file;
++#}
++#else {
++#    print "# test $t skipped, can't open file: $!\nok $t\n"; $t++;
++#}
++
++
++print "ok $last_test\n";
++BEGIN { $last_test = 32 }
+diff -urN perl-5.8.8/ext/Opcode/t.old/safe3.t perl-5.8.8/ext/Opcode/t/safe3.t
+--- perl-5.8.8/ext/Opcode/t.old/safe3.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.8.8/ext/Opcode/t/safe3.t	2010-04-29 22:35:30.000000000 +0200
+@@ -0,0 +1,46 @@
++#!perl -w
++
++BEGIN {
++    require Config; import Config;
++    if ($Config{'extensions'} !~ /\bOpcode\b/
++	&& $Config{'extensions'} !~ /\bPOSIX\b/
++	&& $Config{'osname'} ne 'VMS')
++    {
++	print "1..0\n";
++	exit 0;
++    }
++}
++
++use strict;
++use warnings;
++use POSIX qw(ceil);
++use Test::More tests => 2;
++use Safe;
++
++my $safe = new Safe;
++$safe->deny('add');
++
++my $masksize = ceil( Opcode::opcodes / 8 );
++# Attempt to change the opmask from within the safe compartment
++$safe->reval( qq{\$_[1] = qq/\0/ x } . $masksize );
++
++# Check that it didn't work
++$safe->reval( q{$x + $y} );
++# Written this way to keep the Test::More that comes with perl 5.6.2 happy
++ok( $@ =~ /^'?addition \(\+\)'? trapped by operation mask/,
++	    'opmask still in place with reval' );
++
++my $safe2 = new Safe;
++$safe2->deny('add');
++
++open my $fh, '>nasty.pl' or die "Can't write nasty.pl: $!\n";
++print $fh <<EOF;
++\$_[1] = "\0" x $masksize;
++EOF
++close $fh;
++$safe2->rdo('nasty.pl');
++$safe2->reval( q{$x + $y} );
++# Written this way to keep the Test::More that comes with perl 5.6.2 happy
++ok( $@ =~ /^'?addition \(\+\)'? trapped by operation mask/,
++	    'opmask still in place with rdo' );
++END { unlink 'nasty.pl' }
+diff -urN perl-5.8.8/ext/Opcode/t.old/safeload.t perl-5.8.8/ext/Opcode/t/safeload.t
+--- perl-5.8.8/ext/Opcode/t.old/safeload.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.8.8/ext/Opcode/t/safeload.t	2010-04-29 22:35:30.000000000 +0200
+@@ -0,0 +1,26 @@
++#!perl
++
++BEGIN {
++    require Config;
++    import Config;
++    if ($Config{'extensions'} !~ /\bOpcode\b/) {
++	print "1..0\n";
++	exit 0;
++    }
++    # Can we load the version module ?
++    eval { require version; 1 } or do {
++	print "1..0 # no version.pm\n";
++	exit 0;
++    };
++    delete $INC{"version.pm"};
++}
++
++use strict;
++use Test::More;
++use Safe;
++plan(tests => 1);
++
++my $c = new Safe;
++$c->permit(qw(require caller entereval unpack));
++my $r = $c->reval(q{ use version; 1 });
++ok( defined $r, "Can load version.pm in a Safe compartment" ) or diag $@;
+diff -urN perl-5.8.8/ext/Opcode/t.old/safeops.t perl-5.8.8/ext/Opcode/t/safeops.t
+--- perl-5.8.8/ext/Opcode/t.old/safeops.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.8.8/ext/Opcode/t/safeops.t	2010-04-29 22:35:30.000000000 +0200
+@@ -0,0 +1,428 @@
++#!perl
++# Tests that all ops can be trapped by a Safe compartment
++
++BEGIN {
++    unless ($ENV{PERL_CORE}) {
++	# this won't work outside of the core, so exit
++        print "1..0 # skipped: PERL_CORE unset\n"; exit 0;
++    }
++}
++use Config;
++BEGIN {
++    if ($Config{'extensions'} !~ /\bOpcode\b/ && $Config{'osname'} ne 'VMS') {
++        print "1..0\n"; exit 0;
++    }
++}
++
++use strict;
++use Test::More;
++use Safe;
++
++# Read the op names and descriptions directly from opcode.pl
++my @op;
++my %code;
++
++while (<DATA>) {
++    chomp;
++    die "Can't match $_" unless /^([a-z_0-9]+)\t+(.*)/;
++    $code{$1} = $2;
++}
++
++open my $fh, '<', '../../opcode.pl' or die "Can't open opcode.pl: $!";
++while (<$fh>) {
++    last if /^__END__/;
++}
++while (<$fh>) {
++    chomp;
++    next if !$_ or /^#/;
++    my ($op, $opname) = split /\t+/;
++    push @op, [$op, $opname, $code{$op}];
++}
++close $fh;
++
++plan(tests => scalar @op);
++
++sub testop {
++    my ($op, $opname, $code) = @_;
++    pass("$op : skipped") and return if $code =~ /^SKIP/;
++    pass("$op : skipped") and return if $code =~ m://|~~: && $] < 5.010;
++    my $c = new Safe;
++    $c->deny_only($op);
++    $c->reval($code);
++    like($@, qr/'\Q$opname\E' trapped by operation mask/, $op);
++}
++
++foreach (@op) {
++    if ($_->[2]) {
++	testop @$_;
++    } else {
++	local $TODO = "No test yet for $_->[1]";
++	fail();
++    }
++}
++
++# things that begin with SKIP are skipped, for various reasons (notably
++# optree modified by the optimizer -- Safe checks are done before the
++# optimizer modifies the optree)
++
++__DATA__
++null		SKIP
++stub		SKIP
++scalar		scalar $x
++pushmark	print @x
++wantarray	wantarray
++const		42
++gvsv		SKIP (set by optimizer) $x
++gv		SKIP *x
++gelem		*x{SCALAR}
++padsv		SKIP my $x
++padav		SKIP my @x
++padhv		SKIP my %x
++padany		SKIP (not implemented)
++pushre		SKIP split /foo/
++rv2gv		*x
++rv2sv		$x
++av2arylen	$#x
++rv2cv		f()
++anoncode	sub { }
++prototype	prototype 'foo'
++refgen		\($x,$y)
++srefgen		SKIP \$x
++ref		ref
++bless		bless
++backtick	qx/ls/
++glob		<*.c>
++readline	<FH>
++rcatline	SKIP (set by optimizer) $x .= <F>
++regcmaybe	SKIP (internal)
++regcreset	SKIP (internal)
++regcomp		SKIP (internal)
++match		/foo/
++qr		qr/foo/
++subst		s/foo/bar/
++substcont	SKIP (set by optimizer)
++trans		y:z:t:
++sassign		$x = $y
++aassign		@x = @y
++chop		chop @foo
++schop		chop
++chomp		chomp @foo
++schomp		chomp
++defined		defined
++undef		undef
++study		study
++pos		pos
++preinc		++$i
++i_preinc	SKIP (set by optimizer)
++predec		--$i
++i_predec	SKIP (set by optimizer)
++postinc		$i++
++i_postinc	SKIP (set by optimizer)
++postdec		$i--
++i_postdec	SKIP (set by optimizer)
++pow		$x ** $y
++multiply	$x * $y
++i_multiply	SKIP (set by optimizer)
++divide		$x / $y
++i_divide	SKIP (set by optimizer)
++modulo		$x % $y
++i_modulo	SKIP (set by optimizer)
++repeat		$x x $y
++add		$x + $y
++i_add		SKIP (set by optimizer)
++subtract	$x - $y
++i_subtract	SKIP (set by optimizer)
++concat		$x . $y
++stringify	"$x"
++left_shift	$x << 1
++right_shift	$x >> 1
++lt		$x < $y
++i_lt		SKIP (set by optimizer)
++gt		$x > $y
++i_gt		SKIP (set by optimizer)
++le		$i <= $y
++i_le		SKIP (set by optimizer)
++ge		$i >= $y
++i_ge		SKIP (set by optimizer)
++eq		$x == $y
++i_eq		SKIP (set by optimizer)
++ne		$x != $y
++i_ne		SKIP (set by optimizer)
++ncmp		$i <=> $y
++i_ncmp		SKIP (set by optimizer)
++slt		$x lt $y
++sgt		$x gt $y
++sle		$x le $y
++sge		$x ge $y
++seq		$x eq $y
++sne		$x ne $y
++scmp		$x cmp $y
++bit_and		$x & $y
++bit_xor		$x ^ $y
++bit_or		$x | $y
++negate		-$x
++i_negate	SKIP (set by optimizer)
++not		!$x
++complement	~$x
++atan2		atan2 1
++sin		sin 1
++cos		cos 1
++rand		rand
++srand		srand
++exp		exp 1
++log		log 1
++sqrt		sqrt 1
++int		int
++hex		hex
++oct		oct
++abs		abs
++length		length
++substr		substr $x, 1
++vec		vec
++index		index
++rindex		rindex
++sprintf		sprintf '%s', 'foo'
++formline	formline
++ord		ord
++chr		chr
++crypt		crypt 'foo','bar'
++ucfirst		ucfirst
++lcfirst		lcfirst
++uc		uc
++lc		lc
++quotemeta	quotemeta
++rv2av		@a
++aelemfast	SKIP (set by optimizer)
++aelem		$a[1]
++aslice		@a[1,2]
++each		each %h
++values		values %h
++keys		keys %h
++delete		delete $h{Key}
++exists		exists $h{Key}
++rv2hv		%h
++helem		$h{kEy}
++hslice		@h{kEy}
++unpack		unpack
++pack		pack
++split		split /foo/
++join		join $a, @b
++list		@x = (1,2)
++lslice		SKIP @x[1,2]
++anonlist	[1,2]
++anonhash	{ a => 1 }
++splice		splice @x, 1, 2, 3
++push		push @x, $x
++pop		pop @x
++shift		shift @x
++unshift		unshift @x
++sort		sort @x
++reverse		reverse @x
++grepstart	grep { $_ eq 'foo' } @x
++grepwhile	SKIP grep { $_ eq 'foo' } @x
++mapstart	map $_ + 1, @foo
++mapwhile	SKIP (set by optimizer)
++range		SKIP
++flip		1..2
++flop		1..2
++and		$x && $y
++or		$x || $y
++xor		$x xor $y
++cond_expr	$x ? 1 : 0
++andassign	$x &&= $y
++orassign	$x ||= $y
++method		Foo->$x()
++entersub	f()
++leavesub	sub f{} f()
++leavesublv	sub f:lvalue{return $x} f()
++caller		caller
++warn		warn
++die		die
++reset		reset
++lineseq		SKIP
++nextstate	SKIP
++dbstate		SKIP (needs debugger)
++unstack		while(0){}
++enter		SKIP
++leave		SKIP
++scope		SKIP
++enteriter	SKIP
++iter		SKIP
++enterloop	SKIP
++leaveloop	SKIP
++return		return
++last		last
++next		next
++redo		redo THIS
++dump		dump
++goto		goto THERE
++exit		exit 0
++open		open FOO
++close		close FOO
++pipe_op		pipe FOO,BAR
++fileno		fileno FOO
++umask		umask 0755, 'foo'
++binmode		binmode FOO
++tie		tie
++untie		untie
++tied		tied
++dbmopen		dbmopen
++dbmclose	dbmclose
++sselect		SKIP (set by optimizer)
++select		select FOO
++getc		getc FOO
++read		read FOO
++enterwrite	write
++leavewrite	SKIP
++prtf		printf
++print		print
++sysopen		sysopen
++sysseek		sysseek
++sysread		sysread
++syswrite	syswrite
++send		send
++recv		recv
++eof		eof FOO
++tell		tell
++seek		seek FH, $pos, $whence
++truncate	truncate FOO, 42
++fcntl		fcntl
++ioctl		ioctl
++flock		flock FOO, 1
++socket		socket
++sockpair	socketpair
++bind		bind
++connect		connect
++listen		listen
++accept		accept
++shutdown	shutdown
++gsockopt	getsockopt
++ssockopt	setsockopt
++getsockname	getsockname
++getpeername	getpeername
++lstat		lstat FOO
++stat		stat FOO
++ftrread		-R
++ftrwrite	-W
++ftrexec		-X
++fteread		-r
++ftewrite	-w
++fteexec		-x
++ftis		-e
++fteowned	SKIP -O
++ftrowned	SKIP -o
++ftzero		-z
++ftsize		-s
++ftmtime		-M
++ftatime		-A
++ftctime		-C
++ftsock		-S
++ftchr		-c
++ftblk		-b
++ftfile		-f
++ftdir		-d
++ftpipe		-p
++ftlink		-l
++ftsuid		-u
++ftsgid		-g
++ftsvtx		-k
++fttty		-t
++fttext		-T
++ftbinary	-B
++chdir		chdir '/'
++chown		chown
++chroot		chroot
++unlink		unlink 'foo'
++chmod		chmod 511, 'foo'
++utime		utime
++rename		rename 'foo', 'bar'
++link		link 'foo', 'bar'
++symlink		symlink 'foo', 'bar'
++readlink	readlink 'foo'
++mkdir		mkdir 'foo'
++rmdir		rmdir 'foo'
++open_dir	opendir DIR
++readdir		readdir DIR
++telldir		telldir DIR
++seekdir		seekdir DIR, $pos
++rewinddir	rewinddir DIR
++closedir	closedir DIR
++fork		fork
++wait		wait
++waitpid		waitpid
++system		system
++exec		exec
++kill		kill
++getppid		getppid
++getpgrp		getpgrp
++setpgrp		setpgrp
++getpriority	getpriority
++setpriority	setpriority
++time		time
++tms		times
++localtime	localtime
++gmtime		gmtime
++alarm		alarm
++sleep		sleep 1
++shmget		shmget
++shmctl		shmctl
++shmread		shmread
++shmwrite	shmwrite
++msgget		msgget
++msgctl		msgctl
++msgsnd		msgsnd
++msgrcv		msgrcv
++semget		semget
++semctl		semctl
++semop		semop
++require		use strict
++dofile		do 'file'
++entereval	eval "1+1"
++leaveeval	eval "1+1"
++entertry	SKIP eval { 1+1 }
++leavetry	SKIP eval { 1+1 }
++ghbyname	gethostbyname 'foo'
++ghbyaddr	gethostbyaddr 'foo'
++ghostent	gethostent
++gnbyname	getnetbyname 'foo'
++gnbyaddr	getnetbyaddr 'foo'
++gnetent		getnetent
++gpbyname	getprotobyname 'foo'
++gpbynumber	getprotobynumber 42
++gprotoent	getprotoent
++gsbyname	getservbyname 'name', 'proto'
++gsbyport	getservbyport 'a', 'b'
++gservent	getservent
++shostent	sethostent
++snetent		setnetent
++sprotoent	setprotoent
++sservent	setservent
++ehostent	endhostent
++enetent		endnetent
++eprotoent	endprotoent
++eservent	endservent
++gpwnam		getpwnam
++gpwuid		getpwuid
++gpwent		getpwent
++spwent		setpwent
++epwent		endpwent
++ggrnam		getgrnam
++ggrgid		getgrgid
++ggrent		getgrent
++sgrent		setgrent
++egrent		endgrent
++getlogin	getlogin
++syscall		syscall
++lock		SKIP
++threadsv	SKIP
++setstate	SKIP
++method_named	$x->y()
++dor		$x // $y
++dorassign	$x //= $y
++once		SKIP {use feature 'state'; state $foo = 42;}
++say		SKIP {use feature 'say'; say "foo";}
++smartmatch	$x ~~ $y
++aeach		SKIP each @t
++akeys		SKIP keys @t
++avalues		SKIP values @t
++custom		SKIP (no way)
+diff -urN perl-5.8.8/ext/Opcode/t.old/safesort.t perl-5.8.8/ext/Opcode/t/safesort.t
+--- perl-5.8.8/ext/Opcode/t.old/safesort.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.8.8/ext/Opcode/t/safesort.t	2010-04-29 22:35:30.000000000 +0200
+@@ -0,0 +1,56 @@
++#!perl -w
++$|=1;
++BEGIN {
++    require Config; import Config;
++    if ($Config{'extensions'} !~ /\bOpcode\b/ && $Config{'osname'} ne 'VMS') {
++        print "1..0\n";
++        exit 0;
++    }
++}
++
++use Safe 1.00;
++use Test::More tests => 10;
++
++my $safe = Safe->new('PLPerl');
++$safe->permit_only(qw(:default sort));
++
++# check basic argument passing and context for anon-subs
++my $func = $safe->reval(q{ sub { @_ } });
++is_deeply [ $func->() ], [ ];
++is_deeply [ $func->("foo") ], [ "foo" ];
++
++my $func1 = $safe->reval(<<'EOS');
++
++    # uses quotes in { "$a" <=> $b } to avoid the optimizer replacing the block
++    # with a hardwired comparison
++    { package Pkg; sub p_sort { return sort { "$a" <=> $b } @_; } }
++                   sub l_sort { return sort { "$a" <=> $b } @_; }
++
++    return sub { return join(",",l_sort(@_)), join(",",Pkg::p_sort(@_)) }
++
++EOS
++
++is $@, '', 'reval should not fail';
++is ref $func, 'CODE', 'reval should return a CODE ref';
++
++my ($l_sorted, $p_sorted) = $func1->(3,1,2);
++is $l_sorted, "1,2,3";
++is $p_sorted, "1,2,3";
++
++# check other aspects of closures created inside Safe
++
++my $die_func = $safe->reval(q{ sub { die @_ if @_; 1 } });
++
++# check $@ not affected by successful call
++$@ = 42;
++$die_func->();
++is $@, 42, 'successful closure call should not alter $@';
++
++{
++    my $warns = 0;
++    local $SIG{__WARN__} = sub { $warns++ };
++    ok !eval { $die_func->("died\n"); 1 }, 'should die';
++    is $@, "died\n", '$@ should be set correctly';
++    local $TODO = "Shouldn't warn";
++    is $warns, 0;
++}
+diff -urN perl-5.8.8/ext/Opcode/t.old/safeuniversal.t perl-5.8.8/ext/Opcode/t/safeuniversal.t
+--- perl-5.8.8/ext/Opcode/t.old/safeuniversal.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.8.8/ext/Opcode/t/safeuniversal.t	2010-04-29 22:35:30.000000000 +0200
+@@ -0,0 +1,46 @@
++#!perl
++
++BEGIN {
++    require Config;
++    import Config;
++    if ($Config{'extensions'} !~ /\bOpcode\b/) {
++	print "1..0\n";
++	exit 0;
++    }
++}
++
++use strict;
++use warnings;
++use Test::More;
++use Safe;
++plan(tests => 6);
++
++my $c = new Safe;
++$c->permit(qw(require caller));
++
++my $no_warn_redef = ($] != 5.008009)
++    ? q(no warnings 'redefine';)
++    : q($SIG{__WARN__}=sub{};);
++my $r = $c->reval($no_warn_redef . q!
++    sub UNIVERSAL::isa { "pwned" }
++    (bless[],"Foo")->isa("Foo");
++!);
++
++is( $r, "pwned", "isa overriden in compartment" );
++is( (bless[],"Foo")->isa("Foo"), 1, "... but not outside" );
++
++sub Foo::foo {}
++
++$r = $c->reval($no_warn_redef . q!
++    sub UNIVERSAL::can { "pwned" }
++    (bless[],"Foo")->can("foo");
++!);
++
++is( $r, "pwned", "can overriden in compartment" );
++is( (bless[],"Foo")->can("foo"), \&Foo::foo, "... but not outside" );
++
++$r = $c->reval(q!
++    utf8::is_utf8("\x{100}");
++!);
++is( $@, '', 'can call utf8::is_valid' );
++is( $r, 1, '... returns 1' );
+diff -urN perl-5.8.8/ext/Opcode/t.old/safeutf8.t perl-5.8.8/ext/Opcode/t/safeutf8.t
+--- perl-5.8.8/ext/Opcode/t.old/safeutf8.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.8.8/ext/Opcode/t/safeutf8.t	2010-04-29 22:35:30.000000000 +0200
+@@ -0,0 +1,46 @@
++#!perl -w
++$|=1;
++BEGIN {
++    require Config; import Config;
++    if ($Config{'extensions'} !~ /\bOpcode\b/ && $Config{'osname'} ne 'VMS') {
++        print "1..0\n";
++        exit 0;
++    }
++}
++
++use Test::More tests => 7;
++
++use Safe 1.00;
++use Opcode qw(full_opset);
++
++pass;
++
++my $safe = Safe->new('PLPerl');
++$safe->deny_only();
++
++# Expression that triggers require utf8 and call to SWASHNEW.
++# Fails with "Undefined subroutine PLPerl::utf8::SWASHNEW called"
++# if SWASHNEW is not shared, else returns true if unicode logic is working.
++my $trigger = q{ my $a = pack('U',0xC4); my $b = chr 0xE4; utf8::upgrade $b; $a =~ /$b/i };
++
++ok $safe->reval( $trigger ), 'trigger expression should return true';
++is $@, '', 'trigger expression should not die';
++
++# return a closure
++my $sub = $safe->reval(q{sub { warn pack('U',0xC4) }});
++
++# define code outside Safe that'll be triggered from inside
++my @warns;
++$SIG{__WARN__} = sub {
++    my $msg = shift;
++    # this regex requires a different SWASH digit data for \d)
++    # than the one used above and by the trigger code in Safe.pm
++    $msg =~ s/\(eval \d+\)/XXX/i; # uses IsDigit SWASH
++    push @warns, $msg;
++};
++
++is eval { $sub->() }, 1, 'warn should return 1';
++is $@, '', '__WARN__ hook should not die';
++is @warns, 1, 'should only be 1 warning';
++like $warns[0], qr/at XXX line/, 'warning should have been edited';
++
+diff -urN perl-5.8.8/ext/Opcode/t.old/safewrap.t perl-5.8.8/ext/Opcode/t/safewrap.t
+--- perl-5.8.8/ext/Opcode/t.old/safewrap.t	1970-01-01 01:00:00.000000000 +0100
++++ perl-5.8.8/ext/Opcode/t/safewrap.t	2010-04-29 22:35:30.000000000 +0200
+@@ -0,0 +1,39 @@
++#!perl -w
++
++$|=1;
++BEGIN {
++    require Config; import Config;
++    if ($Config{'extensions'} !~ /\bOpcode\b/ && $Config{'osname'} ne 'VMS') {
++        print "1..0\n";
++        exit 0;
++    }
++}
++
++use strict;
++use Safe 1.00;
++use Test::More tests => 9;
++
++my $safe = Safe->new('PLPerl');
++$safe->permit_only(qw(:default sort));
++
++# eval within an eval: the outer eval is compiled into the sub, the inner is
++# compiled (by the outer) at runtime and so is subject to runtime opmask
++my $sub1 = sub { eval " eval '1+1' " };
++is $sub1->(), 2;
++
++my $sub1w = $safe->wrap_code_ref($sub1);
++is ref $sub1w, 'CODE';
++is eval { $sub1w->() }, undef;
++like $@, qr/eval .* trapped by operation mask/;
++
++is $sub1->(), 2, 'original ref should be unaffected';
++
++# setup args for wrap_code_refs_within including nested data
++my @args = (42, [[ 0, { sub => $sub1 }, 2 ]], 24);
++is $args[1][0][1]{sub}, $sub1;
++
++$safe->wrap_code_refs_within(@args);
++my $sub1w2 = $args[1][0][1]{sub};
++isnt $sub1w2, $sub1;
++is eval { $sub1w2->() }, undef;
++like $@, qr/eval .* trapped by operation mask/;
