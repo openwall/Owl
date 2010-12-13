@@ -46,6 +46,28 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 2.0 and Owl-current.
 
+2010/12/13	Package: perl
+SECURITY FIX	Severity: none to high, remote, active
+Added security fix backports found in Red Hat's 5.8.8-32.el5.2.  These
+are for a double-free bug triggerable via malicious regexps with UTF-8
+characters (CVE-2008-1927), Safe.pm restrictions bypass (CVE-2010-1168),
+and race conditions in the rmtree function in File::Path (CVE-2008-5302,
+CVE-2008-5303).  Despite of these fixes, we recommend that regexps not
+be obtained or formed from untrusted input, Safe.pm not be used at all
+(it is regarded by many as a failed experiment and is a candidate for
+removal from the core Perl distribution), and rmtree not be used on
+directory trees potentially under an attacker's control.
+References:
+http://rt.perl.org/rt3/Public/Bug/Display.html?id=48156
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-1927
+http://www.openwall.com/lists/oss-security/2010/05/20/5
+http://www.mail-archive.com/debian-bugs-rc@lists.debian.org/msg220612.html
+https://rhn.redhat.com/errata/RHSA-2010-0458.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-1168
+http://www.openwall.com/lists/oss-security/2008/11/28/2
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-5302
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-5303
+
 2010/12/09	Packages: owl-cdrom, owl-setup
 Added new boot label called "safe" to the CD boot menu.  Currently, this
 adds the "acpi=ht" kernel parameter (for machines that have problems
@@ -1533,4 +1555,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.298 2010/12/09 17:22:31 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.299 2010/12/13 14:47:31 solar Exp $
