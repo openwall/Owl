@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.29 2010/07/26 03:49:49 solar Exp $
+# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.30 2010/12/13 10:46:12 solar Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
 Version: 0.10
-Release: owl1
+Release: owl2
 License: public domain
 Group: System Environment/Base
 Source: base
@@ -72,9 +72,21 @@ done | sort > filelist.remove
 sort filelist.mtree |
 comm -3 - filelist.remove >> filelist
 
+%pre
+if [ -d /var/tmp ]; then
+	mv /var/tmp{,-}
+# If we fail to remove the old /var/tmp directory, have a message printed (the
+# error message from rmdir) and leave the directory as /var/tmp-, mode 700.
+	rmdir /var/tmp- || chmod 700 /var/tmp-
+fi
+
 %files -f filelist
 
 %changelog
+* Mon Dec 13 2010 Solar Designer <solar-at-owl.openwall.com> 0.10-owl2
+- Rename and try to remove the old /var/tmp if it's a directory, for upgrades
+from owl-hier older than 0.10-owl1.  Problem discovered by Vasiliy Kulikov.
+
 * Mon Jul 26 2010 Solar Designer <solar-at-owl.openwall.com> 0.10-owl1
 - Added /sys mountpoint, made /var/tmp a symlink to ../tmp.
 
