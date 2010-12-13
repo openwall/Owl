@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installworld.sh,v 1.34 2010/12/04 12:42:11 segoon Exp $
+# $Owl: Owl/build/installworld.sh,v 1.35 2010/12/13 10:30:11 solar Exp $
 
 . installworld.conf
 
@@ -149,6 +149,12 @@ EOF
 	setup_rpm
 
 	log "Rebuilding RPM database"
+# Remove __db.00? files that look like they're pre-NPTL.  The next invocation
+# of rpm will recreate the files.
+	if [ -f $ROOT/var/lib/rpm/__db.001 -a \
+	    "`wc -c < $ROOT/var/lib/rpm/__db.001`" -le 8192 ]; then
+		rm -f $ROOT/var/lib/rpm/__db.00?
+	fi
 	$RPMD $RPM_FLAGS --root $ROOT --rebuilddb || exit 1
 	NEED_FAKE=yes
 else
