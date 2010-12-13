@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/build/installworld.sh,v 1.36 2010/12/13 18:23:06 solar Exp $
+# $Owl: Owl/build/installworld.sh,v 1.37 2010/12/13 18:51:28 solar Exp $
 
 . installworld.conf
 
@@ -180,6 +180,7 @@ fi
 # before we install the shell.  Hence, we try to remove the directory here.
 if [ ! -L $ROOT/var/tmp -a -d $ROOT/var/tmp ]; then
 	if mv $ROOT/var/tmp{,-}; then
+		ln -s ../tmp $ROOT/var/tmp
 # If we fail to remove the old /var/tmp directory, have a message printed (the
 # error message from rmdir) and leave the directory as /var/tmp-, mode 700.
 		rmdir $ROOT/var/tmp- || chmod 700 $ROOT/var/tmp-
