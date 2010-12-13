@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.32 2010/12/13 14:08:28 solar Exp $
+# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.33 2010/12/13 14:12:57 solar Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
@@ -73,7 +73,7 @@ sort filelist.mtree |
 comm -3 - filelist.remove >> filelist
 
 %pre
-if [ -d /var/tmp ]; then
+if [ ! -L /var/tmp -a -d /var/tmp ]; then
 	mv /var/tmp{,-}
 # We can't remove the /var/tmp- directory just yet because it holds a temporary
 # file with this very scriptlet.  Instead, we create a symlink to the directory
