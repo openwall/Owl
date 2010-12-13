@@ -41,6 +41,4 @@ building Owl for these architectures for a while.  Possibly this is not
 worth the time as it would delay the release.  Maybe it could be done
 post-release, for the stable branch.
 
-Consider/implement Perl Safe.pm bypass fixes (update the module?)
-
-$Owl: Owl/doc/TODO,v 1.194 2010/11/09 13:24:10 solar Exp $
+$Owl: Owl/doc/TODO,v 1.195 2010/12/13 14:50:04 solar Exp $
