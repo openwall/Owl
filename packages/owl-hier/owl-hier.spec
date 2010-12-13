@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.30 2010/12/13 10:46:12 solar Exp $
+# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.31 2010/12/13 14:01:03 solar Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
@@ -75,6 +75,12 @@ comm -3 - filelist.remove >> filelist
 %pre
 if [ -d /var/tmp ]; then
 	mv /var/tmp{,-}
+# We can't remove the /var/tmp- directory just yet because it holds a temporary
+# file with this very scriptlet.
+fi
+
+%post
+if [ -d /var/tmp- ]; then
 # If we fail to remove the old /var/tmp directory, have a message printed (the
 # error message from rmdir) and leave the directory as /var/tmp-, mode 700.
 	rmdir /var/tmp- || chmod 700 /var/tmp-
