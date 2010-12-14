@@ -53,9 +53,6 @@ i386 Pakete als auch die für i686 sind für den i686 optimiert, allerdings
 benutzen die i686 Pakete Instruktionen, die nur für diese neue
 CPU-Version verfügbar sind.
 
-Es ist empfehlenswert die i386 Pakete zu verwenden, da der Geschwindigkeits-
-gewinn minimal ist (kleiner als 1%).
-
 
 	SPARC.
 
@@ -83,4 +80,4 @@ optimiert.  Die Pakete für alphaev56 sind für EV56/PCA56 Prozessoren
 alpha Pakete nutzen.  Auf einem EV6+ (21264, 21264A) sollten
 die alphaev56 Pakete benutzt werden.
 
-$Owl: Owl/doc/de/ARCHITECTURES,v 1.7 2006/01/02 10:26:38 schmidt Exp $
+$Owl: Owl/doc/de/ARCHITECTURES,v 1.8 2010/12/14 16:35:40 solar Exp $

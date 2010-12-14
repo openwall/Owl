@@ -59,10 +59,6 @@ pour un i686, avec la seule différence que les paquets i686 utilisent les
 instructions seulement disponibles avec cette version d'architecture plus
 récente.
 
-Il est recommandé que vous utilisiez seulement des paquets i386, comme les
-améliorations de performances avec le i686 est minimal (moins de 1% dans
-l'ensemble).
-
 
 	SPARC.
 
@@ -91,4 +87,4 @@ processeurs EV56/PCA56 (21164A, 21164PC). Sur un processeur EV5 (21164) vous
 pouvez utiliser le paquet alpha ordinaire sous-optimal. Sur un EV6+ (21264,
 21264A), utilisez les paquets alphaev56.
 
-$Owl: Owl/doc/fr/ARCHITECTURES,v 1.5 2006/02/15 16:38:43 solar Exp $
+$Owl: Owl/doc/fr/ARCHITECTURES,v 1.6 2010/12/14 16:35:40 solar Exp $
