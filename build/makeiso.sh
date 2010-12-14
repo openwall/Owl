@@ -1,5 +1,5 @@
-#!/bin/sh
-# $Owl: Owl/build/makeiso.sh,v 1.3 2007/01/08 17:01:54 ldv Exp $
+#!/bin/bash
+# $Owl: Owl/build/makeiso.sh,v 1.4 2010/12/14 10:57:09 solar Exp $
 
 set -e
 

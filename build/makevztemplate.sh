@@ -1,5 +1,5 @@
-#!/bin/sh
-# $Owl: Owl/build/makevztemplate.sh,v 1.1 2010/01/28 16:57:05 solar Exp $
+#!/bin/bash
+# $Owl: Owl/build/makevztemplate.sh,v 1.2 2010/12/14 10:57:09 solar Exp $
 
 set -e
 

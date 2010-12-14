@@ -1,5 +1,5 @@
-#!/bin/sh
-# $Owl: Owl/build/installisotree.sh,v 1.14 2010/07/28 16:34:59 solar Exp $
+#!/bin/bash
+# $Owl: Owl/build/installisotree.sh,v 1.15 2010/12/14 10:57:08 solar Exp $
 
 set -e
 

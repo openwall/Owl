@@ -1,5 +1,5 @@
-#!/bin/sh
-# $Owl: Owl/build/installvztree.sh,v 1.4 2010/07/26 23:20:01 solar Exp $
+#!/bin/bash
+# $Owl: Owl/build/installvztree.sh,v 1.5 2010/12/14 10:57:09 solar Exp $
 
 set -e
 

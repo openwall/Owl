@@ -1,5 +1,5 @@
-#!/bin/sh
-# $Owl: Owl/build/buildworld.sh,v 1.51 2010/12/06 05:32:41 solar Exp $
+#!/bin/bash
+# $Owl: Owl/build/buildworld.sh,v 1.52 2010/12/14 10:57:08 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
