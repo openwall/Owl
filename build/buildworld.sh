@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/buildworld.sh,v 1.52 2010/12/14 10:57:08 solar Exp $
+# $Owl: Owl/build/buildworld.sh,v 1.53 2010/12/14 11:10:24 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -468,7 +468,7 @@ wait
 STATUS=0
 if [ -e $HOME/native-work/failed ]; then
 	STATUS=1
-	log "Some packages failed to build."
+	log "Some packages failed to build"
 fi
 
 log "Removing temporary files"
