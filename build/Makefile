@@ -1,13 +1,15 @@
-# $Owl: Owl/build/Makefile,v 1.29 2010/07/19 20:40:27 solar Exp $
+# $Owl: Owl/build/Makefile,v 1.30 2010/12/14 10:54:04 solar Exp $
 
 # The Owl branch to build and/or install, specified by its tag in the
 # CVS.  This should only be set to build and/or install a non-current
 # branch.
 #
-#TAG=Owl-2_0-stable
+#TAG = Owl-2_0-stable
 
-MODULE=Owl
-BRANCH=$(if $(TAG),$(TAG),$(MODULE))
+MODULE = Owl
+BRANCH = $(if $(TAG),$(TAG),$(MODULE))
+
+SHELL = /bin/bash
 
 default: symlinks
 	BRANCH=$(BRANCH) native/$(BRANCH)/build/buildworld.sh
