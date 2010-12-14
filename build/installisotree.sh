@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installisotree.sh,v 1.15 2010/12/14 10:57:08 solar Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.15.2.1 2010/12/14 18:44:27 solar Exp $
 
 set -e
 
@@ -100,7 +100,7 @@ cd "$ROOT"
 if [ "$BRANCH" = "Owl" ]; then
 	echo "current as of $(TZ=UTC date +%Y/%m/%d)" >.Owl-CD-ROM
 else
-	touch .Owl-CD-ROM
+	echo "3.0-release built on $(TZ=UTC date +%Y/%m/%d)" >.Owl-CD-ROM
 fi
 chroot "$ROOT" sh -c '. /etc/profile.d/welcome-cdrom.sh >/README'
 chmod 644 .Owl-CD-ROM README
