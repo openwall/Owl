@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installworld.sh,v 1.39 2010/12/14 11:07:16 solar Exp $
+# $Owl: Owl/build/installworld.sh,v 1.40 2010/12/14 11:24:30 solar Exp $
 
 . installworld.conf
 
@@ -156,7 +156,17 @@ EOF
 		rm -f $ROOT/var/lib/rpm/__db.00?
 	fi
 	$RPMD $RPM_FLAGS --root $ROOT --rebuilddb || exit 1
-	NEED_FAKE=yes
+
+# We introduced x86_64 support shortly _after_ Owl 2.0 release, so we do not
+# have nor need the backwards compatibility installation support packages on
+# this architecture.  In the check below, we assume that we're running with the
+# correct personality set (e.g., set to i686 when upgrading a 32-bit system
+# while running an x86_64 kernel), which is similarly assumed by RPM anyway.
+	if [ "`uname -m`" != x86_64 ]; then
+		NEED_FAKE=yes
+	else
+		NEED_FAKE=no
+	fi
 else
 	setup_rpm
 
