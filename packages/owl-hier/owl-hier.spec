@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.34 2010/12/13 18:23:06 solar Exp $
+# $Owl: Owl/packages/owl-hier/owl-hier.spec,v 1.35 2010/12/14 11:07:16 solar Exp $
 
 Summary: Initial directory hierarchy.
 Name: owl-hier
-Version: 1.0
+Version: 1.1
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -35,8 +35,8 @@ if [ %_lib != lib ]; then
 	mkdir -m755 %_lib .%_libdir usr/X11R6/%_lib
 	mv lib/security %_lib
 fi
-ln -s ../tmp usr/tmp
-ln -s ../tmp var/tmp
+ln -s /tmp usr/tmp
+ln -s /tmp var/tmp
 ln -s ../X11R6/bin .%_bindir/X11
 ln -s ../X11R6/include/X11 .%_includedir/X11
 ln -s ../X11R6/lib/X11 .%_libdir/X11
@@ -75,6 +75,12 @@ comm -3 - filelist.remove >> filelist
 %files -f filelist
 
 %changelog
+* Tue Dec 14 2010 Solar Designer <solar-at-owl.openwall.com> 1.1-owl1
+- Changed the /usr/tmp and /var/tmp symlinks to be absolute such that /var/tmp
+works even when /var itself is a symlink (perhaps to a directory on a
+filesystem shared with another part of the system).  Thanks to (GalaxyMaster)
+for noticing the problem with relative symlinks.
+
 * Mon Dec 13 2010 Solar Designer <solar-at-owl.openwall.com> 1.0-owl1
 - Set version to 1.0 for Owl 3.0 release as well as to skip over 0.10-owl2,
 which existed for a few hours until the changes were reverted and moved to

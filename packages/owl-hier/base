@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-hier/base,v 1.8 2010/07/26 02:02:13 solar Exp $
+# $Owl: Owl/packages/owl-hier/base,v 1.9 2010/12/14 11:07:16 solar Exp $
 
 # /
 /set type=file uname=root gname=root mode=0755
@@ -139,7 +139,7 @@ tmp		type=dir mode=01777
 
 # /usr
 usr		type=dir
-    tmp		type=link link=../tmp
+    tmp		type=link link=/tmp
 
 # /usr/X11R6
 X11R6		type=dir
@@ -566,7 +566,7 @@ world		type=dir uname=build gname=sources mode=0750
 var		type=dir
     adm		type=link link=log
     mail	type=link link=spool/mail
-    tmp		type=link link=../tmp
+    tmp		type=link link=/tmp
 
 # /var/account
 account		type=dir mode=0700
