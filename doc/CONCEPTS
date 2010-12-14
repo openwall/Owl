@@ -1,4 +1,4 @@
-	"Owl", -- a security-enhanced server platform.
+	"Owl" - a security-enhanced server platform.
 
 "Owl" (or "Openwall GNU/*/Linux"; please, note that only the "O" is
 capitalized in either case) is a security-enhanced operating system
@@ -120,8 +120,8 @@ Hat Linux and several other distributions, on an Owl system.
 Except for a few cases where this conflicts with our more important
 goals, Owl tries to be binary- and package- compatible with several
 other major distributions of GNU/*/Linux.  In particular, in most
-cases it is possible to install applications packaged for a recent
-version of Fedora Core or Red Hat Enterprise Linux on Owl (as of Owl 2.0
-release, this applies to FC3 and RHEL4).
+cases it is possible to install applications packaged for a certain
+version of Red Hat Enterprise Linux, CentOS, or Fedora on Owl.  As of
+Owl 2.0 and Owl 3.0, this applies to RHEL4, CentOS 4, and FC3.
 
-$Owl: Owl/doc/CONCEPTS,v 1.13 2006/10/17 00:31:15 solar Exp $
+$Owl: Owl/doc/CONCEPTS,v 1.14 2010/12/14 16:37:05 solar Exp $

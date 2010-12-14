@@ -1,6 +1,6 @@
 In most cases it is possible to install applications packaged for a
 certain version of Red Hat Enterprise Linux, CentOS, or Fedora on Owl.
-As of Owl 2.0 release, this applies to RHEL4, CentOS 4, and FC3.
+As of Owl 2.0 and Owl 3.0, this applies to RHEL4, CentOS 4, and FC3.
 
 This file lists known issues with using packages from or intended for
 Red Hat Enterprise Linux, CentOS, and Fedora on Owl.  The names of
@@ -113,4 +113,4 @@ don't do that.  If another package requires S-Lang with UTF-8 support,
 the workaround is simply to replace our slang package with Red Hat's.
 There are no dependencies on our version of slang within Owl itself.
 
-$Owl: Owl/doc/REDHAT,v 1.12 2010/02/12 01:44:36 solar Exp $
+$Owl: Owl/doc/REDHAT,v 1.13 2010/12/14 16:37:05 solar Exp $

@@ -49,7 +49,7 @@ another GNU/*/Linux system is sometimes possible, but tricky and
 requires that you slowly produce an Owl system with multiple iterations
 of "make buildworld" and "make installworld".
 
-Here are some build times (hours:minutes) for Owl-current, so that you
+Here are some build times (hours:minutes) for Owl 3.0, so that you
 know what to expect:
 
 Core 2 Duo E6550, 2.33 GHz, 2 GB				0:55
@@ -59,9 +59,9 @@ commented out, missing, or set to an empty string).  The build times
 happen to be about the same for i686 and x86_64 builds (when the machine
 supports both).
 
-Some build times of Owl 2.0 (Owl-current should take a bit longer and
-some packages will likely fail to build since we haven't been doing
-builds for these architectures for a long time):
+Some build times of Owl 2.0 (Owl 3.0 and Owl-current should take a bit
+longer and some packages will likely fail to build since we haven't been
+doing builds for these architectures for a long time):
 
 UltraSparc IIi, 400 MHz, 256 MB					10:00
 Alpha 21164PC (164SX-1MB), 533 MHz, 128 MB			14:00
@@ -110,4 +110,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Owl: Owl/doc/BUILD,v 1.44 2010/12/04 03:32:56 solar Exp $
+$Owl: Owl/doc/BUILD,v 1.45 2010/12/14 16:37:05 solar Exp $
