@@ -17,12 +17,16 @@ cpp.vim
 crontab.vim
 csh.vim
 css.vim
+ctrlh.vim
 cvs.vim
 cvsrc.vim
 denyhosts.vim
 diff.vim
 dircolors.vim
 dns.vim
+dot.vim
+doxygen.vim
+dtd.vim
 elf.vim
 elinks.vim
 fstab.vim
@@ -66,6 +70,7 @@ perl.vim
 php.vim
 phtml.vim
 po.vim
+pod.vim
 procmail.vim
 protocols.vim
 python.vim
@@ -100,6 +105,7 @@ tar.vim
 tcsh.vim
 terminfo.vim
 texinfo.vim
+vb.vim
 vim.vim
 viminfo.vim
 wget.vim
