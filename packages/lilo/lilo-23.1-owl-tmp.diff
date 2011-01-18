@@ -1,0 +1,26 @@
+diff -uNrp lilo-23.1.orig/mkrescue lilo-23.1/mkrescue
+--- lilo-23.1.orig/mkrescue	2010-06-19 22:07:36 +0000
++++ lilo-23.1/mkrescue	2011-01-16 15:19:16 +0000
+@@ -96,11 +96,17 @@ fi
+ compact=-c
+ device=/dev/fd0
+ fs=ext2
+-tmpbase=${TMPDIR:-/tmp}/mkrescue_$$
+-mount=`mktemp -d -t mkrescue-flp.XXXXXX` || { echo "$0: Cannot create temporary directory" >&2; exit 1; }
+-mfile=`mktemp -t mkrescue-emu.XXXXXX` || { echo "$0: Cannot create temporary file" >&2; exit 1;  }
+-mtemp=`mktemp -t mkrescue-tmp.XXXXXX` || { echo "$0: Cannot create temporary file" >&2; exit 1;  }
+-trap " [ \"$debug\" != true ] && rm -f \"$mtemp\" ;  /bin/rm -rf -- \"$mount\" \"$mfile\" " 0 1 2 3 13 15
++tmpbase="`mktemp -dt $(basename $0).XXXXXXXXXX`" || exit
++if [ "$debug" != true ]; then
++        trap 'rm -rf -- "$tmpbase"' EXIT
++        trap 'trap - EXIT; rm -rf -- "$tmpbase"; exit 1' HUP INT QUIT TERM
++fi
++mount="$tmpbase/mkrescue-flp"
++mfile="$tmpbase/mkrescue-emu"
++mtemp="$tmpbase/mkrescue-tmp"
++mkdir "$mount"
++touch "$mfile" "$mtemp"
++
+ loopback=loop0
+ looppart=loop1
+ install=text

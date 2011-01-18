@@ -1,7 +1,7 @@
-diff -ur lilo-22.7.orig/manPages/lilo.conf.5 lilo-22.7/manPages/lilo.conf.5
---- lilo-22.7.orig/manPages/lilo.conf.5	2004-11-16 20:43:23 +0000
-+++ lilo-22.7/manPages/lilo.conf.5	2005-06-13 18:51:24 +0000
-@@ -770,7 +770,8 @@
+diff -uNrp lilo-23.1.orig/man/lilo.conf.5 lilo-23.1/man/lilo.conf.5
+--- lilo-23.1.orig/man/lilo.conf.5	2010-11-01 16:13:41 +0000
++++ lilo-23.1/man/lilo.conf.5	2011-01-16 15:19:39 +0000
+@@ -813,7 +813,8 @@ select 80x50 text mode.
  .BR ask :
  stop and ask for user input (at boot time).
  .sp

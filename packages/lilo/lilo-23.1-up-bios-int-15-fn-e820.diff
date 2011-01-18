@@ -1,0 +1,12 @@
+--- lilo-23.1/src/second.S	2010-06-19 22:20:26 +0000
++++ lilo-23.1/src/second.S	2011-01-18 02:09:35 +0000
+@@ -2927,8 +2927,7 @@
+ 	xor	edx,edx			; flag nothing found
+ 	xor	esi,esi			; flag size==0
+ 	xor	ebx,ebx
+-	;jmp	e8go			; circumvented due to BIOS problems
+-	br	no_e801			; skip to backup plan
++	jmp	e8go
+ e8go2:	or	ebx,ebx			; test for end
+ 	jz	e8go5
+ e8go:	push	edx			; save best prospect
