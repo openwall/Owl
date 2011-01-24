@@ -46,6 +46,10 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2011/01/24	Package: owl-startup
+Added "-s 131072" to the dmesg invocation in rc.sysinit.  Without this
+change, /var/run/dmesg.boot was often incomplete.
+
 2011/01/24	Package: lilo
 Updated to 23.1.
 
@@ -55,4 +59,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.1 2011/01/24 05:40:28 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.2 2011/01/24 06:32:45 solar Exp $
