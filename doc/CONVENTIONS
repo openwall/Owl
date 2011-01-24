@@ -186,6 +186,7 @@ info		- texinfo documentation patches only
 install-no-root	- changes to run "make install" or equivalent as non-root
 linux		- changes needed to build on Linux (for ported software)
 man		- man page patches only
+revert		- patches reverting ORIGIN's changes (e.g., "up-revert")
 tests		- testsuite patches only
 tmp		- patches dealing with temporary file handling issues
 vitmp		- patches that add vitmp(1) support
@@ -256,4 +257,4 @@ then require the proper version of mktemp(1):
 As usual, use Requires, PreReq, and/or BuildRequires depending on
 where in the package the uses of mktemp occur.
 
-$Owl: Owl/doc/CONVENTIONS,v 1.32 2010/03/22 18:49:00 solar Exp $
+$Owl: Owl/doc/CONVENTIONS,v 1.33 2011/01/24 06:19:04 solar Exp $
