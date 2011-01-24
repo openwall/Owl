@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/lilo/lilo.spec,v 1.32 2011/01/18 15:04:18 segoon Exp $
+# $Owl: Owl/packages/lilo/lilo.spec,v 1.33 2011/01/24 05:36:21 solar Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 
@@ -36,7 +36,7 @@ can also boot other operating systems.
 
 # filename collision of README and readme/README
 mv readme/README{,2}
-bzip2 -9k README readme/README*
+bzip2 -9k readme/README2
 
 %{expand: %%define optflags %optflags -Wall -Wno-long-long -pedantic}
 
@@ -110,11 +110,11 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc README.bz2 readme/README{2,.bitmaps,.common.problems,.raid1,.nokeyboard,.volumeID}.bz2
+%doc README
+%doc readme/README{2.bz2,.bitmaps,.common.problems,.raid1,.nokeyboard,.volumeID}
 %doc CHANGELOG NEWS TODO
 %doc sample/*.conf
 %doc COPYING readme/INCOMPAT QuickInst
-%doc doc
 %doc %_sysconfdir/lilo.conf.sample
 %attr(600,root,root) %verify(not md5 mtime size) %ghost %_sysconfdir/lilo.conf
 %attr(755,root,root) %_bindir/keytab-lilo
