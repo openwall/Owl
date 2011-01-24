@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/lilo/lilo.spec,v 1.34 2011/01/24 05:52:53 solar Exp $
+# $Owl: Owl/packages/lilo/lilo.spec,v 1.35 2011/01/24 06:14:35 solar Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 
@@ -15,7 +15,7 @@ Patch0: lilo-23.1-owl-Makefile.diff
 Patch1: lilo-23.1-alt-owl-fixes.diff
 Patch2: lilo-23.1-owl-tmp.diff
 Patch3: lilo-23.1-deb-owl-man.diff
-Patch4: lilo-23.1-up-bios-int-15-fn-e820.diff
+Patch4: lilo-23.1-up-revert-bios-int-15-fn-e820.diff
 BuildRequires: coreutils, dev86
 ExclusiveArch: %ix86 x86_64
 BuildRoot: /override/%name-%version
