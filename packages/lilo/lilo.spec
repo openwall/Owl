@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/lilo/lilo.spec,v 1.33 2011/01/24 05:36:21 solar Exp $
+# $Owl: Owl/packages/lilo/lilo.spec,v 1.34 2011/01/24 05:52:53 solar Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
 Version: 23.1
-Release: owl3
+Release: owl1
 License: MIT
 Group: System Environment/Base
 URL: http://lilo.alioth.debian.org/
