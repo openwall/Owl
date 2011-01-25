@@ -23,6 +23,11 @@ Move to OpenVZ's RHEL6 branch kernels.
 IPv6 support (networking startup scripts, installer, default kernel
 config).  Need to get the networking scripts replaced first (Simon?)
 
+Replace LILO with Syslinux (ISOLINUX, EXTLINUX).
+
+Add a GPT-aware disk partitioning tool (gparted?), make it available
+from the installer.
+
 
 	Tasks left over from Owl 3.0 release preparations.
 
@@ -38,4 +43,4 @@ User's Guide - review and edit the draft, make it public, then identify
 and add important missing chapters (adding/removing users, managing
 OpenVZ containers, maybe something else).
 
-$Owl: Owl/doc/TODO,v 1.197 2011/01/25 15:35:30 solar Exp $
+$Owl: Owl/doc/TODO,v 1.198 2011/01/25 15:55:49 solar Exp $
