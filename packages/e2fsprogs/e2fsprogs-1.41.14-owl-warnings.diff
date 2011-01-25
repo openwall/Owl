@@ -1,5 +1,5 @@
---- e2fsprogs-1.41.9/debugfs/debugfs.c.orig	2009-10-12 13:56:09.000000000 +0000
-+++ e2fsprogs-1.41.9/debugfs/debugfs.c	2009-10-12 13:58:14.000000000 +0000
+--- e2fsprogs-1.41.9/debugfs/debugfs.c.orig	2009-10-12 13:56:09 +0000
++++ e2fsprogs-1.41.9/debugfs/debugfs.c	2009-10-12 13:58:14 +0000
 @@ -875,7 +875,6 @@ void do_dump_extents(int argc, char *arg
  	}
  
@@ -8,9 +8,17 @@
  		com_err(0, 0, "Usage: dump_extents [-n] [-l] file");
  		return;
  	}
---- e2fsprogs-1.41.9/misc/tune2fs.c.orig	2009-10-12 13:58:45.000000000 +0000
-+++ e2fsprogs-1.41.9/misc/tune2fs.c	2009-10-12 14:04:10.000000000 +0000
-@@ -1044,7 +1044,7 @@ static int move_block(ext2_filsys fs, ex
+--- e2fsprogs-1.41.9/misc/tune2fs.c	2009-10-12 14:04:10 +0000
++++ b/misc/tune2fs.c
+@@ -345,7 +345,6 @@
+ {
+ 	struct ext2_super_block *sb = fs->super;
+ 	struct ext2_group_desc *gd;
+-	errcode_t	retval;
+ 	__u32		old_features[3];
+ 	int		i, type_err;
+ 	unsigned int	mask_err;
+@@ -1044,7 +1043,7 @@
  {
  
  	char *buf;
@@ -19,8 +27,8 @@
  	errcode_t retval;
  	int meta_data = 0;
  	blk_t blk, new_blk, goal;
---- e2fsprogs-1.41.9/misc/filefrag.c.orig	2009-10-12 14:04:29.000000000 +0000
-+++ e2fsprogs-1.41.9/misc/filefrag.c	2009-10-12 14:05:31.000000000 +0000
+--- e2fsprogs-1.41.9/misc/filefrag.c.orig	2009-10-12 14:04:29 +0000
++++ e2fsprogs-1.41.9/misc/filefrag.c	2009-10-12 14:05:31 +0000
 @@ -263,7 +263,7 @@ static void frag_report(const char *file
  #endif
  	int		bs;
@@ -30,8 +38,8 @@
  	long		bpib;	/* Blocks per indirect block */
  	long		cylgroups;
  	int		num_extents = 0, expected;
---- e2fsprogs-1.41.9/misc/e2freefrag.c.orig	2009-10-12 14:05:51.000000000 +0000
-+++ e2fsprogs-1.41.9/misc/e2freefrag.c	2009-10-12 14:06:54.000000000 +0000
+--- e2fsprogs-1.41.9/misc/e2freefrag.c.orig	2009-10-12 14:05:51 +0000
++++ e2fsprogs-1.41.9/misc/e2freefrag.c	2009-10-12 14:06:54 +0000
 @@ -144,7 +144,7 @@ errcode_t get_chunk_info(ext2_filsys fs,
  	unsigned long total_chunks;
  	char *unitp = "KMGTPEZY";
@@ -50,8 +58,8 @@
  
  	printf("Device: %s\n", fs->device_name);
  	printf("Blocksize: %u bytes\n", fs->blocksize);
---- e2fsprogs-1.41.9/lib/blkid/probe.c.orig	2009-08-13 01:39:57.000000000 +0000
-+++ e2fsprogs-1.41.9/lib/blkid/probe.c	2009-10-11 20:00:16.000000000 +0000
+--- e2fsprogs-1.41.9/lib/blkid/probe.c.orig	2009-08-13 01:39:57 +0000
++++ e2fsprogs-1.41.9/lib/blkid/probe.c	2009-10-11 20:00:16 +0000
 @@ -249,7 +249,7 @@ static int linux_version_code()
  {
  #ifdef __linux__
@@ -61,8 +69,8 @@
  	int		major, minor, rev;
  	char		*endptr;
  	const char 	*cp;
---- e2fsprogs-1.41.9/lib/uuid/gen_uuid.c.orig	2009-08-13 01:39:57.000000000 +0000
-+++ e2fsprogs-1.41.9/lib/uuid/gen_uuid.c	2009-10-11 20:00:29.000000000 +0000
+--- e2fsprogs-1.41.9/lib/uuid/gen_uuid.c.orig	2009-08-13 01:39:57 +0000
++++ e2fsprogs-1.41.9/lib/uuid/gen_uuid.c	2009-10-11 20:00:29 +0000
 @@ -38,6 +38,10 @@
   */
  #define _SVID_SOURCE
@@ -91,8 +99,8 @@
  
  /*
   * Try using the uuidd daemon to generate the UUID
---- e2fsprogs-1.41.9/resize/main.c.orig	2009-08-23 02:39:05.000000000 +0000
-+++ e2fsprogs-1.41.9/resize/main.c	2009-10-11 20:00:29.000000000 +0000
+--- e2fsprogs-1.41.9/resize/main.c.orig	2009-08-23 02:39:05 +0000
++++ e2fsprogs-1.41.9/resize/main.c	2009-10-11 20:00:29 +0000
 @@ -106,7 +106,7 @@ static void determine_fs_stride(ext2_fil
  
  	if (fs->stride)
@@ -102,8 +110,8 @@
  	for (group = 0; group < fs->group_desc_count; group++) {
  		has_sb = ext2fs_bg_has_super(fs, group);
  		if (group == 0 || has_sb != prev_has_sb)
---- e2fsprogs-1.41.9/e2fsck/ea_refcount.c.orig	2009-08-13 01:39:57.000000000 +0000
-+++ e2fsprogs-1.41.9/e2fsck/ea_refcount.c	2009-10-11 20:00:29.000000000 +0000
+--- e2fsprogs-1.41.9/e2fsck/ea_refcount.c.orig	2009-08-13 01:39:57 +0000
++++ e2fsprogs-1.41.9/e2fsck/ea_refcount.c	2009-10-11 20:00:29 +0000
 @@ -402,7 +402,7 @@ int main(int argc, char **argv)
  			retval = ea_refcount_create(size, &refcount);
  			if (retval) {
@@ -154,8 +162,8 @@
  			else
  				printf("Refcount validation OK.\n");
  			break;
---- e2fsprogs-1.41.9/e2fsck/region.c.orig	2009-08-13 01:39:57.000000000 +0000
-+++ e2fsprogs-1.41.9/e2fsck/region.c	2009-10-11 20:00:29.000000000 +0000
+--- e2fsprogs-1.41.9/e2fsck/region.c.orig	2009-08-13 01:39:57 +0000
++++ e2fsprogs-1.41.9/e2fsck/region.c	2009-10-11 20:00:29 +0000
 @@ -170,9 +170,9 @@ void region_print(region_t region, FILE 
  
  int main(int argc, char **argv)
@@ -168,8 +176,8 @@
  
  
  	while (1) {
---- e2fsprogs-1.41.9/e2fsck/message.c.orig	2009-10-12 13:50:06.000000000 +0000
-+++ e2fsprogs-1.41.9/e2fsck/message.c	2009-10-12 13:51:11.000000000 +0000
+--- e2fsprogs-1.41.9/e2fsck/message.c.orig	2009-10-12 13:50:06 +0000
++++ e2fsprogs-1.41.9/e2fsck/message.c	2009-10-12 13:51:11 +0000
 @@ -262,7 +262,6 @@ static _INLINE_ void expand_inode_expres
  {
  	struct ext2_inode	*inode;
@@ -178,8 +186,8 @@
  
  	if (!ctx || !ctx->inode)
  		goto no_inode;
---- e2fsprogs-1.41.9/e2fsck/rehash.c.orig	2009-10-12 13:51:21.000000000 +0000
-+++ e2fsprogs-1.41.9/e2fsck/rehash.c	2009-10-12 13:55:31.000000000 +0000
+--- e2fsprogs-1.41.9/e2fsck/rehash.c.orig	2009-10-12 13:51:21 +0000
++++ e2fsprogs-1.41.9/e2fsck/rehash.c	2009-10-12 13:55:31 +0000
 @@ -429,6 +429,7 @@ static errcode_t copy_dir_entries(e2fsck
  	if ((retval = get_next_block(fs, outdir, &block_start)))
  		return retval;
@@ -188,8 +196,8 @@
  	prev_rec_len = 0;
  	left = fs->blocksize;
  	slack = fd->compress ? 12 :
---- e2fsprogs-1.41.9/e2fsck/problem.c.orig	2009-10-12 14:07:29.000000000 +0000
-+++ e2fsprogs-1.41.9/e2fsck/problem.c	2009-10-12 14:13:52.000000000 +0000
+--- e2fsprogs-1.41.9/e2fsck/problem.c.orig	2009-10-12 14:07:29 +0000
++++ e2fsprogs-1.41.9/e2fsck/problem.c	2009-10-12 14:13:52 +0000
 @@ -1930,7 +1930,7 @@ int verify_problem_table(e2fsck_t ctx)
  
  int main(int argc, char *argv[])
@@ -199,3 +207,72 @@
  	int rc;
  
  	rc = verify_problem_table(ctx);
+--- a/e2fsck/pass1.c.orig	2010-08-17 08:43:20 +0000
++++ b/e2fsck/pass1.c	2010-08-17 08:43:39 +0000
+@@ -405,7 +405,6 @@
+ 	const char		*old_op;
+ 	errcode_t		retval;
+ 	blk_t			blk;
+-	blk64_t			first_dir_blk;
+ 	unsigned int		i, rec_len, not_device = 0;
+ 	int			extent_fs;
+ 
+--- b/misc/mke2fs.c	2010-08-17 08:43:03 +0000
++++ b/misc/mke2fs.c
+@@ -17,6 +17,7 @@
+  */
+ 
+ #define _XOPEN_SOURCE 600 /* for inclusion of PATH_MAX in Solaris */
++#define _LARGEFILE64_SOURCE
+ 
+ #include <stdio.h>
+ #include <string.h>
+@@ -2017,7 +2018,7 @@
+ static int mke2fs_discard_blocks(ext2_filsys fs)
+ {
+ 	int fd;
+-	int ret;
++	int ret = -1;
+ 	int blocksize;
+ 	__u64 blocks;
+ 	__uint64_t range[2];
+@@ -2048,7 +2049,6 @@
+ static int mke2fs_discard_zeroes_data(ext2_filsys fs)
+ {
+ 	int fd;
+-	int ret;
+ 	int discard_zeroes_data = 0;
+ 
+ 	fd = open64(fs->device_name, O_RDWR);
+--- a/lib/ext2fs/ext2fs.h
++++ b/lib/ext2fs/ext2fs.h
+@@ -1212,7 +1212,7 @@ _INLINE_ errcode_t ext2fs_get_memalign(unsigned long size,
+ 
+ 	if (align == 0)
+ 		align = 8;
+-	if (retval = posix_memalign((void **) ptr, align, size)) {
++	if ((retval = posix_memalign((void **) ptr, align, size))) {
+ 		if (retval == ENOMEM)
+ 			return EXT2_ET_NO_MEMORY;
+ 		return retval;
+--- a/lib/ext2fs/tst_super_size.c
++++ b/lib/ext2fs/tst_super_size.c
+@@ -22,6 +22,8 @@ struct sb_struct sb;
+ 
+ int verbose = 0;
+ 
++#if (__GNUC__ >= 4)
++
+ #define offsetof(type, member)  __builtin_offsetof (type, member)
+ #define check_field(x) cur_offset = do_field(#x, sizeof(sb.x),		\
+ 					      offsetof(struct sb_struct, x), \
+@@ -37,6 +39,9 @@ static int do_field(const char *field, size_t size, int offset, int cur_offset)
+ 	return offset + size;
+ }
+ 
++#endif
++
++
+ void check_superblock_fields()
+ {
+ #if (__GNUC__ >= 4)
