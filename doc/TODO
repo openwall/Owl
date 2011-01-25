@@ -1,16 +1,41 @@
-This is the public Owl to-do list.  Currently, it contains a few tasks
-left over from Owl 3.0 release preparations (these tasks were not taken
-care of in time for the release).
+This is the public Owl to-do list.
 
+
+	Owl 4.0 roadmap.
+
+Support a package repository, likely with Zypper (package it):
+http://en.opensuse.org/Portal:Zypper
+
+Toolchain and libraries updates (gcc, glibc, OpenSSL, etc.)  Package
+updates that we didn't dare to make shortly before 3.0 (OpenSSH, etc.)
+
+Packages to consider and likely add (first batch): ethtool, biosdevname,
+vlan, bridge-utils, pv.
+
+Packages to consider and likely add (second batch, after toolchain and
+libraries update): tcpdump (or tshark?), nano (or another
+newbie-friendly text editor), wget (or put it in the repository only).
+
+ICMP sockets.
+
+Move to OpenVZ's RHEL6 branch kernels.
+
+IPv6 support (networking startup scripts, installer, default kernel
+config).  Need to get the networking scripts replaced first (Simon?)
+
+
+	Tasks left over from Owl 3.0 release preparations.
 
 Bring the documentation translations in sync with English or drop them.
+(French and German were in fact dropped from 3.0, but kept in -current
+for now.  Maybe drop them from -current as well.)
 
-Start to implement security hardening of OpenVZ kernels.
+Proceed to implement security hardening of OpenVZ kernels.
 
 Replace our hybrid 2.4+2.6 modutils with plain module-init-tools.
 
-User's Guide - review and edit the draft, identify and add important
-missing chapters (adding/removing users, managing OpenVZ containers,
-maybe something else).
+User's Guide - review and edit the draft, make it public, then identify
+and add important missing chapters (adding/removing users, managing
+OpenVZ containers, maybe something else).
 
-$Owl: Owl/doc/TODO,v 1.196 2010/12/14 16:37:05 solar Exp $
+$Owl: Owl/doc/TODO,v 1.197 2011/01/25 15:35:30 solar Exp $
