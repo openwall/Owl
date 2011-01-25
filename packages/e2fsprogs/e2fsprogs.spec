@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.57 2011/01/25 17:02:35 segoon Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.58 2011/01/25 17:20:17 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -18,7 +18,7 @@ License: GPL
 Group: System Environment/Base
 URL: http://e2fsprogs.sourceforge.net
 # http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
-Source: e2fsprogs-%version.tar.bz2
+Source: e2fsprogs-%version.tar.xz
 # Signature: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz.asc
 # http://repo.or.cz/w/e2fsprogs.git?a=shortlog;h=maint
 Patch0: e2fsprogs-1.41.5-alt-fixes.diff
