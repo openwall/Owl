@@ -25,7 +25,7 @@ config).  Need to get the networking scripts replaced first (Simon?)
 
 Replace LILO with Syslinux (ISOLINUX, EXTLINUX).
 
-Add a GPT-aware disk partitioning tool (gparted?), make it available
+Add a GPT-aware disk partitioning tool (parted?), make it available
 from the installer.
 
 
@@ -43,4 +43,4 @@ User's Guide - review and edit the draft, make it public, then identify
 and add important missing chapters (adding/removing users, managing
 OpenVZ containers, maybe something else).
 
-$Owl: Owl/doc/TODO,v 1.198 2011/01/25 15:55:49 solar Exp $
+$Owl: Owl/doc/TODO,v 1.199 2011/01/25 16:04:39 solar Exp $
