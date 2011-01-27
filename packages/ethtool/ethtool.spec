@@ -1,4 +1,6 @@
-Summary: Ethernet settings tool for PCI ethernet cards
+# $Owl: Owl/packages/ethtool/ethtool.spec,v 1.2 2011/01/27 14:43:46 solar Exp $
+
+Summary: Utility for controlling network drivers and hardware.
 Name: ethtool
 Version: 2.6.37
 Release: owl1
@@ -9,14 +11,23 @@ URL: http://www.kernel.org/pub/software/network/ethtool/
 # URL: http://sourceforge.net/projects/gkernel/
 Source: http://www.kernel.org/pub/software/network/%name/%name-%version.tar.bz2
 # Signature: http://www.kernel.org/pub/software/network/%name/%name-%version.tar.bz2.sign
-
-BuildRequires:	automake, autoconf
+BuildRequires: automake, autoconf
 BuildRoot: /override/%name-%version
 
 %description
-This utility allows querying and changing settings such as speed,
-port, autonegotiation, PCI locations and checksum offload on many
-network devices, especially of ethernet devices.
+ethtool is the standard Linux utility for controlling network drivers and
+hardware, particularly for wired Ethernet devices.  It can be used to:
+
+* Get identification and diagnostic information
+* Get extended device statistics
+* Control speed, duplex, autonegotiation, and flow control for Ethernet devices
+* Control checksum offload and other hardware offload features
+* Control DMA ring sizes and interrupt moderation
+* Control receive queue selection for multiqueue devices
+* Upgrade firmware in flash memory
+
+Most features are dependent on support in the specific driver.  See the manual
+page for full information.
 
 %prep
 %setup -q
@@ -39,6 +50,6 @@ rm -rf %buildroot
 %_mandir/man8/%name.8*
 
 %changelog
-* Thu Jan 27 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.37-owl1
+* Thu Jan 27 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:2.6.37-owl1
 - Initial import from Fedora.
 - Updated to 2.6.37.
