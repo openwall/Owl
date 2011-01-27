@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/ethtool/ethtool.spec,v 1.2 2011/01/27 14:43:46 solar Exp $
+# $Owl: Owl/packages/ethtool/ethtool.spec,v 1.3 2011/01/27 15:18:23 solar Exp $
 
 Summary: Utility for controlling network drivers and hardware.
 Name: ethtool
@@ -39,9 +39,6 @@ page for full information.
 %install
 rm -rf %buildroot
 %__make DESTDIR=%buildroot INSTALL='install -p' install
-
-%clean
-rm -rf %buildroot
 
 %files
 %defattr(-,root,root,-)
