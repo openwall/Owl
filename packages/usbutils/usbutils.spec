@@ -51,4 +51,4 @@ rm -rf %buildroot
 * Thu Jan 27 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 001-owl1
 - Initial import from Fedora.
 - Updated to 001.
-- Fixed update-usbids.sh to gzip the database.
+- Fixed update-usbids.sh to gzip the database and use lftp.
