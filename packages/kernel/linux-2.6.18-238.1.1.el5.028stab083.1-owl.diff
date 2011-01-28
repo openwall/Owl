@@ -107,6 +107,92 @@ diff -urp linux-2.6.18-238.1.1.el5.028stab083.1/drivers/ata/ahci.c linux-2.6.18-
  
  	/* acquire resources */
  	rc = pcim_enable_device(pdev);
+diff -urp linux-2.6.18-238.1.1.el5.028stab083.1/drivers/block/cciss.c linux-2.6.18-238.1.1.el5.028stab083.1-owl/drivers/block/cciss.c
+--- linux-2.6.18-238.1.1.el5.028stab083.1/drivers/block/cciss.c	2011-01-25 09:59:58 +0000
++++ linux-2.6.18-238.1.1.el5.028stab083.1-owl/drivers/block/cciss.c	2011-01-28 14:13:29 +0000
+@@ -194,11 +194,40 @@ static void cciss_free_drive_info(ctlr_i
+ static void cciss_clear_drive_info(drive_info_struct *drive_info);
+ static void cciss_sysfs_stat_inquiry(int ctlr, int logvol,
+ 			drive_info_struct *drv);
+-static inline void complete_pc_buffers(struct bio *bio,
+-	unsigned int nr_bytes, int status);
+-static inline void complete_fs_buffers(struct bio *bio, int status);
+ static unsigned int blk_rq_bytes(struct request *rq);
+ 
++static inline void complete_pc_buffers(struct bio *bio,
++	unsigned int nr_bytes, int status)
++{
++	unsigned int bytes_remaining = nr_bytes;
++
++	while (bio) {
++		struct bio *xbh = bio->bi_next;
++		unsigned int bytes_in_this_bio = bio_sectors(bio) << 9;
++
++		if (bytes_in_this_bio > bytes_remaining)
++			bytes_in_this_bio = bytes_remaining;
++
++		bio->bi_next = NULL;
++		bio_endio(bio, bytes_in_this_bio, status ? 0 : -EIO);
++		bio = xbh;
++
++		bytes_remaining -= bytes_in_this_bio;
++	}
++}
++
++static inline void complete_fs_buffers(struct bio *bio, int status)
++{
++	while (bio) {
++		struct bio *xbh = bio->bi_next;
++		unsigned int nr_bytes = bio_sectors(bio) << 9;
++ 
++		bio->bi_next = NULL;
++		bio_endio(bio, nr_bytes, status ? 0 : -EIO);
++		bio = xbh;
++	}
++}
++
+ #ifdef CONFIG_PROC_FS
+ static void cciss_procinit(int i);
+ #else
+@@ -4460,38 +4489,6 @@ err:
+ 
+ }
+ 
+-static inline void complete_pc_buffers(struct bio *bio,
+-	unsigned int nr_bytes, int status)
+-{
+-	unsigned int bytes_remaining = nr_bytes;
+-
+-	while (bio) {
+-		struct bio *xbh = bio->bi_next;
+-		unsigned int bytes_in_this_bio = bio_sectors(bio) << 9;
+-
+-		if (bytes_in_this_bio > bytes_remaining)
+-			bytes_in_this_bio = bytes_remaining;
+-
+-		bio->bi_next = NULL;
+-		bio_endio(bio, bytes_in_this_bio, status ? 0 : -EIO);
+-		bio = xbh;
+-
+-		bytes_remaining -= bytes_in_this_bio;
+-	}
+-}
+-
+-static inline void complete_fs_buffers(struct bio *bio, int status)
+-{
+-	while (bio) {
+-		struct bio *xbh = bio->bi_next;
+-		unsigned int nr_bytes = bio_sectors(bio) << 9;
+- 
+-		bio->bi_next = NULL;
+-		bio_endio(bio, nr_bytes, status ? 0 : -EIO);
+-		bio = xbh;
+-	}
+-}
+-
+ /**
+  * blk_rq_bytes - Returns bytes left to complete in the entire request
+  * @rq: the request being processed
 diff -urp linux-2.6.18-238.1.1.el5.028stab083.1/drivers/char/keyboard.c linux-2.6.18-238.1.1.el5.028stab083.1-owl/drivers/char/keyboard.c
 --- linux-2.6.18-238.1.1.el5.028stab083.1/drivers/char/keyboard.c	2011-01-25 10:00:03 +0000
 +++ linux-2.6.18-238.1.1.el5.028stab083.1-owl/drivers/char/keyboard.c	2011-01-28 09:50:36 +0000
@@ -271,6 +357,43 @@ diff -urp linux-2.6.18-238.1.1.el5.028stab083.1/fs/proc/base.c linux-2.6.18-238.
  #endif
  
  	{0,0,NULL,0}
+diff -urp linux-2.6.18-238.1.1.el5.028stab083.1/fs/sysfs/inode.c linux-2.6.18-238.1.1.el5.028stab083.1-owl/fs/sysfs/inode.c
+--- linux-2.6.18-238.1.1.el5.028stab083.1/fs/sysfs/inode.c	2011-01-25 10:00:03 +0000
++++ linux-2.6.18-238.1.1.el5.028stab083.1-owl/fs/sysfs/inode.c	2011-01-28 14:11:57 +0000
+@@ -16,7 +16,15 @@
+ #include <linux/security.h>
+ #include "sysfs.h"
+ 
+-static inline void set_inode_attr(struct inode * inode, struct iattr * iattr);
++static inline void set_inode_attr(struct inode * inode, struct iattr * iattr)
++{
++	inode->i_mode = iattr->ia_mode;
++	inode->i_uid = iattr->ia_uid;
++	inode->i_gid = iattr->ia_gid;
++	inode->i_atime = iattr->ia_atime;
++	inode->i_mtime = iattr->ia_mtime;
++	inode->i_ctime = iattr->ia_ctime;
++}
+ 
+ static const struct address_space_operations sysfs_aops = {
+ 	.readpage	= simple_readpage,
+@@ -189,16 +197,6 @@ static inline void set_default_inode_att
+ 	inode->i_atime = inode->i_mtime = inode->i_ctime = CURRENT_TIME;
+ }
+ 
+-static inline void set_inode_attr(struct inode * inode, struct iattr * iattr)
+-{
+-	inode->i_mode = iattr->ia_mode;
+-	inode->i_uid = iattr->ia_uid;
+-	inode->i_gid = iattr->ia_gid;
+-	inode->i_atime = iattr->ia_atime;
+-	inode->i_mtime = iattr->ia_mtime;
+-	inode->i_ctime = iattr->ia_ctime;
+-}
+-
+ /*
+  * sysfs has a different i_mutex lock order behavior for i_mutex than other
+  * filesystems; sysfs i_mutex is called in many places with subsystem locks
 diff -urp linux-2.6.18-238.1.1.el5.028stab083.1/include/linux/binfmts.h linux-2.6.18-238.1.1.el5.028stab083.1-owl/include/linux/binfmts.h
 --- linux-2.6.18-238.1.1.el5.028stab083.1/include/linux/binfmts.h	2011-01-25 10:00:03 +0000
 +++ linux-2.6.18-238.1.1.el5.028stab083.1-owl/include/linux/binfmts.h	2011-01-28 09:50:36 +0000
