@@ -1,4 +1,6 @@
-Summary: Utilities for configuring the linux ethernet bridge
+# $Owl: Owl/packages/bridge-utils/bridge-utils.spec,v 1.2 2011/01/28 07:24:45 solar Exp $
+
+Summary: Utilities for configuring the Linux Ethernet bridge.
 Name: bridge-utils
 Version: 1.4
 Release: owl1
@@ -9,13 +11,11 @@ Source: http://dl.sf.net/bridge/bridge-utils-%version.tar.gz
 BuildRoot: /override/%name-%version
 
 %description
-This package contains utilities for configuring the linux ethernet
-bridge. The linux ethernet bridge can be used for connecting multiple
-ethernet devices together. The connecting is fully transparent: hosts
-connected to one ethernet device see hosts connected to the other
-ethernet devices directly.
-
-Install bridge-utils if you want to use the linux ethernet bridge.
+This package contains utilities for configuring the Linux Ethernet
+bridge.  The Linux Ethernet bridge can be used for connecting multiple
+Ethernet devices together.  The connection is fully transparent: hosts
+connected to one Ethernet device see hosts connected to the other
+Ethernet devices directly.
 
 %prep
 %setup -q
@@ -30,7 +30,7 @@ rm -rf %buildroot
 %__make DESTDIR=%buildroot SUBDIRS="brctl doc" install
 
 %files
-%defattr (-,root,root,0755)
+%defattr(-,root,root,0755)
 %doc AUTHORS COPYING doc/FAQ doc/HOWTO
 %_sbindir/brctl
 %_mandir/man8/brctl.8*
