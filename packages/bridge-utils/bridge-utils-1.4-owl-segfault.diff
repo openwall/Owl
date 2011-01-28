@@ -1,0 +1,200 @@
+diff --git a/libbridge/libbridge_devif.c b/libbridge/libbridge_devif.c
+index 1decc28..c411c46 100644
+--- a/libbridge/libbridge_devif.c
++++ b/libbridge/libbridge_devif.c
+@@ -36,37 +36,77 @@ static FILE *fpopen(const char *dir, const char *name)
+ 	return fopen(path, "r");
+ }
+ 
+-static void fetch_id(const char *dev, const char *name, struct bridge_id *id)
++static int fetch_id(const char *dev, const char *name, struct bridge_id *id)
+ {
+ 	FILE *f = fpopen(dev, name);
++	int ret;
++	if (!f) {
++		fprintf(stderr, "%s: %s\n", dev, strerror(errno));
++		return 1;
++	}
+ 
+-	fscanf(f, "%2hhx%2hhx.%2hhx%2hhx%2hhx%2hhx%2hhx%2hhx",
++	ret = fscanf(f, "%2hhx%2hhx.%2hhx%2hhx%2hhx%2hhx%2hhx%2hhx",
+ 	      &id->prio[0], &id->prio[1],
+ 	      &id->addr[0], &id->addr[1], &id->addr[2],
+ 	      &id->addr[3], &id->addr[4], &id->addr[5]);
+ 	fclose(f);
++	if (ret == 6)
++		return 0;
++	else
++		return 1;
+ }
+ 
+ /* Fetch an integer attribute out of sysfs. */
+-static int fetch_int(const char *dev, const char *name)
++static int fetch_uint(const char *dev, const char *name, unsigned int *res)
+ {
+ 	FILE *f = fpopen(dev, name);
+-	int value = -1;
++	int val, ret;
+ 
+-	if (!f) 
++	if (!f) {
+ 		fprintf(stderr, "%s: %s\n", dev, strerror(errno));
+-	else {
+-		fscanf(f, "%i", &value);
++		return 1;
++	} else {
++		ret = fscanf(f, "%i", &val);
+ 		fclose(f);
++		*res = val;
++		if (ret == 1)
++			return 0;
++		else
++			return 1;
+ 	}
+-	return value;
++}
++
++static int fetch_uchar(const char *dev, const char *name, unsigned char *res)
++{
++	unsigned int val;
++	int ret;
++	ret = fetch_uint(dev, name, &val);
++	if (ret)
++		return 1;
++	*res = val;
++	return 0;
++}
++
++static int fetch_uint16(const char *dev, const char *name, u_int16_t *res)
++{
++	unsigned int val;
++	int ret;
++	ret = fetch_uint(dev, name, &val);
++	if (ret)
++		return 1;
++	*res = val;
++	return 0;
+ }
+ 
+ /* Get a time value out of sysfs */
+-static void fetch_tv(const char *dev, const char *name, 
++static int fetch_tv(const char *dev, const char *name,
+ 		    struct timeval *tv)
+ {
+-	__jiffies_to_tv(tv, fetch_int(dev, name));
++	unsigned int jiffies;
++	if (fetch_uint(dev, name, &jiffies))
++		return 1;
++	__jiffies_to_tv(tv, jiffies);
++	return 0;
+ }
+ 
+ /*
+@@ -165,30 +205,31 @@ int br_get_bridge_info(const char *bridge, struct bridge_info *info)
+ 	}
+ 
+ 	memset(info, 0, sizeof(*info));
+-	fetch_id(path, "root_id", &info->designated_root);
+-	fetch_id(path, "bridge_id", &info->bridge_id);
+-	info->root_path_cost = fetch_int(path, "root_path_cost");
+-	fetch_tv(path, "max_age", &info->max_age);
+-	fetch_tv(path, "hello_time", &info->hello_time);
+-	fetch_tv(path, "forward_delay", &info->forward_delay);
+-	fetch_tv(path, "max_age", &info->bridge_max_age);
+-	fetch_tv(path, "hello_time", &info->bridge_hello_time);
+-	fetch_tv(path, "forward_delay", &info->bridge_forward_delay);
+-	fetch_tv(path, "ageing_time", &info->ageing_time);
+-	fetch_tv(path, "hello_timer", &info->hello_timer_value);
+-	fetch_tv(path, "tcn_timer", &info->tcn_timer_value);
+-	fetch_tv(path, "topology_change_timer", 
+-		 &info->topology_change_timer_value);;
+-	fetch_tv(path, "gc_timer", &info->gc_timer_value);
+-
+-	info->root_port = fetch_int(path, "root_port");
+-	info->stp_enabled = fetch_int(path, "stp_state");
+-	info->topology_change = fetch_int(path, "topology_change");
+-	info->topology_change_detected = fetch_int(path, "topology_change_detected");
++	if (fetch_id(path, "root_id", &info->designated_root) ||
++            fetch_id(path, "bridge_id", &info->bridge_id) ||
++            fetch_uint(path, "root_path_cost", &info->root_path_cost) ||
++            fetch_tv(path, "max_age", &info->max_age) ||
++            fetch_tv(path, "hello_time", &info->hello_time) ||
++            fetch_tv(path, "forward_delay", &info->forward_delay) ||
++            fetch_tv(path, "max_age", &info->bridge_max_age) ||
++            fetch_tv(path, "hello_time", &info->bridge_hello_time) ||
++            fetch_tv(path, "forward_delay", &info->bridge_forward_delay) ||
++            fetch_tv(path, "ageing_time", &info->ageing_time) ||
++            fetch_tv(path, "hello_timer", &info->hello_timer_value) ||
++            fetch_tv(path, "tcn_timer", &info->tcn_timer_value) ||
++            fetch_tv(path, "topology_change_timer", &info->topology_change_timer_value) ||
++            fetch_tv(path, "gc_timer", &info->gc_timer_value) ||
++            fetch_uint16(path, "root_port", &info->root_port) ||
++            fetch_uchar(path, "stp_state", &info->stp_enabled) ||
++            fetch_uchar(path, "topology_change", &info->topology_change) ||
++            fetch_uchar(path, "topology_change_detected", &info->topology_change_detected))
++		goto fallback_closedir;
+ 
+ 	closedir(dir);
+ 	return 0;
+ 
++fallback_closedir:
++	closedir(dir);
+ fallback:
+ 	return old_get_bridge_info(bridge, info);
+ }
+@@ -254,22 +295,26 @@ int br_get_port_info(const char *brname, const char *port,
+ 
+ 	memset(info, 0, sizeof(*info));
+ 
+-	fetch_id(path, "designated_root", &info->designated_root);
+-	fetch_id(path, "designated_bridge", &info->designated_bridge);
+-	info->port_no = fetch_int(path, "port_no");
+-	info->port_id = fetch_int(path, "port_id");
+-	info->designated_port = fetch_int(path, "designated_port");
+-	info->path_cost = fetch_int(path, "path_cost");
+-	info->designated_cost = fetch_int(path, "designated_cost");
+-	info->state = fetch_int(path, "state");
+-	info->top_change_ack = fetch_int(path, "change_ack");
+-	info->config_pending = fetch_int(path, "config_pending");
+-	fetch_tv(path, "message_age_timer", &info->message_age_timer_value);
+-	fetch_tv(path, "forward_delay_timer", &info->forward_delay_timer_value);
+-	fetch_tv(path, "hold_timer", &info->hold_timer_value);
+-	closedir(d);
++	if (fetch_id(path, "designated_root", &info->designated_root) ||
++            fetch_id(path, "designated_bridge", &info->designated_bridge) ||
++            fetch_uint(path, "port_no", &info->port_no) ||
++            fetch_uint16(path, "port_id", &info->port_id) ||
++            fetch_uint16(path, "designated_port", &info->designated_port) ||
++            fetch_uint(path, "path_cost", &info->path_cost) ||
++            fetch_uint(path, "designated_cost", &info->designated_cost) ||
++            fetch_uchar(path, "state", &info->state) ||
++            fetch_uchar(path, "change_ack", &info->top_change_ack) ||
++            fetch_uchar(path, "config_pending", &info->config_pending) ||
++            fetch_tv(path, "message_age_timer", &info->message_age_timer_value) ||
++            fetch_tv(path, "forward_delay_timer", &info->forward_delay_timer_value) ||
++            fetch_tv(path, "hold_timer", &info->hold_timer_value))
++		goto fallback_closedir;
+ 
++	closedir(d);
+ 	return 0;
++
++fallback_closedir:
++	closedir(d);
+ fallback:
+ 	return old_get_port_info(brname, port, info);
+ }
+diff --git a/libbridge/libbridge_init.c b/libbridge/libbridge_init.c
+index a7473bd..9cd5dab 100644
+--- a/libbridge/libbridge_init.c
++++ b/libbridge/libbridge_init.c
+@@ -49,6 +49,10 @@ static int isbridge(const struct dirent *entry)
+ 	char path[SYSFS_PATH_MAX];
+ 	struct stat st;
+ 
++    if (strcmp(entry->d_name, ".") == 0 ||
++        strcmp(entry->d_name, "..") == 0)
++        return 0;
++
+ 	snprintf(path, SYSFS_PATH_MAX, SYSFS_CLASS_NET "%s/bridge", entry->d_name);
+ 	return stat(path, &st) == 0 && S_ISDIR(st.st_mode);
+ }
