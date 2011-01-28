@@ -1,23 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.36 2010/12/09 17:47:51 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.37 2011/01/28 16:19:55 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 194.26.1.el5.028stab079.1
-Release: %ovzversion.owl2
+%define ovzversion 238.1.1.el5.028stab083.1
+Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab079.1
+URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab083.1
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab079.1/patches/patch-194.26.1.el5.028stab079.1-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab079.1/patches/patch-194.26.1.el5.028stab079.1-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab083.1/patches/patch-238.1.1.el5.028stab083.1-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab083.1/patches/patch-238.1.1.el5.028stab083.1-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -104,6 +104,33 @@ done
 %files fake
 
 %changelog
+* Fri Jan 28 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab083.1.owl1
+- Updated to 2.6.18-238.1.1.el5.028stab083.1.
+- Fixed an infoleak in net/core/ethtool.c: ethtool_get_regs().
+This was the portion of CVE-2010-4655 affecting RHEL5 kernels.
+http://www.openwall.com/lists/oss-security/2011/01/28/1
+- CONFIG_PCIE_ECRC=y to match Red Hat's kernels; presumably they had enabled
+this option for a reason (broken BIOSes?)
+- CONFIG_PCI_IOV=y, which is indirectly required for the bnx2x driver (via what
+looks like a somewhat bogus dependency in the current PCI code).
+- CONFIG_SCSI_3W_SAS=y (new driver backport in RHEL 5.6).
+- CONFIG_FUSION_SAS=y, also requiring CONFIG_SCSI_SAS_ATTRS=y.  On i686, also
+CONFIG_FUSION_FC=y and CONFIG_SCSI_FC_ATTRS=y.  Previously, these were built
+as modules.
+- CONFIG_SATA_SIS=y, CONFIG_PATA_SIS=y, and CONFIG_SIS900=y (on i686) or
+CONFIG_SIS900=m (on x86_64).  These were needed for at least a certain Atom CPU
+based mini-server.  These chips are presumably unlikely to be seen on a 64-bit
+capable system, yet this is possible.  The SATA/PATA drivers are tiny.  The NIC
+driver is larger, so it's excluded from the x86_64 kernel image.
+- CONFIG_BNX2X=m (also sets CONFIG_MDIO=m, CONFIG_CRYPTO_CRC32C=m, and
+CONFIG_LIBCRC32C=m).
+- Enabled building of old 3Com NIC drivers as modules.
+- Moved the EDAC drivers to modules to avoid console flood on certain buggy
+machines, as well as to reduce kernel size.
+- Moved the DMA engine stuff to modules because it resulted in a boot-time
+failure on at least one server type (Supermicro X8DTU/X8DTU-F motherboard)
+when compiled into the kernel.
+
 * Thu Dec 09 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.26.1.el5.028stab079.1-owl2
 - In the CVE-2010-4258 fix, moved the in_interrupt() check to be done before
 the newly added set_fs() call.  Rationale:
