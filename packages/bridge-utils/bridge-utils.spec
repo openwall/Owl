@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bridge-utils/bridge-utils.spec,v 1.2 2011/01/28 07:24:45 solar Exp $
+# $Owl: Owl/packages/bridge-utils/bridge-utils.spec,v 1.3 2011/01/28 07:38:40 solar Exp $
 
 Summary: Utilities for configuring the Linux Ethernet bridge.
 Name: bridge-utils
@@ -31,7 +31,7 @@ rm -rf %buildroot
 
 %files
 %defattr(-,root,root,0755)
-%doc AUTHORS COPYING doc/FAQ doc/HOWTO
+%doc AUTHORS COPYING THANKS doc/FAQ doc/HOWTO
 %_sbindir/brctl
 %_mandir/man8/brctl.8*
 
