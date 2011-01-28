@@ -532,6 +532,18 @@ diff -urp linux-2.6.18-238.1.1.el5.028stab083.1/mm/mmap.c linux-2.6.18-238.1.1.e
  	if (unlikely(insert_vm_struct(mm, vma))) {
  		kmem_cache_free(vm_area_cachep, vma);
  		return -ENOMEM;
+diff -urp linux-2.6.18-238.1.1.el5.028stab083.1/net/core/ethtool.c linux-2.6.18-238.1.1.el5.028stab083.1-owl/net/core/ethtool.c
+--- linux-2.6.18-238.1.1.el5.028stab083.1/net/core/ethtool.c	2011-01-25 10:00:04 +0000
++++ linux-2.6.18-238.1.1.el5.028stab083.1-owl/net/core/ethtool.c	2011-01-28 10:51:00 +0000
+@@ -183,7 +183,7 @@ static int ethtool_get_regs(struct net_d
+ 	if (regs.len > reglen)
+ 		regs.len = reglen;
+ 
+-	regbuf = kmalloc(reglen, GFP_USER);
++	regbuf = kzalloc(reglen, GFP_USER);
+ 	if (!regbuf)
+ 		return -ENOMEM;
+ 
 diff -urp linux-2.6.18-238.1.1.el5.028stab083.1/net/llc/af_llc.c linux-2.6.18-238.1.1.el5.028stab083.1-owl/net/llc/af_llc.c
 --- linux-2.6.18-238.1.1.el5.028stab083.1/net/llc/af_llc.c	2006-09-20 03:42:06 +0000
 +++ linux-2.6.18-238.1.1.el5.028stab083.1-owl/net/llc/af_llc.c	2009-08-26 10:16:29 +0000
