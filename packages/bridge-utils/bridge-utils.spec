@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bridge-utils/bridge-utils.spec,v 1.3 2011/01/28 07:38:40 solar Exp $
+# $Owl: Owl/packages/bridge-utils/bridge-utils.spec,v 1.4 2011/01/28 07:56:17 solar Exp $
 
 Summary: Utilities for configuring the Linux Ethernet bridge.
 Name: bridge-utils
@@ -19,6 +19,7 @@ Ethernet devices directly.
 
 %prep
 %setup -q
+sed -i 's/^CFLAGS =.*$/CFLAGS = -Wall @CFLAGS@/' libbridge/Makefile.in
 
 %build
 autoconf
