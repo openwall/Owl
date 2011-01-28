@@ -194,6 +194,18 @@ diff -urp linux-2.6.18-238.1.1.el5.028stab083.1/drivers/message/fusion/mptsas.c 
  static inline struct sas_port *
  mptsas_get_port(struct mptsas_phyinfo *phy_info)
  {
+diff -urp linux-2.6.18-238.1.1.el5.028stab083.1/drivers/net/Kconfig linux-2.6.18-238.1.1.el5.028stab083.1-owl/drivers/net/Kconfig
+--- linux-2.6.18-238.1.1.el5.028stab083.1/drivers/net/Kconfig	2011-01-25 10:00:04 +0000
++++ linux-2.6.18-238.1.1.el5.028stab083.1-owl/drivers/net/Kconfig	2011-01-28 13:50:16 +0000
+@@ -2615,6 +2615,8 @@ config NIU
+ config BNX2X
+ 	tristate "Broadcom NetXtremeII 10Gb support"
+ 	depends on PCI
++	select CRYPTO_CRC32C
++	select MDIO
+ 	help
+ 	  This driver supports Broadcom NetXtremeII 10 gigabit Ethernet cards.
+ 	  To compile this driver as a module, choose M here: the module
 diff -urp linux-2.6.18-238.1.1.el5.028stab083.1/fs/Kconfig linux-2.6.18-238.1.1.el5.028stab083.1-owl/fs/Kconfig
 --- linux-2.6.18-238.1.1.el5.028stab083.1/fs/Kconfig	2011-01-25 10:00:04 +0000
 +++ linux-2.6.18-238.1.1.el5.028stab083.1-owl/fs/Kconfig	2011-01-28 09:50:36 +0000
