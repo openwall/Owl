@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/usbutils/usbutils.spec,v 1.4 2011/01/29 17:54:52 segoon Exp $
+# $Owl: Owl/packages/usbutils/usbutils.spec,v 1.5 2011/01/29 18:03:38 solar Exp $
 
 %define BUILD_UPDATE_USBIDS 0
 
@@ -59,7 +59,7 @@ rm -rf %buildroot
 
 %changelog
 * Sat Jan 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 001-owl2
-- Moved usb.ids.gz to /usr/hwdata/.
+- Moved usb.ids.gz to /usr/share/hwdata/.
 - Do not package update-usbids.sh by default.
 
 * Thu Jan 27 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 001-owl1
