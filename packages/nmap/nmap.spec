@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.46 2011/01/29 16:35:34 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.47 2011/01/29 16:42:13 solar Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -22,7 +22,7 @@ Source: %srcname-stripped-for-owl-1.tar.xz
 # and a README-stripped file has been added.
 # The .tar.xz file was created with:
 # tar cJf %SOURCE0 --owner=root --group=root `find %srcname ! -type d | sort -i -t / -k 3 | sort -i -t . -k 3`
-# The size reduced from 9.6 MB to 2.5 MB.
+# The size reduced from 17 MB to 3.4 MB.
 # Source: http://nmap.org/dist/%srcname.tar.bz2
 # Signature: http://nmap.org/dist/sigs/%srcname.tar.bz2.asc
 Patch0: nmap-5.20-owl-nse_ldflags.diff
