@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.45 2011/01/29 16:13:25 segoon Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.46 2011/01/29 16:35:34 solar Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -72,14 +72,14 @@ virtually limitless number of potential uses.
 
 %if %BUILD_NPING
 %package -n nping
-Summary: Network packet generation tool / ping utility
+Summary: Network packet generation tool / ping utility.
 Group: Applications/System
 
 %description -n nping
-Nping is an open-source tool for network packet generation, response
-analysis and response time measurement. Nping allows users to generate
+Nping is an Open Source tool for network packet generation, response
+analysis, and response time measurement.  Nping allows users to generate
 network packets of a wide range of protocols, letting them tune
-virtually any field of the protocol headers. While Nping can be used as
+virtually any field of the protocol headers.  While Nping can be used as
 a simple ping utility to detect active hosts, it can also be used as a
 raw packet generator for network stack stress tests, ARP poisoning,
 Denial of Service attacks, route tracing, and other purposes.
