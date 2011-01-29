@@ -9,8 +9,8 @@ http://en.opensuse.org/Portal:Zypper
 Toolchain and libraries updates (gcc, glibc, OpenSSL, etc.)  Package
 updates that we didn't dare to make shortly before 3.0 (OpenSSH, etc.)
 
-Packages to consider and likely add (first batch): vlan, usbutils.
-(Already added: ethtool, pv, bridge-utils)
+Packages to consider and likely add (first batch): vlan.
+(Already added: ethtool, pv, bridge-utils, usbutils.)
 
 Packages to consider and likely add (second batch, after toolchain and
 libraries update): tcpdump (or tshark?), nano (or another
@@ -43,4 +43,4 @@ User's Guide - review and edit the draft, make it public, then identify
 and add important missing chapters (adding/removing users, managing
 OpenVZ containers, maybe something else).
 
-$Owl: Owl/doc/TODO,v 1.202 2011/01/27 17:00:01 segoon Exp $
+$Owl: Owl/doc/TODO,v 1.203 2011/01/29 14:54:38 solar Exp $
