@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.47 2011/01/29 16:42:13 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.48 2011/01/29 18:57:28 segoon Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -10,7 +10,7 @@
 Summary: Network exploration tool and security scanner.
 Name: nmap
 Version: 5.50
-Release: owl1
+Release: owl2
 Epoch: 2
 License: GPL
 Group: Applications/System
@@ -175,6 +175,9 @@ grep -q ^nmap: /etc/passwd ||
 %endif
 
 %changelog
+* Sat Jan 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5:50-owl2
+- Fixed owl-privileges-drop patch bug (nmap -n was complaining).
+
 * Sat Jan 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl1
 - Updated to 5.50.
 - Dropped patches -owl-route and -owl-include (fixed in upstream).
