@@ -1,6 +1,7 @@
---- nmap-5.20/configure.ac.orig	2010-01-22 14:20:42.000000000 +0000
-+++ nmap-5.20/configure.ac	2010-01-22 14:22:26.000000000 +0000
-@@ -8,6 +8,27 @@
+diff -uNrp nmap-5.50.orig/configure.ac nmap-5.50/configure.ac
+--- nmap-5.50.orig/configure.ac	2011-01-29 11:22:53.000000000 +0000
++++ nmap-5.50/configure.ac	2011-01-29 11:23:57.000000000 +0000
+@@ -8,6 +8,27 @@ dnl Give us the --enable-nls option, to 
  dnl installed. This gets replaced with AM_GNU_GETTEXT for full gettext support.
  AM_NLS
  
@@ -28,7 +29,7 @@
  AC_ARG_WITH(localdirs,
  AC_HELP_STRING([--with-localdirs], [Explicitly ask compiler to use /usr/local/{include,libs} if they exist ]),
    [ case "$with_localdirs" in
-@@ -56,6 +77,7 @@
+@@ -57,6 +78,7 @@ if test -n "$GXX"; then
  fi
  
  # Remember that all following tests will run with this CXXFLAGS by default
@@ -36,7 +37,7 @@
  AC_MSG_CHECKING(for __func__)
  AC_TRY_COMPILE([
  #include <stdio.h>
-@@ -92,76 +114,77 @@
+@@ -93,76 +115,77 @@ NSE_LDFLAGS=""
  case "$host" in
    *alpha-dec-osf*)
      AC_DEFINE(DEC)
@@ -140,7 +141,7 @@
      dnl on Mac OSX the math library seems to contain unwanted getopt cruft
      AC_CHECK_LIB(m, main)
      LUA_CFLAGS="-DLUA_USE_MACOSX"
-@@ -292,7 +315,7 @@
+@@ -342,7 +365,7 @@ fi
  
  OPENSSL_LIBS=
  if test "$use_openssl" = "yes"; then
@@ -149,16 +150,16 @@
    OPENSSL_LIBS="-lssl -lcrypto"
  fi
  
-@@ -378,7 +401,7 @@
-   PCAP_BUILD=""
-   PCAP_CLEAN=""
-   PCAP_DIST_CLEAN=""
+@@ -418,7 +441,7 @@ if test $have_libpcap != yes; then
+   PCAP_CLEAN="pcap_clean"
+   PCAP_DIST_CLEAN="pcap_dist_clean"
+ else
 -  AC_DEFINE(HAVE_LIBPCAP)
 +  AC_DEFINE(HAVE_LIBPCAP, 1, [Define to 1 for libpcap support])
- else
-   if test "${LIBPCAP_INC+set}" = "set"; then
-     LDFLAGS="-L$libpcapdir $_ldflags"
-@@ -620,7 +643,7 @@
+   LIBPCAP_LIBS="-lpcap"
+   PCAP_DEPENDS=""
+   PCAP_BUILD=""
+@@ -652,7 +675,7 @@ AC_CACHE_CHECK(if sockaddr{} has sa_len 
          ac_cv_sockaddr_has_sa_len=yes,
          ac_cv_sockaddr_has_sa_len=no))
  if test $ac_cv_sockaddr_has_sa_len = yes ; then
@@ -167,7 +168,7 @@
  fi
  
  #dnl check endedness
-@@ -629,11 +652,11 @@
+@@ -661,11 +684,11 @@ AC_C_BIGENDIAN
  AC_MSG_CHECKING([if struct in_addr is a wacky huge structure (some Sun boxes)])
  
  AC_TRY_COMPILE([#include <netinet/in.h>], struct in_addr i; i._S_un._S_addr;, \
@@ -181,7 +182,7 @@
                               AC_MSG_RESULT(yes) , \
                               AC_MSG_RESULT(no);))
  
-@@ -652,7 +675,7 @@
+@@ -684,7 +707,7 @@ AC_CACHE_CHECK(if struct icmp exists, ac
          ac_cv_struct_icmp_exists=yes,
          ac_cv_struct_icmp_exists=no))
  if test $ac_cv_struct_icmp_exists = yes ; then
@@ -190,7 +191,7 @@
  fi
  
  AC_CACHE_CHECK(if struct ip exists, ac_cv_struct_ip_exists,
-@@ -669,7 +692,7 @@
+@@ -701,7 +724,7 @@ AC_CACHE_CHECK(if struct ip exists, ac_c
          ac_cv_struct_ip_exists=yes,
          ac_cv_struct_ip_exists=no))
  if test $ac_cv_struct_ip_exists = yes ; then
@@ -199,7 +200,7 @@
  fi
  
  AC_CACHE_CHECK(if struct ip has ip_sum member, ac_cv_ip_has_ip_sum,
-@@ -687,7 +710,7 @@
+@@ -719,7 +742,7 @@ AC_CACHE_CHECK(if struct ip has ip_sum m
          ac_cv_ip_has_ip_sum=yes,
          ac_cv_ip_has_ip_sum=no))
  if test $ac_cv_ip_has_ip_sum = yes ; then
@@ -208,3 +209,50 @@
  fi
  
  dnl Checks for library functions.
+diff -uNrp nmap-5.50.orig/configure.ac.orig nmap-5.50/configure.ac.orig
+--- nmap-5.50.orig/configure.ac.orig	2011-01-29 11:22:53.000000000 +0000
++++ nmap-5.50/configure.ac.orig	2011-01-29 11:22:40.000000000 +0000
+@@ -88,6 +88,7 @@ AC_PATH_TOOL([STRIP], [strip], [/bin/tru
+ needs_cpp_precomp=no
+ 
+ LUA_CFLAGS="-DLUA_USE_POSIX -DLUA_USE_DLOPEN"
++NSE_LDFLAGS=""
+ 
+ case "$host" in
+   *alpha-dec-osf*)
+@@ -95,15 +96,15 @@ case "$host" in
+     ;;
+   *-netbsd* | *-knetbsd*-gnu)
+     AC_DEFINE(NETBSD)
+-    LDFLAGS="-Wl,-E $LDFLAGS" # needed for nse-C-module support
++    NSE_LDFLAGS="-Wl,-E"
+     ;;
+   *-openbsd*)
+     AC_DEFINE(OPENBSD)
+-    LDFLAGS="-Wl,-E $LDFLAGS" # needed for nse-C-module support
++    NSE_LDFLAGS="-Wl,-E"
+     ;;
+   *-freebsd* | *-kfreebsd*-gnu | *-dragonfly*)
+     AC_DEFINE(FREEBSD)
+-    LDFLAGS="-Wl,-E $LDFLAGS" # needed for nse-C-module support
++    NSE_LDFLAGS="-Wl,-E"
+     ;;
+   *-bsdi*)
+     AC_DEFINE(BSDI)
+@@ -158,7 +159,7 @@ case "$host" in
+     ;;
+   *-linux*)
+     AC_DEFINE(LINUX)
+-    LDFLAGS="-Wl,-E $LDFLAGS" # needed for nse-C-module support
++    NSE_LDFLAGS="-Wl,-E"
+     ;;
+   *-apple-darwin*)
+     AC_DEFINE(MACOSX)
+@@ -626,6 +627,7 @@ else 
+   fi
+ 
+   INSTALLNSE="install-nse"
++  LDFLAGS="$NSE_LDFLAGS $LDFLAGS"
+ fi
+ 
+ AC_SUBST(LIBLUA_LIBS)

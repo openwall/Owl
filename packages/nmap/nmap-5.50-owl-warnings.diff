@@ -1,0 +1,25 @@
+--- ncat/ncat_ssl.c.orig        2011-01-29 16:54:26.000000000 +0300
++++ ncat/ncat_ssl.c     2011-01-29 16:55:23.000000000 +0300
+@@ -114,7 +114,7 @@ enum {
+ 
+ SSL_CTX *setup_ssl_listen(void)
+ {
+-    const SSL_METHOD *method;
++    SSL_METHOD *method;
+ 
+     if (sslctx)
+         goto done;
+@@ -278,11 +278,11 @@ static int cert_match_dnsname(X509 *cert
+ #if (OPENSSL_VERSION_NUMBER > 0x00907000L)
+     if (method->it != NULL) {
+         gen_names = (STACK_OF(GENERAL_NAME) *) ASN1_item_d2i(NULL,
+-            (const unsigned char **) &data,
++            (unsigned char **) &data,
+             ext->value->length, ASN1_ITEM_ptr(method->it));
+     } else {
+         gen_names = (STACK_OF(GENERAL_NAME) *) method->d2i(NULL,
+-            (const unsigned char **) &data,
++            (unsigned char **) &data,
+             ext->value->length);
+     }
+ #else
