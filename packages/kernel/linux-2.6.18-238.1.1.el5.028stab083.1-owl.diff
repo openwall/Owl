@@ -1,12 +1,12 @@
 diff -urp linux-2.6.18-238.1.1.el5.028stab083.1/Makefile linux-2.6.18-238.1.1.el5.028stab083.1-owl/Makefile
 --- linux-2.6.18-238.1.1.el5.028stab083.1/Makefile	2011-01-25 10:00:04 +0000
-+++ linux-2.6.18-238.1.1.el5.028stab083.1-owl/Makefile	2011-01-28 09:51:45 +0000
++++ linux-2.6.18-238.1.1.el5.028stab083.1-owl/Makefile	2011-01-29 15:23:51 +0000
 @@ -1,7 +1,7 @@
  VERSION = 2
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -238.1.1.el5.028stab083.1
-+EXTRAVERSION = -238.1.1.el5.028stab083.1.owl1
++EXTRAVERSION = -238.1.1.el5.028stab083.1.owl2
  RHEL_MAJOR = 5
  RHEL_MINOR = 6
  NAME=Avast! A bilge rat!
@@ -68,6 +68,33 @@ diff -urp linux-2.6.18-238.1.1.el5.028stab083.1/arch/x86_64/Kconfig linux-2.6.18
  	depends on PCI && !X86_64_XEN
  	help
  	  Support for full DMA access of devices with 32bit memory access only
+diff -urp linux-2.6.18-238.1.1.el5.028stab083.1/arch/x86_64/kernel/genapic.c linux-2.6.18-238.1.1.el5.028stab083.1-owl/arch/x86_64/kernel/genapic.c
+--- linux-2.6.18-238.1.1.el5.028stab083.1/arch/x86_64/kernel/genapic.c	2011-01-25 09:59:49 +0000
++++ linux-2.6.18-238.1.1.el5.028stab083.1-owl/arch/x86_64/kernel/genapic.c	2011-01-29 15:24:51 +0000
+@@ -67,7 +67,10 @@ void __init clustered_apic_check(void)
+ 				genapic = &apic_flat;
+ 		}
+ #else
+-		genapic = &apic_flat;
++		if (num_possible_cpus() > 8)
++			genapic = &apic_physflat;
++		else
++			genapic = &apic_flat;
+ #endif
+ 	}
+ 
+diff -urp linux-2.6.18-238.1.1.el5.028stab083.1/arch/x86_64/vdso/vma.c linux-2.6.18-238.1.1.el5.028stab083.1-owl/arch/x86_64/vdso/vma.c
+--- linux-2.6.18-238.1.1.el5.028stab083.1/arch/x86_64/vdso/vma.c	2011-01-25 10:00:03 +0000
++++ linux-2.6.18-238.1.1.el5.028stab083.1-owl/arch/x86_64/vdso/vma.c	2011-01-29 16:09:28 +0000
+@@ -13,7 +13,7 @@
+ #include <asm/proto.h>
+ #include "voffset.h"
+ 
+-int vdso_enabled = 1;
++int vdso_enabled = 0;
+ 
+ #define VEXTERN(x) extern typeof(__ ## x) *vdso_ ## x;
+ #include "vextern.h"
 diff -urp linux-2.6.18-238.1.1.el5.028stab083.1/drivers/ata/Kconfig linux-2.6.18-238.1.1.el5.028stab083.1-owl/drivers/ata/Kconfig
 --- linux-2.6.18-238.1.1.el5.028stab083.1/drivers/ata/Kconfig	2011-01-25 09:59:52 +0000
 +++ linux-2.6.18-238.1.1.el5.028stab083.1-owl/drivers/ata/Kconfig	2011-01-28 10:18:59 +0000

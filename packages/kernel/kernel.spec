@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.37 2011/01/28 16:19:55 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.38 2011/01/29 16:19:51 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 238.1.1.el5.028stab083.1
-Release: %ovzversion.owl1
+Release: %ovzversion.owl2
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab083.1
@@ -104,6 +104,12 @@ done
 %files fake
 
 %changelog
+* Sat Jan 29 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab083.1.owl2
+- Applied a patch fixing APIC driver selection on x86_64 systems with more than
+8 logical CPUs (thanks to Pavel Emelyanov of OpenVZ for providing this patch).
+- Disabled VDSO on x86_64 as a temporary workaround for a bug introduced in
+2.6.18-238.1.1.el5.028stab083.1.
+
 * Fri Jan 28 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab083.1.owl1
 - Updated to 2.6.18-238.1.1.el5.028stab083.1.
 - Fixed an infoleak in net/core/ethtool.c: ethtool_get_regs().
