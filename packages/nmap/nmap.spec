@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.48 2011/01/29 18:57:28 segoon Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.49 2011/01/29 19:03:48 solar Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -175,8 +175,8 @@ grep -q ^nmap: /etc/passwd ||
 %endif
 
 %changelog
-* Sat Jan 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5:50-owl2
-- Fixed owl-privileges-drop patch bug (nmap -n was complaining).
+* Sat Jan 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl2
+- Fixed owl-drop-priv patch bug (nmap -n was complaining).
 
 * Sat Jan 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl1
 - Updated to 5.50.
