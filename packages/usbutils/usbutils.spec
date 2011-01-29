@@ -1,24 +1,27 @@
-Summary: Linux USB utilities
+# $Owl: Owl/packages/usbutils/usbutils.spec,v 1.3 2011/01/29 14:40:46 solar Exp $
+
+Summary: Linux USB utilities.
 Name: usbutils
 Version: 001
 Release: owl1
 License: GPLv2+
 Group: Applications/System
-URL: http://www.linux-usb.org/
+URL: http://www.linux-usb.org
 Source: http://www.kernel.org/pub/linux/utils/usb/usbutils/%name-%version.tar.bz2
+# Signature: http://www.kernel.org/pub/linux/utils/usb/usbutils/%name-%version.tar.bz2.sign
 # Source: http://downloads.sourceforge.net/linux-usb/%name-%version.tar.bz2
 Patch0: usbutils-001-owl-lftp.diff
 BuildRequires: libusb1-devel
 BuildRoot: /override/%name-%version
 
-%description 
-This package contains the lsusb utility for inspecting the devices
-connected to the USB bus. It shows a representation of the devices that
-are currently plugged in, showing the topology of the USB bus. It also
-displays information on each individual device on the bus.
+%description
+This package contains the lsusb utility for inspecting devices connected to the
+USB bus.  It shows a representation of the devices that are currently plugged
+in, showing the topology of the USB bus.  It also displays information on each
+individual device on the bus.
 
 More information can be found at the Linux USB web site:
-http://www.linux-usb.org/
+http://www.linux-usb.org
 
 %prep
 %setup -q
