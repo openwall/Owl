@@ -46,6 +46,15 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2011/01/29	Package: kernel
+Dealt with two known critical x86_64 specific bugs introduced in
+2.6.18-238.1.1.el5.028stab083.1, applying a fix for one of them (bootup
+on systems with more than 8 logical CPUs) and working around the other
+(VDSO, which is now temporarily disabled on x86_64, to be re-enabled
+with the next kernel update).
+Reference:
+http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab083.1
+
 2011/01/29	Package: nmap
 Updated to 5.50.
 
@@ -106,4 +115,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.10 2011/01/29 16:14:08 segoon Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.11 2011/01/29 17:33:53 solar Exp $
