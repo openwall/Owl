@@ -1,13 +1,16 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.44 2010/12/01 09:25:35 segoon Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.45 2011/01/29 16:13:25 segoon Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
 %define BUILD_NDIFF 0
 
+# XXX: Broken in 5.50 - segoon
+%define BUILD_NPING 0
+
 Summary: Network exploration tool and security scanner.
 Name: nmap
-Version: 5.21
-Release: owl2
+Version: 5.50
+Release: owl1
 Epoch: 2
 License: GPL
 Group: Applications/System
@@ -23,13 +26,12 @@ Source: %srcname-stripped-for-owl-1.tar.xz
 # Source: http://nmap.org/dist/%srcname.tar.bz2
 # Signature: http://nmap.org/dist/sigs/%srcname.tar.bz2.asc
 Patch0: nmap-5.20-owl-nse_ldflags.diff
-Patch1: nmap-5.20-alt-owl-autoheader.diff
-Patch2: nmap-5.20-alt-owl-drop-priv.diff
-Patch3: nmap-5.20-alt-owl-dot-dir.diff
-Patch4: nmap-5.20-alt-owl-fileexistsandisreadable.diff
-Patch5: nmap-5.20-owl-include.diff
-Patch6: nmap-5.21-owl-warnings.diff
-Patch7: nmap-5.20-owl-route.diff
+Patch1: nmap-5.50-alt-owl-autoheader.diff
+Patch2: nmap-5.50-alt-owl-drop-priv.diff
+Patch3: nmap-5.50-alt-owl-dot-dir.diff
+Patch4: nmap-5.50-alt-owl-fileexistsandisreadable.diff
+Patch5: nmap-5.50-owl-warnings.diff
+Patch6: nmap-5.50-owl-build.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
 %if %BUILD_NDIFF
@@ -68,17 +70,31 @@ Ncat will not only work with IPv4 and IPv6 but provides the user with a
 virtually limitless number of potential uses.
 %endif
 
+%if %BUILD_NPING
+%package -n nping
+Summary: Network packet generation tool / ping utility
+Group: Applications/System
+
+%description -n nping
+Nping is an open-source tool for network packet generation, response
+analysis and response time measurement. Nping allows users to generate
+network packets of a wide range of protocols, letting them tune
+virtually any field of the protocol headers. While Nping can be used as
+a simple ping utility to detect active hosts, it can also be used as a
+raw packet generator for network stack stress tests, ARP poisoning,
+Denial of Service attacks, route tracing, and other purposes.
+%endif
+
 %prep
 %setup -q -n %srcname
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-bzip2 -9 CHANGELOG ncat/ChangeLog docs/TODO*
+%patch3 -p0
+%patch4 -p0
+%patch5 -p0
+%patch6 -p0
+bzip2 -9 CHANGELOG ncat/ChangeLog
 
 %if !%BUILD_NSE_ENABLED
 %define nseflag --without-liblua
@@ -98,12 +114,19 @@ bzip2 -9 CHANGELOG ncat/ChangeLog docs/TODO*
 %define ndiff_flag %{nil}
 %endif
 
+%if !%BUILD_NPING
+%define npingflag --without-nping
+%else
+%define npingflag %{nil}
+%endif
+
 %build
 aclocal
 autoheader
 autoconf
 %configure \
-	--without-zenmap %nseflag %ncatflag %ndiff_flag \
+	--without-zenmap %nseflag %ncatflag %ndiff_flag %npingflag \
+	--with-libpcap=yes \
 	--with-user=nmap \
 	--with-chroot-empty=/var/empty
 touch makefile.dep
@@ -120,7 +143,7 @@ grep -q ^nmap: /etc/passwd ||
 
 %files
 %defattr(-,root,root)
-%doc CHANGELOG.bz2 COPYING HACKING docs/{README,TODO*,*.txt}
+%doc CHANGELOG.bz2 COPYING HACKING docs/{README,*.txt}
 %attr(750,root,wheel) %_bindir/nmap
 %_mandir/man1/nmap.1*
 %_mandir/*/man1/nmap.1*
@@ -141,7 +164,22 @@ grep -q ^nmap: /etc/passwd ||
 %_datadir/ncat
 %endif
 
+%if %BUILD_NPING
+# XXX: check this - segoon
+%files -n nping
+%defattr(-,root,root)
+%doc nping/COPYING
+%_bindir/nping
+%_mandir/man1/nping.1*
+%_datadir/nping
+%endif
+
 %changelog
+* Sat Jan 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl1
+- Updated to 5.50.
+- Dropped patches -owl-route and -owl-include (fixed in upstream).
+- Updated all other patches.
+
 * Thu Jan 28 2010 Solar Designer <solar-at-owl.openwall.com> 2:5.21-owl2
 - Fixed two additional compiler warnings seen with a 64-bit build.
 
