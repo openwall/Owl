@@ -1,9 +1,11 @@
-# $Owl: Owl/packages/usbutils/usbutils.spec,v 1.3 2011/01/29 14:40:46 solar Exp $
+# $Owl: Owl/packages/usbutils/usbutils.spec,v 1.4 2011/01/29 17:54:52 segoon Exp $
+
+%define BUILD_UPDATE_USBIDS 0
 
 Summary: Linux USB utilities.
 Name: usbutils
 Version: 001
-Release: owl1
+Release: owl2
 License: GPLv2+
 Group: Applications/System
 URL: http://www.linux-usb.org
@@ -32,7 +34,8 @@ http://www.linux-usb.org
 # Workaround - we have no pkg-config yet
 export LIBUSB_CFLAGS=-I%_includedir/libusb-1.0/
 export LIBUSB_LIBS=-lusb-1.0
-%configure
+%configure \
+	datadir=%_datadir/hwdata/
 %__make
 
 %install
@@ -44,13 +47,21 @@ rm -rf %buildroot
 %doc AUTHORS COPYING ChangeLog NEWS README
 %_mandir/man1/*
 %_mandir/man8/*
-%_sbindir/update-usbids.sh
 %_bindir/*
-%_datadir/usb.ids.gz
-%exclude %_datadir/usb.ids
+%_datadir/hwdata/usb.ids.gz
+%if %BUILD_UPDATE_USBIDS
+%_sbindir/update-usbids.sh
+%else
+%exclude %_sbindir/update-usbids.sh
+%endif
+%exclude %_datadir/hwdata/usb.ids
 %exclude %_datadir/pkgconfig/usbutils.pc
 
 %changelog
+* Sat Jan 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 001-owl2
+- Moved usb.ids.gz to /usr/hwdata/.
+- Do not package update-usbids.sh by default.
+
 * Thu Jan 27 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 001-owl1
 - Initial import from Fedora.
 - Updated to 001.
