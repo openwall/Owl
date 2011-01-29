@@ -1,6 +1,6 @@
 diff -uNrp nmap-5.50.orig/configure.ac nmap-5.50/configure.ac
---- nmap-5.50.orig/configure.ac	2011-01-29 13:19:34.000000000 +0000
-+++ nmap-5.50/configure.ac	2011-01-29 13:19:53.000000000 +0000
+--- nmap-5.50.orig/configure.ac	2011-01-29 17:22:39 +0000
++++ nmap-5.50/configure.ac	2011-01-29 17:23:29 +0000
 @@ -720,6 +720,50 @@ if test $ac_cv_ip_has_ip_sum = yes ; the
          AC_DEFINE(HAVE_IP_IP_SUM)
  fi
@@ -53,9 +53,9 @@ diff -uNrp nmap-5.50.orig/configure.ac nmap-5.50/configure.ac
  AC_CHECK_FUNCS(strerror)
  RECVFROM_ARG6_TYPE
 diff -uNrp nmap-5.50.orig/droppriv.cc nmap-5.50/droppriv.cc
---- nmap-5.50.orig/droppriv.cc	1970-01-01 00:00:00.000000000 +0000
-+++ nmap-5.50/droppriv.cc	2011-01-29 13:19:53.000000000 +0000
-@@ -0,0 +1,95 @@
+--- nmap-5.50.orig/droppriv.cc	1970-01-01 00:00:00 +0000
++++ nmap-5.50/droppriv.cc	2011-01-29 17:24:05 +0000
+@@ -0,0 +1,96 @@
 +#include "nmap.h"
 +#include "service_scan.h"
 +#include "utils.h"
@@ -115,6 +115,7 @@ diff -uNrp nmap-5.50.orig/droppriv.cc nmap-5.50/droppriv.cc
 +	AllProbes::service_scan_init();
 +	routethrough_init();
 +	mac_prefix_init();
++	init_payloads();
 +	if (!o.noresolve) etchosts_init();
 +
 +	if (setgroups(0, 0) < 0)
@@ -152,9 +153,9 @@ diff -uNrp nmap-5.50.orig/droppriv.cc nmap-5.50/droppriv.cc
 +
 +#endif /* NMAP_USER */
 diff -uNrp nmap-5.50.orig/droppriv.h nmap-5.50/droppriv.h
---- nmap-5.50.orig/droppriv.h	1970-01-01 00:00:00.000000000 +0000
-+++ nmap-5.50/droppriv.h	2011-01-29 13:19:53.000000000 +0000
-@@ -0,0 +1,13 @@
+--- nmap-5.50.orig/droppriv.h	1970-01-01 00:00:00 +0000
++++ nmap-5.50/droppriv.h	2011-01-29 17:26:35 +0000
+@@ -0,0 +1,14 @@
 +#ifndef NMAP_DROPPRIV_H__
 +#define NMAP_DROPPRIV_H__
 +
@@ -166,11 +167,12 @@ diff -uNrp nmap-5.50.orig/droppriv.h nmap-5.50/droppriv.h
 +extern void routethrough_init(void);
 +extern void mac_prefix_init(void);
 +extern void etchosts_init(void);
++extern void init_payloads(void);
 +
 +#endif /* NMAP_DROPPRIV_H__ */
 diff -uNrp nmap-5.50.orig/libnetutil/netutil.cc nmap-5.50/libnetutil/netutil.cc
---- nmap-5.50.orig/libnetutil/netutil.cc	2011-01-29 13:19:34.000000000 +0000
-+++ nmap-5.50/libnetutil/netutil.cc	2011-01-29 13:24:42.000000000 +0000
+--- nmap-5.50.orig/libnetutil/netutil.cc	2011-01-29 17:22:39 +0000
++++ nmap-5.50/libnetutil/netutil.cc	2011-01-29 17:23:29 +0000
 @@ -1258,6 +1258,13 @@ struct interface_info *getinterfaces(int
    return mydevs;
  }
@@ -213,8 +215,8 @@ diff -uNrp nmap-5.50.orig/libnetutil/netutil.cc nmap-5.50/libnetutil/netutil.cc
    if(routes==NULL){
      *howmany=-1;
 diff -uNrp nmap-5.50.orig/MACLookup.cc nmap-5.50/MACLookup.cc
---- nmap-5.50.orig/MACLookup.cc	2011-01-29 13:19:34.000000000 +0000
-+++ nmap-5.50/MACLookup.cc	2011-01-29 13:19:53.000000000 +0000
+--- nmap-5.50.orig/MACLookup.cc	2011-01-29 17:22:39 +0000
++++ nmap-5.50/MACLookup.cc	2011-01-29 17:23:29 +0000
 @@ -100,6 +100,7 @@
  #include "NmapOps.h"
  #include "nmap_error.h"
@@ -233,8 +235,8 @@ diff -uNrp nmap-5.50.orig/MACLookup.cc nmap-5.50/MACLookup.cc
    if (initialized) return;
    initialized = 1;
 diff -uNrp nmap-5.50.orig/Makefile.in nmap-5.50/Makefile.in
---- nmap-5.50.orig/Makefile.in	2011-01-29 13:19:34.000000000 +0000
-+++ nmap-5.50/Makefile.in	2011-01-29 13:26:02.000000000 +0000
+--- nmap-5.50.orig/Makefile.in	2011-01-29 17:22:39 +0000
++++ nmap-5.50/Makefile.in	2011-01-29 17:23:29 +0000
 @@ -93,11 +93,11 @@ NSE_OBJS+=nse_openssl.o nse_ssl_cert.o
  endif
  endif
@@ -251,8 +253,8 @@ diff -uNrp nmap-5.50.orig/Makefile.in nmap-5.50/Makefile.in
  # %.o : %.cc -- nope this is a GNU extension
  .cc.o:
 diff -uNrp nmap-5.50.orig/nmap.cc nmap-5.50/nmap.cc
---- nmap-5.50.orig/nmap.cc	2011-01-29 13:19:34.000000000 +0000
-+++ nmap-5.50/nmap.cc	2011-01-29 13:21:12.000000000 +0000
+--- nmap-5.50.orig/nmap.cc	2011-01-29 17:22:39 +0000
++++ nmap-5.50/nmap.cc	2011-01-29 17:23:29 +0000
 @@ -96,6 +96,7 @@
  #include "scan_engine.h"
  #include "idle_scan.h"
@@ -313,8 +315,8 @@ diff -uNrp nmap-5.50.orig/nmap.cc nmap-5.50/nmap.cc
    /* Time to create a hostgroup state object filled with all the requested
       machines. The list is initially empty. It is refilled inside the loop
 diff -uNrp nmap-5.50.orig/nmap_dns.cc nmap-5.50/nmap_dns.cc
---- nmap-5.50.orig/nmap_dns.cc	2011-01-29 13:19:34.000000000 +0000
-+++ nmap-5.50/nmap_dns.cc	2011-01-29 13:19:53.000000000 +0000
+--- nmap-5.50.orig/nmap_dns.cc	2011-01-29 17:22:39 +0000
++++ nmap-5.50/nmap_dns.cc	2011-01-29 17:23:29 +0000
 @@ -149,6 +149,7 @@
  #endif
  
@@ -333,8 +335,8 @@ diff -uNrp nmap-5.50.orig/nmap_dns.cc nmap-5.50/nmap_dns.cc
    if (initialized) return;
    initialized = 1;
 diff -uNrp nmap-5.50.orig/nmap_rpc.cc nmap-5.50/nmap_rpc.cc
---- nmap-5.50.orig/nmap_rpc.cc	2011-01-29 13:19:34.000000000 +0000
-+++ nmap-5.50/nmap_rpc.cc	2011-01-29 13:19:53.000000000 +0000
+--- nmap-5.50.orig/nmap_rpc.cc	2011-01-29 17:22:39 +0000
++++ nmap-5.50/nmap_rpc.cc	2011-01-29 17:23:29 +0000
 @@ -94,6 +94,7 @@
  
  
@@ -353,8 +355,8 @@ diff -uNrp nmap-5.50.orig/nmap_rpc.cc nmap-5.50/nmap_rpc.cc
    if (services_initialized) return;
    services_initialized = 1;
 diff -uNrp nmap-5.50.orig/protocols.cc nmap-5.50/protocols.cc
---- nmap-5.50.orig/protocols.cc	2011-01-29 13:19:34.000000000 +0000
-+++ nmap-5.50/protocols.cc	2011-01-29 13:19:53.000000000 +0000
+--- nmap-5.50.orig/protocols.cc	2011-01-29 17:22:39 +0000
++++ nmap-5.50/protocols.cc	2011-01-29 17:23:29 +0000
 @@ -91,6 +91,7 @@
  /* $Id: protocols.cc 21904 2011-01-21 00:04:16Z fyodor $ */
  
@@ -373,8 +375,8 @@ diff -uNrp nmap-5.50.orig/protocols.cc nmap-5.50/protocols.cc
  
    char filename[512];
 diff -uNrp nmap-5.50.orig/services.cc nmap-5.50/services.cc
---- nmap-5.50.orig/services.cc	2011-01-29 13:19:34.000000000 +0000
-+++ nmap-5.50/services.cc	2011-01-29 13:19:53.000000000 +0000
+--- nmap-5.50.orig/services.cc	2011-01-29 17:22:39 +0000
++++ nmap-5.50/services.cc	2011-01-29 17:23:29 +0000
 @@ -92,6 +92,7 @@
  
  #include "nmap.h"
@@ -393,8 +395,8 @@ diff -uNrp nmap-5.50.orig/services.cc nmap-5.50/services.cc
  
    char filename[512];
 diff -uNrp nmap-5.50.orig/tcpip.cc nmap-5.50/tcpip.cc
---- nmap-5.50.orig/tcpip.cc	2011-01-29 13:19:34.000000000 +0000
-+++ nmap-5.50/tcpip.cc	2011-01-29 13:19:53.000000000 +0000
+--- nmap-5.50.orig/tcpip.cc	2011-01-29 17:22:39 +0000
++++ nmap-5.50/tcpip.cc	2011-01-29 17:23:29 +0000
 @@ -99,6 +99,7 @@
  #include <dnet.h>
  #include <net/if_arp.h>
