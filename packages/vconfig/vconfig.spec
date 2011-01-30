@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vconfig/vconfig.spec,v 1.1 2011/01/30 13:57:42 segoon Exp $
+# $Owl: Owl/packages/vconfig/vconfig.spec,v 1.2 2011/01/30 16:51:28 solar Exp $
 
 Summary: Linux 802.1q VLAN configuration utility.
 Name: vconfig
@@ -10,11 +10,10 @@ URL: http://www.candelatech.com/~greear/vlan.html
 Source: http://www.candelatech.com/~greear/vlan/vlan.%version.tar.gz
 BuildRoot: /override/%name-%version
 
-%description 
-This package contains the user mode programs you need to add and remove
-802.1q VLAN devices from your Ethernet devices.  A typical application
-for a VLAN enabled box is a single wire firewall, router or load
-balancer.
+%description
+This package contains the user mode program to add and remove 802.1q VLAN
+virtual devices from Ethernet devices.  A typical application for a VLAN
+enabled box is a single wire firewall, router, or load balancer.
 
 %prep
 %setup -q -n vlan
@@ -32,8 +31,8 @@ rm -rf %buildroot
 %__install -D -m755 vconfig %buildroot%_sbindir/vconfig
 %__install -D -m644 vconfig.8 %buildroot%_mandir/man8/vconfig.8
 
-%files 
-%defattr(-, root, root, 0755)
+%files
+%defattr(-,root,root,0755)
 %doc CHANGELOG README vlan.html vlan_test.pl
 %attr(700,root,root) %_sbindir/vconfig
 %_mandir/man8/vconfig.8*
