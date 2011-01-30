@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vconfig/vconfig.spec,v 1.2 2011/01/30 16:51:28 solar Exp $
+# $Owl: Owl/packages/vconfig/vconfig.spec,v 1.3 2011/01/30 17:00:20 solar Exp $
 
 Summary: Linux 802.1q VLAN configuration utility.
 Name: vconfig
@@ -17,6 +17,7 @@ enabled box is a single wire firewall, router, or load balancer.
 
 %prep
 %setup -q -n vlan
+rm macvlan_config* vconfig vconfig.o
 
 %{expand:%%define optflags %optflags -Wall -D_GNU_SOURCE}
 
