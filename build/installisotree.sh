@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installisotree.sh,v 1.16 2011/01/23 03:15:10 solar Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.17 2011/01/30 17:28:41 solar Exp $
 
 set -e
 
@@ -109,7 +109,7 @@ chmod 644 .Owl-CD-ROM README
 > var/log/wtmp
 
 log "Creating mtree specification"
-chroot "$ROOT" mtree -c -K size,md5digest,sha1digest |
+chroot "$ROOT" mtree -c -K sha1digest |
 	tail -n +4 >"$HOME/cdrom.mtree"
 mv "$HOME/cdrom.mtree" Owl-CD-ROM.mtree
-bzip2 -9 Owl-CD-ROM.mtree
+xz Owl-CD-ROM.mtree
