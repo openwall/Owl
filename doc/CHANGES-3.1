@@ -46,6 +46,14 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2011/01/31	Packages: kernel, iputils
+Added support for non-raw ICMP sockets to the kernel and made use of
+said support in ping(1).  (A further update will install ping such that
+it will be available for use by non-root by default, yet not be SUID.)
+References:
+http://lwn.net/Articles/420799/
+http://openwall.info/wiki/people/segoon/ping
+
 2011/01/30	Package: vconfig
 New package: vconfig is a user mode program to add and remove 802.1q
 VLAN virtual devices from Ethernet devices.
@@ -119,4 +127,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.13 2011/01/30 16:51:28 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.14 2011/01/31 21:30:59 solar Exp $
