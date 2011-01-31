@@ -1,5 +1,6 @@
---- ncat/ncat_ssl.c.orig        2011-01-29 16:54:26.000000000 +0300
-+++ ncat/ncat_ssl.c     2011-01-29 16:55:23.000000000 +0300
+diff -uNp -r nmap-5.50.orig/ncat/ncat_ssl.c nmap-5.50/ncat/ncat_ssl.c
+--- nmap-5.50.orig/ncat/ncat_ssl.c	2011-01-31 12:12:35 +0000
++++ nmap-5.50/ncat/ncat_ssl.c	2011-01-31 12:18:17 +0000
 @@ -114,7 +114,7 @@ enum {
  
  SSL_CTX *setup_ssl_listen(void)
@@ -23,3 +24,15 @@
              ext->value->length);
      }
  #else
+diff -uNp -r nmap-5.50.orig/nping/PacketElement.h nmap-5.50/nping/PacketElement.h
+--- nmap-5.50.orig/nping/PacketElement.h	2011-01-31 12:12:36 +0000
++++ nmap-5.50/nping/PacketElement.h	2011-01-31 12:13:30 +0000
+@@ -108,7 +108,7 @@ class PacketElement {
+   public:
+ 
+     PacketElement();
+-    ~PacketElement();
++    virtual ~PacketElement();
+ 
+     /** This function MUST be overwritten on ANY class that inherits from
+       *  this one. Otherwise getBinaryBuffer will fail */

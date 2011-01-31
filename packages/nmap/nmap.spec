@@ -1,16 +1,14 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.49 2011/01/29 19:03:48 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.50 2011/01/31 12:25:40 segoon Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
 %define BUILD_NDIFF 0
-
-# XXX: Broken in 5.50 - segoon
-%define BUILD_NPING 0
+%define BUILD_NPING 1
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
 Version: 5.50
-Release: owl2
+Release: owl3
 Epoch: 2
 License: GPL
 Group: Applications/System
@@ -92,40 +90,53 @@ Denial of Service attacks, route tracing, and other purposes.
 %patch2 -p1
 %patch3 -p0
 %patch4 -p0
-%patch5 -p0
+%patch5 -p1
 %patch6 -p0
 bzip2 -9 CHANGELOG ncat/ChangeLog
 
 %if !%BUILD_NSE_ENABLED
 %define nseflag --without-liblua
 %else
-%define nseflag %{nil}
+%define nseflag %nil
 %endif
 
 %if !%BUILD_NCAT
 %define ncatflag --without-ncat
 %else
-%define ncatflag %{nil}
+%define ncatflag %nil
 %endif
 
 %if %BUILD_NDIFF
 %define ndiff_flag --with-ndiff
 %else
-%define ndiff_flag %{nil}
+%define ndiff_flag %nil
 %endif
 
 %if !%BUILD_NPING
 %define npingflag --without-nping
 %else
-%define npingflag %{nil}
+%define npingflag %nil
 %endif
 
 %build
 aclocal
 autoheader
 autoconf
+%if %BUILD_NPING
 %configure \
+	--without-openssl \
 	--without-zenmap %nseflag %ncatflag %ndiff_flag %npingflag \
+	--with-libpcap=yes \
+	--with-user=nmap \
+	--with-chroot-empty=/var/empty
+touch makefile.dep
+%__make
+mv nping/nping{,.wo-ssl}
+%__make clean
+%endif
+
+%configure \
+	--without-zenmap %nseflag %ncatflag %ndiff_flag --without-nping \
 	--with-libpcap=yes \
 	--with-user=nmap \
 	--with-chroot-empty=/var/empty
@@ -135,6 +146,11 @@ touch makefile.dep
 %install
 rm -rf %buildroot
 %__make install DESTDIR=%buildroot
+
+%if %BUILD_NPING
+%__install -m 0755 nping/nping.wo-ssl %buildroot%_bindir/nping
+%__install -m 0755 nping/docs/nping.1 %buildroot%_mandir/man1/
+%endif
 
 %pre
 grep -q ^nmap: /etc/group || groupadd -g 189 nmap
@@ -165,16 +181,17 @@ grep -q ^nmap: /etc/passwd ||
 %endif
 
 %if %BUILD_NPING
-# XXX: check this - segoon
 %files -n nping
 %defattr(-,root,root)
 %doc nping/COPYING
 %_bindir/nping
 %_mandir/man1/nping.1*
-%_datadir/nping
 %endif
 
 %changelog
+* Mon Jan 31 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl3
+- Package nping without ssl support.
+
 * Sat Jan 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl2
 - Fixed owl-drop-priv patch bug (nmap -n was complaining).
 
