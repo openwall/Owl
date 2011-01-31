@@ -1,0 +1,226 @@
+diff -uNp -r nmap-5.50.orig/nping/configure.ac nmap-5.50/nping/configure.ac
+--- nmap-5.50.orig/nping/configure.ac	2011-01-31 13:19:40 +0000
++++ nmap-5.50/nping/configure.ac	2011-01-31 13:33:12 +0000
+@@ -171,7 +171,7 @@ fi
+ 
+ OPENSSL_LIBS=
+ if test "$use_openssl" = "yes"; then
+-  AC_DEFINE(HAVE_OPENSSL)
++  AC_DEFINE(HAVE_OPENSSL, 1, [Define to 1 for HAVE_OPENSSL])
+   OPENSSL_LIBS="-lssl -lcrypto"
+ fi
+ 
+@@ -246,7 +246,7 @@ if test $have_libpcap != yes; then
+   PCAP_CLEAN="pcap_clean"
+   PCAP_DIST_CLEAN="pcap_dist_clean"
+ else
+-  AC_DEFINE(HAVE_LIBPCAP)
++  AC_DEFINE(HAVE_LIBPCAP, 1, [Define to 1 if LIBPCAP])
+   LIBPCAP_LIBS="-lpcap"
+   PCAP_DEPENDS=""
+   PCAP_BUILD=""
+@@ -335,7 +335,7 @@ AC_CACHE_CHECK(if sockaddr{} has sa_len 
+         ac_cv_sockaddr_has_sa_len=yes,
+         ac_cv_sockaddr_has_sa_len=no))
+ if test $ac_cv_sockaddr_has_sa_len = yes ; then
+-        AC_DEFINE(HAVE_SOCKADDR_SA_LEN)
++        AC_DEFINE(HAVE_SOCKADDR_SA_LEN, 1, [Define to 1 for HAVE_SOCKADDR_SA_LEN])
+ fi
+ 
+ 
+@@ -352,7 +352,7 @@ AC_CACHE_CHECK(if sockaddr_in{} has sin_
+         ac_cv_sockaddr_in_has_sin_len=yes,
+         ac_cv_sockaddr_in_has_sin_len=no))
+ if test $ac_cv_sockaddr_in_has_sin_len = yes ; then
+-        AC_DEFINE(HAVE_SOCKADDR_IN_SIN_LEN)
++        AC_DEFINE(HAVE_SOCKADDR_IN_SIN_LEN, 1, [Define to 1 for HAVE_SOCKADDR_IN_SIN_LEN])
+ fi
+ 
+ 
+@@ -369,21 +369,22 @@ AC_CACHE_CHECK(if sockaddr_in6{} has sin
+         ac_cv_sockaddr_in6_has_sin6_len=yes,
+         ac_cv_sockaddr_in6_has_sin6_len=no))
+ if test $ac_cv_sockaddr_in6_has_sin6_len = yes ; then
+-        AC_DEFINE(HAVE_SOCKADDR_IN6_SIN6_LEN)
++        AC_DEFINE(HAVE_SOCKADDR_IN6_SIN6_LEN, 1, [Define to 1 for HAVE_SOCKADDR_IN6_SIN6_LEN])
+ fi
+ 
+ 
+ #dnl check endedness
+ AC_C_BIGENDIAN
+ 
++AH_TEMPLATE([__func__], [])
+ AC_MSG_CHECKING([if struct in_addr is a wacky huge structure (some Sun boxes)])
+ 
+ AC_TRY_COMPILE([#include <netinet/in.h>], struct in_addr i; i._S_un._S_addr;, \
+-             AC_DEFINE(IN_ADDR_DEEPSTRUCT) \
++             AC_DEFINE(IN_ADDR_DEEPSTRUCT, 1, [Define to 1 for IN_ADDR_DEEPSTRUCT]) \
+              AC_MSG_RESULT(yes) , \
+              AC_TRY_COMPILE([#include <sys/types.h>
+ #include <netinet/in.h>], struct in_addr i; i.S_un.S_addr;, \
+-                             AC_DEFINE(IN_ADDR_DEEPSTRUCT) \
++                             AC_DEFINE(IN_ADDR_DEEPSTRUCT, 1, [Define to 1 for IN_ADDR_DEEPSTRUCT]) \
+                              AC_MSG_RESULT(yes) , \
+                              AC_MSG_RESULT(no);))
+ 
+@@ -437,9 +438,54 @@ AC_CACHE_CHECK(if struct ip has ip_sum m
+         ac_cv_ip_has_ip_sum=yes,
+         ac_cv_ip_has_ip_sum=no))
+ if test $ac_cv_ip_has_ip_sum = yes ; then
+-        AC_DEFINE(HAVE_IP_IP_SUM)
++        AC_DEFINE(HAVE_IP_IP_SUM, 1, [Define to 1 if struct ip had ip_sum field])
+ fi
+ 
++try_drop_priv=no
++AC_CHECK_HEADERS(grp.h sys/capability.h sys/prctl.h)
++AC_CHECK_FUNC(chroot)
++AC_CHECK_FUNC(prctl,
++  [AC_CHECK_FUNC(setgid,
++    [AC_CHECK_FUNC(setgroups,
++      [AC_CHECK_FUNC(setreuid,
++        [try_drop_priv=yes
++       AC_CHECK_LIB(cap, cap_from_text, , [try_drop_priv=no])]
++      )]
++    )]
++  )]
++)
++
++AC_ARG_WITH(user,
++  [  --with-user=USERNAME    Lower root privileges by switching to user USERNAME])
++AC_MSG_CHECKING([whether to lower root privileges by default])
++if test -z "$with_user" -o "$try_drop_priv" = "no"; then
++       AC_MSG_RESULT(no)
++else
++       AC_DEFINE_UNQUOTED(NMAP_USER, "$withval", [Define user to switch during lowering privileges])
++       AC_MSG_RESULT(to \"$withval\")
++fi
++
++AC_ARG_WITH(chroot-empty,
++  [  --with-chroot-empty=DIRECTORY When lowering privileges and -n option is given, chroot to empty DIRECTORY])
++AC_MSG_CHECKING([whether to chroot when -n option is given])
++if test -z "$with_chroot_empty" -o "$try_drop_priv" = "no" -o "$ac_cv_func_chroot" = no; then
++       AC_MSG_RESULT(no)
++else
++       AC_DEFINE_UNQUOTED(NMAP_CHROOT_EMPTY, "$withval", [Define directory to chroot during lowering privileges if -n option is given])
++       AC_MSG_RESULT(to \"$withval\")
++fi
++AC_ARG_WITH(chroot-resolv,
++  [  --with-chroot-resolv=DIRECTORY When lowering privileges and -n option is not given, chroot to resolver DIRECTORY])
++AC_MSG_CHECKING([whether to chroot when -n option is not given])
++if test -z "$with_chroot_resolv" -o "$try_drop_priv" = "no" -o "$ac_cv_func_chroot" = no; then
++       AC_MSG_RESULT(no)
++else
++       AC_DEFINE_UNQUOTED(NMAP_CHROOT_RESOLV, "$withval", [Define directory to chroot during lowering privileges if -n option is not given])
++       AC_MSG_RESULT(to \"$withval\")
++fi
++
++
++
+ AC_CACHE_CHECK(if function signal is accessible, ac_cv_have_signal,
+         AC_TRY_COMPILE(
+                 [
+@@ -458,7 +504,7 @@ AC_CACHE_CHECK(if function signal is acc
+         ac_cv_have_signal=yes,
+         ac_cv_have_signal=no))
+ if test $ac_cv_have_signal = yes ; then
+-        AC_DEFINE(HAVE_SIGNAL)
++        AC_DEFINE(HAVE_SIGNAL, 1, [Define to 1 for HAVE_SIGNAL])
+ fi
+ 
+ 
+@@ -466,25 +512,25 @@ fi
+ 
+ case "$host" in
+   *alpha-dec-osf*)
+-    AC_DEFINE(DEC)
++    AC_DEFINE(DEC, 1, [Define to 1 for DEC])
+     ;;
+   *-netbsd* | *-knetbsd*-gnu)
+-    AC_DEFINE(NETBSD)
++    AC_DEFINE(NETBSD, 1, [Define to 1 for NetBSD])
+     ;;
+   *-openbsd*)
+-    AC_DEFINE(OPENBSD)
++    AC_DEFINE(OPENBSD, 1, [Define to 1 for OpenBSD])
+     ;;
+   *-freebsd* | *-kfreebsd*-gnu | *-dragonfly*)
+-    AC_DEFINE(FREEBSD)
++    AC_DEFINE(FREEBSD, 1, [Define to 1 for FreeBSD])
+     ;;
+   *-bsdi*)
+-    AC_DEFINE(BSDI)
++    AC_DEFINE(BSDI, 1, [Define to 1 for BSDI])
+     ;;
+   *-sgi-irix5* | *-sgi-irix6*)
+-    AC_DEFINE(IRIX)
++    AC_DEFINE(IRIX, 1, [Define to 1 for IRIX])
+     ;;
+   *-hpux*)
+-    AC_DEFINE(HPUX)
++    AC_DEFINE(HPUX, 1, [Define to 1 for HPUX])
+     # To link with libnet and NM (/usr/lib/libnm.sl) library
+     # on HP-UX 11.11 (other versions?) Mikhail Zakharov (zmey20000@yahoo.com)
+     AC_CHECK_LIB(nm, open_mib)
+@@ -495,44 +541,44 @@ case "$host" in
+     AC_CHECK_LIB(cfg, _system_configuration)
+     ;;
+   *-solaris2.0*)  
+-    AC_DEFINE(STUPID_SOLARIS_CHECKSUM_BUG)
+-    AC_DEFINE(SOLARIS)
++    AC_DEFINE(STUPID_SOLARIS_CHECKSUM_BUG, 1, [Define to 1 for Solaris checksum bug])
++    AC_DEFINE(SOLARIS, 1, [Define to 1 for SolariS])
+     ;;
+   *-solaris2.[[1-9]][[0-9]]*)
+-    AC_DEFINE(SOLARIS)
++    AC_DEFINE(SOLARIS, 1, [Define to 1 for Solaris])
+     ;;
+   *-solaris2.1*)
+-    AC_DEFINE(STUPID_SOLARIS_CHECKSUM_BUG)
+-    AC_DEFINE(SOLARIS)
++    AC_DEFINE(STUPID_SOLARIS_CHECKSUM_BUG, 1, [Define to 1 for Solaris checksum bug])
++    AC_DEFINE(SOLARIS, 1, [Define to 1 for Solaris])
+     ;;
+   *-solaris2.2*)
+-    AC_DEFINE(STUPID_SOLARIS_CHECKSUM_BUG)
+-    AC_DEFINE(SOLARIS)
++    AC_DEFINE(STUPID_SOLARIS_CHECKSUM_BUG, 1, [Define to 1 for Solaris checksum bug])
++    AC_DEFINE(SOLARIS, 1, [Define to 1 for Solaris])
+     ;;
+   *-solaris2.3*)
+-    AC_DEFINE(STUPID_SOLARIS_CHECKSUM_BUG)
+-    AC_DEFINE(SOLARIS)
++    AC_DEFINE(STUPID_SOLARIS_CHECKSUM_BUG, 1, [Define to 1 for Solaris checksum bug])
++    AC_DEFINE(SOLARIS, 1, [Define to 1 for Solaris])
+     ;;
+   *-solaris2.4*)
+-    AC_DEFINE(STUPID_SOLARIS_CHECKSUM_BUG)
+-    AC_DEFINE(SOLARIS)
++    AC_DEFINE(STUPID_SOLARIS_CHECKSUM_BUG, 1, [Define to 1 for Solaris checksum bug])
++    AC_DEFINE(SOLARIS, 1, [Define to 1 for Solaris])
+     ;;
+   *-solaris2.5.1)
+-    AC_DEFINE(STUPID_SOLARIS_CHECKSUM_BUG)
+-    AC_DEFINE(SOLARIS)
++    AC_DEFINE(STUPID_SOLARIS_CHECKSUM_BUG, 1, [Define to 1 for Solaris checksum bug])
++    AC_DEFINE(SOLARIS, 1, [Define to 1 for Solaris])
+     ;;
+   *-solaris*)
+-    AC_DEFINE(SOLARIS)
++    AC_DEFINE(SOLARIS, 1, [Define to 1 for Solaris])
+     ;;
+   *-sunos4*)
+-    AC_DEFINE(SUNOS)
+-    AC_DEFINE(SPRINTF_RETURNS_STRING)
++    AC_DEFINE(SUNOS, 1, [Define to 1 for SunOS])
++    AC_DEFINE(SPRINTF_RETURNS_STRING, 1, [Define to 1 if sprintf returns string])
+     ;;
+   *-linux*)
+-    AC_DEFINE(LINUX)
++    AC_DEFINE(LINUX, 1, [Define to 1 for Linux])
+     ;;
+   *-apple-darwin*)
+-    AC_DEFINE(MACOSX)
++    AC_DEFINE(MACOSX, 1, [Define to 1 for MacOSX])
+     dnl on Mac OSX the math library seems to contain unwanted getopt cruft
+     AC_CHECK_LIB(m, main)
+     needs_cpp_precomp=yes

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.50 2011/01/31 12:25:40 segoon Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.51 2011/01/31 14:19:37 segoon Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -8,7 +8,7 @@
 Summary: Network exploration tool and security scanner.
 Name: nmap
 Version: 5.50
-Release: owl3
+Release: owl4
 Epoch: 2
 License: GPL
 Group: Applications/System
@@ -30,6 +30,8 @@ Patch3: nmap-5.50-alt-owl-dot-dir.diff
 Patch4: nmap-5.50-alt-owl-fileexistsandisreadable.diff
 Patch5: nmap-5.50-owl-warnings.diff
 Patch6: nmap-5.50-owl-build.diff
+Patch7: nmap-5.50-owl-nping-drop-priv.diff
+Patch8: nmap-5.50-owl-nping-autoheader.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
 %if %BUILD_NDIFF
@@ -92,6 +94,8 @@ Denial of Service attacks, route tracing, and other purposes.
 %patch4 -p0
 %patch5 -p1
 %patch6 -p0
+%patch7 -p1
+%patch8 -p1
 bzip2 -9 CHANGELOG ncat/ChangeLog
 
 %if !%BUILD_NSE_ENABLED
@@ -123,6 +127,11 @@ aclocal
 autoheader
 autoconf
 %if %BUILD_NPING
+pushd nping
+aclocal
+autoheader
+autoconf
+popd
 %configure \
 	--without-openssl \
 	--without-zenmap %nseflag %ncatflag %ndiff_flag %npingflag \
@@ -189,6 +198,9 @@ grep -q ^nmap: /etc/passwd ||
 %endif
 
 %changelog
+* Mon Jan 31 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl4
+- Added patch for nping to drop root privileges.
+
 * Mon Jan 31 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl3
 - Package nping without ssl support.
 

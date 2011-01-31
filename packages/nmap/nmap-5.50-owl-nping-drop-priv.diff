@@ -1,0 +1,174 @@
+diff -uNp -r nmap-5.50.orig/nping/droppriv.cc nmap-5.50/nping/droppriv.cc
+--- nmap-5.50.orig/nping/droppriv.cc	1970-01-01 00:00:00 +0000
++++ nmap-5.50/nping/droppriv.cc	2011-01-31 13:01:17 +0000
+@@ -0,0 +1,81 @@
++#include "nping.h"
++#include "output.h"
++#ifndef NMAP_USER
++
++void drop_priv(void) {}
++
++#else
++
++#if HAVE_GRP_H
++# include <grp.h>
++#endif
++#if HAVE_SYS_CAPABILITY_H
++# include <sys/capability.h>
++#endif
++#if HAVE_SYS_PRCTL_H
++# include <sys/prctl.h>
++#endif
++
++#ifndef NMAP_CHROOT_EMPTY
++# ifdef NMAP_CHROOT_RESOLV
++#  define NMAP_CHROOT_EMPTY NMAP_CHROOT_RESOLV
++# else
++#  define NMAP_CHROOT_EMPTY NULL
++# endif
++#endif
++
++#ifndef NMAP_CHROOT_RESOLV
++# define NMAP_CHROOT_RESOLV NULL
++#endif
++
++const char *
++drop_priv_dir(void)
++{
++	return NMAP_CHROOT_EMPTY;
++}
++
++void
++drop_priv(void)
++{
++	const char *user = NMAP_USER;
++	const char *dir;
++	struct passwd *pw;
++	cap_t   caps;
++
++	if (geteuid())
++		return;
++
++	if (setgroups(0, 0) < 0)
++		fatal("setgroups failed");
++
++	if (prctl(PR_SET_KEEPCAPS, 1))
++		fatal("prctl PR_SET_KEEPCAPS failed");
++
++	if (!(pw = getpwnam(user)))
++		fatal("lookup of user \"%s\" failed", user);
++	endpwent();
++
++	if (!pw->pw_uid)
++		fatal("user \"%s\" shouldn't be root", user);
++
++	dir = drop_priv_dir();
++	if (dir && (chroot(dir) || chdir("/")))
++		fatal("chroot to \"%s\" failed", dir);
++
++	if (setgid(pw->pw_gid) < 0)
++		fatal("setgid failed");
++
++	if (setreuid(pw->pw_uid, pw->pw_uid) < 0)
++		fatal("setreuid failed");
++
++	caps = cap_from_text("cap_net_raw=ep");
++	if (!caps)
++		fatal("cap_from_text failed");
++
++	if (cap_set_proc(caps) < 0)
++		fatal("cap_set_proc failed");
++
++	cap_free(caps);
++}
++
++#endif /* NMAP_USER */
+diff -uNp -r nmap-5.50.orig/nping/droppriv.h nmap-5.50/nping/droppriv.h
+--- nmap-5.50.orig/nping/droppriv.h	1970-01-01 00:00:00 +0000
++++ nmap-5.50/nping/droppriv.h	2011-01-31 13:01:38 +0000
+@@ -0,0 +1,7 @@
++#ifndef NMAP_DROPPRIV_H__
++#define NMAP_DROPPRIV_H__
++
++extern const char *drop_priv_dir(void);
++extern void drop_priv(void);
++
++#endif /* NMAP_DROPPRIV_H__ */
+diff -uNp -r nmap-5.50.orig/nping/EchoClient.cc nmap-5.50/nping/EchoClient.cc
+--- nmap-5.50.orig/nping/EchoClient.cc	2011-01-31 12:12:36 +0000
++++ nmap-5.50/nping/EchoClient.cc	2011-01-31 13:06:02 +0000
+@@ -149,6 +149,7 @@ int EchoClient::start(NpingTarget *targe
+     outError(QT_2, "Connection failed.");
+     return OP_FAILURE;
+   }
++  drop_priv();
+ 
+   /* Perform NEP authentication handshake */
+   if( this->nep_handshake() != OP_SUCCESS ){
+diff -uNp -r nmap-5.50.orig/nping/EchoServer.cc nmap-5.50/nping/EchoServer.cc
+--- nmap-5.50.orig/nping/EchoServer.cc	2011-01-31 12:12:36 +0000
++++ nmap-5.50/nping/EchoServer.cc	2011-01-31 13:07:09 +0000
+@@ -1397,6 +1397,7 @@ int EchoServer::start() {
+ 
+   /* Get a socket suitable for an accept() call */
+   listen_sd=this->nep_listen_socket();
++  drop_priv();
+ 
+   while(1){
+     /* If --once is enabled, just allow the first client */
+diff -uNp -r nmap-5.50.orig/nping/Makefile.in nmap-5.50/nping/Makefile.in
+--- nmap-5.50.orig/nping/Makefile.in	2011-01-31 12:12:36 +0000
++++ nmap-5.50/nping/Makefile.in	2011-01-31 13:06:35 +0000
+@@ -64,11 +64,11 @@ DESTDIR =
+ TARGET = nping
+ 
+ 
+-export SRCS = ArgParser.cc NetworkLayerElement.cc PacketElement.cc common.cc common_modified.cc nping.cc RawData.cc UDPHeader.cc NpingOps.cc TCPHeader.cc utils.cc utils_net.cc IPv4Header.cc IPv6Header.cc ICMPv4Header.cc output.cc TransportLayerElement.cc stats.cc NpingTargets.cc NpingTarget.cc EthernetHeader.cc ARPHeader.cc EchoHeader.cc EchoServer.cc EchoClient.cc ProbeMode.cc NEPContext.cc Crypto.cc PacketDiff.cc @COMPAT_SRCS@
++export SRCS = ArgParser.cc NetworkLayerElement.cc PacketElement.cc common.cc common_modified.cc nping.cc RawData.cc UDPHeader.cc NpingOps.cc TCPHeader.cc utils.cc utils_net.cc IPv4Header.cc IPv6Header.cc ICMPv4Header.cc output.cc TransportLayerElement.cc stats.cc NpingTargets.cc NpingTarget.cc EthernetHeader.cc ARPHeader.cc EchoHeader.cc EchoServer.cc EchoClient.cc ProbeMode.cc NEPContext.cc Crypto.cc PacketDiff.cc droppriv.cc @COMPAT_SRCS@
+ 
+-export HDRS = ApplicationLayerElement.h NetworkLayerElement.h TCPHeader.h ArgParser.h nping_config.h TransportLayerElement.h common.h common_modified.h nping.h NpingOps.h UDPHeader.h global_structures.h output.h utils.h utils_net.h IPv4Header.h IPv6Header.h ICMPv4Header.h PacketElement.h RawData.h stats.h NpingTargets.h NpingTarget.h DataLinkLayerElement.h EthernetHeader.h ARPHeader.h EchoHeader.h EchoServer.h EchoClient.h ProbeMode.h NEPContext.h Crypto.h PacketDiff.h
++export HDRS = ApplicationLayerElement.h NetworkLayerElement.h TCPHeader.h ArgParser.h nping_config.h TransportLayerElement.h common.h common_modified.h nping.h NpingOps.h UDPHeader.h global_structures.h output.h utils.h utils_net.h IPv4Header.h IPv6Header.h ICMPv4Header.h PacketElement.h RawData.h stats.h NpingTargets.h NpingTarget.h DataLinkLayerElement.h EthernetHeader.h ARPHeader.h EchoHeader.h EchoServer.h EchoClient.h ProbeMode.h NEPContext.h Crypto.h PacketDiff.h droppriv.h
+ 
+-OBJS = ArgParser.o NetworkLayerElement.o PacketElement.o common.o common_modified.o nping.o RawData.o UDPHeader.o  NpingOps.o TCPHeader.o utils.o utils_net.o IPv4Header.o ICMPv4Header.o IPv6Header.o output.o TransportLayerElement.o stats.o NpingTargets.o NpingTarget.o EthernetHeader.o ARPHeader.o EchoHeader.o EchoServer.o EchoClient.o ProbeMode.o NEPContext.o Crypto.o PacketDiff.o @COMPAT_OBJS@
++OBJS = ArgParser.o NetworkLayerElement.o PacketElement.o common.o common_modified.o nping.o RawData.o UDPHeader.o  NpingOps.o TCPHeader.o utils.o utils_net.o IPv4Header.o ICMPv4Header.o IPv6Header.o output.o TransportLayerElement.o stats.o NpingTargets.o NpingTarget.o EthernetHeader.o ARPHeader.o EchoHeader.o EchoServer.o EchoClient.o ProbeMode.o NEPContext.o Crypto.o PacketDiff.o droppriv.o @COMPAT_OBJS@
+ 
+ export DOCS2DIST = leet-nping-ascii-art.txt nping.1 nping-man.html
+ 
+diff -uNp -r nmap-5.50.orig/nping/nping.h nmap-5.50/nping/nping.h
+--- nmap-5.50.orig/nping/nping.h	2011-01-31 12:12:36 +0000
++++ nmap-5.50/nping/nping.h	2011-01-31 13:09:19 +0000
+@@ -101,6 +101,7 @@
+ #include <ctype.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include "droppriv.h"
+ 
+ #include "../libnetutil/netutil.h"
+ 
+diff -uNp -r nmap-5.50.orig/nping/ProbeMode.cc nmap-5.50/nping/ProbeMode.cc
+--- nmap-5.50.orig/nping/ProbeMode.cc	2011-01-31 12:12:36 +0000
++++ nmap-5.50/nping/ProbeMode.cc	2011-01-31 13:05:49 +0000
+@@ -216,6 +216,7 @@ int ProbeMode::start(){
+   /** TCP CONNECT MODE                                                      **/
+   /***************************************************************************/
+   case TCP_CONNECT:
++    drop_priv();
+     o.stats.startClocks();
+     for( c=0; c < o.getPacketCount(); c++){ /* Do requested times */
+         o.targets.rewind();
+@@ -254,6 +255,7 @@ int ProbeMode::start(){
+   /** UDP UNPRIVILEGD MODE                                                  **/
+   /***************************************************************************/
+   case UDP_UNPRIV:
++    drop_priv();
+     o.stats.startClocks();
+     for( c=0; c < o.getPacketCount(); c++){ /* Do requested times */
+         o.targets.rewind();
+@@ -342,6 +344,7 @@ int ProbeMode::start(){
+             outFatal(QT_3, "Error opening capture device %s --> %s\n", o.getDevice(), auxpnt);
+         outPrint(DBG_2,"Pcap device %s open successfully", o.getDevice() );
+     }
++    drop_priv();
+ 
+     /* Ready? Go! */
+     o.stats.startClocks();
