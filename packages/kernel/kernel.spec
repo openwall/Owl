@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.38 2011/01/29 16:19:51 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.39 2011/01/31 16:07:34 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 238.1.1.el5.028stab083.1
-Release: %ovzversion.owl2
+Release: %ovzversion.owl3
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab083.1
@@ -19,6 +19,7 @@ Patch0: patch-%ovzversion-combined.xz
 # http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab083.1/patches/patch-238.1.1.el5.028stab083.1-combined.gz
 # Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab083.1/patches/patch-238.1.1.el5.028stab083.1-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
+Patch2: linux-%version-%ovzversion-owl-pingsockets.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
 ExclusiveArch: i686 x86_64
@@ -50,6 +51,7 @@ satisfy possible dependencies of other packages.
 %setup -q -n linux-%version
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 cp %_sourcedir/dot-config-%_target_cpu .config
 
 %build
@@ -104,6 +106,9 @@ done
 %files fake
 
 %changelog
+* Mon Jan 31 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab083.1.owl3
+- Added ICMP socket kind.
+
 * Sat Jan 29 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab083.1.owl2
 - Applied a patch fixing APIC driver selection on x86_64 systems with more than
 8 logical CPUs (thanks to Pavel Emelyanov of OpenVZ for providing this patch).
