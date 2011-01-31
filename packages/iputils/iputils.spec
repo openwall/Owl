@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/iputils/iputils.spec,v 1.29 2010/09/03 00:45:06 solar Exp $
+# $Owl: Owl/packages/iputils/iputils.spec,v 1.30 2011/01/31 15:24:09 segoon Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
 Version: ss020927
-Release: owl8
+Release: owl9
 License: mostly BSD, some GPL
 Group: Applications/Internet
 Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%version.tar.gz
@@ -15,6 +15,7 @@ Patch2: iputils-ss020927-owl-socketbits.diff
 Patch3: iputils-ss020927-owl-man.diff
 Patch4: iputils-ss020927-alt-Makefile.diff
 Patch5: iputils-ss020927-owl-ipv6.diff
+Patch6: iputils-ss020927-owl-pingsock.diff
 Patch10: bonding-0.2-owl-ioctl.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 Prefix: %_prefix
@@ -35,6 +36,7 @@ mv -f bonding-0.2/README bonding-0.2/README.ifenslave
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 %patch10 -p0
 
 %{expand:%%define optflags %optflags -Wall}
@@ -103,6 +105,9 @@ fi
 /etc/control.d/facilities/ping6
 
 %changelog
+* Mon Jan 31 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> ss020927-owl9
+- Added patch for ICMP sockets (no control mode yet).
+
 * Fri Sep 03 2010 Solar Designer <solar-at-owl.openwall.com> ss020927-owl8
 - Install ping as "restricted" by default.
 
