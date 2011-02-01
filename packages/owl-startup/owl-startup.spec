@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.89 2011/01/24 06:31:14 solar Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.90 2011/02/01 13:56:12 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.40
+Version: 0.41
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -169,6 +169,9 @@ fi
 %doc redhat
 
 %changelog
+* Tue Feb 01 2011 Solar Designer <solar-at-owl.openwall.com> 0.41-owl1
+- Set "net.ipv4.ping_group_range = 111 111" in sysctl.conf.
+
 * Mon Jan 24 2011 Solar Designer <solar-at-owl.openwall.com> 0.40-owl1
 - Added "-s 131072" to the dmesg invocation in rc.sysinit; without this change,
 /var/run/dmesg.boot was often incomplete.
