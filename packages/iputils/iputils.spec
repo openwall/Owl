@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/iputils/iputils.spec,v 1.30 2011/01/31 15:24:09 segoon Exp $
+# $Owl: Owl/packages/iputils/iputils.spec,v 1.31 2011/02/01 13:41:06 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
 Version: ss020927
-Release: owl9
+Release: owl10
 License: mostly BSD, some GPL
 Group: Applications/Internet
 Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%version.tar.gz
@@ -80,13 +80,13 @@ install -m 700 %_sourcedir/ping6.control \
 if [ $1 -ge 2 ]; then
 	%_sbindir/control-dump ping ping6
 fi
+grep -q ^_icmp: /etc/group || groupadd -g 111 _icmp
 
 %post
 if [ $1 -ge 2 ]; then
 	%_sbindir/control-restore ping ping6
 else
-	echo -n "ping not enabled for non-root by default, use "
-	echo "\"control ping public\" to enable"
+	%_sbindir/control ping dgramsocket
 fi
 
 %files
@@ -105,6 +105,13 @@ fi
 /etc/control.d/facilities/ping6
 
 %changelog
+* Tue Feb 01 2011 Solar Designer <solar-at-owl.openwall.com> ss020927-owl10
+- Add group _icmp (if it does not exist yet) on package install.
+- Revised the control(8) settings for ping(1): added dgramsocket, turned public
+into an alias for dgramsocket (for upgrades of systems that used public),
+renamed old public into traditional.
+- "control ping dgramsocket" by default.
+
 * Mon Jan 31 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> ss020927-owl9
 - Added patch for ICMP sockets (no control mode yet).
 
