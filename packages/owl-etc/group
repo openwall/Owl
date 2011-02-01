@@ -25,6 +25,7 @@ sshd:x:74:
 nobody:x:99:
 users:x:100:
 proc:x:110:
+_icmp:x:111:
 audio:x:120:
 video:x:121:
 radio:x:122:

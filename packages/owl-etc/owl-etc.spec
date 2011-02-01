@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.76 2010/07/26 23:20:01 solar Exp $
+# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.77 2011/02/01 13:14:05 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 0.34
+Version: 1.0
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -159,6 +159,9 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %dir %attr(755,root,root) /etc/sysconfig
 
 %changelog
+* Tue Feb 01 2011 Solar Designer <solar-at-owl.openwall.com> 1.0-owl1
+- Added group _icmp.
+
 * Mon Jul 26 2010 Solar Designer <solar-at-owl.openwall.com> 0.34-owl1
 - Added default fstab lines for tmpfs and for sysfs (the latter with noauto).
 
