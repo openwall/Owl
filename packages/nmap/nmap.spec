@@ -1,14 +1,19 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.51 2011/01/31 14:19:37 segoon Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.52 2011/02/02 15:24:37 segoon Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
 %define BUILD_NDIFF 0
 %define BUILD_NPING 1
 
+# nping wants EVP_sha256() that is not part of OpenSSL 0.9.7.
+# If you have OpenSSL 0.9.7 define this to 1 .
+# - segoon
+%define HAVE_OPENSSL_0_9_7 0
+
 Summary: Network exploration tool and security scanner.
 Name: nmap
 Version: 5.50
-Release: owl4
+Release: owl5
 Epoch: 2
 License: GPL
 Group: Applications/System
@@ -126,12 +131,24 @@ bzip2 -9 CHANGELOG ncat/ChangeLog
 aclocal
 autoheader
 autoconf
-%if %BUILD_NPING
+
 pushd nping
 aclocal
 autoheader
 autoconf
 popd
+
+%if !%HAVE_OPENSSL_0_9_7
+%configure \
+	--without-zenmap %nseflag %ncatflag %ndiff_flag %npingflag \
+	--with-libpcap=yes \
+	--with-user=nmap \
+	--with-chroot-empty=/var/empty
+touch makefile.dep
+%__make
+%else
+
+# First, build everything without openssl, but with nping
 %configure \
 	--without-openssl \
 	--without-zenmap %nseflag %ncatflag %ndiff_flag %npingflag \
@@ -142,8 +159,8 @@ touch makefile.dep
 %__make
 mv nping/nping{,.wo-ssl}
 %__make clean
-%endif
 
+# Now build everything with openssl, but without nping
 %configure \
 	--without-zenmap %nseflag %ncatflag %ndiff_flag --without-nping \
 	--with-libpcap=yes \
@@ -151,13 +168,18 @@ mv nping/nping{,.wo-ssl}
 	--with-chroot-empty=/var/empty
 touch makefile.dep
 %__make
+%endif
 
 %install
 rm -rf %buildroot
 %__make install DESTDIR=%buildroot
 
 %if %BUILD_NPING
+%if !%HAVE_OPENSSL_0_9_7
+%__install -m 0755 nping/nping %buildroot%_bindir/nping
+%else
 %__install -m 0755 nping/nping.wo-ssl %buildroot%_bindir/nping
+%endif
 %__install -m 0755 nping/docs/nping.1 %buildroot%_mandir/man1/
 %endif
 
@@ -198,6 +220,9 @@ grep -q ^nmap: /etc/passwd ||
 %endif
 
 %changelog
+* Wed Feb 02 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl5
+- Enabled nping OpenSSL support.
+
 * Mon Jan 31 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl4
 - Added patch for nping to drop root privileges.
 
