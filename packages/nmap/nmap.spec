@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.53 2011/02/02 20:23:02 segoon Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.54 2011/02/02 20:36:51 solar Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -6,14 +6,14 @@
 %define BUILD_NPING 1
 
 # nping wants EVP_sha256() that is not part of OpenSSL 0.9.7.
-# If you have OpenSSL 0.9.7 define this to 0.
+# If you only have OpenSSL 0.9.7 define this to 0.
 # - segoon
 %define HAVE_OPENSSL_SHA256 0
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
 Version: 5.50
-Release: owl6
+Release: owl5
 Epoch: 2
 License: GPL
 Group: Applications/System
@@ -219,11 +219,9 @@ grep -q ^nmap: /etc/passwd ||
 %endif
 
 %changelog
-* Wed Feb 02 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl6
-- Temporary disable nping OpenSSL support (we haven't got openssl-1.0.0 yet).
-
 * Wed Feb 02 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl5
-- Enabled nping OpenSSL support.
+- Introduced a way to enable Nping's OpenSSL support in this spec file (not
+enabled yet).
 
 * Mon Jan 31 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl4
 - Added patch for nping to drop root privileges.
