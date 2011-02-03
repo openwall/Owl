@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.39 2011/01/31 16:07:34 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.40 2011/02/03 11:39:58 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 238.1.1.el5.028stab083.1
-Release: %ovzversion.owl3
+Release: %ovzversion.owl4
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab083.1
@@ -106,6 +106,10 @@ done
 %files fake
 
 %changelog
+* Thu Feb 03 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab083.1.owl4
+- Initialize ping_group_range to {1, 0} to disable the feature for
+daemons that don't drop GID 0.  Suggested by Solar.
+
 * Mon Jan 31 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab083.1.owl3
 - Added ICMP socket kind.
 
