@@ -1,12 +1,12 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.40 2011/02/03 11:39:58 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.41 2011/02/04 16:47:57 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 238.1.1.el5.028stab083.1
-Release: %ovzversion.owl4
+%define ovzversion 238.1.1.el5.028stab084.1
+Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab083.1
@@ -19,7 +19,6 @@ Patch0: patch-%ovzversion-combined.xz
 # http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab083.1/patches/patch-238.1.1.el5.028stab083.1-combined.gz
 # Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab083.1/patches/patch-238.1.1.el5.028stab083.1-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
-Patch2: linux-%version-%ovzversion-owl-pingsockets.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
 ExclusiveArch: i686 x86_64
@@ -51,7 +50,6 @@ satisfy possible dependencies of other packages.
 %setup -q -n linux-%version
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 cp %_sourcedir/dot-config-%_target_cpu .config
 
 %build
@@ -106,6 +104,14 @@ done
 %files fake
 
 %changelog
+* Fri Feb 04 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab084.1.owl1
+- Updated to 2.6.18-238.1.1.el5.028stab084.1.
+- Enabled VDSO on x86_64 (the actual bug is fixed in 028stab084.1).
+- Combined -owl and -owl-pingsockets into -owl.
+- Applied a patch fixing flooding "Uncharging too much" for non-4levels page
+tables acct:
+http://bugzilla.openvz.org/show_bug.cgi?id=1760
+
 * Thu Feb 03 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab083.1.owl4
 - Initialize ping_group_range to {1, 0} to disable the feature for
 daemons that don't drop GID 0.  Suggested by Solar.
