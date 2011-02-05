@@ -33,13 +33,13 @@ diff -uNp -r shadow-4.0.4.1.orig/libmisc/chkname.c shadow-4.0.4.1/libmisc/chknam
  	 */
 -	if (!*name || !((*name >= 'a' && *name <= 'z') || *name == '_'))
 +	if (!*name || !((*name >= 'a' && *name <= 'z') ||
-+                        (*name >= 'A' && *name <= 'Z' && relaxed) ||
-+                         *name == '_'))
++	                (*name >= 'A' && *name <= 'Z' && relaxed) ||
++	                 *name == '_'))
  		return 0;
  
  	while (*++name) {
  		if (!((*name >= 'a' && *name <= 'z') ||
-+                      (*name >= 'A' && *name <= 'Z' && relaxed) ||
++		      (*name >= 'A' && *name <= 'Z' && relaxed) ||
  		      (*name >= '0' && *name <= '9') ||
  		      *name == '_' || *name == '-' ||
  		      (*name == '$' && *(name + 1) == '\0')))
@@ -47,7 +47,7 @@ diff -uNp -r shadow-4.0.4.1.orig/libmisc/chkname.c shadow-4.0.4.1/libmisc/chknam
  #else
  	struct utmp ut;
  #endif
-+        int relaxed = getdef_bool("USERNAME_RELAXED");
++	int relaxed = getdef_bool("USERNAME_RELAXED");
  
  	/*
  	 * User names are limited by whatever utmp can
