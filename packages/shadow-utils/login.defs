@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/shadow-utils/login.defs,v 1.13 2011/02/05 14:24:54 segoon Exp $
+# $Owl: Owl/packages/shadow-utils/login.defs,v 1.14 2011/02/05 14:38:35 solar Exp $
 #
 # Please refer to login.defs(5) for more information on this file, the
 # parameters which may be defined here and the corresponding programs.
@@ -111,10 +111,10 @@ TCB_SYMLINKS		no
 USERNAME_MAX		8
 GROUPNAME_MAX		16
 
-# 
-# Whether capital letters are allowed in usernames and groupnames.
-# Relaxed character set is a subject to change in future versions
-# of shadow-utils.  Default is no.
-# 
-#USERNAME_RELAXED yes
-#GROUPNAME_RELAXED yes
+#
+# Currently, these control whether capital letters are allowed in usernames
+# and group names or not.  The exact effect of these settings is subject
+# to change in future versions.  The default for both settings is no.
+#
+#USERNAME_RELAXED	no
+#GROUPNAME_RELAXED	no
