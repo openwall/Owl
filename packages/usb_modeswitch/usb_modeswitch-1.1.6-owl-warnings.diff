@@ -1,0 +1,35 @@
+diff -uNrp usb-modeswitch-1.1.6.orig/usb_modeswitch.c usb-modeswitch-1.1.6/usb_modeswitch.c
+--- usb-modeswitch-1.1.6.orig/usb_modeswitch.c	2011-02-05 19:52:56 +0300
++++ usb-modeswitch-1.1.6/usb_modeswitch.c	2011-02-05 20:02:46 +0300
+@@ -1200,7 +1200,8 @@ void release_usb_device(int dummy) {
+ struct usb_device* search_devices( int *numFound, int vendor, int product, char* productList, int targetClass, int configuration, int mode)
+ {
+ 	struct usb_bus *bus;
+-	char *listcopy, *token, buffer[2];
++	char *listcopy = NULL; /* Never used */
++	char *token, buffer[2];
+ 	int devClass;
+ 	struct usb_device* right_dev = NULL;
+ 	struct usb_dev_handle *testdevh;
+@@ -1213,10 +1214,10 @@ struct usb_device* search_devices( int *
+ 	*numFound = 0;
+ 
+ 	/* Sanity check */
+-	if (!vendor || (!product && productList == '\0') )
++	if (!vendor || (!product && *productList == '\0') )
+ 		return NULL;
+ 
+-	if (productList != '\0')
++	if (*productList != '\0')
+ 		listcopy = malloc(strlen(productList)+1);
+ 
+ 	for (bus = usb_get_busses(); bus; bus = bus->next) {
+@@ -1330,7 +1331,7 @@ struct usb_device* search_devices( int *
+ 				}
+ 		}
+ 	}
+-	if (productList != NULL)
++	if (*productList != '\0')
+ 		free(listcopy);
+ 	return right_dev;
+ }
