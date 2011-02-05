@@ -46,6 +46,13 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2011/02/05	Package: kernel
+Updated to upstream's "fixed fix for paging accounting".  The incomplete
+fix introduced with our 2011/02/04 update could have caused trouble with
+32-bit x86 kernels.
+Reference:
+http://bugzilla.openvz.org/show_bug.cgi?id=1760
+
 2011/02/05	Package: shadow-utils
 Added USERNAME_RELAXED and GROUPNAME_RELAXED options to /etc/login.defs,
 which, if changed to "yes", will allow capital letters to be used in new
@@ -55,8 +62,8 @@ usernames and/or group names, respectively.
 Updated the kernel to OpenVZ's latest from their "RHEL5 testing" branch
 (238.1.1.el5.028stab084.1), which includes updated atl1 driver (Attansic
 L1 Gigabit Ethernet).  Enabled VDSO on x86_64 (the actual bug is fixed
-in 028stab084.1).  Applied upstream's "fix for non-4levels page tables
-acct" (the bug was introduced in 084.1, so we never had it).
+in 028stab084.1).  Applied upstream's initial "fix for non-4levels page
+tables acct" (the bug was introduced in 084.1, so we never had it).
 References:
 http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab084.1
 http://bugzilla.openvz.org/show_bug.cgi?id=1760
@@ -154,4 +161,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.20 2011/02/05 15:12:22 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.21 2011/02/05 15:31:42 solar Exp $
