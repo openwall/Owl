@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.58 2010/08/21 00:42:07 solar Exp $
+# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.59 2011/02/05 14:24:54 segoon Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.4.1
-Release: owl12
+Release: owl13
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -38,6 +38,7 @@ Patch24: shadow-4.0.4.1-owl-newgrp.diff
 Patch30: shadow-4.0.4.1-owl-tcb.diff
 Patch40: shadow-4.0.4.1-alt-man.diff
 Patch41: shadow-4.0.4.1-alt-configure.diff
+Patch42: shadow-4.0.4.1-owl-name-relaxed.diff
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: pam >= 0:0.80-owl2, pam_userpass >= 0.5, tcb >= 0.9.8
 BuildRequires: libtool, gettext >= 0.14.1, automake, autoconf
@@ -74,6 +75,7 @@ shadow password files.
 %patch30 -p1
 %patch40 -p1
 %patch41 -p1
+%patch42 -p1
 
 find . -name '*.orig' -delete
 bzip2 -9k ChangeLog NEWS doc/HOWTO
@@ -238,6 +240,10 @@ fi
 %exclude %_mandir/man8/mkpasswd*
 
 %changelog
+* Sat Feb 05 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:4.0.4.1-owl13
+- Allow capital letters in usernames and groupnames.  Added USERNAME_RELAXED
+and GROUPNAME_RELAXED options.
+
 * Sat Aug 21 2010 Solar Designer <solar-at-owl.openwall.com> 2:4.0.4.1-owl12
 - Don't package getspnam.3* (let the man-pages version of it be installed).
 
