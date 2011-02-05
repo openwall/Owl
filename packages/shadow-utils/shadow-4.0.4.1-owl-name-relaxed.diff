@@ -33,13 +33,13 @@ diff -uNp -r shadow-4.0.4.1.orig/libmisc/chkname.c shadow-4.0.4.1/libmisc/chknam
  	 */
 -	if (!*name || !((*name >= 'a' && *name <= 'z') || *name == '_'))
 +	if (!*name || !((*name >= 'a' && *name <= 'z') ||
-+                        (*name >= 'A' && *name <= 'z' && relaxed) ||
++                        (*name >= 'A' && *name <= 'Z' && relaxed) ||
 +                         *name == '_'))
  		return 0;
  
  	while (*++name) {
  		if (!((*name >= 'a' && *name <= 'z') ||
-+                      (*name >= 'A' && *name <= 'A' && relaxed) ||
++                      (*name >= 'A' && *name <= 'Z' && relaxed) ||
  		      (*name >= '0' && *name <= '9') ||
  		      *name == '_' || *name == '-' ||
  		      (*name == '$' && *(name + 1) == '\0')))
