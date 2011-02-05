@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.41 2011/02/04 16:47:57 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.42 2011/02/05 15:51:24 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 238.1.1.el5.028stab084.1
-Release: %ovzversion.owl1
+Release: %ovzversion.owl2
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab083.1
@@ -104,6 +104,12 @@ done
 %files fake
 
 %changelog
+* Sat Feb 05 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab084.1.owl2
+- Updated to upstream's "fixed fix for paging accounting".  The incomplete
+fix introduced with our 2011/02/04 update could have caused trouble with
+32-bit x86 kernels:
+http://bugzilla.openvz.org/show_bug.cgi?id=1760
+
 * Fri Feb 04 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab084.1.owl1
 - Updated to 2.6.18-238.1.1.el5.028stab084.1.
 - Enabled VDSO on x86_64 (the actual bug is fixed in 028stab084.1).

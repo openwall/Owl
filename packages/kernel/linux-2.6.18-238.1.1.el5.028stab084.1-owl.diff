@@ -6,7 +6,7 @@ diff -uNrp linux-2.6.18.orig/Makefile linux-2.6.18/Makefile
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -238.1.1.el5.028stab084.1
-+EXTRAVERSION = -238.1.1.el5.028stab084.1.owl1
++EXTRAVERSION = -238.1.1.el5.028stab084.1.owl2
  RHEL_MAJOR = 5
  RHEL_MINOR = 6
  NAME=Avast! A bilge rat!
@@ -742,17 +742,19 @@ diff -uNrp linux-2.6.18.orig/security/min_addr.c linux-2.6.18/security/min_addr.
 diff -uNrp linux-2.6.18.orig/mm/memory.c linux-2.6.18/mm/memory.c
 --- linux-2.6.18.orig/mm/memory.c	2011-02-04 19:22:58 +0300
 +++ linux-2.6.18/mm/memory.c	2011-02-04 19:23:09 +0300
-@@ -176,7 +176,9 @@ static inline void free_pmd_range(struct
+@@ -176,7 +176,11 @@ static inline void free_pmd_range(struct
  	pmd = pmd_offset(pud, start);
  	pud_clear(pud);
  	pmd_free_tlb(tlb, pmd);
 +#ifndef __PAGETABLE_PMD_FOLDED
++# ifndef CONFIG_X86_PAE
  	tlb->mm->page_table_acct--;
++# endif
 +#endif
  }
  
  static inline void free_pud_range(struct mmu_gather *tlb, pgd_t *pgd,
-@@ -210,7 +212,9 @@ static inline void free_pud_range(struct
+@@ -210,7 +214,9 @@ static inline void free_pud_range(struct
  	pud = pud_offset(pgd, start);
  	pgd_clear(pgd);
  	pud_free_tlb(tlb, pud);
