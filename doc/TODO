@@ -6,8 +6,15 @@ This is the public Owl to-do list.
 Support a package repository, possibly with Zypper, yum, or apt (package
 one of these - and its prerequisites).
 
-Toolchain and libraries updates (gcc, glibc, OpenSSL, etc.)  Package
-updates that we didn't dare to make shortly before 3.0 (OpenSSH, etc.)
+Toolchain and libraries updates (gcc, glibc, OpenSSL, etc.)  Drop
+pre-3.0 compatibility stuff (most notably the old libstdc++ binaries),
+likely introduce new compatibility stuff to support upgrades from 3.0.
+
+After or along with the toolchain and library updates, make other
+package updates that we didn't dare to make shortly before 3.0 (OpenSSH,
+etc.)  (If a certain outdated upstream version fails to build with the
+new tools/libraries, just update it along with those tool/library
+updates.  Otherwise, update it after the tool/library updates.)
 
 Packages to consider and likely add (second batch, after toolchain and
 libraries update): tcpdump (or tshark?), up to two newbie-friendly text
@@ -53,4 +60,4 @@ User's Guide - review and edit the draft, make it public, then identify
 and add important missing chapters (adding/removing users, managing
 OpenVZ containers, maybe something else).
 
-$Owl: Owl/doc/TODO,v 1.205 2011/02/06 14:25:05 solar Exp $
+$Owl: Owl/doc/TODO,v 1.206 2011/02/06 14:30:47 solar Exp $
