@@ -32,8 +32,8 @@ or start using a compressed filesystem.
 UTF-8 support.  In Owl 3.0, we have building of UTF-8 locales disabled
 in glibc.spec by default, and we have UTF-8 support disabled when
 building other packages (e.g., Mutt).  This saves us from some security
-issues being discovered (that affect other distributions but not us),
-but perhaps it's time to bite the bullet and support UTF-8 by default.
+issues that turn out to affect other distributions but not us, but
+perhaps it's time to bite the bullet and support UTF-8 by default.
 
 Move to OpenVZ's RHEL6 branch kernels.
 
@@ -60,4 +60,4 @@ User's Guide - review and edit the draft, make it public, then identify
 and add important missing chapters (adding/removing users, managing
 OpenVZ containers, maybe something else).
 
-$Owl: Owl/doc/TODO,v 1.206 2011/02/06 14:30:47 solar Exp $
+$Owl: Owl/doc/TODO,v 1.207 2011/02/06 14:34:29 solar Exp $
