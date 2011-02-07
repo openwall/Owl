@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/libusb-compat/libusb-compat.spec,v 1.1 2011/02/05 18:18:18 segoon Exp $
+# $Owl: Owl/packages/libusb-compat/libusb-compat.spec,v 1.2 2011/02/07 17:36:10 segoon Exp $
 
 Summary: A library which allows userspace access to USB devices.
 Name: libusb-compat
@@ -27,15 +27,6 @@ Requires: %name = %version-%release
 %description devel
 This package contains the header files, libraries and documentation needed to
 develop applications that use libusb-compat.
-
-%package static
-Summary: Static development files for libusb-compat.
-Group: Development/Libraries
-Requires: %name-devel = %version-%release
-
-%description static
-This package contains static libraries to develop applications that use
-libusb-compat.
 
 %prep
 %setup -q
@@ -68,9 +59,6 @@ rm -rf %buildroot
 %_includedir/usb.h
 %_libdir/libusb.so
 %_libdir/pkgconfig/libusb.pc
-
-%files static
-%defattr(-,root,root,-)
 %_libdir/libusb.a
 
 %changelog
