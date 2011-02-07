@@ -2,5 +2,6 @@ tmpfs		/tmp			tmpfs	nosuid,nodev		0 0
 proc		/proc			proc	gid=110			0 0
 devpts		/dev/pts		devpts	gid=5,mode=620		0 0
 sysfs		/sys			sysfs	noauto			0 0
+usbfs		/proc/bus/usb		usbfs	noauto			0 0
 /dev/cdrom	/mnt/cdrom		iso9660	noauto,nosuid,owner,ro	0 0
 /dev/fd0	/mnt/floppy		ext2	noauto,nosuid,owner	0 0

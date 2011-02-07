@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.77 2011/02/01 13:14:05 solar Exp $
+# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.78 2011/02/07 17:43:23 segoon Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
 Version: 1.0
-Release: owl1
+Release: owl2
 License: public domain
 Group: System Environment/Base
 Source0: passwd
@@ -159,6 +159,9 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %dir %attr(755,root,root) /etc/sysconfig
 
 %changelog
+* Mon Feb 07 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.0-owl2
+- Added "usbfs" entry in fstab (for lsusb).
+
 * Tue Feb 01 2011 Solar Designer <solar-at-owl.openwall.com> 1.0-owl1
 - Added group _icmp.
 
