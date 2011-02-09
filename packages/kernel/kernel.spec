@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.43 2011/02/09 17:12:06 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.44 2011/02/09 17:51:07 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -9,15 +9,15 @@ Version: 2.6.18
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab083.1
+URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab084.2
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab083.1/patches/patch-238.1.1.el5.028stab083.1-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab083.1/patches/patch-238.1.1.el5.028stab083.1-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab084.2/patches/patch-238.1.1.el5.028stab084.2-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab084.2/patches/patch-238.1.1.el5.028stab084.2-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -106,7 +106,8 @@ done
 %changelog
 * Wed Feb 09 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab084.2.owl1
 - Updated to 2.6.18-238.1.1.el5.028stab084.2.  The fix for VDSO bug in
-028stab084.1 was incomplete, now fixed, hopefully.
+028stab084.1 was incomplete, now fixed, hopefully:
+http://bugzilla.openvz.org/show_bug.cgi?id=1762
 - Dropped page accounting fix from -owl patch (fixed in OpenVZ's kernel).
 - CONFIG_BRIDGE=m (it also needs CONFIG_BRIDGE_NETFILTER=y,
 CONFIG_NETFILTER_XT_MATCH_PHYSDEV=m, CONFIG_BRIDGE_NF_EBTABLES=n).
@@ -129,7 +130,7 @@ http://bugzilla.openvz.org/show_bug.cgi?id=1760
 
 * Thu Feb 03 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab083.1.owl4
 - Initialize ping_group_range to {1, 0} to disable the feature for
-daemons that doesn't drop GID 0.  Suggested by Solar.
+daemons that don't drop GID 0.  Suggested by Solar.
 
 * Mon Jan 31 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab083.1.owl3
 - Added ICMP socket kind.
