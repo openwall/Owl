@@ -1,18 +1,18 @@
 diff -uNrp linux-2.6.18.orig/Makefile linux-2.6.18/Makefile
---- linux-2.6.18.orig/Makefile	2011-02-04 19:22:59 +0300
-+++ linux-2.6.18/Makefile	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/Makefile	2011-02-08 10:11:50 +0000
++++ linux-2.6.18/Makefile	2011-02-08 16:44:00 +0000
 @@ -1,7 +1,7 @@
  VERSION = 2
  PATCHLEVEL = 6
  SUBLEVEL = 18
--EXTRAVERSION = -238.1.1.el5.028stab084.1
-+EXTRAVERSION = -238.1.1.el5.028stab084.1.owl2
+-EXTRAVERSION = -238.1.1.el5.028stab084.2
++EXTRAVERSION = -238.1.1.el5.028stab084.2.owl1
  RHEL_MAJOR = 5
  RHEL_MINOR = 6
  NAME=Avast! A bilge rat!
 diff -uNrp linux-2.6.18.orig/arch/i386/kernel/cpu/amd.c linux-2.6.18/arch/i386/kernel/cpu/amd.c
---- linux-2.6.18.orig/arch/i386/kernel/cpu/amd.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/arch/i386/kernel/cpu/amd.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/arch/i386/kernel/cpu/amd.c	2011-02-08 10:11:45 +0000
++++ linux-2.6.18/arch/i386/kernel/cpu/amd.c	2011-02-08 16:41:57 +0000
 @@ -45,11 +45,14 @@ static void __cpuinit amd_fixup_dcm(stru
  	if (cpu_has(c, X86_FEATURE_AMD_DCM))
  		return;
@@ -29,8 +29,8 @@ diff -uNrp linux-2.6.18.orig/arch/i386/kernel/cpu/amd.c linux-2.6.18/arch/i386/k
  	rdmsrl(0xc001100c, value);
  
 diff -uNrp linux-2.6.18.orig/arch/i386/kernel/cpu/intel_cacheinfo.c linux-2.6.18/arch/i386/kernel/cpu/intel_cacheinfo.c
---- linux-2.6.18.orig/arch/i386/kernel/cpu/intel_cacheinfo.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/arch/i386/kernel/cpu/intel_cacheinfo.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/arch/i386/kernel/cpu/intel_cacheinfo.c	2011-02-08 10:11:48 +0000
++++ linux-2.6.18/arch/i386/kernel/cpu/intel_cacheinfo.c	2011-02-08 16:41:57 +0000
 @@ -47,10 +47,12 @@ static void wbinvd_on_cpu(int cpu)
  	smp_call_function_single(cpu, __wbinvd, NULL, 0, 1);
  }
@@ -58,8 +58,8 @@ diff -uNrp linux-2.6.18.orig/arch/i386/kernel/cpu/intel_cacheinfo.c linux-2.6.18
  	this_leaf->can_disable = true;
  	this_leaf->l3_indices  = amd_calc_l3_indices();
 diff -uNrp linux-2.6.18.orig/arch/x86_64/Kconfig linux-2.6.18/arch/x86_64/Kconfig
---- linux-2.6.18.orig/arch/x86_64/Kconfig	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/arch/x86_64/Kconfig	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/arch/x86_64/Kconfig	2011-02-08 10:11:48 +0000
++++ linux-2.6.18/arch/x86_64/Kconfig	2011-02-08 16:41:57 +0000
 @@ -476,6 +476,7 @@ config IOMMU
  	default y
  	select SWIOTLB
@@ -69,8 +69,8 @@ diff -uNrp linux-2.6.18.orig/arch/x86_64/Kconfig linux-2.6.18/arch/x86_64/Kconfi
  	help
  	  Support for full DMA access of devices with 32bit memory access only
 diff -uNrp linux-2.6.18.orig/drivers/ata/Kconfig linux-2.6.18/drivers/ata/Kconfig
---- linux-2.6.18.orig/drivers/ata/Kconfig	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/drivers/ata/Kconfig	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/drivers/ata/Kconfig	2011-02-08 10:11:38 +0000
++++ linux-2.6.18/drivers/ata/Kconfig	2011-02-08 16:41:57 +0000
 @@ -447,8 +447,8 @@ config PATA_MARVELL
  	help
  	  This option enables limited support for the Marvell 88SE61xx ATA
@@ -83,8 +83,8 @@ diff -uNrp linux-2.6.18.orig/drivers/ata/Kconfig linux-2.6.18/drivers/ata/Kconfi
  	  If unsure, say N.
  
 diff -uNrp linux-2.6.18.orig/drivers/ata/ahci.c linux-2.6.18/drivers/ata/ahci.c
---- linux-2.6.18.orig/drivers/ata/ahci.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/drivers/ata/ahci.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/drivers/ata/ahci.c	2011-02-08 10:11:46 +0000
++++ linux-2.6.18/drivers/ata/ahci.c	2011-02-08 16:41:57 +0000
 @@ -791,7 +791,7 @@ static void ahci_save_initial_config(str
  			   port_map,
  			   port_map & mv);
@@ -108,8 +108,8 @@ diff -uNrp linux-2.6.18.orig/drivers/ata/ahci.c linux-2.6.18/drivers/ata/ahci.c
  	/* acquire resources */
  	rc = pcim_enable_device(pdev);
 diff -uNrp linux-2.6.18.orig/drivers/block/cciss.c linux-2.6.18/drivers/block/cciss.c
---- linux-2.6.18.orig/drivers/block/cciss.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/drivers/block/cciss.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/drivers/block/cciss.c	2011-02-08 10:11:44 +0000
++++ linux-2.6.18/drivers/block/cciss.c	2011-02-08 16:41:57 +0000
 @@ -194,11 +194,40 @@ static void cciss_free_drive_info(ctlr_i
  static void cciss_clear_drive_info(drive_info_struct *drive_info);
  static void cciss_sysfs_stat_inquiry(int ctlr, int logvol,
@@ -194,8 +194,8 @@ diff -uNrp linux-2.6.18.orig/drivers/block/cciss.c linux-2.6.18/drivers/block/cc
   * blk_rq_bytes - Returns bytes left to complete in the entire request
   * @rq: the request being processed
 diff -uNrp linux-2.6.18.orig/drivers/char/keyboard.c linux-2.6.18/drivers/char/keyboard.c
---- linux-2.6.18.orig/drivers/char/keyboard.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/drivers/char/keyboard.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/drivers/char/keyboard.c	2011-02-08 10:11:48 +0000
++++ linux-2.6.18/drivers/char/keyboard.c	2011-02-08 16:41:57 +0000
 @@ -1376,7 +1376,7 @@ int __init kbd_init(void)
  		kbd_table[i].lockstate = KBD_DEFLOCK;
  		kbd_table[i].slockstate = 0;
@@ -206,8 +206,8 @@ diff -uNrp linux-2.6.18.orig/drivers/char/keyboard.c linux-2.6.18/drivers/char/k
  
  	input_register_handler(&kbd_handler);
 diff -uNrp linux-2.6.18.orig/drivers/char/vt.c linux-2.6.18/drivers/char/vt.c
---- linux-2.6.18.orig/drivers/char/vt.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/drivers/char/vt.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/drivers/char/vt.c	2011-02-08 10:11:34 +0000
++++ linux-2.6.18/drivers/char/vt.c	2011-02-08 16:41:57 +0000
 @@ -1497,7 +1497,7 @@ static void reset_terminal(struct vc_dat
  	vc->vc_charset		= 0;
  	vc->vc_need_wrap	= 0;
@@ -218,8 +218,8 @@ diff -uNrp linux-2.6.18.orig/drivers/char/vt.c linux-2.6.18/drivers/char/vt.c
  
  	vc->vc_disp_ctrl	= 0;
 diff -uNrp linux-2.6.18.orig/drivers/dca/Kconfig linux-2.6.18/drivers/dca/Kconfig
---- linux-2.6.18.orig/drivers/dca/Kconfig	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/drivers/dca/Kconfig	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/drivers/dca/Kconfig	2011-02-08 10:11:19 +0000
++++ linux-2.6.18/drivers/dca/Kconfig	2011-02-08 16:41:57 +0000
 @@ -3,7 +3,7 @@
  #
  
@@ -230,8 +230,8 @@ diff -uNrp linux-2.6.18.orig/drivers/dca/Kconfig linux-2.6.18/drivers/dca/Kconfi
  	default m
  	---help---
 diff -uNrp linux-2.6.18.orig/drivers/message/fusion/mptsas.c linux-2.6.18/drivers/message/fusion/mptsas.c
---- linux-2.6.18.orig/drivers/message/fusion/mptsas.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/drivers/message/fusion/mptsas.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/drivers/message/fusion/mptsas.c	2011-02-08 10:11:40 +0000
++++ linux-2.6.18/drivers/message/fusion/mptsas.c	2011-02-08 16:41:57 +0000
 @@ -436,6 +436,23 @@ mptsas_is_end_device(struct mptsas_devin
  		return 0;
  }
@@ -281,8 +281,8 @@ diff -uNrp linux-2.6.18.orig/drivers/message/fusion/mptsas.c linux-2.6.18/driver
  mptsas_get_port(struct mptsas_phyinfo *phy_info)
  {
 diff -uNrp linux-2.6.18.orig/drivers/net/Kconfig linux-2.6.18/drivers/net/Kconfig
---- linux-2.6.18.orig/drivers/net/Kconfig	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/drivers/net/Kconfig	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/drivers/net/Kconfig	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/drivers/net/Kconfig	2011-02-08 16:41:57 +0000
 @@ -2615,6 +2615,8 @@ config NIU
  config BNX2X
  	tristate "Broadcom NetXtremeII 10Gb support"
@@ -293,8 +293,8 @@ diff -uNrp linux-2.6.18.orig/drivers/net/Kconfig linux-2.6.18/drivers/net/Kconfi
  	  This driver supports Broadcom NetXtremeII 10 gigabit Ethernet cards.
  	  To compile this driver as a module, choose M here: the module
 diff -uNrp linux-2.6.18.orig/fs/Kconfig linux-2.6.18/fs/Kconfig
---- linux-2.6.18.orig/fs/Kconfig	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/fs/Kconfig	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/fs/Kconfig	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/fs/Kconfig	2011-02-08 16:41:57 +0000
 @@ -473,6 +473,7 @@ config QFMT_V2
  config SIM_FS
  	tristate "VPS filesystem"
@@ -304,8 +304,8 @@ diff -uNrp linux-2.6.18.orig/fs/Kconfig linux-2.6.18/fs/Kconfig
  	help
  	  This file system is a part of Virtuozzo. It intoduces a fake
 diff -uNrp linux-2.6.18.orig/fs/exec.c linux-2.6.18/fs/exec.c
---- linux-2.6.18.orig/fs/exec.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/fs/exec.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/fs/exec.c	2011-02-08 10:11:48 +0000
++++ linux-2.6.18/fs/exec.c	2011-02-08 16:41:57 +0000
 @@ -231,7 +231,8 @@ struct page *get_arg_page(struct linux_b
  		 *  - the program will have a reasonable amount of stack left
  		 *    to work from.
@@ -329,8 +329,8 @@ diff -uNrp linux-2.6.18.orig/fs/exec.c linux-2.6.18/fs/exec.c
  		up_write(&mm->mmap_sem);
  		goto err;
 diff -uNrp linux-2.6.18.orig/fs/proc/base.c linux-2.6.18/fs/proc/base.c
---- linux-2.6.18.orig/fs/proc/base.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/fs/proc/base.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/fs/proc/base.c	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/fs/proc/base.c	2011-02-08 16:41:57 +0000
 @@ -273,10 +273,10 @@ static struct pid_entry tgid_base_stuff[
  	  S_IFREG|S_IRUGO|S_IWUSR),
  #endif
@@ -358,8 +358,8 @@ diff -uNrp linux-2.6.18.orig/fs/proc/base.c linux-2.6.18/fs/proc/base.c
  
  	{0,0,NULL,0}
 diff -uNrp linux-2.6.18.orig/fs/sysfs/inode.c linux-2.6.18/fs/sysfs/inode.c
---- linux-2.6.18.orig/fs/sysfs/inode.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/fs/sysfs/inode.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/fs/sysfs/inode.c	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/fs/sysfs/inode.c	2011-02-08 16:41:57 +0000
 @@ -16,7 +16,15 @@
  #include <linux/security.h>
  #include "sysfs.h"
@@ -395,8 +395,8 @@ diff -uNrp linux-2.6.18.orig/fs/sysfs/inode.c linux-2.6.18/fs/sysfs/inode.c
   * sysfs has a different i_mutex lock order behavior for i_mutex than other
   * filesystems; sysfs i_mutex is called in many places with subsystem locks
 diff -uNrp linux-2.6.18.orig/include/linux/binfmts.h linux-2.6.18/include/linux/binfmts.h
---- linux-2.6.18.orig/include/linux/binfmts.h	2011-02-04 19:22:59 +0300
-+++ linux-2.6.18/include/linux/binfmts.h	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/include/linux/binfmts.h	2011-02-08 10:11:48 +0000
++++ linux-2.6.18/include/linux/binfmts.h	2011-02-08 16:41:57 +0000
 @@ -13,7 +13,8 @@ struct pt_regs;
   */
  #define MAX_ARG_PAGES 32
@@ -408,8 +408,8 @@ diff -uNrp linux-2.6.18.orig/include/linux/binfmts.h linux-2.6.18/include/linux/
  /* sizeof(linux_binprm->buf) */
  #define BINPRM_BUF_SIZE 128
 diff -uNrp linux-2.6.18.orig/include/linux/compat.h linux-2.6.18/include/linux/compat.h
---- linux-2.6.18.orig/include/linux/compat.h	2011-02-04 19:22:59 +0300
-+++ linux-2.6.18/include/linux/compat.h	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/include/linux/compat.h	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/include/linux/compat.h	2011-02-08 16:41:57 +0000
 @@ -263,5 +263,6 @@ asmlinkage long compat_sys_epoll_pwait(i
  asmlinkage long compat_sys_signalfd(int ufd,
  				const compat_sigset_t __user *sigmask,
@@ -418,8 +418,8 @@ diff -uNrp linux-2.6.18.orig/include/linux/compat.h linux-2.6.18/include/linux/c
  #endif /* CONFIG_COMPAT */
  #endif /* _LINUX_COMPAT_H */
 diff -uNrp linux-2.6.18.orig/include/linux/dmar.h linux-2.6.18/include/linux/dmar.h
---- linux-2.6.18.orig/include/linux/dmar.h	2011-02-04 19:22:59 +0300
-+++ linux-2.6.18/include/linux/dmar.h	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/include/linux/dmar.h	2011-02-08 10:11:29 +0000
++++ linux-2.6.18/include/linux/dmar.h	2011-02-08 16:41:57 +0000
 @@ -125,10 +125,6 @@ extern int irq_remapped(int irq);
  extern struct intel_iommu *map_dev_to_ir(struct pci_dev *dev);
  extern struct intel_iommu *map_ioapic_to_ir(int apic);
@@ -432,8 +432,8 @@ diff -uNrp linux-2.6.18.orig/include/linux/dmar.h linux-2.6.18/include/linux/dma
  {
  	return -1;
 diff -uNrp linux-2.6.18.orig/init/do_mounts.c linux-2.6.18/init/do_mounts.c
---- linux-2.6.18.orig/init/do_mounts.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/init/do_mounts.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/init/do_mounts.c	2006-09-20 03:42:06 +0000
++++ linux-2.6.18/init/do_mounts.c	2011-02-08 16:41:57 +0000
 @@ -13,6 +13,10 @@
  #include <linux/nfs_fs_sb.h>
  #include <linux/nfs_mount.h>
@@ -520,8 +520,8 @@ diff -uNrp linux-2.6.18.orig/init/do_mounts.c linux-2.6.18/init/do_mounts.c
  		       root_delay);
  		ssleep(root_delay);
 diff -uNrp linux-2.6.18.orig/init/do_mounts_md.c linux-2.6.18/init/do_mounts_md.c
---- linux-2.6.18.orig/init/do_mounts_md.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/init/do_mounts_md.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/init/do_mounts_md.c	2006-09-20 03:42:06 +0000
++++ linux-2.6.18/init/do_mounts_md.c	2011-02-08 16:41:57 +0000
 @@ -122,6 +122,7 @@ static void __init md_setup_drive(void)
  
  	for (ent = 0; ent < md_setup_ents ; ent++) {
@@ -568,8 +568,8 @@ diff -uNrp linux-2.6.18.orig/init/do_mounts_md.c linux-2.6.18/init/do_mounts_md.
  
  		printk(KERN_INFO "md: Loading md%s%d: %s\n",
 diff -uNrp linux-2.6.18.orig/kernel/exit.c linux-2.6.18/kernel/exit.c
---- linux-2.6.18.orig/kernel/exit.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/kernel/exit.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/kernel/exit.c	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/kernel/exit.c	2011-02-08 16:41:57 +0000
 @@ -957,12 +957,28 @@ fastcall NORET_TYPE void do_exit(long co
  	int group_dead;
  	unsigned int mycpu;
@@ -602,8 +602,8 @@ diff -uNrp linux-2.6.18.orig/kernel/exit.c linux-2.6.18/kernel/exit.c
  		panic("Attempted to kill the idle task!");
  #ifdef CONFIG_VE
 diff -uNrp linux-2.6.18.orig/kernel/kallsyms.c linux-2.6.18/kernel/kallsyms.c
---- linux-2.6.18.orig/kernel/kallsyms.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/kernel/kallsyms.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/kernel/kallsyms.c	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/kernel/kallsyms.c	2011-02-08 16:41:57 +0000
 @@ -421,7 +421,7 @@ static int __init kallsyms_init(void)
  {
  	struct proc_dir_entry *entry;
@@ -614,8 +614,8 @@ diff -uNrp linux-2.6.18.orig/kernel/kallsyms.c linux-2.6.18/kernel/kallsyms.c
  		entry->proc_fops = &kallsyms_operations;
  	return 0;
 diff -uNrp linux-2.6.18.orig/kernel/panic.c linux-2.6.18/kernel/panic.c
---- linux-2.6.18.orig/kernel/panic.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/kernel/panic.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/kernel/panic.c	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/kernel/panic.c	2011-02-08 16:41:57 +0000
 @@ -20,7 +20,7 @@
  #include <linux/kexec.h>
  #include <linux/debug_locks.h>
@@ -626,8 +626,8 @@ diff -uNrp linux-2.6.18.orig/kernel/panic.c linux-2.6.18/kernel/panic.c
  static int pause_on_oops;
  static int pause_on_oops_flag;
 diff -uNrp linux-2.6.18.orig/kernel/printk.c linux-2.6.18/kernel/printk.c
---- linux-2.6.18.orig/kernel/printk.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/kernel/printk.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/kernel/printk.c	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/kernel/printk.c	2011-02-08 16:41:57 +0000
 @@ -255,10 +255,6 @@ int do_syslog(int type, char __user *buf
  	if (!ve_is_super(get_exec_env()) && (type == 6 || type == 7))
  		goto out;
@@ -653,8 +653,8 @@ diff -uNrp linux-2.6.18.orig/kernel/printk.c linux-2.6.18/kernel/printk.c
  }
  
 diff -uNrp linux-2.6.18.orig/mm/mmap.c linux-2.6.18/mm/mmap.c
---- linux-2.6.18.orig/mm/mmap.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/mm/mmap.c	2011-02-04 19:28:26 +0300
+--- linux-2.6.18.orig/mm/mmap.c	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/mm/mmap.c	2011-02-08 16:41:57 +0000
 @@ -2397,6 +2397,11 @@ int install_special_mapping(struct mm_st
  	vma->vm_ops = &special_mapping_vmops;
  	vma->vm_private_data = pages;
@@ -668,8 +668,8 @@ diff -uNrp linux-2.6.18.orig/mm/mmap.c linux-2.6.18/mm/mmap.c
  		free_vma(mm, vma);
  		return -ENOMEM;
 diff -uNrp linux-2.6.18.orig/net/core/ethtool.c linux-2.6.18/net/core/ethtool.c
---- linux-2.6.18.orig/net/core/ethtool.c	2011-02-04 19:22:59 +0300
-+++ linux-2.6.18/net/core/ethtool.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/net/core/ethtool.c	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/net/core/ethtool.c	2011-02-08 16:41:57 +0000
 @@ -183,7 +183,7 @@ static int ethtool_get_regs(struct net_d
  	if (regs.len > reglen)
  		regs.len = reglen;
@@ -680,8 +680,8 @@ diff -uNrp linux-2.6.18.orig/net/core/ethtool.c linux-2.6.18/net/core/ethtool.c
  		return -ENOMEM;
  
 diff -uNrp linux-2.6.18.orig/net/llc/af_llc.c linux-2.6.18/net/llc/af_llc.c
---- linux-2.6.18.orig/net/llc/af_llc.c	2011-02-04 19:22:59 +0300
-+++ linux-2.6.18/net/llc/af_llc.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/net/llc/af_llc.c	2006-09-20 03:42:06 +0000
++++ linux-2.6.18/net/llc/af_llc.c	2011-02-08 16:41:57 +0000
 @@ -155,6 +155,9 @@ static int llc_ui_create(struct socket *
  	struct sock *sk;
  	int rc = -ESOCKTNOSUPPORT;
@@ -701,8 +701,8 @@ diff -uNrp linux-2.6.18.orig/net/llc/af_llc.c linux-2.6.18/net/llc/af_llc.c
  	if (sock_flag(sk, SOCK_ZAPPED))
  		goto out;
 diff -uNrp linux-2.6.18.orig/scripts/mkcompile_h linux-2.6.18/scripts/mkcompile_h
---- linux-2.6.18.orig/scripts/mkcompile_h	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/scripts/mkcompile_h	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/scripts/mkcompile_h	2006-09-20 03:42:06 +0000
++++ linux-2.6.18/scripts/mkcompile_h	2011-02-08 16:41:57 +0000
 @@ -47,17 +47,9 @@ UTS_TRUNCATE="sed -e s/\(.\{1,$UTS_LEN\}
    echo \#define UTS_VERSION \"`echo $UTS_VERSION | $UTS_TRUNCATE`\"
  
@@ -725,8 +725,8 @@ diff -uNrp linux-2.6.18.orig/scripts/mkcompile_h linux-2.6.18/scripts/mkcompile_
  ) > .tmpcompile
  
 diff -uNrp linux-2.6.18.orig/security/min_addr.c linux-2.6.18/security/min_addr.c
---- linux-2.6.18.orig/security/min_addr.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/security/min_addr.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/security/min_addr.c	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/security/min_addr.c	2011-02-08 16:41:57 +0000
 @@ -5,9 +5,9 @@
  #include <linux/sysctl.h>
  
@@ -739,34 +739,9 @@ diff -uNrp linux-2.6.18.orig/security/min_addr.c linux-2.6.18/security/min_addr.
  /* amount of vm to protect from userspace using the LSM = CONFIG_LSM_MMAP_MIN_ADDR */
  
  /*
-diff -uNrp linux-2.6.18.orig/mm/memory.c linux-2.6.18/mm/memory.c
---- linux-2.6.18.orig/mm/memory.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/mm/memory.c	2011-02-04 19:23:09 +0300
-@@ -176,7 +176,11 @@ static inline void free_pmd_range(struct
- 	pmd = pmd_offset(pud, start);
- 	pud_clear(pud);
- 	pmd_free_tlb(tlb, pmd);
-+#ifndef __PAGETABLE_PMD_FOLDED
-+# ifndef CONFIG_X86_PAE
- 	tlb->mm->page_table_acct--;
-+# endif
-+#endif
- }
- 
- static inline void free_pud_range(struct mmu_gather *tlb, pgd_t *pgd,
-@@ -210,7 +214,9 @@ static inline void free_pud_range(struct
- 	pud = pud_offset(pgd, start);
- 	pgd_clear(pgd);
- 	pud_free_tlb(tlb, pud);
-+#ifndef __PAGETABLE_PUD_FOLDED
- 	tlb->mm->page_table_acct--;
-+#endif
- }
- 
- /*
 diff -uNrp linux-2.6.18.orig/include/linux/sysctl.h linux-2.6.18/include/linux/sysctl.h
---- linux-2.6.18.orig/include/linux/sysctl.h	2011-02-04 19:22:59 +0300
-+++ linux-2.6.18/include/linux/sysctl.h	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/include/linux/sysctl.h	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/include/linux/sysctl.h	2011-02-08 16:41:57 +0000
 @@ -476,6 +476,7 @@ enum
  	NET_IPV4_LOCAL_RESERVED_PORTS=125,
  	NET_TCP_PORT_FORWARD_RANGE=150,
@@ -776,8 +751,8 @@ diff -uNrp linux-2.6.18.orig/include/linux/sysctl.h linux-2.6.18/include/linux/s
  
  enum {
 diff -uNrp linux-2.6.18.orig/include/linux/ve.h linux-2.6.18/include/linux/ve.h
---- linux-2.6.18.orig/include/linux/ve.h	2011-02-04 19:22:59 +0300
-+++ linux-2.6.18/include/linux/ve.h	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/include/linux/ve.h	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/include/linux/ve.h	2011-02-08 16:41:57 +0000
 @@ -216,6 +216,7 @@ struct ve_struct {
  	struct ctl_table_header	*forward_header;
  	struct ctl_table	*forward_table;
@@ -788,7 +763,7 @@ diff -uNrp linux-2.6.18.orig/include/linux/ve.h linux-2.6.18/include/linux/ve.h
  	struct ipv6_devconf	*_ipv6_devconf;
 diff -uNrp /dev/null linux-2.6.18/include/net/ping.h
 --- /dev/null	1970-01-01 00:00:00 +0000
-+++ linux-2.6.18/include/net/ping.h	2011-02-04 19:23:09 +0300
++++ linux-2.6.18/include/net/ping.h	2011-02-04 16:23:09 +0000
 @@ -0,0 +1,68 @@
 +/*
 + * INET		An implementation of the TCP/IP protocol suite for the LINUX
@@ -859,8 +834,8 @@ diff -uNrp /dev/null linux-2.6.18/include/net/ping.h
 +
 +#endif /* _PING_H */
 diff -uNrp linux-2.6.18.orig/kernel/ve/ve.c linux-2.6.18/kernel/ve/ve.c
---- linux-2.6.18.orig/kernel/ve/ve.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/kernel/ve/ve.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/kernel/ve/ve.c	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/kernel/ve/ve.c	2011-02-08 16:41:57 +0000
 @@ -120,6 +120,7 @@ struct ve_struct ve0 = {
  #endif
  	._randomize_va_space	= 1,
@@ -870,8 +845,8 @@ diff -uNrp linux-2.6.18.orig/kernel/ve/ve.c linux-2.6.18/kernel/ve/ve.c
  
  EXPORT_SYMBOL(ve0);
 diff -uNrp linux-2.6.18.orig/kernel/ve/vecalls.c linux-2.6.18/kernel/ve/vecalls.c
---- linux-2.6.18.orig/kernel/ve/vecalls.c	2011-02-04 19:22:58 +0300
-+++ linux-2.6.18/kernel/ve/vecalls.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/kernel/ve/vecalls.c	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/kernel/ve/vecalls.c	2011-02-08 16:41:57 +0000
 @@ -1111,6 +1111,8 @@ static int init_ve_struct(struct ve_stru
  
  	ve->_randomize_va_space = ve0._randomize_va_space;
@@ -882,8 +857,8 @@ diff -uNrp linux-2.6.18.orig/kernel/ve/vecalls.c linux-2.6.18/kernel/ve/vecalls.
  	return 0;
  }
 diff -uNrp linux-2.6.18.orig/net/ipv4/Kconfig linux-2.6.18/net/ipv4/Kconfig
---- linux-2.6.18.orig/net/ipv4/Kconfig	2011-02-04 19:22:59 +0300
-+++ linux-2.6.18/net/ipv4/Kconfig	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/net/ipv4/Kconfig	2011-02-08 10:11:05 +0000
++++ linux-2.6.18/net/ipv4/Kconfig	2011-02-08 16:41:57 +0000
 @@ -14,6 +14,26 @@ config IP_MULTICAST
  	  <file:Documentation/networking/multicast.txt>. For most people, it's
  	  safe to say N.
@@ -912,8 +887,8 @@ diff -uNrp linux-2.6.18.orig/net/ipv4/Kconfig linux-2.6.18/net/ipv4/Kconfig
  	bool "IP: advanced router"
  	---help---
 diff -uNrp linux-2.6.18.orig/net/ipv4/Makefile linux-2.6.18/net/ipv4/Makefile
---- linux-2.6.18.orig/net/ipv4/Makefile	2011-02-04 19:22:59 +0300
-+++ linux-2.6.18/net/ipv4/Makefile	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/net/ipv4/Makefile	2011-02-08 10:11:05 +0000
++++ linux-2.6.18/net/ipv4/Makefile	2011-02-08 16:41:57 +0000
 @@ -20,6 +20,7 @@ obj-$(CONFIG_IP_FIB_TRIE) += fib_trie.o
  obj-$(CONFIG_PROC_FS) += proc.o
  obj-$(CONFIG_IP_MULTIPLE_TABLES) += fib_rules.o
@@ -923,8 +898,8 @@ diff -uNrp linux-2.6.18.orig/net/ipv4/Makefile linux-2.6.18/net/ipv4/Makefile
  obj-$(CONFIG_NET_IPGRE) += ip_gre.o
  obj-$(CONFIG_SYN_COOKIES) += syncookies.o
 diff -uNrp linux-2.6.18.orig/net/ipv4/af_inet.c linux-2.6.18/net/ipv4/af_inet.c
---- linux-2.6.18.orig/net/ipv4/af_inet.c	2011-02-04 19:22:59 +0300
-+++ linux-2.6.18/net/ipv4/af_inet.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/net/ipv4/af_inet.c	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/net/ipv4/af_inet.c	2011-02-08 16:41:57 +0000
 @@ -104,6 +104,7 @@
  #include <net/inet_connection_sock.h>
  #include <net/tcp.h>
@@ -1022,8 +997,8 @@ diff -uNrp linux-2.6.18.orig/net/ipv4/af_inet.c linux-2.6.18/net/ipv4/af_inet.c
  out_fib:
  	udp4_proc_exit();
 diff -uNrp linux-2.6.18.orig/net/ipv4/devinet.c linux-2.6.18/net/ipv4/devinet.c
---- linux-2.6.18.orig/net/ipv4/devinet.c	2011-02-04 19:22:59 +0300
-+++ linux-2.6.18/net/ipv4/devinet.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/net/ipv4/devinet.c	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/net/ipv4/devinet.c	2011-02-08 16:41:57 +0000
 @@ -61,6 +61,7 @@
  
  #include <net/arp.h>
@@ -1053,8 +1028,8 @@ diff -uNrp linux-2.6.18.orig/net/ipv4/devinet.c linux-2.6.18/net/ipv4/devinet.c
  		.ctl_name 	= NET_IPV4_ROUTE_FLUSH,
  		.procname	= "flush",
 diff -uNrp linux-2.6.18.orig/net/ipv4/icmp.c linux-2.6.18/net/ipv4/icmp.c
---- linux-2.6.18.orig/net/ipv4/icmp.c	2011-02-04 19:22:59 +0300
-+++ linux-2.6.18/net/ipv4/icmp.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/net/ipv4/icmp.c	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/net/ipv4/icmp.c	2011-02-08 16:41:57 +0000
 @@ -84,6 +84,7 @@
  #include <net/tcp.h>
  #include <net/udp.h>
@@ -1092,7 +1067,7 @@ diff -uNrp linux-2.6.18.orig/net/ipv4/icmp.c linux-2.6.18/net/ipv4/icmp.c
  		.handler = icmp_discard,
 diff -uNrp /dev/null linux-2.6.18/net/ipv4/ping.c
 --- /dev/null	1970-01-01 00:00:00 +0000
-+++ linux-2.6.18/net/ipv4/ping.c	2011-02-04 19:23:09 +0300
++++ linux-2.6.18/net/ipv4/ping.c	2011-02-04 16:23:09 +0000
 @@ -0,0 +1,1013 @@
 +/*
 + * INET		An implementation of the TCP/IP protocol suite for the LINUX
@@ -2108,8 +2083,8 @@ diff -uNrp /dev/null linux-2.6.18/net/ipv4/ping.c
 +	rwlock_init(&ping_table.lock);
 +}
 diff -uNrp linux-2.6.18.orig/net/ipv4/sysctl_net_ipv4.c linux-2.6.18/net/ipv4/sysctl_net_ipv4.c
---- linux-2.6.18.orig/net/ipv4/sysctl_net_ipv4.c	2011-02-04 19:22:59 +0300
-+++ linux-2.6.18/net/ipv4/sysctl_net_ipv4.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/net/ipv4/sysctl_net_ipv4.c	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/net/ipv4/sysctl_net_ipv4.c	2011-02-08 16:41:57 +0000
 @@ -16,6 +16,7 @@
  #include <net/snmp.h>
  #include <net/icmp.h>
@@ -2133,8 +2108,8 @@ diff -uNrp linux-2.6.18.orig/net/ipv4/sysctl_net_ipv4.c linux-2.6.18/net/ipv4/sy
  		.ctl_name	= NET_IPV4_DEFAULT_TTL,
  		.procname	= "ip_default_ttl",
 diff -uNrp linux-2.6.18.orig/net/socket.c linux-2.6.18/net/socket.c
---- linux-2.6.18.orig/net/socket.c	2011-02-04 19:22:59 +0300
-+++ linux-2.6.18/net/socket.c	2011-02-04 19:23:09 +0300
+--- linux-2.6.18.orig/net/socket.c	2011-02-08 10:11:49 +0000
++++ linux-2.6.18/net/socket.c	2011-02-08 16:41:57 +0000
 @@ -1171,6 +1171,7 @@ int vz_security_protocol_check(int proto
  	case  IPPROTO_TCP:
  	case  IPPROTO_UDP:

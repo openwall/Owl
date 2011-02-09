@@ -1,12 +1,12 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.42 2011/02/05 15:51:24 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.43 2011/02/09 17:12:06 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 238.1.1.el5.028stab084.1
-Release: %ovzversion.owl2
+%define ovzversion 238.1.1.el5.028stab084.2
+Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab083.1
@@ -104,6 +104,15 @@ done
 %files fake
 
 %changelog
+* Wed Feb 09 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab084.2.owl1
+- Updated to 2.6.18-238.1.1.el5.028stab084.2.  The fix for VDSO bug in
+028stab084.1 was incomplete, now fixed, hopefully.
+- Dropped page accounting fix from -owl patch (fixed in OpenVZ's kernel).
+- CONFIG_BRIDGE=m (it also needs CONFIG_BRIDGE_NETFILTER=y,
+CONFIG_NETFILTER_XT_MATCH_PHYSDEV=m, CONFIG_BRIDGE_NF_EBTABLES=n).
+- CONFIG_PPP_MPPE=m, this is needed by PPTP access server.
+- CONFIG_IP_NF_TARGET_ULOG=y.
+
 * Sat Feb 05 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab084.1.owl2
 - Updated to upstream's "fixed fix for paging accounting".  The incomplete
 fix introduced with our 2011/02/04 update could have caused trouble with
@@ -120,7 +129,7 @@ http://bugzilla.openvz.org/show_bug.cgi?id=1760
 
 * Thu Feb 03 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab083.1.owl4
 - Initialize ping_group_range to {1, 0} to disable the feature for
-daemons that don't drop GID 0.  Suggested by Solar.
+daemons that doesn't drop GID 0.  Suggested by Solar.
 
 * Mon Jan 31 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab083.1.owl3
 - Added ICMP socket kind.
