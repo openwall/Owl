@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/patch/patch.spec,v 1.12 2011/02/02 14:50:22 segoon Exp $
+# $Owl: Owl/packages/patch/patch.spec,v 1.13 2011/02/09 18:39:00 segoon Exp $
 
 Summary: The GNU patch command, for modifying/upgrading files.
 Name: patch
 Version: 2.5.9
-Release: owl2
+Release: owl3
 License: GPL
 Group: Development/Tools
 URL: http://www.gnu.org/software/patch/
@@ -51,8 +51,14 @@ rm -rf %buildroot
 %_mandir/*/*
 
 %changelog
+* Wed Feb 09 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.5.9-owl3
+- Backported RH's patch for CVE-2010-4651.  The previous fix didn't address
+malicious patches with absolute filenames.
+https://bugzilla.redhat.com/show_bug.cgi?id=667529
+
 * Wed Feb 02 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.5.9-owl2
 - Imported fix for CVE-2010-4651 from RH.
+https://bugzilla.redhat.com/show_bug.cgi?id=667529
 
 * Sat Nov 12 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.5.9-owl1
 - Updated to 2.5.9.
