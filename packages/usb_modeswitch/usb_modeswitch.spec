@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/usb_modeswitch/usb_modeswitch.spec,v 1.3 2011/02/10 17:49:09 solar Exp $
+# $Owl: Owl/packages/usb_modeswitch/usb_modeswitch.spec,v 1.4 2011/02/10 18:04:51 solar Exp $
 
 %define source_name	usb-modeswitch
 
@@ -12,7 +12,7 @@ URL: http://www.draisberghof.de/usb_modeswitch/
 Source0: http://www.draisberghof.de/%name/%source_name-%version.tar.bz2
 Patch0: usb_modeswitch-1.1.6-owl-fixes.diff
 Requires: usb_modeswitch-data
-BuildRequires: libusb1-devel
+BuildRequires: libusb1-devel, libusb-compat-devel
 BuildRoot: /override/%name-%version
 
 %description
