@@ -48,8 +48,11 @@ clarify the specific issue(s) and their severities in the description.
 
 2011/02/09	Package: patch
 SECURITY FIX	Severity: high, indirect, passive
-Backported a fix for CVE-2010-4651.  The previous fix of 02/02 didn't
-address malicious patches with absolute filenames like "/tmp/file".
+Backported a fix for CVE-2010-4651.  The patch utility allowed ".." in
+pathnames, and it also allowed absolute pathnames, either of which could
+allow an attacker to create or modify arbitrary files outside of the
+intended directory tree using a specially-crafted patch file.  Our
+partial fix of 2011/02/02 did not address the absolute pathname case.
 References:
 https://bugzilla.redhat.com/show_bug.cgi?id=667529
 http://www.openwall.com/lists/oss-security/2011/01/05/10
@@ -58,21 +61,23 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4651
 
 2011/02/09	Package: kernel
 Updated the kernel to OpenVZ's latest from their "RHEL5 testing" branch
-(238.1.1.el5.028stab084.2), which includes updated fix for VDSO bug
-(the fix in 028stab084.1 was incomplete).  Enabled bridge support,
-PPP_MPPE and ULOG netfilter target, for more info see the changelog
-for the kernel package.
+(238.1.1.el5.028stab084.2), which includes updated fix for the x86_64
+VDSO bug (the fix in 028stab084.1 was incomplete).  Enabled Ethernet
+bridge support, PPP_MPPE, and ULOG netfilter target.  For more info, see
+the changelog for the kernel package.
 References:
 http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab084.2
 http://bugzilla.openvz.org/show_bug.cgi?id=1762
 
-2011/02/05	Package: usb_modeswitch, usb_modeswitch-data
-New package: usb_modeswitch is a mode switching tool for controlling
-"flip flop" (multiple device) USB gear.
+2011/02/05	Packages: usb_modeswitch, usb_modeswitch-data
+New packages: usb_modeswitch is a mode switching tool for controlling
+"flip flop" (multiple device) USB gear.  usb_modeswitch-data contains
+the data files for usb_modeswitch.
 
 2011/02/05	Package: libusb-compat
 New package: libusb-compat is a compatibility layer allowing
-applications written for libusb-0.1 to work with libusb-1.0.
+applications written for libusb-0.1 to work with libusb-1.0.  It is
+needed for usb_modeswitch.
 
 2011/02/05	Package: kernel
 Updated to upstream's "fixed fix for paging accounting".  The incomplete
@@ -89,24 +94,17 @@ usernames and/or group names, respectively.
 2011/02/04	Package: kernel
 Updated the kernel to OpenVZ's latest from their "RHEL5 testing" branch
 (238.1.1.el5.028stab084.1), which includes updated atl1 driver (Attansic
-L1 Gigabit Ethernet).  Enabled VDSO on x86_64 (the actual bug is fixed
-in 028stab084.1).  Applied upstream's initial "fix for non-4levels page
-tables acct" (the bug was introduced in 084.1, so we never had it).
+L1 Gigabit Ethernet).  Enabled VDSO on x86_64 (the actual bug was
+believed to be fixed in 028stab084.1).  Applied upstream's initial "fix
+for non-4levels page tables acct" (the bug was introduced in 084.1, so
+we did not have it before).
 References:
 http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab084.1
 http://bugzilla.openvz.org/show_bug.cgi?id=1760
 
 2011/02/02	Package: patch
-SECURITY FIX	Severity: high, indirect, passive
-Backported a fix for CVE-2010-4651.  The patch utility allowed ".." in
-path names, which could allow an attacker to create or modify arbitrary
-files outside of the intended directory tree using a specially-crafted
-patch file.
-References:
-https://bugzilla.redhat.com/show_bug.cgi?id=667529
-http://www.openwall.com/lists/oss-security/2011/01/05/10
-http://lists.gnu.org/archive/html/bug-patch/2010-12/msg00000.html
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4651
+Backported a partial fix for CVE-2010-4651.  Since the fix turned out to
+be incomplete, this change is not actually fixing CVE-2010-4651 yet.
 
 2011/01/31 -
 2011/02/01	Packages: kernel, iputils, owl-etc, owl-startup
@@ -189,4 +187,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.24 2011/02/09 18:41:34 segoon Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.25 2011/02/10 18:33:54 solar Exp $
