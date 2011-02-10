@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/usb_modeswitch/usb_modeswitch.spec,v 1.2 2011/02/10 17:36:08 solar Exp $
+# $Owl: Owl/packages/usb_modeswitch/usb_modeswitch.spec,v 1.3 2011/02/10 17:49:09 solar Exp $
 
 %define source_name	usb-modeswitch
 
@@ -16,11 +16,14 @@ BuildRequires: libusb1-devel
 BuildRoot: /override/%name-%version
 
 %description
-USB Modeswitch brings up your datacard into operational mode. When plugged
-in they identify themselves as cdrom and present some non-Linux compatible
-installation files. This tool deactivates this cdrom-devices and enables
-the real communication device. It supports most devices built and
-sold by Huawei, T-Mobile, Vodafone, Option, ZTE, Novatel.
+USB_ModeSwitch is a mode switching tool for controlling "flip flop" (multiple
+device) USB gear.
+
+When plugged in, some USB "datacards" identify themselves as CD-ROM or flash
+drives and present some non-Linux compatible installation files.  This tool
+deactivates this fake CD-ROM or flash device and enables the real communication
+device.  It supports most devices built and sold by Huawei, T-Mobile, Vodafone,
+Option, ZTE, and Novatel.
 
 %prep
 %setup -q -n %source_name-%version
@@ -41,9 +44,9 @@ install -m 644 usb_modeswitch.1 %buildroot%_datadir/man/man1
 %defattr(-,root,root,-)
 %_sbindir/usb_modeswitch
 %_mandir/man1/usb_modeswitch.1.gz
-%doc COPYING README ChangeLog device_reference.txt 
+%doc COPYING README ChangeLog device_reference.txt
 
 %changelog
 * Sat Feb 05 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.1.6-owl1
 - Initial import from Fedora.
-- Added owl-warnings patch to fix memory leak.
+- Added owl-fixes patch to fix memory leak.
