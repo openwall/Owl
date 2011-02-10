@@ -1,23 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.44 2011/02/09 17:51:07 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.45 2011/02/10 19:26:08 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 238.1.1.el5.028stab084.2
+%define ovzversion 238.1.1.el5.028stab084.3
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab084.2
+URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab084.3
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab084.2/patches/patch-238.1.1.el5.028stab084.2-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab084.2/patches/patch-238.1.1.el5.028stab084.2-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab084.3/patches/patch-238.1.1.el5.028stab084.3-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab084.3/patches/patch-238.1.1.el5.028stab084.3-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -104,6 +104,10 @@ done
 %files fake
 
 %changelog
+* Thu Feb 10 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab084.3.owl1
+- Updated to 2.6.18-238.1.1.el5.028stab084.3.  It contains
+"fix for optimized kmem accounting."
+
 * Wed Feb 09 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab084.2.owl1
 - Updated to 2.6.18-238.1.1.el5.028stab084.2.  The fix for VDSO bug in
 028stab084.1 was incomplete, now fixed, hopefully:
