@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installvztree.sh,v 1.10 2011/01/30 14:47:07 segoon Exp $
+# $Owl: Owl/build/installvztree.sh,v 1.11 2011/02/10 18:09:28 solar Exp $
 
 set -e
 
@@ -54,7 +54,7 @@ cd "$ROOT"
 log "Removing packages that are harmful inside a container"
 chroot "$ROOT" rpm -e vzctl vzquota ||:
 log "Removing packages that are typically not needed inside a container"
-chroot "$ROOT" rpm -e vconfig ethtool bridge-utils hdparm smartmontools mdadm lilo dmidecode pciutils usbutils modutils losetup acct bind-doc bash-doc cvs-doc pam-doc db4-doc groff-doc rpm-devel ||:
+chroot "$ROOT" rpm -e vconfig ethtool bridge-utils hdparm smartmontools mdadm lilo dmidecode pciutils usbutils usb_modeswitch usb_modeswitch-data modutils losetup acct bind-doc bash-doc cvs-doc pam-doc db4-doc groff-doc rpm-devel ||:
 
 log "Removing SSH host keys"
 cd "$ROOT/etc"
