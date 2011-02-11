@@ -26,7 +26,7 @@ ftp://gd.tuwien.ac.at/opsys/linux/openwall/Owl/	(Österreich)
 	rsync://gd.tuwien.ac.at/opsys/linux/openwall/Owl/
 ftp://ftp.cc.uoc.gr/mirrors/linux/openwall/Owl/	(Griechenland)
 	http://ftp.cc.uoc.gr/mirrors/linux/openwall/Owl/
-ftp://ftp.ibiblio.org/pub/linux/distributions/openwall/Owl/	(USA)
+ftp://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/	(USA)
 	http://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/
 ftp://mirror.optusnet.com.au/pub/Owl/	(Australien)
 	http://mirror.optusnet.com.au/pub/Owl/
@@ -83,4 +83,4 @@ Wir bieten zudem auch ein CVSweb-Interface an:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/de/DOWNLOAD,v 1.43 2010/08/16 15:45:55 solar Exp $
+$Owl: Owl/doc/de/DOWNLOAD,v 1.44 2011/02/11 23:31:26 solar Exp $

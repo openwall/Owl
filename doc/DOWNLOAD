@@ -10,7 +10,7 @@ Owl can be downloaded from the following official mirrors:
 ftp://mirrors.kernel.org/openwall/Owl/	(USA & EU)
 	http://mirrors.kernel.org/openwall/Owl/
 	rsync://mirrors.kernel.org/mirrors/openwall/Owl/
-ftp://ftp.ibiblio.org/pub/linux/distributions/openwall/Owl/	(USA)
+ftp://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/	(USA)
 	http://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/
 ftp://ftp1.msk.ru.openwall.com/pub/Owl/	(Moscow, Russia)
 ftp://ftp2.msk.ru.openwall.com/pub/Owl/	(Moscow, Russia)
@@ -85,4 +85,4 @@ Finally, the CVSweb interface is provided at:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/DOWNLOAD,v 1.49 2010/08/16 15:45:55 solar Exp $
+$Owl: Owl/doc/DOWNLOAD,v 1.50 2011/02/11 23:31:25 solar Exp $

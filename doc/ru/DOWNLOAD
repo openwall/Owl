@@ -25,7 +25,7 @@ ftp://ftp.cc.uoc.gr/mirrors/linux/openwall/Owl/	(Греция)
 ftp://mirrors.kernel.org/openwall/Owl/	(США и Европа)
 	http://mirrors.kernel.org/openwall/Owl/
 	rsync://mirrors.kernel.org/mirrors/openwall/Owl/
-ftp://ftp.ibiblio.org/pub/linux/distributions/openwall/Owl/	(США)
+ftp://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/	(США)
 	http://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/
 ftp://mirror.optusnet.com.au/pub/Owl/	(Австралия)
 	http://mirror.optusnet.com.au/pub/Owl/
@@ -77,4 +77,4 @@ CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
 
 Интерфейс CVSweb доступен по адресу http://cvsweb.openwall.com
 
-$Owl: Owl/doc/ru/DOWNLOAD,v 1.37 2010/08/16 15:45:56 solar Exp $
+$Owl: Owl/doc/ru/DOWNLOAD,v 1.38 2011/02/11 23:31:26 solar Exp $
