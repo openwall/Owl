@@ -21,6 +21,11 @@ syslogd credentials passing, verification, and logging:
 
 	ArkanoiD <ark at cvs.openwall.com>
 
+Initial implementation of non-raw ICMP sockets (Linux kernel and ping(1)
+program patches):
+
+	Pavel Kankovsky
+
 Addition of the --ignore-device-id option to tar (now obsoleted by
 --no-check-device and thus removed):
 
@@ -58,4 +63,4 @@ donation too:
 
 http://www.openwall.com/donations/
 
-$Owl: Owl/doc/CREDITS,v 1.21 2010/08/18 18:17:53 solar Exp $
+$Owl: Owl/doc/CREDITS,v 1.22 2011/02/18 22:34:04 solar Exp $

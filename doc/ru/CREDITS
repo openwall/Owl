@@ -22,6 +22,10 @@
 
 	ArkanoiD <ark ПРИ cvs.openwall.com>
 
+Начальная реализация не-raw ICMP-сокетов (в ядре Linux и команде ping):
+
+	Pavel Kankovsky
+
 Добавление опции --ignore-device-id в tar (теперь заменена на
 --no-check-device и поэтому удалена):
 
@@ -59,4 +63,4 @@
 
 http://www.openwall.com/donations/
 
-$Owl: Owl/doc/ru/CREDITS,v 1.17 2010/08/18 18:17:53 solar Exp $
+$Owl: Owl/doc/ru/CREDITS,v 1.18 2011/02/18 22:34:04 solar Exp $
