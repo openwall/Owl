@@ -12,9 +12,8 @@ ftp://mirrors.kernel.org/openwall/Owl/	(USA & EU)
 	rsync://mirrors.kernel.org/mirrors/openwall/Owl/
 ftp://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/	(USA)
 	http://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/
-ftp://ftp1.msk.ru.openwall.com/pub/Owl/	(Moscow, Russia)
-ftp://ftp2.msk.ru.openwall.com/pub/Owl/	(Moscow, Russia)
-ftp://ftp.spb.ru.openwall.com/pub/Owl/	(St. Petersburg, Russia)
+ftp://ftp1.ru.openwall.com/pub/Owl/	(Moscow, Russia)
+ftp://ftp2.ru.openwall.com/pub/Owl/	(Moscow, Russia)
 ftp://ftp.fr.openwall.com/pub/Owl/	(France)
 ftp://ftp.cz.openwall.com/pub/Owl/	(Czech Republic)
 ftp://ftp.ua.openwall.com/pub/Owl/	(Ukraine)
@@ -85,4 +84,4 @@ Finally, the CVSweb interface is provided at:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/DOWNLOAD,v 1.50 2011/02/11 23:31:25 solar Exp $
+$Owl: Owl/doc/DOWNLOAD,v 1.51 2011/02/18 22:24:43 solar Exp $
