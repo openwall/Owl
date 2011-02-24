@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.74 2011/02/24 17:55:14 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.75 2011/02/24 20:07:01 segoon Exp $
 
 %define shlib_soversion 10
 
@@ -112,7 +112,7 @@ This package contains some miscellaneous Perl scripts.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
-# XXX Not yet, need gcc update for AES instruction set - segoon
+# XXX This patch has not received enough testing yet - segoon
 #%patch14 -p1
 %patch15 -p1
 
