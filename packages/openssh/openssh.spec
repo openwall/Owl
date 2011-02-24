@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.102 2010/09/01 21:14:58 solar Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.103 2011/02/24 15:49:48 segoon Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl26
+Release: owl27
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -44,7 +44,7 @@ Patch24: openssh-3.6.1p2-cvs-20060919-packet_enable_delayed_compress.diff
 Patch25: openssh-3.6.1p2-rh-sftp-memleaks.diff
 Patch26: openssh-3.6.1p2-cvs-20061108-monitor.diff
 Patch27: openssh-3.6.1p2-owl-blacklist.diff
-PreReq: openssl >= 0.9.7, openssl < 0.9.8
+PreReq: openssl >= 1.0.0, openssl < 1.0.1
 Requires: pam >= 0:0.80-owl2
 Obsoletes: ssh
 BuildRequires: openssl-devel >= 0.9.7g-owl1
@@ -296,6 +296,9 @@ fi
 %attr(0644,root,root) /etc/ssh/blacklist
 
 %changelog
+* Thu Feb 24 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.6.1p2-owl27
+- Changed "PreReq" tag to build with openssl-1.0.0d.
+
 * Wed Sep 01 2010 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl26
 - Have SFTP enabled by default.
 
