@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.75 2011/02/24 20:07:01 segoon Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.76 2011/02/24 21:15:48 solar Exp $
 
 %define shlib_soversion 10
 
@@ -28,6 +28,7 @@ Patch12: openssl-1.0.0b-rh-alt-ipv6-apps.diff
 Patch13: openssl-1.0.0b-rh-env-nozlib.diff
 Patch14: openssl-1.0.0b-rh-aesni.diff
 Patch15: openssl-1.0.0-beta4-rh-dtls1-abi.diff
+Patch16: openssl-1.0.0d-owl-warnings.diff
 BuildRequires: perl, diffutils
 # Due to sed -i.
 BuildRequires: sed >= 4.1.1
@@ -115,6 +116,7 @@ This package contains some miscellaneous Perl scripts.
 # XXX This patch has not received enough testing yet - segoon
 #%patch14 -p1
 %patch15 -p1
+%patch16 -p1
 
 bzip2 -9k CHANGES CHANGES.SSLeay
 
