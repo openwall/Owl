@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.71 2011/02/24 15:47:58 segoon Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.72 2011/02/24 16:29:50 segoon Exp $
 
 %define shlib_soversion 10
 
@@ -16,17 +16,17 @@ Patch1: openssl-1.0.0b-gosta-pkcs12-fix.diff
 Patch2: openssl-1.0.0b-rh-alt-soversion.diff
 Patch3: openssl-1.0.0b-rh-enginesdir.diff
 Patch4: openssl-1.0.0b-rh-rpath.diff
-Patch5: openssl-0.9.8b-test-use-localhost.diff
+Patch5: openssl-0.9.8b-rh-test-use-localhost.diff
 Patch6: openssl-1.0.0b-rh-default-paths.diff
 Patch7: openssl-1.0.0b-rh-bad-mime.diff
 Patch8: openssl-1.0.0b-rh-man.diff
 Patch9: openssl-1.0.0b-rh-x509.diff
 Patch10: openssl-1.0.0b-rh-version-engines.diff
-Patch11: openssl-1.0.0-beta5-cipher-change.diff
+Patch11: openssl-1.0.0-rh-beta5-cipher-change.diff
 Patch12: openssl-1.0.0b-rh-alt-ipv6-apps.diff
 Patch13: openssl-1.0.0b-rh-env-nozlib.diff
 Patch14: openssl-1.0.0b-rh-aesni.diff
-Patch15: openssl-1.0.0-beta4-dtls1-abi.diff
+Patch15: openssl-1.0.0-rh-beta4-dtls1-abi.diff
 BuildRequires: perl, diffutils
 # Due to sed -i.
 BuildRequires: sed >= 4.1.1
@@ -111,7 +111,7 @@ This package contains some miscellaneous Perl scripts.
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
-# XXX Not yet, need gcc update for AES instuction set - segoon
+# XXX Not yet, need gcc update for AES instruction set - segoon
 #%patch14 -p1
 %patch15 -p1
 
