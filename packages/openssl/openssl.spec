@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.72 2011/02/24 16:29:50 segoon Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.73 2011/02/24 16:52:24 segoon Exp $
 
 %define shlib_soversion 10
 
@@ -22,11 +22,11 @@ Patch7: openssl-1.0.0b-rh-bad-mime.diff
 Patch8: openssl-1.0.0b-rh-man.diff
 Patch9: openssl-1.0.0b-rh-x509.diff
 Patch10: openssl-1.0.0b-rh-version-engines.diff
-Patch11: openssl-1.0.0-rh-beta5-cipher-change.diff
+Patch11: openssl-1.0.0-beta5-rh-cipher-change.diff
 Patch12: openssl-1.0.0b-rh-alt-ipv6-apps.diff
 Patch13: openssl-1.0.0b-rh-env-nozlib.diff
 Patch14: openssl-1.0.0b-rh-aesni.diff
-Patch15: openssl-1.0.0-rh-beta4-dtls1-abi.diff
+Patch15: openssl-1.0.0-beta4-rh-dtls1-abi.diff
 BuildRequires: perl, diffutils
 # Due to sed -i.
 BuildRequires: sed >= 4.1.1
