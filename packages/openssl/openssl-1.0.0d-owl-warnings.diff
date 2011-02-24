@@ -1,69 +1,62 @@
-diff -uNp -r openssl-1.0.0d.orig/apps/s_socket.c openssl-1.0.0d/apps/s_socket.c
---- openssl-1.0.0d.orig/apps/s_socket.c	2011-02-24 15:18:49 +0000
-+++ openssl-1.0.0d/apps/s_socket.c	2011-02-24 15:25:54 +0000
-@@ -563,58 +563,4 @@ int extract_port(char *str, short *port_
- 		}
+diff -ur openssl-1.0.0d-ipv6/apps/s_socket.c openssl-1.0.0d/apps/s_socket.c
+--- openssl-1.0.0d-ipv6/apps/s_socket.c	2011-02-24 22:45:50 +0000
++++ openssl-1.0.0d/apps/s_socket.c	2011-02-24 22:47:08 +0000
+@@ -97,14 +97,18 @@
+ #include "netdb.h"
+ #endif
+ 
++#if 0
+ static struct hostent *GetHostByName(char *name);
++#endif
+ #if defined(OPENSSL_SYS_WINDOWS) || (defined(OPENSSL_SYS_NETWARE) && !defined(NETWARE_BSDSOCK))
+ static void ssl_sock_cleanup(void);
+ #endif
+ static int ssl_sock_init(void);
+ static int init_server(int *sock, char *port, int type);
+ static int do_accept(int acc_sock, int *sock, char **host);
++#if 0
+ static int host_ip(char *str, unsigned char ip[4]);
++#endif
+ 
+ #ifdef OPENSSL_SYS_WIN16
+ #define SOCKET_PROTOCOL	0 /* more microsoft stupidity */
+@@ -337,7 +341,6 @@
+ 	{
+ 	struct addrinfo *res, *res0, hints;
+ 	char * failed_call = NULL;
+-	char port_name[8];
+ 	int s = INVALID_SOCKET;
+ 	int e;
+ 
+@@ -506,6 +509,7 @@
  	return(1);
  	}
--
--#define GHBN_NUM	4
--static struct ghbn_cache_st
--	{
--	char name[128];
--	struct hostent ent;
--	unsigned long order;
--	} ghbn_cache[GHBN_NUM];
--
--static unsigned long ghbn_hits=0L;
--static unsigned long ghbn_miss=0L;
--
--static struct hostent *GetHostByName(char *name)
--	{
--	struct hostent *ret;
--	int i,lowi=0;
--	unsigned long low= (unsigned long)-1;
--
--	for (i=0; i<GHBN_NUM; i++)
--		{
--		if (low > ghbn_cache[i].order)
--			{
--			low=ghbn_cache[i].order;
--			lowi=i;
--			}
--		if (ghbn_cache[i].order > 0)
--			{
--			if (strncmp(name,ghbn_cache[i].name,128) == 0)
--				break;
--			}
--		}
--	if (i == GHBN_NUM) /* no hit*/
--		{
--		ghbn_miss++;
--		ret=gethostbyname(name);
--		if (ret == NULL) return(NULL);
--		/* else add to cache */
--		if(strlen(name) < sizeof ghbn_cache[0].name)
--			{
--			strcpy(ghbn_cache[lowi].name,name);
--			memcpy((char *)&(ghbn_cache[lowi].ent),ret,sizeof(struct hostent));
--			ghbn_cache[lowi].order=ghbn_miss+ghbn_hits;
--			}
--		return(ret);
--		}
--	else
--		{
--		ghbn_hits++;
--		ret= &(ghbn_cache[i].ent);
--		ghbn_cache[i].order=ghbn_miss+ghbn_hits;
--		return(ret);
--		}
--	}
--
+ 
++#if 0
+ #define GHBN_NUM	4
+ static struct ghbn_cache_st
+ 	{
+@@ -558,5 +562,6 @@
+ 		return(ret);
+ 		}
+ 	}
++#endif
+ 
  #endif
-diff -uNp -r openssl-1.0.0d.orig/engines/e_padlock.c openssl-1.0.0d/engines/e_padlock.c
---- openssl-1.0.0d.orig/engines/e_padlock.c	2011-02-24 15:18:49 +0000
-+++ openssl-1.0.0d/engines/e_padlock.c	2011-02-24 15:21:15 +0000
-@@ -197,6 +197,8 @@ padlock_bind_helper(ENGINE *e)
+diff -ur openssl-1.0.0d-ipv6/engines/e_padlock.c openssl-1.0.0d/engines/e_padlock.c
+--- openssl-1.0.0d-ipv6/engines/e_padlock.c	2011-01-30 01:05:38 +0000
++++ openssl-1.0.0d/engines/e_padlock.c	2011-02-24 22:38:06 +0000
+@@ -104,7 +104,9 @@
+ # if (defined(__GNUC__) && (defined(__i386__) || defined(__i386))) || \
+      (defined(_MSC_VER) && defined(_M_IX86))
+ #  define COMPILE_HW_PADLOCK
++#  ifdef OPENSSL_NO_DYNAMIC_ENGINE
+ static ENGINE *ENGINE_padlock (void);
++#  endif
+ # endif
+ #endif
+ 
+@@ -197,6 +199,8 @@
  	return 1;
  }
  
@@ -72,7 +65,7 @@ diff -uNp -r openssl-1.0.0d.orig/engines/e_padlock.c openssl-1.0.0d/engines/e_pa
  /* Constructor */
  static ENGINE *
  ENGINE_padlock(void)
-@@ -215,6 +217,8 @@ ENGINE_padlock(void)
+@@ -215,6 +219,8 @@
  	return eng;
  }
  
