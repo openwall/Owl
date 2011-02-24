@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.73 2011/02/24 16:52:24 segoon Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.74 2011/02/24 17:55:14 solar Exp $
 
 %define shlib_soversion 10
 
@@ -9,8 +9,9 @@ Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
-# ftp://ftp.openssl.org/source/%name-%version.tar.gz
-Source: %name-%version.tar.bz2
+Source: %name-%version.tar.xz
+# Source: ftp://ftp.openssl.org/source/%name-%version.tar.gz
+# Signature: ftp://ftp.openssl.org/source/%name-%version.tar.gz.asc
 Patch0: openssl-1.0.0b-owl-alt-issetugid.diff
 Patch1: openssl-1.0.0b-gosta-pkcs12-fix.diff
 Patch2: openssl-1.0.0b-rh-alt-soversion.diff
@@ -149,7 +150,7 @@ ADD_ARGS=%_os-%_arch
 	enable-camellia enable-seed enable-tlsext \
 	enable-cms \
 	no-idea no-mdc2 no-rc5 no-ec no-ecdh no-ecdsa \
-	--openssldir=%openssldir $ADD_ARGS 
+	--openssldir=%openssldir $ADD_ARGS
 
 # SMP-incompatible build.
 %__make -j1 SHLIB_SOVERSION=%shlib_soversion
