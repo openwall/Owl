@@ -1,6 +1,5 @@
-diff -upk.orig openssl-0.9.7g.orig/crypto/uid.c openssl-0.9.7g/crypto/uid.c
---- openssl-0.9.7g.orig/crypto/uid.c	2002-10-09 13:41:11 +0000
-+++ openssl-0.9.7g/crypto/uid.c	2004-05-08 14:41:41 +0000
+--- openssl/crypto/uid.c
++++ openssl/crypto/uid.c
 @@ -77,8 +77,11 @@ int OPENSSL_issetugid(void)
  #include OPENSSL_UNISTD
  #include <sys/types.h>

@@ -1,27 +1,32 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.70 2010/02/20 18:55:30 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.71 2011/02/24 15:47:58 segoon Exp $
+
+%define shlib_soversion 10
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 0.9.7m
-Release: owl4
+Version: 1.0.0d
+Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
 # ftp://ftp.openssl.org/source/%name-%version.tar.gz
 Source: %name-%version.tar.bz2
-Patch0: openssl-0.9.7m-cvs-20071004-SSL_get_shared_ciphers.diff
-Patch1: openssl-0.9.7g-owl-alt-issetugid.diff
-Patch2: openssl-0.9.7m-mdk-alt-owl-Makefile.diff
-Patch3: openssl-0.9.7l-rh-alt-owl-soversion.diff
-Patch4: openssl-0.9.7g-rh-mdk-ia64-asm.diff
-Patch5: openssl-0.9.7g-rh-version-engines.diff
-Patch6: openssl-0.9.7l-owl-warnings.diff
-Patch7: openssl-0.9.7m-owl-CVE-2008-5077.diff
-Provides: SSL
-%ifnarch x86_64
-# For backwards compatibility.
-Provides: libcrypto.so.4, libssl.so.4
-%endif
+Patch0: openssl-1.0.0b-owl-alt-issetugid.diff
+Patch1: openssl-1.0.0b-gosta-pkcs12-fix.diff
+Patch2: openssl-1.0.0b-rh-alt-soversion.diff
+Patch3: openssl-1.0.0b-rh-enginesdir.diff
+Patch4: openssl-1.0.0b-rh-rpath.diff
+Patch5: openssl-0.9.8b-test-use-localhost.diff
+Patch6: openssl-1.0.0b-rh-default-paths.diff
+Patch7: openssl-1.0.0b-rh-bad-mime.diff
+Patch8: openssl-1.0.0b-rh-man.diff
+Patch9: openssl-1.0.0b-rh-x509.diff
+Patch10: openssl-1.0.0b-rh-version-engines.diff
+Patch11: openssl-1.0.0-beta5-cipher-change.diff
+Patch12: openssl-1.0.0b-rh-alt-ipv6-apps.diff
+Patch13: openssl-1.0.0b-rh-env-nozlib.diff
+Patch14: openssl-1.0.0b-rh-aesni.diff
+Patch15: openssl-1.0.0-beta4-dtls1-abi.diff
 BuildRequires: perl, diffutils
 # Due to sed -i.
 BuildRequires: sed >= 4.1.1
@@ -100,11 +105,17 @@ This package contains some miscellaneous Perl scripts.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+# XXX Not yet, need gcc update for AES instuction set - segoon
+#%patch14 -p1
+%patch15 -p1
 
 bzip2 -9k CHANGES CHANGES.SSLeay
-
-# Avoid conflict with pow10(3).
-sed -i s/pow10/pow10i/ crypto/bio/b_print.c
 
 # Correct compilation options.  "-Wall" is already present in Configure.
 %{expand:%%define optflags %optflags -Wa,--noexecstack}
@@ -113,53 +124,52 @@ perl -pi -e 's/-O.(?: -fomit-frame-pointer)?(?: -m.86)?/%optflags/' \
 
 # Correct shared library name.
 sed -i 's/\\\$(SHLIB_MAJOR)\.\\\$(SHLIB_MINOR)/\\$(VERSION)/g' Configure
-sed -i 's/\${SHLIB_MAJOR}\.\${SHLIB_MINOR}/\${VERSION}/g' Makefile.org
+sed -i 's/\$(SHLIB_MAJOR)\.\$(SHLIB_MINOR)/\$(VERSION)/g' Makefile.org
+
+# Be more verbose
+sed -i 's/^\(\s\+\)@/\1/' Makefile* */Makefile* */*/Makefile*
 
 %define openssldir %_datadir/ssl
-%define opensslflags shared -DSSL_ALLOW_ADH --prefix=%_prefix
 
 %build
+ADD_ARGS=%_os-%_arch
 %ifarch %ix86
+	ADD_ARGS=linux-elf
 %ifarch i386
-./Configure %opensslflags --openssldir=%openssldir 386 linux-elf
-%else
-./Configure %opensslflags --openssldir=%openssldir linux-elf
+	ADD_ARGS="$ADD_ARGS 386"
 %endif
-%endif
-%ifarch x86_64
-./Configure %opensslflags --openssldir=%openssldir linux-x86_64
-%endif
-%ifarch ppc
-./Configure %opensslflags --openssldir=%openssldir linux-ppc
-%endif
-%ifarch alpha alphaev5
-./Configure %opensslflags --openssldir=%openssldir linux-alpha-gcc
-%endif
-%ifarch alphaev56 alphapca56 alphaev6 alphaev67
-./Configure %opensslflags --openssldir=%openssldir linux-alpha+bwx-gcc
-%endif
-%ifarch sparc
-./Configure %opensslflags --openssldir=%openssldir linux-sparcv8
-%endif
-%ifarch sparcv9
-./Configure %opensslflags --openssldir=%openssldir linux-sparcv9
 %endif
 
-LD_LIBRARY_PATH=`pwd` %__make SLIB=%_lib
+
+./Configure shared -DSSL_ALLOW_ADH \
+	--prefix=%_prefix \
+	--libdir=%_lib \
+	--enginesdir=%_libdir/openssl/engines  \
+	enable-md2 enable-rfc3779 enable-tlsext zlib \
+	enable-camellia enable-seed enable-tlsext \
+	enable-cms \
+	no-idea no-mdc2 no-rc5 no-ec no-ecdh no-ecdsa \
+	--openssldir=%openssldir $ADD_ARGS 
+
+# SMP-incompatible build.
+%__make -j1 SHLIB_SOVERSION=%shlib_soversion
+
+# Make soname symlinks.
+/sbin/ldconfig -nv .
+
+#LD_LIBRARY_PATH=`pwd` %__make SLIB=%_lib
 touch -r libcrypto.so.%version libcrypto-stamp
 touch -r libssl.so.%version libssl-stamp
-LD_LIBRARY_PATH=`pwd` %__make rehash
-
-%check
-LD_LIBRARY_PATH=`pwd` %__make test
+LD_LIBRARY_PATH=`pwd` %__make -j1 rehash
+LD_LIBRARY_PATH=`pwd` %__make -j1 test
 
 %install
 rm -rf %buildroot
-%__make install SLIB=%_lib MANDIR=%_mandir INSTALL_PREFIX="%buildroot"
+%__make install MANDIR=%_mandir INSTALL_PREFIX="%buildroot"
 
 # Fail if one of shared libraries was rebuit.
 if [ libcrypto.so.%version -nt libcrypto-stamp -o \
-     libssl.so.%version -nt libssl-stamp ]; then
+	libssl.so.%version -nt libssl-stamp ]; then
 	echo 'Shared library was rebuilt by "make install".'
 	exit 1
 fi
@@ -170,25 +180,23 @@ LD_LIBRARY_PATH=`pwd` ldd %buildroot/usr/bin/openssl | tee openssl.libs
 grep -qw libssl openssl.libs
 grep -qw libcrypto openssl.libs
 
-# Relocate shared libraries from %_libdir/ to /%_lib/.
-mkdir %buildroot/%_lib
+# Relocate shared libraries from %_libdir/ to /lib/.
+mkdir -p %buildroot{/%_lib,%_libdir/openssl,%_sbindir}
 for f in %buildroot%_libdir/*.so; do
-	t=`objdump -p "$f" |awk '/SONAME/ {print $2}'`
-	[ -n "$t" ]
-	ln -sf ../../%_lib/"$t" "$f"
+	t=$(readlink "$f") || continue
+	ln -snf ../../%_lib/"$t" "$f"
 done
 mv %buildroot%_libdir/*.so.* %buildroot/%_lib/
 
-%ifnarch x86_64
-# For backwards compatibility.
-ln -s libcrypto.so.5 %buildroot/%_lib/libcrypto.so.4
-ln -s libssl.so.5 %buildroot/%_lib/libssl.so.4
-%endif
+mv %buildroot%_libdir/engines %buildroot%_libdir/openssl/
 
 # Rename man pages.
 mv %buildroot%_mandir/man1/{,ssl}passwd.1
 mv %buildroot%_mandir/man3/{,ssl}err.3
 mv %buildroot%_mandir/man3/{,ssl}rand.3
+mv %buildroot%_mandir/man3/{,ssl}threads.3
+mv %buildroot%_mandir/man5/{,ssl}config.5
+ln -s sslconfig.5 %buildroot%_mandir/man5/openssl.cnf.5
 
 # Make backwards-compatibility symlink to ssleay.
 ln -s openssl %buildroot/usr/bin/ssleay
@@ -204,20 +212,12 @@ bzip2 -9 docs/doc/ssleay.txt
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
-%ifnarch x86_64
-%triggerpostun -- %name < 0:0.9.7g-owl1
-ln -sf libcrypto.so.5 /%_lib/libcrypto.so.4
-ln -sf libssl.so.5 /%_lib/libssl.so.4
-%endif
-
 %files
 %defattr(0644,root,root,0755)
 %doc CHANGES*.bz2 LICENSE NEWS README
 %doc docs/doc
 %attr(0755,root,root) %_bindir/*
-%exclude %_bindir/fipsld
 %exclude %_bindir/c_rehash
-%attr(-,root,root) /%_lib/*.so.?
 %attr(0755,root,root) /%_lib/*.so.?.*
 %attr(0755,root,root) %openssldir/misc/CA
 %attr(0755,root,root) %openssldir/misc/c_*
@@ -228,26 +228,32 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %dir %attr(0755,root,root) %openssldir/certs
 %dir %attr(0755,root,root) %openssldir/misc
 %dir %attr(0700,root,root) %openssldir/private
+%attr(0755,root,root) %_libdir/openssl/engines
 
 %files devel
 %defattr(0644,root,root,0755)
 %attr(-,root,root) %_libdir/*.so
 %attr(0644,root,root) %_libdir/*.a
-%attr(0644,root,root) %_libdir/fips_premain.c*
 %dir %attr(0755,root,root) /usr/include/openssl
 %attr(0644,root,root) /usr/include/openssl/*
 # XXX: we don't have a package providing %_libdir/pkgconfig directory
-%attr(0644,root,root) %_libdir/pkgconfig/openssl.pc
+%_libdir/pkgconfig/libssl.pc
+%_libdir/pkgconfig/libcrypto.pc
+%_libdir/pkgconfig/openssl.pc
 %attr(0644,root,root) %_mandir/man3/*
-%attr(0755,root,root) %_bindir/fipsld
 
 %files perl
 %defattr(0644,root,root,0755)
 %attr(0755,root,root) %_bindir/c_rehash
 %attr(0755,root,root) %openssldir/misc/CA.pl
 %attr(0644,root,root) %_mandir/man1/CA.pl.1*
+%exclude  %_datadir/ssl/misc/tsget
 
 %changelog
+* Thu Feb 24 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.0.0d-owl1
+- Updated to 1.0.0d.
+- Imported numerous patches from ALT and RH.
+
 * Sat Feb 20 2010 Solar Designer <solar-at-owl.openwall.com> 0.9.7m-owl4
 - Corrected the addition of -Wa,--noexecstack to gcc options actually used
 during OpenSSL build.
