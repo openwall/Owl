@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.123 2010/07/12 02:37:42 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.124 2011/02/25 08:42:36 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.6.1
+Version: 1.7.6.2
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,6 +88,10 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Fri Feb 25 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.6.2-owl1
+- Added Intel AVX and AMD XOP instruction sets support for bitslice DES
+(with C compiler intrinsics), not enabled in the Owl package yet.
+
 * Mon Jul 12 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.6.1-owl1
 - Corrected a logic error introduced in JtR 1.7.4.2: in "single crack" mode,
 we need a salt's key buffer even when we have no words corresponding to that
