@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.70 2010/02/20 18:55:30 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.70.2.1 2011/02/26 17:16:35 segoon Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
@@ -17,6 +17,8 @@ Patch4: openssl-0.9.7g-rh-mdk-ia64-asm.diff
 Patch5: openssl-0.9.7g-rh-version-engines.diff
 Patch6: openssl-0.9.7l-owl-warnings.diff
 Patch7: openssl-0.9.7m-owl-CVE-2008-5077.diff
+Patch8: openssl-0.9.7m-up-CVE-2009-0590.diff
+Patch9: openssl-0.9.7m-up-CVE-2010-4180.diff
 Provides: SSL
 %ifnarch x86_64
 # For backwards compatibility.
@@ -100,6 +102,8 @@ This package contains some miscellaneous Perl scripts.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
+%patch9 -p1
 
 bzip2 -9k CHANGES CHANGES.SSLeay
 
@@ -248,6 +252,9 @@ ln -sf libssl.so.5 /%_lib/libssl.so.4
 %attr(0644,root,root) %_mandir/man1/CA.pl.1*
 
 %changelog
+* Sat Feb 26 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 0.9.7m-owl5
+- Backported fixes for CVE-2009-0590 and CVE-2010-4180.
+
 * Sat Feb 20 2010 Solar Designer <solar-at-owl.openwall.com> 0.9.7m-owl4
 - Corrected the addition of -Wa,--noexecstack to gcc options actually used
 during OpenSSL build.
