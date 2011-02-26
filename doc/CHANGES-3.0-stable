@@ -1,0 +1,66 @@
+This file lists all changes made between Owl 3.0 and its corresponding
+stable branch.  Please note that the release itself remains fixed; it's
+only the stable branch which has these changes.
+
+The dates shown in braces indicate when an equivalent change went into
+Owl-current, where applicable.
+
+Security fixes have a "Severity" specified for the issue(s) being fixed.
+The three comma-separated metrics given after "Severity:" are: risk
+impact (low, medium, or high), attack vector (local, remote, or
+indirect), and whether the attack may be carried out at will (active) or
+not (passive).  Please note that the specified risk impact is just that,
+it is not the overall severity, so other metrics are not factored into
+it.  For example, a "high" impact "local, passive" issue is generally of
+lower overall severity than a "high" impact "remote, active" one - this
+is left up to our users to consider given their specific circumstances.
+
+Per our current conventions, a Denial of Service (DoS) vulnerability is
+generally considered to have a "low" risk impact (even if it is a
+"remote, active" one, which is to be considered separately as it may
+make the vulnerability fairly critical under specific circumstances).
+Some examples of "medium" impact vulnerabilities would be bugs enabling
+non-critical information leaks, cryptographic signature forgeries,
+and/or sending of or accepting spoofed/forged network traffic (where
+such behavior was unexpected), as long as they would not directly allow
+for a "high" impact attack.  Finally, a typical "high" impact
+vulnerability would allow for privilege escalation such as ability to
+execute code as another user ID than the attacker's (a "local" attack)
+or without "legitimately" having such an ability (a "remote" attack).
+
+The metrics specified are generally those for a worst case scenario,
+however in certain cases ranges such as "none to low" or/and "local to
+remote" may be specified, referring to the defaults vs. a worst case yet
+"legitimate" custom configuration.  In some complicated cases, multiple
+issues or attacks may be dealt with at once.  When those differ in their
+severity metrics, we use slashes to denote the possible combinations.
+For example, "low/none to high, remote/local" means that we've dealt
+with issue(s) or attack(s) that are "low, remote" and those that are
+"none to high, local".  In those tricky cases, we generally try to
+clarify the specific issue(s) and their severities in the description.
+
+
+	Changes made between Owl 3.0 and Owl 3.0-stable.
+
+2011/02/26	Package: openssl
+SECURITY FIX	Severity: none to high, remote, active
+Backported a fix for CVE-2010-4180.  An old bug workaround in the
+OpenSSL SSL/TLS server code allows malicous clients to modify the stored
+session cache ciphersuite.  In some cases the ciphersuite can be
+downgraded to a weaker one on subsequent connections.
+Backported a fix for CVE-2009-0590. The function ASN1_STRING_print_ex()
+when used to print a BMPString or UniversalString will crash with an
+invalid memory access if the encoded length of the string is illegal.
+The impact of this flaw is limited to crash of the applications calling
+affected openssl function.  There are currently no known applications
+printing untrusted certificates, where application crash would be
+considered a security issue.
+References:
+http://openssl.org/news/secadv_20101202.txt
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4180
+https://bugzilla.redhat.com/show_bug.cgi?id=659462
+http://openssl.org/news/secadv_20090325.txt
+https://bugzilla.redhat.com/show_bug.cgi?id=492304
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-0590
+
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.1 2011/02/26 17:18:39 segoon Exp $
