@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.70.2.1 2011/02/26 17:16:35 segoon Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.70.2.2 2011/02/26 17:23:10 segoon Exp $
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 0.9.7m
-Release: owl4
+Release: owl5
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
