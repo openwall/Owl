@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/patch/patch.spec,v 1.11 2005/11/16 13:28:58 solar Exp $
+# $Owl: Owl/packages/patch/patch.spec,v 1.11.4.1 2011/02/27 11:59:23 segoon Exp $
 
 Summary: The GNU patch command, for modifying/upgrading files.
 Name: patch
 Version: 2.5.9
-Release: owl1
+Release: owl3
 License: GPL
 Group: Development/Tools
 URL: http://www.gnu.org/software/patch/
@@ -13,6 +13,7 @@ Patch1: patch-2.5.9-suse-remember-backup-files.diff
 Patch2: patch-2.5.9-rh-stderr.diff
 Patch3: patch-2.5.9-mdk-sigsegv.diff
 Patch4: patch-2.5.9-mdk-backup.diff
+Patch5: patch-2.5.9-rh-CVE-2010-4651.diff
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
 
@@ -30,6 +31,7 @@ original file (patching the file).
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 autoreconf -fisv
@@ -49,6 +51,15 @@ rm -rf %buildroot
 %_mandir/*/*
 
 %changelog
+* Wed Feb 09 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.5.9-owl3
+- Backported RH's patch for CVE-2010-4651.  The previous fix didn't address
+malicious patches with absolute filenames.
+https://bugzilla.redhat.com/show_bug.cgi?id=667529
+
+* Wed Feb 02 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.5.9-owl2
+- Imported fix for CVE-2010-4651 from RH.
+https://bugzilla.redhat.com/show_bug.cgi?id=667529
+
 * Sat Nov 12 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.5.9-owl1
 - Updated to 2.5.9.
 - Applied upstream fix for CR handling bug.
