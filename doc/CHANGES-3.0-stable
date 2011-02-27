@@ -63,4 +63,27 @@ http://openssl.org/news/secadv_20090325.txt
 https://bugzilla.redhat.com/show_bug.cgi?id=492304
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-0590
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.1 2011/02/26 17:18:39 segoon Exp $
+2011/02/09	Package: patch
+SECURITY FIX	Severity: high, indirect, passive
+Backported a fix for CVE-2010-4651.  The patch utility allowed ".." in
+pathnames, and it also allowed absolute pathnames, either of which could
+allow an attacker to create or modify arbitrary files outside of the
+intended directory tree using a specially-crafted patch file.  Our
+partial fix of 2011/02/02 did not address the absolute pathname case.
+References:
+https://bugzilla.redhat.com/show_bug.cgi?id=667529
+http://www.openwall.com/lists/oss-security/2011/01/05/10
+http://lists.gnu.org/archive/html/bug-patch/2010-12/msg00000.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4651
+
+2011/02/02	Package: patch
+Backported a partial fix for CVE-2010-4651.  Since the fix turned out to
+be incomplete, this change is not actually fixing CVE-2010-4651 yet.
+
+2011/01/24	Package: vim
+Moved a few syntax highlighting related files from the vim-syntax to the
+vim-enhanced subpackage to correct a packaging error where some files
+in vim-enhanced were dependent upon files from vim-syntax, which is not
+installed by default.
+
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.2 2011/02/27 12:02:38 segoon Exp $
