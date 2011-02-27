@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.49 2010/12/09 22:07:22 solar Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.49.2.1 2011/02/27 11:53:49 segoon Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -12,7 +12,7 @@ Name: vim
 %define patchlevel 075
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl2
+Release: owl3
 License: Charityware
 Group: Applications/Editors
 URL: http://www.vim.org
@@ -387,6 +387,9 @@ comm -13 filelist.syntax-base filelist.syntax-all > filelist.syntax-rest
 %endif
 
 %changelog
+* Thu Dec 23 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 7.3.075-owl3
+- Package all syntax dependencies of -enhanced into -enhanced.
+
 * Thu Dec 09 2010 Solar Designer <solar-at-owl.openwall.com> 7.3.075-owl2
 - Don't compress doc/* files yet because this is not supported by our "small"
 build of Vim (/bin/vi), yet is expected to work by our "settle" program (the
