@@ -42,15 +42,15 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl 3.0-stable.
 
-2011/02/26	Package: openssl
-SECURITY FIX	Severity: none to high, remote, active
+2011/03/01	Package: openssl
+SECURITY FIX	Severity: none to medium, remote, active
 Backported a fix for CVE-2010-4180.  An old bug workaround in the
-OpenSSL SSL/TLS server code allows malicous clients to modify the stored
-session cache ciphersuite.  In some cases the ciphersuite can be
+OpenSSL SSL/TLS server code allows malicious clients to modify the
+stored session cache ciphersuite.  In some cases the ciphersuite can be
 downgraded to a weaker one on subsequent connections.
-Backported a fix for CVE-2009-0590. The function ASN1_STRING_print_ex()
-when used to print a BMPString or UniversalString will crash with an
-invalid memory access if the encoded length of the string is illegal.
+Backported a fix for CVE-2009-0590.  The function ASN1_STRING_print_ex()
+when used to print a BMPString or UniversalString would crash with an
+invalid memory access if the encoded length of the string was illegal.
 The impact of this flaw is limited to crash of the applications calling
 affected openssl function.  There are currently no known applications
 printing untrusted certificates, where application crash would be
@@ -63,27 +63,24 @@ http://openssl.org/news/secadv_20090325.txt
 https://bugzilla.redhat.com/show_bug.cgi?id=492304
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-0590
 
-2011/02/09	Package: patch
+(2011/02/09)
+2011/03/01	Package: patch
 SECURITY FIX	Severity: high, indirect, passive
 Backported a fix for CVE-2010-4651.  The patch utility allowed ".." in
 pathnames, and it also allowed absolute pathnames, either of which could
 allow an attacker to create or modify arbitrary files outside of the
-intended directory tree using a specially-crafted patch file.  Our
-partial fix of 2011/02/02 did not address the absolute pathname case.
+intended directory tree using a specially-crafted patch file.
 References:
 https://bugzilla.redhat.com/show_bug.cgi?id=667529
 http://www.openwall.com/lists/oss-security/2011/01/05/10
 http://lists.gnu.org/archive/html/bug-patch/2010-12/msg00000.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4651
 
-2011/02/02	Package: patch
-Backported a partial fix for CVE-2010-4651.  Since the fix turned out to
-be incomplete, this change is not actually fixing CVE-2010-4651 yet.
-
-2011/01/24	Package: vim
+(2011/01/24)
+2011/03/01	Package: vim
 Moved a few syntax highlighting related files from the vim-syntax to the
 vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.2 2011/02/27 12:02:38 segoon Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.3 2011/03/01 05:15:53 solar Exp $
