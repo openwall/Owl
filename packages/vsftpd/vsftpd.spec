@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.38 2010/08/30 08:54:43 segoon Exp $
+# $Owl: Owl/packages/vsftpd/vsftpd.spec,v 1.39 2011/03/02 08:25:33 solar Exp $
 
 Summary: File Transfer Protocol (FTP) server.
 Name: vsftpd
-Version: 2.3.2
+Version: 2.3.4
 Release: owl1
 License: GPL
 Group: System Environment/Daemons
@@ -84,6 +84,9 @@ mkdir -m 755 /home/ftp &> /dev/null || :
 %_mandir/man8/vsftpd.8*
 
 %changelog
+* Wed Mar 02 2011 Solar Designer <solar-at-owl.openwall.com> 2.3.4-owl1
+- Updated to 2.3.4.
+
 * Mon Aug 30 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.3.2-owl1
 - Updated to 2.3.2.
 
