@@ -46,6 +46,19 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2011/03/02	Package: vsftpd
+SECURITY FIX	Severity: none to low, remote, active
+Updated to 2.3.4.  This release corrects a DoS vulnerability discovered by
+Maksymilian Arciemowicz where an attacker permitted to login to an FTP server
+would be able to cause the vsftpd child process(es) spawned for their
+session(s) to consume excessive amounts of CPU time.  If the attack is carried
+out on a sufficient number of FTP sessions (possibly from multiple source IP
+addresses to exceed a possible per-source limit), the FTP service would become
+unavailable and other services of the system would be greatly impacted.
+References:
+http://securityreason.com/achievement_securityalert/95
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-0762
+
 2011/02/24	Packages: openssl, openssh
 Updated OpenSSL to 1.0.0d.
 
@@ -194,4 +207,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.28 2011/02/24 22:14:05 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.29 2011/03/02 08:43:35 solar Exp $
