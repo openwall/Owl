@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.45 2011/02/10 19:26:08 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.46 2011/03/10 11:01:28 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 238.1.1.el5.028stab084.3
+%define ovzversion 238.5.1.el5.028stab085.1
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
@@ -104,6 +104,18 @@ done
 %files fake
 
 %changelog
+* Thu Mar 10 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.1.owl1
+- Updated to 238.5.1.el5.028stab085.1.  This fixes a rare kernel panic with
+sysfs virtualization, a potential livelock in dirty pages balancing,
+garbage collector for AF_UNIX sockets error (CVE-2010-4249):
+https://bugzilla.redhat.com/show_bug.cgi?id=657303,
+exceeding the receiver's buffer limit of socket queues (CVE-2010-4251):
+https://bugzilla.redhat.com/show_bug.cgi?id=656756
+- Fixed build failure with CONFIG_IPV6=n (default in Owl).
+- Fixed build failure with gcc 3.4.5 (inline).
+- Fixed bug with fragmented ICMP sockets (Owl-specific).  Reported
+by Piotr Meyer.
+
 * Thu Feb 10 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab084.3.owl1
 - Updated to 2.6.18-238.1.1.el5.028stab084.3.  It contains
 "fix for optimized kmem accounting."
