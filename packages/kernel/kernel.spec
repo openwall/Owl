@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.47 2011/03/10 12:30:19 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.48 2011/03/11 16:50:19 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 238.5.1.el5.028stab085.1
+%define ovzversion 238.5.1.el5.028stab085.2
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
@@ -104,6 +104,9 @@ done
 %files fake
 
 %changelog
+* Fri Mar 11 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.2.owl1
+- Updated to 238.5.1.el5.028stab085.2.  This fixes a bug in CFQ.
+
 * Thu Mar 10 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.1.owl1
 - Updated to 238.5.1.el5.028stab085.1.  This fixes a rare kernel panic with
 sysfs virtualization, a potential livelock in dirty pages balancing,
