@@ -57,7 +57,8 @@ on fixes a flaw in the garbage collector for AF_UNIX sockets
 exceeding the buffer limit (CVE-2010-4251, remote DoS).  (It also
 includes a fix for CVE-2010-4655, but it was already included it in our
 2011/01/28 update.)  Fixed an Owl-current specific bug in checksum
-calculation of fragmented ICMP echo request datagrams.
+calculation of fragmented ICMP echo request datagrams (reported by Piotr
+Meyer).  Disabled the eepro100 driver in favor of e100.
 References:
 http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab085.2
 http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab085.1
@@ -65,6 +66,7 @@ https://rhn.redhat.com/errata/RHSA-2011-0303.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4249
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4251
 http://www.openwall.com/lists/owl-users/2011/03/06/1
+http://www.openwall.com/lists/owl-users/2011/03/05/3
 
 2011/03/02	Package: vsftpd
 SECURITY FIX	Severity: none to low, remote, active
@@ -227,4 +229,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.31 2011/03/12 15:06:29 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.32 2011/03/12 15:59:39 solar Exp $

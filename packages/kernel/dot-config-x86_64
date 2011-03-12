@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.18-238.5.1.el5.028stab085.2.owl1
-# Sat Mar 12 18:19:48 2011
+# Sat Mar 12 18:24:28 2011
 #
 CONFIG_X86_64=y
 CONFIG_64BIT=y
@@ -876,8 +876,8 @@ CONFIG_PCNET32=y
 # CONFIG_B44 is not set
 CONFIG_FORCEDETH=y
 # CONFIG_DGRS is not set
-CONFIG_EEPRO100=y
-# CONFIG_E100 is not set
+# CONFIG_EEPRO100 is not set
+CONFIG_E100=y
 # CONFIG_FEALNX is not set
 # CONFIG_NATSEMI is not set
 CONFIG_NE2K_PCI=y

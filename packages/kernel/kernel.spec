@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.49 2011/03/12 15:13:37 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.50 2011/03/12 15:57:21 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 238.5.1.el5.028stab085.2
-Release: %ovzversion.owl1
+Release: %ovzversion.owl2
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab085.2
@@ -104,6 +104,10 @@ done
 %files fake
 
 %changelog
+* Sat Mar 12 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.2.owl2
+- Disabled the eepro100 driver in favor of e100:
+http://www.openwall.com/lists/owl-users/2011/03/05/3
+
 * Fri Mar 11 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.2.owl1
 - Updated to 238.5.1.el5.028stab085.2.  This fixes a bug in CFQ.
 
