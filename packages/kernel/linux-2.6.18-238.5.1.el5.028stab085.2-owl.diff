@@ -407,16 +407,6 @@ diff -uNrp linux-2.6.18.orig/include/linux/binfmts.h linux-2.6.18/include/linux/
  
  /* sizeof(linux_binprm->buf) */
  #define BINPRM_BUF_SIZE 128
-diff -uNrp linux-2.6.18.orig/include/linux/compat.h linux-2.6.18/include/linux/compat.h
---- linux-2.6.18.orig/include/linux/compat.h	2011-03-11 10:36:15 +0000
-+++ linux-2.6.18/include/linux/compat.h	2011-03-11 16:08:40 +0000
-@@ -263,5 +263,6 @@ asmlinkage long compat_sys_epoll_pwait(i
- asmlinkage long compat_sys_signalfd(int ufd,
- 				const compat_sigset_t __user *sigmask,
- 				compat_size_t sigsetsize);
-+
- #endif /* CONFIG_COMPAT */
- #endif /* _LINUX_COMPAT_H */
 diff -uNrp linux-2.6.18.orig/include/linux/dmar.h linux-2.6.18/include/linux/dmar.h
 --- linux-2.6.18.orig/include/linux/dmar.h	2011-03-11 10:35:57 +0000
 +++ linux-2.6.18/include/linux/dmar.h	2011-03-11 16:08:40 +0000
