@@ -42,6 +42,10 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl 3.0-stable.
 
+(2011/02/18)
+2011/03/12	Package: patchutils
+Updated to 0.3.2.
+
 2011/03/02	Package: vsftpd
 SECURITY FIX	Severity: none to low, remote, active
 Updated to 2.3.4.  This release corrects a DoS vulnerability discovered by
@@ -96,4 +100,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.4 2011/03/02 12:25:54 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.5 2011/03/12 16:19:32 solar Exp $
