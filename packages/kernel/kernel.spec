@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.50 2011/03/12 15:57:21 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.51 2011/03/17 16:09:22 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -9,15 +9,16 @@ Version: 2.6.18
 Release: %ovzversion.owl2
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab085.2
+URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab085.2
+#URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab085.2
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab085.2/patches/patch-238.5.1.el5.028stab085.2-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab085.2/patches/patch-238.5.1.el5.028stab085.2-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab085.2/patches/patch-238.5.1.el5.028stab085.2-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab085.2/patches/patch-238.5.1.el5.028stab085.2-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
