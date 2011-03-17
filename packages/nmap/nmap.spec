@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.54 2011/02/02 20:36:51 solar Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.55 2011/03/17 10:38:24 segoon Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -8,12 +8,12 @@
 # nping wants EVP_sha256() that is not part of OpenSSL 0.9.7.
 # If you only have OpenSSL 0.9.7 define this to 0.
 # - segoon
-%define HAVE_OPENSSL_SHA256 0
+%define HAVE_OPENSSL_SHA256 1
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
-Version: 5.50
-Release: owl5
+Version: 5.51
+Release: owl1
 Epoch: 2
 License: GPL
 Group: Applications/System
@@ -30,7 +30,7 @@ Source: %srcname-stripped-for-owl-1.tar.xz
 # Signature: http://nmap.org/dist/sigs/%srcname.tar.bz2.asc
 Patch0: nmap-5.20-owl-nse_ldflags.diff
 Patch1: nmap-5.50-alt-owl-autoheader.diff
-Patch2: nmap-5.50-alt-owl-drop-priv.diff
+Patch2: nmap-5.51-alt-owl-drop-priv.diff
 Patch3: nmap-5.50-alt-owl-dot-dir.diff
 Patch4: nmap-5.50-alt-owl-fileexistsandisreadable.diff
 Patch5: nmap-5.50-owl-warnings.diff
@@ -219,6 +219,10 @@ grep -q ^nmap: /etc/passwd ||
 %endif
 
 %changelog
+* Thu Mar 17 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.51-owl1
+- Updated to 5.51.
+- Enabled ssl support for nping.
+
 * Wed Feb 02 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl5
 - Introduced a way to enable Nping's OpenSSL support in this spec file (not
 enabled yet).
