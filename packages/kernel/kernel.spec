@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.51 2011/03/17 16:09:22 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.52 2011/03/22 17:21:13 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 238.5.1.el5.028stab085.2
-Release: %ovzversion.owl2
+Release: %ovzversion.owl3
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab085.2
@@ -105,6 +105,14 @@ done
 %files fake
 
 %changelog
+* Mon Mar 21 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.2.owl3
+- Backported fixes for netfilter infoleaks: arp_tables (CVE-2011-1170),
+ip_tables (CVE-2011-1171), ip6_tables (CVE-2011-1172), and ipt_CLUSTERIP:
+http://www.openwall.com/lists/oss-security/2011/03/18/15
+One must have CAP_NET_ADMIN to exploit these issues.  The default Owl
+installation is vulnerable to the infoleak in ip_tables only as we don't
+neither ship other netfiler modules nor have IPv6 enabled.
+
 * Sat Mar 12 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.2.owl2
 - Disabled the eepro100 driver in favor of e100:
 http://www.openwall.com/lists/owl-users/2011/03/05/3

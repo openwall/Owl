@@ -1,12 +1,12 @@
 diff -uNrp linux-2.6.18.orig/Makefile linux-2.6.18/Makefile
 --- linux-2.6.18.orig/Makefile	2011-03-11 10:36:16 +0000
-+++ linux-2.6.18/Makefile	2011-03-11 16:08:57 +0000
++++ linux-2.6.18/Makefile	2011-03-21 18:31:15 +0000
 @@ -1,7 +1,7 @@
  VERSION = 2
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -238.5.1.el5.028stab085.2
-+EXTRAVERSION = -238.5.1.el5.028stab085.2.owl2
++EXTRAVERSION = -238.5.1.el5.028stab085.2.owl3
  RHEL_MAJOR = 5
  RHEL_MINOR = 6
  NAME=Avast! A bilge rat!
@@ -2215,3 +2215,84 @@ diff -uNrp linux-2.6.18.orig/arch/x86_64/vdso/vdso.lds.S linux-2.6.18/arch/x86_6
    eh_frame_hdr 0x6474e550; /* PT_GNU_EH_FRAME, but ld doesn't match the name */
  }
  
+diff -uNrp linux-2.6.18.orig/net/ipv4/netfilter/arp_tables.c linux-2.6.18/net/ipv4/netfilter/arp_tables.c
+--- linux-2.6.18.orig/net/ipv4/netfilter/arp_tables.c	2011-03-21 18:18:48 +0000
++++ linux-2.6.18/net/ipv4/netfilter/arp_tables.c	2011-03-21 18:18:51 +0000
+@@ -820,6 +820,7 @@ static int do_replace(void __user *user,
+ 	/* overflow check */
+ 	if (tmp.num_counters >= INT_MAX / sizeof(struct xt_counters))
+ 		return -ENOMEM;
++	tmp.name[sizeof(tmp.name)-1] = 0;
+ 
+ 	newinfo = xt_alloc_table_info(tmp.size);
+ 	if (!newinfo)
+@@ -1074,6 +1075,7 @@ static int do_arpt_get_ctl(struct sock *
+ 			ret = -EFAULT;
+ 			break;
+ 		}
++		rev.name[sizeof(rev.name)-1] = 0;
+ 
+ 		try_then_request_module(xt_find_revision(NF_ARP, rev.name,
+ 							 rev.revision, 1, &ret),
+diff -uNrp linux-2.6.18.orig/net/ipv4/netfilter/ip_tables.c linux-2.6.18/net/ipv4/netfilter/ip_tables.c
+--- linux-2.6.18.orig/net/ipv4/netfilter/ip_tables.c	2011-03-21 18:19:57 +0000
++++ linux-2.6.18/net/ipv4/netfilter/ip_tables.c	2011-03-21 18:21:32 +0000
+@@ -1292,6 +1292,7 @@ do_replace(void __user *user, unsigned i
+ 	/* overflow check */
+ 	if (tmp.num_counters >= INT_MAX / sizeof(struct xt_counters))
+ 		return -ENOMEM;
++	tmp.name[sizeof(tmp.name)-1] = 0;
+ 
+ 	newinfo = xt_alloc_table_info(tmp.size);
+ 	if (!newinfo)
+@@ -1848,6 +1849,7 @@ compat_do_replace(void __user *user, uns
+ 		return -ENOMEM;
+ 	if (tmp.num_counters >= INT_MAX / sizeof(struct xt_counters))
+ 		return -ENOMEM;
++	tmp.name[sizeof(tmp.name)-1] = 0;
+ 
+ 	newinfo = xt_alloc_table_info(tmp.size);
+ 	if (!newinfo)
+@@ -2137,6 +2139,7 @@ do_ipt_get_ctl(struct sock *sk, int cmd,
+ 			ret = -EFAULT;
+ 			break;
+ 		}
++		rev.name[sizeof(rev.name)-1] = 0;
+ 
+ 		if (cmd == IPT_SO_GET_REVISION_TARGET)
+ 			target = 1;
+diff -uNrp linux-2.6.18.orig/net/ipv4/netfilter/ipt_CLUSTERIP.c linux-2.6.18/net/ipv4/netfilter/ipt_CLUSTERIP.c
+--- linux-2.6.18.orig/net/ipv4/netfilter/ipt_CLUSTERIP.c	2011-03-21 18:22:11 +0000
++++ linux-2.6.18/net/ipv4/netfilter/ipt_CLUSTERIP.c	2011-03-21 18:23:09 +0000
+@@ -686,8 +686,11 @@ static ssize_t clusterip_proc_write(stru
+ 	struct clusterip_config *c = pde->data;
+ 	unsigned long nodenum;
+ 
+-	if (copy_from_user(buffer, input, PROC_WRITELEN))
++	if (size > PROC_WRITELEN)
++		return -EIO;
++	if (copy_from_user(buffer, input, size))
+ 		return -EFAULT;
++	buffer[size] = 0;
+ 
+ 	if (*buffer == '+') {
+ 		nodenum = simple_strtoul(buffer+1, NULL, 10);
+diff -uNrp linux-2.6.18.orig/net/ipv6/netfilter/ip6_tables.c linux-2.6.18/net/ipv6/netfilter/ip6_tables.c
+--- linux-2.6.18.orig/net/ipv6/netfilter/ip6_tables.c	2011-03-21 18:23:36 +0000
++++ linux-2.6.18/net/ipv6/netfilter/ip6_tables.c	2011-03-21 18:26:18 +0000
+@@ -976,6 +976,7 @@ do_replace(void __user *user, unsigned i
+ 	/* overflow check */
+ 	if (tmp.num_counters >= INT_MAX / sizeof(struct xt_counters))
+ 		return -ENOMEM;
++	tmp.name[sizeof(tmp.name)-1] = 0;
+ 
+ 	newinfo = xt_alloc_table_info(tmp.size);
+ 	if (!newinfo)
+@@ -1252,6 +1253,7 @@ do_ip6t_get_ctl(struct sock *sk, int cmd
+ 			ret = -EFAULT;
+ 			break;
+ 		}
++		rev.name[sizeof(rev.name)-1] = 0;
+ 
+ 		if (cmd == IP6T_SO_GET_REVISION_TARGET)
+ 			target = 1;
