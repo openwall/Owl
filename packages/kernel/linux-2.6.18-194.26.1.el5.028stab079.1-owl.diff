@@ -1328,3 +1328,84 @@ diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/sound/pci/rme9652/hdspm.c linux
  		spin_lock_irq(&hdspm->lock);
  		info.pref_sync_ref =
  		    (unsigned char) hdspm_pref_sync_ref(hdspm);
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/net/ipv4/netfilter/arp_tables.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/net/ipv4/netfilter/arp_tables.c
+--- linux-2.6.18-194.26.1.el5.028stab079.1/net/ipv4/netfilter/arp_tables.c	2011-03-26 19:17:52 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/net/ipv4/netfilter/arp_tables.c	2011-03-26 19:17:56 +0000
+@@ -820,6 +820,7 @@ static int do_replace(void __user *user,
+ 		return -ENOMEM;
+ 	if (tmp.num_counters >= INT_MAX / sizeof(struct xt_counters))
+ 		return -ENOMEM;
++	tmp.name[sizeof(tmp.name)-1] = 0;
+ 
+ 	newinfo = xt_alloc_table_info(tmp.size);
+ 	if (!newinfo)
+@@ -1074,6 +1075,7 @@ static int do_arpt_get_ctl(struct sock *
+ 			ret = -EFAULT;
+ 			break;
+ 		}
++		rev.name[sizeof(rev.name)-1] = 0;
+ 
+ 		try_then_request_module(xt_find_revision(NF_ARP, rev.name,
+ 							 rev.revision, 1, &ret),
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/net/ipv4/netfilter/ip_tables.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/net/ipv4/netfilter/ip_tables.c
+--- linux-2.6.18-194.26.1.el5.028stab079.1/net/ipv4/netfilter/ip_tables.c	2011-03-26 19:17:52 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/net/ipv4/netfilter/ip_tables.c	2011-03-26 19:17:56 +0000
+@@ -1295,6 +1295,7 @@ do_replace(void __user *user, unsigned i
+ 		return -ENOMEM;
+ 	if (tmp.num_counters >= INT_MAX / sizeof(struct xt_counters))
+ 		return -ENOMEM;
++	tmp.name[sizeof(tmp.name)-1] = 0;
+ 
+ 	newinfo = xt_alloc_table_info(tmp.size);
+ 	if (!newinfo)
+@@ -1850,6 +1851,7 @@ compat_do_replace(void __user *user, uns
+ 		return -ENOMEM;
+ 	if (tmp.num_counters >= INT_MAX / sizeof(struct xt_counters))
+ 		return -ENOMEM;
++	tmp.name[sizeof(tmp.name)-1] = 0;
+ 
+ 	newinfo = xt_alloc_table_info(tmp.size);
+ 	if (!newinfo)
+@@ -2139,6 +2141,7 @@ do_ipt_get_ctl(struct sock *sk, int cmd,
+ 			ret = -EFAULT;
+ 			break;
+ 		}
++		rev.name[sizeof(rev.name)-1] = 0;
+ 
+ 		if (cmd == IPT_SO_GET_REVISION_TARGET)
+ 			target = 1;
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/net/ipv4/netfilter/ipt_CLUSTERIP.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/net/ipv4/netfilter/ipt_CLUSTERIP.c
+--- linux-2.6.18-194.26.1.el5.028stab079.1/net/ipv4/netfilter/ipt_CLUSTERIP.c	2011-03-26 19:17:52 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/net/ipv4/netfilter/ipt_CLUSTERIP.c	2011-03-26 19:17:56 +0000
+@@ -685,8 +685,11 @@ static ssize_t clusterip_proc_write(stru
+ 	struct clusterip_config *c = pde->data;
+ 	unsigned long nodenum;
+ 
+-	if (copy_from_user(buffer, input, PROC_WRITELEN))
++	if (size > PROC_WRITELEN)
++		return -EIO;
++	if (copy_from_user(buffer, input, size))
+ 		return -EFAULT;
++	buffer[size] = 0;
+ 
+ 	if (*buffer == '+') {
+ 		nodenum = simple_strtoul(buffer+1, NULL, 10);
+diff -urp linux-2.6.18-194.26.1.el5.028stab079.1/net/ipv6/netfilter/ip6_tables.c linux-2.6.18-194.26.1.el5.028stab079.1-owl/net/ipv6/netfilter/ip6_tables.c
+--- linux-2.6.18-194.26.1.el5.028stab079.1/net/ipv6/netfilter/ip6_tables.c	2011-03-26 19:17:52 +0000
++++ linux-2.6.18-194.26.1.el5.028stab079.1-owl/net/ipv6/netfilter/ip6_tables.c	2011-03-26 19:17:56 +0000
+@@ -971,6 +971,7 @@ do_replace(void __user *user, unsigned i
+ 		return -ENOMEM;
+ 	if (tmp.num_counters >= INT_MAX / sizeof(struct xt_counters))
+ 		return -ENOMEM;
++	tmp.name[sizeof(tmp.name)-1] = 0;
+ 
+ 	newinfo = xt_alloc_table_info(tmp.size);
+ 	if (!newinfo)
+@@ -1247,6 +1248,7 @@ do_ip6t_get_ctl(struct sock *sk, int cmd
+ 			ret = -EFAULT;
+ 			break;
+ 		}
++		rev.name[sizeof(rev.name)-1] = 0;
+ 
+ 		if (cmd == IP6T_SO_GET_REVISION_TARGET)
+ 			target = 1;

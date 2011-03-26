@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.36 2010/12/09 17:47:51 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.1 2011/03/26 19:21:38 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 194.26.1.el5.028stab079.1
-Release: %ovzversion.owl2
+Release: %ovzversion.owl3
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab079.1
@@ -104,6 +104,14 @@ done
 %files fake
 
 %changelog
+* Sat Mar 26 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.2.owl3
+- Backported fixes for netfilter infoleaks: arp_tables (CVE-2011-1170),
+ip_tables (CVE-2011-1171), ip6_tables (CVE-2011-1172), and ipt_CLUSTERIP:
+http://www.openwall.com/lists/oss-security/2011/03/18/15
+One must have CAP_NET_ADMIN to exploit these issues.  The default Owl
+installation is vulnerable to the infoleak in ip_tables only as we don't
+neither ship other netfiler modules nor have IPv6 enabled.
+
 * Thu Dec 09 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.26.1.el5.028stab079.1-owl2
 - In the CVE-2010-4258 fix, moved the in_interrupt() check to be done before
 the newly added set_fs() call.  Rationale:
