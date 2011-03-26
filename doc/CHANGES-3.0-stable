@@ -42,6 +42,21 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl 3.0-stable.
 
+(2011/03/21)
+2011/03/26	Package: kernel
+SECURITY FIX	Severity: none to medium, local, active
+Backported fixes for information infoleaks in netfilter modules:
+arp_tables (CVE-2011-1170), ip_tables (CVE-2011-1171), ip6_tables
+(CVE-2011-1172), and ipt_CLUSTERIP.  One must have CAP_NET_ADMIN to
+exploit these issues.  The default Owl installation is vulnerable to
+the infoleak in ip_tables only as we don't neither ship other netfiler
+modules nor have IPv6 enabled.
+References:
+http://www.openwall.com/lists/oss-security/2011/03/18/15
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-1170
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-1171
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-1172
+
 (2011/02/18)
 2011/03/12	Package: patchutils
 Updated to 0.3.2.
@@ -100,4 +115,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.5 2011/03/12 16:19:32 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.6 2011/03/26 19:24:10 segoon Exp $
