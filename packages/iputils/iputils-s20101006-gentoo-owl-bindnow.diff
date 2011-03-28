@@ -1,0 +1,13 @@
+diff -uNp -r iputils-s20101006.orig/Makefile iputils-s20101006/Makefile
+--- iputils-s20101006.orig/Makefile	2011-03-28 10:49:55 +0000
++++ iputils-s20101006/Makefile	2011-03-28 10:55:42 +0000
+@@ -29,7 +29,9 @@ all: $(TARGETS)
+ tftpd: tftpd.o tftpsubs.o
+ arping: arping.o
+ ping: ping.o ping_common.o
++	$(LINK.o) $^ $(LDLIBS) -o $@ -Wl,-z,now -Wl,-z,relro
+ ping6: ping6.o ping_common.o -lresolv -lcrypto
++	$(LINK.o) $^ $(LDLIBS) -o $@ -Wl,-z,now -Wl,-z,relro
+ ping.o ping6.o ping_common.o: ping_common.h
+ tftpd.o tftpsubs.o: tftp.h
+ 

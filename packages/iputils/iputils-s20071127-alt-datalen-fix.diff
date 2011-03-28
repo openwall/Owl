@@ -1,0 +1,15 @@
+--- iputils-s20071127/traceroute6.c.orig	2007-11-27 03:57:27 +0300
++++ iputils-s20071127/traceroute6.c	2008-09-15 12:40:05 +0400
+@@ -446,9 +446,11 @@
+ 		/* Message for rpm maintainers: have _shame_. If you want
+ 		 * to fix something send the patch to me for sanity checking.
+ 		 * "datalen" patch is a shit. */
++        /*
+ 		if (datalen == 0)
+ 			datalen = sizeof(struct pkt_format);
+-		else if (datalen < (int)sizeof(struct pkt_format) ||
++		else */
++        if (datalen < (int)sizeof(struct pkt_format) ||
+ 			 datalen >= MAXPACKET) {
+ 			Fprintf(stderr,
+ 			    "traceroute: packet size must be %d <= s < %d.\n",

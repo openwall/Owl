@@ -1,22 +1,31 @@
-# $Owl: Owl/packages/iputils/iputils.spec,v 1.31 2011/02/01 13:41:06 solar Exp $
+# $Owl: Owl/packages/iputils/iputils.spec,v 1.32 2011/03/28 13:49:51 segoon Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
-Version: ss020927
-Release: owl10
+Version: s20101006
+Release: owl1
+Epoch: 1
 License: mostly BSD, some GPL
 Group: Applications/Internet
-Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%version.tar.gz
-Source1: bonding-0.2.tar.bz2
+Source0: http://www.skbuff.net/iputils/%name-%version.tar.bz2
+Source1: ifenslave.tar.gz
 Source2: ping.control
+Source3: ping6.control
+Source4: arping.8
+Source5: clockdiff.8
+Source6: ping.8
+Source7: rdisc.8
+Source8: tracepath.8
 Patch0: iputils-ss020927-rh-owl-cache-reverse-lookups.diff
-Patch1: iputils-ss020927-owl-warnings.diff
-Patch2: iputils-ss020927-owl-socketbits.diff
-Patch3: iputils-ss020927-owl-man.diff
-Patch4: iputils-ss020927-alt-Makefile.diff
-Patch5: iputils-ss020927-owl-ipv6.diff
-Patch6: iputils-ss020927-owl-pingsock.diff
-Patch10: bonding-0.2-owl-ioctl.diff
+Patch1: iputils-s20101006-owl-SO_MARK.diff
+Patch2: iputils-s20101006-owl-libsysfs.diff
+Patch3: iputils-s20101006-owl-pingsock.diff
+Patch4: iputils-20001007-rh-bug23844.diff
+Patch5: iputils-s20101006-gentoo-owl-bindnow.diff
+Patch6: iputils-s20101006-rh-ping_cleanup.diff
+Patch7: iputils-s20101006-alt-perror-newline.diff
+Patch8: iputils-s20071127-alt-datalen-fix.diff
+Patch9: iputils-s20101006-owl-warnings.diff
 PreReq: owl-control >= 0.4, owl-control < 2.0
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
@@ -28,8 +37,8 @@ protocol ECHO_REQUEST packets to a specified network host and can tell
 you if that machine is alive and receiving network traffic.
 
 %prep
-%setup -q -n %name -a 1
-mv -f bonding-0.2/README bonding-0.2/README.ifenslave
+%setup -q -a 1
+mv -f README.bonding README.ifenslave
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -37,7 +46,9 @@ mv -f bonding-0.2/README bonding-0.2/README.ifenslave
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch10 -p0
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
@@ -45,7 +56,7 @@ mv -f bonding-0.2/README bonding-0.2/README.ifenslave
 %__make \
 	CCOPT="-D_GNU_SOURCE %optflags" \
 	IPV4_TARGETS="tracepath ping clockdiff rdisc arping" # no tftpd, rarpd
-%__cc %optflags -s bonding-0.2/ifenslave.c -o bonding-0.2/ifenslave
+%__cc %optflags -s ifenslave.c -o ifenslave
 
 %install
 rm -rf %buildroot
@@ -56,19 +67,20 @@ install -m 755 arping clockdiff %buildroot%_sbindir/
 install -m 755 rdisc %buildroot%_sbindir/rdiscd
 install -m 700 ping ping6 %buildroot/bin/
 install -m 755 tracepath tracepath6 %buildroot/bin/
-install -m 755 bonding-0.2/ifenslave %buildroot/sbin/
+install -m 755 ifenslave %buildroot/sbin/
 
-install -pD -m644 doc/ping.8 %buildroot%_mandir/man1/ping.1
-install -pD -m644 doc/tracepath.8 %buildroot%_mandir/man1/tracepath.1
-ln -s ping.1 %buildroot%_mandir/man1/ping6.1
-ln -s tracepath.1 %buildroot%_mandir/man1/tracepath6.1
-
+mkdir -p %buildroot%_mandir/man1
 mkdir -p %buildroot%_mandir/man8
-install -m 644 doc/{arping,clockdiff}.8 \
+install -pD -m644 %_sourcedir/ping.8 %buildroot%_mandir/man1/ping.1
+ln -sf ping.1 %buildroot%_mandir/man1/ping6.1
+ln -sf tracepath.1 %buildroot%_mandir/man1/tracepath6.1
+ln -sf tracepath.8 %buildroot%_mandir/man8/tracepath6.8
+install -pD -m644 %_sourcedir/tracepath.8 \
+	%buildroot%_mandir/man1/tracepath.1
+install -m 644 %_sourcedir/{arping,clockdiff}.8 \
 	%buildroot%_mandir/man8/
-
 sed 's/rdisc/rdiscd/' \
-	< doc/rdisc.8 > %buildroot%_mandir/man8/rdiscd.8
+	< %_sourcedir/rdisc.8 > %buildroot%_mandir/man8/rdiscd.8
 
 mkdir -p %buildroot/etc/control.d/facilities
 install -m 700 %_sourcedir/ping.control \
@@ -91,7 +103,7 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc RELNOTES bonding*/README.ifenslave
+%doc RELNOTES README.ifenslave
 %_sbindir/arping
 %_sbindir/clockdiff
 /sbin/ifenslave
@@ -105,6 +117,14 @@ fi
 /etc/control.d/facilities/ping6
 
 %changelog
+* Mon Mar 28 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:s20101006-owl1
+- Updated to s20101006.
+- Dropped obsoleted patches.
+- Updated owl-pingsock and owl-warnings patches.
+- Imported patches from ALT, RH and gentoo.
+- Removed usages of SO_MARK (because of the kernel version) and libsysfs.
+- Introduced lost "ping6.control".
+
 * Tue Feb 01 2011 Solar Designer <solar-at-owl.openwall.com> ss020927-owl10
 - Add group _icmp (if it does not exist yet) on package install.
 - Revised the control(8) settings for ping(1): added dgramsocket, turned public

@@ -1,7 +1,7 @@
-diff -urN iputils.orig/ping.c iputils/ping.c
---- iputils.orig/ping.c	2002-09-20 17:08:11 +0200
-+++ iputils/ping.c	2007-03-08 10:17:09 +0100
-@@ -80,6 +80,7 @@
+diff -uNp -r iputils-s20101006.orig/ping.c iputils-s20101006/ping.c
+--- iputils-s20101006.orig/ping.c	2010-10-06 11:59:20 +0000
++++ iputils-s20101006/ping.c	2011-03-24 12:21:30 +0000
+@@ -88,6 +88,7 @@ struct sockaddr_in whereto;	/* who to pi
  int optlen = 0;
  int settos = 0;			/* Set TOS, Precendence or other QOS options */
  int icmp_sock;			/* socket file descriptor */
@@ -9,8 +9,8 @@ diff -urN iputils.orig/ping.c iputils/ping.c
  u_char outpack[0x10000];
  int maxpacket = sizeof(outpack);
  
-@@ -115,7 +116,11 @@
- 	char *target, hnamebuf[MAXHOSTNAMELEN];
+@@ -123,7 +124,11 @@ main(int argc, char **argv)
+ 	char *target, hnamebuf[MAX_HOSTNAMELEN];
  	char rspace[3 + 4 * NROUTES + 1];	/* record route space */
  
 -	icmp_sock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
@@ -22,7 +22,7 @@ diff -urN iputils.orig/ping.c iputils/ping.c
  	socket_errno = errno;
  
  	uid = getuid();
-@@ -359,13 +364,35 @@
+@@ -377,13 +382,35 @@ main(int argc, char **argv)
  		}
  	}
  
@@ -63,7 +63,7 @@ diff -urN iputils.orig/ping.c iputils/ping.c
  		struct icmp_filter filt;
  		filt.data = ~((1<<ICMP_SOURCE_QUENCH)|
  			      (1<<ICMP_DEST_UNREACH)|
-@@ -380,6 +407,12 @@
+@@ -398,6 +425,12 @@ main(int argc, char **argv)
  	hold = 1;
  	if (setsockopt(icmp_sock, SOL_IP, IP_RECVERR, (char *)&hold, sizeof(hold)))
  		fprintf(stderr, "WARNING: your kernel is veeery old. No problems.\n");
@@ -76,7 +76,7 @@ diff -urN iputils.orig/ping.c iputils/ping.c
  
  	/* record route option */
  	if (options & F_RROUTE) {
-@@ -548,6 +581,7 @@
+@@ -566,6 +599,7 @@ int receive_error_msg()
  		nerrors++;
  	} else if (e->ee_origin == SO_EE_ORIGIN_ICMP) {
  		struct sockaddr_in *sin = (struct sockaddr_in*)(e+1);
@@ -84,7 +84,7 @@ diff -urN iputils.orig/ping.c iputils/ping.c
  
  		if (res < sizeof(icmph) ||
  		    target.sin_addr.s_addr != whereto.sin_addr.s_addr ||
-@@ -558,9 +592,18 @@
+@@ -576,9 +610,18 @@ int receive_error_msg()
  			goto out;
  		}
  
@@ -105,7 +105,7 @@ diff -urN iputils.orig/ping.c iputils/ping.c
  			struct icmp_filter filt;
  			working_recverr = 1;
  			/* OK, it works. Add stronger filter. */
-@@ -571,14 +614,13 @@
+@@ -589,15 +632,14 @@ int receive_error_msg()
  				perror("\rWARNING: setsockopt(ICMP_FILTER)");
  		}
  
@@ -118,12 +118,13 @@ diff -urN iputils.orig/ping.c iputils/ping.c
 +			if (error_pkt)
 +				write(STDOUT_FILENO, "\bE", 2);
  		} else {
+ 			print_timestamp();
 -			printf("From %s icmp_seq=%u ", pr_addr(sin->sin_addr.s_addr), ntohs(icmph.un.echo.sequence));
 +			printf("From %s: icmp_seq=%u ", pr_addr(sin->sin_addr.s_addr), ntohs(icmph.un.echo.sequence));
  			pr_icmph(e->ee_type, e->ee_code, e->ee_info, NULL);
  			fflush(stdout);
  		}
-@@ -670,15 +712,41 @@
+@@ -695,15 +737,41 @@ parse_reply(struct msghdr *msg, int cc, 
  	struct iphdr *ip;
  	int hlen;
  	int csfailed;
@@ -171,16 +172,16 @@ diff -urN iputils.orig/ping.c iputils/ping.c
  	}
  
  	/* Now the ICMP part */
-@@ -691,7 +759,7 @@
+@@ -716,7 +784,7 @@ parse_reply(struct msghdr *msg, int cc, 
  			return 1;			/* 'Twas not our ECHO */
- 		if (gather_statistics((__u8*)(icp+1), cc,
+ 		if (gather_statistics((__u8*)icp, sizeof(*icp), cc,
  				      ntohs(icp->un.echo.sequence),
--				      ip->ttl, 0, tv, pr_addr(from->sin_addr.s_addr)))
-+				      ttl, 0, tv, pr_addr(from->sin_addr.s_addr)))
+-				      ip->ttl, 0, tv, pr_addr(from->sin_addr.s_addr),
++				      ttl, 0, tv, pr_addr(from->sin_addr.s_addr),
+ 				      pr_echo_reply))
  			return 0;
  	} else {
- 		/* We fall here when a redirect or source quench arrived.
-@@ -775,7 +843,7 @@
+@@ -807,7 +875,7 @@ parse_reply(struct msghdr *msg, int cc, 
  	}
  
  	if (!(options & F_FLOOD)) {
@@ -189,7 +190,7 @@ diff -urN iputils.orig/ping.c iputils/ping.c
  
  		if (options & F_AUDIBLE)
  			putchar('\a');
-@@ -881,8 +949,7 @@
+@@ -916,8 +984,7 @@ void pr_icmph(__u8 type, __u8 code, __u3
  			printf("Redirect, Bad Code: %d", code);
  			break;
  		}
@@ -199,7 +200,7 @@ diff -urN iputils.orig/ping.c iputils/ping.c
  		if (icp && (options & F_VERBOSE))
  			pr_iph((struct iphdr*)(icp + 1));
  		break;
-@@ -1182,7 +1249,7 @@
+@@ -1217,7 +1284,7 @@ void install_filter(void)
  		insns
  	};
  
@@ -208,16 +209,16 @@ diff -urN iputils.orig/ping.c iputils/ping.c
  		return;
  	once = 1;
  
-diff -urN iputils.orig/ping_common.c iputils/ping_common.c
---- iputils.orig/ping_common.c	2002-09-20 18:02:32 +0200
-+++ iputils/ping_common.c	2007-02-25 20:05:58 +0100
-@@ -473,7 +473,8 @@
+diff -uNp -r iputils-s20101006.orig/ping_common.c iputils-s20101006/ping_common.c
+--- iputils-s20101006.orig/ping_common.c	2010-10-06 11:59:20 +0000
++++ iputils-s20101006/ping_common.c	2011-03-24 12:22:20 +0000
+@@ -515,7 +515,8 @@ void setup(int icmp_sock)
  			*p++ = i;
  	}
  
--	ident = getpid() & 0xFFFF;
+-	ident = htons(getpid() & 0xFFFF);
 +	if (!ident)
-+		ident = getpid() & 0xFFFF;
++		ident = htons(getpid() & 0xFFFF);
  
  	set_signal(SIGINT, sigexit);
  	set_signal(SIGALRM, sigexit);
