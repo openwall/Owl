@@ -50,9 +50,10 @@ clarify the specific issue(s) and their severities in the description.
 SECURITY FIX	Severity: none to medium, local, active
 Backported fixes for information leaks in Netfilter modules: arp_tables
 (CVE-2011-1170), ip_tables (CVE-2011-1171), ip6_tables (CVE-2011-1172),
-and ipt_CLUSTERIP.  One must have CAP_NET_ADMIN to exploit these issues.
-The default Owl installation is vulnerable to the infoleak in ip_tables
-only as we don't ship other Netfilter modules nor have IPv6 enabled.
+and ipt_CLUSTERIP.  One must have CAP_NET_ADMIN to exploit these issues
+(e.g. in-container root may trigger the leak).  The default Owl
+installation is vulnerable to the infoleak in ip_tables only as we don't
+ship other Netfilter modules nor have IPv6 enabled.
 References:
 http://www.openwall.com/lists/oss-security/2011/03/18/15
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-1170
@@ -253,4 +254,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.38 2011/03/27 12:27:16 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.39 2011/04/02 15:30:21 segoon Exp $
