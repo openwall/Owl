@@ -1,24 +1,24 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.52 2011/03/22 17:21:13 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.53 2011/04/02 15:26:19 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 238.5.1.el5.028stab085.2
-Release: %ovzversion.owl3
+%define ovzversion 238.5.1.el5.028stab085.3
+Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab085.2
-#URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab085.2
+URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab085.3
+#URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab085.3
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab085.2/patches/patch-238.5.1.el5.028stab085.2-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab085.2/patches/patch-238.5.1.el5.028stab085.2-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab085.3/patches/patch-238.5.1.el5.028stab085.3-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab085.3/patches/patch-238.5.1.el5.028stab085.3-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -105,6 +105,12 @@ done
 %files fake
 
 %changelog
+* Sat Apr 02 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.3.owl1
+- Updated to 2.6.18-238.5.1.el5.028stab085.3.  This fixes a kernel oops caused
+by nfsd.
+- Fixed a SIGSEGV of top running in Fedora 13 x86_64 container (gcc 3.4.5
+inlining issue).
+
 * Mon Mar 21 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.2.owl3
 - Backported fixes for netfilter infoleaks: arp_tables (CVE-2011-1170),
 ip_tables (CVE-2011-1171), ip6_tables (CVE-2011-1172), and ipt_CLUSTERIP:
