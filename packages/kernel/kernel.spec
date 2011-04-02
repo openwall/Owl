@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.53 2011/04/02 15:26:19 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.54 2011/04/02 15:32:56 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -109,7 +109,8 @@ done
 - Updated to 2.6.18-238.5.1.el5.028stab085.3.  This fixes a kernel oops caused
 by nfsd.
 - Fixed a SIGSEGV of top running in Fedora 13 x86_64 container (gcc 3.4.5
-inlining issue).
+inlining issue):
+http://bugzilla.openvz.org/show_bug.cgi?id=1815
 
 * Mon Mar 21 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.2.owl3
 - Backported fixes for netfilter infoleaks: arp_tables (CVE-2011-1170),
