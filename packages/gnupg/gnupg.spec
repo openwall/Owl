@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.49 2011/04/06 15:23:14 segoon Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.50 2011/04/06 15:26:26 segoon Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
 Version: 1.4.11
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
