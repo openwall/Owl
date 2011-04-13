@@ -1,33 +1,18 @@
-# $Owl: Owl/packages/iproute2/iproute2.spec,v 1.23 2009/09/21 15:27:27 ldv Exp $
-
-%define ver 2.4.7
-%define snapshot ss020116
+# $Owl: Owl/packages/iproute2/iproute2.spec,v 1.24 2011/04/13 18:03:12 segoon Exp $
 
 Summary: Enhanced IP routing and network devices configuration tools.
 Name: iproute2
-Version: %ver.%snapshot
-Release: owl4
+Version: 2.6.38
+Release: owl1
 License: GPL
 Group: Applications/System
-Source0: ftp://ftp.inr.ac.ru/ip-routing/%name-%ver-now-%snapshot-try.tar.gz
-Source1: %name-%ver-%snapshot-ps.tar.bz2
-Source2: ip.8
-Source3: tc.8
-Source4: tc-htb.8
-Source5: tc-pbfifo.8
-Source6: tc-pfifo_fast.8
-Source7: tc-prio.8
-Source8: tc-red.8
-Source9: tc-sfq.8
-Source10: tc-tbf.8
-Source11: tc-cbq.8
-Patch0: iproute2-2.4.7-rh-promisc-allmulti.diff
-Patch1: iproute2-2.4.7-owl-socketbits.diff
-Patch2: iproute2-2.4.7-owl-warnings.diff
-Patch3: iproute2-2.4.7-deb-netlink.diff
-Patch4: iproute2-2.4.7-owl-nstat-bound.diff
-Patch5: iproute2-2.4.7-devik-htb.diff
-Patch6: iproute2-2.4.7-owl-Makefile.diff
+Source0: http://devresources.linuxfoundation.org/dev/iproute2/download/%name-%version.tar.bz2
+# Signature: http://devresources.linuxfoundation.org/dev/iproute2/download/%name-%version.tar.bz2.sig
+Patch0: iproute2-2.4.7-alt-rtacct_daemon.diff
+Patch1: iproute2-2.6.18-alt-ifcfg.diff
+Patch2: iproute2-2.6.18-alt-ip-man.diff
+Patch3: iproute2-2.6.28-alt-format_not_a_string_literal_and_no_format_arguments.diff
+Patch4: iproute2-2.6.38-owl-warnings.diff
 Provides: iproute = %version
 Obsoletes: iproute
 BuildRequires: db4-devel, bison
@@ -41,53 +26,55 @@ routing, fast NAT and packet scheduling.  This package includes the new
 utilities (ip, tc, rtmon, rtacct, ifstat, nstat, rtstat, ss).
 
 %prep
-%setup -q -n %name -a 1
+%setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
 
 %{expand:%%define optflags %optflags -Wall -Wstrict-prototypes}
 
 %build
-make \
+%__make \
 	KERNEL_INCLUDE=/usr/include \
 	CCOPTS="%optflags -D_GNU_SOURCE"
 
 %install
 rm -rf %buildroot
 
-mkdir -p %buildroot{/sbin,%_sbindir,/etc/iproute2,%_mandir/man8}
+%__make install \
+	DESTDIR=%buildroot \
+	SBINDIR=/sbin/ \
+	MANDIR=%_mandir \
+	DOCDIR=%_docdir/%name-%version
 
-install -m 755 ip/{ip,ifcfg,rtmon} tc/tc %buildroot/sbin/
-install -m 755 misc/{ifstat,nstat,rtacct,rtstat,ss} %buildroot%_sbindir/
-install -m 644 etc/iproute2/* %buildroot/etc/iproute2/
-install -m 644 %_sourcedir/ip.8 %buildroot%_mandir/man8/
-install -m 644 %_sourcedir/tc.8 %buildroot%_mandir/man8/
-install -m 644 %_sourcedir/tc-htb.8 %buildroot%_mandir/man8/
-install -m 644 %_sourcedir/tc-pbfifo.8 %buildroot%_mandir/man8/
-install -m 644 %_sourcedir/tc-pfifo_fast.8 %buildroot%_mandir/man8/
-install -m 644 %_sourcedir/tc-prio.8 %buildroot%_mandir/man8/
-install -m 644 %_sourcedir/tc-red.8 %buildroot%_mandir/man8/
-install -m 644 %_sourcedir/tc-sfq.8 %buildroot%_mandir/man8/
-install -m 644 %_sourcedir/tc-tbf.8 %buildroot%_mandir/man8/
-install -m 644 %_sourcedir/tc-cbq.8 %buildroot%_mandir/man8/
-
-gzip -9nf iproute2-ps/*.ps
+mkdir -p %buildroot/%_sbindir
+rm %buildroot/sbin/rtstat
+mv %buildroot/sbin/{arpd,lnstat,ifstat,nstat,rtacct,ss} %buildroot/%_sbindir/
+ln -sf lnstat %buildroot/%_sbindir/rtstat
+ln -sf lnstat %buildroot/%_sbindir/ctstat
 
 %files
 %defattr(-,root,root)
-%doc README* RELNOTES examples iproute2-ps/*.ps*
+%doc RELNOTES examples
+%doc README.distribution  README.iproute2+tc  README.lnstat
 %dir /etc/iproute2
 %attr(644,root,root) %config(noreplace) /etc/iproute2/*
 /sbin/*
+%exclude /sbin/rtpr
+%exclude %_sbindir/arpd
+%exclude /sbin/genl
 %_sbindir/*
-%_mandir/man8/*
+/usr/lib/tc/
+%_mandir/man*/*
 
 %changelog
+* Wed Apr 13 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.38-owl1
+- Updated to 2.6.38.
+- Dropped obsoleted patches (fixed in upstream).
+- Imported some patches from ALT.
+
 * Sun Sep 20 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.4.7.ss020116-owl4
 - Disabled build time kernel headers check.
 
