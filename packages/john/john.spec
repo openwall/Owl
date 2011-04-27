@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.124 2011/02/25 08:42:36 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.125 2011/04/27 18:14:20 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.6.2
+Version: 1.7.7
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,9 +88,33 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Fri Feb 25 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.6.2-owl1
+* Wed Apr 27 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.7-owl1
 - Added Intel AVX and AMD XOP instruction sets support for bitslice DES
 (with C compiler intrinsics), not enabled in the Owl package yet.
+- A "dummy" "format" is now supported (plaintext passwords encoded in
+hexadecimal and prefixed with "$dummy$").
+- Apache "$apr1$" MD5-based password hashes are now supported along with the
+FreeBSD-style MD5-based crypt(3) hashes that were supported previously.
+- The "--salts" option threshold is now applied before removal of previously
+cracked hashes for consistent behavior with interrupted and continued sessions.
+- The "Idle = Y" setting (which is the default) is now ignored for
+OpenMP-enabled hash types when the actual number of threads is greater than 1
+(although we do not enable the OpenMP support in the Owl package yet).
+- When a cracking session terminates or is interrupted, John will now warn the
+user if the cracked passwords printed to the terminal while cracking are
+potentially incomplete.
+- When loading hashes specified on a line on their own, the loader will now
+ignore leading and trailing whitespace.
+- Unless a hash type is forced from the command line, the loader will now print
+warnings about additional hash types seen in the input files.
+- For use primarily by the jumbo patch (and later by future enhancements to the
+official versions as well), the loader now includes logic to warn the user of
+ambiguous hash encodings and of excessive partial hash collisions.
+- The "unique" and "unshadow" programs have been made significantly faster.
+- "DateTime", "Repeats", "Subsets", "AtLeast1-Simple", "AtLeast1-Generic", and
+"Policy" external mode samples have been added to the default john.conf.
+- The self-tests have been enhanced to detect more kinds of program bugs.
+- A few minor bug fixes and enhancements were made.
 
 * Mon Jul 12 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.6.1-owl1
 - Corrected a logic error introduced in JtR 1.7.4.2: in "single crack" mode,
