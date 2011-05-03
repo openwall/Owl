@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/iputils/iputils.spec,v 1.32 2011/03/28 13:49:51 segoon Exp $
+# $Owl: Owl/packages/iputils/iputils.spec,v 1.33 2011/05/03 16:54:04 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
@@ -8,7 +8,7 @@ Epoch: 1
 License: mostly BSD, some GPL
 Group: Applications/Internet
 Source0: http://www.skbuff.net/iputils/%name-%version.tar.bz2
-Source1: ifenslave.tar.gz
+Source1: ifenslave-20080602.tar.gz
 Source2: ping.control
 Source3: ping6.control
 Source4: arping.8
