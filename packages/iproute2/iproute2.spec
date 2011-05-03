@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/iproute2/iproute2.spec,v 1.24 2011/04/13 18:03:12 segoon Exp $
+# $Owl: Owl/packages/iproute2/iproute2.spec,v 1.25 2011/05/03 17:34:00 solar Exp $
 
 Summary: Enhanced IP routing and network devices configuration tools.
 Name: iproute2
@@ -11,7 +11,7 @@ Source0: http://devresources.linuxfoundation.org/dev/iproute2/download/%name-%ve
 Patch0: iproute2-2.4.7-alt-rtacct_daemon.diff
 Patch1: iproute2-2.6.18-alt-ifcfg.diff
 Patch2: iproute2-2.6.18-alt-ip-man.diff
-Patch3: iproute2-2.6.28-alt-format_not_a_string_literal_and_no_format_arguments.diff
+Patch3: iproute2-2.6.28-alt-format.diff
 Patch4: iproute2-2.6.38-owl-warnings.diff
 Provides: iproute = %version
 Obsoletes: iproute
