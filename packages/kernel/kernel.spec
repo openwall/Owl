@@ -1,24 +1,24 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.54 2011/04/02 15:32:56 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.55 2011/05/03 20:59:07 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 238.5.1.el5.028stab085.3
+%define ovzversion 238.9.1.el5.028stab089.1
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab085.3
-#URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab085.3
+URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab089.1
+# URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab089.1
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab085.3/patches/patch-238.5.1.el5.028stab085.3-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab085.3/patches/patch-238.5.1.el5.028stab085.3-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab089.1/patches/patch-238.9.1.el5.028stab089.1-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab089.1/patches/patch-238.9.1.el5.028stab089.1-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -105,6 +105,17 @@ done
 %files fake
 
 %changelog
+* Wed May 04 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.9.1.el5.028stab089.1-owl1
+- Updated to 2.6.18-238.9.1.el5.028stab089.1.  This fixes security issues:
+kernel panic by unprivileged user via NFSv4 (CVE-2011-1090), NULL pointer
+dereference in GRO code (CVE-2011-1478), mmap_min_addr bypassing
+(CVE-2010-4346), infoleak via procfs status file (CVE-2011-0710).  It fixes
+nonsecurity issues with page tables accounting, AMD Bulldozer boot process, OOM
+killer and CPU stats bugs.  It also introduces numerous features.  More
+detailed description see at:
+http://wiki.openvz.org/Download/kernel/rhel5/028stab089.1
+http://wiki.openvz.org/Download/kernel/rhel5/028stab085.5
+
 * Sat Apr 02 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.3.owl1
 - Updated to 2.6.18-238.5.1.el5.028stab085.3.  This fixes a kernel oops caused
 by nfsd.
