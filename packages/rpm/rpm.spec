@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.84 2010/09/06 19:44:09 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.85 2011/05/03 08:54:27 ldv Exp $
 
 %define WITH_PYTHON 0
 
@@ -8,7 +8,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl24
+Release: owl25
 License: GPL
 Group: System Environment/Base
 # ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -513,6 +513,10 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Mon May 02 2011 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl25
+- Fixed %%patch regression introduced in previous release.
+Reported by Chris Bopp (http://www.openwall.com/lists/owl-dev/2011/05/02/1).
+
 * Mon Sep 06 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl24
 - Backported xz/lzma support in %%setup and %%patch macros.
 - Backported xz/lzma payload support.
