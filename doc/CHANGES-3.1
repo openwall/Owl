@@ -46,6 +46,24 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2011/05/03	Package: rpm
+Fixed a regression in %patch introduced in the previous release.  Thanks
+to Chris Bopp for reporting the bug.
+Reference:
+http://www.openwall.com/lists/owl-dev/2011/05/02/1
+
+2011/05/03	Package: iproute2
+Updated to 2.6.38.
+
+2011/05/03	Package: iputils
+Updated to s20101006.
+
+2011/04/27	Package: john
+Made numerous enhancements to John the Ripper, resulting in its 1.7.7
+release, which is also part of Owl (as usual).
+Reference:
+http://www.openwall.com/lists/john-users/2011/04/28/1
+
 2011/04/02	Package: kernel
 Updated to 2.6.18-238.5.1.el5.028stab085.3, which is now marked as
 "RHEL5 stable".  This fixes a kernel Oops caused by nfsd.  Also fixed
@@ -265,4 +283,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.42 2011/05/03 17:49:05 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.43 2011/05/03 17:58:20 solar Exp $
