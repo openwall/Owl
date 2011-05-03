@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.55 2011/05/03 20:59:07 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.56 2011/05/03 21:18:10 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -105,14 +105,13 @@ done
 %files fake
 
 %changelog
-* Wed May 04 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.9.1.el5.028stab089.1-owl1
-- Updated to 2.6.18-238.9.1.el5.028stab089.1.  This fixes security issues:
-kernel panic by unprivileged user via NFSv4 (CVE-2011-1090), NULL pointer
-dereference in GRO code (CVE-2011-1478), mmap_min_addr bypassing
-(CVE-2010-4346), infoleak via procfs status file (CVE-2011-0710).  It fixes
-nonsecurity issues with page tables accounting, AMD Bulldozer boot process, OOM
-killer and CPU stats bugs.  It also introduces numerous features.  More
-detailed description see at:
+* Tue May 03 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.9.1.el5.028stab089.1-owl1
+- Updated to 2.6.18-238.9.1.el5.028stab089.1.  This fixes obscure security
+issues: kernel panic by unprivileged user via NFSv4 (CVE-2011-1090) and a NULL
+pointer dereference in GRO code (CVE-2011-1478).  It fixes non-security issues
+with page tables accounting, AMD Bulldozer boot process, OOM killer and CPU
+stats bugs.  It also introduces numerous features.  More detailed description
+see at:
 http://wiki.openvz.org/Download/kernel/rhel5/028stab089.1
 http://wiki.openvz.org/Download/kernel/rhel5/028stab085.5
 
