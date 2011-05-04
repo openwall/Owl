@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.2 2011/05/04 13:16:55 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.3 2011/05/04 13:36:49 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -122,7 +122,7 @@ by nfsd.
 inlining issue):
 http://bugzilla.openvz.org/show_bug.cgi?id=1815
 
-* Sat Mar 26 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.2.owl3
+* Mon Mar 21 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.2.owl3
 - Backported fixes for netfilter infoleaks: arp_tables (CVE-2011-1170),
 ip_tables (CVE-2011-1171), ip6_tables (CVE-2011-1172), and ipt_CLUSTERIP:
 http://www.openwall.com/lists/oss-security/2011/03/18/15
