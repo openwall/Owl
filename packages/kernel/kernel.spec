@@ -1,23 +1,24 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.1 2011/03/26 19:21:38 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.2 2011/05/04 13:16:55 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 194.26.1.el5.028stab079.1
-Release: %ovzversion.owl3
+%define ovzversion 238.9.1.el5.028stab089.1
+Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab079.1
+URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab089.1
+# URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab089.1
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab079.1/patches/patch-194.26.1.el5.028stab079.1-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab079.1/patches/patch-194.26.1.el5.028stab079.1-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab089.1/patches/patch-238.9.1.el5.028stab089.1-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab089.1/patches/patch-238.9.1.el5.028stab089.1-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -104,6 +105,23 @@ done
 %files fake
 
 %changelog
+* Tue May 03 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.9.1.el5.028stab089.1-owl1
+- Updated to 2.6.18-238.9.1.el5.028stab089.1.  This fixes obscure security
+issues: kernel panic by unprivileged user via NFSv4 (CVE-2011-1090) and a NULL
+pointer dereference in GRO code (CVE-2011-1478).  It fixes non-security issues
+with page tables accounting, AMD Bulldozer boot process, OOM killer and CPU
+stats bugs.  It also introduces numerous features.  More detailed description
+see at:
+http://wiki.openvz.org/Download/kernel/rhel5/028stab089.1
+http://wiki.openvz.org/Download/kernel/rhel5/028stab085.5
+
+* Sat Apr 02 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.3.owl1
+- Updated to 2.6.18-238.5.1.el5.028stab085.3.  This fixes a kernel oops caused
+by nfsd.
+- Fixed a SIGSEGV of top running in Fedora 13 x86_64 container (gcc 3.4.5
+inlining issue):
+http://bugzilla.openvz.org/show_bug.cgi?id=1815
+
 * Sat Mar 26 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.2.owl3
 - Backported fixes for netfilter infoleaks: arp_tables (CVE-2011-1170),
 ip_tables (CVE-2011-1171), ip6_tables (CVE-2011-1172), and ipt_CLUSTERIP:
@@ -111,6 +129,93 @@ http://www.openwall.com/lists/oss-security/2011/03/18/15
 One must have CAP_NET_ADMIN to exploit these issues.  The default Owl
 installation is vulnerable to the infoleak in ip_tables only as we don't
 neither ship other netfiler modules nor have IPv6 enabled.
+
+* Sat Mar 12 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.2.owl2
+- Disabled the eepro100 driver in favor of e100:
+http://www.openwall.com/lists/owl-users/2011/03/05/3
+
+* Fri Mar 11 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.2.owl1
+- Updated to 238.5.1.el5.028stab085.2.  This fixes a bug in CFQ.
+
+* Thu Mar 10 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.1.owl1
+- Updated to 238.5.1.el5.028stab085.1.  This fixes a rare kernel panic with
+sysfs virtualization, a potential livelock in dirty pages balancing,
+garbage collector for AF_UNIX sockets error (CVE-2010-4249):
+https://bugzilla.redhat.com/show_bug.cgi?id=657303,
+exceeding the receiver's buffer limit of socket queues (CVE-2010-4251):
+https://bugzilla.redhat.com/show_bug.cgi?id=656756
+- Fixed build failure with CONFIG_IPV6=n (default in Owl).
+- Fixed build failure with gcc 3.4.5 (issue with inline functions).
+- Fixed bug with fragmented ICMP sockets (Owl-specific issue).  Reported
+by Piotr Meyer.
+
+* Thu Feb 10 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab084.3.owl1
+- Updated to 2.6.18-238.1.1.el5.028stab084.3.  It contains
+"fix for optimized kmem accounting."
+
+* Wed Feb 09 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab084.2.owl1
+- Updated to 2.6.18-238.1.1.el5.028stab084.2.  The fix for VDSO bug in
+028stab084.1 was incomplete, now fixed, hopefully:
+http://bugzilla.openvz.org/show_bug.cgi?id=1762
+- Dropped page accounting fix from -owl patch (fixed in OpenVZ's kernel).
+- CONFIG_BRIDGE=m (it also needs CONFIG_BRIDGE_NETFILTER=y,
+CONFIG_NETFILTER_XT_MATCH_PHYSDEV=m, CONFIG_BRIDGE_NF_EBTABLES=n).
+- CONFIG_PPP_MPPE=m, this is needed by PPTP access server.
+- CONFIG_IP_NF_TARGET_ULOG=y.
+
+* Sat Feb 05 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab084.1.owl2
+- Updated to upstream's "fixed fix for paging accounting".  The incomplete
+fix introduced with our 2011/02/04 update could have caused trouble with
+32-bit x86 kernels:
+http://bugzilla.openvz.org/show_bug.cgi?id=1760
+
+* Fri Feb 04 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab084.1.owl1
+- Updated to 2.6.18-238.1.1.el5.028stab084.1.
+- Enabled VDSO on x86_64 (the actual bug is fixed in 028stab084.1).
+- Combined -owl and -owl-pingsockets into -owl.
+- Applied a patch fixing flooding "Uncharging too much" for non-4levels page
+tables acct:
+http://bugzilla.openvz.org/show_bug.cgi?id=1760
+
+* Thu Feb 03 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab083.1.owl4
+- Initialize ping_group_range to {1, 0} to disable the feature for
+daemons that don't drop GID 0.  Suggested by Solar.
+
+* Mon Jan 31 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab083.1.owl3
+- Added ICMP socket kind.
+
+* Sat Jan 29 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab083.1.owl2
+- Applied a patch fixing APIC driver selection on x86_64 systems with more than
+8 logical CPUs (thanks to Pavel Emelyanov of OpenVZ for providing this patch).
+- Disabled VDSO on x86_64 as a temporary workaround for a bug introduced in
+2.6.18-238.1.1.el5.028stab083.1.
+
+* Fri Jan 28 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.1.1.el5.028stab083.1.owl1
+- Updated to 2.6.18-238.1.1.el5.028stab083.1.
+- Fixed an infoleak in net/core/ethtool.c: ethtool_get_regs().
+This was the portion of CVE-2010-4655 affecting RHEL5 kernels.
+http://www.openwall.com/lists/oss-security/2011/01/28/1
+- CONFIG_PCIE_ECRC=y to match Red Hat's kernels; presumably they had enabled
+this option for a reason (broken BIOSes?)
+- CONFIG_PCI_IOV=y, which is indirectly required for the bnx2x driver (via what
+looks like a somewhat bogus dependency in the current PCI code).
+- CONFIG_SCSI_3W_SAS=y (new driver backport in RHEL 5.6).
+- CONFIG_FUSION_SAS=y, also requiring CONFIG_SCSI_SAS_ATTRS=y.  On i686, also
+CONFIG_FUSION_FC=y and CONFIG_SCSI_FC_ATTRS=y.  Previously, these were built
+as modules.
+- CONFIG_SATA_SIS=y, CONFIG_PATA_SIS=y, and CONFIG_SIS900=y (on i686) or
+CONFIG_SIS900=m (on x86_64).  These were needed for at least a certain Atom CPU
+based mini-server.  These chips are presumably unlikely to be seen on a 64-bit
+capable system, yet this is possible.  The SATA/PATA drivers are tiny.  The NIC
+driver is larger, so it's excluded from the x86_64 kernel image.
+- CONFIG_BNX2X=m (also sets CONFIG_MDIO=m, CONFIG_CRYPTO_CRC32C=m, and
+CONFIG_LIBCRC32C=m).
+- Enabled building of old 3Com NIC drivers as modules.
+- Moved the EDAC drivers to modules to avoid console flood on certain buggy
+machines, as well as to reduce kernel size.
+- Moved the DMA engine stuff to modules because it resulted in a boot-time
+failure on at least one server type (Supermicro X8DTU/X8DTU-F motherboard)
+when compiled into the kernel.
 
 * Thu Dec 09 2010 Solar Designer <solar-at-owl.openwall.com> 2.6.18-194.26.1.el5.028stab079.1-owl2
 - In the CVE-2010-4258 fix, moved the in_interrupt() check to be done before
