@@ -42,6 +42,49 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl 3.0-stable.
 
+(2011/01/28 - 2011/05/03)
+2011/05/03	Package: kernel
+SECURITY FIX	Severity: none to medium, local/remote, active
+Updated to 2.6.18-238.9.1.el5.028stab089.1.  This fixes obscure security
+issues: kernel panic by unprivileged user via NFSv4 (CVE-2011-1090),
+NULL pointer dereference in GRO code (CVE-2011-1478), a flaw in the
+garbage collector for AF_UNIX sockets (CVE-2010-4249, local DoS), a flaw
+in handling of received packets exceeding the buffer limit
+(CVE-2010-4251, remote DoS) and a potential information leak in
+net/core/ethtool.c: ethtool_get_regs() - this was the portion of
+CVE-2010-4655 relevant to RHEL5 kernels.  According to our analysis, the
+latter issue did not affect installs with default OpenVZ container
+settings, but it could affect systems where a network device was passed
+into an OpenVZ container by an administrator.  (The important and
+relevant ones of the security fixes described in the Red Hat security
+advisories referenced below were already included in our previous kernel
+revision (in Owl 3.0) with our own backports from a "testing" Red Hat
+kernel.).  Updated atl1 driver (Attansic L1 Gigabit Ethernet).  Disabled
+the eepro100 driver in favor of e100, enabled Ethernet bridge support,
+PPP_MPPE, and ULOG netfilter target.  Made numerous kernel configuration
+changes (enabled extra drivers, moved some to modules), documented the
+changes (and the rationale behind them) in the change log for the kernel
+package.
+References:
+http://www.openwall.com/lists/oss-security/2011/01/28/1
+http://wiki.openvz.org/Download/kernel/rhel5/028stab089.1
+http://wiki.openvz.org/Download/kernel/rhel5/028stab085.5
+http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab085.2
+http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab085.1
+http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab084.3
+http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab084.1
+http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab083.1
+http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab082.1
+http://rhn.redhat.com/errata/RHSA-2011-0004.html
+http://rhn.redhat.com/errata/RHSA-2011-0163.html
+http://rhn.redhat.com/errata/RHSA-2011-0303.html
+http://rhn.redhat.com/errata/RHSA-2011-0429.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4249
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4251
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4655
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-1090
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-1478
+
 (2011/03/21)
 2011/03/26	Package: kernel
 SECURITY FIX	Severity: none to medium, local, active
@@ -115,4 +158,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.6 2011/03/26 19:24:10 segoon Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.7 2011/05/04 13:18:11 segoon Exp $
