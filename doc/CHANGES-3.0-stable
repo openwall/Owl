@@ -59,7 +59,7 @@ into an OpenVZ container by an administrator.  (The important and
 relevant ones of the security fixes described in the Red Hat security
 advisories referenced below were already included in our previous kernel
 revision (in Owl 3.0) with our own backports from a "testing" Red Hat
-kernel.).  Updated atl1 driver (Attansic L1 Gigabit Ethernet).  Disabled
+kernel.)  Updated atl1 driver (Attansic L1 Gigabit Ethernet).  Disabled
 the eepro100 driver in favor of e100, enabled Ethernet bridge support,
 PPP_MPPE, and ULOG netfilter target.  Made numerous kernel configuration
 changes (enabled extra drivers, moved some to modules), documented the
@@ -88,12 +88,12 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-1478
 (2011/03/21)
 2011/03/26	Package: kernel
 SECURITY FIX	Severity: none to medium, local, active
-Backported fixes for information infoleaks in netfilter modules:
-arp_tables (CVE-2011-1170), ip_tables (CVE-2011-1171), ip6_tables
-(CVE-2011-1172), and ipt_CLUSTERIP.  One must have CAP_NET_ADMIN to
-exploit these issues.  The default Owl installation is vulnerable to
-the infoleak in ip_tables only as we don't neither ship other netfiler
-modules nor have IPv6 enabled.
+Backported fixes for information leaks in Netfilter modules: arp_tables
+(CVE-2011-1170), ip_tables (CVE-2011-1171), ip6_tables (CVE-2011-1172),
+and ipt_CLUSTERIP.  One must have CAP_NET_ADMIN to exploit these issues
+(e.g. in-container root may trigger the leak).  The default Owl
+installation is vulnerable to the infoleak in ip_tables only as we don't
+ship other Netfilter modules nor have IPv6 enabled.
 References:
 http://www.openwall.com/lists/oss-security/2011/03/18/15
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-1170
@@ -158,4 +158,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.7 2011/05/04 13:18:11 segoon Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.8 2011/05/04 13:34:13 solar Exp $
