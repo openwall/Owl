@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.125 2011/04/27 18:14:20 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.126 2011/05/08 21:41:09 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.7
+Version: 1.7.7.1
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,6 +88,10 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sun May 08 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.7.1-owl1
+- Post-1.7.7 development is in progress, the changes so far are minor and
+mostly not user-visible (this entry is to be replaced/revised).
+
 * Wed Apr 27 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.7-owl1
 - Added Intel AVX and AMD XOP instruction sets support for bitslice DES
 (with C compiler intrinsics), not enabled in the Owl package yet.
