@@ -1,21 +1,17 @@
-# $Owl: Owl/packages/lilo/lilo.spec,v 1.35 2011/01/24 06:14:35 solar Exp $
+# $Owl: Owl/packages/lilo/lilo.spec,v 1.36 2011/06/09 16:06:43 segoon Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
-Version: 23.1
+Version: 23.2
 Release: owl1
 License: MIT
 Group: System Environment/Base
 URL: http://lilo.alioth.debian.org/
 Source0: http://lilo.alioth.debian.org/ftp/upstream/sources/%name-%version.tar.gz
 Source1: keytab-lilo.c
-Patch0: lilo-23.1-owl-Makefile.diff
-Patch1: lilo-23.1-alt-owl-fixes.diff
-Patch2: lilo-23.1-owl-tmp.diff
-Patch3: lilo-23.1-deb-owl-man.diff
-Patch4: lilo-23.1-up-revert-bios-int-15-fn-e820.diff
+Patch0: lilo-23.2-owl-Makefile.diff
 BuildRequires: coreutils, dev86
 ExclusiveArch: %ix86 x86_64
 BuildRoot: /override/%name-%version
@@ -29,10 +25,6 @@ can also boot other operating systems.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
 
 # filename collision of README and readme/README
 mv readme/README{,2}
@@ -62,8 +54,6 @@ mkdir -p %buildroot%_mandir
 	SBIN_DIR=/sbin \
 	USRSBIN_DIR=%_sbindir \
 	MAN_DIR=%_mandir
-
-install -m 755 keytab-lilo %buildroot%_bindir/
 
 # Create a sample lilo.conf file
 mkdir -p -m755 %buildroot%_sysconfdir
@@ -117,7 +107,7 @@ fi
 %doc COPYING readme/INCOMPAT QuickInst
 %doc %_sysconfdir/lilo.conf.sample
 %attr(600,root,root) %verify(not md5 mtime size) %ghost %_sysconfdir/lilo.conf
-%attr(755,root,root) %_bindir/keytab-lilo
+%attr(755,root,root) %_sbindir/keytab-lilo
 %if %BUILD_EXTERNAL_SUPPORT
 /boot/boot*
 /boot/chain.b
@@ -128,9 +118,16 @@ fi
 %exclude /etc/kernel/*
 %exclude /etc/initramfs/post-update.d/runlilo
 %exclude /etc/lilo.conf_example
+%exclude %_sbindir/liloconfig
+%exclude %_sbindir/lilo-uuid-diskid
 %_mandir/*/*
 
 %changelog
+* Thu Jun 09 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 23.2-owl1
+- Updated to 23.2.
+- Dropped almost all patches (fixed in upstream).
+- Updated -owl-Makefile patch.
+
 * Tue Jan 18 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 23.1-owl1
 - Updated to 23.1.
 - Enabled -Wall, updated all patches.

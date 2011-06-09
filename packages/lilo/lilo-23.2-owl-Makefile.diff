@@ -1,0 +1,47 @@
+diff -uNp -r lilo-23.2.old/Makefile lilo-23.2/Makefile
+--- lilo-23.2.old/Makefile	2011-06-09 15:45:29 +0000
++++ lilo-23.2/Makefile	2011-06-09 15:45:46 +0000
+@@ -38,14 +38,14 @@ help:
+ #
+ all: test
+ 	$(MAKE) -C src all
+-	$(MAKE) -C images all
++	#$(MAKE) -C images all
+ 
+ #
+ # everything above plus the statically linked version
+ #
+ alles: test
+ 	$(MAKE) -C src alles
+-	$(MAKE) -C images all
++	#$(MAKE) -C images all
+ 
+ #
+ # documentation files
+@@ -105,7 +105,7 @@ ins:
+ #
+ install:  all
+ 	$(MAKE) -C src install
+-	$(MAKE) -C images install
++	#$(MAKE) -C images install
+ 	$(MAKE) -C hooks install
+ 	$(MAKE) -C sample install
+ 	$(MAKE) -C scripts install
+@@ -121,7 +121,7 @@ tidy:
+ clean: tidy
+ 	rm -f test.img
+ 	$(MAKE) -C src clean
+-	$(MAKE) -C images clean
++	#$(MAKE) -C images clean
+ 	$(MAKE) -C diagnose clean
+ 	$(MAKE) -C dos clean
+ 	$(MAKE) -C doc clean
+@@ -134,7 +134,7 @@ distclean: clean
+ 
+ uninstall:
+ 	$(MAKE) -C src uninstall
+-	$(MAKE) -C images uninstall
++	#$(MAKE) -C images uninstall
+ 	$(MAKE) -C hooks uninstall
+ 	$(MAKE) -C sample uninstall
+ 	$(MAKE) -C scripts uninstall
