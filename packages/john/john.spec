@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.126 2011/05/08 21:41:09 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.127 2011/06/11 04:20:25 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -88,9 +88,11 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Sun May 08 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.7.1-owl1
-- Post-1.7.7 development is in progress, the changes so far are minor and
-mostly not user-visible (this entry is to be replaced/revised).
+* Sat Jun 11 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.7.1-owl1
+- The external mode virtual machine's performance has been improved through
+additional multi-op instructions matching common instruction sequences
+(assign-pop and some triple- and quad-push VM instructions were added).
+- A few minor bug fixes and enhancements were made.
 
 * Wed Apr 27 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.7-owl1
 - Added Intel AVX and AMD XOP instruction sets support for bitslice DES
