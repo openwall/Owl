@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/lilo/lilo.spec,v 1.36 2011/06/09 16:06:43 segoon Exp $
+# $Owl: Owl/packages/lilo/lilo.spec,v 1.37 2011/06/11 03:54:26 solar Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 
@@ -8,8 +8,9 @@ Version: 23.2
 Release: owl1
 License: MIT
 Group: System Environment/Base
-URL: http://lilo.alioth.debian.org/
-Source0: http://lilo.alioth.debian.org/ftp/upstream/sources/%name-%version.tar.gz
+URL: http://lilo.alioth.debian.org
+Source0: http://lilo.alioth.debian.org/ftp/sources/%name-%version.tar.gz
+# Signature: http://lilo.alioth.debian.org/ftp/sources/%name-%version.tar.gz.asc
 Source1: keytab-lilo.c
 Patch0: lilo-23.2-owl-Makefile.diff
 BuildRequires: coreutils, dev86
