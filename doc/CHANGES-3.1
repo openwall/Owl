@@ -46,6 +46,44 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2011/06/21	Package: glibc
+SECURITY FIX	Severity: high, remote, active
+crypt_blowfish has been updated to version 1.1, which fixes the 8-bit
+character handling bug and adds 8-bit test vectors and a quick self-test
+on every password hash computation.  The impact of this bug was that
+most (but not all) passwords containing non-ASCII characters with the
+8th bit set were hashed incorrectly, resulting in password hashes
+incompatible with those of OpenBSD's original implementation of bcrypt.
+What's worse, in some cases (but not in all) one, two, or three
+characters immediately preceding the 8-bit characters were ignored by
+the password hash computation.  Thus, many passwords containing
+characters with the 8th bit set are significantly easier to crack than
+it was previously expected.  This primarily applies to offline attacks
+against the password hashes (if they're leaked or stolen), but in rare
+extreme cases it might also apply to remote password guessing attacks.
+In practice, passwords with non-ASCII characters are relatively uncommon
+and are typically more complicated than average, so they're unlikely to
+be an attractive target for attacks, despite of the weakness that this
+bug exposes them to.  Yet the risk is there.  With this glibc update,
+existing users' passwords containing characters with the 8th bit set
+will mostly stop working, because the hashes will be computed correctly
+and not match the incorrectly computed hashes recorded in the system.
+Please note that this does not always prevent potential exploitation of
+the weakness described above; in some cases, alternate passwords may be
+found that would produce those same hashes under the correct algorithm.
+Thus, it is recommended that any passwords containing characters with
+the 8th bit set be changed after this upgrade.  In order to allow users
+to log in after the upgrade even if they have a potentially affected
+password, the newly introduced backwards compatibility hash encoding
+prefix of "$2x$" may be used (in place of the usual "$2a$").  Such
+password hashes should only be used during a transition period; when
+passwords are changed, the usual "$2a$" prefix is used, denoting the
+correct algorithm.
+References:
+http://www.openwall.com/lists/oss-security/2011/06/20/2
+http://www.openwall.com/lists/oss-security/2011/06/21/2
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2483
+
 2011/06/09	Package: lilo
 Updated to 23.2.
 
@@ -301,4 +339,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.47 2011/06/09 16:08:02 segoon Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.48 2011/06/21 18:58:18 solar Exp $
