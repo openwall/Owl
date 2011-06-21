@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.127 2011/06/11 04:20:25 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.128 2011/06/21 23:35:22 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.7.1
+Version: 1.7.7.2
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,6 +88,13 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Tue Jun 21 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.7.2-owl1
+- Corrected support for bcrypt (OpenBSD Blowfish) hashes of passwords
+containing non-ASCII characters (that is, characters with the 8th bit set).
+Added support for such hashes produced by crypt_blowfish up to 1.0.4, which
+contained a sign extension bug (inherited from older versions of John).
+The old buggy behavior may be enabled per-hash, using the "$2x$" prefix.
+
 * Sat Jun 11 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.7.1-owl1
 - The external mode virtual machine's performance has been improved through
 additional multi-op instructions matching common instruction sequences
