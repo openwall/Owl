@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.120 2010/11/29 03:22:01 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.121 2011/06/21 09:57:19 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -10,8 +10,8 @@
 Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
-%define crypt_bf_version 1.0.4
-Release: owl12
+%define crypt_bf_version 1.1
+Release: owl13
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
@@ -470,6 +470,10 @@ fi
 %endif
 
 %changelog
+* Tue Jun 21 2011 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl13
+- crypt_blowfish 1.1, correcting the sign extension bug with 8-bit characters
+in passwords.
+
 * Mon Oct 18 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.3.6-owl12
 - Build glibc without NDEBUG.  Disabling of assertion checks does not
 provide significant performance advantage, but it may expose some security
