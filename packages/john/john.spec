@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.128 2011/06/21 23:35:22 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.129 2011/06/22 13:39:46 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.7.2
+Version: 1.7.8
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,7 +88,11 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Tue Jun 21 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.7.2-owl1
+* Wed Jun 22 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8-owl1
+- The bitslice DES S-box expressions have been replaced with those generated
+by Roman Rusakov specifically for John the Ripper.  The corresponding assembly
+code for x86 with MMX, SSE2, and for x86-64 with SSE2 has been re-generated.
+This effort has been sponsored by Rapid7: http://www.rapid7.com
 - Corrected support for bcrypt (OpenBSD Blowfish) hashes of passwords
 containing non-ASCII characters (that is, characters with the 8th bit set).
 Added support for such hashes produced by crypt_blowfish up to 1.0.4, which
