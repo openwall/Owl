@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.121 2011/06/21 09:57:19 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.122 2011/07/06 20:47:57 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -10,8 +10,8 @@
 Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
-%define crypt_bf_version 1.1
-Release: owl13
+%define crypt_bf_version 1.1.1
+Release: owl14
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
@@ -470,6 +470,12 @@ fi
 %endif
 
 %changelog
+* Wed Jul 06 2011 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl14
+- In crypt_blowfish, support "$2y$" to refer to the correct algorithm (same as
+"$2a$" in OpenBSD), but with "$2a$" deviate from the correct algorithm when
+necessary to prevent easy collisions with multiple hashes produced by the sign
+extension buggy algorithm.
+
 * Tue Jun 21 2011 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl13
 - crypt_blowfish 1.1, correcting the sign extension bug with 8-bit characters
 in passwords.
