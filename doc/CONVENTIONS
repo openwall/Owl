@@ -226,7 +226,7 @@ When developing or importing pieces of C code for further maintenance
 as a part of Owl, indent(1) may initially be used with the following
 options:
 
-	indent -kr -i8 -nlp -nbbo -l79 -lc79
+	indent -kr -i8 -nlp -nbbo -ncs -l79 -lc79
 
 This does not exactly match our preferred coding style and thus isn't
 to be used on sources already in Owl.
@@ -257,4 +257,4 @@ then require the proper version of mktemp(1):
 As usual, use Requires, PreReq, and/or BuildRequires depending on
 where in the package the uses of mktemp occur.
 
-$Owl: Owl/doc/CONVENTIONS,v 1.33 2011/01/24 06:19:04 solar Exp $
+$Owl: Owl/doc/CONVENTIONS,v 1.34 2011/07/15 15:39:52 solar Exp $
