@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.123 2011/07/08 08:30:10 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.124 2011/07/16 15:22:27 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -10,7 +10,7 @@
 Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
-%define crypt_bf_version 1.1.2
+%define crypt_bf_version 1.2
 Release: owl15
 License: LGPL
 Group: System Environment/Libraries
@@ -470,9 +470,9 @@ fi
 %endif
 
 %changelog
-* Fri Jul 08 2011 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl15
-- Revised the recent changes to crypt_blowfish (still not released separately
-from Owl), including based on feedback from Ludwig Nussel (thanks!)
+* Sat Jul 16 2011 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl15
+- Revised the recent changes to crypt_blowfish, including based on feedback
+from Ludwig Nussel (thanks!)
 
 * Wed Jul 06 2011 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl14
 - In crypt_blowfish, support "$2y$" to refer to the correct algorithm (same as
