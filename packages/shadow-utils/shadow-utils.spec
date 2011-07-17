@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.59 2011/02/05 14:24:54 segoon Exp $
+# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.60 2011/07/17 10:12:32 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.4.1
-Release: owl13
+Release: owl14
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -41,6 +41,7 @@ Patch41: shadow-4.0.4.1-alt-configure.diff
 Patch42: shadow-4.0.4.1-owl-name-relaxed.diff
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: pam >= 0:0.80-owl2, pam_userpass >= 0.5, tcb >= 0.9.8
+Requires: glibc-crypt_blowfish >= 1.2
 BuildRequires: libtool, gettext >= 0.14.1, automake, autoconf
 BuildRequires: glibc-crypt_blowfish-devel
 BuildRequires: pam-devel, pam_userpass-devel, tcb-devel
@@ -240,6 +241,11 @@ fi
 %exclude %_mandir/man8/mkpasswd*
 
 %changelog
+* Sun Jul 17 2011 Solar Designer <solar-at-owl.openwall.com> 2:4.0.4.1-owl14
+- In /etc/pam.d/chpasswd, /etc/pam.d/newusers, and /etc/login.defs, use the
+"$2y$" hash encoding prefix (crypt_blowfish 1.2+).
+- Added "Requires: glibc-crypt_blowfish >= 1.2".
+
 * Sat Feb 05 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:4.0.4.1-owl13
 - Allow capital letters in usernames and groupnames.  Added USERNAME_RELAXED
 and GROUPNAME_RELAXED options.
