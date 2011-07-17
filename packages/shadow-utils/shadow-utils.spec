@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.60 2011/07/17 10:12:32 solar Exp $
+# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.61 2011/07/17 10:32:38 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -173,7 +173,7 @@ fi
 %defattr(-,root,root)
 %doc ChangeLog.bz2 NEWS.bz2 README doc/HOWTO.bz2
 %dir /etc/default
-%attr(0644,root,root) %config(noreplace) %verify(not mode group) /etc/login.defs
+%attr(0640,root,shadow) %config(noreplace) /etc/login.defs
 %attr(0600,root,root) %config(noreplace) /etc/default/useradd
 %_sbindir/adduser
 %attr(0700,root,root) %_sbindir/user*
@@ -245,6 +245,7 @@ fi
 - In /etc/pam.d/chpasswd, /etc/pam.d/newusers, and /etc/login.defs, use the
 "$2y$" hash encoding prefix (crypt_blowfish 1.2+).
 - Added "Requires: glibc-crypt_blowfish >= 1.2".
+- Install /etc/login.defs as root:shadow mode 640 right away.
 
 * Sat Feb 05 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:4.0.4.1-owl13
 - Allow capital letters in usernames and groupnames.  Added USERNAME_RELAXED
