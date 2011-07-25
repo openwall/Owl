@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.85 2011/05/03 08:54:27 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.86 2011/07/25 01:13:18 solar Exp $
 
 %define WITH_PYTHON 0
 
@@ -17,9 +17,6 @@ Source1: rpminit
 Source2: rpminit.1
 Source3: gendiff
 Source4: configure-presets
-# XXX: Patch0 is only for the case of using glibc with NPTL and is currently
-# not applied.
-#Patch0: rpm-4.2-owl-pthreads.diff
 Patch1: rpm-4.2-owl-lite.diff
 Patch2: rpm-4.2-owl-librpmbuild-link.diff
 Patch3: rpm-4.2-owl-static-utils.diff
@@ -140,7 +137,6 @@ shell-like rules.
 # XXX: RPM tests have known tmp issues :(
 rm -r tests
 
-#patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
