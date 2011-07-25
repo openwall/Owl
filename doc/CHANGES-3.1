@@ -46,6 +46,19 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2011/07/25	Package: rpm
+SECURITY FIX	Severity: none to high, local, passive
+Added a patch to remove unsafe file permissions (chmod'ing files to 0) on
+package removal or upgrade to prevent continued access to such files via
+hard-links possibly created by a user.
+References:
+http://www.openwall.com/lists/oss-security/2011/07/25/1
+http://www.openwall.com/lists/oss-security/2010/06/02/2
+https://bugzilla.redhat.com/show_bug.cgi?id=125517
+https://bugzilla.redhat.com/show_bug.cgi?id=598775
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2005-4889
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-2059
+
 2011/06/21 -
 2011/07/17	Packages: glibc, pam, shadow-utils, tcb
 SECURITY FIX	Severity: high, remote, active
@@ -357,4 +370,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.50 2011/07/17 11:21:46 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.51 2011/07/25 02:17:36 solar Exp $
