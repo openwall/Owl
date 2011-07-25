@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.86 2011/07/25 01:13:18 solar Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.87 2011/07/25 01:35:14 solar Exp $
 
 %define WITH_PYTHON 0
 
@@ -8,7 +8,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl25
+Release: owl26
 License: GPL
 Group: System Environment/Base
 # ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -59,7 +59,7 @@ Patch37: rpm-4.2-cvs-20061030-showQueryPackage.diff
 Patch38: rpm-4.2-rh-owl-build-tar.diff
 Patch39: rpm-4.2-owl-xz-macros.diff
 Patch40: rpm-4.2-owl-xz-payload.diff
-
+Patch41: rpm-4.2-owl-remove-unsafe-perms.diff
 PreReq: /sbin/ldconfig
 PreReq: sh-utils, fileutils, mktemp, gawk
 Requires: findutils, diffutils, gzip
@@ -176,6 +176,7 @@ rm -r tests
 %patch38 -p1
 %patch39 -p1
 %patch40 -p1
+%patch41 -p1
 
 bzip2 -9k CHANGES
 
@@ -509,6 +510,11 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Mon Jul 25 2011 Solar Designer <solar-at-owl.openwall.com> 4.2-owl26
+- Added a patch to remove unsafe file permissions (chmod'ing files to 0) on
+package removal or upgrade to prevent continued access to such files via
+hard-links possibly created by a user (CVE-2005-4889, CVE-2010-2059).
+
 * Mon May 02 2011 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl25
 - Fixed %%patch regression introduced in previous release.
 Reported by Chris Bopp (http://www.openwall.com/lists/owl-dev/2011/05/02/1).
