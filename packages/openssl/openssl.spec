@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.77 2011/02/24 21:18:56 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.78 2011/07/26 03:52:44 solar Exp $
 
 %define shlib_soversion 10
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 1.0.0d
-Release: owl1
+Release: owl2
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -28,6 +28,7 @@ Patch12: openssl-1.0.0b-rh-alt-ipv6-apps.diff
 Patch13: openssl-1.0.0b-rh-env-nozlib.diff
 Patch14: openssl-1.0.0-beta4-rh-dtls1-abi.diff
 Patch15: openssl-1.0.0d-owl-warnings.diff
+Patch16: openssl-1.0.0d-suse-env.diff
 BuildRequires: perl, diffutils
 # Due to sed -i.
 BuildRequires: sed >= 4.1.1
@@ -114,6 +115,7 @@ This package contains some miscellaneous Perl scripts.
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 
 bzip2 -9k CHANGES CHANGES.SSLeay
 
@@ -250,6 +252,10 @@ bzip2 -9 docs/doc/ssleay.txt
 %exclude  %_datadir/ssl/misc/tsget
 
 %changelog
+* Tue Jul 26 2011 Solar Designer <solar-at-owl.openwall.com> 1.0.0d-owl2
+- Added a patch by Sebastian Krahmer of SUSE to protect more of the getenv()
+calls with !OPENSSL_issetugid() checks.
+
 * Thu Feb 24 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.0.0d-owl1
 - Updated to 1.0.0d.
 - Imported numerous patches from ALT and RH.
