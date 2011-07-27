@@ -1,24 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.56 2011/05/03 21:18:10 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.57 2011/07/27 06:13:55 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 238.9.1.el5.028stab089.1
+%define ovzversion 238.19.1.el5.028stab092.2
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab089.1
-# URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab089.1
+URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab092.2
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab089.1/patches/patch-238.9.1.el5.028stab089.1-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab089.1/patches/patch-238.9.1.el5.028stab089.1-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab092.2/patches/patch-238.19.1.el5.028stab092.2-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab092.2/patches/patch-238.19.1.el5.028stab092.2-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -105,6 +104,9 @@ done
 %files fake
 
 %changelog
+* Wed Jul 27 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.19.1.el5.028stab092.2.owl1
+- Updated to 2.6.18-238.19.1.el5.028stab092.2.
+
 * Tue May 03 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.9.1.el5.028stab089.1-owl1
 - Updated to 2.6.18-238.9.1.el5.028stab089.1.  This fixes obscure security
 issues: kernel panic by unprivileged user via NFSv4 (CVE-2011-1090) and a NULL
@@ -127,8 +129,8 @@ http://bugzilla.openvz.org/show_bug.cgi?id=1815
 ip_tables (CVE-2011-1171), ip6_tables (CVE-2011-1172), and ipt_CLUSTERIP:
 http://www.openwall.com/lists/oss-security/2011/03/18/15
 One must have CAP_NET_ADMIN to exploit these issues.  The default Owl
-installation is vulnerable to the infoleak in ip_tables only as we don't
-neither ship other netfiler modules nor have IPv6 enabled.
+installation is vulnerable to the infoleak in ip_tables only as we neither ship
+other netfilter modules nor have IPv6 enabled.
 
 * Sat Mar 12 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.2.owl2
 - Disabled the eepro100 driver in favor of e100:
