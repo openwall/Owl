@@ -248,9 +248,50 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/dca/Kconfig linux-2.6.
  	depends on DMA_ENGINE_V3 && PCI
  	default m
  	---help---
+diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/Kconfig linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/message/fusion/Kconfig
+--- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/Kconfig	2011-07-21 19:23:56 +0000
++++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/message/fusion/Kconfig	2011-07-27 04:11:58 +0000
+@@ -57,6 +57,7 @@ config FUSION_SAS
+ 	  LSISAS1064E
+ 	  LSISAS1068E
+ 	  LSISAS1078
++	  LSISAS8208ELP
+ 
+ config FUSION_MAX_SGE
+ 	int "Maximum number of scatter gather entries (16 - 128)"
+diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/lsi/mpi_cnfg.h linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/message/fusion/lsi/mpi_cnfg.h
+--- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/lsi/mpi_cnfg.h	2011-07-21 19:24:07 +0000
++++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/message/fusion/lsi/mpi_cnfg.h	2011-07-27 04:11:58 +0000
+@@ -584,6 +584,7 @@ typedef struct _MSG_CONFIG_REPLY
+ #define MPI_MANUFACTPAGE_DEVID_SAS1068              (0x0054)
+ #define MPI_MANUFACTPAGE_DEVID_SAS1068E             (0x0058)
+ #define MPI_MANUFACTPAGE_DEVID_SAS1078              (0x0062)
++#define MPI_MANUFACTPAGE_DEVID_SAS8208ELP           (0x0059)
+ 
+ 
+ typedef struct _CONFIG_PAGE_MANUFACTURING_0
+diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/mptbase.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/message/fusion/mptbase.c
+--- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/mptbase.c	2011-07-21 19:24:28 +0000
++++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/message/fusion/mptbase.c	2011-07-27 04:11:58 +0000
+@@ -1527,6 +1527,7 @@ mpt_get_product_name(u16 vendor, u16 dev
+ 		}
+ 		break;
+ 	case MPI_MANUFACTPAGE_DEVID_SAS1068E:
++	case MPI_MANUFACTPAGE_DEVID_SAS8208ELP:
+ 		switch (revision)
+ 		{
+ 		case 0x00:
+@@ -1890,6 +1891,7 @@ mpt_attach(struct pci_dev *pdev, const s
+ 	case MPI_MANUFACTPAGE_DEVID_SAS1064E:
+ 	case MPI_MANUFACTPAGE_DEVID_SAS1068E:
+ 	case MPI_MANUFACTPAGE_DEVID_SAS1078:
++	case MPI_MANUFACTPAGE_DEVID_SAS8208ELP:
+ 		ioc->bus_type = SAS;
+ 		break;
+ 	}
 diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/mptsas.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/message/fusion/mptsas.c
 --- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/mptsas.c	2011-07-21 19:24:21 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/message/fusion/mptsas.c	2011-07-27 04:03:04 +0000
++++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/message/fusion/mptsas.c	2011-07-27 04:11:58 +0000
 @@ -436,6 +436,23 @@ mptsas_is_end_device(struct mptsas_devin
  		return 0;
  }
@@ -299,6 +340,15 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/mptsas.
  static inline struct sas_port *
  mptsas_get_port(struct mptsas_phyinfo *phy_info)
  {
+@@ -4981,6 +4981,8 @@ static struct pci_device_id mptsas_pci_t
+ 		PCI_ANY_ID, PCI_ANY_ID },
+ 	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVID_SAS1078,
+ 		PCI_ANY_ID, PCI_ANY_ID },
++	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVID_SAS8208ELP,
++		PCI_ANY_ID, PCI_ANY_ID },
+ 	{0}	/* Terminating entry */
+ };
+ MODULE_DEVICE_TABLE(pci, mptsas_pci_table);
 diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/net/Kconfig linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/net/Kconfig
 --- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/net/Kconfig	2011-07-21 19:24:28 +0000
 +++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/net/Kconfig	2011-07-27 04:03:04 +0000
@@ -311,6 +361,100 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/net/Kconfig linux-2.6.
  	help
  	  This driver supports Broadcom NetXtremeII 10 gigabit Ethernet cards.
  	  To compile this driver as a module, choose M here: the module
+diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/net/bonding/bond_main.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/net/bonding/bond_main.c
+--- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/net/bonding/bond_main.c	2011-07-21 19:24:28 +0000
++++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/net/bonding/bond_main.c	2011-07-27 05:05:37 +0000
+@@ -230,8 +230,6 @@ struct bond_parm_tbl pri_reselect_tbl[]
+ 
+ static void bond_send_gratuitous_arp(struct bonding *bond);
+ static void bond_deinit(struct net_device *bond_dev);
+-static inline int bond_slave_override(struct bonding *bond,
+-                                      struct sk_buff *skb);
+ 
+ /*---------------------------- General routines -----------------------------*/
+ 
+@@ -4461,6 +4459,40 @@ unwind:
+ 	return res;
+ }
+ 
++/*
++ * Lookup the slave that corresponds to a qid
++ */
++static inline int bond_slave_override(struct bonding *bond,
++				      struct sk_buff *skb)
++{
++	int i, res = 1;
++	struct slave *slave = NULL;
++	struct slave *check_slave;
++
++	read_lock(&bond->lock);
++
++	if (!BOND_IS_OK(bond) || !skb->nfmark)
++		goto out;
++
++	/* Find out if any slaves have the same mapping as this skb. */
++	bond_for_each_slave(bond, check_slave, i) {
++		if (check_slave->dev->ifindex == skb->nfmark) {
++			slave = check_slave;
++			break;
++		}
++	}
++
++	/* If the slave isn't UP, use default transmit policy. */
++	if (slave && IS_UP(slave->dev) &&
++	    (slave->link == BOND_LINK_UP)) {
++		res = bond_dev_queue_xmit(bond, skb, slave->dev);
++	}
++
++out:
++	read_unlock(&bond->lock);
++	return res;
++}
++
+ static int bond_xmit_roundrobin(struct sk_buff *skb, struct net_device *bond_dev)
+ {
+ 	struct bonding *bond = bond_dev->priv;
+@@ -4724,40 +4756,6 @@ static void bond_set_xmit_hash_policy(st
+ }
+ 
+ /*
+- * Lookup the slave that corresponds to a qid
+- */
+-static inline int bond_slave_override(struct bonding *bond,
+-				      struct sk_buff *skb)
+-{
+-	int i, res = 1;
+-	struct slave *slave = NULL;
+-	struct slave *check_slave;
+-
+-	read_lock(&bond->lock);
+-
+-	if (!BOND_IS_OK(bond) || !skb->nfmark)
+-		goto out;
+-
+-	/* Find out if any slaves have the same mapping as this skb. */
+-	bond_for_each_slave(bond, check_slave, i) {
+-		if (check_slave->dev->ifindex == skb->nfmark) {
+-			slave = check_slave;
+-			break;
+-		}
+-	}
+-
+-	/* If the slave isn't UP, use default transmit policy. */
+-	if (slave && IS_UP(slave->dev) &&
+-	    (slave->link == BOND_LINK_UP)) {
+-		res = bond_dev_queue_xmit(bond, skb, slave->dev);
+-	}
+-
+-out:
+-	read_unlock(&bond->lock);
+-	return res;
+-}
+-
+-/*
+  * set bond mode specific net device operations
+  */
+ void bond_set_mode_ops(struct bonding *bond, int mode)
 diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/fs/Kconfig linux-2.6.18-238.19.1.el5.028stab092.2-owl/fs/Kconfig
 --- linux-2.6.18-238.19.1.el5.028stab092.2/fs/Kconfig	2011-07-21 19:24:28 +0000
 +++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/fs/Kconfig	2011-07-27 04:03:04 +0000
@@ -324,7 +468,7 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/fs/Kconfig linux-2.6.18-238.19
  	  This file system is a part of Virtuozzo. It intoduces a fake
 diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/fs/exec.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/fs/exec.c
 --- linux-2.6.18-238.19.1.el5.028stab092.2/fs/exec.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/fs/exec.c	2011-07-27 04:03:04 +0000
++++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/fs/exec.c	2011-07-27 04:59:00 +0000
 @@ -231,7 +231,8 @@ struct page *get_arg_page(struct linux_b
  		 *  - the program will have a reasonable amount of stack left
  		 *    to work from.
@@ -335,6 +479,26 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/fs/exec.c linux-2.6.18-238.19.
  			put_page(page);
  			return NULL;
  		}
+@@ -1469,6 +1470,19 @@ int do_execve(char * filename,
+ 	struct file *file;
+ 	int retval;
+ 
++	/*
++	 * We check for RLIMIT_NPROC in execve() instead of set_user() because
++	 * too many poorly written programs don't check setuid() return code.
++	 * The check in execve() does the same thing for programs doing
++	 * setuid()+execve(), but without similar security issues.
++	 */
++	if (atomic_read(&current->user->processes) >
++	    current->signal->rlim[RLIMIT_NPROC].rlim_cur &&
++	    current->uid != 0) {
++		retval = -EAGAIN;
++		goto out_ret;
++	}
++
+ 	retval = virtinfo_gencall(VIRTINFO_DOEXECVE, NULL);
+ 	if (retval)
+ 		return retval;
 diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/fs/proc/base.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/fs/proc/base.c
 --- linux-2.6.18-238.19.1.el5.028stab092.2/fs/proc/base.c	2011-07-21 19:24:28 +0000
 +++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/fs/proc/base.c	2011-07-27 04:03:04 +0000
@@ -802,6 +966,38 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/printk.c linux-2.6.18-2
 +		
  	return do_syslog(type, buf, len);
  }
+ 
+diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/sched.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/sched.c
+--- linux-2.6.18-238.19.1.el5.028stab092.2/kernel/sched.c	2011-07-21 19:24:29 +0000
++++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/sched.c	2011-07-27 05:02:13 +0000
+@@ -857,7 +857,9 @@ done_noswitch:
+ 
+ idle:
+ 	fairsched_switch(prev_node, &fairsched_idle_node, cycles);
++#ifdef CONFIG_SCHEDSTATS
+ 	vcpu_rq(cur_vcpu)->sched_goidle++;
++#endif
+ 	vcpu = task_vcpu(this_pcpu()->idle);
+ 	__vcpu_get(vcpu);
+ 	spin_unlock(&fairsched_lock);
+diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/sys.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/sys.c
+--- linux-2.6.18-238.19.1.el5.028stab092.2/kernel/sys.c	2011-07-21 19:24:28 +0000
++++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/sys.c	2011-07-27 04:31:52 +0000
+@@ -1013,13 +1013,8 @@ int set_user(uid_t new_ruid, int dumpcle
+ 	struct user_struct *new_user;
+ 
+ 	new_user = alloc_uid(new_ruid);
+-	if (!new_user)
+-		return -EAGAIN;
+-
+-	if (atomic_read(&new_user->processes) >=
+-				current->signal->rlim[RLIMIT_NPROC].rlim_cur &&
+-			new_ruid != 0) {
+-		free_uid(new_user);
++	if (!new_user) {
++		force_sig(SIGKILL, current);
+ 		return -EAGAIN;
+ 	}
  
 diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/ve/ve.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/ve/ve.c
 --- linux-2.6.18-238.19.1.el5.028stab092.2/kernel/ve/ve.c	2011-07-21 19:24:28 +0000

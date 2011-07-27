@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.57 2011/07/27 06:13:55 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.58 2011/07/27 06:34:13 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -106,6 +106,22 @@ done
 %changelog
 * Wed Jul 27 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.19.1.el5.028stab092.2.owl1
 - Updated to 2.6.18-238.19.1.el5.028stab092.2.
+- In kernel/sched.c, wrapped the use of sched_goidle in
+#ifdef CONFIG_SCHEDSTATS ... #endif (otherwise the new revision of the code
+wouldn't compile with our config).
+- In drivers/net/bonding/bond_main.c, moved the body of a function to be
+inlined up in the code to make this compilable by gcc 3.4.5;
+set CONFIG_BONDING=m in dot-config-*.
+- CONFIG_BLK_CPQ_CISS_DA=m and CONFIG_CISS_SCSI_TAPE=y in dot-config-x86_64.
+- Applied a patch adding limited support for LSISAS8208ELP (PCI device id
+0x0059), which provides access to individual hard drives:
+http://bugs.gentoo.org/show_bug.cgi?id=325805
+http://bugs.gentoo.org/attachment.cgi?id=236721
+http://forums.gentoo.org/viewtopic-t-731366.html
+- Moved the RLIMIT_NPROC check from set_user() to execve():
+http://www.openwall.com/lists/kernel-hardening/2011/07/12/1
+- In set_user(), SIGKILL the process rather than return -EAGAIN on alloc_uid()
+failure (which "can't happen").
 
 * Tue May 03 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.9.1.el5.028stab089.1-owl1
 - Updated to 2.6.18-238.9.1.el5.028stab089.1.  This fixes obscure security
