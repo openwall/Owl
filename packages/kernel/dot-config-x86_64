@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.18-238.5.1.el5.028stab085.2.owl1
-# Sat Mar 12 18:24:28 2011
+# Linux kernel version: 2.6.18-238.19.1.el5.028stab092.2.owl1
+# Wed Jul 27 09:11:56 2011
 #
 CONFIG_X86_64=y
 CONFIG_64BIT=y
@@ -530,10 +530,6 @@ CONFIG_BLK_DEV_FD=m
 # CONFIG_BLK_DEV_COW_COMMON is not set
 CONFIG_BLK_DEV_LOOP=y
 CONFIG_BLK_DEV_CRYPTOLOOP=y
-
-#
-# DRBD disabled because PROC_FS, INET or CONNECTOR not selected
-#
 CONFIG_BLK_DEV_DRBD=m
 # CONFIG_DRBD_TRACE is not set
 # CONFIG_BLK_DEV_NBD is not set
@@ -826,7 +822,7 @@ CONFIG_FUSION_LOGGING=y
 #
 CONFIG_NETDEVICES=y
 CONFIG_DUMMY=m
-# CONFIG_BONDING is not set
+CONFIG_BONDING=m
 # CONFIG_EQUALIZER is not set
 CONFIG_TUN=m
 
