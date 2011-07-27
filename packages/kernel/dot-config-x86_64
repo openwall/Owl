@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.18-238.19.1.el5.028stab092.2.owl1
-# Wed Jul 27 09:11:56 2011
+# Wed Jul 27 09:44:30 2011
 #
 CONFIG_X86_64=y
 CONFIG_64BIT=y
@@ -524,7 +524,8 @@ CONFIG_PARPORT_1284=y
 CONFIG_BLK_DEV_FD=m
 # CONFIG_PARIDE is not set
 # CONFIG_BLK_CPQ_DA is not set
-# CONFIG_BLK_CPQ_CISS_DA is not set
+CONFIG_BLK_CPQ_CISS_DA=m
+CONFIG_CISS_SCSI_TAPE=y
 # CONFIG_BLK_DEV_DAC960 is not set
 # CONFIG_BLK_DEV_UMEM is not set
 # CONFIG_BLK_DEV_COW_COMMON is not set
