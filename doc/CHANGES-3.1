@@ -46,6 +46,26 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2011/07/27	Package: kernel
+SECURITY FIX	Severity: none to high, local, active
+Updated to 2.6.18-238.19.1.el5.028stab092.2.  Enabled CONFIG_BONDING=m
+in both i686 and x86_64 kernels, enabled CONFIG_BLK_CPQ_CISS_DA=m in the
+x86_64 kernel (i686 already had it at "=y").  Applied a patch adding
+limited support for LSISAS8208ELP (PCI device id 0x0059), which provides
+access to individual hard drives.  Moved the RLIMIT_NPROC check from
+set_user() to execve(2) and adjusted set_user() so that it can't fail.
+These changes were desirable to address missing setuid(2) return value
+check vulnerabilities in user-space programs.
+References:
+http://wiki.openvz.org/Download/kernel/rhel5/028stab092.2
+http://wiki.openvz.org/Download/kernel/rhel5/028stab091.1
+http://rhn.redhat.com/errata/RHSA-2011-0927.html
+http://rhn.redhat.com/errata/RHSA-2011-0833.html
+http://bugs.gentoo.org/show_bug.cgi?id=325805
+http://bugs.gentoo.org/attachment.cgi?id=236721
+http://forums.gentoo.org/viewtopic-t-731366.html
+http://www.openwall.com/lists/kernel-hardening/2011/07/12/1
+
 2011/07/25	Package: rpm
 SECURITY FIX	Severity: none to high, local, passive
 Added a patch to remove unsafe file permissions (chmod'ing files to 0) on
@@ -370,4 +390,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.51 2011/07/25 02:17:36 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.52 2011/07/27 07:12:31 solar Exp $
