@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installworld.sh,v 1.40 2010/12/14 11:24:30 solar Exp $
+# $Owl: Owl/build/installworld.sh,v 1.41 2011/09/06 23:53:59 solar Exp $
 
 . installworld.conf
 
@@ -204,11 +204,21 @@ export SILO_FLAGS
 
 cd $RPMS || exit 1
 
+# Don't install vzctl and vzquota inside a container
+if [ -e $ROOT/proc/vz -a ! -e $ROOT/proc/vz/version ]; then
+	SKIP_VZ=yes
+fi
+
 grep -v ^# $HOME/installorder.conf |
 while read PACKAGES; do
 	FILES=
 	for PACKAGE in $PACKAGES; do
 		if [ "$PACKAGE" = owl-cdrom -a "$MAKE_CDROM" != yes ]; then
+			log "Skipping $PACKAGE"
+			continue
+		fi
+		if [ \( "$PACKAGE" = vzctl -o "$PACKAGE" = vzquota \) -a \
+		    "$SKIP_VZ" = yes ]; then
 			log "Skipping $PACKAGE"
 			continue
 		fi
