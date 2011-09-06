@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.29 2010/09/02 04:52:34 solar Exp $
+# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.30 2011/09/06 23:02:07 solar Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
-Version: 0.14
+Version: 0.15
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -63,6 +63,10 @@ grep -q ^radio: /etc/group || groupadd -g 122 radio
 %files -f filelist
 
 %changelog
+* Tue Sep 06 2011 Solar Designer <solar-at-owl.openwall.com> 0.15-owl1
+- Create /dev/sd* devices for 16 disks, not just 8 like we did before (patch
+by gremlin@).
+
 * Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 0.14-owl1
 - Make the /dev/core and /dev/fd symlinks to under /proc absolute such that
 they're not broken when /dev is moved in owl-cdrom (this reverts the change
