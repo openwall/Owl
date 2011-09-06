@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.79 2011/02/10 18:12:42 solar Exp $
+# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.80 2011/09/06 23:15:11 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
-Version: 1.1
+Version: 1.2
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -20,6 +20,7 @@ Source22: mime.types
 Source30: hosts.allow
 Source31: hosts.deny
 Source40: inputrc
+Source50: owl-release
 Obsoletes: setup
 Provides: setup
 AutoReq: false
@@ -41,6 +42,7 @@ install -p %_sourcedir/{passwd,shadow,group,fstab} etc/
 install -p %_sourcedir/{securetty,shells,host.conf,nsswitch.conf} etc/
 install -p %_sourcedir/{protocols,services,mime.types,hosts.{allow,deny}} etc/
 install -p %_sourcedir/inputrc etc/
+install -p %_sourcedir/owl-release etc/
 touch etc/{group,passwd,shadow}-
 touch etc/{hosts,mtab,resolv.conf}
 mkdir etc/sysconfig
@@ -150,6 +152,7 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %config(noreplace) /etc/hosts.allow
 %config(noreplace) /etc/hosts.deny
 %config /etc/inputrc
+/etc/owl-release
 %config(noreplace) /etc/motd
 %ghost /var/log/lastlog
 %ghost /etc/*-
@@ -159,6 +162,9 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %dir %attr(755,root,root) /etc/sysconfig
 
 %changelog
+* Tue Sep 06 2011 Solar Designer <solar-at-owl.openwall.com> 1.2-owl1
+- Added /etc/owl-release.
+
 * Mon Feb 07 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.1-owl1
 - Added "usbfs" entry in fstab (for lsusb).
 
