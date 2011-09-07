@@ -1,15 +1,15 @@
-# $Owl: Owl/packages/strace/strace.spec,v 1.26 2010/04/14 20:14:58 ldv Exp $
+# $Owl: Owl/packages/strace/strace.spec,v 1.26.2.1 2011/09/07 06:36:48 solar Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
-Version: 4.5.20
+Version: 4.6
 Release: owl1
 License: BSD
 Group: Development/Debuggers
 URL: http://sourceforge.net/projects/strace/
-Source: http://prdownloads.sourceforge.net/%name/%name-%version.tar.bz2
-# Signature: http://prdownloads.sourceforge.net/%name/%name-%version.tar.bz2.sig
-BuildRequires: automake, autoconf
+Source: http://download.sourceforge.net/%name/%name-%version.tar.xz
+# Signature: http://download.sourceforge.net/%name/%name-%version.tar.xz.sig
+BuildRequires: time, xz
 BuildRoot: /override/%name-%version
 
 %package graph
@@ -30,9 +30,7 @@ commands do.
 
 %prep
 %setup -q
-bzip2 -9k ChangeLog*
-
-%{expand:%%define optflags %optflags -Wall}
+xz ChangeLog*
 
 %build
 %configure
@@ -42,9 +40,12 @@ bzip2 -9k ChangeLog*
 rm -rf %buildroot
 %makeinstall
 
+%check
+%__make check
+
 %files
 %defattr(-,root,root)
-%doc ChangeLog*.bz2 COPYRIGHT CREDITS NEWS README README-linux
+%doc ChangeLog*.xz COPYRIGHT CREDITS NEWS
 %_bindir/strace
 %_mandir/man1/strace.1*
 
@@ -53,6 +54,9 @@ rm -rf %buildroot
 %_bindir/strace-graph
 
 %changelog
+* Tue Mar 15 2011 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.6-owl1
+- Updated to 4.6.
+
 * Wed Apr 14 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.5.20-owl1
 - Updated to 4.5.20.
 
