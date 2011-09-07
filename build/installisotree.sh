@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installisotree.sh,v 1.15.2.2 2011/01/23 03:11:34 solar Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.15.2.3 2011/09/07 07:50:05 solar Exp $
 
 set -e
 
@@ -43,16 +43,12 @@ cd $HOME
 rmdir -- "$ROOT"
 mkdir -m 755 -- "$ROOT"
 
-MAKE_CDROM=yes KERNEL_FAKE=no "$HOME/native/$BRANCH/build/installworld.sh"
+MAKE_CDROM=yes KERNEL_FAKE=no SKIP_EXTRA=yes "$HOME/native/$BRANCH/build/installworld.sh"
 
 mkdir -p logs
 exec 3>&1
 exec </dev/null >logs/installisotree 2>&1
 echo "`date '+%Y %b %e %H:%M:%S'`: Started"
-
-log "Removing packages that are typically not needed on a CD"
-cd "$ROOT"
-chroot "$ROOT" rpm -e man-pages-posix bind-doc bash-doc cvs-doc pam-doc db4-doc groff-doc rpm-devel openssh-blacklist ||:
 
 log "Installing kernel"
 cd "$ROOT/boot"
@@ -109,7 +105,7 @@ chmod 644 .Owl-CD-ROM README
 > var/log/wtmp
 
 log "Creating mtree specification"
-chroot "$ROOT" mtree -c -K size,md5digest,sha1digest |
+chroot "$ROOT" mtree -c -K sha1digest |
 	tail -n +4 >"$HOME/cdrom.mtree"
 mv "$HOME/cdrom.mtree" Owl-CD-ROM.mtree
-bzip2 -9 Owl-CD-ROM.mtree
+xz Owl-CD-ROM.mtree

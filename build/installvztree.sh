@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installvztree.sh,v 1.5 2010/12/14 10:57:09 solar Exp $
+# $Owl: Owl/build/installvztree.sh,v 1.5.2.1 2011/09/07 07:50:05 solar Exp $
 
 set -e
 
@@ -43,18 +43,12 @@ cd $HOME
 rmdir -- "$ROOT"
 mkdir -m 755 -- "$ROOT"
 
-FORCE_ROOT="$ROOT" KERNEL_FAKE=yes "$HOME/native/$BRANCH/build/installworld.sh"
+FORCE_ROOT="$ROOT" KERNEL_FAKE=yes SKIP_HOST=yes SKIP_EXTRA=yes "$HOME/native/$BRANCH/build/installworld.sh"
 
 mkdir -p logs
 exec 3>&1
 exec </dev/null >logs/installvztree 2>&1
 echo "`date '+%Y %b %e %H:%M:%S'`: Started"
-
-cd "$ROOT"
-log "Removing packages that are harmful inside a container"
-chroot "$ROOT" rpm -e vzctl vzquota ||:
-log "Removing packages that are typically not needed inside a container"
-chroot "$ROOT" rpm -e hdparm smartmontools mdadm lilo dmidecode pciutils modutils losetup acct bind-doc bash-doc cvs-doc pam-doc db4-doc groff-doc rpm-devel ||:
 
 log "Removing SSH host keys"
 cd "$ROOT/etc"

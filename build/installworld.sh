@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installworld.sh,v 1.40 2010/12/14 11:24:30 solar Exp $
+# $Owl: Owl/build/installworld.sh,v 1.40.2.1 2011/09/07 07:50:05 solar Exp $
 
 . installworld.conf
 
@@ -204,11 +204,21 @@ export SILO_FLAGS
 
 cd $RPMS || exit 1
 
+# Don't install host system specific packages inside a container
+if [ -e $ROOT/proc/vz -a ! -e $ROOT/proc/vz/version ]; then
+	SKIP_HOST=yes
+fi
+
 grep -v ^# $HOME/installorder.conf |
 while read PACKAGES; do
 	FILES=
-	for PACKAGE in $PACKAGES; do
-		if [ "$PACKAGE" = owl-cdrom -a "$MAKE_CDROM" != yes ]; then
+	for TOKEN in $PACKAGES; do
+		PACKAGE=${TOKEN#[A-Za-z]:}
+		TAG=${TOKEN:0:2}
+		if [ \( "$TAG" = "D:" -a "$MAKE_CDROM" != yes \) -o \
+		    \( "$TAG" = "d:" -a "$MAKE_CDROM" = yes \) -o \
+		    \( "$TAG" = "E:" -a "$SKIP_EXTRA" = yes \) -o \
+		    \( "$TAG" = "H:" -a "$SKIP_HOST" = yes \) ]; then
 			log "Skipping $PACKAGE"
 			continue
 		fi
