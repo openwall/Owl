@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installisotree.sh,v 1.17 2011/01/30 17:28:41 solar Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.18 2011/09/07 00:40:50 solar Exp $
 
 set -e
 
@@ -43,16 +43,12 @@ cd $HOME
 rmdir -- "$ROOT"
 mkdir -m 755 -- "$ROOT"
 
-MAKE_CDROM=yes KERNEL_FAKE=no "$HOME/native/$BRANCH/build/installworld.sh"
+MAKE_CDROM=yes KERNEL_FAKE=no SKIP_EXTRA=yes "$HOME/native/$BRANCH/build/installworld.sh"
 
 mkdir -p logs
 exec 3>&1
 exec </dev/null >logs/installisotree 2>&1
 echo "`date '+%Y %b %e %H:%M:%S'`: Started"
-
-log "Removing packages that are typically not needed on a CD"
-cd "$ROOT"
-chroot "$ROOT" rpm -e man-pages-posix bind-doc bash-doc cvs-doc pam-doc db4-doc groff-doc rpm-devel openssh-blacklist ||:
 
 log "Installing kernel"
 cd "$ROOT/boot"

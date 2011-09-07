@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installworld.sh,v 1.42 2011/09/07 00:30:41 solar Exp $
+# $Owl: Owl/build/installworld.sh,v 1.43 2011/09/07 00:40:50 solar Exp $
 
 . installworld.conf
 
@@ -213,9 +213,10 @@ grep -v ^# $HOME/installorder.conf |
 while read PACKAGES; do
 	FILES=
 	for TOKEN in $PACKAGES; do
-		PACKAGE=${TOKEN#[A-Z]:}
+		PACKAGE=${TOKEN#[A-Za-z]:}
 		TAG=${TOKEN:0:2}
 		if [ \( "$TAG" = "D:" -a "$MAKE_CDROM" != yes \) -o \
+		    \( "$TAG" = "d:" -a "$MAKE_CDROM" = yes \) -o \
 		    \( "$TAG" = "E:" -a "$SKIP_EXTRA" = yes \) -o \
 		    \( "$TAG" = "H:" -a "$SKIP_HOST" = yes \) ]; then
 			log "Skipping $PACKAGE"
