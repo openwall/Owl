@@ -1,0 +1,12 @@
+diff -Naur iproute2-2.6.28/misc/rtacct.c iproute2-2.6.28.tpg/misc/rtacct.c
+--- iproute2-2.6.28/misc/rtacct.c	2009-01-15 20:25:04.000000000 +0000
++++ iproute2-2.6.28.tpg/misc/rtacct.c	2009-01-29 16:28:20.000000000 +0000
+@@ -535,7 +535,7 @@
+ 	}
+ 
+ 	if (getenv("RTACCT_HISTORY"))
+-		snprintf(hist_name, sizeof(hist_name), getenv("RTACCT_HISTORY"));
++		snprintf(hist_name, sizeof(hist_name), "%s", getenv("RTACCT_HISTORY"));
+ 	else
+ 		sprintf(hist_name, "/tmp/.rtacct.u%d", getuid());
+ 

@@ -1,0 +1,32 @@
+diff -uNp -r iproute2-2.6.38.orig/misc/ifstat.c iproute2-2.6.38/misc/ifstat.c
+--- iproute2-2.6.38.orig/misc/ifstat.c	2011-03-17 17:05:47 +0000
++++ iproute2-2.6.38/misc/ifstat.c	2011-03-23 15:13:13 +0000
+@@ -442,7 +442,7 @@ void update_db(int interval)
+ 			if (h1->ifindex == n->ifindex) {
+ 				int i;
+ 				for (i = 0; i < MAXS; i++) {
+-					if ((long)(h1->ival[i] - n->ival[i]) < 0) {
++					if (((long)h1->ival[i] - n->ival[i]) < 0) {
+ 						memset(n->ival, 0, sizeof(n->ival));
+ 						break;
+ 					}
+diff -uNp -r iproute2-2.6.38.orig/tc/f_u32.c iproute2-2.6.38/tc/f_u32.c
+--- iproute2-2.6.38.orig/tc/f_u32.c	2011-03-17 17:05:47 +0000
++++ iproute2-2.6.38/tc/f_u32.c	2011-03-23 15:11:46 +0000
+@@ -405,7 +405,6 @@ static int parse_ip6_addr(int *argc_p, c
+ 
+ static int parse_ip6_class(int *argc_p, char ***argv_p, struct tc_u32_sel *sel)
+ {
+-	int res = -1;
+ 	int argc = *argc_p;
+ 	char **argv = *argv_p;
+ 	__u32 key;
+@@ -432,7 +431,7 @@ static int parse_ip6_class(int *argc_p, 
+ 	key = htonl(key);
+ 	mask = htonl(mask);
+ 
+-	if (res = pack_key(sel, key, mask, off, offmask) < 0)
++	if (pack_key(sel, key, mask, off, offmask) < 0)
+ 		return -1;
+ 
+ 	*argc_p = argc;

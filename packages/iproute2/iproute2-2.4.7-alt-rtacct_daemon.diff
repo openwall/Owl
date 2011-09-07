@@ -1,0 +1,12 @@
+diff -u -r iproute2.orig/misc/rtacct.c iproute2/misc/rtacct.c
+--- iproute2.orig/misc/rtacct.c	2002-01-10 07:01:36 +0300
++++ iproute2/misc/rtacct.c	2005-03-18 03:59:07 +0300
+@@ -375,7 +375,7 @@
+ 
+ 	for (;;) {
+ 		int status;
+-		int tdiff;
++		unsigned int tdiff;
+ 		struct timeval now;
+ 		gettimeofday(&now, NULL);
+ 		tdiff = T_DIFF(now, snaptime);
