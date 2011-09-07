@@ -49,10 +49,10 @@ clarify the specific issue(s) and their severities in the description.
 2011/09/07	Owl/build/{install*.sh,installorder.conf}
 Support for optional package tags has been added to installorder.conf
 and made use of in install*.sh scripts.  Currently supported are:
-D - CD only
-d - exclude from CD
-E - extra (exclude from CD and OpenVZ container templates)
-H - host only (exclude from OpenVZ container templates)
+"D:" - CD only;
+"d:" - exclude from CD;
+"E:" - exclude from CD and OpenVZ container templates;
+"H:" - host only (exclude from OpenVZ container templates).
 
 2011/09/07	Package: owl-etc
 Added /etc/owl-release (with "Owl-current post-3.0" in it).
@@ -404,4 +404,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.56 2011/09/07 01:10:08 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.57 2011/09/07 04:11:32 solar Exp $
