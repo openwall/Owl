@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.48 2010/11/30 18:55:11 segoon Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.48.2.1 2011/09/07 07:16:54 solar Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
 Version: 1.4.11
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
@@ -46,6 +46,7 @@ bzip2 -9k NEWS doc/{DETAILS,FAQ}
 %configure \
 	--enable-static-rnd=linux \
 	--with-mailprog=/usr/sbin/sendmail \
+	--with-libusb=no \
 	--enable-noexecstack
 %__make
 
@@ -102,6 +103,9 @@ fi
 %exclude %_datadir/gnupg/FAQ
 
 %changelog
+* Wed Apr 06 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.4.11-owl2
+- Removed a dependency on libusb.  Reported by Chris Bopp.
+
 * Fri Oct 29 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.4.11-owl1
 - Updated to 1.4.11.
 - Introduced setuid() return code check.
