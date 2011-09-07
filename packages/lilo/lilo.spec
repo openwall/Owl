@@ -1,20 +1,18 @@
-# $Owl: Owl/packages/lilo/lilo.spec,v 1.31 2010/07/19 19:46:28 solar Exp $
+# $Owl: Owl/packages/lilo/lilo.spec,v 1.31.2.1 2011/09/07 06:56:49 solar Exp $
 
 %define BUILD_EXTERNAL_SUPPORT 0
 
 Summary: The boot loader for Linux and other operating systems.
 Name: lilo
-Version: 22.8
-Release: owl3
+Version: 23.2
+Release: owl1
 License: MIT
 Group: System Environment/Base
-URL: http://lilo.go.dyndns.org/pub/linux/lilo/
-Source0: ftp://sunsite.unc.edu/pub/Linux/system/boot/lilo/%name-%version.src.tar.gz
+URL: http://lilo.alioth.debian.org
+Source0: http://lilo.alioth.debian.org/ftp/sources/%name-%version.tar.gz
+# Signature: http://lilo.alioth.debian.org/ftp/sources/%name-%version.tar.gz.asc
 Source1: keytab-lilo.c
-Patch0: lilo-22.8-owl-Makefile.diff
-Patch1: lilo-22.8-alt-owl-fixes.diff
-Patch2: lilo-22.7.1-owl-tmp.diff
-Patch3: lilo-22.7-deb-owl-man.diff
+Patch0: lilo-23.2-owl-Makefile.diff
 BuildRequires: coreutils, dev86
 ExclusiveArch: %ix86 x86_64
 BuildRoot: /override/%name-%version
@@ -28,16 +26,15 @@ can also boot other operating systems.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-bzip2 -9k CHANGES README
+
+# filename collision of README and readme/README
+mv readme/README{,2}
+bzip2 -9k readme/README2
 
 %{expand: %%define optflags %optflags -Wall -Wno-long-long -pedantic}
 
 %build
-# XXX: Do we need the DOS version of LILO and its diagnostic disk? -- (GM)
-%__make lilo \
+%__make all \
 	CFG_DIR=%_sysconfdir \
 	BOOT_DIR=/boot \
 	CC=%__cc OPT="%optflags -Wall" \
@@ -52,14 +49,12 @@ rm -rf %buildroot
 mkdir -p %buildroot/usr/bin
 mkdir -p %buildroot%_mandir
 %__make install \
-	ROOT=%buildroot \
+	DESTDIR=%buildroot \
 	CFG_DIR=%_sysconfdir \
 	BOOT_DIR=/boot \
 	SBIN_DIR=/sbin \
 	USRSBIN_DIR=%_sbindir \
 	MAN_DIR=%_mandir
-
-install -m 755 keytab-lilo %buildroot%_bindir/
 
 # Create a sample lilo.conf file
 mkdir -p -m755 %buildroot%_sysconfdir
@@ -106,22 +101,39 @@ fi
 
 %files
 %defattr(-,root,root)
-%doc README.bz2 README.bitmaps README.common.problems README.raid1
-%doc CHANGES.bz2 COPYING INCOMPAT QuickInst
-%doc doc
+%doc README
+%doc readme/README{2.bz2,.bitmaps,.common.problems,.raid1,.nokeyboard,.volumeID}
+%doc CHANGELOG NEWS TODO
+%doc sample/*.conf
+%doc COPYING readme/INCOMPAT QuickInst
 %doc %_sysconfdir/lilo.conf.sample
 %attr(600,root,root) %verify(not md5 mtime size) %ghost %_sysconfdir/lilo.conf
-%attr(755,root,root) %_bindir/keytab-lilo
+%attr(755,root,root) %_sbindir/keytab-lilo
 %if %BUILD_EXTERNAL_SUPPORT
 /boot/boot*
 /boot/chain.b
 /boot/os2_d.b
 %endif
 %attr(700,root,root) /sbin/lilo
-%attr(700,root,root) /sbin/mkrescue
+%attr(700,root,root) /usr/sbin/mkrescue
+%exclude /etc/kernel/*
+%exclude /etc/initramfs/post-update.d/runlilo
+%exclude /etc/lilo.conf_example
+%exclude %_sbindir/liloconfig
+%exclude %_sbindir/lilo-uuid-diskid
 %_mandir/*/*
 
 %changelog
+* Thu Jun 09 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 23.2-owl1
+- Updated to 23.2.
+- Dropped almost all patches (fixed in upstream).
+- Updated -owl-Makefile patch.
+
+* Tue Jan 18 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 23.1-owl1
+- Updated to 23.1.
+- Enabled -Wall, updated all patches.
+- Reverted upstream patch (up-bios-int15-fn-e820).
+
 * Mon Jul 19 2010 Solar Designer <solar-at-owl.openwall.com> 22.8-owl3
 - In the sample config file, call the kernel image vmlinuz, not bzImage, for
 consistency with our RPM'ed kernels.
