@@ -1,0 +1,39 @@
+diff -uNrp usbutils-001.orig/update-usbids.sh.in usbutils-001/update-usbids.sh.in
+--- usbutils-001.orig/update-usbids.sh.in	2011-01-27 19:57:05 +0000
++++ usbutils-001/update-usbids.sh.in	2011-01-28 17:41:34 +0000
+@@ -10,7 +10,7 @@ DEST=@usbids@
+ 
+ # if usb.ids is read-only (because the filesystem is read-only),
+ # then just skip this whole process.
+-if ! touch ${DEST} >&2 >/dev/null ; then
++if ! touch ${DEST}.gz >&2 >/dev/null ; then
+ 	${quiet} || echo "${DEST} is read-only, exiting."
+ 	exit 0
+ fi
+@@ -20,8 +20,10 @@ if which wget >/dev/null 2>&1 ; then
+ 	${quiet} && DL="$DL -q"
+ elif which lynx >/dev/null 2>&1 ; then
+ 	DL="eval lynx -source $SRC >$DEST.new"
++elif which lftp >/dev/null 2>&1 ; then
++	DL="eval lftp -c \"get1 -o $DEST.new $SRC\""
+ else
+-	echo >&2 "update-usbids: cannot find wget nor lynx"
++	echo >&2 "update-usbids: cannot find wget, lynx or lftp"
+ 	exit 1
+ fi
+ 
+@@ -38,9 +40,12 @@ fi
+ 
+ if [ -f $DEST ] ; then
+ 	mv $DEST $DEST.old
+-	# --reference is supported only by chmod from GNU file, so let's ignore any errors
+-	chmod -f --reference=$DEST.old $DEST.new 2>/dev/null || true
++fi
++if [ -f $DEST.gz ] ; then
++	mv $DEST.gz $DEST.gz.old
+ fi
+ mv $DEST.new $DEST
++gzip -9 $DEST
++chmod 0644 $DEST.gz
+ 
+ ${quiet} || echo "Done."
