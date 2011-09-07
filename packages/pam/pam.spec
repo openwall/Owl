@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.61 2010/10/19 12:20:46 solar Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.61.2.1 2011/09/07 05:54:49 solar Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 1.1.2
-Release: owl1
+Release: owl2
 %define rh_version 0.99.10-1
 License: GPLv2+ or BSD-style
 Group: System Environment/Base
@@ -29,7 +29,7 @@ Patch7: Linux-PAM-1.1.2-owl-pam_get_authtok.diff
 Patch8: Linux-PAM-1.1.2-alt-pam_chroot.diff
 Patch9: Linux-PAM-1.1.2-owl-pam_stack.diff
 PreReq: /sbin/ldconfig
-Requires: glibc-crypt_blowfish
+Requires: glibc-crypt_blowfish >= 1.2
 # Just to make sure no one misses pam_unix and pam_pwdb, which are now
 # provided by tcb.
 Requires: tcb >= 0.9.9
@@ -293,6 +293,9 @@ rm %buildroot%docdir/*.pdf
 %docdir/[^ACNm]*
 
 %changelog
+* Sun Jul 17 2011 Solar Designer <solar-at-owl.openwall.com> 1.1.2-owl2
+- In system-auth, use the "$2y$" hash encoding prefix (crypt_blowfish 1.2+).
+
 * Wed Oct 13 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1.2-owl1
 - Updated Linux-PAM to 1.1.2+ snapshot 20101011 (fixes privilege switching in
 pam_env, pam_mail and pam_xauth: CVE-2010-3316, CVE-2010-3430, CVE-2010-3431).
