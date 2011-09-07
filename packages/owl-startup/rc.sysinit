@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.29 2010/12/09 13:31:21 solar Exp $
+# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.29.2.1 2011/09/07 06:39:25 solar Exp $
 
 repair_fs()
 {
@@ -216,4 +216,4 @@ done
 test -f /var/run/utmpx && > /var/run/utmpx
 
 # Save a copy of the boot messages.
-dmesg > /var/run/dmesg.boot
+dmesg -s 131072 > /var/run/dmesg.boot

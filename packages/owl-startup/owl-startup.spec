@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.88 2010/12/09 18:49:26 solar Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.88.2.1 2011/09/07 06:39:25 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.39
+Version: 0.41
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -169,6 +169,13 @@ fi
 %doc redhat
 
 %changelog
+* Tue Feb 01 2011 Solar Designer <solar-at-owl.openwall.com> 0.41-owl1
+- Set "net.ipv4.ping_group_range = 111 111" in sysctl.conf.
+
+* Mon Jan 24 2011 Solar Designer <solar-at-owl.openwall.com> 0.40-owl1
+- Added "-s 131072" to the dmesg invocation in rc.sysinit; without this change,
+/var/run/dmesg.boot was often incomplete.
+
 * Thu Dec 09 2010 Solar Designer <solar-at-owl.openwall.com> 0.39-owl1
 - Dropped the "-e /proc/lvm" check from rc.sysinit.  Rationale:
 http://www.openwall.com/lists/owl-users/2010/12/06/1
