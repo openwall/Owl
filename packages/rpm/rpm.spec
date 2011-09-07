@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.84 2010/09/06 19:44:09 ldv Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.84.2.1 2011/09/07 06:35:28 solar Exp $
 
 %define WITH_PYTHON 0
 
@@ -8,7 +8,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl24
+Release: owl26
 License: GPL
 Group: System Environment/Base
 # ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -17,9 +17,6 @@ Source1: rpminit
 Source2: rpminit.1
 Source3: gendiff
 Source4: configure-presets
-# XXX: Patch0 is only for the case of using glibc with NPTL and is currently
-# not applied.
-#Patch0: rpm-4.2-owl-pthreads.diff
 Patch1: rpm-4.2-owl-lite.diff
 Patch2: rpm-4.2-owl-librpmbuild-link.diff
 Patch3: rpm-4.2-owl-static-utils.diff
@@ -62,7 +59,7 @@ Patch37: rpm-4.2-cvs-20061030-showQueryPackage.diff
 Patch38: rpm-4.2-rh-owl-build-tar.diff
 Patch39: rpm-4.2-owl-xz-macros.diff
 Patch40: rpm-4.2-owl-xz-payload.diff
-
+Patch41: rpm-4.2-owl-remove-unsafe-perms.diff
 PreReq: /sbin/ldconfig
 PreReq: sh-utils, fileutils, mktemp, gawk
 Requires: findutils, diffutils, gzip
@@ -140,7 +137,6 @@ shell-like rules.
 # XXX: RPM tests have known tmp issues :(
 rm -r tests
 
-#patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -180,6 +176,7 @@ rm -r tests
 %patch38 -p1
 %patch39 -p1
 %patch40 -p1
+%patch41 -p1
 
 bzip2 -9k CHANGES
 
@@ -513,6 +510,15 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Mon Jul 25 2011 Solar Designer <solar-at-owl.openwall.com> 4.2-owl26
+- Added a patch to remove unsafe file permissions (chmod'ing files to 0) on
+package removal or upgrade to prevent continued access to such files via
+hard-links possibly created by a user (CVE-2005-4889, CVE-2010-2059).
+
+* Mon May 02 2011 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl25
+- Fixed %%patch regression introduced in previous release.
+Reported by Chris Bopp (http://www.openwall.com/lists/owl-dev/2011/05/02/1).
+
 * Mon Sep 06 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.2-owl24
 - Backported xz/lzma support in %%setup and %%patch macros.
 - Backported xz/lzma payload support.

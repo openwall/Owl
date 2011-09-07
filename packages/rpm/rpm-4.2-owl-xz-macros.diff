@@ -12,7 +12,7 @@
      struct Source *sp;
      rpmCompressedMagic compressed = COMPRESSED_NOT;
      int urltype;
-@@ -87,9 +87,7 @@ static int checkOwners(const char * urlf
+@@ -87,14 +87,12 @@ static int checkOwners(const char * urlf
  	return NULL;
      }
  
@@ -22,7 +22,14 @@
 +    sprintf(args, "-p%d -s", strip);
      if (db) {
  #if HAVE_OLDPATCH_21 == 0
- 	strcat(args, "-b ");
+-	strcat(args, "-b ");
++	strcat(args, " -b");
+ #endif
+-	strcat(args, "--suffix ");
++	strcat(args, " --suffix ");
+ 	strcat(args, db);
+     }
+     if (reverse) {
 @@ -104,6 +102,8 @@ static int checkOwners(const char * urlf
  	strcat(args, " -E");
      }
