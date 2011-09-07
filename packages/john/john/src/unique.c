@@ -1,8 +1,9 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1998,1999,2002,2003,2005,2006 by Solar Designer
+ * Copyright (c) 1998,1999,2002,2003,2005,2006,2011 by Solar Designer
  */
 
+#define _POSIX_SOURCE /* for fdopen(3) */
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -14,7 +15,7 @@
 #include "params.h"
 #include "memory.h"
 
-#define ENTRY_END_HASH			0xFFFFFFFF
+#define ENTRY_END_HASH			0xFFFFFFFF /* also hard-coded */
 #define ENTRY_END_LIST			0xFFFFFFFE
 #define ENTRY_DUPE			0xFFFFFFFD
 
@@ -66,25 +67,58 @@ static void put_int(unsigned int *ptr, unsigned int value)
 
 static unsigned int line_hash(char *line)
 {
-	unsigned int hash = 0;
+	unsigned int hash, extra;
+	char *p;
 
-	while (*line) {
-		hash <<= 2;
-		hash ^= *line++;
-		hash += hash >> UNIQUE_HASH_LOG;
+	p = line + 2;
+	hash = (unsigned char)line[0];
+	if (!hash)
+		goto out;
+	extra = (unsigned char)line[1];
+	if (!extra)
+#if UNIQUE_HASH_SIZE >= 0x100
+		goto out;
+#else
+		goto out_and;
+#endif
+
+	while (*p) {
+		hash <<= 3; extra <<= 2;
+		hash += (unsigned char)p[0];
+		if (!p[1]) break;
+		extra += (unsigned char)p[1];
+		p += 2;
+		if (hash & 0xe0000000) {
+			hash ^= hash >> UNIQUE_HASH_LOG;
+			extra ^= extra >> UNIQUE_HASH_LOG;
+			hash &= UNIQUE_HASH_SIZE - 1;
+		}
 	}
 
-	hash &= UNIQUE_HASH_SIZE - 1;
+	hash -= extra;
+	hash ^= extra << (UNIQUE_HASH_LOG / 2);
 
+	hash ^= hash >> UNIQUE_HASH_LOG;
+
+#if UNIQUE_HASH_SIZE < 0x100
+out_and:
+#endif
+	hash &= UNIQUE_HASH_SIZE - 1;
+out:
 	return hash;
 }
 
 static void init_hash(void)
 {
+#if 0
 	int index;
 
 	for (index = 0; index < UNIQUE_HASH_SIZE; index++)
 		buffer.hash[index] = ENTRY_END_HASH;
+#else
+/* ENTRY_END_HASH is 0xFFFFFFFF */
+	memset(buffer.hash, 0xff, UNIQUE_HASH_SIZE * sizeof(unsigned int));
+#endif
 }
 
 static void read_buffer(void)
@@ -131,12 +165,16 @@ static void write_buffer(void)
 
 	ptr = 0;
 	while ((hash = get_data(ptr)) != ENTRY_END_LIST) {
+		unsigned int length, size;
 		ptr += 4;
+		length = strlen(&buffer.data[ptr]);
+		size = length + 1;
 		if (hash != ENTRY_DUPE) {
-			fprintf(output, "%s\n", &buffer.data[ptr]);
-			if (ferror(output)) pexit("fprintf");
+			buffer.data[ptr + length] = '\n';
+			if (fwrite(&buffer.data[ptr], size, 1, output) != 1)
+				pexit("fwrite");
 		}
-		ptr += strlen(&buffer.data[ptr]) + 1;
+		ptr += size;
 	}
 }
 

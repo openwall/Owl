@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-2010 by Solar Designer
+ * Copyright (c) 1996-2011 by Solar Designer
  */
 
 /*
@@ -15,7 +15,7 @@
 /*
  * John's version number.
  */
-#define JOHN_VERSION			"1.7.6.1"
+#define JOHN_VERSION			"1.7.8"
 
 /*
  * Notes to packagers of John for *BSD "ports", Linux distributions, etc.:
@@ -181,9 +181,9 @@ extern int password_hash_thresholds[PASSWORD_HASH_SIZES];
 #define SINGLE_HASH_MIN			8
 
 /*
- * Shadow file entry table hash size, used by unshadow.
+ * Shadow file entry hash table size, used by unshadow.
  */
-#define SHADOW_HASH_LOG			8
+#define SHADOW_HASH_LOG			18
 #define SHADOW_HASH_SIZE		(1 << SHADOW_HASH_LOG)
 
 /*
@@ -197,6 +197,13 @@ extern int password_hash_thresholds[PASSWORD_HASH_SIZES];
  * Maximum number of GECOS words per password to load.
  */
 #define LDR_WORDS_MAX			0x10
+
+/*
+ * Maximum number of partial hash collisions in a db->password_hash[] bucket.
+ * If this limit is hit, we print a warning and disable detection of duplicate
+ * hashes (since it could be too slow).
+ */
+#define LDR_HASH_COLLISIONS_MAX		1000
 
 /*
  * Maximum number of GECOS words to try in pairs.

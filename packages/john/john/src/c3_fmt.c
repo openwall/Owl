@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 2009,2010 by Solar Designer
+ * Copyright (c) 2009-2011 by Solar Designer
  *
  * Generic crypt(3) support, as well as support for glibc's crypt_r(3) and
  * Solaris' MT-safe crypt(3C) with OpenMP parallelization.
@@ -14,7 +14,6 @@
 #include <string.h>
 #if defined(_OPENMP) && defined(__GLIBC__)
 #include <crypt.h>
-#include <stdlib.h> /* for calloc(3) */
 #include <omp.h> /* for omp_get_thread_num() */
 #else
 #include <unistd.h>
@@ -23,6 +22,7 @@
 #include "arch.h"
 #include "misc.h"
 #include "params.h"
+#include "memory.h"
 #include "common.h"
 #include "formats.h"
 
@@ -121,8 +121,16 @@ static int valid(char *ciphertext)
  */
 	{
 		struct crypt_data **data = &crypt_data[0];
-		if (!*data)
-			*data = calloc(1, sizeof(**data));
+		if (!*data) {
+/*
+ * **data is not exactly tiny, but we use mem_alloc_tiny() for its alignment
+ * support and error checking.  We do not need to free() this memory anyway.
+ *
+ * The page alignment is to keep different threads' data on different pages.
+ */
+			*data = mem_alloc_tiny(sizeof(**data), MEM_ALIGN_PAGE);
+			memset(*data, 0, sizeof(**data));
+		}
 		new_ciphertext = crypt_r(pw, ciphertext, *data);
 	}
 #else
@@ -229,20 +237,20 @@ static void *salt(char *ciphertext)
 	((int)(unsigned char)(atoi64[ARCH_INDEX((s)[(i)])] ^ (s)[(i) - 1]))
 
 #define H0(s) \
-	int i = strlen(s) - 1; \
+	int i = strlen(s) - 2; \
 	return i > 0 ? H((s), i) & 0xF : 0
 #define H1(s) \
-	int i = strlen(s) - 1; \
+	int i = strlen(s) - 2; \
 	return i > 2 ? (H((s), i) ^ (H((s), i - 2) << 4)) & 0xFF : 0
 #define H2(s) \
-	int i = strlen(s) - 1; \
+	int i = strlen(s) - 2; \
 	return i > 2 ? (H((s), i) ^ (H((s), i - 2) << 6)) & 0xFFF : 0
 #define H3(s) \
-	int i = strlen(s) - 1; \
+	int i = strlen(s) - 2; \
 	return i > 4 ? (H((s), i) ^ (H((s), i - 2) << 5) ^ \
 	    (H((s), i - 4) << 10)) & 0xFFFF : 0
 #define H4(s) \
-	int i = strlen(s) - 1; \
+	int i = strlen(s) - 2; \
 	return i > 6 ? (H((s), i) ^ (H((s), i - 2) << 5) ^ \
 	    (H((s), i - 4) << 10) ^ (H((s), i - 6) << 15)) & 0xFFFFF : 0
 
@@ -301,6 +309,7 @@ static int salt_hash(void *salt)
 	int i, h;
 
 	i = strlen((char *)salt) - 1;
+	if (i > 1) i--;
 
 	h = (unsigned char)atoi64[ARCH_INDEX(((char *)salt)[i])];
 	h ^= ((unsigned char *)salt)[i - 1];
@@ -337,8 +346,22 @@ static void crypt_all(int count)
 		int t = omp_get_thread_num();
 		if (t < MAX_THREADS) {
 			struct crypt_data **data = &crypt_data[t];
-			if (!*data)
-				*data = calloc(1, sizeof(**data));
+			if (!*data) {
+/* Stagger the structs to reduce their competition for the same cache lines */
+				size_t mask = MEM_ALIGN_PAGE, shift = 0;
+				while (t) {
+					mask >>= 1;
+					if (mask < MEM_ALIGN_CACHE)
+						break;
+					if (t & 1)
+						shift += mask;
+					t >>= 1;
+				}
+				*data = (void *)((char *)
+				    mem_alloc_tiny(sizeof(**data) +
+				    shift, MEM_ALIGN_PAGE) + shift);
+				memset(*data, 0, sizeof(**data));
+			}
 			hash = crypt_r(saved_key[index], saved_salt, *data);
 		} else { /* should not happen */
 			struct crypt_data data;
@@ -355,7 +378,7 @@ static void crypt_all(int count)
  * threads, and the per-thread performance is extremely poor anyway).  For
  * modern hash types, the function is actually able to compute multiple hashes
  * in parallel by different threads (and the performance for some hash types is
- * reasonable).  Overall, this code is reasonable to use for "SHA-crypt" and
+ * reasonable).  Overall, this code is reasonable to use for SHA-crypt and
  * SunMD5 hashes, which are not yet supported by John natively.
  */
 #pragma omp parallel for default(none) private(index) shared(count, crypt_out, saved_key, saved_salt)
@@ -393,7 +416,7 @@ struct fmt_main fmt_crypt = {
 		SALT_SIZE,
 		MIN_KEYS_PER_CRYPT,
 		MAX_KEYS_PER_CRYPT,
-		FMT_CASE | FMT_8_BIT,
+		FMT_CASE | FMT_8_BIT | FMT_OMP,
 		tests
 	}, {
 		fmt_default_init,

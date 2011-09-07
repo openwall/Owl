@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-2000,2003 by Solar Designer
+ * Copyright (c) 1996-2000,2003,2011 by Solar Designer
  */
 
 /*
@@ -73,6 +73,8 @@ typedef struct {
 	MD5_block _block[MD5_N];
 	MD5_pattern _order[21][MD5_N];
 	MD5_pool _pool[MD5_N];
+	char *prefix;
+	int prelen;
 } MD5_std_combined;
 
 extern MD5_std_combined MD5_std_all;

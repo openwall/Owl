@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-2004,2006,2009,2010 by Solar Designer
+ * Copyright (c) 1996-2004,2006,2009-2011 by Solar Designer
  */
 
 #include <stdio.h>
@@ -18,6 +18,7 @@
 #include "tty.h"
 #include "signals.h"
 #include "common.h"
+#include "idle.h"
 #include "formats.h"
 #include "loader.h"
 #include "logger.h"
@@ -41,6 +42,7 @@ extern struct fmt_main fmt_AFS, fmt_LM;
 #ifdef HAVE_CRYPT
 extern struct fmt_main fmt_crypt;
 #endif
+extern struct fmt_main fmt_dummy;
 
 extern int unshadow(int argc, char **argv);
 extern int unafs(int argc, char **argv);
@@ -72,6 +74,7 @@ static void john_register_all(void)
 #ifdef HAVE_CRYPT
 	john_register_one(&fmt_crypt);
 #endif
+	john_register_one(&fmt_dummy);
 
 	if (!fmt_list) {
 		fprintf(stderr, "Unknown ciphertext format name requested\n");
@@ -158,6 +161,8 @@ static void john_load(void)
 	}
 
 	if (options.flags & FLG_PASSWD) {
+		int total;
+
 		if (options.flags & FLG_SHOW_CHK) {
 			options.loader.flags |= DB_CRACKED;
 			ldr_init_database(&database, &options.loader);
@@ -200,21 +205,24 @@ static void john_load(void)
 			else
 				log_event("Starting a new session");
 			log_event("Loaded a total of %s", john_loaded_counts());
-		}
-
-		ldr_load_pot_file(&database, POT_NAME);
-
-		ldr_fix_database(&database);
-
-		if (database.password_count) {
-			log_event("Remaining %s", john_loaded_counts());
 			printf("Loaded %s (%s [%s])\n",
 				john_loaded_counts(),
 				database.format->params.format_name,
 				database.format->params.algorithm_name);
-		} else {
+		}
+
+		total = database.password_count;
+		ldr_load_pot_file(&database, POT_NAME);
+		ldr_fix_database(&database);
+
+		if (!database.password_count) {
 			log_discard();
-			puts("No password hashes loaded");
+			printf("No password hashes %s (see FAQ)\n",
+			    total ? "left to crack" : "loaded");
+		} else
+		if (database.password_count < total) {
+			log_event("Remaining %s", john_loaded_counts());
+			printf("Remaining %s\n", john_loaded_counts());
 		}
 
 		if ((options.flags & FLG_PWD_REQ) && !database.salts) exit(0);
@@ -279,11 +287,13 @@ static void john_run(void)
 		do_makechars(&database, options.charset);
 	else
 	if (options.flags & FLG_CRACKING_CHK) {
+		int remaining = database.password_count;
+
 		if (!(options.flags & FLG_STDOUT)) {
 			status_init(NULL, 1);
 			log_init(LOG_NAME, POT_NAME, options.session);
 			john_log_format();
-			if (cfg_get_bool(SECTION_OPTIONS, NULL, "Idle", 1))
+			if (idle_requested(database.format))
 				log_event("- Configured to use otherwise idle "
 					"processor cycles only");
 		}
@@ -307,6 +317,26 @@ static void john_run(void)
 
 		status_print();
 		tty_done();
+
+		if (database.password_count < remaining) {
+			char *might = "Warning: passwords printed above might";
+			char *partial = " be partial";
+			char *not_all = " not be all those cracked";
+			switch (database.options->flags &
+			    (DB_SPLIT | DB_NODUP)) {
+			case DB_SPLIT:
+				fprintf(stderr, "%s%s\n", might, partial);
+				break;
+			case DB_NODUP:
+				fprintf(stderr, "%s%s\n", might, not_all);
+				break;
+			case (DB_SPLIT | DB_NODUP):
+				fprintf(stderr, "%s%s and%s\n",
+				    might, partial, not_all);
+			}
+			fputs("Use the \"--show\" option to display all of "
+			    "the cracked passwords reliably\n", stderr);
+		}
 	}
 }
 

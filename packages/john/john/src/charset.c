@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-99,2003,2005,2008 by Solar Designer
+ * Copyright (c) 1996-99,2003,2005,2008,2011 by Solar Designer
  */
 
 #include <stdio.h>
@@ -96,19 +96,26 @@ static void charset_write_header(FILE *file, struct charset_header *header)
 	fwrite(header->order, sizeof(header->order), 1, file);
 }
 
-void charset_read_header(FILE *file, struct charset_header *header)
+int charset_read_header(FILE *file, struct charset_header *header)
 {
-	fread(header->version, sizeof(header->version), 1, file);
-	if (memcmp(header->version, CHARSET_V1, sizeof(header->version)))
-		fread(header->check, sizeof(header->check), 1, file);
-	else
-		memset(header->check, 0, sizeof(header->check));
-	header->min = getc(file);
-	header->max = getc(file);
-	header->length = getc(file);
-	header->count = getc(file);
-	fread(header->offsets, sizeof(header->offsets), 1, file);
-	fread(header->order, sizeof(header->order), 1, file);
+	if (fread(header->version, sizeof(header->version), 1, file) != 1)
+		return -1;
+	memset(header->check, 0, sizeof(header->check));
+	if (memcmp(header->version, CHARSET_V1, sizeof(header->version)) &&
+	    fread(header->check, sizeof(header->check), 1, file) != 1)
+		return -1;
+	{
+		unsigned char values[4];
+		if (fread(values, sizeof(values), 1, file) != 1)
+			return -1;
+		header->min = values[0];
+		header->max = values[1];
+		header->length = values[2];
+		header->count = values[3];
+	}
+	return
+	    fread(header->offsets, sizeof(header->offsets), 1, file) != 1 ||
+	    fread(header->order, sizeof(header->order), 1, file) != 1;
 }
 
 static int charset_new_length(int length,
@@ -330,7 +337,7 @@ static void charset_generate_order(crack_counters cracks, unsigned char *order)
 static void charset_generate_all(struct list_entry *plaintexts, char *charset)
 {
 	FILE *file;
-	int error;
+	int was_error;
 	struct charset_header *header;
 	char_counters chars;
 	crack_counters cracks;
@@ -383,10 +390,11 @@ static void charset_generate_all(struct list_entry *plaintexts, char *charset)
 	MEM_FREE(cracks);
 	MEM_FREE(chars);
 
-	error = ferror(file);
-	if (error | fclose(file)) {
+	was_error = ferror(file);
+	if (fclose(file) || was_error) {
 		unlink(charset);
-		pexit("%s", charset);
+		fprintf(stderr, "Failed to write charset file: %s\n", charset);
+		error();
 	}
 
 	printf("Successfully written charset file: %s (%d character%s)\n",

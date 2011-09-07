@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.123 2010/07/12 02:37:42 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.123.2.1 2011/09/07 06:07:54 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.6.1
+Version: 1.7.8
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,6 +88,51 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Wed Jun 22 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8-owl1
+- The bitslice DES S-box expressions have been replaced with those generated
+by Roman Rusakov specifically for John the Ripper.  The corresponding assembly
+code for x86 with MMX, SSE2, and for x86-64 with SSE2 has been re-generated.
+This effort has been sponsored by Rapid7: http://www.rapid7.com
+- Corrected support for bcrypt (OpenBSD Blowfish) hashes of passwords
+containing non-ASCII characters (that is, characters with the 8th bit set).
+Added support for such hashes produced by crypt_blowfish up to 1.0.4, which
+contained a sign extension bug (inherited from older versions of John).
+The old buggy behavior may be enabled per-hash, using the "$2x$" prefix.
+
+* Sat Jun 11 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.7.1-owl1
+- The external mode virtual machine's performance has been improved through
+additional multi-op instructions matching common instruction sequences
+(assign-pop and some triple- and quad-push VM instructions were added).
+- A few minor bug fixes and enhancements were made.
+
+* Wed Apr 27 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.7-owl1
+- Added Intel AVX and AMD XOP instruction sets support for bitslice DES
+(with C compiler intrinsics), not enabled in the Owl package yet.
+- A "dummy" "format" is now supported (plaintext passwords encoded in
+hexadecimal and prefixed with "$dummy$").
+- Apache "$apr1$" MD5-based password hashes are now supported along with the
+FreeBSD-style MD5-based crypt(3) hashes that were supported previously.
+- The "--salts" option threshold is now applied before removal of previously
+cracked hashes for consistent behavior with interrupted and continued sessions.
+- The "Idle = Y" setting (which is the default) is now ignored for
+OpenMP-enabled hash types when the actual number of threads is greater than 1
+(although we do not enable the OpenMP support in the Owl package yet).
+- When a cracking session terminates or is interrupted, John will now warn the
+user if the cracked passwords printed to the terminal while cracking are
+potentially incomplete.
+- When loading hashes specified on a line on their own, the loader will now
+ignore leading and trailing whitespace.
+- Unless a hash type is forced from the command line, the loader will now print
+warnings about additional hash types seen in the input files.
+- For use primarily by the jumbo patch (and later by future enhancements to the
+official versions as well), the loader now includes logic to warn the user of
+ambiguous hash encodings and of excessive partial hash collisions.
+- The "unique" and "unshadow" programs have been made significantly faster.
+- "DateTime", "Repeats", "Subsets", "AtLeast1-Simple", "AtLeast1-Generic", and
+"Policy" external mode samples have been added to the default john.conf.
+- The self-tests have been enhanced to detect more kinds of program bugs.
+- A few minor bug fixes and enhancements were made.
+
 * Mon Jul 12 2010 Solar Designer <solar-at-owl.openwall.com> 1.7.6.1-owl1
 - Corrected a logic error introduced in JtR 1.7.4.2: in "single crack" mode,
 we need a salt's key buffer even when we have no words corresponding to that

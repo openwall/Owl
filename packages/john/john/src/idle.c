@@ -1,9 +1,11 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-2001,2006,2009 by Solar Designer
+ * Copyright (c) 1996-2001,2006,2009,2011 by Solar Designer
  */
 
+#define _XOPEN_SOURCE /* for nice(2) */
 #include <unistd.h>
+#include <stdio.h>
 
 #ifdef _POSIX_PRIORITY_SCHEDULING
 #include <sched.h>
@@ -21,25 +23,50 @@ extern int nice(int);
 #include <OS.h>
 #endif
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include "params.h"
 #include "config.h"
 #include "options.h"
 #include "signals.h"
 #include "bench.h"
+#include "formats.h"
 
-void idle_init(void)
+int idle_requested(struct fmt_main *format)
+{
+	if (!cfg_get_bool(SECTION_OPTIONS, NULL, "Idle", 1))
+		return 0;
+
+#ifdef _OPENMP
+	if ((format->params.flags & FMT_OMP) && omp_get_max_threads() > 1)
+		return 0;
+#endif
+
+	return 1;
+}
+
+void idle_init(struct fmt_main *format)
 {
 #if defined(_POSIX_PRIORITY_SCHEDULING) && defined(SCHED_IDLE)
 	struct sched_param param = {0};
 #endif
 
-	if (!cfg_get_bool(SECTION_OPTIONS, NULL, "Idle", 1)) return;
-	if (options.flags & FLG_STDOUT) return;
+	if (!idle_requested(format) || (options.flags & FLG_STDOUT))
+		return;
 
 	clk_tck_init();
 
 #ifndef __BEOS__
-	nice(20);
+/*
+ * Normally, the range is -20 to 19, but some systems can do 20 as well (at
+ * least some versions of Linux on Alpha), so we try 20.  We assume that we're
+ * started with a non-negative nice value (so no need to increment it by more
+ * than 20).
+ */
+	if (nice(20) == -1)
+		perror("nice");
 #else
 	set_thread_priority(getpid(), 1);
 #endif

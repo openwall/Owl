@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-2000,2003,2005,2010 by Solar Designer
+ * Copyright (c) 1996-2000,2003,2005,2010,2011 by Solar Designer
  */
 
 #include <stdio.h>
@@ -215,17 +215,41 @@ static int ldr_split_line(char **login, char **ciphertext,
 	char *source, struct fmt_main **format,
 	struct db_options *options, char *line)
 {
+	struct fmt_main *alt;
 	char *uid = NULL, *gid = NULL, *shell = NULL;
-	char *tmp;
-	int count;
+	int retval;
 
 	*login = ldr_get_field(&line);
-	if (!strcmp(*login, "+") || !strncmp(*login, "+@", 2)) return 0;
+	*ciphertext = ldr_get_field(&line);
 
-	if (!*(*ciphertext = ldr_get_field(&line)) && !line) {
-		if (strlen(*login) < 13)
-			return 0;
-		*ciphertext = *login;
+/* Check for NIS stuff */
+	if ((!strcmp(*login, "+") || !strncmp(*login, "+@", 2)) &&
+	    strlen(*ciphertext) < 13 && strncmp(*ciphertext, "$dummy$", 7))
+		return 0;
+
+	if (!**ciphertext && !line) {
+/* Possible hash on a line on its own (no colons) */
+		char *p = *login;
+/* Skip leading and trailing whitespace */
+		while (*p == ' ' || *p == '\t') p++;
+		*ciphertext = p;
+		p += strlen(p) - 1;
+		while (p > *ciphertext && (*p == ' ' || *p == '\t')) p--;
+		p++;
+/* Some valid dummy hashes may be shorter than 13 characters, so don't subject
+ * them to the length checks. */
+		if (strncmp(*ciphertext, "$dummy$", 7)) {
+/* Check for a special case: possibly a traditional crypt(3) hash with
+ * whitespace in its invalid salt.  Only support such hashes at the very start
+ * of a line (no leading whitespace other than the invalid salt). */
+			if (p - *ciphertext == 11 && *ciphertext - *login == 2)
+				(*ciphertext)--;
+			if (p - *ciphertext == 12 && *ciphertext - *login == 1)
+				(*ciphertext)--;
+			if (p - *ciphertext < 13)
+				return 0;
+		}
+		*p = 0;
 		*login = no_username;
 	}
 
@@ -234,7 +258,7 @@ static int ldr_split_line(char **login, char **ciphertext,
 	uid = ldr_get_field(&line);
 
 	if (strlen(uid) == 32) {
-		tmp = *ciphertext;
+		char *tmp = *ciphertext;
 		*ciphertext = uid;
 		uid = tmp;
 
@@ -261,10 +285,49 @@ static int ldr_split_line(char **login, char **ciphertext,
 	if (ldr_check_list(options->groups, gid, gid)) return 0;
 	if (ldr_check_shells(options->shells, shell)) return 0;
 
-	if (*format) return (*format)->methods.valid(*ciphertext);
+	if (*format) {
+		int valid = (*format)->methods.valid(*ciphertext);
+		if (!valid) {
+			alt = fmt_list;
+			do {
+				if (alt == *format)
+					continue;
+				if (alt->params.flags & FMT_WARNED)
+					continue;
+#ifdef HAVE_CRYPT
+				if (alt == &fmt_crypt &&
+#ifdef __sun
+				    strncmp(*ciphertext, "$md5$", 5) &&
+				    strncmp(*ciphertext, "$md5,", 5) &&
+#endif
+				    strncmp(*ciphertext, "$5$", 3) &&
+				    strncmp(*ciphertext, "$6$", 3))
+					continue;
+#endif
+				if (alt->methods.valid(*ciphertext)) {
+					alt->params.flags |= FMT_WARNED;
+					fprintf(stderr,
+					    "Warning: only loading hashes "
+					    "of type \"%s\", but also saw "
+					    "type \"%s\"\n"
+					    "Use the "
+					    "\"--format=%s\" option to force "
+					    "loading hashes of that type "
+					    "instead\n",
+					    (*format)->params.label,
+					    alt->params.label,
+					    alt->params.label);
+					break;
+				}
+			} while ((alt = alt->next));
+		}
+		return valid;
+	}
 
-	if ((*format = fmt_list))
+	retval = -1;
+	if ((alt = fmt_list))
 	do {
+		int valid;
 #ifdef HAVE_CRYPT
 /*
  * Only probe for support by the current system's crypt(3) if this is forced
@@ -272,7 +335,7 @@ static int ldr_split_line(char **login, char **ciphertext,
  * those that are only supported in that way.  Avoid the probe in other cases
  * because it may be slow and undesirable (false detection is possible).
  */
-		if (*format == &fmt_crypt &&
+		if (alt == &fmt_crypt &&
 		    fmt_list != &fmt_crypt /* not forced */ &&
 #ifdef __sun
 		    strncmp(*ciphertext, "$md5$", 5) &&
@@ -282,13 +345,29 @@ static int ldr_split_line(char **login, char **ciphertext,
 		    strncmp(*ciphertext, "$6$", 3))
 			continue;
 #endif
-		if ((count = (*format)->methods.valid(*ciphertext))) {
-			fmt_init(*format);
-			return count;
+		if (!(valid = alt->methods.valid(*ciphertext)))
+			continue;
+		if (retval < 0) {
+			fmt_init(*format = alt);
+			retval = valid;
+#ifdef LDR_WARN_AMBIGUOUS
+			if (!source) /* not --show */
+				continue;
+#endif
+			break;
 		}
-	} while ((*format = (*format)->next));
+#ifdef LDR_WARN_AMBIGUOUS
+		fprintf(stderr,
+		    "Warning: detected hash type \"%s\", but the string is "
+		    "also recognized as \"%s\"\n"
+		    "Use the \"--format=%s\" option to force loading these "
+		    "as that type instead\n",
+		    (*format)->params.label, alt->params.label,
+		    alt->params.label);
+#endif
+	} while ((alt = alt->next));
 
-	return -1;
+	return retval;
 }
 
 static void ldr_split_string(struct list_main *dst, char *src)
@@ -332,6 +411,7 @@ static struct list_main *ldr_init_words(char *login, char *gecos, char *home)
 
 static void ldr_load_pw_line(struct db_main *db, char *line)
 {
+	static int skip_dupe_checking = 0;
 	struct fmt_main *format;
 	int index, count;
 	char *login, *ciphertext, *gecos, *home;
@@ -375,13 +455,34 @@ static void ldr_load_pw_line(struct db_main *db, char *line)
 		binary = format->methods.binary(piece);
 		pw_hash = db->password_hash_func(binary);
 
-		if (!(db->options->flags & DB_WORDS)) {
+		if (!(db->options->flags & DB_WORDS) && !skip_dupe_checking) {
+			int collisions = 0;
 			if ((current_pw = db->password_hash[pw_hash]))
 			do {
 				if (!memcmp(current_pw->binary, binary,
 				    format->params.binary_size) &&
-				    !strcmp(current_pw->source, piece))
+				    !strcmp(current_pw->source, piece)) {
+					db->options->flags |= DB_NODUP;
 					break;
+				}
+				if (++collisions <= LDR_HASH_COLLISIONS_MAX)
+					continue;
+				if (format->params.binary_size)
+					fprintf(stderr, "Warning: "
+					    "excessive partial hash "
+					    "collisions detected\n%s",
+					    db->password_hash_func !=
+					    fmt_default_binary_hash ? "" :
+					    "(cause: the \"format\" lacks "
+					    "proper binary_hash() function "
+					    "definitions)\n");
+				else
+					fprintf(stderr, "Warning: "
+					    "check for duplicates partially "
+					    "bypassed to speedup loading\n");
+				skip_dupe_checking = 1;
+				current_pw = NULL; /* no match */
+				break;
 			} while ((current_pw = current_pw->next_hash));
 
 			if (current_pw) continue;
@@ -680,8 +781,8 @@ void ldr_fix_database(struct db_main *db)
 	MEM_FREE(db->password_hash);
 	MEM_FREE(db->salt_hash);
 
-	ldr_remove_marked(db);
 	ldr_filter_salts(db);
+	ldr_remove_marked(db);
 
 	ldr_init_hash(db);
 

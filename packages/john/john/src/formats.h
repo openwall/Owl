@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-2001,2005,2010 by Solar Designer
+ * Copyright (c) 1996-2001,2005,2010,2011 by Solar Designer
  */
 
 /*
@@ -13,12 +13,24 @@
 #include "params.h"
 
 /*
- * Format property flags...
+ * Format property flags.
  */
+/* Uses case-sensitive passwords */
 #define FMT_CASE			0x00000001
+/* Supports 8-bit characters in passwords (does not ignore the 8th bit) */
 #define FMT_8_BIT			0x00000002
+/* Uses a bitslice implementation */
 #define FMT_BS				0x00010000
+/* The split() method unifies the case of characters in hash encodings */
 #define FMT_SPLIT_UNIFIES_CASE		0x00020000
+/* Parallelized with OpenMP */
+#ifdef _OPENMP
+#define FMT_OMP				0x01000000
+#else
+#define FMT_OMP				0
+#endif
+/* We've already warned the user about hashes of this type being present */
+#define FMT_WARNED			0x80000000
 
 /*
  * A password to test the methods for correct operation.
@@ -31,7 +43,8 @@ struct fmt_tests {
  * Parameters of a hash function and its cracking algorithm.
  */
 struct fmt_params {
-/* Label to refer to this format */
+/* Label to refer to this format (any alphabetical characters in it must be
+ * lowercase). */
 	char *label;
 
 /* Ciphertext format name */
@@ -192,6 +205,7 @@ extern void *fmt_default_binary(char *ciphertext);
 extern void *fmt_default_salt(char *ciphertext);
 extern int fmt_default_binary_hash(void *binary);
 extern int fmt_default_salt_hash(void *salt);
+extern void fmt_default_set_salt(void *salt);
 extern void fmt_default_clear_keys(void);
 extern int fmt_default_get_hash(int index);
 

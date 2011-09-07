@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-2001,2008,2010 by Solar Designer
+ * Copyright (c) 1996-2001,2008,2010,2011 by Solar Designer
  */
 
 #include <string.h>
@@ -21,16 +21,24 @@
 #define CIPHERTEXT_LENGTH		22
 
 #define BINARY_SIZE			4
-#define SALT_SIZE			8
+#define SALT_SIZE			9
 
 #define MIN_KEYS_PER_CRYPT		MD5_N
 #define MAX_KEYS_PER_CRYPT		MD5_N
 
 static struct fmt_tests tests[] = {
 	{"$1$12345678$aIccj83HRDBo6ux1bVx7D1", "0123456789ABCDE"},
+	{"$apr1$Q6ZYh...$RV6ft2bZ8j.NGrxLYaJt9.", "test"},
 	{"$1$12345678$f8QoJuo0DpBRfQSD0vglc1", "12345678"},
+	{"$1$$qRPK7m23GJusamGpoGLby/", ""},
+	{"$apr1$a2Jqm...$grFrwEgiQleDr0zR4Jx1b.", "15 chars is max"},
+	{"$1$$AuJCr07mI7DSew03TmBIv/", "no salt"},
+	{"$1$`!@#%^&*$E6hD76/pKTS8qToBCkux30", "invalid salt"},
 	{"$1$12345678$xek.CpjQUVgdf/P2N9KQf/", ""},
 	{"$1$1234$BdIMOAWFOV2AQlLsrN/Sw.", "1234"},
+	{"$apr1$rBXqc...$NlXxN9myBOk95T0AyLAsJ0", "john"},
+	{"$apr1$Grpld/..$qp5GyjwM2dnA5Cdej9b411", "the"},
+	{"$apr1$GBx.D/..$yfVeeYFCIiEXInfRhBRpy/", "ripper"},
 	{NULL}
 };
 
@@ -40,7 +48,11 @@ static int valid(char *ciphertext)
 {
 	char *pos, *start;
 
-	if (strncmp(ciphertext, "$1$", 3)) return 0;
+	if (strncmp(ciphertext, "$1$", 3)) {
+		if (strncmp(ciphertext, "$apr1$", 6))
+			return 0;
+		ciphertext += 3;
+	}
 
 	for (pos = &ciphertext[3]; *pos && *pos != '$'; pos++);
 	if (!*pos || pos < &ciphertext[3] || pos > &ciphertext[11]) return 0;
@@ -106,9 +118,22 @@ static int get_hash_4(int index)
 
 static int salt_hash(void *salt)
 {
-	return
-		((int)atoi64[ARCH_INDEX(((char *)salt)[0])] |
-		((int)atoi64[ARCH_INDEX(((char *)salt)[1])] << 6)) & 0x3FF;
+	unsigned int i, h, retval;
+
+	retval = 0;
+	for (i = 0; i <= 6; i += 2) {
+		h = (unsigned char)atoi64[ARCH_INDEX(((char *)salt)[i])];
+		h ^= ((unsigned char *)salt)[i + 1];
+		h <<= 6;
+		h ^= (unsigned char)atoi64[ARCH_INDEX(((char *)salt)[i + 1])];
+		h ^= ((unsigned char *)salt)[i];
+		retval += h;
+	}
+
+	retval ^= retval >> 10;
+	retval &= 0x3FF;
+
+	return retval;
 }
 
 static void set_key(char *key, int index)

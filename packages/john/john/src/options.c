@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-2010 by Solar Designer
+ * Copyright (c) 1996-2011 by Solar Designer
  */
 
 #include <stdio.h>
@@ -68,12 +68,7 @@ static struct opt_entry opt_list[] = {
 	{NULL}
 };
 
-#if DES_BS
-/* nonstd.c, sboxes.c, sboxes-s.c, and parts of x86-mmx.S aren't mine - SD */
-#define JOHN_COPYRIGHT "Solar Designer and others"
-#else
 #define JOHN_COPYRIGHT "Solar Designer"
-#endif
 
 #ifdef HAVE_CRYPT
 #define MAYBE_CRYPT "/crypt"
@@ -83,7 +78,7 @@ static struct opt_entry opt_list[] = {
 
 #define JOHN_USAGE \
 "John the Ripper password cracker, version " JOHN_VERSION "\n" \
-"Copyright (c) 1996-2010 by " JOHN_COPYRIGHT "\n" \
+"Copyright (c) 1996-2011 by " JOHN_COPYRIGHT "\n" \
 "Homepage: http://www.openwall.com/john/\n" \
 "\n" \
 "Usage: %s [OPTIONS] [PASSWORD-FILES]\n" \
