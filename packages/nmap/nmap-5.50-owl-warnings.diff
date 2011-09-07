@@ -1,0 +1,38 @@
+diff -uNp -r nmap-5.50.orig/ncat/ncat_ssl.c nmap-5.50/ncat/ncat_ssl.c
+--- nmap-5.50.orig/ncat/ncat_ssl.c	2011-01-31 12:12:35 +0000
++++ nmap-5.50/ncat/ncat_ssl.c	2011-01-31 12:18:17 +0000
+@@ -114,7 +114,7 @@ enum {
+ 
+ SSL_CTX *setup_ssl_listen(void)
+ {
+-    const SSL_METHOD *method;
++    SSL_METHOD *method;
+ 
+     if (sslctx)
+         goto done;
+@@ -278,11 +278,11 @@ static int cert_match_dnsname(X509 *cert
+ #if (OPENSSL_VERSION_NUMBER > 0x00907000L)
+     if (method->it != NULL) {
+         gen_names = (STACK_OF(GENERAL_NAME) *) ASN1_item_d2i(NULL,
+-            (const unsigned char **) &data,
++            (unsigned char **) &data,
+             ext->value->length, ASN1_ITEM_ptr(method->it));
+     } else {
+         gen_names = (STACK_OF(GENERAL_NAME) *) method->d2i(NULL,
+-            (const unsigned char **) &data,
++            (unsigned char **) &data,
+             ext->value->length);
+     }
+ #else
+diff -uNp -r nmap-5.50.orig/nping/PacketElement.h nmap-5.50/nping/PacketElement.h
+--- nmap-5.50.orig/nping/PacketElement.h	2011-01-31 12:12:36 +0000
++++ nmap-5.50/nping/PacketElement.h	2011-01-31 12:13:30 +0000
+@@ -108,7 +108,7 @@ class PacketElement {
+   public:
+ 
+     PacketElement();
+-    ~PacketElement();
++    virtual ~PacketElement();
+ 
+     /** This function MUST be overwritten on ANY class that inherits from
+       *  this one. Otherwise getBinaryBuffer will fail */

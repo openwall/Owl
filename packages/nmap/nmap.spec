@@ -1,13 +1,19 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.44 2010/12/01 09:25:35 segoon Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.44.2.1 2011/09/07 06:49:41 solar Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
 %define BUILD_NDIFF 0
+%define BUILD_NPING 1
+
+# nping wants EVP_sha256() that is not part of OpenSSL 0.9.7.
+# If you only have OpenSSL 0.9.7 define this to 0.
+# - segoon
+%define HAVE_OPENSSL_SHA256 0
 
 Summary: Network exploration tool and security scanner.
 Name: nmap
-Version: 5.21
-Release: owl2
+Version: 5.51
+Release: owl0.3.0.1
 Epoch: 2
 License: GPL
 Group: Applications/System
@@ -19,17 +25,18 @@ Source: %srcname-stripped-for-owl-1.tar.xz
 # and a README-stripped file has been added.
 # The .tar.xz file was created with:
 # tar cJf %SOURCE0 --owner=root --group=root `find %srcname ! -type d | sort -i -t / -k 3 | sort -i -t . -k 3`
-# The size reduced from 9.6 MB to 2.5 MB.
+# The size reduced from 17 MB to 3.4 MB.
 # Source: http://nmap.org/dist/%srcname.tar.bz2
 # Signature: http://nmap.org/dist/sigs/%srcname.tar.bz2.asc
 Patch0: nmap-5.20-owl-nse_ldflags.diff
-Patch1: nmap-5.20-alt-owl-autoheader.diff
-Patch2: nmap-5.20-alt-owl-drop-priv.diff
-Patch3: nmap-5.20-alt-owl-dot-dir.diff
-Patch4: nmap-5.20-alt-owl-fileexistsandisreadable.diff
-Patch5: nmap-5.20-owl-include.diff
-Patch6: nmap-5.21-owl-warnings.diff
-Patch7: nmap-5.20-owl-route.diff
+Patch1: nmap-5.50-alt-owl-autoheader.diff
+Patch2: nmap-5.51-alt-owl-drop-priv.diff
+Patch3: nmap-5.50-alt-owl-dot-dir.diff
+Patch4: nmap-5.50-alt-owl-fileexistsandisreadable.diff
+Patch5: nmap-5.50-owl-warnings.diff
+Patch6: nmap-5.50-owl-build.diff
+Patch7: nmap-5.50-owl-nping-drop-priv.diff
+Patch8: nmap-5.50-owl-nping-autoheader.diff
 PreReq: grep, shadow-utils
 Requires: /var/empty
 %if %BUILD_NDIFF
@@ -68,50 +75,112 @@ Ncat will not only work with IPv4 and IPv6 but provides the user with a
 virtually limitless number of potential uses.
 %endif
 
+%if %BUILD_NPING
+%package -n nping
+Summary: Network packet generation tool / ping utility.
+Group: Applications/System
+
+%description -n nping
+Nping is an Open Source tool for network packet generation, response
+analysis, and response time measurement.  Nping allows users to generate
+network packets of a wide range of protocols, letting them tune
+virtually any field of the protocol headers.  While Nping can be used as
+a simple ping utility to detect active hosts, it can also be used as a
+raw packet generator for network stack stress tests, ARP poisoning,
+Denial of Service attacks, route tracing, and other purposes.
+%endif
+
 %prep
 %setup -q -n %srcname
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
+%patch3 -p0
+%patch4 -p0
 %patch5 -p1
-%patch6 -p1
+%patch6 -p0
 %patch7 -p1
-bzip2 -9 CHANGELOG ncat/ChangeLog docs/TODO*
+%patch8 -p1
+bzip2 -9 CHANGELOG ncat/ChangeLog
 
 %if !%BUILD_NSE_ENABLED
 %define nseflag --without-liblua
 %else
-%define nseflag %{nil}
+%define nseflag %nil
 %endif
 
 %if !%BUILD_NCAT
 %define ncatflag --without-ncat
 %else
-%define ncatflag %{nil}
+%define ncatflag %nil
 %endif
 
 %if %BUILD_NDIFF
 %define ndiff_flag --with-ndiff
 %else
-%define ndiff_flag %{nil}
+%define ndiff_flag %nil
+%endif
+
+%if !%BUILD_NPING
+%define npingflag --without-nping
+%else
+%define npingflag %nil
 %endif
 
 %build
 aclocal
 autoheader
 autoconf
+
+pushd nping
+aclocal
+autoheader
+autoconf
+popd
+
+%if !%HAVE_OPENSSL_SHA256
+# First, build everything without openssl, but with nping
 %configure \
-	--without-zenmap %nseflag %ncatflag %ndiff_flag \
+	--without-openssl \
+	--without-zenmap %nseflag %ncatflag %ndiff_flag %npingflag \
+	--with-libpcap=yes \
 	--with-user=nmap \
 	--with-chroot-empty=/var/empty
 touch makefile.dep
 %__make
+mv nping/nping{,.wo-ssl}
+%__make clean
+
+# Now build everything with openssl, but without nping
+%configure \
+	--without-zenmap %nseflag %ncatflag %ndiff_flag --without-nping \
+	--with-libpcap=yes \
+	--with-user=nmap \
+	--with-chroot-empty=/var/empty
+touch makefile.dep
+%__make
+%else
+%configure \
+	--without-zenmap %nseflag %ncatflag %ndiff_flag %npingflag \
+	--with-libpcap=yes \
+	--with-user=nmap \
+	--with-chroot-empty=/var/empty
+touch makefile.dep
+%__make
+%endif
 
 %install
 rm -rf %buildroot
 %__make install DESTDIR=%buildroot
+
+%if %BUILD_NPING
+%if !%HAVE_OPENSSL_SHA256
+%__install -m 0755 nping/nping.wo-ssl %buildroot%_bindir/nping
+%else
+%__install -m 0755 nping/nping %buildroot%_bindir/nping
+%endif
+%__install -m 0755 nping/docs/nping.1 %buildroot%_mandir/man1/
+%endif
 
 %pre
 grep -q ^nmap: /etc/group || groupadd -g 189 nmap
@@ -120,7 +189,7 @@ grep -q ^nmap: /etc/passwd ||
 
 %files
 %defattr(-,root,root)
-%doc CHANGELOG.bz2 COPYING HACKING docs/{README,TODO*,*.txt}
+%doc CHANGELOG.bz2 COPYING HACKING docs/{README,*.txt}
 %attr(750,root,wheel) %_bindir/nmap
 %_mandir/man1/nmap.1*
 %_mandir/*/man1/nmap.1*
@@ -141,7 +210,38 @@ grep -q ^nmap: /etc/passwd ||
 %_datadir/ncat
 %endif
 
+%if %BUILD_NPING
+%files -n nping
+%defattr(-,root,root)
+%doc nping/COPYING
+%_bindir/nping
+%_mandir/man1/nping.1*
+%endif
+
 %changelog
+* Wed Sep 07 2011 Solar Designer <solar-at-owl.openwall.com> 2:5.51-owl0.3.0.1
+- Mostly sync'ed with 2:5.51-owl1 by Vasiliy Kulikov in Owl-current, but kept
+SSL support in Nping disabled since we have an older version of OpenSSL in Owl
+3.0-stable.
+
+* Wed Feb 02 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl5
+- Introduced a way to enable Nping's OpenSSL support in this spec file (not
+enabled yet).
+
+* Mon Jan 31 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl4
+- Added patch for nping to drop root privileges.
+
+* Mon Jan 31 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl3
+- Package nping without ssl support.
+
+* Sat Jan 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl2
+- Fixed owl-drop-priv patch bug (nmap -n was complaining).
+
+* Sat Jan 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.50-owl1
+- Updated to 5.50.
+- Dropped patches -owl-route and -owl-include (fixed in upstream).
+- Updated all other patches.
+
 * Thu Jan 28 2010 Solar Designer <solar-at-owl.openwall.com> 2:5.21-owl2
 - Fixed two additional compiler warnings seen with a 64-bit build.
 

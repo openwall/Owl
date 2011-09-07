@@ -1,0 +1,21 @@
+--- acinclude.m4.orig   2011-01-29 12:05:39.000000000 +0000
++++ acinclude.m4        2011-01-29 12:06:03.000000000 +0000
+@@ -51,6 +51,7 @@ int main() {
+   ], [
+     AC_TRY_RUN([
+ #include <stdio.h>
++#include <sys/types.h>
+ #ifdef HAVE_SYS_IOCCOM_H
+ #include <sys/ioccom.h>
+ #endif
+--- nping/configure.orig	2011-01-29 15:40:19.000000000 +0300
++++ nping/configure	2011-01-29 15:40:33.000000000 +0300
+@@ -5069,6 +5069,7 @@ else
+ /* end confdefs.h.  */
+ 
+ #include <stdio.h>
++#include <sys/types.h>
+ #ifdef HAVE_SYS_IOCCOM_H
+ #include <sys/ioccom.h>
+ #endif
+
