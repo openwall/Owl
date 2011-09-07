@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.58 2010/08/21 00:42:07 solar Exp $
+# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.58.2.1 2011/09/07 05:53:02 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.4.1
-Release: owl12
+Release: owl14
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -38,8 +38,10 @@ Patch24: shadow-4.0.4.1-owl-newgrp.diff
 Patch30: shadow-4.0.4.1-owl-tcb.diff
 Patch40: shadow-4.0.4.1-alt-man.diff
 Patch41: shadow-4.0.4.1-alt-configure.diff
+Patch42: shadow-4.0.4.1-owl-name-relaxed.diff
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: pam >= 0:0.80-owl2, pam_userpass >= 0.5, tcb >= 0.9.8
+Requires: glibc-crypt_blowfish >= 1.2
 BuildRequires: libtool, gettext >= 0.14.1, automake, autoconf
 BuildRequires: glibc-crypt_blowfish-devel
 BuildRequires: pam-devel, pam_userpass-devel, tcb-devel
@@ -74,6 +76,7 @@ shadow password files.
 %patch30 -p1
 %patch40 -p1
 %patch41 -p1
+%patch42 -p1
 
 find . -name '*.orig' -delete
 bzip2 -9k ChangeLog NEWS doc/HOWTO
@@ -170,7 +173,7 @@ fi
 %defattr(-,root,root)
 %doc ChangeLog.bz2 NEWS.bz2 README doc/HOWTO.bz2
 %dir /etc/default
-%attr(0644,root,root) %config(noreplace) %verify(not mode group) /etc/login.defs
+%attr(0640,root,shadow) %config(noreplace) /etc/login.defs
 %attr(0600,root,root) %config(noreplace) /etc/default/useradd
 %_sbindir/adduser
 %attr(0700,root,root) %_sbindir/user*
@@ -238,6 +241,16 @@ fi
 %exclude %_mandir/man8/mkpasswd*
 
 %changelog
+* Sun Jul 17 2011 Solar Designer <solar-at-owl.openwall.com> 2:4.0.4.1-owl14
+- In /etc/pam.d/chpasswd, /etc/pam.d/newusers, and /etc/login.defs, use the
+"$2y$" hash encoding prefix (crypt_blowfish 1.2+).
+- Added "Requires: glibc-crypt_blowfish >= 1.2".
+- Install /etc/login.defs as root:shadow mode 640 right away.
+
+* Sat Feb 05 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:4.0.4.1-owl13
+- Allow capital letters in usernames and groupnames.  Added USERNAME_RELAXED
+and GROUPNAME_RELAXED options.
+
 * Sat Aug 21 2010 Solar Designer <solar-at-owl.openwall.com> 2:4.0.4.1-owl12
 - Don't package getspnam.3* (let the man-pages version of it be installed).
 

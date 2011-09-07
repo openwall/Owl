@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/shadow-utils/login.defs,v 1.12 2005/11/16 13:31:52 solar Exp $
+# $Owl: Owl/packages/shadow-utils/login.defs,v 1.12.4.1 2011/09/07 05:53:02 solar Exp $
 #
 # Please refer to login.defs(5) for more information on this file, the
 # parameters which may be defined here and the corresponding programs.
@@ -74,7 +74,7 @@ CREATE_HOME		no
 # The password hashing method and iteration count to use for group
 # passwords that may be set with gpasswd(1).
 #
-CRYPT_PREFIX		$2a$
+CRYPT_PREFIX		$2y$
 CRYPT_ROUNDS		8
 
 #
@@ -110,3 +110,11 @@ TCB_SYMLINKS		no
 #
 USERNAME_MAX		8
 GROUPNAME_MAX		16
+
+#
+# Currently, these control whether capital letters are allowed in usernames
+# and group names or not.  The exact effect of these settings is subject
+# to change in future versions.  The default for both settings is no.
+#
+#USERNAME_RELAXED	no
+#GROUPNAME_RELAXED	no
