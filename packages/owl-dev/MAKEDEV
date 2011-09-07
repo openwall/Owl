@@ -1,6 +1,6 @@
 #!/bin/bash -
 
-VERSION='MAKEDEV 2.5.2-0.13-owl1'
+VERSION='MAKEDEV 2.5.2-0.15-owl1'
 
 # This version of MAKEDEV is based on work of many people.  The script was
 # initially written by Nick Holloway, and then maintained by Michael K.
@@ -205,7 +205,7 @@ cvt () {
 			ide5)	echo hdk hdl ;;
 			ide6)	echo hdm hdn ;;
 			ide7)	echo hdo hdp ;;
-			sd)	echo sda sdb sdc sdd sde sdf sdg sdh ;;
+			sd)	echo sda sdb sdc sdd sde sdf sdg sdh sdi sdj sdk sdl sdm sdn sdo sdp ;;
 			sr)	echo scd0 ;;
 			st)	echo st0 ;;
 			xd)	echo xda xdb ;;
@@ -243,7 +243,7 @@ do
 		$0 $opts fd0 fd1 || exit 1
 		$0 $opts hda hdb hdc hdd hde hdf hdg hdh || exit 1
 		$0 $opts xda xdb || exit 1
-		$0 $opts sda sdb sdc sdd sde sdf sdg sdh || exit 1
+		$0 $opts sda sdb sdc sdd sde sdf sdg sdh sdi sdj sdk sdl sdm sdn sdo sdp || exit 1
 		$0 $opts st0 st1 || exit 1
 		$0 $opts scd0 scd1 || exit 1
 		$0 $opts sg || exit 1
