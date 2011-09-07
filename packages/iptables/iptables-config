@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/iptables/iptables-config,v 1.1 2006/03/01 22:52:04 ldv Exp $
+# $Owl: Owl/packages/iptables/iptables-config,v 1.1.2.1 2011/09/07 07:04:47 solar Exp $
 #
 # Save current iptables firewall rules on stop.
 #   Value: yes|no,  default: no
@@ -17,5 +17,5 @@ IPTABLES_RESTORE_ARGS=
 IPTABLES_SAVE_ARGS=
 
 # Additional options to iptables --list.
-#   Value: string,  default:
-IPTABLES_STATUS_ARGS=
+#   Value: string,  default: -nv
+IPTABLES_STATUS_ARGS=-nv

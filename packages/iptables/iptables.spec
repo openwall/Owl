@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/iptables/iptables.spec,v 1.27 2010/11/09 18:19:19 segoon Exp $
+# $Owl: Owl/packages/iptables/iptables.spec,v 1.27.2.1 2011/09/07 07:04:47 solar Exp $
 
 %define BUILD_IPV6 0
 
 Summary: Tools for managing Netfilter/iptables packet filtering rules.
 Name: iptables
 Version: 1.4.10
-Release: owl1
+Release: owl2
 License: GPLv2+
 Group: System Environment/Base
 URL: http://www.netfilter.org/projects/iptables/
@@ -144,6 +144,9 @@ fi
 %endif
 
 %changelog
+* Mon Mar 14 2011 Solar Designer <solar-at-owl.openwall.com> 1.4.10-owl2
+- Changed the default for IPTABLES_STATUS_ARGS to "-nv".
+
 * Tue Nov 09 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.4.10-owl1
 - Updated to 1.4.10.
 - Updated patches alt-link, alt-modprobe and owl-Makefile.

@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/iptables/iptables.init,v 1.8 2007/04/15 13:25:26 ldv Exp $
+# $Owl: Owl/packages/iptables/iptables.init,v 1.8.2.1 2011/09/07 07:04:47 solar Exp $
 #
 # chkconfig: 2345 08 92
 # description: \
@@ -13,7 +13,7 @@ IPTABLES_RESTORE="$IPTABLES-restore"
 IPTABLES_RESTORE_ARGS=
 IPTABLES_SAVE="$IPTABLES-save"
 IPTABLES_SAVE_ARGS=
-IPTABLES_STATUS_ARGS=
+IPTABLES_STATUS_ARGS=-nv
 IPTABLES_SAVE_ON_STOP=no
 IPTABLES_SAVE_ON_RESTART=no
 IPTABLES_DATA="/etc/sysconfig/$IPTABLES"
