@@ -1,24 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.3 2011/05/04 13:36:49 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.4 2011/09/07 07:01:39 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 238.9.1.el5.028stab089.1
+%define ovzversion 238.19.1.el5.028stab092.2
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab089.1
-# URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab089.1
+URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab092.2
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab089.1/patches/patch-238.9.1.el5.028stab089.1-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab089.1/patches/patch-238.9.1.el5.028stab089.1-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab092.2/patches/patch-238.19.1.el5.028stab092.2-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab092.2/patches/patch-238.19.1.el5.028stab092.2-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -105,6 +104,25 @@ done
 %files fake
 
 %changelog
+* Wed Jul 27 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.19.1.el5.028stab092.2.owl1
+- Updated to 2.6.18-238.19.1.el5.028stab092.2.
+- In kernel/sched.c, wrapped the use of sched_goidle in
+#ifdef CONFIG_SCHEDSTATS ... #endif (otherwise the new revision of the code
+wouldn't compile with our config).
+- In drivers/net/bonding/bond_main.c, moved the body of a function to be
+inlined up in the code to make this compilable by gcc 3.4.5;
+set CONFIG_BONDING=m in dot-config-*.
+- CONFIG_BLK_CPQ_CISS_DA=m and CONFIG_CISS_SCSI_TAPE=y in dot-config-x86_64.
+- Applied a patch adding limited support for LSISAS8208ELP (PCI device id
+0x0059), which provides access to individual hard drives:
+http://bugs.gentoo.org/show_bug.cgi?id=325805
+http://bugs.gentoo.org/attachment.cgi?id=236721
+http://forums.gentoo.org/viewtopic-t-731366.html
+- Moved the RLIMIT_NPROC check from set_user() to execve():
+http://www.openwall.com/lists/kernel-hardening/2011/07/12/1
+- In set_user(), SIGKILL the process rather than return -EAGAIN on alloc_uid()
+failure (which "can't happen").
+
 * Tue May 03 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-238.9.1.el5.028stab089.1-owl1
 - Updated to 2.6.18-238.9.1.el5.028stab089.1.  This fixes obscure security
 issues: kernel panic by unprivileged user via NFSv4 (CVE-2011-1090) and a NULL
@@ -127,8 +145,8 @@ http://bugzilla.openvz.org/show_bug.cgi?id=1815
 ip_tables (CVE-2011-1171), ip6_tables (CVE-2011-1172), and ipt_CLUSTERIP:
 http://www.openwall.com/lists/oss-security/2011/03/18/15
 One must have CAP_NET_ADMIN to exploit these issues.  The default Owl
-installation is vulnerable to the infoleak in ip_tables only as we don't
-neither ship other netfiler modules nor have IPv6 enabled.
+installation is vulnerable to the infoleak in ip_tables only as we neither ship
+other netfilter modules nor have IPv6 enabled.
 
 * Sat Mar 12 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.5.1.el5.028stab085.2.owl2
 - Disabled the eepro100 driver in favor of e100:
