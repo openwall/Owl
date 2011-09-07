@@ -1,12 +1,16 @@
 #!/bin/sh
-# $Owl: Owl/packages/iputils/ping.control,v 1.2 2005/11/16 13:11:14 solar Exp $
+# $Owl: Owl/packages/iputils/ping.control,v 1.2.4.1 2011/09/07 07:09:46 solar Exp $
 
 . /etc/control.d/functions
 
 BINARY=/bin/ping
 
-new_fmode public 4711 root root
+new_fmode traditional 4711 root root
+new_fmode dgramsocket 2711 root _icmp
 new_fmode wheelonly 4710 root wheel
 new_fmode restricted 700 root root
+
+# Backwards compatibility
+test "$*" = public && set - dgramsocket
 
 control_fmode "$BINARY" "$*" || exit 1

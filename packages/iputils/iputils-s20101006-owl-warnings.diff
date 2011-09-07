@@ -1,0 +1,24 @@
+diff -uNp -r iputils-s20101006.orig/tracepath6.c iputils-s20101006/tracepath6.c
+--- iputils-s20101006.orig/tracepath6.c	2010-10-06 11:59:20 +0000
++++ iputils-s20101006/tracepath6.c	2011-03-28 11:11:30 +0000
+@@ -89,7 +89,7 @@ void print_host(const char *a, const cha
+ 	}
+ 	if (plen >= HOST_COLUMN_SIZE)
+ 		plen = HOST_COLUMN_SIZE - 1;
+-	printf("%*s", HOST_COLUMN_SIZE - plen, "");
++	printf("%*s", (int)(HOST_COLUMN_SIZE - plen), "");
+ }
+ 
+ int recverr(int fd, int ttl)
+diff -uNp -r iputils-s20101006.orig/tracepath.c iputils-s20101006/tracepath.c
+--- iputils-s20101006.orig/tracepath.c	2010-10-06 11:59:20 +0000
++++ iputils-s20101006/tracepath.c	2011-03-28 11:10:01 +0000
+@@ -77,7 +77,7 @@ void print_host(const char *a, const cha
+ 	}
+ 	if (plen >= HOST_COLUMN_SIZE)
+ 		plen = HOST_COLUMN_SIZE - 1;
+-	printf("%*s", HOST_COLUMN_SIZE - plen, "");
++	printf("%*s", (int)(HOST_COLUMN_SIZE - plen), "");
+ }
+ 
+ int recverr(int fd, int ttl)

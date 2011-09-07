@@ -1,0 +1,52 @@
+diff -uNp iputils-s20101006.orig/arping.c iputils-s20101006/arping.c
+--- iputils-s20101006.orig/arping.c	2010-10-06 11:59:20 +0000
++++ iputils-s20101006/arping.c	2011-03-24 12:00:12 +0000
+@@ -32,7 +32,9 @@
+ #include <netinet/in.h>
+ #include <arpa/inet.h>
+ 
++#if 0
+ #include <sysfs/libsysfs.h>
++#endif
+ 
+ #include "SNAPSHOT.h"
+ 
+@@ -311,6 +313,7 @@ int recv_pack(unsigned char *buf, int le
+ 	return 1;
+ }
+ 
++#if 0
+ void set_device_broadcast(char *device, unsigned char *ba, size_t balen)
+ {
+ 	struct sysfs_class_device *dev;
+@@ -340,6 +343,7 @@ void set_device_broadcast(char *device, 
+ 
+ 	return;
+ }
++#endif
+ 
+ int
+ main(int argc, char **argv)
+@@ -527,7 +531,7 @@ main(int argc, char **argv)
+ 
+ 	he = me;
+ 
+-#if 1
++#if 0
+ 	set_device_broadcast(device, ((struct sockaddr_ll *)&he)->sll_addr,
+ 			     ((struct sockaddr_ll *)&he)->sll_halen);
+ #else
+Общие подкаталоги: iputils-s20101006.orig/doc и iputils-s20101006/doc
+diff -uNp iputils-s20101006.orig/Makefile iputils-s20101006/Makefile
+--- iputils-s20101006.orig/Makefile	2010-10-06 11:59:20 +0000
++++ iputils-s20101006/Makefile	2011-03-24 12:00:29 +0000
+@@ -27,7 +27,7 @@ all: $(TARGETS)
+ 
+ 
+ tftpd: tftpd.o tftpsubs.o
+-arping: arping.o -lsysfs
++arping: arping.o
+ ping: ping.o ping_common.o
+ ping6: ping6.o ping_common.o -lresolv -lcrypto
+ ping.o ping6.o ping_common.o: ping_common.h
+Общие подкаталоги: iputils-s20101006.orig/Modules и iputils-s20101006/Modules
