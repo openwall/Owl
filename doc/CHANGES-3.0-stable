@@ -42,6 +42,195 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl 3.0-stable.
 
+(2011/09/07)
+2011/09/09	Owl/build/{install*.sh,installorder.conf}
+Support for optional package tags has been added to installorder.conf
+and made use of in install*.sh scripts.  Currently supported are:
+"D:" - CD only;
+"d:" - exclude from CD;
+"E:" - exclude from CD and OpenVZ container templates;
+"H:" - host only (exclude from OpenVZ container templates).
+
+(2011/09/07)
+2011/09/09	Package: owl-etc
+Added /etc/owl-release (with "Owl 3.0-stable" in it).
+
+(2011/09/07)
+2011/09/09	Package: owl-dev
+Create /dev/sd* devices for 16 disks, not just 8 like we did before.
+
+(2011/07/27)
+2011/09/09	Package: kernel
+SECURITY FIX	Severity: none to high, local, active
+Updated to 2.6.18-238.19.1.el5.028stab092.2.  Enabled CONFIG_BONDING=m
+in both i686 and x86_64 kernels, enabled CONFIG_BLK_CPQ_CISS_DA=m in the
+x86_64 kernel (i686 already had it at "=y").  Applied a patch adding
+limited support for LSISAS8208ELP (PCI device id 0x0059), which provides
+access to individual hard drives.  Moved the RLIMIT_NPROC check from
+set_user() to execve(2) and adjusted set_user() so that it can't fail.
+These changes were desirable to address missing setuid(2) return value
+check vulnerabilities in user-space programs.
+References:
+http://wiki.openvz.org/Download/kernel/rhel5/028stab092.2
+http://wiki.openvz.org/Download/kernel/rhel5/028stab091.1
+http://rhn.redhat.com/errata/RHSA-2011-0927.html
+http://rhn.redhat.com/errata/RHSA-2011-0833.html
+https://bugs.gentoo.org/show_bug.cgi?id=325805
+https://bugs.gentoo.org/attachment.cgi?id=236721
+http://forums.gentoo.org/viewtopic-t-731366.html
+http://www.openwall.com/lists/kernel-hardening/2011/07/12/1
+
+(2011/05/03 - 2011/07/25)
+2011/09/09	Package: rpm
+SECURITY FIX	Severity: none to high, local, passive
+Added a patch to remove unsafe file permissions (chmod'ing files to 0) on
+package removal or upgrade to prevent continued access to such files via
+hard-links possibly created by a user.  With this same update, we've also
+fixed a non-security regression in %patch.
+References:
+http://www.openwall.com/lists/oss-security/2011/07/25/1
+http://www.openwall.com/lists/oss-security/2010/06/02/2
+https://bugzilla.redhat.com/show_bug.cgi?id=125517
+https://bugzilla.redhat.com/show_bug.cgi?id=598775
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2005-4889
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-2059
+http://www.openwall.com/lists/owl-dev/2011/05/02/1
+
+(2011/06/21 - 2011/07/17)
+2011/09/09	Packages: glibc, pam, shadow-utils, tcb
+SECURITY FIX	Severity: high, remote, active
+crypt_blowfish has been updated to version 1.1 (and then to 1.2), which
+fixes the 8-bit character handling bug and adds 8-bit test vectors and a
+quick self-test on every password hash computation.  The impact of this
+bug was that most (but not all) passwords containing non-ASCII
+characters with the 8th bit set were hashed incorrectly, resulting in
+password hashes incompatible with those of OpenBSD's original
+implementation of bcrypt.  What's worse, in some cases (but not in all)
+one, two, or three characters immediately preceding the 8-bit characters
+were ignored by the password hash computation.  Thus, many passwords
+containing characters with the 8th bit set were significantly easier to
+crack than it was previously expected.  This primarily applies to
+offline attacks against the password hashes (if the hashes are leaked or
+stolen), but in rare extreme cases it might also apply to remote
+password guessing attacks.  In practice, passwords with non-ASCII
+characters are relatively uncommon and are typically more complicated
+than average, so they're unlikely to be an attractive target for
+attacks, despite of the weakness that this bug exposes them to.  Yet the
+risk is there.  With this glibc update, existing users' passwords
+containing characters with the 8th bit set will mostly stop working,
+because the hashes will be computed correctly and not match the
+incorrectly computed hashes recorded in the system.  In order to allow
+users to log in after the upgrade even if they have a potentially
+affected password, the newly introduced backwards compatibility hash
+encoding prefix of "$2x$" may be used.  Such password hashes should only
+be used during a transition period; when passwords are changed and
+hashed using the correct algorithm, another newly introduced "$2y$"
+prefix is used.  After installation of this glibc update, login services
+such as sshd(8) should be restarted ("service sshd restart" and so on)
+in order for users' newly changed passwords (with the "$2y$" prefix on
+the hash encodings) to be recognized.
+References:
+http://www.openwall.com/lists/announce/2011/06/21/1
+http://www.openwall.com/lists/oss-security/2011/06/24/1
+http://www.openwall.com/lists/oss-security/2011/06/29/16
+http://www.openwall.com/lists/john-dev/2011/07/06/15
+http://www.openwall.com/lists/oss-security/2011/07/07/9
+http://www.openwall.com/lists/oss-security/2011/07/08/1
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2483
+
+(2011/04/27 - 2011/06/22)
+2011/09/09	Package: john
+Updated to 1.7.8.
+References:
+http://www.openwall.com/lists/john-users/2011/06/22/1
+http://www.openwall.com/lists/john-users/2011/04/28/1
+
+(2011/01/24 - 2011/06/09)
+2011/09/09	Package: lilo
+Updated to 23.2.
+
+(2011/05/03)
+2011/09/09	Package: iproute2
+Updated to 2.6.38.
+
+(2011/01/31 - 2011/05/03)
+2011/09/09	Packages: iputils, owl-etc, owl-startup
+Updated iputils to s20101006.  Made use of our updated kernel's support
+for non-raw ICMP sockets in ping(1).
+References:
+http://lwn.net/Articles/420799/
+http://openwall.info/wiki/people/segoon/ping
+
+(2011/01/29 - 2011/03/17)
+2011/09/09	Package: nmap
+Updated to 5.51.
+
+(2011/03/15)
+2011/09/09	Package: strace
+Updated to 4.6.
+
+(2011/03/14)
+2011/09/09	Package: iptables
+Changed the default for IPTABLES_STATUS_ARGS to "-nv".  Most
+importantly, this disables the (risky and slow) reverse DNS lookups with
+"service iptables status".
+
+(2011/02/05)
+2011/09/09	Packages: usb_modeswitch, usb_modeswitch-data
+New packages: usb_modeswitch is a mode switching tool for controlling
+"flip flop" (multiple device) USB gear.  usb_modeswitch-data contains
+the data files for usb_modeswitch.
+
+(2011/02/05)
+2011/09/09	Package: libusb-compat
+New package: libusb-compat is a compatibility layer allowing
+applications written for libusb-0.1 to work with libusb-1.0.  It is
+needed for usb_modeswitch.
+
+(2011/02/05)
+2011/09/09	Package: shadow-utils
+Added USERNAME_RELAXED and GROUPNAME_RELAXED options to /etc/login.defs,
+which, if changed to "yes", will allow capital letters to be used in new
+usernames and/or group names, respectively.
+
+(2011/01/30)
+2011/09/09	Package: vconfig
+New package: vconfig is a user mode program to add and remove 802.1q
+VLAN virtual devices from Ethernet devices.
+
+(2011/01/28)
+2011/09/09	Package: usbutils
+New package: usbutils contains the lsusb utility for inspecting the
+devices connected to the USB bus.
+
+(2011/01/28)
+2011/09/09	Package: libusb1
+New package: libusb is a library providing access to USB devices.
+
+(2011/01/27)
+2011/09/09	Package: bridge-utils
+New package: bridge-utils is a tool for configuring the Linux Ethernet
+bridge.
+
+(2011/01/27)
+2011/09/09	Package: pv
+New package: PV ("Pipe Viewer") is a tool for monitoring the progress of
+data through a pipeline.
+
+(2011/01/27)
+2011/09/09	Package: ethtool
+New package: ethtool is an utility for controlling network drivers and
+hardware, particularly for wired Ethernet devices.
+
+(2011/01/25)
+2011/09/09	Package: e2fsprogs
+Updated to 1.41.14.
+
+(2011/01/24)
+2011/09/09	Package: owl-startup
+Added "-s 131072" to the dmesg invocation in rc.sysinit.  Without this
+change, /var/run/dmesg.boot was often incomplete.
+
 (2011/01/28 - 2011/05/03)
 2011/05/03	Package: kernel
 SECURITY FIX	Severity: none to medium/low, local/remote, active
@@ -158,4 +347,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.9 2011/05/04 13:42:20 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.10 2011/09/09 10:24:00 solar Exp $
