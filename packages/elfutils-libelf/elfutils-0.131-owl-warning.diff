@@ -1,0 +1,21 @@
+diff -uNp -r elfutils-0.131.old/libelf/common.h elfutils-0.131/libelf/common.h
+--- elfutils-0.131.old/libelf/common.h	2011-09-09 07:51:27.807697419 +0000
++++ elfutils-0.131/libelf/common.h	2011-09-09 08:20:36.340262001 +0000
+@@ -111,7 +111,7 @@ allocate_elf (int fildes, void *map_addr
+ 
+ 
+ /* Acquire lock for the descriptor and all children.  */
+-static void
++static inline void
+ libelf_acquire_all (Elf *elf)
+ {
+   rwlock_wrlock (elf->lock);
+@@ -130,7 +130,7 @@ libelf_acquire_all (Elf *elf)
+ }
+ 
+ /* Release own lock and those of the children.  */
+-static void
++static inline void
+ libelf_release_all (Elf *elf)
+ {
+   if (elf->kind == ELF_K_AR)
