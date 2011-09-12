@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/mdadm/mdadm.spec,v 1.4 2007/10/07 01:40:17 solar Exp $
+# $Owl: Owl/packages/mdadm/mdadm.spec,v 1.5 2011/09/12 09:23:33 segoon Exp $
 
 Summary: mdadm is used for controlling Linux md devices (aka RAID arrays).
 Name: mdadm
 Version: 2.6.3
 %define version_howto 1.1
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 URL: http://neil.brown.name/blog/mdadm
@@ -14,6 +14,7 @@ Source0: ftp://ftp.kernel.org/pub/linux/utils/raid/mdadm/mdadm-%version.tar.bz2
 Source1: Software-RAID.HOWTO-%version_howto.txt.bz2
 Source2: %name.conf
 #Source3: %name.init
+Patch0: mdadm-2.6.3-owl-warnings.diff
 Obsoletes: mdctl, raidtools
 BuildRequires: groff
 BuildRoot: /override/%name-%version
@@ -29,6 +30,7 @@ be used to help with some common tasks).
 
 %prep
 %setup -q
+%patch0 -p1
 
 # this is a system tool and will go into /sbin
 %define _exec_prefix %{nil}
@@ -39,7 +41,7 @@ install -pm 644 %_sourcedir/Software-RAID.HOWTO-%version_howto.txt.bz2 \
 
 %build
 %__make \
-	CXFLAGS='%optflags' \
+	CXFLAGS='%optflags -fno-strict-aliasing' \
 	SYSCONFDIR=%_sysconfdir \
 	CONFFILE=%_sysconfdir/%name.conf \
 	CONFFILE2=/dev/null
@@ -92,6 +94,9 @@ fi
 %_mandir/man*/md*
 
 %changelog
+* Mon Sep 12 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.3-owl2
+- Fixed build failure with gcc 4.6.1.
+
 * Sun Oct 07 2007 Solar Designer <solar-at-owl.openwall.com> 2.6.3-owl1
 - Assorted changes to meet the current Owl conventions.
 - Changes to the package description.
