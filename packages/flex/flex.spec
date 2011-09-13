@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/flex/flex.spec,v 1.18 2010/10/15 01:02:47 solar Exp $
+# $Owl: Owl/packages/flex/flex.spec,v 1.19 2011/09/13 14:21:49 segoon Exp $
 
 Summary: A tool for creating scanners (text pattern recognizers).
 Name: flex
 Version: 2.5.35
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Tools
 URL: http://flex.sourceforge.net
@@ -12,6 +12,7 @@ Patch0: flex-2.5.4a-rh-skel.diff
 Patch1: flex-2.5.35-alt-YY_STATE_BUF_SIZE.diff
 Patch2: flex-2.5.35-suse-pic.diff
 Patch3: flex-2.5.35-alt-info.diff
+Patch4: flex-2.5.35-owl-tests.diff
 PreReq: /sbin/install-info
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
@@ -33,6 +34,7 @@ build process.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 autoconf
@@ -86,6 +88,9 @@ fi
 %exclude %_infodir/dir
 
 %changelog
+* Tue Sep 13 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.5.35-owl2
+- Fixed build bug with gcc 4.6.1.
+
 * Mon Oct 11 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.5.35-owl1
 - Updated to 2.5.35.
 - Imported patches from ALT Linux and SuSE.
