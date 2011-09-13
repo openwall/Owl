@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.61 2011/07/17 10:32:38 solar Exp $
+# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.62 2011/09/13 13:43:18 segoon Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.4.1
-Release: owl14
+Release: owl15
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -241,6 +241,9 @@ fi
 %exclude %_mandir/man8/mkpasswd*
 
 %changelog
+* Tue Sep 13 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:4.0.4.1-owl15
+- Fixed build bug with gcc 4.6.1.
+
 * Sun Jul 17 2011 Solar Designer <solar-at-owl.openwall.com> 2:4.0.4.1-owl14
 - In /etc/pam.d/chpasswd, /etc/pam.d/newusers, and /etc/login.defs, use the
 "$2y$" hash encoding prefix (crypt_blowfish 1.2+).
