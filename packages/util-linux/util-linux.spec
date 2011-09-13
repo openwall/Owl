@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.50 2011/09/13 12:48:23 segoon Exp $
+# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.51 2011/09/13 16:26:43 segoon Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -28,7 +28,6 @@ Patch9: util-linux-2.11z-owl-cytune.diff
 Patch10: util-linux-2.11z-owl-hwclock.diff
 Patch11: util-linux-2.11z-up-pivot_root.diff
 Patch12: util-linux-2.11z-owl-_syscall5.diff
-# XXX: Should be removed if build on sparc, etc. -segoon
 Patch13: util-linux-2.11z-owl-minix.diff
 %if %BUILD_CRYPTO
 Patch100: util-linux-2.11z-crypto-v3.diff.bz2
@@ -191,12 +190,6 @@ fi
 /sbin/cfdisk
 %endif
 
-%ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
-# XXX: broken! -segoon
-/sbin/fsck.minix
-/sbin/mkfs.minix
-%endif
-
 /sbin/mkfs
 /sbin/mkswap
 /sbin/fsck.cramfs
@@ -308,10 +301,6 @@ fi
 /bin/more
 %_mandir/man1/more.1*
 
-%ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
-%_mandir/man8/fsck.minix.8*
-%_mandir/man8/mkfs.minix.8*
-%endif
 %_mandir/man8/mkfs.8*
 %_mandir/man8/elvtune.8*
 %_mandir/man8/blockdev.8*
@@ -360,8 +349,8 @@ fi
 
 %changelog
 * Tue Sep 13 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.11z-owl15
-- Temporary disable fsck.minix and mkfs.minix because of gcc 4.6.1 upgrade.
-As they are needed on sparc only, x86 systems don't suffer.
+- Disable fsck.minix and mkfs.minix compilation.  They are not used
+nowadays and fail to build with gcc 4.6.1.
 
 * Mon Nov 23 2009 Solar Designer <solar-at-owl.openwall.com> 2.11z-owl14
 - In sys-utils/cytune.c, #define __iomem before including <linux/cyclades.h>.
