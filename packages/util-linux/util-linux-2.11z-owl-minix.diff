@@ -1,0 +1,18 @@
+diff -uNp -r util-linux-2.11z.old/disk-utils/Makefile util-linux-2.11z/disk-utils/Makefile
+--- util-linux-2.11z.old/disk-utils/Makefile	2002-11-02 13:52:47 +0000
++++ util-linux-2.11z/disk-utils/Makefile	2011-09-13 12:20:30.721362022 +0000
+@@ -9,12 +9,12 @@ include ../MCONFIG
+ # Where to put man pages?
+ 
+ MAN8= 	blockdev.8 fdformat.8 isosize.8 mkfs.8 mkswap.8 elvtune.8 \
+-	fsck.minix.8 mkfs.minix.8 mkfs.bfs.8
++	mkfs.bfs.8
+ 
+ # Where to put binaries?
+ # See the "install" rule for the links. . .
+ 
+-SBIN= 	mkfs mkswap blockdev elvtune fsck.minix mkfs.minix mkfs.bfs
++SBIN= 	mkfs mkswap blockdev elvtune mkfs.bfs
+ 
+ USRBIN=	fdformat isosize
+ 

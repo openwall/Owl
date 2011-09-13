@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.49 2009/11/23 07:02:06 solar Exp $
+# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.50 2011/09/13 12:48:23 segoon Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -7,7 +7,7 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.11z
-Release: owl14
+Release: owl15
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%version.tar.bz2
@@ -28,6 +28,8 @@ Patch9: util-linux-2.11z-owl-cytune.diff
 Patch10: util-linux-2.11z-owl-hwclock.diff
 Patch11: util-linux-2.11z-up-pivot_root.diff
 Patch12: util-linux-2.11z-owl-_syscall5.diff
+# XXX: Should be removed if build on sparc, etc. -segoon
+Patch13: util-linux-2.11z-owl-minix.diff
 %if %BUILD_CRYPTO
 Patch100: util-linux-2.11z-crypto-v3.diff.bz2
 %endif
@@ -88,6 +90,9 @@ to query the status of a loop device.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%ifarch %ix86 x86_64
+%patch13 -p1
+%endif
 %if %BUILD_CRYPTO
 %patch100 -p1
 %endif
@@ -95,10 +100,10 @@ to query the status of a loop device.
 %build
 unset LINGUAS || :
 CC="%__cc" \
-CFLAGS="%optflags" \
+CFLAGS="%optflags -Wno-strict-aliasing" \
 LDFLAGS="" \
 ./configure
-%__make RPM_OPT_FLAGS="%optflags"
+%__make RPM_OPT_FLAGS="%optflags -Wno-strict-aliasing"
 %__cc %optflags -static -nostartfiles -Dmain=_start -Dexit=_exit \
 	%_sourcedir/nologin.c -o nologin
 
@@ -186,7 +191,8 @@ fi
 /sbin/cfdisk
 %endif
 
-%ifarch %ix86 x86_64 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
+%ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
+# XXX: broken! -segoon
 /sbin/fsck.minix
 /sbin/mkfs.minix
 %endif
@@ -302,7 +308,7 @@ fi
 /bin/more
 %_mandir/man1/more.1*
 
-%ifarch %ix86 x86_64 alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
+%ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67 sparc sparcv9
 %_mandir/man8/fsck.minix.8*
 %_mandir/man8/mkfs.minix.8*
 %endif
@@ -353,6 +359,10 @@ fi
 %endif
 
 %changelog
+* Tue Sep 13 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.11z-owl15
+- Temporary disable fsck.minix and mkfs.minix because of gcc 4.6.1 upgrade.
+As they are needed on sparc only, x86 systems don't suffer.
+
 * Mon Nov 23 2009 Solar Designer <solar-at-owl.openwall.com> 2.11z-owl14
 - In sys-utils/cytune.c, #define __iomem before including <linux/cyclades.h>.
 This is needed for building with our current kernel headers on x86_64.
