@@ -1,0 +1,60 @@
+diff -u cpio-2.10.90/src/copyin.c cpio-2.10.90/src/copyin.c
+--- cpio-2.10.90/src/copyin.c	2011-09-09 07:06:41.124867185 +0000
++++ cpio-2.10.90/src/copyin.c	2011-09-09 07:06:41.124867185 +0000
+@@ -783,8 +783,8 @@
+ static void
+ copyin_file (struct cpio_file_stat* file_hdr, int in_file_des)
+ {
+-  int existing_dir;
+-  mode_t existing_mode;
++  int existing_dir = 0; /* Never used */
++  mode_t existing_mode = 0; /* Never used */
+ 
+   if (!to_stdout_option
+       && try_existing_file (file_hdr, in_file_des, &existing_dir,
+diff -u cpio-2.10.90/src/util.c cpio-2.10.90/src/util.c
+--- cpio-2.10.90/src/util.c	2011-09-15 06:01:05.724976559 +0000
++++ cpio-2.10.90/src/util.c	2011-09-15 06:01:05.724976559 +0000
+@@ -599,19 +599,16 @@
+ create_all_directories (char *name)
+ {
+   char *dir;
+-  int   mode;
+ #ifdef HPUX_CDF
+   int   cdf;
+ #endif
+ 
+   dir = dir_name (name);
+-  mode = 0700;
+ #ifdef HPUX_CDF
+   cdf = islastparentcdf (name);
+   if (cdf)
+     {
+       dir [strlen (dir) - 1] = '\0';	/* remove final + */
+-      mode = 04700;
+     }
+   
+ #endif
+@@ -1122,10 +1119,8 @@
+   int complete_block_count;
+   int leftover_bytes_count;
+   int seek_count;
+-  int write_count;
+-  char *cur_write_start;
+-  int lseek_rc;
+-  int write_rc;
++  int write_count = 0; /* Never used */
++  char *cur_write_start = buf;
+   int i;
+   enum { begin, in_zeros, not_in_zeros } state;
+ 
+only in patch2:
+unchanged:
+--- cpio-2.10.90.old/src/filetypes.h	2009-02-14 12:39:37 +0000
++++ cpio-2.10.90/src/filetypes.h	2011-09-09 07:01:35.984419645 +0000
+@@ -81,5 +81,3 @@
+ #ifndef S_ISLNK
+ #define lstat stat
+ #endif
+-int lstat ();
+-int stat ();

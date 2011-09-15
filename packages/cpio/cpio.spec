@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/cpio/cpio.spec,v 1.31 2010/03/19 17:55:21 ldv Exp $
+# $Owl: Owl/packages/cpio/cpio.spec,v 1.32 2011/09/15 17:15:54 segoon Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
 Version: 2.10.90
-Release: owl2
+Release: owl3
 License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/cpio/
@@ -18,6 +18,7 @@ Patch4: cpio-2.10.90-alt-no_abs_paths_flag.diff
 Patch5: cpio-2.10.90-owl-fixes.diff
 Patch6: cpio-2.10.90-rh-error.diff
 Patch7: cpio-2.10.90-up-bound.diff
+Patch8: cpio-2.10.90-owl-warnings.diff
 
 PreReq: /sbin/install-info
 Provides: mt-st, rmt
@@ -47,9 +48,10 @@ and can read archives created on machines with a different byte-order.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 install -m644 %_sourcedir/rmt.8 .
 
-%{expand:%%define optflags %optflags -Wall}
+%{expand:%%define optflags %optflags -Wall -Wno-strict-aliasing}
 
 %build
 %configure --enable-mt
@@ -96,6 +98,10 @@ fi
 %_datadir/locale/*/LC_MESSAGES/cpio.mo
 
 %changelog
+* Thu Sep 15 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.10.90-owl3
+- Added checks of write(2) and lseek(2) return codes to -owl-fixes patch.
+- Fixed build failure with gcc 4.6.1.
+
 * Fri Mar 19 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.10.90-owl2
 - Backported upstream fix for a heap-based buffer overflow bug (CVE-2010-0624).
 
