@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.50 2010/12/23 19:44:16 segoon Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.51 2011/09/15 17:19:08 segoon Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -12,7 +12,7 @@ Name: vim
 %define patchlevel 075
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl3
+Release: owl4
 License: Charityware
 Group: Applications/Editors
 URL: http://www.vim.org
@@ -178,6 +178,8 @@ aclocal
 autoconf
 sed 's+\./config.log+auto/config.log+' configure > auto/configure
 chmod 755 auto/configure
+
+export LDFLAGS="$LDFLAGS -ltermcap"
 
 %if %BUILD_USE_X
 export ac_cv_func_mkstemp=yes \
@@ -387,6 +389,9 @@ comm -13 filelist.syntax-base filelist.syntax-all > filelist.syntax-rest
 %endif
 
 %changelog
+* Thu Sep 15 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 7.3.075-owl4
+- Fixed build failure with gcc 4.6.1.
+
 * Thu Dec 23 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 7.3.075-owl3
 - Package all syntax dependencies of -enhanced into -enhanced.
 
