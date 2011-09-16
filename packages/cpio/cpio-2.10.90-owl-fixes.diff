@@ -59,40 +59,6 @@ diff -uNp -r cpio-2.10.90.old/src/copyin.c cpio-2.10.90/src/copyin.c
    return value;
  }
  
-diff -uNp -r cpio-2.10.90.old/src/copyin.c.orig cpio-2.10.90/src/copyin.c.orig
---- cpio-2.10.90.old/src/copyin.c.orig	2011-09-15 06:03:13.645164165 +0000
-+++ cpio-2.10.90/src/copyin.c.orig	2011-09-15 06:03:21.775176098 +0000
-@@ -375,12 +375,12 @@ create_final_defers ()
- 	  continue;
- 	}
-       out_file_des = open (d->header.c_name,
--			   O_CREAT | O_WRONLY | O_BINARY, 0600);
-+			   O_CREAT | O_EXCL | O_WRONLY | O_BINARY, 0600);
-       if (out_file_des < 0 && create_dir_flag)
- 	{
- 	  create_all_directories (d->header.c_name);
- 	  out_file_des = open (d->header.c_name,
--			       O_CREAT | O_WRONLY | O_BINARY,
-+			       O_CREAT | O_EXCL | O_WRONLY | O_BINARY,
- 			       0600);
- 	}
-       if (out_file_des < 0)
-@@ -483,13 +483,13 @@ copyin_regular_file (struct cpio_file_st
-     
-       /* If not linked, copy the contents of the file.  */
-       out_file_des = open (file_hdr->c_name,
--			   O_CREAT | O_WRONLY | O_BINARY, 0600);
-+			   O_CREAT | O_EXCL | O_WRONLY | O_BINARY, 0600);
-   
-       if (out_file_des < 0 && create_dir_flag)
- 	{
- 	  create_all_directories (file_hdr->c_name);
- 	  out_file_des = open (file_hdr->c_name,
--			       O_CREAT | O_WRONLY | O_BINARY,
-+			       O_CREAT | O_EXCL | O_WRONLY | O_BINARY,
- 			       0600);
- 	}
-       
 diff -uNp -r cpio-2.10.90.old/src/copypass.c cpio-2.10.90/src/copypass.c
 --- cpio-2.10.90.old/src/copypass.c	2011-09-15 06:03:21.775176098 +0000
 +++ cpio-2.10.90/src/copypass.c	2011-09-15 06:03:53.525222686 +0000
