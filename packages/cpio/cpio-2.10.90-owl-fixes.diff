@@ -76,18 +76,18 @@ diff -uNp -r cpio-2.10.90.old/src/copypass.c cpio-2.10.90/src/copypass.c
  
 diff -uNp -r cpio-2.10.90.old/src/mt.c cpio-2.10.90/src/mt.c
 --- cpio-2.10.90.old/src/mt.c	2009-07-31 09:03:42 +0000
-+++ cpio-2.10.90/src/mt.c	2011-09-15 06:11:12.365866297 +0000
-@@ -207,7 +207,9 @@ parse_opt (int key, char *arg, struct ar
++++ cpio-2.10.90/src/mt.c	2011-09-17 13:57:50.741970267 +0000
+@@ -207,8 +207,9 @@ parse_opt (int key, char *arg, struct ar
  	  {
  	    char *p;
  	    long val = strtol (arg, &p, 0);
 -	    if (*p || (count = val) != count)
-+            int old_count = count;
-+            count = val;
-+	    if (*p || count != old_count)
++	    if (*p || val != (int)val)
  	      error (MT_EXIT_INVOP, 0, _("invalid count value"));
++	    count = val;
  	  }
  	  break;
+
 diff -uNp -r cpio-2.10.90.old/src/util.c cpio-2.10.90/src/util.c
 --- cpio-2.10.90.old/src/util.c	2009-02-14 12:39:37 +0000
 +++ cpio-2.10.90/src/util.c	2011-09-15 06:11:12.365866297 +0000
