@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.64 2011/10/09 23:10:31 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.65 2011/10/09 23:19:03 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -110,10 +110,10 @@ done
 - Moved some OpenVZ features to modules like it is done in OpenVZ's official
 kernel builds.
 - Changed CONFIG_UDF_FS=y to =m.
-- On x86_64, changed CONFIG_PCNET32, CONFIG_FORCEDETH, and CONFIG_NE2K_PCI
-(these are some of the 100 Mbps NIC drivers) from =y to =m.  Of the 100 Mbps
-NIC drivers, we're leaving only those for Intel and Realtek NICs built into the
-kernel on x86_64 now.
+- On x86_64, changed CONFIG_PCNET32 and CONFIG_FORCEDETH (these are some of the
+100 Mbps NIC drivers) from =y to =m.  Of the 100 Mbps NIC drivers, we're
+leaving only those for Intel, Realtek, and NE2000-compatible NICs built into
+the kernel on x86_64 now.
 - CONFIG_SCSI_AIC94XX=y, CONFIG_BLK_CPQ_CISS_DA=y (the latter was already =y on
 i686, now it is =y on x86_64 as well).
 
