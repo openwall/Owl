@@ -10,30 +10,20 @@ diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/Makefile linux-2.6.18-274.3.1.e
  RHEL_MAJOR = 5
  RHEL_MINOR = 7
  NAME=Avast! A bilge rat!
-diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/arch/i386/kernel/cpu/amd.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/arch/i386/kernel/cpu/amd.c
---- linux-2.6.18-274.3.1.el5.028stab094.3/arch/i386/kernel/cpu/amd.c	2011-09-23 10:18:07 +0000
-+++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/arch/i386/kernel/cpu/amd.c	2011-10-09 15:56:07 +0000
-@@ -39,6 +39,9 @@ static void __cpuinit amd_get_topology(s
- 	u8 node_id;
- 	int cpu = smp_processor_id();
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/arch/i386/Kconfig linux-2.6.18-274.3.1.el5.028stab094.3-owl/arch/i386/Kconfig
+--- linux-2.6.18-274.3.1.el5.028stab094.3/arch/i386/Kconfig	2011-09-23 10:18:16 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/arch/i386/Kconfig	2011-10-09 20:55:24 +0000
+@@ -1237,7 +1237,6 @@ config SCx200HR_TIMER
  
-+#if 0
-+/* early_is_k8_nb() is only defined under arch/x86_64/ */
-+
- 	/* RHEL5: Check for a valid AMD northbridge device, which does
- 	 * not exist in virtualized environments.
- 	 *
-@@ -58,6 +61,7 @@ static void __cpuinit amd_get_topology(s
- 	if ((c->x86 == 0x10) && (c->x86_model == 9) &&
- 	    !early_is_k8_nb(read_pci_config(0, 24, 3, 0x00)))
- 		return;
-+#endif
+ config K8_NB
+ 	def_bool y
+-	depends on AGP_AMD64
  
- 	/* get information required for multi-node processors */
- 	if (cpu_has(c, X86_FEATURE_TOPOEXT)) {
+ source "drivers/pcmcia/Kconfig"
+ 
 diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/arch/i386/kernel/cpu/intel_cacheinfo.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/arch/i386/kernel/cpu/intel_cacheinfo.c
 --- linux-2.6.18-274.3.1.el5.028stab094.3/arch/i386/kernel/cpu/intel_cacheinfo.c	2011-09-23 10:18:16 +0000
-+++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/arch/i386/kernel/cpu/intel_cacheinfo.c	2011-10-09 15:56:07 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/arch/i386/kernel/cpu/intel_cacheinfo.c	2011-10-09 20:57:56 +0000
 @@ -47,10 +47,12 @@ static void wbinvd_on_cpu(int cpu)
  	smp_call_function_single(cpu, __wbinvd, NULL, 0, 1);
  }
@@ -47,19 +37,6 @@ diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/arch/i386/kernel/cpu/intel_cach
  
  /* from arch/x86/kernel/cpu/amd.c upstream */
  static int amd_get_nb_id(int cpu)
-@@ -335,9 +337,12 @@ amd_check_l3_disable(int index, struct _
- 	    boot_cpu_data.x86_mask < 0x1)
- 		return;
- 
-+#if 0
-+/* num_k8_northbridges is only defined under arch/x86_64/ */
- 	/* not in virtualized environments */
- 	if (num_k8_northbridges == 0)
- 		return;
-+#endif
- 
- 	this_leaf->can_disable = true;
- 	this_leaf->l3_indices  = amd_calc_l3_indices();
 diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/arch/x86_64/Kconfig linux-2.6.18-274.3.1.el5.028stab094.3-owl/arch/x86_64/Kconfig
 --- linux-2.6.18-274.3.1.el5.028stab094.3/arch/x86_64/Kconfig	2011-09-23 10:18:17 +0000
 +++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/arch/x86_64/Kconfig	2011-10-09 15:56:07 +0000
