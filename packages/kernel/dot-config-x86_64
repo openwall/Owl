@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.18-274.3.1.el5.028stab094.3.owl1
-# Mon Oct 10 01:38:25 2011
+# Mon Oct 10 01:39:29 2011
 #
 CONFIG_X86_64=y
 CONFIG_64BIT=y
@@ -1452,7 +1452,7 @@ CONFIG_DNOTIFY=y
 CONFIG_ISO9660_FS=y
 CONFIG_JOLIET=y
 # CONFIG_ZISOFS is not set
-CONFIG_UDF_FS=y
+CONFIG_UDF_FS=m
 CONFIG_UDF_NLS=y
 
 #
