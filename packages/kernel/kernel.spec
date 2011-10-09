@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.59 2011/10/09 22:49:58 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.60 2011/10/09 22:56:41 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -106,6 +106,7 @@ done
 %changelog
 * Sun Oct 09 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.3.1.el5.028stab094.3.owl1
 - Updated to 2.6.18-274.3.1.el5.028stab094.3.
+- Restricted permissions on /proc/slabinfo.
 
 * Wed Jul 27 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.19.1.el5.028stab092.2.owl1
 - Updated to 2.6.18-238.19.1.el5.028stab092.2.

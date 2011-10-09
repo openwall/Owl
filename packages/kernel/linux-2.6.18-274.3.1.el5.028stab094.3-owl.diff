@@ -567,6 +567,18 @@ diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/fs/proc/base.c linux-2.6.18-274
  #endif
  
  	{0,0,NULL,0}
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/fs/proc/proc_misc.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/fs/proc/proc_misc.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/fs/proc/proc_misc.c	2011-09-23 10:18:18 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/fs/proc/proc_misc.c	2011-10-09 21:14:07 +0000
+@@ -902,7 +902,7 @@ void __init proc_misc_init(void)
+ 	create_seq_entry("interrupts", 0, &proc_interrupts_operations);
+ 	create_seq_entry("softirqs", 0, &proc_softirqs_operations);
+ #ifdef CONFIG_SLAB
+-	create_seq_entry("slabinfo",S_IWUSR|S_IRUGO,&proc_slabinfo_operations);
++	create_seq_entry("slabinfo",S_IRUSR,&proc_slabinfo_operations);
+ #ifdef CONFIG_DEBUG_SLAB_LEAK
+ 	create_seq_entry("slab_allocators", 0 ,&proc_slabstats_operations);
+ #endif
 diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/fs/sysfs/inode.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/fs/sysfs/inode.c
 --- linux-2.6.18-274.3.1.el5.028stab094.3/fs/sysfs/inode.c	2011-09-23 10:18:17 +0000
 +++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/fs/sysfs/inode.c	2011-10-09 15:56:07 +0000
