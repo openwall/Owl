@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.60 2011/10/09 22:56:41 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.61 2011/10/09 22:58:33 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -107,6 +107,8 @@ done
 * Sun Oct 09 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.3.1.el5.028stab094.3.owl1
 - Updated to 2.6.18-274.3.1.el5.028stab094.3.
 - Restricted permissions on /proc/slabinfo.
+- Moved some OpenVZ features to modules like it is done in OpenVZ's official
+kernel builds.
 
 * Wed Jul 27 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.19.1.el5.028stab092.2.owl1
 - Updated to 2.6.18-238.19.1.el5.028stab092.2.
