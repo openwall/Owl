@@ -6,9 +6,8 @@ diff -ur vzctl-3.0.23.orig/etc/vz.conf vzctl-3.0.23/etc/vz.conf
  VZFASTBOOT=no
  
 -# Disable module loading. If set, vz initscript do not load any modules.
--#MODULES_DISABLED=yes
 +# Disable module loading. If set, vz initscript does not load any modules.
-+MODULES_DISABLED=yes
+ #MODULES_DISABLED=yes
  
  # The name of the device whose IP address will be used as source IP for CT.
  # By default automatically assigned.
