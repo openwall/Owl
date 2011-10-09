@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.61 2011/10/09 22:58:33 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.62 2011/10/09 23:02:27 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -109,6 +109,8 @@ done
 - Restricted permissions on /proc/slabinfo.
 - Moved some OpenVZ features to modules like it is done in OpenVZ's official
 kernel builds.
+- CONFIG_SCSI_AIC94XX=y, CONFIG_BLK_CPQ_CISS_DA=y (the latter was already =y on
+i686, now it is =y on x86_64 as well).
 
 * Wed Jul 27 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.19.1.el5.028stab092.2.owl1
 - Updated to 2.6.18-238.19.1.el5.028stab092.2.
