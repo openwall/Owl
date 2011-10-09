@@ -1,21 +1,21 @@
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/Makefile linux-2.6.18-238.19.1.el5.028stab092.2-owl/Makefile
---- linux-2.6.18-238.19.1.el5.028stab092.2/Makefile	2011-07-21 19:24:29 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/Makefile	2011-07-27 04:03:41 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/Makefile linux-2.6.18-274.3.1.el5.028stab094.3-owl/Makefile
+--- linux-2.6.18-274.3.1.el5.028stab094.3/Makefile	2011-09-23 10:18:16 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/Makefile	2011-10-09 18:37:57 +0000
 @@ -1,7 +1,7 @@
  VERSION = 2
  PATCHLEVEL = 6
  SUBLEVEL = 18
--EXTRAVERSION = -238.19.1.el5.028stab092.2
-+EXTRAVERSION = -238.19.1.el5.028stab092.2.owl1
+-EXTRAVERSION = -prep
++EXTRAVERSION = -274.3.1.el5.028stab094.3.owl1
  RHEL_MAJOR = 5
- RHEL_MINOR = 6
+ RHEL_MINOR = 7
  NAME=Avast! A bilge rat!
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/arch/i386/kernel/cpu/amd.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/arch/i386/kernel/cpu/amd.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/arch/i386/kernel/cpu/amd.c	2011-07-21 19:24:27 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/arch/i386/kernel/cpu/amd.c	2011-07-27 04:03:04 +0000
-@@ -45,6 +45,9 @@ static void __cpuinit amd_fixup_dcm(stru
- 	if (cpu_has(c, X86_FEATURE_AMD_DCM))
- 		return;
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/arch/i386/kernel/cpu/amd.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/arch/i386/kernel/cpu/amd.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/arch/i386/kernel/cpu/amd.c	2011-09-23 10:18:07 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/arch/i386/kernel/cpu/amd.c	2011-10-09 15:56:07 +0000
+@@ -39,6 +39,9 @@ static void __cpuinit amd_get_topology(s
+ 	u8 node_id;
+ 	int cpu = smp_processor_id();
  
 +#if 0
 +/* early_is_k8_nb() is only defined under arch/x86_64/ */
@@ -23,17 +23,17 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/arch/i386/kernel/cpu/amd.c lin
  	/* RHEL5: Check for a valid AMD northbridge device, which does
  	 * not exist in virtualized environments.
  	 *
-@@ -64,6 +67,7 @@ static void __cpuinit amd_fixup_dcm(stru
+@@ -58,6 +61,7 @@ static void __cpuinit amd_get_topology(s
  	if ((c->x86 == 0x10) && (c->x86_model == 9) &&
  	    !early_is_k8_nb(read_pci_config(0, 24, 3, 0x00)))
  		return;
 +#endif
  
- 	rdmsrl(0xc001100c, value);
- 
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/arch/i386/kernel/cpu/intel_cacheinfo.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/arch/i386/kernel/cpu/intel_cacheinfo.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/arch/i386/kernel/cpu/intel_cacheinfo.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/arch/i386/kernel/cpu/intel_cacheinfo.c	2011-07-27 04:03:04 +0000
+ 	/* get information required for multi-node processors */
+ 	if (cpu_has(c, X86_FEATURE_TOPOEXT)) {
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/arch/i386/kernel/cpu/intel_cacheinfo.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/arch/i386/kernel/cpu/intel_cacheinfo.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/arch/i386/kernel/cpu/intel_cacheinfo.c	2011-09-23 10:18:16 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/arch/i386/kernel/cpu/intel_cacheinfo.c	2011-10-09 15:56:07 +0000
 @@ -47,10 +47,12 @@ static void wbinvd_on_cpu(int cpu)
  	smp_call_function_single(cpu, __wbinvd, NULL, 0, 1);
  }
@@ -60,9 +60,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/arch/i386/kernel/cpu/intel_cac
  
  	this_leaf->can_disable = true;
  	this_leaf->l3_indices  = amd_calc_l3_indices();
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/arch/x86_64/Kconfig linux-2.6.18-238.19.1.el5.028stab092.2-owl/arch/x86_64/Kconfig
---- linux-2.6.18-238.19.1.el5.028stab092.2/arch/x86_64/Kconfig	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/arch/x86_64/Kconfig	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/arch/x86_64/Kconfig linux-2.6.18-274.3.1.el5.028stab094.3-owl/arch/x86_64/Kconfig
+--- linux-2.6.18-274.3.1.el5.028stab094.3/arch/x86_64/Kconfig	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/arch/x86_64/Kconfig	2011-10-09 15:56:07 +0000
 @@ -476,6 +476,7 @@ config IOMMU
  	default y
  	select SWIOTLB
@@ -71,25 +71,25 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/arch/x86_64/Kconfig linux-2.6.
  	depends on PCI && !X86_64_XEN
  	help
  	  Support for full DMA access of devices with 32bit memory access only
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/arch/x86_64/vdso/vclock_gettime.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/arch/x86_64/vdso/vclock_gettime.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/arch/x86_64/vdso/vclock_gettime.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/arch/x86_64/vdso/vclock_gettime.c	2011-07-27 04:03:04 +0000
-@@ -119,6 +119,7 @@ int __vdso_clock_gettime(clockid_t clock
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/arch/x86_64/vdso/vclock_gettime.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/arch/x86_64/vdso/vclock_gettime.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/arch/x86_64/vdso/vclock_gettime.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/arch/x86_64/vdso/vclock_gettime.c	2011-10-09 18:42:21 +0000
+@@ -125,6 +125,7 @@ int __vdso_clock_gettime(clockid_t clock
  int clock_gettime(clockid_t, struct timespec *)
  	 __attribute__((weak, alias("__vdso_clock_gettime")));
  
 +#if __GNUC__ >= 4
- int __vdso_gettimeofday(struct timeval *tv, struct timezone *tz)
+ int ___vdso_gettimeofday(struct timeval *tv, struct timezone *tz)
  {
  	long ret;
-@@ -142,3 +143,4 @@ int __vdso_gettimeofday(struct timeval *
+@@ -156,3 +157,4 @@ int __vdso_gettimeofday(struct timeval *
  }
  int gettimeofday(struct timeval *, struct timezone *)
  	__attribute__((weak, alias("__vdso_gettimeofday")));
 +#endif
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/ata/Kconfig linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/ata/Kconfig
---- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/ata/Kconfig	2011-07-21 19:24:18 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/ata/Kconfig	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/drivers/ata/Kconfig linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/ata/Kconfig
+--- linux-2.6.18-274.3.1.el5.028stab094.3/drivers/ata/Kconfig	2011-09-23 10:18:08 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/ata/Kconfig	2011-10-09 15:56:07 +0000
 @@ -447,8 +447,8 @@ config PATA_MARVELL
  	help
  	  This option enables limited support for the Marvell 88SE61xx ATA
@@ -101,10 +101,10 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/ata/Kconfig linux-2.6.
  
  	  If unsure, say N.
  
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/ata/ahci.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/ata/ahci.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/ata/ahci.c	2011-07-21 19:24:26 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/ata/ahci.c	2011-07-27 04:03:04 +0000
-@@ -791,7 +791,7 @@ static void ahci_save_initial_config(str
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/drivers/ata/ahci.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/ata/ahci.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/drivers/ata/ahci.c	2011-09-23 10:18:07 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/ata/ahci.c	2011-10-09 15:56:07 +0000
+@@ -792,7 +792,7 @@ static void ahci_save_initial_config(str
  			   port_map,
  			   port_map & mv);
  		dev_printk(KERN_ERR, &pdev->dev,
@@ -113,7 +113,7 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/ata/ahci.c linux-2.6.1
  
  		port_map &= mv;
  	}
-@@ -2900,8 +2900,11 @@ static int ahci_init_one(struct pci_dev
+@@ -2901,8 +2901,11 @@ static int ahci_init_one(struct pci_dev
  	/* The AHCI driver can only drive the SATA ports, the PATA driver
  	   can drive them all so if both drivers are selected make sure
  	   AHCI stays out of the way */
@@ -126,17 +126,28 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/ata/ahci.c linux-2.6.1
  
  	/* acquire resources */
  	rc = pcim_enable_device(pdev);
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/block/cciss.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/block/cciss.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/block/cciss.c	2011-07-21 19:24:27 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/block/cciss.c	2011-07-27 04:03:04 +0000
-@@ -194,11 +194,40 @@ static void cciss_free_drive_info(ctlr_i
- static void cciss_clear_drive_info(drive_info_struct *drive_info);
- static void cciss_sysfs_stat_inquiry(int ctlr, int logvol,
- 			drive_info_struct *drv);
--static inline void complete_pc_buffers(struct bio *bio,
--	unsigned int nr_bytes, int status);
--static inline void complete_fs_buffers(struct bio *bio, int status);
- static unsigned int blk_rq_bytes(struct request *rq);
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/drivers/block/cciss.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/block/cciss.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/drivers/block/cciss.c	2011-09-23 10:18:08 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/block/cciss.c	2011-10-09 20:24:15 +0000
+@@ -1038,6 +1038,15 @@ static CommandList_struct *cmd_special_a
+ 	return c;
+ }
+ 
++static inline u32 cciss_tag_discard_error_bits(ctlr_info_t *h, u32 tag)
++{
++#define CCISS_PERF_ERROR_BITS ((1 << DIRECT_LOOKUP_SHIFT) - 1)
++#define CCISS_SIMPLE_ERROR_BITS 0x03
++	if (likely(h->transMethod & CFGTBL_Trans_Performant))
++		return tag & ~CCISS_PERF_ERROR_BITS;
++	return tag & ~CCISS_SIMPLE_ERROR_BITS;
++}
++
+ static void cmd_special_free(ctlr_info_t *h, CommandList_struct *c)
+ {
+ 	u64bit temp64;
+@@ -1796,6 +1805,38 @@ static void cciss_check_queues(ctlr_info
+ 	}
+ }
  
 +static inline void complete_pc_buffers(struct bio *bio,
 +	unsigned int nr_bytes, int status)
@@ -170,10 +181,26 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/block/cciss.c linux-2.
 +	}
 +}
 +
- #ifdef CONFIG_PROC_FS
- static void cciss_procinit(int i);
- #else
-@@ -4460,38 +4489,6 @@ err:
+ static void cciss_softirq_done(struct request *rq)
+ {
+ 	CommandList_struct *c = rq->completion_data;
+@@ -3261,15 +3302,6 @@ static inline u32 cciss_tag_to_index(u32
+ 	return tag >> DIRECT_LOOKUP_SHIFT;
+ }
+ 
+-static inline u32 cciss_tag_discard_error_bits(ctlr_info_t *h, u32 tag)
+-{
+-#define CCISS_PERF_ERROR_BITS ((1 << DIRECT_LOOKUP_SHIFT) - 1)
+-#define CCISS_SIMPLE_ERROR_BITS 0x03
+-	if (likely(h->transMethod & CFGTBL_Trans_Performant))
+-		return tag & ~CCISS_PERF_ERROR_BITS;
+-	return tag & ~CCISS_SIMPLE_ERROR_BITS;
+-}
+-
+ static void inline cciss_mark_tag_indexed(u32 *tag)
+ {
+ 	*tag |= DIRECT_LOOKUP_BIT;
+@@ -5271,38 +5303,6 @@ err:
  
  }
  
@@ -212,9 +239,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/block/cciss.c linux-2.
  /**
   * blk_rq_bytes - Returns bytes left to complete in the entire request
   * @rq: the request being processed
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/char/keyboard.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/char/keyboard.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/char/keyboard.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/char/keyboard.c	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/drivers/char/keyboard.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/char/keyboard.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/drivers/char/keyboard.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/char/keyboard.c	2011-10-09 15:56:07 +0000
 @@ -1376,7 +1376,7 @@ int __init kbd_init(void)
  		kbd_table[i].lockstate = KBD_DEFLOCK;
  		kbd_table[i].slockstate = 0;
@@ -224,10 +251,10 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/char/keyboard.c linux-
  	}
  
  	input_register_handler(&kbd_handler);
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/char/vt.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/char/vt.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/char/vt.c	2011-07-21 19:24:17 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/char/vt.c	2011-07-27 04:03:04 +0000
-@@ -1497,7 +1497,7 @@ static void reset_terminal(struct vc_dat
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/drivers/char/vt.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/char/vt.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/drivers/char/vt.c	2011-09-23 10:18:08 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/char/vt.c	2011-10-09 15:56:07 +0000
+@@ -1499,7 +1499,7 @@ static void reset_terminal(struct vc_dat
  	vc->vc_charset		= 0;
  	vc->vc_need_wrap	= 0;
  	vc->vc_report_mouse	= 0;
@@ -236,9 +263,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/char/vt.c linux-2.6.18
  	vc->vc_utf_count	= 0;
  
  	vc->vc_disp_ctrl	= 0;
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/dca/Kconfig linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/dca/Kconfig
---- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/dca/Kconfig	2011-07-21 19:24:05 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/dca/Kconfig	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/drivers/dca/Kconfig linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/dca/Kconfig
+--- linux-2.6.18-274.3.1.el5.028stab094.3/drivers/dca/Kconfig	2011-09-23 10:18:08 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/dca/Kconfig	2011-10-09 15:56:07 +0000
 @@ -3,7 +3,7 @@
  #
  
@@ -248,9 +275,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/dca/Kconfig linux-2.6.
  	depends on DMA_ENGINE_V3 && PCI
  	default m
  	---help---
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/Kconfig linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/message/fusion/Kconfig
---- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/Kconfig	2011-07-21 19:23:56 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/message/fusion/Kconfig	2011-07-27 04:11:58 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/drivers/message/fusion/Kconfig linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/message/fusion/Kconfig
+--- linux-2.6.18-274.3.1.el5.028stab094.3/drivers/message/fusion/Kconfig	2011-09-23 10:18:08 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/message/fusion/Kconfig	2011-10-09 15:56:07 +0000
 @@ -57,6 +57,7 @@ config FUSION_SAS
  	  LSISAS1064E
  	  LSISAS1068E
@@ -259,9 +286,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/Kconfig
  
  config FUSION_MAX_SGE
  	int "Maximum number of scatter gather entries (16 - 128)"
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/lsi/mpi_cnfg.h linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/message/fusion/lsi/mpi_cnfg.h
---- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/lsi/mpi_cnfg.h	2011-07-21 19:24:07 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/message/fusion/lsi/mpi_cnfg.h	2011-07-27 04:11:58 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/drivers/message/fusion/lsi/mpi_cnfg.h linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/message/fusion/lsi/mpi_cnfg.h
+--- linux-2.6.18-274.3.1.el5.028stab094.3/drivers/message/fusion/lsi/mpi_cnfg.h	2011-09-23 10:18:08 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/message/fusion/lsi/mpi_cnfg.h	2011-10-09 15:56:07 +0000
 @@ -584,6 +584,7 @@ typedef struct _MSG_CONFIG_REPLY
  #define MPI_MANUFACTPAGE_DEVID_SAS1068              (0x0054)
  #define MPI_MANUFACTPAGE_DEVID_SAS1068E             (0x0058)
@@ -270,10 +297,10 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/lsi/mpi
  
  
  typedef struct _CONFIG_PAGE_MANUFACTURING_0
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/mptbase.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/message/fusion/mptbase.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/mptbase.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/message/fusion/mptbase.c	2011-07-27 04:11:58 +0000
-@@ -1527,6 +1527,7 @@ mpt_get_product_name(u16 vendor, u16 dev
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/drivers/message/fusion/mptbase.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/message/fusion/mptbase.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/drivers/message/fusion/mptbase.c	2011-09-23 10:18:08 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/message/fusion/mptbase.c	2011-10-09 15:56:07 +0000
+@@ -1529,6 +1529,7 @@ mpt_get_product_name(u16 vendor, u16 dev
  		}
  		break;
  	case MPI_MANUFACTPAGE_DEVID_SAS1068E:
@@ -281,7 +308,7 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/mptbase
  		switch (revision)
  		{
  		case 0x00:
-@@ -1890,6 +1891,7 @@ mpt_attach(struct pci_dev *pdev, const s
+@@ -1892,6 +1893,7 @@ mpt_attach(struct pci_dev *pdev, const s
  	case MPI_MANUFACTPAGE_DEVID_SAS1064E:
  	case MPI_MANUFACTPAGE_DEVID_SAS1068E:
  	case MPI_MANUFACTPAGE_DEVID_SAS1078:
@@ -289,10 +316,10 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/mptbase
  		ioc->bus_type = SAS;
  		break;
  	}
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/mptsas.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/message/fusion/mptsas.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/mptsas.c	2011-07-21 19:24:21 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/message/fusion/mptsas.c	2011-07-27 04:11:58 +0000
-@@ -436,6 +436,23 @@ mptsas_is_end_device(struct mptsas_devin
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/drivers/message/fusion/mptsas.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/message/fusion/mptsas.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/drivers/message/fusion/mptsas.c	2011-09-23 10:18:08 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/message/fusion/mptsas.c	2011-10-09 15:56:07 +0000
+@@ -438,6 +438,23 @@ mptsas_is_end_device(struct mptsas_devin
  		return 0;
  }
  
@@ -316,7 +343,7 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/mptsas.
  /* no mutex */
  static void
  mptsas_port_delete(MPT_ADAPTER *ioc, struct mptsas_portinfo_details * port_details)
-@@ -474,23 +491,6 @@ mptsas_get_rphy(struct mptsas_phyinfo *p
+@@ -476,23 +493,6 @@ mptsas_get_rphy(struct mptsas_phyinfo *p
  		return NULL;
  }
  
@@ -340,7 +367,7 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/mptsas.
  static inline struct sas_port *
  mptsas_get_port(struct mptsas_phyinfo *phy_info)
  {
-@@ -4981,6 +4981,8 @@ static struct pci_device_id mptsas_pci_t
+@@ -5200,6 +5200,8 @@ static struct pci_device_id mptsas_pci_t
  		PCI_ANY_ID, PCI_ANY_ID },
  	{ PCI_VENDOR_ID_LSI_LOGIC, MPI_MANUFACTPAGE_DEVID_SAS1078,
  		PCI_ANY_ID, PCI_ANY_ID },
@@ -349,10 +376,10 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/message/fusion/mptsas.
  	{0}	/* Terminating entry */
  };
  MODULE_DEVICE_TABLE(pci, mptsas_pci_table);
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/net/Kconfig linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/net/Kconfig
---- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/net/Kconfig	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/net/Kconfig	2011-07-27 04:03:04 +0000
-@@ -2615,6 +2615,8 @@ config NIU
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/drivers/net/Kconfig linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/net/Kconfig
+--- linux-2.6.18-274.3.1.el5.028stab094.3/drivers/net/Kconfig	2011-09-23 10:18:18 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/net/Kconfig	2011-10-09 15:56:07 +0000
+@@ -2657,6 +2657,8 @@ config NIU
  config BNX2X
  	tristate "Broadcom NetXtremeII 10Gb support"
  	depends on PCI
@@ -361,9 +388,35 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/net/Kconfig linux-2.6.
  	help
  	  This driver supports Broadcom NetXtremeII 10 gigabit Ethernet cards.
  	  To compile this driver as a module, choose M here: the module
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/net/bonding/bond_main.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/net/bonding/bond_main.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/drivers/net/bonding/bond_main.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/drivers/net/bonding/bond_main.c	2011-07-27 05:05:37 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/drivers/net/bnx2x/bnx2x_main.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/net/bnx2x/bnx2x_main.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/drivers/net/bnx2x/bnx2x_main.c	2011-09-23 10:18:08 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/net/bnx2x/bnx2x_main.c	2011-10-09 20:37:48 +0000
+@@ -6758,6 +6758,13 @@ static inline u16 bnx2x_cid_ilt_lines(st
+ 	return L2_ILT_LINES(bp);
+ }
+ 
++/*
++ * gcc 3.4.5's __builtin_constant_p() appears to misbehave on the expressions
++ * passed into ilog2() by the function below.
++ */
++#undef ilog2
++#define ilog2 __ilog2_u32
++
+ void bnx2x_ilt_set_info(struct bnx2x *bp)
+ {
+ 	struct ilt_client_info *ilt_client;
+@@ -6855,6 +6862,8 @@ void bnx2x_ilt_set_info(struct bnx2x *bp
+ #endif
+ }
+ 
++#undef ilog2
++
+ int bnx2x_setup_client(struct bnx2x *bp, struct bnx2x_fastpath *fp,
+ 		       int is_leading)
+ {
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/drivers/net/bonding/bond_main.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/net/bonding/bond_main.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/drivers/net/bonding/bond_main.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/net/bonding/bond_main.c	2011-10-09 15:56:07 +0000
 @@ -230,8 +230,6 @@ struct bond_parm_tbl pri_reselect_tbl[]
  
  static void bond_send_gratuitous_arp(struct bonding *bond);
@@ -373,7 +426,7 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/net/bonding/bond_main.
  
  /*---------------------------- General routines -----------------------------*/
  
-@@ -4461,6 +4459,40 @@ unwind:
+@@ -4481,6 +4479,40 @@ unwind:
  	return res;
  }
  
@@ -414,7 +467,7 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/net/bonding/bond_main.
  static int bond_xmit_roundrobin(struct sk_buff *skb, struct net_device *bond_dev)
  {
  	struct bonding *bond = bond_dev->priv;
-@@ -4724,40 +4756,6 @@ static void bond_set_xmit_hash_policy(st
+@@ -4744,40 +4776,6 @@ static void bond_set_xmit_hash_policy(st
  }
  
  /*
@@ -455,9 +508,26 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/drivers/net/bonding/bond_main.
   * set bond mode specific net device operations
   */
  void bond_set_mode_ops(struct bonding *bond, int mode)
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/fs/Kconfig linux-2.6.18-238.19.1.el5.028stab092.2-owl/fs/Kconfig
---- linux-2.6.18-238.19.1.el5.028stab092.2/fs/Kconfig	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/fs/Kconfig	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/drivers/net/loopback.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/net/loopback.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/drivers/net/loopback.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/drivers/net/loopback.c	2011-10-09 19:28:45 +0000
+@@ -286,5 +286,13 @@ int __init loopback_init(void)
+ 	return register_netdev(&loopback_dev);
+ };
+ 
++#if 0
++/*
++ * With gcc 3.4.5:
++ * drivers/net/loopback.c:289: error: initializer element is not constant
++ * drivers/net/loopback.c:289: error: (near initialization for `__ksymtab_loopback_dev.value')
++ * drivers/net/loopback.c:289: error: __ksymtab_loopback_dev causes a section type conflict
++ */
+ EXPORT_SYMBOL(loopback_dev);
++#endif
+ EXPORT_SYMBOL(templ_loopback_dev);
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/fs/Kconfig linux-2.6.18-274.3.1.el5.028stab094.3-owl/fs/Kconfig
+--- linux-2.6.18-274.3.1.el5.028stab094.3/fs/Kconfig	2011-09-23 10:18:18 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/fs/Kconfig	2011-10-09 15:56:07 +0000
 @@ -473,6 +473,7 @@ config QFMT_V2
  config SIM_FS
  	tristate "VPS filesystem"
@@ -466,9 +536,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/fs/Kconfig linux-2.6.18-238.19
  	default m
  	help
  	  This file system is a part of Virtuozzo. It intoduces a fake
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/fs/exec.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/fs/exec.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/fs/exec.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/fs/exec.c	2011-07-27 04:59:00 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/fs/exec.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/fs/exec.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/fs/exec.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/fs/exec.c	2011-10-09 15:56:07 +0000
 @@ -231,7 +231,8 @@ struct page *get_arg_page(struct linux_b
  		 *  - the program will have a reasonable amount of stack left
  		 *    to work from.
@@ -499,15 +569,11 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/fs/exec.c linux-2.6.18-238.19.
  	retval = virtinfo_gencall(VIRTINFO_DOEXECVE, NULL);
  	if (retval)
  		return retval;
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/fs/proc/base.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/fs/proc/base.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/fs/proc/base.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/fs/proc/base.c	2011-07-27 04:03:04 +0000
-@@ -273,10 +273,10 @@ static struct pid_entry tgid_base_stuff[
- 	  S_IFREG|S_IRUGO|S_IWUSR),
- #endif
- #ifdef CONFIG_TASK_IO_ACCOUNTING
--	E(PROC_TGID_IO,             "io",  S_IFREG|S_IRUGO),
-+	E(PROC_TGID_IO,             "io",  S_IFREG|S_IRUSR),
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/fs/proc/base.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/fs/proc/base.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/fs/proc/base.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/fs/proc/base.c	2011-10-09 18:50:45 +0000
+@@ -276,7 +276,7 @@ static struct pid_entry tgid_base_stuff[
+ 	E(PROC_TGID_IO,             "io",  S_IFREG|S_IRUSR),
  #endif
  #ifdef CONFIG_STACKTRACE_PROC
 -	E(PROC_TGID_STACK,     "stack",   S_IFREG|S_IRUGO),
@@ -515,12 +581,8 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/fs/proc/base.c linux-2.6.18-23
  #endif
  
  	{0,0,NULL,0}
-@@ -324,10 +324,10 @@ static struct pid_entry tid_base_stuff[]
- #endif
- 	E(PROC_TID_LIMITS, "limits", S_IFREG|S_IRUGO),
- #ifdef CONFIG_TASK_IO_ACCOUNTING
--	E(PROC_TID_IO,         "io",      S_IFREG|S_IRUGO),
-+	E(PROC_TID_IO,         "io",      S_IFREG|S_IRUSR),
+@@ -327,7 +327,7 @@ static struct pid_entry tid_base_stuff[]
+ 	E(PROC_TID_IO,         "io",      S_IFREG|S_IRUSR),
  #endif
  #ifdef CONFIG_STACKTRACE_PROC
 -	E(PROC_TID_STACK,      "stack",   S_IFREG|S_IRUGO),
@@ -528,9 +590,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/fs/proc/base.c linux-2.6.18-23
  #endif
  
  	{0,0,NULL,0}
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/fs/sysfs/inode.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/fs/sysfs/inode.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/fs/sysfs/inode.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/fs/sysfs/inode.c	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/fs/sysfs/inode.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/fs/sysfs/inode.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/fs/sysfs/inode.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/fs/sysfs/inode.c	2011-10-09 15:56:07 +0000
 @@ -16,7 +16,15 @@
  #include <linux/security.h>
  #include "sysfs.h"
@@ -565,9 +627,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/fs/sysfs/inode.c linux-2.6.18-
  /*
   * sysfs has a different i_mutex lock order behavior for i_mutex than other
   * filesystems; sysfs i_mutex is called in many places with subsystem locks
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/include/linux/binfmts.h linux-2.6.18-238.19.1.el5.028stab092.2-owl/include/linux/binfmts.h
---- linux-2.6.18-238.19.1.el5.028stab092.2/include/linux/binfmts.h	2011-07-21 19:24:27 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/include/linux/binfmts.h	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/include/linux/binfmts.h linux-2.6.18-274.3.1.el5.028stab094.3-owl/include/linux/binfmts.h
+--- linux-2.6.18-274.3.1.el5.028stab094.3/include/linux/binfmts.h	2011-09-23 10:18:15 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/include/linux/binfmts.h	2011-10-09 15:56:07 +0000
 @@ -13,7 +13,8 @@ struct pt_regs;
   */
  #define MAX_ARG_PAGES 32
@@ -578,9 +640,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/include/linux/binfmts.h linux-
  
  /* sizeof(linux_binprm->buf) */
  #define BINPRM_BUF_SIZE 128
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/include/linux/dmar.h linux-2.6.18-238.19.1.el5.028stab092.2-owl/include/linux/dmar.h
---- linux-2.6.18-238.19.1.el5.028stab092.2/include/linux/dmar.h	2011-07-21 19:24:13 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/include/linux/dmar.h	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/include/linux/dmar.h linux-2.6.18-274.3.1.el5.028stab094.3-owl/include/linux/dmar.h
+--- linux-2.6.18-274.3.1.el5.028stab094.3/include/linux/dmar.h	2011-09-23 10:18:15 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/include/linux/dmar.h	2011-10-09 15:56:07 +0000
 @@ -125,10 +125,6 @@ extern int irq_remapped(int irq);
  extern struct intel_iommu *map_dev_to_ir(struct pci_dev *dev);
  extern struct intel_iommu *map_ioapic_to_ir(int apic);
@@ -592,9 +654,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/include/linux/dmar.h linux-2.6
  static inline int alloc_irte(struct intel_iommu *iommu, int irq, u16 count)
  {
  	return -1;
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/include/linux/sysctl.h linux-2.6.18-238.19.1.el5.028stab092.2-owl/include/linux/sysctl.h
---- linux-2.6.18-238.19.1.el5.028stab092.2/include/linux/sysctl.h	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/include/linux/sysctl.h	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/include/linux/sysctl.h linux-2.6.18-274.3.1.el5.028stab094.3-owl/include/linux/sysctl.h
+--- linux-2.6.18-274.3.1.el5.028stab094.3/include/linux/sysctl.h	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/include/linux/sysctl.h	2011-10-09 15:56:07 +0000
 @@ -476,6 +476,7 @@ enum
  	NET_IPV4_LOCAL_RESERVED_PORTS=125,
  	NET_TCP_PORT_FORWARD_RANGE=150,
@@ -603,9 +665,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/include/linux/sysctl.h linux-2
  };
  
  enum {
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/include/linux/ve.h linux-2.6.18-238.19.1.el5.028stab092.2-owl/include/linux/ve.h
---- linux-2.6.18-238.19.1.el5.028stab092.2/include/linux/ve.h	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/include/linux/ve.h	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/include/linux/ve.h linux-2.6.18-274.3.1.el5.028stab094.3-owl/include/linux/ve.h
+--- linux-2.6.18-274.3.1.el5.028stab094.3/include/linux/ve.h	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/include/linux/ve.h	2011-10-09 15:56:07 +0000
 @@ -216,6 +216,7 @@ struct ve_struct {
  	struct ctl_table_header	*forward_header;
  	struct ctl_table	*forward_table;
@@ -614,9 +676,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/include/linux/ve.h linux-2.6.1
  	struct neigh_table	*ve_arp_tbl;
  #if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
  	struct ipv6_devconf	*_ipv6_devconf;
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/include/net/ping.h linux-2.6.18-238.19.1.el5.028stab092.2-owl/include/net/ping.h
---- linux-2.6.18-238.19.1.el5.028stab092.2/include/net/ping.h	1970-01-01 00:00:00 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/include/net/ping.h	2011-02-10 18:44:33 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/include/net/ping.h linux-2.6.18-274.3.1.el5.028stab094.3-owl/include/net/ping.h
+--- linux-2.6.18-274.3.1.el5.028stab094.3/include/net/ping.h	1970-01-01 00:00:00 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/include/net/ping.h	2011-02-10 18:44:33 +0000
 @@ -0,0 +1,68 @@
 +/*
 + * INET		An implementation of the TCP/IP protocol suite for the LINUX
@@ -686,9 +748,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/include/net/ping.h linux-2.6.1
 +
 +
 +#endif /* _PING_H */
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/include/net/sock.h linux-2.6.18-238.19.1.el5.028stab092.2-owl/include/net/sock.h
---- linux-2.6.18-238.19.1.el5.028stab092.2/include/net/sock.h	2011-07-21 19:24:29 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/include/net/sock.h	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/include/net/sock.h linux-2.6.18-274.3.1.el5.028stab094.3-owl/include/net/sock.h
+--- linux-2.6.18-274.3.1.el5.028stab094.3/include/net/sock.h	2011-09-23 10:18:18 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/include/net/sock.h	2011-10-09 15:56:07 +0000
 @@ -495,27 +495,6 @@ static inline void __sk_add_backlog(stru
  	skb->next = NULL;
  }
@@ -746,9 +808,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/include/net/sock.h linux-2.6.1
  #ifdef SOCK_REFCNT_DEBUG
  static inline void sk_refcnt_debug_inc(struct sock *sk)
  {
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/init/do_mounts.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/init/do_mounts.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/init/do_mounts.c	2006-09-20 03:42:06 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/init/do_mounts.c	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/init/do_mounts.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/init/do_mounts.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/init/do_mounts.c	2006-09-20 03:42:06 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/init/do_mounts.c	2011-07-27 04:03:04 +0000
 @@ -13,6 +13,10 @@
  #include <linux/nfs_fs_sb.h>
  #include <linux/nfs_mount.h>
@@ -834,9 +896,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/init/do_mounts.c linux-2.6.18-
  		printk(KERN_INFO "Waiting %dsec before mounting root device...\n",
  		       root_delay);
  		ssleep(root_delay);
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/init/do_mounts_md.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/init/do_mounts_md.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/init/do_mounts_md.c	2006-09-20 03:42:06 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/init/do_mounts_md.c	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/init/do_mounts_md.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/init/do_mounts_md.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/init/do_mounts_md.c	2006-09-20 03:42:06 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/init/do_mounts_md.c	2011-07-27 04:03:04 +0000
 @@ -122,6 +122,7 @@ static void __init md_setup_drive(void)
  
  	for (ent = 0; ent < md_setup_ents ; ent++) {
@@ -882,9 +944,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/init/do_mounts_md.c linux-2.6.
  			continue;
  
  		printk(KERN_INFO "md: Loading md%s%d: %s\n",
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/exit.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/exit.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/kernel/exit.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/exit.c	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/kernel/exit.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/kernel/exit.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/kernel/exit.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/kernel/exit.c	2011-10-09 15:56:07 +0000
 @@ -957,12 +957,28 @@ fastcall NORET_TYPE void do_exit(long co
  	int group_dead;
  	unsigned int mycpu;
@@ -916,9 +978,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/exit.c linux-2.6.18-238
  	if (unlikely(!tsk->pid))
  		panic("Attempted to kill the idle task!");
  #ifdef CONFIG_VE
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/kallsyms.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/kallsyms.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/kernel/kallsyms.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/kallsyms.c	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/kernel/kallsyms.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/kernel/kallsyms.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/kernel/kallsyms.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/kernel/kallsyms.c	2011-10-09 15:56:07 +0000
 @@ -421,7 +421,7 @@ static int __init kallsyms_init(void)
  {
  	struct proc_dir_entry *entry;
@@ -928,9 +990,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/kallsyms.c linux-2.6.18
  	if (entry)
  		entry->proc_fops = &kallsyms_operations;
  	return 0;
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/panic.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/panic.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/kernel/panic.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/panic.c	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/kernel/panic.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/kernel/panic.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/kernel/panic.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/kernel/panic.c	2011-10-09 15:56:07 +0000
 @@ -20,7 +20,7 @@
  #include <linux/kexec.h>
  #include <linux/debug_locks.h>
@@ -940,10 +1002,10 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/panic.c linux-2.6.18-23
  int tainted = 1;
  static int pause_on_oops;
  static int pause_on_oops_flag;
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/printk.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/printk.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/kernel/printk.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/printk.c	2011-07-27 04:03:04 +0000
-@@ -255,10 +255,6 @@ int do_syslog(int type, char __user *buf
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/kernel/printk.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/kernel/printk.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/kernel/printk.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/kernel/printk.c	2011-10-09 15:56:07 +0000
+@@ -256,10 +256,6 @@ int do_syslog(int type, char __user *buf
  	if (!ve_is_super(get_exec_env()) && (type == 6 || type == 7))
  		goto out;
  
@@ -954,7 +1016,7 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/printk.c linux-2.6.18-2
  	switch (type) {
  	case 0:		/* Close log */
  		break;
-@@ -390,6 +386,12 @@ out:
+@@ -391,6 +387,12 @@ out:
  
  asmlinkage long sys_syslog(int type, char __user *buf, int len)
  {
@@ -967,9 +1029,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/printk.c linux-2.6.18-2
  	return do_syslog(type, buf, len);
  }
  
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/sched.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/sched.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/kernel/sched.c	2011-07-21 19:24:29 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/sched.c	2011-07-27 05:02:13 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/kernel/sched.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/kernel/sched.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/kernel/sched.c	2011-09-23 10:18:18 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/kernel/sched.c	2011-10-09 15:56:07 +0000
 @@ -857,7 +857,9 @@ done_noswitch:
  
  idle:
@@ -980,9 +1042,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/sched.c linux-2.6.18-23
  	vcpu = task_vcpu(this_pcpu()->idle);
  	__vcpu_get(vcpu);
  	spin_unlock(&fairsched_lock);
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/sys.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/sys.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/kernel/sys.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/sys.c	2011-07-27 04:31:52 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/kernel/sys.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/kernel/sys.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/kernel/sys.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/kernel/sys.c	2011-10-09 15:56:07 +0000
 @@ -1013,13 +1013,8 @@ int set_user(uid_t new_ruid, int dumpcle
  	struct user_struct *new_user;
  
@@ -999,9 +1061,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/sys.c linux-2.6.18-238.
  		return -EAGAIN;
  	}
  
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/ve/ve.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/ve/ve.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/kernel/ve/ve.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/ve/ve.c	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/kernel/ve/ve.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/kernel/ve/ve.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/kernel/ve/ve.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/kernel/ve/ve.c	2011-10-09 15:56:07 +0000
 @@ -120,6 +120,7 @@ struct ve_struct ve0 = {
  #endif
  	._randomize_va_space	= 1,
@@ -1010,9 +1072,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/ve/ve.c linux-2.6.18-23
  };
  
  EXPORT_SYMBOL(ve0);
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/ve/vecalls.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/ve/vecalls.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/kernel/ve/vecalls.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/kernel/ve/vecalls.c	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/kernel/ve/vecalls.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/kernel/ve/vecalls.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/kernel/ve/vecalls.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/kernel/ve/vecalls.c	2011-10-09 15:56:07 +0000
 @@ -1115,6 +1115,8 @@ static int init_ve_struct(struct ve_stru
  
  	ve->_randomize_va_space = ve0._randomize_va_space;
@@ -1022,10 +1084,10 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/kernel/ve/vecalls.c linux-2.6.
   
  	return 0;
  }
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/core/dev.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/core/dev.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/net/core/dev.c	2011-07-21 19:24:29 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/core/dev.c	2011-07-27 04:03:04 +0000
-@@ -1566,6 +1566,7 @@ static inline int skb_checksum_setup_v4(
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/net/core/dev.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/core/dev.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/net/core/dev.c	2011-09-23 10:18:18 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/core/dev.c	2011-10-09 15:56:07 +0000
+@@ -1568,6 +1568,7 @@ static inline int skb_checksum_setup_v4(
  	return skb_setup_csum_ptr(skb, skb->nh.iph->protocol);
  }
  
@@ -1033,7 +1095,7 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/core/dev.c linux-2.6.18-23
  static inline int skb_checksum_setup_v6(struct sk_buff *skb)
  {
  	int ptr;
-@@ -1585,14 +1586,17 @@ static inline int skb_checksum_setup_v6(
+@@ -1587,14 +1588,17 @@ static inline int skb_checksum_setup_v6(
  	skb->h.raw = skb->data + ptr;
  	return skb_setup_csum_ptr(skb, nexthdr);
  }
@@ -1051,9 +1113,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/core/dev.c linux-2.6.18-23
  		return -EPROTO;
  	}
  	return 0;
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/Kconfig linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/ipv4/Kconfig
---- linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/Kconfig	2011-07-21 19:23:52 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/ipv4/Kconfig	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/net/ipv4/Kconfig linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/ipv4/Kconfig
+--- linux-2.6.18-274.3.1.el5.028stab094.3/net/ipv4/Kconfig	2011-09-23 10:18:15 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/ipv4/Kconfig	2011-10-09 15:56:07 +0000
 @@ -14,6 +14,26 @@ config IP_MULTICAST
  	  <file:Documentation/networking/multicast.txt>. For most people, it's
  	  safe to say N.
@@ -1081,9 +1143,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/Kconfig linux-2.6.18-
  config IP_ADVANCED_ROUTER
  	bool "IP: advanced router"
  	---help---
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/Makefile linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/ipv4/Makefile
---- linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/Makefile	2011-07-21 19:23:52 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/ipv4/Makefile	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/net/ipv4/Makefile linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/ipv4/Makefile
+--- linux-2.6.18-274.3.1.el5.028stab094.3/net/ipv4/Makefile	2011-09-23 10:18:15 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/ipv4/Makefile	2011-10-09 15:56:07 +0000
 @@ -20,6 +20,7 @@ obj-$(CONFIG_IP_FIB_TRIE) += fib_trie.o
  obj-$(CONFIG_PROC_FS) += proc.o
  obj-$(CONFIG_IP_MULTIPLE_TABLES) += fib_rules.o
@@ -1092,9 +1154,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/Makefile linux-2.6.18
  obj-$(CONFIG_NET_IPIP) += ipip.o
  obj-$(CONFIG_NET_IPGRE) += ip_gre.o
  obj-$(CONFIG_SYN_COOKIES) += syncookies.o
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/af_inet.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/ipv4/af_inet.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/af_inet.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/ipv4/af_inet.c	2011-07-27 04:09:59 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/net/ipv4/af_inet.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/ipv4/af_inet.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/net/ipv4/af_inet.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/ipv4/af_inet.c	2011-10-09 15:56:07 +0000
 @@ -104,6 +104,7 @@
  #include <net/inet_connection_sock.h>
  #include <net/tcp.h>
@@ -1184,9 +1246,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/af_inet.c linux-2.6.1
  	fib_proc_exit();
  out_fib:
  	udp4_proc_exit();
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/devinet.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/ipv4/devinet.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/devinet.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/ipv4/devinet.c	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/net/ipv4/devinet.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/ipv4/devinet.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/net/ipv4/devinet.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/ipv4/devinet.c	2011-10-09 15:56:07 +0000
 @@ -61,6 +61,7 @@
  
  #include <net/arp.h>
@@ -1215,9 +1277,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/devinet.c linux-2.6.1
  	{
  		.ctl_name 	= NET_IPV4_ROUTE_FLUSH,
  		.procname	= "flush",
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/icmp.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/ipv4/icmp.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/icmp.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/ipv4/icmp.c	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/net/ipv4/icmp.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/ipv4/icmp.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/net/ipv4/icmp.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/ipv4/icmp.c	2011-10-09 15:56:07 +0000
 @@ -84,6 +84,7 @@
  #include <net/tcp.h>
  #include <net/udp.h>
@@ -1253,9 +1315,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/icmp.c linux-2.6.18-2
  	},
  	[1] = {
  		.handler = icmp_discard,
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/ping.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/ipv4/ping.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/ping.c	1970-01-01 00:00:00 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/ipv4/ping.c	2011-03-06 11:12:31 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/net/ipv4/ping.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/ipv4/ping.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/net/ipv4/ping.c	1970-01-01 00:00:00 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/ipv4/ping.c	2011-03-06 11:12:31 +0000
 @@ -0,0 +1,1022 @@
 +/*
 + * INET		An implementation of the TCP/IP protocol suite for the LINUX
@@ -2279,9 +2341,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/ping.c linux-2.6.18-2
 +		INIT_HLIST_HEAD(&ping_table.hash[i]);
 +	rwlock_init(&ping_table.lock);
 +}
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/sysctl_net_ipv4.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/ipv4/sysctl_net_ipv4.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/sysctl_net_ipv4.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/ipv4/sysctl_net_ipv4.c	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/net/ipv4/sysctl_net_ipv4.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/ipv4/sysctl_net_ipv4.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/net/ipv4/sysctl_net_ipv4.c	2011-09-23 10:18:17 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/ipv4/sysctl_net_ipv4.c	2011-10-09 15:56:07 +0000
 @@ -16,6 +16,7 @@
  #include <net/snmp.h>
  #include <net/icmp.h>
@@ -2304,9 +2366,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/ipv4/sysctl_net_ipv4.c lin
          {
  		.ctl_name	= NET_IPV4_DEFAULT_TTL,
  		.procname	= "ip_default_ttl",
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/llc/af_llc.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/llc/af_llc.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/net/llc/af_llc.c	2006-09-20 03:42:06 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/llc/af_llc.c	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/net/llc/af_llc.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/llc/af_llc.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/net/llc/af_llc.c	2006-09-20 03:42:06 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/llc/af_llc.c	2011-07-27 04:03:04 +0000
 @@ -155,6 +155,9 @@ static int llc_ui_create(struct socket *
  	struct sock *sk;
  	int rc = -ESOCKTNOSUPPORT;
@@ -2325,10 +2387,10 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/llc/af_llc.c linux-2.6.18-
  	lock_sock(sk);
  	if (sock_flag(sk, SOCK_ZAPPED))
  		goto out;
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/socket.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/socket.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/net/socket.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/net/socket.c	2011-07-27 04:03:04 +0000
-@@ -1171,6 +1171,7 @@ int vz_security_protocol_check(int proto
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/net/socket.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/socket.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/net/socket.c	2011-09-23 10:18:18 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/net/socket.c	2011-10-09 15:56:07 +0000
+@@ -1190,6 +1190,7 @@ int vz_security_protocol_check(int proto
  	case  IPPROTO_TCP:
  	case  IPPROTO_UDP:
  	case  IPPROTO_RAW:
@@ -2336,9 +2398,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/net/socket.c linux-2.6.18-238.
  		break;
  	default:
  		return -EAFNOSUPPORT;
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/scripts/mkcompile_h linux-2.6.18-238.19.1.el5.028stab092.2-owl/scripts/mkcompile_h
---- linux-2.6.18-238.19.1.el5.028stab092.2/scripts/mkcompile_h	2006-09-20 03:42:06 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/scripts/mkcompile_h	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/scripts/mkcompile_h linux-2.6.18-274.3.1.el5.028stab094.3-owl/scripts/mkcompile_h
+--- linux-2.6.18-274.3.1.el5.028stab094.3/scripts/mkcompile_h	2006-09-20 03:42:06 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/scripts/mkcompile_h	2011-07-27 04:03:04 +0000
 @@ -47,17 +47,9 @@ UTS_TRUNCATE="sed -e s/\(.\{1,$UTS_LEN\}
    echo \#define UTS_VERSION \"`echo $UTS_VERSION | $UTS_TRUNCATE`\"
  
@@ -2360,9 +2422,9 @@ diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/scripts/mkcompile_h linux-2.6.
    echo \#define LINUX_COMPILER \"`$CC -v 2>&1 | tail -n 1`\"
  ) > .tmpcompile
  
-diff -urpN linux-2.6.18-238.19.1.el5.028stab092.2/security/min_addr.c linux-2.6.18-238.19.1.el5.028stab092.2-owl/security/min_addr.c
---- linux-2.6.18-238.19.1.el5.028stab092.2/security/min_addr.c	2011-07-21 19:24:28 +0000
-+++ linux-2.6.18-238.19.1.el5.028stab092.2-owl/security/min_addr.c	2011-07-27 04:03:04 +0000
+diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/security/min_addr.c linux-2.6.18-274.3.1.el5.028stab094.3-owl/security/min_addr.c
+--- linux-2.6.18-274.3.1.el5.028stab094.3/security/min_addr.c	2011-09-23 10:18:18 +0000
++++ linux-2.6.18-274.3.1.el5.028stab094.3-owl/security/min_addr.c	2011-10-09 15:56:07 +0000
 @@ -5,9 +5,9 @@
  #include <linux/sysctl.h>
  

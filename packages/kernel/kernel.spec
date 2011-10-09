@@ -1,23 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.58 2011/07/27 06:34:13 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.59 2011/10/09 22:49:58 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 238.19.1.el5.028stab092.2
+%define ovzversion 274.3.1.el5.028stab094.3
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab092.2
+URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab094.3
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab092.2/patches/patch-238.19.1.el5.028stab092.2-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab092.2/patches/patch-238.19.1.el5.028stab092.2-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab094.3/patches/patch-274.3.1.el5.028stab094.3-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab094.3/patches/patch-274.3.1.el5.028stab094.3-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -104,6 +104,9 @@ done
 %files fake
 
 %changelog
+* Sun Oct 09 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.3.1.el5.028stab094.3.owl1
+- Updated to 2.6.18-274.3.1.el5.028stab094.3.
+
 * Wed Jul 27 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.19.1.el5.028stab092.2.owl1
 - Updated to 2.6.18-238.19.1.el5.028stab092.2.
 - In kernel/sched.c, wrapped the use of sched_goidle in
