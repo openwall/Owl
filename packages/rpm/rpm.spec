@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.90 2011/10/10 04:09:42 solar Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.91 2011/10/10 04:41:15 solar Exp $
 
 %define WITH_PYTHON 0
 
@@ -190,7 +190,7 @@ rm -r elfutils
 
 # Force non-executable stack.  This is needed because there are assembly files
 # in the rpm source tree that lack section .note.GNU-stack.
-%{expand:%%define optflags %optflags -Wa,--noexecstack}
+%{expand:%%define optflags %optflags -fno-strict-aliasing -Wa,--noexecstack}
 
 %build
 CC=gcc
