@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.89 2011/10/10 02:46:54 solar Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.90 2011/10/10 04:09:42 solar Exp $
 
 %define WITH_PYTHON 0
 
@@ -269,8 +269,7 @@ done
 aclocal
 automake -f
 autoconf
-# This build does not use %%optflags yet, because
-# build with %%optflags produces unusable executables.
+CFLAGS="%optflags -DMAGIC='\"/usr/share/magic\"'" \
 ac_cv_header_libelf_h=no ac_cv_header_gelf_h=no \
 ./configure \
 	--host=%_target_platform \
