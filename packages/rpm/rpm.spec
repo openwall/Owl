@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.92 2011/10/10 05:08:43 solar Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.93 2011/10/10 05:16:41 solar Exp $
 
 %define WITH_PYTHON 0
 
@@ -61,6 +61,7 @@ Patch39: rpm-4.2-owl-xz-macros.diff
 Patch40: rpm-4.2-owl-xz-payload.diff
 Patch41: rpm-4.2-owl-remove-unsafe-perms.diff
 Patch42: rpm-4.2-rh-header-sanity.diff
+Patch43: rpm-4.2-owl-beecrypt-configure.diff
 PreReq: /sbin/ldconfig
 PreReq: sh-utils, fileutils, mktemp, gawk
 Requires: findutils, diffutils, gzip
@@ -179,6 +180,7 @@ rm -r tests
 %patch40 -p1
 %patch41 -p1
 %patch42 -p1
+%patch43 -p1
 
 bzip2 -9k CHANGES
 
@@ -516,6 +518,7 @@ fi
 - Added a patch for CVE-2011-3378 (crash and potential arbitrary code execution
 on malformed package file headers) taken from RHEL 4 update package
 rpm-4.3.3-35_nonptl.el4.src.rpm.
+- Build beecrypt with -Wa,--noexecstack.
 
 * Mon Jul 25 2011 Solar Designer <solar-at-owl.openwall.com> 4.2-owl26
 - Added a patch to remove unsafe file permissions (chmod'ing files to 0) on
