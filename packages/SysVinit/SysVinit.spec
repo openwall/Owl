@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/SysVinit/SysVinit.spec,v 1.30 2010/11/15 21:38:02 solar Exp $
+# $Owl: Owl/packages/SysVinit/SysVinit.spec,v 1.31 2011/10/10 01:26:13 solar Exp $
 
 Summary: Programs which control basic system processes.
 Name: SysVinit
 Version: 2.88dsf
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source: http://download.savannah.gnu.org/releases/sysvinit/sysvinit-%version.tar.bz2
@@ -19,6 +19,7 @@ Patch7: sysvinit-2.88-alt-signedness.diff
 Patch8: sysvinit-2.88-alt-wur.diff
 Patch9: sysvinit-2.88-deb-init-selinux.diff
 Patch10: sysvinit-2.88-suse-SETSIG.diff
+Patch11: sysvinit-2.88-owl-shell.diff
 Requires: /sbin/sulogin
 BuildRoot: /override/%name-%version
 
@@ -43,6 +44,7 @@ rm man/sulogin.8
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 %{expand:%%define optflags %optflags -Wall -D_GNU_SOURCE}
 
@@ -129,6 +131,11 @@ fi
 %attr(0600,root,root) /dev/initctl
 
 %changelog
+* Mon Oct 10 2011 Solar Designer <solar-at-owl.openwall.com> 2.88dsf-owl2
+- Set the shell name to /bin/bash, not /bin/sh, such that
+/etc/profile.d/colorls.sh knows that it may set shell aliases (this broke with
+the update to 2.88dsf, which started setting the SHELL environment variable).
+
 * Fri Nov 12 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.88dsf-owl1
 - Updated to 2.88dsf.
 - Updated all the patches.
