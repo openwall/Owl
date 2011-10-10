@@ -68,6 +68,10 @@ http://www.openwall.com/lists/oss-security/2011/09/27/3
 http://rhn.redhat.com/errata/RHSA-2011-1349.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3378
 
+2011/10/10	Package: SysVinit
+Applied a patch to set the shell name to /bin/bash, not /bin/sh, such
+that colored ls output is enabled on our LiveCD.
+
 2011/10/09	Packages: kernel, vzctl
 SECURITY FIX	Severity: low, local, active
 Updated the kernel to 2.6.18-274.3.1.el5.028stab094.3 (OpenVZ's latest
@@ -456,4 +460,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.60 2011/10/10 02:27:44 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.61 2011/10/10 02:53:22 solar Exp $
