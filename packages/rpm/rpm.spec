@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.88 2011/10/10 02:06:29 solar Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.89 2011/10/10 02:46:54 solar Exp $
 
 %define WITH_PYTHON 0
 
@@ -187,6 +187,10 @@ install -p -m 755 %_sourcedir/gendiff .
 
 # Remove libelf archive just in case
 rm -r elfutils
+
+# Force non-executable stack.  This is needed because there are assembly files
+# in the rpm source tree that lack section .note.GNU-stack.
+%{expand:%%define optflags %optflags -Wa,--noexecstack}
 
 %build
 CC=gcc
@@ -516,6 +520,7 @@ fi
 - Added a patch for CVE-2011-3378 (crash and potential arbitrary code execution
 on malformed package file headers) taken from RHEL 4 update package
 rpm-4.3.3-35_nonptl.el4.src.rpm.
+- Build with gcc -Wa,--noexecstack.
 
 * Mon Jul 25 2011 Solar Designer <solar-at-owl.openwall.com> 4.2-owl26
 - Added a patch to remove unsafe file permissions (chmod'ing files to 0) on
