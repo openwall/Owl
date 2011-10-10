@@ -46,9 +46,35 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2011/10/09	Packages: kernel, vzctl
+SECURITY FIX	Severity: low, local, active
+Updated the kernel to 2.6.18-274.3.1.el5.028stab094.3 (OpenVZ's latest
+stable from their RHEL 5 based branch, now rebased on RHEL 5.7's).
+Restricted permissions on /proc/slabinfo as a security hardening
+measure.  Moved some OpenVZ features to modules like it is done in
+OpenVZ's official kernel builds.  Changed CONFIG_UDF_FS=y to =m.
+Changed CONFIG_BLK_DEV_CRYPTOLOOP and most CONFIG_CRYPTO_* from =y to
+=m.  On x86_64, changed CONFIG_PCNET32 and CONFIG_FORCEDETH (these are
+some of the 100 Mbps NIC drivers) from =y to =m.  Of the 100 Mbps NIC
+drivers, we're leaving only those for Intel, Realtek, and
+NE2000-compatible PCI NICs built into the kernel on x86_64 now.  Set
+CONFIG_SCSI_AIC94XX=y and CONFIG_BLK_CPQ_CISS_DA=y (the latter was
+already =y on i686, now it is =y on x86_64 as well).  Although we
+reference two Red Hat security advisories below, none of the worse than
+local DoS issues listed in those advisories affect our previous kernel
+builds, either because we do not build the affected components, or in
+case of CVE-2011-2495 because we already had the permissions on
+/proc/PID/io restricted before Owl 3.0 release.
+References:
+http://wiki.openvz.org/Download/kernel/rhel5/028stab094.3
+http://rhn.redhat.com/errata/RHSA-2011-1212.html
+http://wiki.openvz.org/Download/kernel/rhel5/028stab093.2
+http://rhn.redhat.com/errata/RHSA-2011-1065.html
+http://www.openwall.com/lists/kernel-hardening/2011/09/27/3
+
 2011/10/09	Packages: tzdata, glibc; Owl/build/installorder.conf
-Moved timezone data files from glibc to new package tzdata, updated it to
-version 2011k.
+Moved timezone data files from glibc to new package tzdata, updated it
+to version 2011k.
 
 2011/09/07	Owl/build/{install*.sh,installorder.conf}
 Support for optional package tags has been added to installorder.conf
@@ -408,4 +434,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.58 2011/10/09 01:26:54 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.59 2011/10/10 00:06:00 solar Exp $
