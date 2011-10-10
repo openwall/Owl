@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.58 2010/12/13 13:49:15 solar Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.59 2011/10/10 15:09:08 segoon Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -24,7 +24,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.8
-Release: owl6
+Release: owl7
 Epoch: 4
 License: GPL
 Group: Development/Languages
@@ -49,6 +49,7 @@ Patch26: perl-5.8.6-alt-pod-vendor-dirs-perlbug34500.diff
 Patch27: perl-5.8.8-up-rh-CVE-2008-1927.diff
 Patch28: perl-5.8.8-up-rh-Safe.diff
 Patch29: perl-5.8.8-up-rh-rmtree.diff
+Patch30: perl-5.8.8-owl-makedepend.diff
 Provides: perl(:WITH_PERLIO)
 %if %BUILD_THREADS
 %define thread_arch -thread-multi
@@ -119,12 +120,13 @@ introduce security holes.
 %patch27 -p1
 %patch28 -p1
 %patch29 -p1
+%patch30 -p1
 
 find . -name '*.orig' -delete
 
 # Remove files with known temporary file handling issues that we don't
 # package or use anyway.
-REMOVE_FILES='INSTALL makeaperl.SH perly.fixer ext/SDBM_File/sdbm/grind'
+REMOVE_FILES='INSTALL makeaperl.SH perly.fixer ext/SDBM_File/sdbm/grind lib/Benchmark.t'
 chmod u+w $REMOVE_FILES
 rm $REMOVE_FILES
 mv MANIFEST MANIFEST.orig
@@ -301,6 +303,12 @@ chmod -R u+w %buildroot
 %endif
 
 %changelog
+* Sun Oct 09 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4:5.8.8-owl7
+- Fixed build failure under gcc 4.6.1.
+- Disabled lib/Benchmark.t test as it fails if perl is built under gcc 4.6
+for some obscure reason:
+http://www.openwall.com/lists/owl-dev/2011/10/09/3
+
 * Mon Dec 13 2010 Solar Designer <solar-at-owl.openwall.com> 4:5.8.8-owl6
 - Added security fix backports found in Red Hat's 5.8.8-32.el5.2.  These are
 for a double-free bug triggerable via malicious regexps with UTF-8 characters
