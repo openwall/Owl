@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.60 2011/10/11 11:23:47 segoon Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.61 2011/10/11 14:14:58 segoon Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -24,7 +24,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.8
-Release: owl7
+Release: owl8
 Epoch: 4
 License: GPL
 Group: Development/Languages
@@ -128,8 +128,9 @@ find . -name '*.orig' -delete
 # package or use anyway.
 REMOVE_FILES='INSTALL makeaperl.SH perly.fixer ext/SDBM_File/sdbm/grind'
 # XXX: Remove lib/Benchmark.t test as it hangs if perl is built under gcc 4.6
-# for some obscure reason (calls times(2) forever).
-REMOVE_FILES="$REMOVE_FILES lib/Benchmark.t"
+# for some obscure reason (calls times(2) forever).  Remove time.t as it has
+# weird assumptions about system performance, resulting in the test failure.
+REMOVE_FILES="$REMOVE_FILES lib/Benchmark.t t/op/time.t"
 chmod u+w $REMOVE_FILES
 rm $REMOVE_FILES
 mv MANIFEST MANIFEST.orig
@@ -306,6 +307,12 @@ chmod -R u+w %buildroot
 %endif
 
 %changelog
+* Tue Oct 11 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4:5.8.8-owl8
+- Also disabled op/time.t test as it wrongly relies on a debatable performance
+assumptions.  This test rarely fails because the assumptions are wrong.
+The problem description:
+http://www.spec.org/cpu2006/Docs/errata.html
+
 * Sun Oct 09 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4:5.8.8-owl7
 - Fixed build failure under gcc 4.6.1.
 - Disabled lib/Benchmark.t test as it fails if perl is built under gcc 4.6
