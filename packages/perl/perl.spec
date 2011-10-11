@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.61 2011/10/11 14:14:58 segoon Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.62 2011/10/11 19:06:54 segoon Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -308,13 +308,13 @@ chmod -R u+w %buildroot
 
 %changelog
 * Tue Oct 11 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4:5.8.8-owl8
-- Also disabled op/time.t test as it wrongly relies on a debatable performance
-assumptions.  This test rarely fails because the assumptions are wrong.
+- Also disabled op/time.t test as it wrongly relies on debatable performance
+assumptions.  This test occasionally fails because the assumptions are wrong.
 The problem description:
 http://www.spec.org/cpu2006/Docs/errata.html
 
 * Sun Oct 09 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4:5.8.8-owl7
-- Fixed build failure under gcc 4.6.1.
+- Fixed build failure under gcc 4.6.1.  Thanks to Georgi Geshev for the patch.
 - Disabled lib/Benchmark.t test as it fails if perl is built under gcc 4.6
 for some obscure reason:
 http://www.openwall.com/lists/owl-dev/2011/10/09/3
