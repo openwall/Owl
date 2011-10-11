@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/libtool/libtool.spec,v 1.27 2010/01/26 17:18:56 solar Exp $
+# $Owl: Owl/packages/libtool/libtool.spec,v 1.28 2011/10/11 14:16:18 segoon Exp $
 
 Summary: The GNU Libtool, which simplifies the use of shared libraries.
 Name: libtool
 Version: 1.5.22
-Release: owl4
+Release: owl5
 License: GPL/LGPL
 Group: Development/Tools
 URL: http://www.gnu.org/software/libtool/
@@ -17,6 +17,7 @@ Patch4: libtool-1.5.18-alt-ltmain-legacy.diff
 Patch5: libtool-1.5.18-alt-ld.so.conf.diff
 Patch6: libtool-1.5.18-rh-multilib-hack.diff
 Patch7: libtool-1.5.26-up-ltdl.diff
+Patch8: libtool-1.5.22-owl-tests.diff
 PreReq: /sbin/install-info, autoconf, automake, m4, perl
 Requires: libtool-libs = %version-%release, mktemp
 Prefix: %_prefix
@@ -46,6 +47,7 @@ shared libraries.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %build
 rm doc/libtool.info
@@ -94,6 +96,9 @@ fi
 %_libdir/libltdl.so.*
 
 %changelog
+* Tue Oct 11 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.5.22-owl5
+- Patched tagdemo test to be compliant with g++ 4.6.1.
+
 * Mon Nov 30 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.5.22-owl4
 - Applied upstream's backport of libltdl changes from the 2.26b release
 to fix CVE-2009-3736.
