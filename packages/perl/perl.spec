@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.59 2011/10/10 15:09:08 segoon Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.60 2011/10/11 11:23:47 segoon Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -126,7 +126,10 @@ find . -name '*.orig' -delete
 
 # Remove files with known temporary file handling issues that we don't
 # package or use anyway.
-REMOVE_FILES='INSTALL makeaperl.SH perly.fixer ext/SDBM_File/sdbm/grind lib/Benchmark.t'
+REMOVE_FILES='INSTALL makeaperl.SH perly.fixer ext/SDBM_File/sdbm/grind'
+# XXX: Remove lib/Benchmark.t test as it hangs if perl is built under gcc 4.6
+# for some obscure reason (calls times(2) forever).
+REMOVE_FILES="$REMOVE_FILES lib/Benchmark.t"
 chmod u+w $REMOVE_FILES
 rm $REMOVE_FILES
 mv MANIFEST MANIFEST.orig
