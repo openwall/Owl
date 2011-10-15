@@ -49,13 +49,13 @@ typedef struct _d {
   char name[0];
 } d;
 
-d *dirs;
+static d *dirs;
 
-h *hps[NHASH];
+static h *hps[NHASH];
 
-int no_link = 0;
-int verbose = 0;
-int content_only = 0;
+static int no_link = 0;
+static int verbose = 0;
+static int content_only = 0;
 
 typedef struct _f {
   struct _f *next;
@@ -65,12 +65,12 @@ typedef struct _f {
   char name[0];
 } f;
 
-inline unsigned int hash(off_t size, time_t mtime)
+static inline unsigned int hash(off_t size, time_t mtime)
 {
   return (size ^ mtime) & (NHASH - 1);
 }
 
-inline int stcmp(struct stat *st1, struct stat *st2, int content_only)
+static inline int stcmp(struct stat *st1, struct stat *st2, int content_only)
 {
   if (content_only)
     return st1->st_size != st2->st_size;
@@ -79,9 +79,9 @@ inline int stcmp(struct stat *st1, struct stat *st2, int content_only)
          st1->st_mtime != st2->st_mtime;
 }
 
-long long ndirs, nobjects, nregfiles, ncomp, nlinks, nsaved;
+static long long ndirs, nobjects, nregfiles, ncomp, nlinks, nsaved;
 
-void doexit(int i)
+static void doexit(int i)
 {
   if (verbose) {  
     fprintf(stderr, "\n\n");
@@ -95,7 +95,7 @@ void doexit(int i)
   exit(i);
 }
 
-void usage(char *prog)
+static void usage(char *prog)
 {
   fprintf (stderr, "Usage: %s [-cnvh] directories...\n", prog);
   fprintf (stderr, "  -c    When finding candidates for linking, compare only file contents.\n");
@@ -106,10 +106,10 @@ void usage(char *prog)
   exit(255);
 }
 
-unsigned int buf[NBUF];
-char iobuf1[NIOBUF], iobuf2[NIOBUF];
+static unsigned int buf[NBUF];
+static char iobuf1[NIOBUF], iobuf2[NIOBUF];
 
-inline size_t add2(size_t a, size_t b)
+static inline size_t add2(size_t a, size_t b)
 {
   size_t sum = a + b;
   if (sum < a) {
@@ -119,7 +119,7 @@ inline size_t add2(size_t a, size_t b)
   return sum;
 }
 
-inline size_t add3(size_t a, size_t b, size_t c)
+static inline size_t add3(size_t a, size_t b, size_t c)
 {
   return add2(add2(a, b), c);
 }
@@ -129,13 +129,13 @@ typedef struct {
   size_t alloc;
 } dynstr;
 
-void initstr(dynstr *str)
+static void initstr(dynstr *str)
 {
   str->buf = NULL;
   str->alloc = 0;
 }
 
-void growstr(dynstr *str, size_t newlen)
+static void growstr(dynstr *str, size_t newlen)
 {
   if (newlen < str->alloc)
     return;
@@ -146,7 +146,7 @@ void growstr(dynstr *str, size_t newlen)
   }
 }
 
-void rf (char *name)
+static void rf (char *name)
 {
   struct stat st, st2, st3;
   nobjects++;
