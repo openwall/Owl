@@ -108,7 +108,28 @@ void usage(char *prog)
 
 unsigned int buf[NBUF];
 char iobuf1[NIOBUF], iobuf2[NIOBUF];
-char nambuf1[NAMELEN], nambuf2[NAMELEN];
+
+typedef struct {
+  char *buf;
+  size_t alloc;
+} dynstr;
+
+void initstr(dynstr *str)
+{
+  str->buf = NULL;
+  str->alloc = 0;
+}
+
+void growstr(dynstr *str, size_t newlen)
+{
+  if (newlen < str->alloc)
+    return;
+  str->buf = realloc(str->buf, str->alloc = newlen + 1);
+  if (!str->buf || str->alloc < newlen) {
+    fprintf(stderr, "\nOut of memory 4\n");
+    doexit(4);
+  }
+}
 
 void rf (char *name)
 {
@@ -221,20 +242,30 @@ void rf (char *name)
         n1 = fp2->name;
         n2 = name;
         if (!no_link) {
-          strcpy (stpcpy (nambuf2, n2), ".$$$___cleanit___$$$");
-          if (rename (n2, nambuf2)) {
-            fprintf(stderr, "\nFailed to rename %s to %s\n", n2, nambuf2);
+          const char *suffix = ".$$$___cleanit___$$$";
+          const size_t suffixlen = strlen(suffix);
+          size_t n2len = strlen(n2);
+          dynstr nam2;
+          initstr(&nam2);
+          growstr(&nam2, n2len + suffixlen);
+          memcpy(nam2.buf, n2, n2len);
+          memcpy(&nam2.buf[n2len], suffix, suffixlen + 1);
+          if (rename (n2, nam2.buf)) {
+            fprintf(stderr, "\nFailed to rename %s to %s\n", n2, nam2.buf);
+            free(nam2.buf);
             continue;
           }
           if (link (n1, n2)) {
             fprintf(stderr, "\nFailed to hardlink %s to %s\n", n1, n2);
-            if (rename (nambuf2, n2)) {
-              fprintf(stderr, "\nBad bad - failed to rename back %s to %s\n", nambuf2, n2);
+            if (rename (nam2.buf, n2)) {
+              fprintf(stderr, "\nBad bad - failed to rename back %s to %s\n", nam2.buf, n2);
             }
             close(fd);
+            free(nam2.buf);
             return;
           }
-          unlink (nambuf2);
+          unlink (nam2.buf);
+          free(nam2.buf);
         }
         nlinks++;
         if (st3.st_nlink > 1) {
@@ -277,7 +308,8 @@ int main(int argc, char **argv)
 {
   int ch;
   int i;
-  char *p;
+  dynstr nam1;
+  size_t nam1baselen;
   d * dp;
   DIR *dh;
   struct dirent *di;
@@ -301,14 +333,16 @@ int main(int argc, char **argv)
     usage(argv[0]);
   for (i = optind; i < argc; i++)
     rf(argv[i]);
+  initstr(&nam1);
   while (dirs) {
     dp = dirs;
     dirs = dp->next;
-    strcpy (nambuf1, dp->name);
+    growstr(&nam1, (nam1baselen = strlen(dp->name)) + 1);
+    memcpy(nam1.buf, dp->name, nam1baselen);
     free (dp);
-    strcat (nambuf1, "/");
-    p = strchr (nambuf1, 0);
-    dh = opendir (nambuf1);
+    nam1.buf[nam1baselen++] = '/';
+    nam1.buf[nam1baselen] = 0;
+    dh = opendir (nam1.buf);
     if (dh == NULL)
       continue;
     ndirs++;
@@ -321,14 +355,18 @@ int main(int argc, char **argv)
           continue;
         q = strrchr (di->d_name, '.');
         if (q && strlen (q) == 7 && q != di->d_name) {
-          *p = 0;
+          nam1.buf[nam1baselen] = 0;
           if (verbose)
-            fprintf(stderr, "Skipping %s%s\n", nambuf1, di->d_name);
+            fprintf(stderr, "Skipping %s%s\n", nam1.buf, di->d_name);
           continue;
         }
       }
-      strcpy (p, di->d_name);
-      rf(nambuf1);
+      {
+        size_t subdirlen;
+        growstr(&nam1, nam1baselen + (subdirlen = strlen(di->d_name)));
+        memcpy(&nam1.buf[nam1baselen], di->d_name, subdirlen + 1);
+      }
+      rf(nam1.buf);
     }
     closedir(dh);
   }
