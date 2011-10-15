@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/hardlink/hardlink.spec,v 1.2 2011/10/15 11:26:19 solar Exp $
+# $Owl: Owl/packages/hardlink/hardlink.spec,v 1.3 2011/10/15 11:36:21 solar Exp $
 
 Summary: Consolidate duplicate files via hardlinks.
 Name: hardlink
@@ -27,6 +27,8 @@ useful when all directories specified are on the same filesystem.
 
 %prep
 %setup -q -c -T
+
+%{expand:%%define optflags %optflags -Wall}
 
 %build
 %__cc %optflags %_sourcedir/hardlink.c -o hardlink
