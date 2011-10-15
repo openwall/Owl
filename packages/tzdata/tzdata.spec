@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/tzdata/tzdata.spec,v 1.2 2011/10/15 11:34:18 solar Exp $
+# $Owl: Owl/packages/tzdata/tzdata.spec,v 1.3 2011/10/15 11:43:04 solar Exp $
 
 Summary: Timezone data.
 Name: tzdata
@@ -18,6 +18,7 @@ Source0: tzdata-base-0.tar.bz2
 Source1: ftp://munnari.oz.au/pub/tzdata%tzdata_version.tar.gz
 Source2: ftp://munnari.oz.au/pub/oldtz/tzcode%tzcode_version.tar.gz
 BuildRequires: /usr/sbin/zic
+BuildRequires: hardlink
 BuildRequires: sed >= 4.0.9
 BuildArchitectures: noarch
 BuildRoot: /override/%name-%version
@@ -45,6 +46,7 @@ fgrep -v tz-art.htm tzcode%tzcode_version/tz-link.htm > \
 rm -rf %buildroot
 sed -i 's|@install_root@|%buildroot|' Makeconfig
 %__make install
+hardlink -vc %buildroot
 
 %check
 %__make check
@@ -59,6 +61,7 @@ sed -i 's|@install_root@|%buildroot|' Makeconfig
 %changelog
 * Sat Oct 15 2011 Solar Designer <solar-at-owl.openwall.com> 2011l-owl1
 - Updated to 2011l.
+- Run hardlink(1) on the target tree to save disk space.
 
 * Sun Oct 09 2011 Solar Designer <solar-at-owl.openwall.com> 2011k-owl1
 - Initial packaging for Owl based on cut-down spec file and
