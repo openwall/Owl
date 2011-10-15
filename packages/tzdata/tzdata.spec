@@ -1,22 +1,22 @@
-# $Owl: Owl/packages/tzdata/tzdata.spec,v 1.1 2011/10/09 01:19:39 solar Exp $
+# $Owl: Owl/packages/tzdata/tzdata.spec,v 1.2 2011/10/15 11:34:18 solar Exp $
 
 Summary: Timezone data.
 Name: tzdata
-%define tzdata_version 2011k
+%define tzdata_version 2011l
 %define tzcode_version 2011i
 Version: %tzdata_version
 Release: owl1
 License: public domain
 Group: System Environment/Base
-URL: ftp://elsie.nci.nih.gov/pub/
+#URL: ftp://elsie.nci.nih.gov/pub/ (currently down)
 # The tzdata-base-0.tar.bz2 is a simple building infrastructure and
 # a test suite.  It is occasionally updated from glibc sources, and as
 # such is under LGPLv2+, but none of this ever gets to be part of
 # final zoneinfo files.
 Source0: tzdata-base-0.tar.bz2
 # These are official upstream.
-Source1: ftp://elsie.nci.nih.gov/pub/tzdata%tzdata_version.tar.gz
-Source2: ftp://elsie.nci.nih.gov/pub/tzcode%tzcode_version.tar.gz
+Source1: ftp://munnari.oz.au/pub/tzdata%tzdata_version.tar.gz
+Source2: ftp://munnari.oz.au/pub/oldtz/tzcode%tzcode_version.tar.gz
 BuildRequires: /usr/sbin/zic
 BuildRequires: sed >= 4.0.9
 BuildArchitectures: noarch
@@ -57,6 +57,9 @@ sed -i 's|@install_root@|%buildroot|' Makeconfig
 %doc tzcode%tzcode_version/tz-link.html
 
 %changelog
+* Sat Oct 15 2011 Solar Designer <solar-at-owl.openwall.com> 2011l-owl1
+- Updated to 2011l.
+
 * Sun Oct 09 2011 Solar Designer <solar-at-owl.openwall.com> 2011k-owl1
 - Initial packaging for Owl based on cut-down spec file and
 tzdata-base-0.tar.bz2 from Fedora, with review of the tzdata package in
