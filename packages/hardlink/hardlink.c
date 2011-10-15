@@ -175,7 +175,7 @@ void rf (char *name)
     nregfiles++;
     if (verbose > 1)
       fprintf(stderr, "  %s", name);
-    fd = open (name, O_RDONLY);
+    fd = open (name, O_RDONLY | O_NOCTTY | O_NOFOLLOW);
     if (fd < 0) return;
     if (st.st_size < sizeof(buf)) {
       cksumsize = st.st_size;
@@ -230,14 +230,20 @@ void rf (char *name)
           !stcmp (&st, &st2, content_only) &&
           st2.st_ino != st.st_ino &&
           st2.st_dev == st.st_dev) {
-        int fd2 = open (fp2->name, O_RDONLY);
+        int fd2 = open (fp2->name, O_RDONLY | O_NOCTTY | O_NOFOLLOW);
         if (fd2 < 0) continue;
         if (fstat (fd2, &st2) || !S_ISREG (st2.st_mode) || st2.st_size == 0) {
+          close (fd);
           close (fd2);
           continue;
         }
         ncomp++;
-	lseek(fd, 0, SEEK_SET);
+	if (lseek(fd, 0, SEEK_SET)) {
+          close(fd);
+          close(fd2);
+          fprintf(stderr, "\nSeeking error\n");
+          return;
+        }
 	for (fsize = st.st_size; fsize > 0; fsize -= NIOBUF) {
 	  off_t rsize = fsize >= NIOBUF ? NIOBUF : fsize;
 	  if (read (fd, iobuf1, rsize) != rsize || read (fd2, iobuf2, rsize) != rsize) {
