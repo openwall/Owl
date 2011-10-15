@@ -109,6 +109,21 @@ void usage(char *prog)
 unsigned int buf[NBUF];
 char iobuf1[NIOBUF], iobuf2[NIOBUF];
 
+inline size_t add2(size_t a, size_t b)
+{
+  size_t sum = a + b;
+  if (sum < a) {
+    fprintf(stderr, "\nInteger overflow\n");
+    doexit(5);
+  }
+  return sum;
+}
+
+inline size_t add3(size_t a, size_t b, size_t c)
+{
+  return add2(add2(a, b), c);
+}
+
 typedef struct {
   char *buf;
   size_t alloc;
@@ -124,8 +139,8 @@ void growstr(dynstr *str, size_t newlen)
 {
   if (newlen < str->alloc)
     return;
-  str->buf = realloc(str->buf, str->alloc = newlen + 1);
-  if (!str->buf || str->alloc < newlen) {
+  str->buf = realloc(str->buf, str->alloc = add2(newlen, 1));
+  if (!str->buf) {
     fprintf(stderr, "\nOut of memory 4\n");
     doexit(4);
   }
@@ -138,12 +153,13 @@ void rf (char *name)
   if (lstat (name, &st))
     return;
   if (S_ISDIR (st.st_mode)) {
-    d * dp = malloc(sizeof(d) + 1 + strlen (name));
+    size_t namelen;
+    d * dp = malloc(add3(sizeof(d), namelen = strlen(name), 1));
     if (!dp) {
       fprintf(stderr, "\nOut of memory 3\n");
       doexit(3);
     }
-    strcpy (dp->name, name);
+    memcpy(dp->name, name, namelen + 1);
     dp->next = dirs;
     dirs = dp;
   } else if (S_ISREG (st.st_mode)) {
@@ -167,8 +183,11 @@ void rf (char *name)
     }
     if (read (fd, buf, cksumsize) != cksumsize) {
       close(fd);
-      if (verbose > 1)
-        fprintf(stderr, "\r%*s\r", (int)strlen(name)+2, "");
+      if (verbose > 1) {
+        size_t namelen = strlen(name);
+        if (namelen <= NAMELEN)
+          fprintf(stderr, "\r%*s\r", (int)(namelen + 2), "");
+      }
       return;
     }
     cksumsize = (cksumsize + sizeof(buf[0]) - 1) / sizeof(buf[0]);
@@ -199,8 +218,11 @@ void rf (char *name)
     for (fp2 = fp; fp2 && fp2->cksum == cksum; fp2 = fp2->next)
       if (fp2->ino == st.st_ino && fp2->dev == st.st_dev) {
         close(fd);
-        if (verbose > 1)
-          fprintf(stderr, "\r%*s\r", (int)strlen(name)+2, "");
+        if (verbose > 1) {
+          size_t namelen = strlen(name);
+          if (namelen <= NAMELEN)
+            fprintf(stderr, "\r%*s\r", (int)(namelen + 2), "");
+        }
         return;
       }
     for (fp2 = fp; fp2 && fp2->cksum == cksum; fp2 = fp2->next)
@@ -247,7 +269,7 @@ void rf (char *name)
           size_t n2len = strlen(n2);
           dynstr nam2;
           initstr(&nam2);
-          growstr(&nam2, n2len + suffixlen);
+          growstr(&nam2, add2(n2len, suffixlen));
           memcpy(nam2.buf, n2, n2len);
           memcpy(&nam2.buf[n2len], suffix, suffixlen + 1);
           if (rename (n2, nam2.buf)) {
@@ -271,35 +293,46 @@ void rf (char *name)
         if (st3.st_nlink > 1) {
 	  /* We actually did not save anything this time, since the link second argument
 	     had some other links as well.  */
-          if (verbose > 1)
-            fprintf(stderr, "\r%*s\r%s %s to %s\n", (int)strlen(name)+2, "", (no_link ? "Would link" : "Linked"), n1, n2);
+          if (verbose > 1) {
+            size_t namelen = strlen(name);
+            if (namelen > NAMELEN)
+              namelen = 0;
+            fprintf(stderr, "\r%*s\r%s %s to %s\n", (int)(namelen + 2), "", (no_link ? "Would link" : "Linked"), n1, n2);
+          }
         } else {
           nsaved+=((st.st_size+4095)/4096)*4096;
-          if (verbose > 1)
-            fprintf(stderr, "\r%*s\r%s %s to %s, %s %ld\n", (int)strlen(name)+2, "", (no_link ? "Would link" : "Linked"), n1, n2, (no_link ? "would save" : "saved"), st.st_size);
+          if (verbose > 1) {
+            size_t namelen = strlen(name);
+            if (namelen > NAMELEN)
+              namelen = 0;
+            fprintf(stderr, "\r%*s\r%s %s to %s, %s %ld\n", (int)(namelen + 2), "", (no_link ? "Would link" : "Linked"), n1, n2, (no_link ? "would save" : "saved"), st.st_size);
+          }
 	}
         close(fd);
         return;
       }
-    fp2 = malloc(sizeof(f) + 1 + strlen (name));
-    if (!fp2) {
-      fprintf(stderr, "\nOut of memory 2\n");
-      doexit(2);
+    {
+      size_t namelen;
+      fp2 = malloc(add3(sizeof(f), namelen = strlen(name), 1));
+      if (!fp2) {
+        fprintf(stderr, "\nOut of memory 2\n");
+        doexit(2);
+      }
+      close(fd);
+      fp2->ino = st.st_ino;
+      fp2->dev = st.st_dev;
+      fp2->cksum = cksum;
+      memcpy(fp2->name, name, namelen + 1);
+      if (fp) {
+        fp2->next = fp->next;
+        fp->next = fp2;
+      } else {
+        fp2->next = hp->chain;
+        hp->chain = fp2;
+      }
+      if (verbose > 1 && namelen <= NAMELEN)
+        fprintf(stderr, "\r%*s\r", namelen + 2, "");
     }
-    close(fd);
-    fp2->ino = st.st_ino;
-    fp2->dev = st.st_dev;
-    fp2->cksum = cksum;
-    strcpy(fp2->name, name);
-    if (fp) {
-      fp2->next = fp->next;
-      fp->next = fp2;
-    } else {
-      fp2->next = hp->chain;
-      hp->chain = fp2;
-    }
-    if (verbose > 1)
-      fprintf(stderr, "\r%*s\r", (int)strlen(name)+2, "");
     return;
   }
 }
@@ -337,7 +370,7 @@ int main(int argc, char **argv)
   while (dirs) {
     dp = dirs;
     dirs = dp->next;
-    growstr(&nam1, (nam1baselen = strlen(dp->name)) + 1);
+    growstr(&nam1, add2(nam1baselen = strlen(dp->name), 1));
     memcpy(nam1.buf, dp->name, nam1baselen);
     free (dp);
     nam1.buf[nam1baselen++] = '/';
@@ -363,8 +396,8 @@ int main(int argc, char **argv)
       }
       {
         size_t subdirlen;
-        growstr(&nam1, nam1baselen + (subdirlen = strlen(di->d_name)));
-        memcpy(&nam1.buf[nam1baselen], di->d_name, subdirlen + 1);
+        growstr(&nam1, add2(nam1baselen, subdirlen = strlen(di->d_name)));
+        memcpy(&nam1.buf[nam1baselen], di->d_name, add2(subdirlen, 1));
       }
       rf(nam1.buf);
     }
