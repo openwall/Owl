@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/hardlink/hardlink.spec,v 1.1 2011/10/15 11:03:00 solar Exp $
+# $Owl: Owl/packages/hardlink/hardlink.spec,v 1.2 2011/10/15 11:26:19 solar Exp $
 
 Summary: Consolidate duplicate files via hardlinks.
 Name: hardlink
@@ -44,3 +44,7 @@ install -pDm644 %_sourcedir/hardlink.1 %buildroot%_mandir/man1/hardlink.1
 %changelog
 * Sat Oct 15 2011 Solar Designer <solar-at-owl.openwall.com> 1:1.0-owl1
 - Initial packaging for Owl, based on a mix of Fedora's and ALT Linux's.
+- Made changes to the program to avoid buffer and integer overflows with deeply
+nested directories and/or with long directory or file names.
+- Added section "BUGS" to the man page explaining that "hardlink" must not be
+used on potentially changing directory trees.
