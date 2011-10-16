@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.125 2011/10/09 01:19:38 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.126 2011/10/16 13:15:48 segoon Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 1.2
-Release: owl16
+Release: owl17
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
@@ -292,7 +292,7 @@ ln -s SUPPORTED.NO-UTF-8 localedata/SUPPORTED
 %build
 mkdir build-%_target_cpu-linux
 pushd build-%_target_cpu-linux
-CFLAGS="-g %optflags -finline-limit=2000" \
+CFLAGS="-g %optflags -finline-limit=2000 -fgnu89-inline" \
 ../configure \
 	--build=%_target_platform --target=%_target_platform \
 	--prefix=%_prefix \
@@ -471,6 +471,9 @@ fi
 %endif
 
 %changelog
+* Sun Oct 16 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.3.6-owl17
+- Fixed build failure under gcc >= 4.3 (used -fgnu89-inline).
+
 * Sun Oct 09 2011 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl16
 - Excluded the zoneinfo files (now part of tzdata package).
 
