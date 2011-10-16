@@ -2426,3 +2426,95 @@ diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/security/min_addr.c linux-2.6.1
  /* amount of vm to protect from userspace using the LSM = CONFIG_LSM_MMAP_MIN_ADDR */
  
  /*
+diff -urpN linux-2.6.18.orig/kernel/mutex.c linux-2.6.18/kernel/mutex.c
+--- linux-2.6.18.orig/kernel/mutex.c	2011-10-16 07:50:23 +0000
++++ linux-2.6.18/kernel/mutex.c	2011-10-16 07:51:11 +0000
+@@ -58,7 +58,7 @@ EXPORT_SYMBOL(__mutex_init);
+  * We also put the fastpath first in the kernel image, to make sure the
+  * branch is predicted by the CPU as default-untaken.
+  */
+-static void fastcall noinline __sched
++void fastcall noinline __sched
+ __mutex_lock_slowpath(atomic_t *lock_count);
+ 
+ /***
+@@ -95,7 +95,7 @@ void inline fastcall __sched mutex_lock(
+ EXPORT_SYMBOL(mutex_lock);
+ #endif
+ 
+-static void fastcall noinline __sched
++void fastcall noinline __sched
+ __mutex_unlock_slowpath(atomic_t *lock_count);
+ 
+ /***
+@@ -260,7 +260,7 @@ __mutex_unlock_common_slowpath(atomic_t 
+ /*
+  * Release the lock, slowpath:
+  */
+-static fastcall noinline void
++fastcall noinline void
+ __mutex_unlock_slowpath(atomic_t *lock_count)
+ {
+ 	__mutex_unlock_common_slowpath(lock_count, 1);
+@@ -294,7 +294,7 @@ int fastcall __sched mutex_lock_interrup
+ 
+ EXPORT_SYMBOL(mutex_lock_interruptible);
+ 
+-static void fastcall noinline __sched
++void fastcall noinline __sched
+ __mutex_lock_slowpath(atomic_t *lock_count)
+ {
+ 	struct mutex *lock = container_of(lock_count, struct mutex, count);
+diff -urpN linux-2.6.18.orig/arch/i386/Makefile linux-2.6.18/arch/i386/Makefile
+--- linux-2.6.18.orig/arch/i386/Makefile	2011-10-16 08:02:38 +0000
++++ linux-2.6.18/arch/i386/Makefile	2011-10-16 08:02:44 +0000
+@@ -20,11 +20,11 @@
+ HAS_BIARCH      := $(call cc-option-yn, -m32)
+ ifeq ($(HAS_BIARCH),y)
+ AS              := $(AS) --32
+-LD              := $(LD) -m elf_i386
++LD              := $(LD) -melf_i386
+ CC              := $(CC) -m32
+ endif
+ 
+-LDFLAGS		:= -m elf_i386
++LDFLAGS		:= -melf_i386
+ OBJCOPYFLAGS	:= -O binary -R .note -R .comment -S
+ LDFLAGS_vmlinux := --emit-relocs
+ CHECKFLAGS	+= -D__i386__
+diff -urpN linux-2.6.18.orig/arch/i386/kernel/Makefile linux-2.6.18/arch/i386/kernel/Makefile
+--- linux-2.6.18.orig/arch/i386/kernel/Makefile	2011-10-16 08:06:30 +0000
++++ linux-2.6.18/arch/i386/kernel/Makefile	2011-10-16 08:06:34 +0000
+@@ -64,7 +64,7 @@ targets += vsyscall-note.o vsyscall.lds
+ 
+ # The DSO images are built using a special linker script.
+ quiet_cmd_syscall = SYSCALL $@
+-      cmd_syscall = $(CC) -m elf_i386 -nostdlib $(SYSCFLAGS_$(@F)) \
++      cmd_syscall = $(CC) -melf_i386 -nostdlib $(SYSCFLAGS_$(@F)) \
+ 		          -Wl,-T,$(filter-out FORCE,$^) -o $@
+ 
+ export CPPFLAGS_vsyscall.lds += -P -C -U$(ARCH)
+diff -urpN linux-2.6.18.orig/arch/x86_64/Makefile linux-2.6.18/arch/x86_64/Makefile
+--- linux-2.6.18.orig/arch/x86_64/Makefile	2011-10-16 08:05:02 +0000
++++ linux-2.6.18/arch/x86_64/Makefile	2011-10-16 08:18:05 +0000
+@@ -21,7 +21,7 @@
+ #
+ # $Id: Makefile,v 1.31 2002/03/22 15:56:07 ak Exp $
+ 
+-LDFLAGS		:= -m elf_x86_64
++LDFLAGS		:= -melf_x86_64
+ OBJCOPYFLAGS	:= -O binary -R .note -R .comment -S
+ LDFLAGS_vmlinux :=
+ CHECKFLAGS      += -D__x86_64__ -m64
+diff -urpN linux-2.6.18.orig/arch/x86_64/vdso/Makefile linux-2.6.18/arch/x86_64/vdso/Makefile
+--- linux-2.6.18.orig/arch/x86_64/vdso/Makefile	2011-10-16 08:35:02 +0000
++++ linux-2.6.18/arch/x86_64/vdso/Makefile	2011-10-16 08:35:06 +0000
+@@ -17,7 +17,7 @@ targets += vdso.so vdso.lds $(vobjs-y)
+ 
+ # The DSO images are built using a special linker script.
+ quiet_cmd_syscall = SYSCALL $@
+-      cmd_syscall = $(CC) -m elf_x86_64 -nostdlib $(SYSCFLAGS_$(@F)) \
++      cmd_syscall = $(CC) -melf_x86_64 -nostdlib $(SYSCFLAGS_$(@F)) \
+ 		          -Wl,-T,$(filter-out FORCE,$^) -o $@
+ 
+ export CPPFLAGS_vdso.lds += -P -C -U$(ARCH)
