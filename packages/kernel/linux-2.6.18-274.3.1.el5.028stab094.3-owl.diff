@@ -6,7 +6,7 @@ diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/Makefile linux-2.6.18-274.3.1.e
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -prep
-+EXTRAVERSION = -274.3.1.el5.028stab094.3.owl1
++EXTRAVERSION = -274.3.1.el5.028stab094.3.owl2
  RHEL_MAJOR = 5
  RHEL_MINOR = 7
  NAME=Avast! A bilge rat!

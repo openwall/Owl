@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.66 2011/10/09 23:22:45 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.67 2011/10/16 12:55:01 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 274.3.1.el5.028stab094.3
-Release: %ovzversion.owl1
+Release: %ovzversion.owl2
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab094.3
@@ -104,6 +104,9 @@ done
 %files fake
 
 %changelog
+* Sun Oct 16 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-274.3.1.el5.028stab094.3.owl2
+- Fixed compilation failures under gcc 4.6.1.
+
 * Sun Oct 09 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.3.1.el5.028stab094.3.owl1
 - Updated to 2.6.18-274.3.1.el5.028stab094.3.
 - Restricted permissions on /proc/slabinfo.
