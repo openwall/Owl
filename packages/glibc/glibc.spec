@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.126 2011/10/16 13:15:48 segoon Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.127 2011/10/20 12:59:11 segoon Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -81,6 +81,7 @@ Patch410: glibc-2.3.3-owl-rpcgen-cpp.diff
 Patch411: glibc-2.3.5-owl-alt-sanitize-env.diff
 Patch412: glibc-2.3.6-owl-crypt-wb.diff
 Patch413: glibc-2.3.6-owl-rh-pld-linker.diff
+Patch414: glibc-2.3.6-owl-gcc-4.3.diff
 
 Requires: /etc/nsswitch.conf
 Provides: glibc-crypt_blowfish = %crypt_bf_version, ldconfig
@@ -254,6 +255,10 @@ install -pm644 %_sourcedir/crypt_freesec.[ch] crypt/
 %patch412 -p1
 # allow binutils v2.2x
 %patch413 -p1
+# compilation under gcc >= 4.3
+if [ "`gcc --version | head -n 1 | grep -oE '[0-9.]+' | tr . 0`" -gt 40300 ]; then
+%patch414 -p1
+fi
 
 # XXX: check sparcv9 builds and probably fix this.
 #%ifarch sparcv9
@@ -292,7 +297,14 @@ ln -s SUPPORTED.NO-UTF-8 localedata/SUPPORTED
 %build
 mkdir build-%_target_cpu-linux
 pushd build-%_target_cpu-linux
-CFLAGS="-g %optflags -finline-limit=2000 -fgnu89-inline" \
+
+if [ "`gcc --version | head -n 1 | grep -oE '[0-9.]+' | tr . 0`" -gt 40300 ]; then
+	F=" -fgnu89-inline -fno-builtin-sin -fno-builtin-cos -fno-asynchronous-unwind-tables"
+else
+	F=""
+fi
+
+CFLAGS="-g %optflags -finline-limit=2000 $F" \
 ../configure \
 	--build=%_target_platform --target=%_target_platform \
 	--prefix=%_prefix \
@@ -471,8 +483,8 @@ fi
 %endif
 
 %changelog
-* Sun Oct 16 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.3.6-owl17
-- Fixed build failure under gcc >= 4.3 (used -fgnu89-inline).
+* Thu Oct 20 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.3.6-owl17
+- Fixed build failure and SEGFAULT in __sincos() with gcc >= 4.3.
 
 * Sun Oct 09 2011 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl16
 - Excluded the zoneinfo files (now part of tzdata package).

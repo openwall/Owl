@@ -1,0 +1,60 @@
+diff -uNp -r glibc-2.3.6.old/csu/Makefile glibc-2.3.6/csu/Makefile
+--- glibc-2.3.6.old/csu/Makefile	2005-02-16 09:34:09 +0000
++++ glibc-2.3.6/csu/Makefile	2011-10-20 12:38:08.474217943 +0000
+@@ -139,7 +139,7 @@ endif
+ 
+ ifeq (yes,$(elf))
+ extra-objs += abi-note.o init.o
+-asm-CPPFLAGS += -I$(objpfx).
++asm-CPPFLAGS += -I$(objpfx). -fno-asynchronous-unwind-tables -fno-dwarf2-cfi-asm
+ endif
+ 
+ include ../Rules
+diff -uNp -r glibc-2.3.6.old/nptl/sysdeps/pthread/pt-initfini.c glibc-2.3.6/nptl/sysdeps/pthread/pt-initfini.c
+--- glibc-2.3.6.old/nptl/sysdeps/pthread/pt-initfini.c	2005-02-26 01:38:45 +0000
++++ glibc-2.3.6/nptl/sysdeps/pthread/pt-initfini.c	2011-10-18 18:16:57.791873672 +0000
+@@ -45,6 +45,11 @@
+ /* Embed an #include to pull in the alignment and .end directives. */
+ asm ("\n#include \"defs.h\"");
+ 
++asm ("\n#if defined __i686 && defined __ASSEMBLER__");
++asm ("\n#undef __i686");
++asm ("\n#define __i686 __i686");
++asm ("\n#endif");
++
+ /* The initial common code ends here. */
+ asm ("\n/*@HEADER_ENDS*/");
+ 
+diff -uNp -r glibc-2.3.6.old/sysdeps/generic/initfini.c glibc-2.3.6/sysdeps/generic/initfini.c
+--- glibc-2.3.6.old/sysdeps/generic/initfini.c	2004-08-16 04:50:53 +0000
++++ glibc-2.3.6/sysdeps/generic/initfini.c	2011-10-20 12:38:51.494281040 +0000
+@@ -81,7 +81,7 @@ call_gmon_start(void)
+ }
+ 
+ SECTION (".init");
+-extern void _init (void);
++extern void __attribute__ ((section (".init"))) _init (void);
+ void
+ _init (void)
+ {
+@@ -107,7 +107,7 @@ asm ("\n/*@_init_EPILOG_ENDS*/");
+ asm ("\n/*@_fini_PROLOG_BEGINS*/");
+ 
+ SECTION (".fini");
+-extern void _fini (void);
++extern void __attribute__ ((section (".fini"))) _fini (void);
+ void
+ _fini (void)
+ {
+diff -uNp -r glibc-2.3.6.old/sysdeps/i386/sysdep.h glibc-2.3.6/sysdeps/i386/sysdep.h
+--- glibc-2.3.6.old/sysdeps/i386/sysdep.h	2003-03-10 09:10:46 +0000
++++ glibc-2.3.6/sysdeps/i386/sysdep.h	2011-10-18 18:18:00.581965758 +0000
+@@ -130,6 +130,8 @@ lose: SYSCALL_PIC_SETUP							      \
+ #define SYSCALL_PIC_SETUP	/* Nothing.  */
+ #endif
+ 
++#undef __i686 
++
+ /* Local label name for asm code. */
+ #ifndef L
+ #ifdef HAVE_ELF
