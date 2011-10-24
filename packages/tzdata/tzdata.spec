@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/tzdata/tzdata.spec,v 1.3 2011/10/15 11:43:04 solar Exp $
+# $Owl: Owl/packages/tzdata/tzdata.spec,v 1.4 2011/10/24 22:46:28 ldv Exp $
 
 Summary: Timezone data.
 Name: tzdata
@@ -8,7 +8,7 @@ Version: %tzdata_version
 Release: owl1
 License: public domain
 Group: System Environment/Base
-#URL: ftp://elsie.nci.nih.gov/pub/ (currently down)
+URL: http://www.iana.org/time-zones
 # The tzdata-base-0.tar.bz2 is a simple building infrastructure and
 # a test suite.  It is occasionally updated from glibc sources, and as
 # such is under LGPLv2+, but none of this ever gets to be part of
