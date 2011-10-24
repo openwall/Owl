@@ -1,17 +1,10 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.64 2011/10/24 06:10:28 solar Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.65 2011/10/24 06:14:02 solar Exp $
 
 # The only supported frontend for now is GXX.
 # Testsuite is not supported because of its requirement for additional
 # packages to run (dejagnu, tcl, expect).
 %define BUILD_GXX 1
 %undefine _with_test
-
-# If this variable is set to non-zero, then all support libraries
-# will be placed into the %_libdir/gcc/%_target_platform/%%version
-# sub-directory (allowing to have several binary incompatible
-# versions of compilers).
-# XXX: doesn't work yet - segoon
-%define USE_VERSION_SPECIFIC_LIBS 0
 
 %define gcc_branch 4.6
 
@@ -163,12 +156,6 @@ To instrument a non-threaded program, add -fmudflap option to GCC and
 when linking add -lmudflap, for threaded programs also add -fmudflapth
 and -lmudflapth.
 
-%if %USE_VERSION_SPECIFIC_LIBS
-%define version_libdir %_libdir/gcc/%_target_platform/%version
-%else
-%define version_libdir %_libdir
-%endif
-
 %prep
 %setup -q
 %if %BUILD_GXX
@@ -215,16 +202,9 @@ cd obj-%_target_platform
 	--mandir=%_mandir \
 	--enable-shared \
 	--enable-threads=posix \
-%if %USE_VERSION_SPECIFIC_LIBS
-	--enable-version-specific-runtime-libs \
-%if %BUILD_GXX
-	--with-gxx-include-dir=%version_libdir/c++ \
-%endif # BUILD_GXX
-%else # USE_VERSION_SPECIFIC_LIBS
 %if %BUILD_GXX
 	--with-gxx-include-dir=%_includedir/c++/%version \
 %endif # BUILD_GXX
-%endif # USE_VERSION_SPECIFIC_LIBS
 %if %BUILD_GXX
 	--disable-libstdcxx-pch \
 %endif # BUILD_GXX
@@ -278,14 +258,12 @@ rm -rf %buildroot
 
 %__make -C obj-%_target_platform DESTDIR=%buildroot install
 
-%if !%USE_VERSION_SPECIFIC_LIBS
 # Relocate libgcc shared library from %_libdir/ to /%_lib/.
 mkdir %buildroot/%_lib
 mv %buildroot%_libdir/libgcc_s.so.1 %buildroot/%_lib/
 ln -s ../../../../../%_lib/libgcc_s.so.1 \
 	%buildroot%_libdir/gcc/%_target_platform/%version/libgcc_s.so
 rm %buildroot%_libdir/libgcc_s.so
-%endif
 
 # Fix some things.
 ln -s gcc %buildroot%_bindir/cc
@@ -299,7 +277,7 @@ echo ".so g++.1" > %buildroot%_mandir/man1/c++.1
 rm %buildroot%_infodir/dir
 rm %buildroot%_infodir/gccinstall.info*
 rm %buildroot%_libdir/libiberty.a
-rm -f %buildroot%version_libdir/*.la
+rm -f %buildroot%_libdir/*.la
 
 %find_lang cpplib
 %find_lang gcc
@@ -385,13 +363,7 @@ fi
 
 %files -n libgcc
 %defattr(-,root,root)
-%if %USE_VERSION_SPECIFIC_LIBS
-%dir %_libdir/gcc
-%dir %_libdir/gcc/%_target_platform
-%_libdir/gcc/%_target_platform/%version/libgcc*.so.*
-%else
 /%_lib/libgcc*.so.*
-%endif
 %_libdir/libquadmath.so.*
 %_libdir/libssp.so.*
 
@@ -408,22 +380,18 @@ fi
 
 %files -n libstdc++
 %defattr(-,root,root)
-%version_libdir/libstdc++.so.6*
+%_libdir/libstdc++.so.6*
 %_datadir/locale/*/LC_MESSAGES/libstdc++.mo
 %doc rpm-doc/libstdc++/*
 %doc libstdc++-v3/doc/html
 %exclude %_datadir/gcc-%version/python
-%exclude %version_libdir/libstdc++.so.6.0.16-gdb.py
+%exclude %_libdir/libstdc++.so.6.0.16-gdb.py
 
 %files -n libstdc++-devel
 %defattr(-,root,root)
-%if %USE_VERSION_SPECIFIC_LIBS
-%version_libdir/c++
-%else
 %_includedir/c++/%version
-%endif
-%version_libdir/libs*++.a
-%version_libdir/libstdc++.so
+%_libdir/libs*++.a
+%_libdir/libstdc++.so
 %endif
 
 %files -n libgcc%gcc_branch-plugin-devel
