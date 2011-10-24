@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/gmp/gmp.spec,v 1.2 2011/10/24 05:21:29 solar Exp $
+# $Owl: Owl/packages/gmp/gmp.spec,v 1.3 2011/10/24 17:27:42 segoon Exp $
 
 Summary: The GNU multiple precision arithmetic library.
 Name: gmp
-Version: 4.3.2
+Version: 5.0.2 
 Release: owl1
 Epoch: 1
 License: LGPLv3+
@@ -12,6 +12,7 @@ Source0: ftp://ftp.gnu.org/pub/gnu/gmp/gmp-%version.tar.bz2
 # Signature: ftp://ftp.gmplib.org/pub/gmp-%version/gmp-%version.tar.bz2.sig
 BuildRequires: autoconf automake libtool
 BuildRoot: /override/%name-%version
+Provides: libgmp.so.3%(test %_lib = lib64 && echo -n '()(64bit)')
 
 %description
 GMP is a free library for arbitrary precision arithmetic, operating on signed
@@ -120,6 +121,7 @@ rm -f %buildroot%_libdir/lib{gmp,mp,gmpxx}.la
 rm -f %buildroot%_infodir/dir
 /sbin/ldconfig -n %buildroot%_libdir
 ln -sf libgmpxx.so.4 %buildroot%_libdir/libgmpxx.so
+ln -s libgmp.so %buildroot%_libdir/libgmp.so.3
 
 %if 0
 #%ifarch %ix86
