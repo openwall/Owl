@@ -1,0 +1,12 @@
+diff -ur sysvinit-2.88dsf.orig/src/paths.h sysvinit-2.88dsf/src/paths.h
+--- sysvinit-2.88dsf.orig/src/paths.h	2010-04-11 09:30:27 +0000
++++ sysvinit-2.88dsf/src/paths.h	2011-10-10 01:20:30 +0000
+@@ -32,7 +32,7 @@
+ #define FASTBOOT	"/fastboot"		/* Enable fast boot. */
+ #define FORCEFSCK	"/forcefsck"		/* Force fsck on boot */
+ #define SDPID		"/var/run/shutdown.pid"	/* PID of shutdown program */
+-#define SHELL		"/bin/sh"		/* Default shell */
++#define SHELL		"/bin/bash"		/* Default shell */
+ #define SULOGIN		"/sbin/sulogin"		/* Sulogin */
+ #define INITSCRIPT	"/etc/initscript"	/* Initscript. */
+ #define PWRSTAT_OLD	"/etc/powerstatus"	/* COMPAT: SIGPWR reason (OK/BAD) */
