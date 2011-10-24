@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.120.2.1 2011/09/07 05:46:11 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.120.2.2 2011/10/24 19:53:45 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 1.2
-Release: owl15
+Release: owl16
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
@@ -96,7 +96,7 @@ kept in one place and shared between programs.  This particular package
 contains the most important sets of shared libraries: the standard C
 library and the standard math library.  Without these two libraries, a
 Linux system will not function.  The glibc package also contains
-national language (locale) support and timezone databases.
+national language (locale) support and database.
 
 %package utils
 Summary: The GNU libc miscellaneous utilities.
@@ -340,6 +340,8 @@ mv %buildroot/%_lib/lib{memusage,pcprofile,SegFault}.so %buildroot%_libdir/
 rm %buildroot/etc/localtime
 cp -a %buildroot%_datadir/zoneinfo/UTC %buildroot/etc/localtime
 
+rm -rf %buildroot%_datadir/zoneinfo
+
 # Create default ldconfig configuration file
 echo "include /etc/ld.so.conf.d/*.conf" > %buildroot/etc/ld.so.conf
 mkdir -m 755 %buildroot/etc/ld.so.conf.d
@@ -407,7 +409,6 @@ touch %buildroot%_libdir/gconv/gconv-modules.cache
 # The last bit: more documentation
 rm -rf documentation
 mkdir documentation
-install -pm644 timezone/README documentation/README.timezone
 install -pm644 ChangeLog documentation/
 bzip2 -9qf documentation/ChangeLog*
 bzip2 -9qf FAQ INSTALL NEWS NOTES %{?snapshot:README-alpha} README.libm
@@ -470,6 +471,9 @@ fi
 %endif
 
 %changelog
+* Sun Oct 09 2011 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl16
+- Excluded the zoneinfo files (now part of tzdata package).
+
 * Sat Jul 16 2011 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl15
 - Revised the recent changes to crypt_blowfish, including based on feedback
 from Ludwig Nussel (thanks!)

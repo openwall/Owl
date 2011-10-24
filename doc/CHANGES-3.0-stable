@@ -42,6 +42,11 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl 3.0-stable.
 
+(2011/10/09 - 2011/10/15)
+2011/10/24	Packages: tzdata, glibc; Owl/build/installorder.conf
+Moved timezone data files from glibc to new package tzdata, updated it
+to version 2011l.
+
 (2011/10/15)
 2011/10/24	Package: hardlink
 New package: a program to consolidate duplicate files via hardlinks.
@@ -360,4 +365,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.12 2011/10/24 19:45:05 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.13 2011/10/24 19:53:45 solar Exp $
