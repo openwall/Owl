@@ -34,12 +34,9 @@ installing binary packages.
 To (re-)build Owl from source, you'll need:
 
 at least 1 GB free disk space under /usr/src/world for use during the
-builds (maybe a bit less when there are no more than two CPU cores);
+builds;
 
-at least 64 MB of physical memory (it is possible to build on less
-with sufficient swap space, but you'd better not);
-
-at least 200 MB of virtual memory;
+at least 1 GB of virtual memory (RAM + swap, or OpenVZ privvmpages);
 
 a few hours of CPU time, on a modern system (on a multi-core system, the
 total build time will be less than the CPU time - likely under an hour).
@@ -110,4 +107,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Owl: Owl/doc/BUILD,v 1.45 2010/12/14 16:37:05 solar Exp $
+$Owl: Owl/doc/BUILD,v 1.46 2011/10/24 09:06:48 solar Exp $

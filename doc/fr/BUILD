@@ -37,10 +37,7 @@ Pour (re-)compiler Owl depuis les sources, vous aurez besoin :
 d'au moins de 1000 Mo d'espace disque libre sous /usr/src/world utilisables
 durant les compilations;
 
-d'au moins 64 Mo de mémoire physique (il est possible de compiler sur moins
-avec suffisamment d'espace de swap, mais vous ne devriez pas);
-
-d'au moins 200 Mo de mémoire virtuelle en compilant sur et pour un Alpha;
+d'au moins 1000 Mo de mémoire virtuelle;
 
 de 1 à 5 heures de temps CPU, sur un système moderne (au moment de cette
 écriture).
@@ -106,4 +103,4 @@ Les paquets individuels peuvent être compilés ou re-compilés avec
 étrangers (SRPMs) compilés avec l'environnement de compilation de Owl vous
 avez aussi besoin d'inclure dans "nom" la partie numéro de version.
 
-$Owl: Owl/doc/fr/BUILD,v 1.12 2010/07/19 20:59:42 solar Exp $
+$Owl: Owl/doc/fr/BUILD,v 1.13 2011/10/24 09:06:48 solar Exp $

@@ -39,10 +39,7 @@ Um Owl aus den Quellen (neu) zu übersetzten, braucht man:
 Mindestens 1 GB freien Speicherplatz in /usr/src/world der
 während des Übersetzens genutzt werden kann;
 
-Mindestens 64 MB Arbeitsspeicher (es geht auch mit weniger und aus-
-reichendem Auslagerungsspeicher, aber davon ist abzuraten);
-
-Mindestens 200 MB virtuellen Speicher.
+Mindestens 1 GB virtuellen Speicher.
 
 Auf einem aktuellen System ein paar Stunden CPU Zeit.
 
@@ -51,7 +48,7 @@ dies alles auf einem anderen GNU/*/Linux System zu machen, aber man muss
 etwas tricksen um das System zu einem Owl zu machen.  Das Ganze geht
 mit mehreren Wiederholungen von "make buildworld" und "make installworld".
 
-Hier einige Übersetzungszeiten (Stunden:Minuten) für Owl-current um
+Hier einige Übersetzungszeiten (Stunden:Minuten) für Owl 2.0 um
 einen Eindruck zu bekommen was einen erwartet:
 
 Dual Pentium 4 Xeon, HT (4-way MP), 2.8 GHz, 2 GB		0:50
@@ -103,4 +100,4 @@ Individuelle Pakete können wieder- oder neuübersetzt werden, indem man
 Für fremde Pakete (SRPMs) die mit der Owl-Arbeitsumgebung erstellt worden
 sind, muss man zusätzlich die Versionsnummer in "name" einfügen.
 
-$Owl: Owl/doc/de/BUILD,v 1.19 2010/07/19 20:59:42 solar Exp $
+$Owl: Owl/doc/de/BUILD,v 1.20 2011/10/24 09:06:48 solar Exp $
