@@ -1,14 +1,15 @@
-# $Owl: Owl/packages/gmp/gmp.spec,v 1.4 2011/10/24 17:29:16 segoon Exp $
+# $Owl: Owl/packages/gmp/gmp.spec,v 1.5 2011/10/24 18:19:31 solar Exp $
 
 Summary: The GNU multiple precision arithmetic library.
 Name: gmp
-Version: 5.0.2 
+Version: 5.0.2
 Release: owl1
 Epoch: 1
 License: LGPLv3+
 Group: System Environment/Libraries
 URL: http://gmplib.org
-Source0: ftp://ftp.gnu.org/pub/gnu/gmp/gmp-%version.tar.bz2
+Source0: gmp-%version.tar.xz
+# ftp://ftp.gnu.org/pub/gnu/gmp/gmp-%version.tar.bz2
 # Signature: ftp://ftp.gmplib.org/pub/gmp-%version/gmp-%version.tar.bz2.sig
 Source1: gmp.h
 Source2: gmp-mparam.h
