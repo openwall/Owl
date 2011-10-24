@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/mpfr/mpfr.spec,v 1.3 2011/10/24 06:45:44 solar Exp $
+# $Owl: Owl/packages/mpfr/mpfr.spec,v 1.4 2011/10/24 07:11:52 solar Exp $
 
 Summary: A C library for multiple-precision floating-point computations.
 Name: mpfr
-Version: 3.0.1
+Version: 3.1.0
 Release: owl1
 License: LGPLv3+ and GPLv3+ and GFDL
 Group: System Environment/Libraries
@@ -90,5 +90,8 @@ fi
 %exclude %_infodir/dir
 
 %changelog
+* Mon Oct 24 2011 Solar Designer <solar-at-owl.openwall.com> 3.1.0-owl1
+- Updated to 3.1.0.
+
 * Fri Oct 21 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0.1-owl1
 - Initial import from Fedora.
