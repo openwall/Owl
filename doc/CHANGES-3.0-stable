@@ -43,6 +43,29 @@ clarify the specific issue(s) and their severities in the description.
 	Changes made between Owl 3.0 and Owl 3.0-stable.
 
 (2011/10/10)
+2011/10/24	Package: rpm
+SECURITY FIX	Severity: high, indirect, passive
+Applied a fix for crash and potential arbitrary code execution when
+processing a malformed/malicious package file.  Although an RPM package
+can, by design, execute arbitrary code when installed or even during
+installation, this issue would potentially allow a specially-crafted RPM
+package to execute arbitrary code when the package metadata is merely
+queried, including for digital signature verification.  Note that for
+Owl RPM packages we do not rely on RPM's support for signatures;
+instead, we sign *.mtree files.  Please continue to verify detached
+GnuPG signatures that we provide for such files with gpg(1), and then
+verify RPM package files against the message digests found in *.mtree
+files with mtree(8) (both of these tools are part of Owl).  This kind of
+verification was unaffected by this RPM issue.  Please note that use of
+RPM on untrusted package files, even if just to verify a signature,
+remains risky despite of this recent fix: RPM package format and
+processing are complicated, so further issues of this kind are likely.
+References:
+http://www.openwall.com/lists/oss-security/2011/09/27/3
+http://rhn.redhat.com/errata/RHSA-2011-1349.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3378
+
+(2011/10/10)
 2011/10/24	Package: SysVinit
 Applied a patch to set the shell name to /bin/bash, not /bin/sh, such
 that colored ls output is enabled on our LiveCD.
@@ -370,4 +393,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.14 2011/10/24 20:02:06 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.15 2011/10/24 20:06:39 solar Exp $
