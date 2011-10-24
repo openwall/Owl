@@ -1,49 +1,45 @@
-# $Owl: Owl/packages/gmp/gmp.spec,v 1.1 2011/10/21 17:02:44 segoon Exp $
+# $Owl: Owl/packages/gmp/gmp.spec,v 1.2 2011/10/24 05:21:29 solar Exp $
 
-#
-# Important for %ix86:
-# This rpm should be built on a CPU with sse2 support like Pentium 4.
-# Otherwise, sse2 tests will be skipped.
-
-Summary: A GNU arbitrary precision library.
+Summary: The GNU multiple precision arithmetic library.
 Name: gmp
 Version: 4.3.2
 Release: owl1
 Epoch: 1
 License: LGPLv3+
 Group: System Environment/Libraries
-URL: http://gmplib.org/
+URL: http://gmplib.org
 Source0: ftp://ftp.gnu.org/pub/gnu/gmp/gmp-%version.tar.bz2
 # Signature: ftp://ftp.gmplib.org/pub/gmp-%version/gmp-%version.tar.bz2.sig
 BuildRequires: autoconf automake libtool
 BuildRoot: /override/%name-%version
 
 %description
-The gmp package contains GNU MP, a library for arbitrary precision
-arithmetic, signed integers operations, rational numbers and floating
-point numbers. GNU MP is designed for speed, for both small and very
-large operands. GNU MP is fast because it uses fullwords as the basic
-arithmetic type, it uses fast algorithms, it carefully optimizes
-assembly code for many CPUs' most common inner loops, and it generally
-emphasizes speed over simplicity/elegance in its operations.
+GMP is a free library for arbitrary precision arithmetic, operating on signed
+integers, rational numbers, and floating point numbers.  There is no practical
+limit to the precision except the ones implied by the available memory in the
+machine GMP runs on.  GMP has a rich set of functions, and the functions have a
+regular interface.
 
-Install the gmp package if you need a fast arbitrary precision
-library.
+The main target applications for GMP are cryptography applications and
+research, Internet security applications, algebra systems, computational
+algebra research, etc.
+
+GMP is carefully designed to be as fast as possible, both for small operands
+and for huge operands.  The speed is achieved by using full machine words as
+the basic arithmetic type, by using fast algorithms, with highly optimized
+assembly code for the most common inner loops for a lot of CPUs, and by a
+general emphasis on speed.
 
 %package devel
-Summary: Development tools for the GNU MP arbitrary precision librar.
+Summary: Development files for the GMP library.
 Group: Development/Libraries
 Requires: %name = %epoch:%version-%release
 Requires(post): /sbin/install-info
 Requires(preun): /sbin/install-info
 
 %description devel
-The libraries, header files and documentation for using the GNU MP 
-arbitrary precision library in applications.
-
-If you want to develop applications which will use the GNU MP library,
-you'll need to install the gmp-devel package.  You'll also need to
-install the gmp package.
+Header files, static libraries, and documentation for using the GNU multiple
+precision arithmetic library in applications.
 
 %prep
 %setup -q
@@ -51,15 +47,16 @@ install the gmp package.
 %build
 autoreconf -if
 
-# the object files do not require an executable stack
-export CCAS="%__cc -c -Wa,--noexecstack"
+# GMP does not require an executable stack despite of its use of hand-written
+# assembly sources.
+export CCAS='%__cc -c -Wa,--noexecstack'
 
 mkdir base
 cd base
 ln -s ../configure .
 
-export CFLAGS="%optflags"
-export CXXFLAGS="%optflags"
+export CFLAGS='%optflags'
+export CXXFLAGS='%optflags'
 ./configure --build=%_build --host=%_host \
 	--program-prefix=%?_program_prefix \
 	--prefix=%_prefix \
@@ -81,8 +78,10 @@ export CXXFLAGS="%optflags"
 perl -pi -e 's|hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=\"-L\\\$libdir\"|g;' libtool
 export LD_LIBRARY_PATH=`pwd`/.libs
 %__make
+
+%if 0
+#%ifarch %ix86
 cd ..
-%ifarch %ix86
 mkdir build-sse2
 cd build-sse2
 ln -s ../configure .
@@ -108,7 +107,6 @@ CFLAGS="%optflags -march=pentium4"
 perl -pi -e 's|hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=\"-L\\\$libdir\"|g;' libtool
 export LD_LIBRARY_PATH=`pwd`/.libs
 %__make
-cd ..
 %endif
 
 %install
@@ -122,9 +120,10 @@ rm -f %buildroot%_libdir/lib{gmp,mp,gmpxx}.la
 rm -f %buildroot%_infodir/dir
 /sbin/ldconfig -n %buildroot%_libdir
 ln -sf libgmpxx.so.4 %buildroot%_libdir/libgmpxx.so
-cd ..
-%ifarch %ix86
-cd build-sse2
+
+%if 0
+#%ifarch %ix86
+cd ../build-sse2
 export LD_LIBRARY_PATH=`pwd`/.libs
 mkdir %buildroot%_libdir/sse2
 install -m 755 .libs/libgmp.so.*.* %buildroot%_libdir/sse2
@@ -136,12 +135,15 @@ chmod 755 %buildroot%_libdir/sse2/libgmpxx.so.?
 install -m 755 .libs/libmp.so.*.* %buildroot%_libdir/sse2
 cp -a .libs/libmp.so.? %buildroot%_libdir/sse2
 chmod 755 %buildroot%_libdir/sse2/libmp.so.?
-cd ..
 %endif
 
-# Rename gmp.h to gmp-<arch>.h and gmp-mparam.h to gmp-mparam-<arch>.h to 
-# avoid file conflicts on multilib systems and install wrapper include files
-# gmp.h and gmp-mparam-<arch>.h
+cd ..
+
+# We'll need to re-enable this for multilib support.
+%if 0
+# Rename gmp.h to gmp-<arch>.h and gmp-mparam.h to gmp-mparam-<arch>.h to
+# avoid file conflicts on multilib systems, and install wrapper include files
+# gmp.h and gmp-mparam.h.
 basearch=%_arch
 # always use i386 for iX86
 %ifarch %ix86
@@ -156,45 +158,38 @@ basearch=arm
 basearch=sh
 %endif
 # Rename files and install wrappers
-
-# Looks like it's redundant for x86 - segoon
-#mv %buildroot/%_includedir/gmp.h %buildroot/%_includedir/gmp-${basearch}.h
-#install -m644 %SOURCE2 %buildroot/%_includedir/gmp.h
-#mv %buildroot/%_includedir/gmp-mparam.h %buildroot/%_includedir/gmp-mparam-${basearch}.h
-#install -m644 %SOURCE3 %buildroot/%_includedir/gmp-mparam.h
-
+mv %buildroot/%_includedir/gmp.h %buildroot/%_includedir/gmp-${basearch}.h
+install -pm644 %_sourcedir/gmp.h %buildroot/%_includedir/
+mv %buildroot/%_includedir/gmp-mparam.h \
+    %buildroot/%_includedir/gmp-mparam-${basearch}.h
+install -pm644 %_sourcedir/gmp-mparam.h %buildroot/%_includedir/
+%endif
 
 %check
-%ifnarch ppc
 cd base
 export LD_LIBRARY_PATH=`pwd`/.libs
 %__make check
-cd ..
-%endif
-%ifarch %ix86
-# Test SSE2 libraries only if we either have SSE2 CPU support
-# or we don't know whether we have it.
-if ! [ -e /proc/cpuinfo ] || grep -q sse2 /proc/cpuinfo; then
-    cd build-sse2
-    export LD_LIBRARY_PATH=`pwd`/.libs
-    %__make check
-    cd ..
+%if 0
+#%ifarch %ix86
+# Test SSE2 libraries only if either the build host's CPU supports SSE2 or we
+# can't determine whether it does.
+if ! [ -r /proc/cpuinfo ] || grep -q '^flags.* sse2' /proc/cpuinfo; then
+	cd ../build-sse2
+	export LD_LIBRARY_PATH=`pwd`/.libs
+	%__make check
 fi
 %endif
 
 %post -p /sbin/ldconfig
-
 %postun -p /sbin/ldconfig
 
 %post devel
 /sbin/install-info %_infodir/gmp.info.gz %_infodir/dir || :
-exit 0
 
 %preun devel
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/gmp.info.gz %_infodir/dir || :
 fi
-exit 0
 
 %files
 %defattr(-,root,root,-)
@@ -202,7 +197,8 @@ exit 0
 %_libdir/libgmp.so.*
 %_libdir/libmp.so.*
 %_libdir/libgmpxx.so.*
-%ifarch %ix86
+%if 0
+#%ifarch %ix86
 %_libdir/sse2/*
 %endif
 

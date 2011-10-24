@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.63 2011/10/21 17:08:07 segoon Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.64 2011/10/24 06:10:28 solar Exp $
 
 # The only supported frontend for now is GXX.
 # Testsuite is not supported because of its requirement for additional
@@ -7,7 +7,7 @@
 %undefine _with_test
 
 # If this variable is set to non-zero, then all support libraries
-# will be placed into %_libdir/gcc/%_target_platform/%%version
+# will be placed into the %_libdir/gcc/%_target_platform/%%version
 # sub-directory (allowing to have several binary incompatible
 # versions of compilers).
 # XXX: doesn't work yet - segoon
@@ -33,11 +33,7 @@ Source2: gcc-g++-%version.tar.xz
 %endif
 
 PreReq: /sbin/install-info
-# XXX: the following line uses RPM4 syntax. I've commented it for now. -- (GM)
-#Requires(post): sed
-# This is the version of binutils we have tested this package with; older
-# ones might work, but were not tested.
-Requires: binutils >= 2.10.1.0.4
+Requires: binutils
 Requires: cpp = %epoch:%version-%release
 Requires: libgcc >= %epoch:%version-%release
 Obsoletes: egcs
@@ -68,15 +64,13 @@ PreReq: /sbin/ldconfig
 This package contains GCC shared support library which is needed
 e.g. for exception handling support.
 
-
 %package -n libgcc%gcc_branch-plugin-devel
-Summary: GCC Plugin header files.
-Group: Development/Other
+Summary: GCC plugin header files.
+Group: Development/Libraries
 Provides: libgcc-plugin-devel = %version-%release
 
 %description -n libgcc%gcc_branch-plugin-devel
 This package contains header files required to build GCC plugins.
-
 
 %if %BUILD_GXX
 %package c++
@@ -100,9 +94,7 @@ Requires: libgcc >= %epoch:%version-%release
 Obsoletes: gcc-libstdc++
 
 %description -n libstdc++
-The libstdc++ package contains a snapshot of the GCC Standard C++
-Library v3, an ongoing project to implement the ISO 14882 Standard C++
-library.
+The libstdc++ package contains the GCC Standard C++ Library.
 
 %package -n libstdc++-devel
 Summary: Header files and libraries for C++ development.
@@ -111,10 +103,8 @@ Requires: libstdc++ = %epoch:%version-%release
 Obsoletes: gcc-libstdc++-devel
 
 %description -n libstdc++-devel
-This is the GNU implementation of the standard C++ libraries.  This
-package includes the header files and libraries needed for C++ development.
+Header files and libraries needed for C++ development.
 %endif
-
 
 ####################################################################
 # OpenMP library
@@ -134,7 +124,7 @@ This package contains GCC OpenMP shared support library.
 
 %package -n libgomp%gcc_branch-devel
 Summary: GCC OpenMP support files.
-Group: Development/Other
+Group: Development/Libraries
 Provides: libgomp-devel = %version-%release
 Requires: libgomp%gcc_branch >= %version-%release
 Requires: glibc-devel
@@ -161,18 +151,17 @@ mudflap support.
 
 %package -n libmudflap%gcc_branch-devel
 Summary: GCC mudflap support files.
-Group: Development/Other
+Group: Development/Libraries
 Provides: libmudflap-devel = %version-%release
 Requires: libmudflap%gcc_branch >= %version-%release
 Requires: glibc-devel
 
 %description -n libmudflap%gcc_branch-devel
-This package contains headers and libraries for building
-mudflap-instrumented programs.
+This package contains headers and libraries for building mudflap-instrumented
+programs.
 To instrument a non-threaded program, add -fmudflap option to GCC and
 when linking add -lmudflap, for threaded programs also add -fmudflapth
 and -lmudflapth.
-
 
 %if %USE_VERSION_SPECIFIC_LIBS
 %define version_libdir %_libdir/gcc/%_target_platform/%version
@@ -181,13 +170,10 @@ and -lmudflapth.
 %endif
 
 %prep
-
 %setup -q
-
 %if %BUILD_GXX
 %setup -q -T -D -b 2
 %endif
-
 %{?_with_test:%setup -q -T -D -b 6}
 
 %build
@@ -212,12 +198,6 @@ done
 %ifarch sparcv9
 %define _target_platform sparc-%_vendor-%_target_os
 %endif
-%ifarch sparc sparcv9
-# pthreads are currently not supported on SPARC.
-%define threads	single
-%else
-%define threads posix
-%endif
 
 # We will build this software outside source tree as recommended by INSTALL/*
 rm -rf obj-%_target_platform
@@ -234,7 +214,7 @@ cd obj-%_target_platform
 	--infodir=%_infodir \
 	--mandir=%_mandir \
 	--enable-shared \
-	--enable-threads=%threads \
+	--enable-threads=posix \
 %if %USE_VERSION_SPECIFIC_LIBS
 	--enable-version-specific-runtime-libs \
 %if %BUILD_GXX
@@ -258,23 +238,8 @@ cd obj-%_target_platform
 	--build=%_target_platform \
 	--target=%_target_platform
 
-# (GM): Here comes some magic :)
-# Although all previous releases of gcc correctly understand "gcc -E"
-# CPP preprocessor mode and not issue warnings about deprecated options
-# in the command line, from 3.4.3 release this was changed and configure's
-# tests will be broken if we use deprecated option in the command line.
-# Perhaps we have to avoid using deprecated options in our build environment,
-# but it will be more correct to adjust autotools or patch gcc to avoid
-# issuing of warning in case of CPP mode.
-#
-# Currently, we use only one deprecated option in our build environment.
-# It's "-mcpu" and we change it to "-mtune" to save meaning, but avoid
-# gcc's deprecation warning.
-
-TARGET_OPT_FLAGS="%{expand:%{?optflags_bin:%optflags_bin}}%{!?optflags_bin:$RPM_OPT_FLAGS}"
-TARGET_OPT_LIBFLAGS="%{expand:%{?optflags_lib:%optflags_lib}}%{!?optflags_lib:$RPM_OPT_FLAGS}"
-#TARGET_OPT_FLAGS="${TARGET_OPT_FLAGS//-mcpu=/-mtune=}"
-#TARGET_OPT_LIBFLAGS="${TARGET_OPT_LIBFLAGS//-mcpu=/-mtune=}"
+TARGET_OPT_FLAGS='%optflags'
+TARGET_OPT_LIBFLAGS='%{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}'
 
 # Let's compile the thing
 # STAGE1_CFLAGS is used for stage1 compiler
@@ -293,16 +258,16 @@ TARGET_OPT_LIBFLAGS="%{expand:%{?optflags_lib:%optflags_lib}}%{!?optflags_lib:$R
 
 cd ..
 mkdir -p rpm-doc/gcc
-install -m 644 -p gcc/ChangeLog rpm-doc/gcc/
-#install -m 644 -p BUGS COPYING* FAQ MAINTAINERS README* gcc/SERVICE rpm-doc/gcc/
-install -m 644 -p COPYING* MAINTAINERS README* rpm-doc/gcc/
+install -pm 644 -p gcc/ChangeLog rpm-doc/gcc/
+#install -pm 644 -p BUGS COPYING* FAQ MAINTAINERS README* gcc/SERVICE rpm-doc/gcc/
+install -pm 644 -p COPYING* MAINTAINERS README* rpm-doc/gcc/
 
 %if %BUILD_GXX
 mkdir -p rpm-doc/g++
-install -m 644 -p gcc/cp/{ChangeLog,NEWS} rpm-doc/g++/
+install -pm 644 -p gcc/cp/{ChangeLog,NEWS} rpm-doc/g++/
 
 mkdir -p rpm-doc/libstdc++
-install -m 644 -p libstdc++-v3/{ChangeLog,README} rpm-doc/libstdc++/
+install -pm 644 -p libstdc++-v3/{ChangeLog,README} rpm-doc/libstdc++/
 %endif
 
 find rpm-doc -type f \( -iname '*changelog*' -not -name '*.bz2' \) -print0 |
@@ -450,7 +415,6 @@ fi
 %exclude %_datadir/gcc-%version/python
 %exclude %version_libdir/libstdc++.so.6.0.16-gdb.py
 
-
 %files -n libstdc++-devel
 %defattr(-,root,root)
 %if %USE_VERSION_SPECIFIC_LIBS
@@ -462,7 +426,6 @@ fi
 %version_libdir/libstdc++.so
 %endif
 
-
 %files -n libgcc%gcc_branch-plugin-devel
 %_libdir/gcc/%_target_platform/%version/plugin/include
 %_infodir/libquadmath.info*
@@ -470,14 +433,12 @@ fi
 %_libdir/libssp.a
 %_libdir/libssp_nonshared.a
 
-
 %files -n libgomp%gcc_branch
 %_libdir/libgomp.so.*
 
 %files -n libmudflap%gcc_branch
 %_libdir/libmudflap.so.*
 %_libdir/libmudflapth.so.*
-
 
 %files -n libgomp%gcc_branch-devel
 %dir %_libdir/gcc/%_target_platform/%version
@@ -489,7 +450,6 @@ fi
 %_libdir/libgomp.a
 %_libdir/libgomp.spec
 
-
 %files -n libmudflap%gcc_branch-devel
 %dir %_libdir/gcc/%_target_platform/%version
 %dir %_libdir/gcc/%_target_platform/%version/include
@@ -497,7 +457,6 @@ fi
 %dir %_libdir/gcc/%_target_platform/%version
 %_libdir/libmudflap.a
 %_libdir/libmudflapth.a
-
 
 %changelog
 * Fri Oct 21 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:4.6.1-owl1
