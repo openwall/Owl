@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/mpfr/mpfr.spec,v 1.4 2011/10/24 07:11:52 solar Exp $
+# $Owl: Owl/packages/mpfr/mpfr.spec,v 1.5 2011/10/24 07:46:54 solar Exp $
 
 Summary: A C library for multiple-precision floating-point computations.
 Name: mpfr
@@ -57,8 +57,8 @@ rm -rf %buildroot
 cd ..
 mkdir %buildroot/%_docdir/%name-%version
 mv %buildroot/%_docdir/%name/ %buildroot/%_docdir/%name-%version/
-ln -s libmpfr.so.4.0.0 %buildroot%_libdir/libmpfr.so.1
-ln -s libmpfr.so.4.0.0 %buildroot%_libdir/libmpfr.so.1.2.2
+ln -s libmpfr.so.4.1.0 %buildroot%_libdir/libmpfr.so.1
+ln -s libmpfr.so.4.1.0 %buildroot%_libdir/libmpfr.so.1.2.2
 
 %check
 %__make check
