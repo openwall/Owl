@@ -2,9 +2,6 @@ Le site web de Owl est :
 
 http://www.openwall.com/Owl/
 
-Vous pouvez y commander Owl sur un CD avec transport mondial et supporter
-notre projet en faisant ceci.
-
 Owl peut être téléchargé depuis les miroirs officiels suivants :
 
 ftp://ftp.fr.openwall.com/pub/Owl/	(France)
@@ -72,4 +69,4 @@ utiliser la compression avec chaque méthode d'accès au serveur CVS anonyme,
 typiquement en spécifiant l'option -z3 à CVS et/ou "Compression yes" dans le
 fichier de configuration du client SSH.
 
-$Owl: Owl/doc/fr/DOWNLOAD,v 1.34 2011/08/15 08:35:13 solar Exp $
+$Owl: Owl/doc/fr/DOWNLOAD,v 1.35 2011/10/24 08:58:09 solar Exp $

@@ -2,9 +2,6 @@ Die Owl Homepage befindet sich unter:
 
 http://www.openwall.com/Owl/
 
-Dort kann man Owl auf einer CD bestellen.  Diese wird in die ganze Welt
-ausgeliefert und man unterstützt damit unser Projekt.
-
 Owl kann von einem der folgenden offiziellen Mirror-Server herunter
 geladen werden:
 
@@ -81,4 +78,4 @@ Wir bieten zudem auch ein CVSweb-Interface an:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/de/DOWNLOAD,v 1.46 2011/08/15 08:35:13 solar Exp $
+$Owl: Owl/doc/de/DOWNLOAD,v 1.47 2011/10/24 08:58:09 solar Exp $

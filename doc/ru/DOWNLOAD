@@ -2,9 +2,6 @@
 
 http://www.openwall.com/Owl/
 
-Здесь вы можете заказать Owl на CD с доставкой по всему миру и тем самым
-поддержать наш проект.
-
 Owl доступна на следующих официальных зеркалах:
 
 ftp://ftp1.ru.openwall.com/pub/Owl/	(Россия - Москва)
@@ -75,4 +72,4 @@ CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
 
 Интерфейс CVSweb доступен по адресу http://cvsweb.openwall.com
 
-$Owl: Owl/doc/ru/DOWNLOAD,v 1.40 2011/08/15 08:35:13 solar Exp $
+$Owl: Owl/doc/ru/DOWNLOAD,v 1.41 2011/10/24 08:58:09 solar Exp $
