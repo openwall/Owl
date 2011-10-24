@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/mpfr/mpfr.spec,v 1.2 2011/10/24 05:20:56 solar Exp $
+# $Owl: Owl/packages/mpfr/mpfr.spec,v 1.3 2011/10/24 06:45:44 solar Exp $
 
 Summary: A C library for multiple-precision floating-point computations.
 Name: mpfr
@@ -7,8 +7,8 @@ Release: owl1
 License: LGPLv3+ and GPLv3+ and GFDL
 Group: System Environment/Libraries
 URL: http://www.mpfr.org
-Source0: http://www.mpfr.org/mpfr-current/%name-%version.tar.xz
-# Signature: http://www.mpfr.org/mpfr-current/mpfr-%version.tar.xz.asc
+Source0: http://www.mpfr.org/mpfr-%version/%name-%version.tar.xz
+# Signature: http://www.mpfr.org/mpfr-%version/mpfr-%version.tar.xz.asc
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 Requires: gmp >= 4.2.1
