@@ -42,6 +42,10 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl 3.0-stable.
 
+(2011/10/15)
+2011/10/24	Package: hardlink
+New package: a program to consolidate duplicate files via hardlinks.
+
 2011/10/24	Package: pam
 SECURITY FIX	Severity: none to high, local, active
 Applied upstream fixes for two vulnerabilities in pam_env.  This module
@@ -356,4 +360,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.11 2011/10/24 18:45:57 ldv Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.12 2011/10/24 19:45:05 solar Exp $
