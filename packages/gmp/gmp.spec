@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gmp/gmp.spec,v 1.3 2011/10/24 17:27:42 segoon Exp $
+# $Owl: Owl/packages/gmp/gmp.spec,v 1.4 2011/10/24 17:29:16 segoon Exp $
 
 Summary: The GNU multiple precision arithmetic library.
 Name: gmp
@@ -10,6 +10,8 @@ Group: System Environment/Libraries
 URL: http://gmplib.org
 Source0: ftp://ftp.gnu.org/pub/gnu/gmp/gmp-%version.tar.bz2
 # Signature: ftp://ftp.gmplib.org/pub/gmp-%version/gmp-%version.tar.bz2.sig
+Source1: gmp.h
+Source2: gmp-mparam.h
 BuildRequires: autoconf automake libtool
 BuildRoot: /override/%name-%version
 Provides: libgmp.so.3%(test %_lib = lib64 && echo -n '()(64bit)')
@@ -141,8 +143,6 @@ chmod 755 %buildroot%_libdir/sse2/libmp.so.?
 
 cd ..
 
-# We'll need to re-enable this for multilib support.
-%if 0
 # Rename gmp.h to gmp-<arch>.h and gmp-mparam.h to gmp-mparam-<arch>.h to
 # avoid file conflicts on multilib systems, and install wrapper include files
 # gmp.h and gmp-mparam.h.
@@ -165,7 +165,6 @@ install -pm644 %_sourcedir/gmp.h %buildroot/%_includedir/
 mv %buildroot/%_includedir/gmp-mparam.h \
     %buildroot/%_includedir/gmp-mparam-${basearch}.h
 install -pm644 %_sourcedir/gmp-mparam.h %buildroot/%_includedir/
-%endif
 
 %check
 cd base
@@ -216,5 +215,9 @@ fi
 %_libdir/libgmpxx.a
 
 %changelog
+* Mon Oct 24 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.0.2-owl1
+- Updated to 5.0.2.
+- Multilib support for gmp-devel.
+
 * Fri Oct 21 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4.3.2-owl1
 - Initial import from Fedora.
