@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.132 2011/10/23 04:47:27 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.133 2011/10/24 02:00:30 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.8.3
+Version: 1.7.8.4
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,6 +88,18 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Oct 24 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.4-owl1
+- Added optional parallelization of the bitslice DES code with OpenMP (not
+enabled in the Owl package yet).
+- Replaced the bitslice DES key setup algorithm with a faster one, which
+significantly improves performance at LM hashes, as well as at DES-based
+crypt(3) hashes when there's just one salt (or very few salts).
+- Optimized the DES S-box x86-64 (16-register SSE2) assembly code.
+- Added support for 10-character DES-based tripcodes (not optimized yet).
+- Added two pre-defined external mode variables: "abort" and "status", which
+let an external mode request the current cracking session to be aborted or the
+status line to be displayed, respectively.
+
 * Wed Jun 22 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8-owl1
 - The bitslice DES S-box expressions have been replaced with those generated
 by Roman Rusakov specifically for John the Ripper.  The corresponding assembly
