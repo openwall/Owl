@@ -339,7 +339,7 @@ static void rf (char *name)
         hp->chain = fp2;
       }
       if (verbose > 1 && namelen <= NAMELEN)
-        fprintf(stderr, "\r%*s\r", (int)namelen + 2, "");
+        fprintf(stderr, "\r%*s\r", (int)(namelen + 2), "");
     }
     return;
   }
