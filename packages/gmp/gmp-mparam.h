@@ -20,7 +20,7 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 MA 02111-1307, USA. */
 
 /*
- * This gmp-mparam.h is a wrapper include file for the original gmp-mparam.h, 
+ * This gmp-mparam.h is a wrapper include file for the original gmp-mparam.h,
  * which has been renamed to gmp-mparam-<arch>.h. There are conflicts for the
  * original gmp-mparam.h on multilib systems, which result from arch-specific
  * configuration options. Please do not use the arch-specific file directly.
@@ -56,7 +56,7 @@ MA 02111-1307, USA. */
 #include "gmp-mparam-sh.h"
 #elif defined(__sparc__) && defined (__arch64__)
 #include "gmp-mparam-sparc64.h"
-#elif defined(__sparc__)                      
+#elif defined(__sparc__)
 #include "gmp-mparam-sparc.h"
 #else
 #error "The gmp-devel package is not usable with the architecture."
