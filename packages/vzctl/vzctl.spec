@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/vzctl/vzctl.spec,v 1.6 2010/12/06 11:57:24 solar Exp $
+# $Owl: Owl/packages/vzctl/vzctl.spec,v 1.6.2.1 2011/10/24 20:16:26 solar Exp $
 
 Summary: OpenVZ containers control utility.
 Name: vzctl
 Version: 3.0.23
-Release: owl6
+Release: owl7
 License: GPLv2+
 Group: System Environment/Kernel
 URL: http://openvz.org/
@@ -83,6 +83,10 @@ fi
 %dev(c,126,0) %attr(600,root,root) /dev/vzctl
 
 %changelog
+* Sun Oct 09 2011 Solar Designer <solar-at-owl.openwall.com> 3.0.23-owl7
+- No longer set MODULES_DISABLED=yes in the default config since our new
+kernels use modules for OpenVZ stuff just like OpenVZ's official kernels do.
+
 * Mon Dec 06 2010 Solar Designer <solar-at-owl.openwall.com> 3.0.23-owl6
 - Corrected the way /etc/cron.d/vz is created such that /etc/cron.d's mtime
 is changed, which is needed for our crond to actually notice the file.
