@@ -46,6 +46,15 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2011/10/24	Package: pam
+SECURITY FIX    Severity: none to high, local, active
+Applied upstream fixes for two vulnerabilities in pam_env.  This module
+is not in use on default installs of Owl, and it never was, hence there
+was no impact for default installs.
+References:
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3148
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3149
+
 2011/10/24	Packages: gcc, gmp, libmpc, mpfr
 Updated GCC to 4.6.1.  Packaged GMP, MPC, and MPFR - arbitrary precision
 arithmetic libraries, which are required by the new GCC version.
@@ -470,4 +479,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.64 2011/10/24 07:08:36 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.65 2011/10/24 18:12:04 ldv Exp $

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.62 2011/07/17 10:05:28 solar Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.63 2011/10/24 18:01:56 ldv Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 1.1.2
-Release: owl2
+Release: owl3
 %define rh_version 0.99.10-1
 License: GPLv2+ or BSD-style
 Group: System Environment/Base
@@ -28,6 +28,8 @@ Patch6: Linux-PAM-1.1.2-owl-pam_wheel-use_uid.diff
 Patch7: Linux-PAM-1.1.2-owl-pam_get_authtok.diff
 Patch8: Linux-PAM-1.1.2-alt-pam_chroot.diff
 Patch9: Linux-PAM-1.1.2-owl-pam_stack.diff
+Patch10: Linux-PAM-1.1.4-up-pam_env-CVE-2011-3148.diff
+Patch11: Linux-PAM-1.1.4-up-pam_env-CVE-2011-3149.diff
 PreReq: /sbin/ldconfig
 Requires: glibc-crypt_blowfish >= 1.2
 # Just to make sure no one misses pam_unix and pam_pwdb, which are now
@@ -84,6 +86,8 @@ mv pam-redhat-%rh_version/pam_chroot modules/
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
+%patch11 -p1
 
 # Replace pam_listfile.
 install -pm644 %_sourcedir/pam_listfile.c modules/pam_listfile/
@@ -293,6 +297,10 @@ rm %buildroot%docdir/*.pdf
 %docdir/[^ACNm]*
 
 %changelog
+* Mon Oct 24 2011 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1.2-owl3
+- Applied upstream fixes for two vulnerabilities in pam_env module
+(CVE-2011-3148 and CVE-2011-3149).
+
 * Sun Jul 17 2011 Solar Designer <solar-at-owl.openwall.com> 1.1.2-owl2
 - In system-auth, use the "$2y$" hash encoding prefix (crypt_blowfish 1.2+).
 
