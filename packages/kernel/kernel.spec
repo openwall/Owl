@@ -1,23 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.4 2011/09/07 07:01:39 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.5 2011/10/24 20:13:37 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 238.19.1.el5.028stab092.2
+%define ovzversion 274.3.1.el5.028stab094.3
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab092.2
+URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab094.3
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab092.2/patches/patch-238.19.1.el5.028stab092.2-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab092.2/patches/patch-238.19.1.el5.028stab092.2-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab094.3/patches/patch-274.3.1.el5.028stab094.3-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab094.3/patches/patch-274.3.1.el5.028stab094.3-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -104,6 +104,20 @@ done
 %files fake
 
 %changelog
+* Sun Oct 09 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.3.1.el5.028stab094.3.owl1
+- Updated to 2.6.18-274.3.1.el5.028stab094.3.
+- Restricted permissions on /proc/slabinfo.
+- Moved some OpenVZ features to modules like it is done in OpenVZ's official
+kernel builds.
+- Changed CONFIG_UDF_FS=y to =m.
+- Changed CONFIG_BLK_DEV_CRYPTOLOOP and most CONFIG_CRYPTO_* from =y to =m.
+- On x86_64, changed CONFIG_PCNET32 and CONFIG_FORCEDETH (these are some of the
+100 Mbps NIC drivers) from =y to =m.  Of the 100 Mbps NIC drivers, we're
+leaving only those for Intel, Realtek, and NE2000-compatible NICs built into
+the kernel on x86_64 now.
+- CONFIG_SCSI_AIC94XX=y, CONFIG_BLK_CPQ_CISS_DA=y (the latter was already =y on
+i686, now it is =y on x86_64 as well).
+
 * Wed Jul 27 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-238.19.1.el5.028stab092.2.owl1
 - Updated to 2.6.18-238.19.1.el5.028stab092.2.
 - In kernel/sched.c, wrapped the use of sched_goidle in
