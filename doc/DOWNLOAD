@@ -2,9 +2,6 @@ The Owl homepage is:
 
 http://www.openwall.com/Owl/
 
-There you can order Owl on a CD with delivery worldwide and support
-our project by doing so.
-
 Owl can be downloaded from the following official mirrors:
 
 ftp://mirrors.kernel.org/openwall/Owl/	(USA & EU)
@@ -83,4 +80,4 @@ Finally, the CVSweb interface is provided at:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/DOWNLOAD,v 1.49.2.2 2011/09/07 07:30:05 solar Exp $
+$Owl: Owl/doc/DOWNLOAD,v 1.49.2.3 2011/10/24 20:31:00 solar Exp $
