@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gmp/gmp.spec,v 1.5 2011/10/24 18:19:31 solar Exp $
+# $Owl: Owl/packages/gmp/gmp.spec,v 1.6 2011/10/26 01:25:31 solar Exp $
 
 Summary: The GNU multiple precision arithmetic library.
 Name: gmp
@@ -124,7 +124,7 @@ rm -f %buildroot%_libdir/lib{gmp,mp,gmpxx}.la
 rm -f %buildroot%_infodir/dir
 /sbin/ldconfig -n %buildroot%_libdir
 ln -sf libgmpxx.so.4 %buildroot%_libdir/libgmpxx.so
-ln -s libgmp.so %buildroot%_libdir/libgmp.so.3
+ln -s libgmp.so.10 %buildroot%_libdir/libgmp.so.3
 
 %if 0
 #%ifarch %ix86
@@ -216,6 +216,10 @@ fi
 %_libdir/libgmpxx.a
 
 %changelog
+* Wed Oct 26 2011 Solar Designer <solar-at-owl.openwall.com> 5.0.2-owl2
+- Re-pointed the libgmp.so.3 symlink (introduced in 5.0.2-owl1) from libgmp.so
+(part of the -devel subpackage) to libgmp.so.10 (part of the main package).
+
 * Mon Oct 24 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.0.2-owl1
 - Updated to 5.0.2.
 - Multilib support for gmp-devel.
