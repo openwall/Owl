@@ -42,6 +42,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl 3.0-stable.
 
+2011/10/26	Package: tzdata
+Updated to 2011m.
+
 2011/10/24	Package: pam
 SECURITY FIX	Severity: none to high, local, active
 Applied upstream fixes for two vulnerabilities in pam_env.  This module
@@ -420,4 +423,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.17 2011/10/24 20:22:06 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.18 2011/10/26 02:07:09 solar Exp $
