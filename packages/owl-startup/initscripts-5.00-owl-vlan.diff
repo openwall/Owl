@@ -52,7 +52,7 @@ diff -urpN initscripts-5.00.orig/sysconfig/network-scripts/ifup initscripts-5.00
  fi
  
 +# 802.1q part
-+if [ -x /usr/sbin/vconfig -a "${VLAN}" = "yes" -a "$ISALIAS" = "no" ]; then
++if [ -x /usr/sbin/vconfig -a "$VLAN" = "yes" -a "$ISALIAS" = "no" ]; then
 +
 +    # DEV_PLUS_VID* type
 +    if echo ${DEVICE} | LANG=C egrep -q '(eth|bond)[0-9]+\.[0-9]{1,4}($|[^:])'; then
@@ -94,7 +94,7 @@ diff -urpN initscripts-5.00.orig/sysconfig/network-scripts/ifup initscripts-5.00
 +            echo "Physical device ${PHYSDEV} for ${DEVICE} does not seem to be present."
 +            exit 1
 +        fi
-+        
++
 +        # Link on Physical device needs to be up but no ip required
 +        /sbin/ifconfig ${PHYSDEV} 2>/dev/null | grep -q UP 
 +        [ $? -gt 0 ] && /sbin/ifconfig ${PHYSDEV} up
@@ -149,7 +149,7 @@ diff -urpN initscripts-5.00.orig/sysconfig.txt initscripts-5.00/sysconfig.txt
  
    NETWORKING=yes|no
 +  VLAN=yes|no 
-+    This setting indicate enable 802.1q vlans. 
++    This setting indicates whether to enable 802.1q VLANs. 
    HOSTNAME=<fqdn by default, but whatever hostname you want>
      Note: for compatibility with some old software people might
      install (like trn), the /etc/HOSTNAME file should contain the
@@ -162,20 +162,20 @@ diff -urpN initscripts-5.00.orig/sysconfig.txt initscripts-5.00/sysconfig.txt
 +       Initscripts use DEV_PLUS_VID_NO_PAD naming mode for VLAN
 +       devices.
 +               Example: eth0.42 for vlan 42 on device eth0.
-+       Valid VLAN ID range is 0-4095. Most ethernet switches reserve
++       Valid VLAN ID range is 0-4095. Most Ethernet switches reserve
 +       VLAN ID 1 to be used as management VLAN; starting from VLAN
 +       ID 2 is recommended.
 +
 +       Alternate format, i.e. DEVICE=vlan42 is also supported,
 +       although not recommended. Requires PHYSDEV to be set (see
-+       below).       
++       below).
 +     PHYSDEV=<physical device for vlan>
 +       Mandatory, when DEVICE is provided in vlan[0-9]{1,4} format.
 +     REORDER_HDR=yes|no
-+       When enabled the VLAN device will move the ethernet header
-+       around to make it look exactly like a real ethernet device.
++       When enabled the VLAN device will move the Ethernet header
++       around to make it look exactly like a real Ethernet device.
 +       This may help programs such as ISC dhcpd which read the raw
-+       ethernet packet and make assumptions about the location of
++       Ethernet packet and make assumptions about the location of
 +       bytes. If you don't need it turn it off because there
 +       is a small performance penalty. Default is on.
 +
