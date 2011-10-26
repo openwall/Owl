@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.67 2011/10/16 12:55:01 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.68 2011/10/26 04:57:56 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 274.3.1.el5.028stab094.3
-Release: %ovzversion.owl2
+Release: %ovzversion.owl3
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab094.3
@@ -104,6 +104,10 @@ done
 %files fake
 
 %changelog
+* Wed Oct 26 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.3.1.el5.028stab094.3.owl3
+- Discard section .eh_frame in arch/i386/kernel/vmlinux.lds.S just like it was
+already being done for x86_64.
+
 * Sun Oct 16 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-274.3.1.el5.028stab094.3.owl2
 - Fixed compilation failures under gcc 4.6.1.
 

@@ -6,7 +6,7 @@ diff -urpN linux-2.6.18-274.3.1.el5.028stab094.3/Makefile linux-2.6.18-274.3.1.e
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -prep
-+EXTRAVERSION = -274.3.1.el5.028stab094.3.owl2
++EXTRAVERSION = -274.3.1.el5.028stab094.3.owl3
  RHEL_MAJOR = 5
  RHEL_MINOR = 7
  NAME=Avast! A bilge rat!
@@ -2518,3 +2518,13 @@ diff -urpN linux-2.6.18.orig/arch/x86_64/vdso/Makefile linux-2.6.18/arch/x86_64/
  		          -Wl,-T,$(filter-out FORCE,$^) -o $@
  
  export CPPFLAGS_vdso.lds += -P -C -U$(ARCH)
+--- linux-2.6.18.orig/arch/i386/kernel/vmlinux.lds.S	2011-09-23 10:18:16 +0000
++++ linux-2.6.18/arch/i386/kernel/vmlinux.lds.S	2011-10-26 04:29:16 +0000
+@@ -253,6 +253,7 @@
+   /* Sections to be discarded */
+   /DISCARD/ : {
+ 	*(.exitcall.exit)
++	*(.eh_frame)
+ 	}
+ 
+   STABS_DEBUG
