@@ -153,7 +153,7 @@ diff -urpN initscripts-5.00.orig/sysconfig.txt initscripts-5.00/sysconfig.txt
    HOSTNAME=<fqdn by default, but whatever hostname you want>
      Note: for compatibility with some old software people might
      install (like trn), the /etc/HOSTNAME file should contain the
-@@ -330,6 +332,29 @@ Files in /etc/sysconfig/network-scripts/
+@@ -330,6 +332,28 @@ Files in /etc/sysconfig/network-scripts/
      ARP=yes|no (adds 'arp' flag to ifconfig, for use with the
        ethertap device)
  
@@ -178,7 +178,6 @@ diff -urpN initscripts-5.00.orig/sysconfig.txt initscripts-5.00/sysconfig.txt
 +       Ethernet packet and make assumptions about the location of
 +       bytes. If you don't need it turn it off because there
 +       is a small performance penalty. Default is on.
-+
 +
    PPP/SLIP items:
      PERSIST=yes|no
