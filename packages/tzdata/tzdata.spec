@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/tzdata/tzdata.spec,v 1.4 2011/10/24 22:46:28 ldv Exp $
+# $Owl: Owl/packages/tzdata/tzdata.spec,v 1.5 2011/10/26 02:05:40 solar Exp $
 
 Summary: Timezone data.
 Name: tzdata
-%define tzdata_version 2011l
+%define tzdata_version 2011m
 %define tzcode_version 2011i
 Version: %tzdata_version
 Release: owl1
@@ -16,7 +16,7 @@ URL: http://www.iana.org/time-zones
 Source0: tzdata-base-0.tar.bz2
 # These are official upstream.
 Source1: ftp://munnari.oz.au/pub/tzdata%tzdata_version.tar.gz
-Source2: ftp://munnari.oz.au/pub/oldtz/tzcode%tzcode_version.tar.gz
+Source2: ftp://munnari.oz.au/pub/tzcode%tzcode_version.tar.gz
 BuildRequires: /usr/sbin/zic
 BuildRequires: hardlink
 BuildRequires: sed >= 4.0.9
@@ -59,6 +59,9 @@ hardlink -vc %buildroot
 %doc tzcode%tzcode_version/tz-link.html
 
 %changelog
+* Wed Oct 26 2011 Solar Designer <solar-at-owl.openwall.com> 2011m-owl1
+- Updated to 2011m.
+
 * Sat Oct 15 2011 Solar Designer <solar-at-owl.openwall.com> 2011l-owl1
 - Updated to 2011l.
 - Run hardlink(1) on the target tree to save disk space.
