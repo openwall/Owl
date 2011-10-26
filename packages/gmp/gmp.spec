@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gmp/gmp.spec,v 1.6 2011/10/26 01:25:31 solar Exp $
+# $Owl: Owl/packages/gmp/gmp.spec,v 1.7 2011/10/26 02:22:41 solar Exp $
 
 Summary: The GNU multiple precision arithmetic library.
 Name: gmp
 Version: 5.0.2
-Release: owl1
+Release: owl2
 Epoch: 1
 License: LGPLv3+
 Group: System Environment/Libraries
