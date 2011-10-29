@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installisotree.sh,v 1.20 2011/10/29 16:17:05 segoon Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.21 2011/10/29 21:14:33 solar Exp $
 
 set -e
 
@@ -54,9 +54,9 @@ log "Installing kernel"
 cd "$ROOT/boot"
 # Should match exactly one file
 KERNEL_NAME="`echo vmlinuz-*`"
-
 # ISOLINUX doesn't respect symlinks :(
-mv "$KERNEL_NAME" vmlinuz
+ln "$KERNEL_NAME" vmlinuz-iso # for owl-cdrom's isolinux.conf
+ln -s "$KERNEL_NAME" vmlinuz # for owl-setup (it copies the symlink)
 
 mkdir -p "$ROOT/boot/isolinux/"
 cp /usr/share/syslinux/isolinux.bin \
