@@ -3,8 +3,8 @@ To continue booting this CD's live + installable system, press Enter or just
 wait a few seconds.  If this fails, try selecting "safe" (limits use of ACPI).
 
 To boot an arbitrary Linux userland along with this CD's kernel (such as to
-rescue an installed system), select "rescue", press TAB, AND TYPE
+rescue an installed system), select "rescue", press Tab, AND TYPE
 "root=/dev/..." without the quotes and replacing the dots with your root
 filesystem device.  For example, your boot line might be
-"/boot/vmlinuz root=/dev/sda2".
+"/boot/vmlinuz-iso root=/dev/sda2".
 ENDTEXT

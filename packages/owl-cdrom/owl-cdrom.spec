@@ -1,16 +1,15 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.59 2011/10/29 16:08:55 segoon Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.60 2011/10/29 21:46:25 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 1.13
-Release: owl2
+Version: 1.14
+Release: owl1
 License: public domain
 Group: System Environment/Base
 Source0: rc.ramdisk
 Source1: welcome-cdrom.sh
-Source10: lilo.conf
-Source11: floppy-update.sh
-Source12: message
+Source10: isolinux.conf
+Source11: message
 Requires: owl-startup >= 0.15-owl1
 ExclusiveArch: %ix86 x86_64
 BuildRoot: /override/%name-%version
@@ -27,9 +26,7 @@ cd %buildroot
 touch .Owl-CD-ROM
 install -m 700 %_sourcedir/rc.ramdisk etc/rc.d/
 install -m 755 %_sourcedir/welcome-cdrom.sh etc/profile.d/
-install -m 600 %_sourcedir/lilo.conf etc/lilo.conf.bootcd
 install -m 600 %_sourcedir/isolinux.conf etc/isolinux.cfg
-install -m 700 %_sourcedir/floppy-update.sh boot/
 install -m 600 %_sourcedir/message boot/
 ln -s ../rom/{dev,etc,home,root,tmp,var,world} ram/
 
@@ -75,17 +72,15 @@ fi
 /.Owl-CD-ROM
 %config /etc/rc.d/rc.ramdisk
 %config /etc/profile.d/welcome-cdrom.sh
-%config /etc/lilo.conf.bootcd
 %config /etc/isolinux.cfg
-/boot/floppy-update.sh
 /boot/message
 %dir /rom
 /ram
 %dir /owl
 
 %changelog
-* Sat Oct 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.13-owl2
-- Added support of ISOLINUX.
+* Sat Oct 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.14-owl1
+- Use ISOLINUX instead of LILO.
 
 * Thu Dec 09 2010 Solar Designer <solar-at-owl.openwall.com> 1.13-owl1
 - Added the "safe" boot label (uses "acpi=ht").
