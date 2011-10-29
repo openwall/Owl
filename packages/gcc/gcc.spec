@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.65 2011/10/24 06:14:02 solar Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.66 2011/10/29 09:15:18 segoon Exp $
 
 # The only supported frontend for now is GXX.
 # Testsuite is not supported because of its requirement for additional
@@ -10,7 +10,7 @@
 
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
-Version: 4.6.1
+Version: 4.6.2
 Release: owl1
 Epoch: 1
 License: GPLv3+
@@ -282,6 +282,13 @@ rm -f %buildroot%_libdir/*.la
 %find_lang cpplib
 %find_lang gcc
 
+# autogen is needed for this
+#
+# %check
+# cd obj-%_target_platform
+# %__make -k check
+# cd -
+
 %post
 /sbin/install-info --info-dir=%_infodir %_infodir/gcc.info
 /sbin/install-info --info-dir=%_infodir %_infodir/gccint.info
@@ -427,6 +434,9 @@ fi
 %_libdir/libmudflapth.a
 
 %changelog
+* Sat Oct 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:4.6.2-owl1
+- Updated to 4.6.2.
+
 * Fri Oct 21 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:4.6.1-owl1
 - Updated to 4.6.1.
 
