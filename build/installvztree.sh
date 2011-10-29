@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installvztree.sh,v 1.13 2011/09/07 00:30:41 solar Exp $
+# $Owl: Owl/build/installvztree.sh,v 1.14 2011/10/29 22:26:11 solar Exp $
 
 set -e
 
@@ -43,7 +43,7 @@ cd $HOME
 rmdir -- "$ROOT"
 mkdir -m 755 -- "$ROOT"
 
-FORCE_ROOT="$ROOT" KERNEL_FAKE=yes SKIP_HOST=yes SKIP_EXTRA=yes "$HOME/native/$BRANCH/build/installworld.sh"
+FORCE_ROOT="$ROOT" KERNEL_FAKE=yes SKIP_HOST=yes SKIP_EXTRA=yes NEED_ARCH_TAG=yes "$HOME/native/$BRANCH/build/installworld.sh"
 
 mkdir -p logs
 exec 3>&1

@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/makeiso.sh,v 1.6 2011/10/29 21:48:47 solar Exp $
+# $Owl: Owl/build/makeiso.sh,v 1.7 2011/10/29 22:26:11 solar Exp $
 
 set -e
 
@@ -14,12 +14,20 @@ if [ ! -d "$ROOT" -o ! -r "$ROOT/boot/isolinux/isolinux.bin" -o \
 fi
 
 umask $UMASK
-cd $HOME
+
+ARCH=
+if [ -r "$ROOT/.Owl-arch" ]; then
+	ARCH="`cat $ROOT/.Owl-arch`"
+fi
+rm -f "$ROOT/.Owl-arch"
+if [ -n "$ARCH" ]; then
+	ARCH="-${ARCH}"
+fi
 
 if [ "$BRANCH" = "Owl" ]; then
-	ISO="Owl-current-$(TZ=UTC date +%Y%m%d).iso"
+	ISO="Owl-current-$(TZ=UTC date +%Y%m%d)${ARCH}.iso"
 else
-	ISO="$BRANCH-$(TZ=UTC date +%Y%m%d).iso"
+	ISO="$BRANCH-$(TZ=UTC date +%Y%m%d)${ARCH}.iso"
 fi
 
 MKISOFS_OPTS="-quiet -lRJ

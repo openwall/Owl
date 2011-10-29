@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installworld.sh,v 1.43 2011/09/07 00:40:50 solar Exp $
+# $Owl: Owl/build/installworld.sh,v 1.44 2011/10/29 22:26:11 solar Exp $
 
 . installworld.conf
 
@@ -260,6 +260,13 @@ if [ "$NEED_FAKE" = yes ]; then
 			log "Removal of $PACKAGE failed"
 		fi
 	done
+fi
+
+if [ "$NEED_ARCH_TAG" = yes ]; then
+	ARCH="`$RPM $RPM_FLAGS --root $ROOT -q --queryformat '%{arch}' kernel`"
+	if [ -n "$ARCH" ]; then
+		echo "$ARCH" > "$ROOT/.Owl-arch"
+	fi
 fi
 
 FAILED="`cd $HOME/tmp-work/failures/ 2>/dev/null && ls`"

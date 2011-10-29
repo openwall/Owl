@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installisotree.sh,v 1.23 2011/10/29 22:13:27 solar Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.24 2011/10/29 22:26:11 solar Exp $
 
 set -e
 
@@ -43,7 +43,7 @@ cd $HOME
 rmdir -- "$ROOT"
 mkdir -m 755 -- "$ROOT"
 
-MAKE_CDROM=yes KERNEL_FAKE=no SKIP_EXTRA=yes "$HOME/native/$BRANCH/build/installworld.sh"
+MAKE_CDROM=yes KERNEL_FAKE=no SKIP_EXTRA=yes NEED_ARCH_TAG=yes "$HOME/native/$BRANCH/build/installworld.sh"
 
 mkdir -p logs
 exec 3>&1
