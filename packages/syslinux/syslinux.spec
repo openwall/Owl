@@ -1,45 +1,46 @@
-# $Owl: Owl/packages/syslinux/syslinux.spec,v 1.2 2011/10/29 09:35:38 segoon Exp $
+# $Owl: Owl/packages/syslinux/syslinux.spec,v 1.3 2011/10/29 21:01:10 solar Exp $
 
-Summary: Simple kernel loader which boots from a FAT filesystem.
+Summary: A collection of boot loaders for the Linux operating system.
 Name: syslinux
 Version: 4.04
 Release: owl2
 License: GPLv2+
 Group: Applications/System
-URL: http://syslinux.zytor.com/wiki/index.php/The_Syslinux_Project
+# "The Syslinux website is currently out of order."
+#URL: http://syslinux.zytor.com/wiki/index.php/The_Syslinux_Project
 Source0: http://www.kernel.org/pub/linux/utils/boot/syslinux/%name-%version.tar.xz
 # Signature: https://www.kernel.org/pub/linux/utils/boot/syslinux/%name-%version.tar.sign
 ExclusiveArch: %ix86 x86_64
 BuildRoot: /override/%name-%version
 
-# NOTE: extlinux belongs in /sbin, not in /usr/sbin, since it is typically
+# extlinux belongs in /sbin, not in /usr/sbin, since it is typically
 # a system bootloader, and may be necessary for system recovery.
 %define _sbindir /sbin
 
-
 %description
-SYSLINUX is a suite of bootloaders, currently supporting DOS FAT
-filesystems, Linux ext2/ext3 filesystems (EXTLINUX), PXE network boots
-(PXELINUX), or ISO 9660 CD-ROMs (ISOLINUX).  It also includes a tool,
-MEMDISK, which loads legacy operating systems from these media.
+SYSLINUX is a collection of boot loaders for the Linux operating system, which
+work from Linux ext2/3/4, btrfs, and DOS FAT filesystems (EXTLINUX), from
+network servers using PXE firmware (PXELINUX), or from CD/DVD discs (ISOLINUX).
+It also includes a tool, MEMDISK, which loads legacy operating systems from
+these media.
 
 %package perl
-Summary: Syslinux tools written in perl.
+Summary: Syslinux tools written in Perl.
 Group: Applications/System
 
 %description perl
-Syslinux tools written in perl
+Syslinux tools written in Perl.
 
 %package devel
-Summary: Headers and libraries for syslinux development.
+Summary: Headers and libraries for Syslinux development.
 Group: Development/Libraries
 
 %description devel
-Headers and libraries for syslinux development.
+Headers and libraries for Syslinux development.
 
 %package extlinux
 Summary: The EXTLINUX bootloader, for booting the local system.
-Group: System/Boot
+Group: System Environment/Base
 Requires: syslinux
 
 %description extlinux
@@ -60,7 +61,7 @@ booting in the /tftpboot directory.
 %__make clean
 
 %build
-OPTFLAGS="-g -Os -Werror -Wno-unused -finline-limit=2000"
+OPTFLAGS="%optflags -Werror -Wno-unused -finline-limit=2000"
 %__make installer OPTFLAGS="$OPTFLAGS"
 %__make -C sample tidy
 
@@ -73,14 +74,14 @@ OPTFLAGS="-g -Os -Werror -Wno-unused -finline-limit=2000"
 	INSTALL_BIN=linux/syslinux
 
 mkdir -p %buildroot/%_docdir/%name-%version/sample
-install -m 644 sample/sample.* %buildroot/%_docdir/%name-%version/sample/
+install -pm 644 sample/sample.* %buildroot/%_docdir/%name-%version/sample/
 mkdir -p %buildroot/etc
 cd %buildroot/etc && ln -s ../boot/extlinux/extlinux.conf .
 
 %files
 %defattr(-,root,root)
-%doc NEWS README* COPYING 
-%doc doc/* 
+%doc NEWS README* COPYING
+%doc doc/*
 %doc sample
 %_mandir/man1/gethostip*
 %_mandir/man1/syslinux*
