@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/syslinux/syslinux.spec,v 1.1 2011/10/27 11:20:39 segoon Exp $
+# $Owl: Owl/packages/syslinux/syslinux.spec,v 1.2 2011/10/29 09:35:38 segoon Exp $
 
 Summary: Simple kernel loader which boots from a FAT filesystem.
 Name: syslinux
 Version: 4.04
-Release: owl1
+Release: owl2
 License: GPLv2+
 Group: Applications/System
 URL: http://syslinux.zytor.com/wiki/index.php/The_Syslinux_Project
@@ -57,6 +57,7 @@ booting in the /tftpboot directory.
 
 %prep
 %setup -q -n syslinux-%version
+%__make clean
 
 %build
 OPTFLAGS="-g -Os -Werror -Wno-unused -finline-limit=2000"
@@ -139,6 +140,9 @@ else
 fi
 
 %changelog
+* Sat Oct 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4.04-owl2
+- Remove precompiled object files in %prep.
+
 * Thu Oct 27 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4.04-owl1
 - Initial import from Fedora.
 - Packaged linux/syslinux instead of mtools/syslinux.
