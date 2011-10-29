@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/buildworld.sh,v 1.53 2010/12/14 11:10:24 solar Exp $
+# $Owl: Owl/build/buildworld.sh,v 1.54 2011/10/29 22:13:27 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -143,7 +143,7 @@ build_native()
 	rm -f '*' || :
 	ln -sf $NATIVE/$PACKAGES/$PACKAGE/* .
 	test -e $PACKAGE.spec || ln -s "`spec $PACKAGE`" $PACKAGE.spec
-	if [ "$BUILDSOURCE" = "yes" ]; then
+	if [ "$BUILDSOURCE" = yes ]; then
 		FLAGS=-ba
 	else
 		FLAGS=-bb
@@ -165,10 +165,10 @@ build_native()
 		&> $HOME/logs/$PACKAGE < /dev/null;
 	then
 		mv $WORK/RPMS/*/* $HOME/RPMS/
-		test "$BUILDSOURCE" = "yes" && mv $WORK/SRPMS/* $HOME/SRPMS/
+		test "$BUILDSOURCE" = yes && mv $WORK/SRPMS/* $HOME/SRPMS/
 	else
 		rm -rf $WORK/RPMS/*
-		test "$BUILDSOURCE" = "yes" && rm -rf $WORK/SRPMS/*
+		test "$BUILDSOURCE" = yes && rm -rf $WORK/SRPMS/*
 		log "#$NUMBER: Failed $PACKAGE"
 		touch $HOME/native-work/failed
 	fi
@@ -429,7 +429,7 @@ umask $UMASK
 cd $HOME || exit 1
 
 mkdir -p logs archives RPMS
-test "$BUILDSOURCE" = "yes" && mkdir -p SRPMS
+test "$BUILDSOURCE" = yes && mkdir -p SRPMS
 
 echo "`date '+%Y %b %e %H:%M:%S'`: Started" >> logs/buildworld
 

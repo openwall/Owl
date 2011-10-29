@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installisotree.sh,v 1.22 2011/10/29 21:28:35 solar Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.23 2011/10/29 22:13:27 solar Exp $
 
 set -e
 
@@ -80,9 +80,9 @@ test -n "$ISO_COPY_SOURCES" || ISO_COPY_SOURCES=yes
 test -n "$ISO_COPY_RPMS" || ISO_COPY_RPMS=yes
 
 cd "$ROOT/rom/world"
-if [ "$ISO_COPY_SOURCES" = "yes" -o "$ISO_COPY_RPMS" = "yes" ]; then
+if [ "$ISO_COPY_SOURCES" = yes -o "$ISO_COPY_RPMS" = yes ]; then
 	TAR_EXTRA_OPTS=
-	if [ "$ISO_COPY_SOURCES" = "yes" ]; then
+	if [ "$ISO_COPY_SOURCES" = yes ]; then
 		log "Copying the native tree"
 	else
 		log "Copying portions of the native tree"
@@ -93,7 +93,7 @@ if [ "$ISO_COPY_SOURCES" = "yes" -o "$ISO_COPY_RPMS" = "yes" ]; then
 		-C "$HOME" \
 		"native/$BRANCH" Makefile | tar -xf-
 
-	if [ "$ISO_COPY_SOURCES" = "yes" ]; then
+	if [ "$ISO_COPY_SOURCES" = yes ]; then
 		log "Copying sources"
 		mkdir sources
 		cp -rpL "$HOME/sources/$BRANCH" sources/
@@ -104,7 +104,7 @@ else
 	log "Skipping native tree and sources copying"
 fi
 
-if [ "$ISO_COPY_RPMS" = "yes" ]; then
+if [ "$ISO_COPY_RPMS" = yes ]; then
 	log "Copying RPMs"
 	cp -rpL "$HOME/RPMS" .
 else
