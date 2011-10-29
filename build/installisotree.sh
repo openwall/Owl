@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installisotree.sh,v 1.24 2011/10/29 22:26:11 solar Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.25 2011/10/29 23:18:26 solar Exp $
 
 set -e
 
@@ -59,10 +59,10 @@ ln "$KERNEL_NAME" vmlinuz-iso # for owl-cdrom's isolinux.conf
 ln -s "$KERNEL_NAME" vmlinuz # for owl-setup (it copies the symlink)
 
 mkdir -p "$ROOT/boot/isolinux/"
-cp /usr/share/syslinux/isolinux.bin \
-	/usr/share/syslinux/menu.c32 \
-	"$ROOT/etc/isolinux.cfg" \
-	"$ROOT/boot/message" \
+ln "$ROOT/usr/share/syslinux/isolinux.bin" \
+    "$ROOT/usr/share/syslinux/menu.c32" \
+    "$ROOT/etc/isolinux.cfg" \
+    "$ROOT/boot/message" \
 	"$ROOT/boot/isolinux/"
 
 # depmod is normally run on bootup, but /lib/modules is read-only on CD
