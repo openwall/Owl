@@ -1,4 +1,4 @@
-# $Owl: Owl/build/Makefile,v 1.31 2010/12/14 16:43:40 solar Exp $
+# $Owl: Owl/build/Makefile,v 1.32 2011/10/29 21:48:47 solar Exp $
 
 # The Owl branch to build and/or install, specified by its tag in the
 # CVS.  This should only be set to build and/or install a non-current
@@ -33,10 +33,10 @@ installisotree: symlinks
 	BRANCH=$(BRANCH) native/$(BRANCH)/build/installisotree.sh
 
 iso: installisotree
-	COMPRESS_ISO= BRANCH=$(BRANCH) native/$(BRANCH)/build/makeiso.sh
+	ISO_COMPRESS= BRANCH=$(BRANCH) native/$(BRANCH)/build/makeiso.sh
 
 iso.gz: installisotree
-	COMPRESS_ISO=yes BRANCH=$(BRANCH) native/$(BRANCH)/build/makeiso.sh
+	ISO_COMPRESS=yes BRANCH=$(BRANCH) native/$(BRANCH)/build/makeiso.sh
 
 installvztree: symlinks
 	BRANCH=$(BRANCH) native/$(BRANCH)/build/installvztree.sh

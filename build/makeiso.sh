@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/makeiso.sh,v 1.5 2011/10/29 16:17:05 segoon Exp $
+# $Owl: Owl/build/makeiso.sh,v 1.6 2011/10/29 21:48:47 solar Exp $
 
 set -e
 
@@ -28,7 +28,7 @@ MKISOFS_OPTS="-quiet -lRJ
 	-b boot/isolinux/isolinux.bin
 	-c boot/isolinux/isolinux.cat"
 
-if [ -z "$COMPRESS_ISO" ]; then
+if [ -z "$ISO_COMPRESS" ]; then
 	mkisofs $MKISOFS_OPTS -o "$ISO" "$ROOT"
 else
 	mkisofs $MKISOFS_OPTS "$ROOT" | gzip -9 >"$ISO.gz"
