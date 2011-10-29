@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.134 2011/10/25 21:17:53 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.135 2011/10/29 13:55:40 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.8.5
+Version: 1.7.8.6
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -88,6 +88,12 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sat Oct 29 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.6-owl1
+- Call external mode functions via direct pointers to virtual machine code and
+without redundant checks for non-NULL.
+- Use gcc's __builtin_expect() in the gcc-specific version of the external mode
+virtual machine implementation.
+
 * Tue Oct 25 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.5-owl1
 - Added -Os to OPT_INLINE to deal with a performance regression otherwise seen
 with gcc 4.6.1 (as compared to 4.4.x and 4.5.x), albeit not in the Owl package
