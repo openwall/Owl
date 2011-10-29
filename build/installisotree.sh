@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installisotree.sh,v 1.21 2011/10/29 21:14:33 solar Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.22 2011/10/29 21:28:35 solar Exp $
 
 set -e
 
@@ -76,28 +76,39 @@ sed -i 's|^\(/dev/cdrom[[:space:]]*\).*|\1/\t\t\tiso9660\tro\t\t\t0 0|' fstab
 sed -i 's|^\(~~:S:wait:\).*|\1/bin/bash --login|' inittab
 sed -i 's/^\(DISK_QUOTA=\)yes$/\1no/' vz/vz.conf
 
-cd "$ROOT/rom/world"
-if [ "$ISO_COPY_SOURCES" != NO ]; then
-	log "Copying sources"
-	tar -cf- --owner=build --group=sources --exclude Root -C "$HOME" \
-		"native/$BRANCH" Makefile | tar -xf-
-	if [ "`uname -m`" = x86_64 ]; then
-		pushd "native/$BRANCH"
-		tar cjf packages.tar.bz2 --remove-files packages
-		popd
-	fi
+test -n "$ISO_COPY_SOURCES" || ISO_COPY_SOURCES=yes
+test -n "$ISO_COPY_RPMS" || ISO_COPY_RPMS=yes
 
-	mkdir sources
-	cp -rpL "$HOME/sources/$BRANCH" sources/
+cd "$ROOT/rom/world"
+if [ "$ISO_COPY_SOURCES" = "yes" -o "$ISO_COPY_RPMS" = "yes" ]; then
+	TAR_EXTRA_OPTS=
+	if [ "$ISO_COPY_SOURCES" = "yes" ]; then
+		log "Copying the native tree"
+	else
+		log "Copying portions of the native tree"
+		TAR_EXTRA_OPTS='--exclude packages'
+	fi
+	tar -cf- --owner=build --group=sources --exclude Root \
+		$TAR_EXTRA_OPTS \
+		-C "$HOME" \
+		"native/$BRANCH" Makefile | tar -xf-
+
+	if [ "$ISO_COPY_SOURCES" = "yes" ]; then
+		log "Copying sources"
+		mkdir sources
+		cp -rpL "$HOME/sources/$BRANCH" sources/
+	else
+		log "Skipping sources copying"
+	fi
 else
-	log "Skipping sources copying"
+	log "Skipping native tree and sources copying"
 fi
 
-if [ "$ISO_COPY_RPMS" != NO ]; then
-	log "Copying RPMS"
+if [ "$ISO_COPY_RPMS" = "yes" ]; then
+	log "Copying RPMs"
 	cp -rpL "$HOME/RPMS" .
 else
-	log "Skipping RPMS copying"
+	log "Skipping RPMs copying"
 fi
 
 chown -hR build:sources .
