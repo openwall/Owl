@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installisotree.sh,v 1.19 2011/10/29 16:03:05 segoon Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.20 2011/10/29 16:17:05 segoon Exp $
 
 set -e
 
@@ -54,13 +54,16 @@ log "Installing kernel"
 cd "$ROOT/boot"
 # Should match exactly one file
 KERNEL_NAME="`echo vmlinuz-*`"
-ln -s "$KERNEL_NAME" vmlinuz
-chroot "$ROOT" sh -c 'cd /boot && ./floppy-update.sh'
-# We'll mount the floppy image when CD-booted, so there's no need to keep a
-# second copy of the kernel image outside of the floppy image.
-rm "$KERNEL_NAME"
-ln -s floppy/boot/"$KERNEL_NAME"
-mkdir -m700 floppy
+
+# ISOLINUX doesn't respect symlinks :(
+mv "$KERNEL_NAME" vmlinuz
+
+mkdir -p "$ROOT/boot/isolinux/"
+cp /usr/share/syslinux/isolinux.bin \
+	/usr/share/syslinux/menu.c32 \
+	"$ROOT/etc/isolinux.cfg" \
+	"$ROOT/boot/message" \
+	"$ROOT/boot/isolinux/"
 
 # depmod is normally run on bootup, but /lib/modules is read-only on CD
 log "Pre-generating kernel module dependencies"
@@ -70,7 +73,6 @@ log "Updating config files"
 cd "$ROOT/etc"
 sed -i '/^tmpfs[[:space:]]/d' fstab
 sed -i 's|^\(/dev/cdrom[[:space:]]*\).*|\1/\t\t\tiso9660\tro\t\t\t0 0|' fstab
-echo -e '/boot/floppy.image /boot/floppy\t\text2\tloop,ro\t\t\t0 0' >> fstab
 sed -i 's|^\(~~:S:wait:\).*|\1/bin/bash --login|' inittab
 sed -i 's/^\(DISK_QUOTA=\)yes$/\1no/' vz/vz.conf
 

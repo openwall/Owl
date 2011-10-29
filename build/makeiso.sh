@@ -1,12 +1,13 @@
 #!/bin/bash
-# $Owl: Owl/build/makeiso.sh,v 1.4 2010/12/14 10:57:09 solar Exp $
+# $Owl: Owl/build/makeiso.sh,v 1.5 2011/10/29 16:17:05 segoon Exp $
 
 set -e
 
 . installworld.conf
 
 ROOT="$ISOTREE_ROOT"
-if [ ! -d "$ROOT" -o ! -r "$ROOT/boot/floppy.image" -o \
+
+if [ ! -d "$ROOT" -o ! -r "$ROOT/boot/isolinux/isolinux.bin" -o \
      "$(readlink -e "$ROOT")" = / ]; then
 	echo >&2 "Invalid or unavailable ISOTREE_ROOT ($ROOT)"
 	exit 1
@@ -21,10 +22,14 @@ else
 	ISO="$BRANCH-$(TZ=UTC date +%Y%m%d).iso"
 fi
 
+MKISOFS_OPTS="-quiet -lRJ
+	-no-emul-boot -boot-load-size 4 -boot-info-table
+	-hide-rr-moved
+	-b boot/isolinux/isolinux.bin
+	-c boot/isolinux/isolinux.cat"
+
 if [ -z "$COMPRESS_ISO" ]; then
-	mkisofs -quiet -lRJ -b boot/floppy.image -c boot/boot.catalog \
-		-o "$ISO" "$ROOT"
+	mkisofs $MKISOFS_OPTS -o "$ISO" "$ROOT"
 else
-	mkisofs -quiet -lRJ -b boot/floppy.image -c boot/boot.catalog "$ROOT" |
-		gzip -9 >"$ISO.gz"
+	mkisofs $MKISOFS_OPTS "$ROOT" | gzip -9 >"$ISO.gz"
 fi
