@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installisotree.sh,v 1.18 2011/09/07 00:40:50 solar Exp $
+# $Owl: Owl/build/installisotree.sh,v 1.19 2011/10/29 16:03:05 segoon Exp $
 
 set -e
 
@@ -74,20 +74,30 @@ echo -e '/boot/floppy.image /boot/floppy\t\text2\tloop,ro\t\t\t0 0' >> fstab
 sed -i 's|^\(~~:S:wait:\).*|\1/bin/bash --login|' inittab
 sed -i 's/^\(DISK_QUOTA=\)yes$/\1no/' vz/vz.conf
 
-log "Installing sources"
 cd "$ROOT/rom/world"
-tar -cf- --owner=build --group=sources --exclude Root -C "$HOME" \
-	"native/$BRANCH" Makefile |
-	tar -xf-
-if [ "`uname -m`" = x86_64 ]; then
-	pushd "native/$BRANCH"
-	tar cjf packages.tar.bz2 --remove-files packages
-	popd
+if [ "$ISO_COPY_SOURCES" != NO ]; then
+	log "Copying sources"
+	tar -cf- --owner=build --group=sources --exclude Root -C "$HOME" \
+		"native/$BRANCH" Makefile | tar -xf-
+	if [ "`uname -m`" = x86_64 ]; then
+		pushd "native/$BRANCH"
+		tar cjf packages.tar.bz2 --remove-files packages
+		popd
+	fi
+
+	mkdir sources
+	cp -rpL "$HOME/sources/$BRANCH" sources/
+else
+	log "Skipping sources copying"
 fi
 
-cp -rpL "$HOME/RPMS" .
-mkdir sources
-cp -rpL "$HOME/sources/$BRANCH" sources/
+if [ "$ISO_COPY_RPMS" != NO ]; then
+	log "Copying RPMS"
+	cp -rpL "$HOME/RPMS" .
+else
+	log "Skipping RPMS copying"
+fi
+
 chown -hR build:sources .
 chmod -R u=rwX,go=rX .
 
