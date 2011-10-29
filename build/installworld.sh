@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installworld.sh,v 1.44 2011/10/29 22:26:11 solar Exp $
+# $Owl: Owl/build/installworld.sh,v 1.45 2011/10/29 23:16:04 solar Exp $
 
 . installworld.conf
 
@@ -7,6 +7,7 @@ RPMS=$HOME/RPMS
 
 RPM=rpm
 RPMD=rpm
+RPMQ=rpm
 RPM_FLAGS=
 
 function log()
@@ -49,12 +50,13 @@ function setup_rpm()
 	cd $TMPDIR || exit 1
 	log "Extracting the RPM binary"
 	if rpm2cpio $RPMS/$FILE | cpio -id --no-preserve-owner --quiet \
-	    usr/lib/rpm/{rpmi,rpmd,rpmrc,macros,rpmpopt\*} && \
+	    usr/lib/rpm/{rpmi,rpmd,rpmq,rpmrc,macros,rpmpopt\*} && \
 	    sed -e "s,^\\(macrofiles:\\).*\$,\\1 $TMPDIR/usr/lib/rpm/macros," \
 	    < $TMPDIR/usr/lib/rpm/rpmrc \
 	    > $TMPDIR/usr/lib/rpm/rpmrc-work; then
 		RPM=$TMPDIR/usr/lib/rpm/rpmi
 		RPMD=$TMPDIR/usr/lib/rpm/rpmd
+		RPMQ=$TMPDIR/usr/lib/rpm/rpmq
 		export RPMALIAS_FILENAME="$TMPDIR/usr/lib/rpm/rpmpopt"
 		RPM_FLAGS="--rcfile $TMPDIR/usr/lib/rpm/rpmrc-work:$HOME/.rpmrc"
 	else
@@ -263,7 +265,7 @@ if [ "$NEED_FAKE" = yes ]; then
 fi
 
 if [ "$NEED_ARCH_TAG" = yes ]; then
-	ARCH="`$RPM $RPM_FLAGS --root $ROOT -q --queryformat '%{arch}' kernel`"
+	ARCH="`$RPMQ $RPM_FLAGS --root $ROOT -q --queryformat '%{arch}' kernel`"
 	if [ -n "$ARCH" ]; then
 		echo "$ARCH" > "$ROOT/.Owl-arch"
 	fi
