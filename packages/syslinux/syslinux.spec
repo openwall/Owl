@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/syslinux/syslinux.spec,v 1.3 2011/10/29 21:01:10 solar Exp $
+# $Owl: Owl/packages/syslinux/syslinux.spec,v 1.4 2011/10/30 00:23:12 solar Exp $
 
 Summary: A collection of boot loaders for the Linux operating system.
 Name: syslinux
@@ -124,11 +124,13 @@ cd %buildroot/etc && ln -s ../boot/extlinux/extlinux.conf .
 %_datadir/syslinux/com32
 
 %files extlinux
+%defattr(-,root,root)
 %_sbindir/extlinux
 /boot/extlinux
 %config /etc/extlinux.conf
 
 %files tftpboot
+%defattr(-,root,root)
 /tftpboot
 
 %post extlinux
