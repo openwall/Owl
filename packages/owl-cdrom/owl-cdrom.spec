@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.60 2011/10/29 21:46:25 solar Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.61 2011/10/31 08:15:27 segoon Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 1.14
+Version: 1.15
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -79,6 +79,10 @@ fi
 %dir /owl
 
 %changelog
+* Mon Oct 31 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.15-owl1
+- Changed dashes in the kernel image name with underscores as ISOLINUX
+doesn't understand dashes.
+
 * Sat Oct 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.14-owl1
 - Use ISOLINUX instead of LILO.
 
