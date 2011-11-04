@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.67 2011/11/04 02:30:31 solar Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.68 2011/11/04 02:52:13 solar Exp $
 
 # The only supported frontend for now is GXX.
 # Testsuite is not supported because of its requirement for additional
@@ -407,6 +407,7 @@ fi
 %endif
 
 %files -n libgcc%gcc_branch-plugin-devel
+%defattr(-,root,root)
 %_libdir/gcc/%_target_platform/%version/plugin/include
 %_infodir/libquadmath.info*
 %_libdir/libquadmath.a
@@ -414,13 +415,16 @@ fi
 %_libdir/libssp_nonshared.a
 
 %files -n libgomp%gcc_branch
+%defattr(-,root,root)
 %_libdir/libgomp.so.*
 
 %files -n libmudflap%gcc_branch
+%defattr(-,root,root)
 %_libdir/libmudflap.so.*
 %_libdir/libmudflapth.so.*
 
 %files -n libgomp%gcc_branch-devel
+%defattr(-,root,root)
 %dir %_libdir/gcc/%_target_platform/%version
 %dir %_libdir/gcc/%_target_platform/%version/include
 %_libdir/gcc/%_target_platform/%version/plugin/include
@@ -428,9 +432,11 @@ fi
 %dir %_libdir/gcc/%_target_platform/%version
 %_infodir/libgomp*.info*
 %_libdir/libgomp.a
+%_libdir/libgomp.so
 %_libdir/libgomp.spec
 
 %files -n libmudflap%gcc_branch-devel
+%defattr(-,root,root)
 %dir %_libdir/gcc/%_target_platform/%version
 %dir %_libdir/gcc/%_target_platform/%version/include
 %_libdir/gcc/%_target_platform/%version/include/mf-runtime.h
@@ -442,6 +448,9 @@ fi
 * Fri Nov 04 2011 Solar Designer <solar-at-owl.openwall.com> 1:4.6.2-owl2
 - Use %%optflags_lib for this entire package until we figure out how to
 properly have just gcc's libraries built with a separate set of flags.
+- Added %defattr(-,root,root) to several subpackages that are new with the
+update to 4.6.
+- Do package the libgomp.so symlink.
 
 * Sat Oct 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:4.6.2-owl1
 - Updated to 4.6.2.
