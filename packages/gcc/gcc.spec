@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.66 2011/10/29 09:15:18 segoon Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.67 2011/11/04 02:30:31 solar Exp $
 
 # The only supported frontend for now is GXX.
 # Testsuite is not supported because of its requirement for additional
@@ -11,7 +11,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: 4.6.2
-Release: owl1
+Release: owl2
 Epoch: 1
 License: GPLv3+
 Group: Development/Languages
@@ -163,6 +163,10 @@ and -lmudflapth.
 %endif
 %{?_with_test:%setup -q -T -D -b 6}
 
+# Use %%optflags_lib for this entire package until we figure out how to
+# properly have just gcc's libraries built with a separate set of flags.
+%{expand:%%define optflags %{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}}
+
 %build
 # Rebuild configure(s) and Makefile(s) if templates are newer...
 for f in */acinclude.m4; do
@@ -219,7 +223,8 @@ cd obj-%_target_platform
 	--target=%_target_platform
 
 TARGET_OPT_FLAGS='%optflags'
-TARGET_OPT_LIBFLAGS='%{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}'
+TARGET_OPT_LIBFLAGS='%optflags'
+#TARGET_OPT_LIBFLAGS='%{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}'
 
 # Let's compile the thing
 # STAGE1_CFLAGS is used for stage1 compiler
@@ -231,8 +236,8 @@ TARGET_OPT_LIBFLAGS='%{?optflags_lib:%optflags_lib}%{!?optflags_lib:%optflags}'
 	BOOT_CFLAGS="-O -fomit-frame-pointer" \
 	CFLAGS_FOR_TARGET="$TARGET_OPT_FLAGS" \
 	LIBCFLAGS_FOR_TARGET="$TARGET_OPT_LIBFLAGS" \
-	CXXFLAGS_FOR_TARGET="${TARGET_OPT_FLAGS//-fno-rtti/} -D_GNU_SOURCE" \
-	LIBCXXFLAGS_FOR_TARGET="${TARGET_OPT_LIBFLAGS//-fno-rtti/} -D_GNU_SOURCE"
+	CXXFLAGS_FOR_TARGET="${TARGET_OPT_FLAGS//-fno-rtti/}" \
+	LIBCXXFLAGS_FOR_TARGET="${TARGET_OPT_LIBFLAGS//-fno-rtti/}"
 
 # Copy various doc files here and there.
 
@@ -434,6 +439,10 @@ fi
 %_libdir/libmudflapth.a
 
 %changelog
+* Fri Nov 04 2011 Solar Designer <solar-at-owl.openwall.com> 1:4.6.2-owl2
+- Use %%optflags_lib for this entire package until we figure out how to
+properly have just gcc's libraries built with a separate set of flags.
+
 * Sat Oct 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:4.6.2-owl1
 - Updated to 4.6.2.
 
