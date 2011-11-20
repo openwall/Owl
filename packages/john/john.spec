@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.136 2011/11/19 04:26:14 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.137 2011/11/20 00:51:35 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.8.7
+Version: 1.7.8.8
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -71,7 +71,7 @@ install -m 700 run/john-* %buildroot%_libexecdir/john/
 install -m 644 -p run/{john.conf,password.lst} \
 	john-charsets-%charsets_version/*.chr \
 	%buildroot%_datadir/john/
-install -m 644 -p run/mailer doc/
+install -m 644 -p run/{mailer,relbench} doc/
 
 %files
 %defattr(-,root,root)
@@ -88,6 +88,11 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sun Nov 20 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.8-owl1
+- Added relbench, a Perl script to compare two "john --test" benchmark runs,
+such as for different machines, "make" targets, C compilers, optimization
+options, or/and versions of John the Ripper.
+
 * Sat Nov 19 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.7-owl1
 - Added support for the "$2y$" prefix of bcrypt hashes.
 - Added two more hash table sizes (16M and 128M entries) for faster processing
