@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.138 2011/11/20 03:26:28 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.139 2011/11/20 05:20:33 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -93,7 +93,8 @@ install -m 644 -p run/{mailer,relbench} doc/
 such as for different machines, "make" targets, C compilers, optimization
 options, or/and versions of John the Ripper.
 - Additional public lists of "top N passwords" have been merged into the
-bundled common passwords list.
+bundled common passwords list, and some insufficiently common passwords were
+removed from the list.
 
 * Sat Nov 19 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.7-owl1
 - Added support for the "$2y$" prefix of bcrypt hashes.
