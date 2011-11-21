@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.140 2011/11/21 02:36:55 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.141 2011/11/21 04:50:16 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -89,6 +89,8 @@ install -m 644 -p run/{mailer,relbench} doc/
 
 %changelog
 * Mon Nov 21 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.8-owl1
+- The "--make-charset" option now uses floating-point rather than 64-bit
+integer operations, which allows for larger CHARSET_* settings in params.h.
 - Added optional parallelization of the MD5-based crypt(3) code with OpenMP
 (although OpenMP is not enabled in the Owl package yet).
 - Added relbench, a Perl script to compare two "john --test" benchmark runs,
