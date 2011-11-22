@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.142 2011/11/22 02:30:45 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.143 2011/11/22 03:53:09 solar Exp $
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -88,6 +88,11 @@ install -m 644 -p run/{mailer,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Tue Nov 22 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.9-owl1
+- Added runtime detection of Intel AVX and AMD XOP instruction set extensions,
+with optional fallback to an alternate program binary (not enabled in the Owl
+package yet).
+
 * Mon Nov 21 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.8-owl1
 - The "--make-charset" option now uses floating-point rather than 64-bit
 integer operations, which allows for larger CHARSET_* settings in params.h.
