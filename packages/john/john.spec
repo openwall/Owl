@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.149 2011/11/23 05:34:31 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.150 2011/11/23 06:55:32 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.8.10
+Version: 1.7.8.11
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -199,7 +199,7 @@ install -m 644 -p run/{mailer,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Wed Nov 23 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.10-owl1
+* Wed Nov 23 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.11-owl1
 - Suppress crypt_fmt's warnings about unsupported hashes for pot file entries.
 - In OpenMP-enabled builds, added support for fallback to a non-OpenMP build
 when the requested thread count is 1.
