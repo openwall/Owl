@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.148 2011/11/23 04:41:23 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.149 2011/11/23 05:34:31 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -31,15 +31,16 @@ of other hash types are supported as well.
 cd src
 
 %ifarch %ix86
+# non-OpenMP builds
 %define with_fallback 1
 %ifarch athlon
 %__make linux-x86-mmx CFLAGS='%cflags'
 %else
 %__make linux-x86-any CFLAGS='%cflags'
 %{!?_without_check:%{!?_without_test:%__make check}}
-mv ../run/john ../run/john-%_arch
+mv ../run/john ../run/john-%buildarch
 %__make clean
-FALLBACK='\"john-%_arch\"'
+FALLBACK='\"john-%buildarch\"'
 %__make linux-x86-mmx CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
 %endif
 %{!?_without_check:%{!?_without_test:%__make check}}
@@ -47,18 +48,62 @@ mv ../run/john ../run/john-mmx
 %__make clean
 FALLBACK='\"john-mmx\"'
 %__make linux-x86-sse2 CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
+%define john_last john-sse2
 %if %BUILD_AVX
 %{!?_without_check:%{!?_without_test:%__make check}}
 mv ../run/john ../run/john-sse2
 %__make clean
 FALLBACK='\"john-sse2\"'
 %__make linux-x86-avx CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
+%define john_last john-avx
 %if %BUILD_XOP
 %{!?_without_check:%{!?_without_test:%__make check}}
 mv ../run/john ../run/john-avx
 %__make clean
 FALLBACK='\"john-avx\"'
 %__make linux-x86-xop CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
+%define john_last john-xop
+%endif
+%endif
+# OpenMP builds
+%if %BUILD_OMP
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/%john_last
+%__make clean
+%ifarch athlon
+OMP_FALLBACK='"john-mmx"'
+%__make linux-x86-mmx CFLAGS='%cflags -fopenmp -mmmx' CFLAGS_MAIN="%cflags -fopenmp -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS='-fopenmp -mmmx'
+%else
+OMP_FALLBACK='\"john-%buildarch\"'
+%__make linux-x86-any CFLAGS="%cflags -fopenmp -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS=-fopenmp
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-omp-%buildarch
+%__make clean
+CPU_FALLBACK='"john-omp-%buildarch"'
+OMP_FALLBACK='"john-mmx"'
+%__make linux-x86-mmx CFLAGS='%cflags -fopenmp -mmmx' CFLAGS_MAIN="%cflags -fopenmp -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$CPU_FALLBACK' -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS='-fopenmp -mmmx'
+%endif
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-omp-mmx
+%__make clean
+CPU_FALLBACK='"john-omp-mmx"'
+OMP_FALLBACK='"john-sse2"'
+%__make linux-x86-sse2 CFLAGS='%cflags -fopenmp -msse2' CFLAGS_MAIN="%cflags -fopenmp -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$CPU_FALLBACK' -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS='-fopenmp -msse2'
+%if %BUILD_AVX
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-omp-sse2
+%__make clean
+CPU_FALLBACK='\"john-omp-sse2\"'
+OMP_FALLBACK='\"john-avx\"'
+%__make linux-x86-avx CFLAGS="%cflags -fopenmp -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$CPU_FALLBACK' -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS=-fopenmp
+%if %BUILD_XOP
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-omp-avx
+%__make clean
+CPU_FALLBACK='\"john-omp-avx\"'
+OMP_FALLBACK='\"john-xop\"'
+%__make linux-x86-xop CFLAGS="%cflags -fopenmp -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$CPU_FALLBACK' -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'"  OMPFLAGS=-fopenmp
+%endif
 %endif
 %endif
 %endif
@@ -158,7 +203,7 @@ install -m 644 -p run/{mailer,relbench} doc/
 - Suppress crypt_fmt's warnings about unsupported hashes for pot file entries.
 - In OpenMP-enabled builds, added support for fallback to a non-OpenMP build
 when the requested thread count is 1.
-- Enabled AVX, XOP, and OpenMP builds (with fallbacks) on x86-64.
+- Enabled AVX, XOP, and OpenMP builds (with fallbacks).
 - Changed the CPU fallback program names used by the Owl package to be
 "positive" (e.g., "john-mmx" as fallback from an SSE2 build) rather than
 "negative" (e.g., "john-non-sse").
