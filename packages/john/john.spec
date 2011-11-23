@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.146 2011/11/23 03:18:02 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.147 2011/11/23 03:21:01 solar Exp $
 
 %define BUILD_AVX 0
 %define BUILD_XOP 0
@@ -23,11 +23,7 @@ of other hash types are supported as well.
 %prep
 %setup -q -a 1
 
-%ifarch x86_64
 %define cflags -c %optflags -Wall -DJOHN_SYSTEMWIDE=1
-%else
-%define cflags -c %optflags -finline-limit=2000 --param inline-unit-growth=2000 -Wall -DJOHN_SYSTEMWIDE=1
-%endif
 %define with_cpu_fallback 0
 
 %build
@@ -67,6 +63,7 @@ FALLBACK='\"john-avx\"'
 %ifarch x86_64
 %__make linux-x86-64 CFLAGS='%cflags'
 %if %BUILD_AVX
+%define with_cpu_fallback 1
 %{!?_without_check:%{!?_without_test:%__make check}}
 mv ../run/john ../run/john-sse2
 %__make clean
