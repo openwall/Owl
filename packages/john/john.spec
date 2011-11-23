@@ -1,7 +1,8 @@
-# $Owl: Owl/packages/john/john.spec,v 1.147 2011/11/23 03:21:01 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.148 2011/11/23 04:41:23 solar Exp $
 
-%define BUILD_AVX 0
-%define BUILD_XOP 0
+%define BUILD_AVX 1
+%define BUILD_XOP 1
+%define BUILD_OMP 1
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -24,12 +25,13 @@ of other hash types are supported as well.
 %setup -q -a 1
 
 %define cflags -c %optflags -Wall -DJOHN_SYSTEMWIDE=1
-%define with_cpu_fallback 0
+%define with_fallback 0
 
 %build
 cd src
+
 %ifarch %ix86
-%define with_cpu_fallback 1
+%define with_fallback 1
 %ifarch athlon
 %__make linux-x86-mmx CFLAGS='%cflags'
 %else
@@ -60,33 +62,67 @@ FALLBACK='\"john-avx\"'
 %endif
 %endif
 %endif
+
 %ifarch x86_64
+# non-OpenMP builds
 %__make linux-x86-64 CFLAGS='%cflags'
+%define john_last john-sse2
 %if %BUILD_AVX
-%define with_cpu_fallback 1
+%define with_fallback 1
 %{!?_without_check:%{!?_without_test:%__make check}}
 mv ../run/john ../run/john-sse2
 %__make clean
 FALLBACK='\"john-sse2\"'
 %__make linux-x86-64-avx CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
+%define john_last john-avx
 %if %BUILD_XOP
 %{!?_without_check:%{!?_without_test:%__make check}}
 mv ../run/john ../run/john-avx
 %__make clean
 FALLBACK='\"john-avx\"'
 %__make linux-x86-64-xop CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
+%define john_last john-xop
+%endif
+%endif
+# OpenMP builds
+%if %BUILD_OMP
+%define with_fallback 1
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/%john_last
+%__make clean
+OMP_FALLBACK='\"john-sse2\"'
+%__make linux-x86-64 CFLAGS="%cflags -fopenmp -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS=-fopenmp
+%if %BUILD_AVX
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-omp-sse2
+%__make clean
+CPU_FALLBACK='\"john-omp-sse2\"'
+OMP_FALLBACK='\"john-avx\"'
+%__make linux-x86-64-avx CFLAGS="%cflags -fopenmp -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$CPU_FALLBACK' -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS=-fopenmp
+%if %BUILD_XOP
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-omp-avx
+%__make clean
+CPU_FALLBACK='\"john-omp-avx\"'
+OMP_FALLBACK='\"john-xop\"'
+%__make linux-x86-64-xop CFLAGS="%cflags -fopenmp -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$CPU_FALLBACK' -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'"  OMPFLAGS=-fopenmp
 %endif
 %endif
 %endif
+%endif
+
 %ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 %__make linux-alpha CFLAGS='%cflags'
 %endif
+
 %ifarch sparc sparcv9
 %__make linux-sparc CFLAGS='%cflags'
 %endif
+
 %ifarch ppc
 %__make linux-ppc32 CFLAGS='%cflags'
 %endif
+
 %{!?_without_check:%{!?_without_test:%__make check}}
 
 %install
@@ -94,7 +130,7 @@ rm -rf %buildroot
 mkdir -p %buildroot{%_bindir,%_datadir/john}
 install -m 700 run/john %buildroot%_bindir/
 cp -a run/un* %buildroot%_bindir/
-%if %with_cpu_fallback
+%if %with_fallback
 mkdir -p %buildroot%_libexecdir/john
 install -m 700 run/john-* %buildroot%_libexecdir/john/
 %endif
@@ -108,7 +144,7 @@ install -m 644 -p run/{mailer,relbench} doc/
 %doc doc/*
 %attr(750,root,wheel) %_bindir/john
 %_bindir/un*
-%if %with_cpu_fallback
+%if %with_fallback
 %dir %_libexecdir/john
 %attr(750,root,wheel) %_libexecdir/john/*
 %endif
@@ -120,8 +156,9 @@ install -m 644 -p run/{mailer,relbench} doc/
 %changelog
 * Wed Nov 23 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.10-owl1
 - Suppress crypt_fmt's warnings about unsupported hashes for pot file entries.
-- In OpenMP-enabled builds (not used in the Owl package yet), added support for
-fallback to a non-OpenMP build when the requested thread count is 1.
+- In OpenMP-enabled builds, added support for fallback to a non-OpenMP build
+when the requested thread count is 1.
+- Enabled AVX, XOP, and OpenMP builds (with fallbacks) on x86-64.
 - Changed the CPU fallback program names used by the Owl package to be
 "positive" (e.g., "john-mmx" as fallback from an SSE2 build) rather than
 "negative" (e.g., "john-non-sse").
