@@ -1,4 +1,7 @@
-# $Owl: Owl/packages/john/john.spec,v 1.144 2011/11/23 01:24:46 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.145 2011/11/23 03:13:24 solar Exp $
+
+%define BUILD_AVX 0
+%define BUILD_XOP 0
 
 Summary: John the Ripper password cracker.
 Name: john
@@ -31,19 +34,35 @@ of other hash types are supported as well.
 cd src
 %ifarch %ix86
 %define with_cpu_fallback 1
-%ifarch athlon i786 i886 i986
+%ifarch athlon
 %__make linux-x86-mmx CFLAGS='%cflags'
 %else
 %__make linux-x86-any CFLAGS='%cflags'
 %{!?_without_check:%{!?_without_test:%__make check}}
-mv ../run/john ../run/john-non-mmx
+mv ../run/john ../run/john-%_arch
 %__make clean
-%__make linux-x86-mmx CFLAGS='%cflags -DCPU_FALLBACK=1'
+FALLBACK='\"john-%_arch\"'
+%__make linux-x86-mmx CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
 %endif
 %{!?_without_check:%{!?_without_test:%__make check}}
-mv ../run/john ../run/john-non-sse
+mv ../run/john ../run/john-mmx
 %__make clean
-%__make linux-x86-sse2 CFLAGS='%cflags -DCPU_FALLBACK=1'
+FALLBACK='\"john-mmx\"'
+%__make linux-x86-sse2 CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
+%if %BUILD_AVX
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-sse2
+%__make clean
+FALLBACK='\"john-sse2\"'
+%__make linux-x86-avx CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
+%if %BUILD_XOP
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-avx
+%__make clean
+FALLBACK='\"john-avx\"'
+%__make linux-x86-xop CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
+%endif
+%endif
 %endif
 %ifarch x86_64
 %__make linux-x86-64 CFLAGS='%cflags'
@@ -88,6 +107,14 @@ install -m 644 -p run/{mailer,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Wed Nov 23 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.10-owl1
+- Suppress crypt_fmt's warnings about unsupported hashes for pot file entries.
+- In OpenMP-enabled builds (not used in the Owl package yet), added support for
+fallback to a non-OpenMP build when the requested thread count is 1.
+- Changed the CPU fallback program names used by the Owl package to be
+"positive" (e.g., "john-mmx" as fallback from an SSE2 build) rather than
+"negative" (e.g., "john-non-sse").
+
 * Tue Nov 22 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.9-owl1
 - Added runtime detection of Intel AVX and AMD XOP instruction set extensions,
 with optional fallback to an alternate program binary (not enabled in the Owl
