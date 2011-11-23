@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.145 2011/11/23 03:13:24 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.146 2011/11/23 03:18:02 solar Exp $
 
 %define BUILD_AVX 0
 %define BUILD_XOP 0
@@ -66,6 +66,20 @@ FALLBACK='\"john-avx\"'
 %endif
 %ifarch x86_64
 %__make linux-x86-64 CFLAGS='%cflags'
+%if %BUILD_AVX
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-sse2
+%__make clean
+FALLBACK='\"john-sse2\"'
+%__make linux-x86-64-avx CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
+%if %BUILD_XOP
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-avx
+%__make clean
+FALLBACK='\"john-avx\"'
+%__make linux-x86-64-xop CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
+%endif
+%endif
 %endif
 %ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 %__make linux-alpha CFLAGS='%cflags'
