@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.69 2011/11/27 14:49:33 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.70 2011/11/27 17:19:37 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -104,7 +104,7 @@ done
 %files fake
 
 %changelog
-* Sun Nov 27 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> xxx-owl1
+* Sun Nov 27 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 274.7.1.el5.028stab095.1-owl1
 - Updated to 274.7.1.el5.028stab095.1.  Security and bugfix update.
 - Moved CONFIG_PCNET32 to =y again as VMware emulates NIC of this type by default.
 See the details in CHANGES file and on OpenVZ page related to the update:
