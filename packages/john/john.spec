@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.151 2011/11/23 11:08:46 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.152 2011/11/28 04:22:06 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.9
+Version: 1.7.9.1
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -199,6 +199,14 @@ install -m 644 -p run/{mailer,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Nov 28 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.9.1-owl1
+- With 32-bit x86 builds and at least MMX enabled, the "two hashes at a time"
+code for bcrypt is now enabled for GCC 4.2 and newer.  This change is made
+based on benchmark results for different builds made with different versions of
+GCC on CPUs ranging from Pentium 3 to Core i7.  Previously, this code was only
+enabled for x86-64 and/or OpenMP-enabled builds.
+- Assorted minor corrections to Cygwin builds were made.
+
 * Wed Nov 23 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.9-owl1
 - Suppress crypt_fmt's warnings about unsupported hashes for pot file entries.
 - In OpenMP-enabled builds, added support for fallback to a non-OpenMP build
