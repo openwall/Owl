@@ -48,26 +48,32 @@ clarify the specific issue(s) and their severities in the description.
 
 2011/11/27	Package: kernel
 SECURITY FIX	Severity: low to medium, local/remote, active
-Updated to 274.7.1.el5.028stab095.1.  It contains fixes for multiple
-local and remote DoS via write into last block of ext4 file, mremap
-syscall, receiving specially crafted packet when GRO is enabled,
-receiving specially crafted packet on bridge devices, and via
-clock_gettime syscall.  It also improves the randomness of IPv4 sequence
-numbers via using MD5.  Owl is not affected to the rest of vulnerabilities
-as we don't build the affected components (IPv6, ecryptfs, taskstats,
-Xen, be2net driver, auerswald usb, TPM, CIFS).  Also there is an OpenVZ fix
-of loosing socket permissions in /dev with udev+tmpfs during CT restore
-(live migration).  Moved CONFIG_PCNET32 to =y again as VMware emulates NIC
-of this type by default.
+Updated to 274.7.1.el5.028stab095.1, which contains fixes for multiple
+local and remote DoS vulnerabilities, including via triggering an ext4
+filesystem implementation bug with writes into the last block of a file
+in certain special circumstances, mremap(2) syscall, receiving of a
+specially crafted packet when GRO is enabled, receiving of a specially
+crafted packet on a bridge device, and via clock_gettime(2) syscall.
+This kernel revision also improves the randomness of IPv4 sequence
+numbers by moving from a 24-bit random component generated using MD4
+plus a timer-based component to the full 32-bit numbers generated using
+MD5.  Owl is not affected by the rest of vulnerabilities reported in the
+referenced Red Hat advisory as we don't build the corresponding
+components.  Also included with this update is an OpenVZ fix of "loosing
+socket permissions in /dev with udev+tmpfs during CT restore (live
+migration)", which may be relevant to certain non-Owl OpenVZ containers
+being live-migrated on Owl host systems.  Finally, we've changed the
+default for CONFIG_PCNET32 from =m to =y for ease of use under VMware,
+which emulates NIC of this type by default.
 References:
 http://wiki.openvz.org/Download/kernel/rhel5/028stab095.1
-https://rhn.redhat.com/errata/RHSA-2011-1386.html
-https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2695
-https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2696
-https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2723
-https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2942
-https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3209
-https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3188
+http://rhn.redhat.com/errata/RHSA-2011-1386.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2695
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2696
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2723
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2942
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3209
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3188
 
 2011/10/29	Packages: syslinux, owl-cdrom; Owl/build/*
 Packaged SYSLINUX - a collection of boot loaders - and moved from LILO
@@ -515,4 +521,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.71 2011/11/27 14:50:57 segoon Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.72 2011/12/01 00:38:26 solar Exp $
