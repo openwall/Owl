@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/hardlink/hardlink.spec,v 1.3 2011/10/15 11:36:21 solar Exp $
+# $Owl: Owl/packages/hardlink/hardlink.spec,v 1.4 2011/12/27 01:25:52 solar Exp $
 
 Summary: Consolidate duplicate files via hardlinks.
 Name: hardlink
 Version: 1.0
-Release: owl1
+Release: owl2
 Epoch: 1
 License: GPLv2+
 Group: System Environment/Base
@@ -44,6 +44,10 @@ install -pDm644 %_sourcedir/hardlink.1 %buildroot%_mandir/man1/hardlink.1
 %_mandir/man1/hardlink.1*
 
 %changelog
+* Tue Dec 27 2011 Solar Designer <solar-at-owl.openwall.com> 1:1.0-owl2
+- Removed an erroneous close(fd) call in a code path triggered on error and for
+empty files (luckily, this did not actually matter in the latter case).
+
 * Sat Oct 15 2011 Solar Designer <solar-at-owl.openwall.com> 1:1.0-owl1
 - Initial packaging for Owl, based on a mix of Fedora's and ALT Linux's.
 - Made changes to the program to avoid buffer and integer overflows with deeply
