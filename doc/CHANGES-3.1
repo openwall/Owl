@@ -46,12 +46,25 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2011/12/27	Package: kernel
+SECURITY FIX	Severity: medium, local, passive
+Updated to 2.6.18-274.12.1.el5.028stab096.1, enabled build of the VIA
+Rhine NIC driver (as a module).  Although the corresponding RHEL update
+fixed multiple vulnerabilities, only the taskstats io infoleak
+(CVE-2011-2494) is relevant to Owl kernel builds.
+References:
+http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab096.1
+http://rhn.redhat.com/errata/RHSA-2011-1479.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2494
+http://www.openwall.com/lists/oss-security/2011/06/24/6
+http://www.openwall.com/lists/oss-security/2011/09/21/1
+
 2011/12/27	Package: hardlink
 Fixed a bug in a code path triggered on error.
 
 2011/11/27	Package: kernel
 SECURITY FIX	Severity: low to medium, local/remote, active
-Updated to 274.7.1.el5.028stab095.1, which contains fixes for multiple
+Updated to -274.7.1.el5.028stab095.1, which contains fixes for multiple
 local and remote DoS vulnerabilities, including via triggering an ext4
 filesystem implementation bug with writes into the last block of a file
 in certain special circumstances, mremap(2) syscall, receiving of a
@@ -536,4 +549,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.74 2011/12/27 01:29:13 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.75 2011/12/27 02:34:46 solar Exp $
