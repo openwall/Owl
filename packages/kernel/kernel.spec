@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.71 2011/12/27 01:59:33 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.72 2011/12/27 02:11:21 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -106,6 +106,7 @@ done
 %changelog
 * Tue Dec 27 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.12.1.el5.028stab096.1.owl1
 - Updated to 2.6.18-274.12.1.el5.028stab096.1.
+- CONFIG_VIA_RHINE=m, CONFIG_VIA_RHINE_MMIO=y, CONFIG_VIA_RHINE_NAPI=y
 
 * Sun Nov 27 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-274.7.1.el5.028stab095.1.owl1
 - Updated to -274.7.1.el5.028stab095.1.  Security and bugfix update.
