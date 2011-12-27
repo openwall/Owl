@@ -1,23 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.70 2011/11/27 17:19:37 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.71 2011/12/27 01:59:33 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 274.7.1.el5.028stab095.1
+%define ovzversion 274.12.1.el5.028stab096.1
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab095.1
+URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab096.1
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab095.1/patches/patch-274.7.1.el5.028stab095.1-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab095.1/patches/patch-274.7.1.el5.028stab095.1-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab096.1/patches/patch-274.12.1.el5.028stab096.1-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab096.1/patches/patch-274.12.1.el5.028stab096.1-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -104,12 +104,13 @@ done
 %files fake
 
 %changelog
-* Sun Nov 27 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 274.7.1.el5.028stab095.1-owl1
-- Updated to 274.7.1.el5.028stab095.1.  Security and bugfix update.
-- Moved CONFIG_PCNET32 to =y again as VMware emulates NIC of this type by default.
-See the details in CHANGES file and on OpenVZ page related to the update:
-http://wiki.openvz.org/Download/kernel/rhel5/028stab095.1
- 
+* Tue Dec 27 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.12.1.el5.028stab096.1.owl1
+- Updated to 2.6.18-274.12.1.el5.028stab096.1.
+
+* Sun Nov 27 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-274.7.1.el5.028stab095.1.owl1
+- Updated to -274.7.1.el5.028stab095.1.  Security and bugfix update.
+- Set CONFIG_PCNET32=y again as VMware emulates NIC of this type by default.
+
 * Wed Oct 26 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.3.1.el5.028stab094.3.owl3
 - Discard section .eh_frame in arch/i386/kernel/vmlinux.lds.S just like it was
 already being done for x86_64.
