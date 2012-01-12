@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.152 2011/11/28 04:22:06 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.153 2012/01/12 03:03:50 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.9.1
+Version: 1.7.9.2
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -199,6 +199,11 @@ install -m 644 -p run/{mailer,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Thu Jan 12 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.2-owl1
+- Enhanced the support for DES-based tripcodes by making use of the bitslice
+DES implementation and supporting OpenMP parallelization.
+- Updated the FAQ.
+
 * Mon Nov 28 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.9.1-owl1
 - With 32-bit x86 builds and at least MMX enabled, the "two hashes at a time"
 code for bcrypt is now enabled for GCC 4.2 and newer.  This change is made
