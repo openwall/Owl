@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.153 2012/01/12 03:03:50 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.154 2012/01/14 19:46:02 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -199,9 +199,11 @@ install -m 644 -p run/{mailer,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Thu Jan 12 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.2-owl1
+* Sat Jan 14 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.2-owl1
 - Enhanced the support for DES-based tripcodes by making use of the bitslice
 DES implementation and supporting OpenMP parallelization.
+- Tuned the hash table size thresholds based on testing on saltless hashes on a
+Core 2'ish CPU.
 - Updated the FAQ.
 
 * Mon Nov 28 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.9.1-owl1
