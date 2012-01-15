@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.154 2012/01/14 19:46:02 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.155 2012/01/15 22:12:09 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.9.2
+Version: 1.7.9.3
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -199,6 +199,10 @@ install -m 644 -p run/{mailer,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sun Jan 15 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.3-owl1
+- Implemented bitmaps for fast initial comparison of computed hashes against
+those loaded for cracking, applied before hash table lookups.
+
 * Sat Jan 14 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.2-owl1
 - Enhanced the support for DES-based tripcodes by making use of the bitslice
 DES implementation and supporting OpenMP parallelization.
