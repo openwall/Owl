@@ -235,7 +235,6 @@ static void rf (char *name)
         int fd2 = open (fp2->name, O_RDONLY | O_NOCTTY | O_NOFOLLOW);
         if (fd2 < 0) continue;
         if (fstat (fd2, &st2) || !S_ISREG (st2.st_mode) || st2.st_size == 0) {
-          close (fd);
           close (fd2);
           continue;
         }
