@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.18-274.3.1.el5.028stab094.3.owl1
-# Mon Oct 10 02:09:13 2011
+# Linux kernel version: 2.6.18-274.12.1.el5.028stab096.1.owl1
+# Tue Dec 27 06:06:00 2011
 #
 CONFIG_X86_64=y
 CONFIG_64BIT=y
@@ -873,7 +873,7 @@ CONFIG_TYPHOON=m
 # CONFIG_NET_TULIP is not set
 # CONFIG_HP100 is not set
 CONFIG_NET_PCI=y
-CONFIG_PCNET32=m
+CONFIG_PCNET32=y
 # CONFIG_AMD8111_ETH is not set
 # CONFIG_ADAPTEC_STARFIRE is not set
 # CONFIG_B44 is not set
@@ -893,7 +893,9 @@ CONFIG_8139TOO_8129=y
 CONFIG_SIS900=m
 # CONFIG_EPIC100 is not set
 # CONFIG_SUNDANCE is not set
-# CONFIG_VIA_RHINE is not set
+CONFIG_VIA_RHINE=m
+CONFIG_VIA_RHINE_MMIO=y
+CONFIG_VIA_RHINE_NAPI=y
 # CONFIG_NET_POCKET is not set
 
 #
