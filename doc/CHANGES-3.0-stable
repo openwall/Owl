@@ -93,6 +93,10 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2942
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3209
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3188
 
+(2011/12/27)
+2012/01/25	Package: hardlink
+Fixed a bug in a code path triggered on error.
+
 2011/10/26	Package: tzdata
 Updated to 2011m.
 
@@ -474,4 +478,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.19 2012/01/25 22:55:07 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.20 2012/01/25 23:21:21 solar Exp $
