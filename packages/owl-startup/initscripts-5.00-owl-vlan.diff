@@ -1,0 +1,184 @@
+diff -urpN initscripts-5.00.orig/sysconfig/network-scripts/ifdown initscripts-5.00/sysconfig/network-scripts/ifdown
+--- initscripts-5.00.orig/sysconfig/network-scripts/ifdown	2004-02-07 05:42:06 +0000
++++ initscripts-5.00/sysconfig/network-scripts/ifdown	2011-03-16 21:20:53 +0000
+@@ -3,6 +3,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
+ 
+ cd /etc/sysconfig/network-scripts
+ . network-functions
++. /etc/sysconfig/network
+ 
+ CONFIG=$1
+ 
+@@ -62,4 +63,14 @@ if [ "$retcode" = 0 ] ; then
+     # the interface went down.
+ fi
+ 
++if [ -n "$VLAN" -a -x /usr/sbin/vconfig ]; then
++    # 802.1q VLAN
++    if echo ${DEVICE} | LANG=C egrep -q '(eth|bond)[0-9]+\.[0-9]{1,4}($|[^:])' \
++        || echo ${DEVICE} | LANG=C egrep -q 'vlan[0-9]{1,4}' ; then
++        [ -f /proc/net/vlan/${DEVICE} ] && {
++            /usr/sbin/vconfig rem ${DEVICE}
++        }
++    fi
++fi
++
+ exit $retcode
+diff -urpN initscripts-5.00.orig/sysconfig/network-scripts/ifup initscripts-5.00/sysconfig/network-scripts/ifup
+--- initscripts-5.00.orig/sysconfig/network-scripts/ifup	2004-02-07 05:42:12 +0000
++++ initscripts-5.00/sysconfig/network-scripts/ifup	2011-03-17 14:19:51 +0000
+@@ -4,6 +4,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
+ 
+ cd /etc/sysconfig/network-scripts
+ . network-functions
++. /etc/sysconfig/network
+ 
+ need_hostname
+ 
+@@ -30,6 +31,11 @@ if [ $UID != 0 ]; then
+     exit 1
+ fi
+ 
++# preserve GATEWAY from /etc/sysconfig/network 
++# GATEWAY  may be overrided by fcfg-* and is neccesary later 
++MAIN_GATEWAY=${GATEWAY}
++GATEWAY=
++
+ source_config
+ 
+ if [ "foo$2" = "fooboot" -a "${ONBOOT}" = "no" -o "${ONBOOT}" = "NO" ]
+@@ -58,6 +64,74 @@ if [ -x $OTHERSCRIPT ]; then
+     exec $OTHERSCRIPT $CONFIG $2
+ fi
+ 
++# 802.1q part
++if [ -x /usr/sbin/vconfig -a "$VLAN" = "yes" -a "$ISALIAS" = "no" ]; then
++
++    # DEV_PLUS_VID* type
++    if echo ${DEVICE} | LANG=C egrep -q '(eth|bond)[0-9]+\.[0-9]{1,4}($|[^:])'; then
++        VID="`echo ${DEVICE} | \
++            LANG=C egrep '(eth|bond)[0-9]+\.[0-9]{1,4}($|[^:])' | \
++            LANG=C sed 's/^[a-z0-9]*\.//g;s/^0*//'`"
++        PHYSDEV="`echo ${DEVICE} | \
++            LANG=C egrep '(eth|bond)[0-9]+\.[0-9]{1,4}($|[^:])' | \
++            LANG=C sed 's/\.[a-z0-9]*$//g'`"
++    fi
++
++    # VLAN_PLUS_VID* type
++    if echo ${DEVICE} | LANG=C egrep -q 'vlan[0-9]{1,4}'; then
++        VID="`echo ${DEVICE} | LANG=C sed 's/^vlan//;s/^0*//'`"
++        VLAN_NAME_TYPE=VLAN_PLUS_VID_NO_PAD
++        # PHYSDEV should be set in ifcfg-vlan* file
++        if [ -z "$PHYSDEV" ]; then
++            echo "PHYSDEV should be set for device ${DEVICE}"
++            exit 1
++        fi
++    fi
++
++    if [ -n "$VID" ]; then
++        # standard Owl kernel has vlan module compiled-in, this is redundant
++        if [ ! -d /proc/net/vlan ]; then
++            if ! modprobe 8021q >/dev/null 2>&1 ; then
++                echo "No 802.1Q VLAN support available in kernel for device ${DEVICE}"
++                exit 1
++            fi
++        fi
++
++        # default mode for vlan devices in rh-compatible scripts
++        test -z "$VLAN_NAME_TYPE" && VLAN_NAME_TYPE=DEV_PLUS_VID_NO_PAD
++        /usr/sbin/vconfig set_name_type "$VLAN_NAME_TYPE" >/dev/null
++        [ $? -gt 0 ] && echo "Could not set 802.1Q VLAN parameters."
++
++        ifconfig ${PHYSDEV} 2>/dev/null | grep -q ${PHYSDEV}
++        if [ $? -gt 0 ]; then
++            echo "Physical device ${PHYSDEV} for ${DEVICE} does not seem to be present."
++            exit 1
++        fi
++
++        # Link on Physical device needs to be up but no ip required
++        /sbin/ifconfig ${PHYSDEV} 2>/dev/null | grep -q UP 
++        [ $? -gt 0 ] && /sbin/ifconfig ${PHYSDEV} up
++
++        if [ ! -f /proc/net/vlan/${DEVICE} ]; then
++            /usr/sbin/vconfig add ${PHYSDEV} ${VID} 
++            if [ $? -gt 0 ]; then
++                echo "ERROR: could not add vlan ${VID} as ${DEVICE} on dev ${PHYSDEV}"
++                exit 1
++            fi
++        else
++            case "$REORDER_HDR" in
++                yes|1)
++                    /usr/sbin/vconfig set_flag ${DEVICE} 1 1 
++                    ;;
++                no|0)
++                    /usr/sbin/vconfig set_flag ${DEVICE} 1 0 
++                    ;;
++            esac
++        fi
++    fi
++fi
++# end of 802.1q part
++
+ # is this device available? (this catches PCMCIA devices for us)
+ /sbin/ifconfig ${REALDEVICE} 2>&1 | grep -s "not found" > /dev/null
+ if [ "$?" = "0" ]; then
+@@ -139,8 +213,7 @@ else
+ 	route add default gw ${GATEWAY} metric 1 ${DEVICE}
+     fi
+ 
+-    . /etc/sysconfig/network
+-
++    GATEWAY=${MAIN_GATEWAY}
+     if [ "${GATEWAYDEV}" = "" -o "${GATEWAYDEV}" = "${DEVICE}" ]; then
+ 	# set up default gateway
+ 	if [ "${GATEWAY}" != "" ]; then
+@@ -152,8 +225,6 @@ else
+     fi
+ fi
+ 
+-. /etc/sysconfig/network
+-
+ if [ "$IPX" = yes ]; then
+ 	/etc/sysconfig/network-scripts/ifup-ipx $DEVICE
+ fi
+diff -urpN initscripts-5.00.orig/sysconfig.txt initscripts-5.00/sysconfig.txt
+--- initscripts-5.00.orig/sysconfig.txt	2000-03-08 13:31:40 +0000
++++ initscripts-5.00/sysconfig.txt	2011-03-16 22:20:36 +0000
+@@ -106,6 +106,8 @@ Files in /etc/sysconfig
+ /etc/sysconfig/network:
+ 
+   NETWORKING=yes|no
++  VLAN=yes|no 
++    This setting indicates whether to enable 802.1q VLANs. 
+   HOSTNAME=<fqdn by default, but whatever hostname you want>
+     Note: for compatibility with some old software people might
+     install (like trn), the /etc/HOSTNAME file should contain the
+@@ -330,6 +332,28 @@ Files in /etc/sysconfig/network-scripts/
+     ARP=yes|no (adds 'arp' flag to ifconfig, for use with the
+       ethertap device)
+ 
++  Ethernet 802.1q VLAN items:
++     DEVICE=eth0.42
++       Initscripts use DEV_PLUS_VID_NO_PAD naming mode for VLAN
++       devices.
++               Example: eth0.42 for vlan 42 on device eth0.
++       Valid VLAN ID range is 0-4095. Most Ethernet switches reserve
++       VLAN ID 1 to be used as management VLAN; starting from VLAN
++       ID 2 is recommended.
++
++       Alternate format, i.e. DEVICE=vlan42 is also supported,
++       although not recommended. Requires PHYSDEV to be set (see
++       below).
++     PHYSDEV=<physical device for vlan>
++       Mandatory, when DEVICE is provided in vlan[0-9]{1,4} format.
++     REORDER_HDR=yes|no
++       When enabled the VLAN device will move the Ethernet header
++       around to make it look exactly like a real Ethernet device.
++       This may help programs such as ISC dhcpd which read the raw
++       Ethernet packet and make assumptions about the location of
++       bytes. If you don't need it turn it off because there
++       is a small performance penalty. Default is on.
++
+   PPP/SLIP items:
+     PERSIST=yes|no
+     MODEMPORT=<device, say /dev/modem>

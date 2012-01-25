@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.88.2.1 2011/09/07 06:39:25 solar Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.88.2.2 2012/01/25 23:27:21 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.41
+Version: 0.42
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -20,6 +20,7 @@ Patch0: initscripts-5.00-owl-dhclient.diff
 Patch1: initscripts-5.00-owl-network-typo.diff
 Patch2: initscripts-5.00-owl-NETWORKING.diff
 Patch3: initscripts-5.00-owl-ifup-routes.diff
+Patch4: initscripts-5.00-owl-vlan.diff
 PreReq: /sbin/chkconfig
 Requires: SysVinit, msulogin, /sbin/start-stop-daemon
 Requires: bash >= 2.0, sh-utils
@@ -39,6 +40,8 @@ system down cleanly.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
 [ %_lib = lib ] || sed -i 's,/usr/lib,%_libdir,g' src/Makefile
 
 %build
@@ -169,6 +172,12 @@ fi
 %doc redhat
 
 %changelog
+* Wed Oct 26 2011 Solar Designer <solar-at-owl.openwall.com> 0.42-owl1
+- Added VLAN support patch by Piotr Meyer, even though this approach might be
+temporary (we're likely to move to using iproute2 for this).
+- Actually apply initscripts-5.00-owl-ifup-routes.diff (patch that was meant to
+be introduced in 0.33-owl1).
+
 * Tue Feb 01 2011 Solar Designer <solar-at-owl.openwall.com> 0.41-owl1
 - Set "net.ipv4.ping_group_range = 111 111" in sysctl.conf.
 
