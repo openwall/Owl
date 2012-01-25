@@ -1,23 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.72 2011/12/27 02:11:21 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.73 2012/01/25 17:55:28 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 274.12.1.el5.028stab096.1
+%define ovzversion 274.17.1.el5.028stab097.1
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab096.1
+URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab097.1
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab096.1/patches/patch-274.12.1.el5.028stab096.1-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab096.1/patches/patch-274.12.1.el5.028stab096.1-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab097.1/patches/patch-274.17.1.el5.028stab097.1-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab097.1/patches/patch-274.17.1.el5.028stab097.1-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -104,6 +104,9 @@ done
 %files fake
 
 %changelog
+* Wed Jan 25 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.17.1.el5.028stab097.1.owl1
+- Updated to 2.6.18-274.17.1.el5.028stab097.1.
+
 * Tue Dec 27 2011 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.12.1.el5.028stab096.1.owl1
 - Updated to 2.6.18-274.12.1.el5.028stab096.1.
 - CONFIG_VIA_RHINE=m, CONFIG_VIA_RHINE_MMIO=y, CONFIG_VIA_RHINE_NAPI=y
