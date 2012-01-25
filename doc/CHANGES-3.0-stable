@@ -97,6 +97,10 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3188
 2012/01/25	Package: hardlink
 Fixed a bug in a code path triggered on error.
 
+(2011/10/26)
+2012/01/25	Package: owl-startup
+Added VLAN support (patch by Piotr Meyer).
+
 2011/10/26	Package: tzdata
 Updated to 2011m.
 
@@ -478,4 +482,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.20 2012/01/25 23:21:21 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.21 2012/01/25 23:30:27 solar Exp $
