@@ -25,6 +25,7 @@
 #include "memory.h"
 #include "common.h"
 #include "formats.h"
+#include "loader.h"
 
 #define FORMAT_LABEL			"crypt"
 #define FORMAT_NAME			"generic crypt(3)"
@@ -144,7 +145,7 @@ static int valid(char *ciphertext)
 		return 1;
 	}
 
-	if (id != 10)
+	if (id != 10 && !ldr_in_pot)
 		fprintf(stderr, "Generic crypt(3) module: "
 		    "hash encoding string length %d, type id %c%c\n"
 		    "appears to be unsupported on this system; "
@@ -201,7 +202,10 @@ static void *salt(char *ciphertext)
 		if (length == 59 && !strncmp(ciphertext, "$2$", 3))
 			cut = 28;
 		else
-		if (length == 60 && !strncmp(ciphertext, "$2a$", 4))
+		if (length == 60 &&
+		    (!strncmp(ciphertext, "$2a$", 4) ||
+		    !strncmp(ciphertext, "$2x$", 4) ||
+		    !strncmp(ciphertext, "$2y$", 4)))
 			cut = 29;
 		else
 		if (length >= 27 &&
@@ -317,7 +321,7 @@ static int salt_hash(void *salt)
 	h ^= (unsigned char)atoi64[ARCH_INDEX(((char *)salt)[i - 1])];
 	h ^= ((unsigned char *)salt)[i];
 
-	return h & 0x3FF;
+	return h & (SALT_HASH_SIZE - 1);
 }
 
 static void set_salt(void *salt)
@@ -391,7 +395,13 @@ static void crypt_all(int count)
 
 static int cmp_all(void *binary, int count)
 {
-	return 1;
+	int index;
+
+	for (index = 0; index < count; index++)
+		if (!strcmp((char *)binary, crypt_out[index]))
+			return 1;
+
+	return 0;
 }
 
 static int cmp_one(void *binary, int index)
@@ -429,7 +439,9 @@ struct fmt_main fmt_crypt = {
 			binary_hash_1,
 			binary_hash_2,
 			binary_hash_3,
-			binary_hash_4
+			binary_hash_4,
+			NULL,
+			NULL
 		},
 		salt_hash,
 		set_salt,
@@ -442,7 +454,9 @@ struct fmt_main fmt_crypt = {
 			get_hash_1,
 			get_hash_2,
 			get_hash_3,
-			get_hash_4
+			get_hash_4,
+			NULL,
+			NULL
 		},
 		cmp_all,
 		cmp_one,

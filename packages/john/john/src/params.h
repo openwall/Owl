@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-2011 by Solar Designer
+ * Copyright (c) 1996-2012 by Solar Designer
  */
 
 /*
@@ -12,33 +12,52 @@
 
 #include <limits.h>
 
+#include "arch.h"
+
 /*
  * John's version number.
  */
-#define JOHN_VERSION			"1.7.8"
+#define JOHN_VERSION			"1.7.9.3"
 
 /*
  * Notes to packagers of John for *BSD "ports", Linux distributions, etc.:
  *
- * You do need to set JOHN_SYSTEMWIDE to 1, but you do not need to patch
- * this file for that.  Instead, you can pass -DJOHN_SYSTEMWIDE=1 in CFLAGS.
- * You also do not need to patch the Makefile for that since you can pass
- * the CFLAGS via "make" command line.  Similarly, you do not need to patch
- * anything to change JOHN_SYSTEMWIDE_EXEC and JOHN_SYSTEMWIDE_HOME
- * (although the defaults for these should be fine).
+ * You do need to set JOHN_SYSTEMWIDE to 1, but you do not need to patch this
+ * file for that.  Instead, you can pass -DJOHN_SYSTEMWIDE=1 in CFLAGS.  You
+ * also do not need to patch the Makefile for that since you can pass the
+ * CFLAGS via "make" command line.  Similarly, you do not need to patch
+ * anything to change JOHN_SYSTEMWIDE_EXEC and JOHN_SYSTEMWIDE_HOME (although
+ * the defaults for these should be fine).
  *
- * JOHN_SYSTEMWIDE_EXEC should be set to the _directory_ where John will
- * look for its "CPU fallback" program binary (which should be another
- * build of John itself).  This is only activated when John is compiled
- * with -DCPU_FALLBACK=1.  The fallback program binary name is defined
- * with CPU_FALLBACK_BINARY in architecture-specific header files such as
- * x86-mmx.h (and the default should be fine - no need to patch it).
- * Currently, this is used to transparently fallback to a non-SSE2 build
- * (perhaps to an MMX build) when an SSE2 build is run on older x86
- * processors.  Similarly, this is used to fallback to a non-MMX build on
- * ancient x86 processors.  Please do make use of this functionality in
- * your package if it is built for 32-bit x86 (yes, you need to do up to
- * three builds of John for a single binary package).
+ * JOHN_SYSTEMWIDE_EXEC should be set to the _directory_ where John will look
+ * for its "CPU fallback" program binary (which should be another build of John
+ * itself).  This is activated when John is compiled with -DCPU_FALLBACK=1.
+ * The fallback program binary name is defined with CPU_FALLBACK_BINARY in
+ * architecture-specific header files such as x86-64.h (and the default should
+ * be fine - no need to patch it).  On x86-64, this may be used to
+ * transparently fallback from a -64-xop build to -64-avx, then to plain -64
+ * (which implies SSE2).  On 32-bit x86, this may be used to fallback from -xop
+ * to -avx, then to -sse2, then to -mmx, and finally to -any.  Please do make
+ * use of this functionality in your package if it is built for x86-64 or
+ * 32-bit x86 (yes, you may need to make five builds of John for a single
+ * 32-bit x86 binary package).
+ *
+ * Similarly, -DOMP_FALLBACK=1 activates fallback to OMP_FALLBACK_BINARY in the
+ * JOHN_SYSTEMWIDE_EXEC directory when an OpenMP-enabled build of John
+ * determines that it would otherwise run only one thread, which would often
+ * be less optimal than running a non-OpenMP build.
+ *
+ * CPU_FALLBACK and OMP_FALLBACK may be used together, but in that case you
+ * need to override some of the default fallback binary filenames such that you
+ * can have both OpenMP-enabled and non-OpenMP fallback binaries that use the
+ * same CPU instruction set extensions.  You can do these overrides with
+ * options like -DOMP_FALLBACK_BINARY='"john-non-omp-non-avx"' (leaving
+ * CPU_FALLBACK_BINARY at its default of "john-non-avx") or
+ * -DOMP_FALLBACK_BINARY='"john-sse2"' and
+ * -DCPU_FALLBACK_BINARY='"john-omp-sse2"' as fallbacks from an OpenMP-enabled
+ * -avx build.  Please note that you do not need to patch any John files for
+ * this, not even the Makefile.  For an example of passing these settings from
+ * an RPM spec file, please refer to john.spec used in Owl.
  *
  * "$JOHN" is supposed to be expanded at runtime.  Please do not replace
  * it with a specific path, neither in this file nor in the default
@@ -62,6 +81,14 @@
 #define JOHN_SYSTEMWIDE_HOME		"/usr/share/john"
 #endif
 #define JOHN_PRIVATE_HOME		"~/.john"
+#endif
+
+#ifndef OMP_FALLBACK
+#define OMP_FALLBACK			0
+#endif
+
+#if OMP_FALLBACK && !defined(OMP_FALLBACK_BINARY)
+#define OMP_FALLBACK_BINARY		"john-non-omp"
 #endif
 
 /*
@@ -135,33 +162,55 @@
  * This is not really configurable, but we define it here in order to have
  * the number hard-coded in fewer places.
  */
-#define PASSWORD_HASH_SIZES		5
+#define PASSWORD_HASH_SIZES		7
 
 /*
- * Hash table sizes.  These are also hardcoded into the hash functions.
+ * Which hash table size (out of those listed below) the loader should use for
+ * its own purposes.  This does not affect password cracking speed after the
+ * loading is complete.
  */
-#define SALT_HASH_SIZE			0x400
+#define PASSWORD_HASH_SIZE_FOR_LDR	4
+
+/*
+ * Hash table sizes.  These may also be hardcoded into the hash functions.
+ */
+#define SALT_HASH_LOG			12
+#define SALT_HASH_SIZE			(1 << SALT_HASH_LOG)
 #define PASSWORD_HASH_SIZE_0		0x10
 #define PASSWORD_HASH_SIZE_1		0x100
 #define PASSWORD_HASH_SIZE_2		0x1000
 #define PASSWORD_HASH_SIZE_3		0x10000
 #define PASSWORD_HASH_SIZE_4		0x100000
+#define PASSWORD_HASH_SIZE_5		0x1000000
+#define PASSWORD_HASH_SIZE_6		0x8000000
 
 /*
  * Password hash table thresholds.  These are the counts of entries required
- * to enable the corresponding hash table size.
+ * to enable the corresponding bitmap size.  The corresponding hash table size
+ * may be smaller as determined by PASSWORD_HASH_SHR.
  */
 #define PASSWORD_HASH_THRESHOLD_0	3
-#define PASSWORD_HASH_THRESHOLD_1	PASSWORD_HASH_SIZE_0
-#define PASSWORD_HASH_THRESHOLD_2	(PASSWORD_HASH_SIZE_1 / 5)
-#define PASSWORD_HASH_THRESHOLD_3	(PASSWORD_HASH_SIZE_2 / 3)
-#define PASSWORD_HASH_THRESHOLD_4	(PASSWORD_HASH_SIZE_3 / 2)
+#define PASSWORD_HASH_THRESHOLD_1	3
+#define PASSWORD_HASH_THRESHOLD_2	(PASSWORD_HASH_SIZE_1 / 25)
+#define PASSWORD_HASH_THRESHOLD_3	(PASSWORD_HASH_SIZE_2 / 20)
+#define PASSWORD_HASH_THRESHOLD_4	(PASSWORD_HASH_SIZE_3 / 10)
+#define PASSWORD_HASH_THRESHOLD_5	(PASSWORD_HASH_SIZE_4 / 15)
+#define PASSWORD_HASH_THRESHOLD_6	(PASSWORD_HASH_SIZE_5 / 5)
 
 /*
  * Tables of the above values.
  */
 extern int password_hash_sizes[PASSWORD_HASH_SIZES];
 extern int password_hash_thresholds[PASSWORD_HASH_SIZES];
+
+/*
+ * How much smaller should the hash tables be than bitmaps in terms of entry
+ * count.  Setting this to 0 will result in them having the same number of
+ * entries, 1 will make the hash tables twice smaller than bitmaps, etc.
+ * 5 or 6 will make them the same size in bytes on systems with 32-bit or
+ * 64-bit pointers, respectively.
+ */
+#define PASSWORD_HASH_SHR		2
 
 /*
  * Cracked password hash size, used while loading.
@@ -172,7 +221,11 @@ extern int password_hash_thresholds[PASSWORD_HASH_SIZES];
 /*
  * Buffered keys hash size, used for "single crack" mode.
  */
+#if defined(_OPENMP) && DES_BS && !DES_BS_ASM
+#define SINGLE_HASH_LOG			10
+#else
 #define SINGLE_HASH_LOG			7
+#endif
 #define SINGLE_HASH_SIZE		(1 << SINGLE_HASH_LOG)
 
 /*
@@ -213,22 +266,13 @@ extern int password_hash_thresholds[PASSWORD_HASH_SIZES];
 /*
  * Charset parameters.
  *
- * Please note that certain intermediate values computed in charset.c while
- * generating a new charset file should fit in 64 bits.  As long as
- * ((SIZE ** LENGTH) * SCALE) fits in 64 bits you're definitely safe, although
- * the exact requirement, which you can see in charset.c: charset_self_test(),
- * is a bit less strict.  John will refuse to generate a charset file if the
- * values would overflow, so rather than do the math yourself you can simply
- * let John test the values for you.  You can reduce the SCALE if required.
- *
- * Also, please note that changes to these parameters make your build of John
+ * Please note that changes to these parameters make your build of John
  * incompatible with charset files generated with other builds.
  */
 #define CHARSET_MIN			' '
 #define CHARSET_MAX			0x7E
 #define CHARSET_SIZE			(CHARSET_MAX - CHARSET_MIN + 1)
 #define CHARSET_LENGTH			8
-#define CHARSET_SCALE			0x100
 
 /*
  * Compiler parameters.

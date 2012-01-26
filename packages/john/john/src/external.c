@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-2001,2003,2004,2006 by Solar Designer
+ * Copyright (c) 1996-2001,2003,2004,2006,2011 by Solar Designer
  */
 
 #include <stdio.h>
@@ -16,22 +16,37 @@
 #include "recovery.h"
 #include "config.h"
 #include "cracker.h"
+#include "external.h"
 
 static char int_word[PLAINTEXT_BUFFER_SIZE];
 static char rec_word[PLAINTEXT_BUFFER_SIZE];
 
-char *ext_mode = NULL;
+unsigned int ext_flags = 0;
+static char *ext_mode;
 
 static c_int ext_word[PLAINTEXT_BUFFER_SIZE];
+c_int ext_abort, ext_status;
+
+static struct c_ident ext_ident_status = {
+	NULL,
+	"status",
+	&ext_status
+};
+
+static struct c_ident ext_ident_abort = {
+	&ext_ident_status,
+	"abort",
+	&ext_abort
+};
 
 static struct c_ident ext_globals = {
-	NULL,
+	&ext_ident_abort,
 	"word",
 	ext_word
 };
 
-static struct c_ident *f_generate;
-struct c_ident *f_filter;
+static void *f_generate;
+void *f_filter = NULL;
 
 static struct cfg_list *ext_source;
 static struct cfg_line *ext_line;
@@ -78,6 +93,19 @@ void ext_init(char *mode)
 	f_generate = c_lookup("generate");
 	f_filter = c_lookup("filter");
 
+	if ((ext_flags & EXT_REQ_GENERATE) && !f_generate) {
+		fprintf(stderr, "No generate() for external mode: %s\n", mode);
+		error();
+	}
+	if ((ext_flags & EXT_REQ_FILTER) && !f_filter) {
+		fprintf(stderr, "No filter() for external mode: %s\n", mode);
+		error();
+	}
+	if ((ext_flags & (EXT_USES_GENERATE | EXT_USES_FILTER)) ==
+	    EXT_USES_FILTER && f_generate)
+		fprintf(stderr, "Warning: external mode defines generate(), "
+		    "but is only used for filter()\n");
+
 	ext_mode = mode;
 }
 
@@ -88,19 +116,47 @@ int ext_filter_body(char *in, char *out)
 
 	internal = (unsigned char *)in;
 	external = ext_word;
-	while (*internal)
-		*external++ = *internal++;
-	*external = 0;
+	external[0] = internal[0];
+	external[1] = internal[1];
+	external[2] = internal[2];
+	external[3] = internal[3];
+	if (external[0] && external[1] && external[2] && external[3])
+	do {
+		if (!(external[4] = internal[4]))
+			break;
+		if (!(external[5] = internal[5]))
+			break;
+		if (!(external[6] = internal[6]))
+			break;
+		if (!(external[7] = internal[7]))
+			break;
+		internal += 4;
+		external += 4;
+	} while (1);
 
-	c_execute(f_filter);
+	c_execute_fast(f_filter);
 
-	if (in[0] && !ext_word[0]) return 0;
+	if (!ext_word[0] && in[0]) return 0;
 
 	internal = (unsigned char *)out;
 	external = ext_word;
-	while (*external)
-		*internal++ = *external++;
-	*internal = 0;
+	internal[0] = external[0];
+	internal[1] = external[1];
+	internal[2] = external[2];
+	internal[3] = external[3];
+	if (external[0] && external[1] && external[2] && external[3])
+	do {
+		if (!(internal[4] = external[4]))
+			break;
+		if (!(internal[5] = external[5]))
+			break;
+		if (!(internal[6] = external[6]))
+			break;
+		if (!(internal[7] = external[7]))
+			break;
+		internal += 4;
+		external += 4;
+	} while (1);
 
 	return 1;
 }
@@ -147,13 +203,6 @@ void do_external_crack(struct db_main *db)
 
 	log_event("Proceeding with external mode: %.100s", ext_mode);
 
-	if (!f_generate) {
-		log_event("! No generate() function defined");
-		fprintf(stderr, "No generate() for external mode: %s\n",
-			ext_mode);
-		error();
-	}
-
 	internal = (unsigned char *)int_word;
 	external = ext_word;
 	while (*external)
@@ -168,17 +217,33 @@ void do_external_crack(struct db_main *db)
 	crk_init(db, fix_state, NULL);
 
 	do {
-		c_execute(f_generate);
-		if (!ext_word[0]) break;
+		c_execute_fast(f_generate);
+		if (!ext_word[0])
+			break;
 
-		c_execute(f_filter);
-		if (!ext_word[0]) continue;
+		if (f_filter) {
+			c_execute_fast(f_filter);
+			if (!ext_word[0])
+				continue;
+		}
 
-		internal = (unsigned char *)int_word;
-		external = ext_word;
-		while (*external)
-			*internal++ = *external++;
-		*internal = 0;
+		int_word[0] = ext_word[0];
+		if ((int_word[1] = ext_word[1])) {
+			internal = (unsigned char *)&int_word[2];
+			external = &ext_word[2];
+			do {
+				if (!(internal[0] = external[0]))
+					break;
+				if (!(internal[1] = external[1]))
+					break;
+				if (!(internal[2] = external[2]))
+					break;
+				if (!(internal[3] = external[3]))
+					break;
+				internal += 4;
+				external += 4;
+			} while (1);
+		}
 
 		if (crk_process_key(int_word)) break;
 	} while (1);

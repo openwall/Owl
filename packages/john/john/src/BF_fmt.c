@@ -42,7 +42,7 @@ static struct fmt_tests tests[] = {
 		"chars after 72 are ignored"},
 	{"$2x$05$/OK.fbVrR/bpIqNJ5ianF.CE5elHaaO4EbggVDjb8P19RukzXSM3e",
 		"\xa3"},
-	{"$2a$05$/OK.fbVrR/bpIqNJ5ianF.Sa7shbm4.OzKpvFnX1pQLmQW96oUlCq",
+	{"$2y$05$/OK.fbVrR/bpIqNJ5ianF.Sa7shbm4.OzKpvFnX1pQLmQW96oUlCq",
 		"\xa3"},
 	{"$2x$05$6bNw2HLQYeqHYyBfLMsv/OiwqTymGIGzFsA4hOTWebfehXHNprcAS",
 		"\xd1\x91"},
@@ -89,19 +89,19 @@ struct fmt_main fmt_BF;
 static void init(void)
 {
 #ifdef _OPENMP
-	int n = BF_Nmin * omp_get_max_threads();
+	int n = BF_Nmin * omp_get_max_threads(), max;
 	if (n < BF_Nmin)
 		n = BF_Nmin;
 	if (n > BF_N)
 		n = BF_N;
 	fmt_BF.params.min_keys_per_crypt = n;
-	n *= BF_cpt;
-	if (n > BF_N)
-		n = BF_N;
-	fmt_BF.params.max_keys_per_crypt = n;
+	max = n * BF_cpt;
+	while (max > BF_N)
+		max -= n;
+	fmt_BF.params.max_keys_per_crypt = max;
 #endif
 
-	keys_mode = 'a';
+	keys_mode = 'y';
 	sign_extension_bug = 0;
 }
 
@@ -111,7 +111,9 @@ static int valid(char *ciphertext)
 	char *pos;
 
 	if (strncmp(ciphertext, "$2a$", 4) &&
-	    strncmp(ciphertext, "$2x$", 4)) return 0;
+	    strncmp(ciphertext, "$2x$", 4) &&
+	    strncmp(ciphertext, "$2y$", 4))
+		return 0;
 
 	if (ciphertext[4] < '0' || ciphertext[4] > '9') return 0;
 	if (ciphertext[5] < '0' || ciphertext[5] > '9') return 0;
@@ -154,6 +156,16 @@ static int binary_hash_4(void *binary)
 	return *(BF_word *)binary & 0xFFFFF;
 }
 
+static int binary_hash_5(void *binary)
+{
+	return *(BF_word *)binary & 0xFFFFFF;
+}
+
+static int binary_hash_6(void *binary)
+{
+	return *(BF_word *)binary & 0x7FFFFFF;
+}
+
 static int get_hash_0(int index)
 {
 	return BF_out[index][0] & 0xF;
@@ -179,9 +191,19 @@ static int get_hash_4(int index)
 	return BF_out[index][0] & 0xFFFFF;
 }
 
+static int get_hash_5(int index)
+{
+	return BF_out[index][0] & 0xFFFFFF;
+}
+
+static int get_hash_6(int index)
+{
+	return BF_out[index][0] & 0x7FFFFFF;
+}
+
 static int salt_hash(void *salt)
 {
-	return ((BF_salt *)salt)->salt[0] & 0x3FF;
+	return ((BF_salt *)salt)->salt[0] & (SALT_HASH_SIZE - 1);
 }
 
 static void set_salt(void *salt)
@@ -259,7 +281,10 @@ struct fmt_main fmt_BF = {
 		SALT_SIZE,
 		MIN_KEYS_PER_CRYPT,
 		MAX_KEYS_PER_CRYPT,
-		FMT_CASE | FMT_8_BIT | FMT_OMP,
+#if BF_mt > 1
+		FMT_OMP |
+#endif
+		FMT_CASE | FMT_8_BIT,
 		tests
 	}, {
 		init,
@@ -272,7 +297,9 @@ struct fmt_main fmt_BF = {
 			binary_hash_1,
 			binary_hash_2,
 			binary_hash_3,
-			binary_hash_4
+			binary_hash_4,
+			binary_hash_5,
+			binary_hash_6
 		},
 		salt_hash,
 		set_salt,
@@ -285,7 +312,9 @@ struct fmt_main fmt_BF = {
 			get_hash_1,
 			get_hash_2,
 			get_hash_3,
-			get_hash_4
+			get_hash_4,
+			get_hash_5,
+			get_hash_6
 		},
 		cmp_all,
 		cmp_one,

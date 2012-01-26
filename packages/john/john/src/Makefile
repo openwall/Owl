@@ -17,13 +17,17 @@ CPPFLAGS = -E
 OMPFLAGS =
 # gcc with OpenMP
 #OMPFLAGS = -fopenmp
+#OMPFLAGS = -fopenmp -msse2
 # Sun Studio with OpenMP (set the OMP_NUM_THREADS env var at runtime)
 #OMPFLAGS = -xopenmp
 CFLAGS = -c -Wall -O2 -fomit-frame-pointer $(OMPFLAGS)
+# CFLAGS for use on the main john.c file only
+CFLAGS_MAIN = $(CFLAGS)
 ASFLAGS = -c $(OMPFLAGS)
 LDFLAGS = -s $(OMPFLAGS)
 OPT_NORMAL = -funroll-loops
-OPT_INLINE = -finline-functions
+# Remove the "-Os" if you're using an ancient version of gcc
+OPT_INLINE = -Os -funroll-loops -finline-functions
 
 JOHN_OBJS = \
 	DES_fmt.o DES_std.o DES_bs.o DES_bs_b.o \
@@ -32,6 +36,7 @@ JOHN_OBJS = \
 	BF_fmt.o BF_std.o \
 	AFS_fmt.o \
 	LM_fmt.o \
+	trip_fmt.o \
 	dummy.o \
 	batch.o bench.o charset.o common.o compiler.o config.o cracker.o \
 	crc32.o external.o formats.o getopt.o idle.o inc.o john.o list.o \
@@ -74,16 +79,16 @@ default:
 	@echo "To build John the Ripper, type:"
 	@echo "	make clean SYSTEM"
 	@echo "where SYSTEM can be one of the following:"
-	@echo "linux-x86-64             Linux, x86-64 with SSE2 (best tested)"
-	@echo "linux-x86-64-avx         Linux, x86-64 with AVX (experimental)"
-	@echo "linux-x86-64-xop         Linux, x86-64 with AVX and XOP (experimental)"
+	@echo "linux-x86-64-avx         Linux, x86-64 with AVX (2011+ Intel CPUs)"
+	@echo "linux-x86-64-xop         Linux, x86-64 with AVX and XOP (2011+ AMD CPUs)"
+	@echo "linux-x86-64             Linux, x86-64 with SSE2 (most common)"
 #	@echo "linux-x86-64-32-sse2     Linux, x86-64, 32-bit with SSE2"
 #	@echo "linux-x86-64-32-mmx      Linux, x86-64, 32-bit with MMX"
-	@echo "linux-x86-sse2           Linux, x86 32-bit with SSE2 (best tested if 32-bit)"
+	@echo "linux-x86-avx            Linux, x86 32-bit with AVX (2011+ Intel CPUs)"
+	@echo "linux-x86-xop            Linux, x86 32-bit with AVX and XOP (2011+ AMD CPUs)"
+	@echo "linux-x86-sse2           Linux, x86 32-bit with SSE2 (most common, if 32-bit)"
 	@echo "linux-x86-mmx            Linux, x86 32-bit with MMX (for old computers)"
 	@echo "linux-x86-any            Linux, x86 32-bit (for truly ancient computers)"
-	@echo "linux-x86-avx            Linux, x86 32-bit with AVX (experimental)"
-	@echo "linux-x86-xop            Linux, x86 32-bit with AVX and XOP (experimental)"
 	@echo "linux-alpha              Linux, Alpha"
 	@echo "linux-sparc              Linux, SPARC 32-bit"
 	@echo "linux-ppc32-altivec      Linux, PowerPC w/AltiVec (best)"
@@ -148,25 +153,29 @@ default:
 	@echo "beos-x86-any             BeOS, x86"
 	@echo "generic                  Any other Unix-like system with gcc"
 
-linux-x86-64:
-	$(LN) x86-64.h arch.h
-	$(MAKE) $(PROJ) \
-		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o x86-64.o" \
-		CFLAGS="$(CFLAGS) -DHAVE_CRYPT" \
-		LDFLAGS="$(LDFLAGS) -lcrypt"
-
 linux-x86-64-avx:
 	$(LN) x86-64.h arch.h
 	$(MAKE) $(PROJ) \
-		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o" \
+		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o x86-64.o" \
+		CFLAGS_MAIN="$(CFLAGS) -DJOHN_AVX -DHAVE_CRYPT" \
 		CFLAGS="$(CFLAGS) -mavx -DHAVE_CRYPT" \
+		ASFLAGS="$(ASFLAGS) -mavx" \
 		LDFLAGS="$(LDFLAGS) -lcrypt"
 
 linux-x86-64-xop:
 	$(LN) x86-64.h arch.h
 	$(MAKE) $(PROJ) \
-		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o" \
+		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o x86-64.o" \
+		CFLAGS_MAIN="$(CFLAGS) -DJOHN_XOP -DHAVE_CRYPT" \
 		CFLAGS="$(CFLAGS) -mxop -DHAVE_CRYPT" \
+		ASFLAGS="$(ASFLAGS) -mxop" \
+		LDFLAGS="$(LDFLAGS) -lcrypt"
+
+linux-x86-64:
+	$(LN) x86-64.h arch.h
+	$(MAKE) $(PROJ) \
+		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o x86-64.o" \
+		CFLAGS="$(CFLAGS) -DHAVE_CRYPT" \
 		LDFLAGS="$(LDFLAGS) -lcrypt"
 
 linux-x86-64-32-sse2:
@@ -183,6 +192,24 @@ linux-x86-64-32-mmx:
 		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o x86.o x86-mmx.o" \
 		CFLAGS="$(CFLAGS) -m32 -DHAVE_CRYPT" \
 		ASFLAGS="$(ASFLAGS) -m32" \
+		LDFLAGS="$(LDFLAGS) -m32 -lcrypt"
+
+linux-x86-avx:
+	$(LN) x86-sse.h arch.h
+	$(MAKE) $(PROJ) \
+		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o x86.o" \
+		CFLAGS_MAIN="$(CFLAGS) -m32 -DJOHN_AVX -DHAVE_CRYPT" \
+		CFLAGS="$(CFLAGS) -m32 -mavx -DHAVE_CRYPT" \
+		ASFLAGS="$(ASFLAGS) -m32 -mavx" \
+		LDFLAGS="$(LDFLAGS) -m32 -lcrypt"
+
+linux-x86-xop:
+	$(LN) x86-sse.h arch.h
+	$(MAKE) $(PROJ) \
+		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o x86.o" \
+		CFLAGS_MAIN="$(CFLAGS) -m32 -DJOHN_XOP -DHAVE_CRYPT" \
+		CFLAGS="$(CFLAGS) -m32 -mxop -DHAVE_CRYPT" \
+		ASFLAGS="$(ASFLAGS) -m32 -mxop" \
 		LDFLAGS="$(LDFLAGS) -m32 -lcrypt"
 
 linux-x86-sse2:
@@ -205,22 +232,6 @@ linux-x86-any:
 		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o x86.o" \
 		CFLAGS="$(CFLAGS) -DHAVE_CRYPT" \
 		LDFLAGS="$(LDFLAGS) -lcrypt"
-
-linux-x86-avx:
-	$(LN) x86-sse.h arch.h
-	$(MAKE) $(PROJ) \
-		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o x86.o" \
-		CFLAGS="$(CFLAGS) -m32 -mavx -DHAVE_CRYPT" \
-		ASFLAGS="$(ASFLAGS) -m32" \
-		LDFLAGS="$(LDFLAGS) -m32 -lcrypt"
-
-linux-x86-xop:
-	$(LN) x86-sse.h arch.h
-	$(MAKE) $(PROJ) \
-		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o x86.o" \
-		CFLAGS="$(CFLAGS) -m32 -mxop -DHAVE_CRYPT" \
-		ASFLAGS="$(ASFLAGS) -m32" \
-		LDFLAGS="$(LDFLAGS) -m32 -lcrypt"
 
 linux-alpha:
 	$(LN) alpha.h arch.h
@@ -401,7 +412,7 @@ solaris-sparc64-cc:
 		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o" \
 		CC=cc \
 		CFLAGS="-c -fast -xarch=native64 -DHAVE_CRYPT $(OMPFLAGS)" \
-		LDFLAGS="-s -xarch=native64 $(OMPFLAGS) -lc -lrt" \
+		LDFLAGS="$(LDFLAGS) -xarch=native64 -lrt" \
 		OPT_NORMAL="" \
 		OPT_INLINE="-xinline=s1,s2,s3,s4,s5,s6,s7,s8"
 
@@ -418,7 +429,7 @@ solaris-sparcv9-cc:
 		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o" \
 		CC=cc \
 		CFLAGS="-c -xO4 -xarch=v8plusa -xchip=ultra -DHAVE_CRYPT $(OMPFLAGS)" \
-		LDFLAGS="-s $(OMPFLAGS) -lc -lrt" \
+		LDFLAGS="$(LDFLAGS) -lrt" \
 		OPT_NORMAL="" \
 		OPT_INLINE="-xinline=s1,s2,s3,s4,s5,s6,s7,s8"
 
@@ -428,7 +439,7 @@ solaris-sparcv8-cc:
 		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o" \
 		CC=cc \
 		CFLAGS="-c -xO4 -xarch=v8 -DHAVE_CRYPT $(OMPFLAGS)" \
-		LDFLAGS="-s $(OMPFLAGS) -lc -lrt" \
+		LDFLAGS="$(LDFLAGS) -lrt" \
 		OPT_NORMAL="" \
 		OPT_INLINE="-xinline=s1,s2,s3,s4,s5,s6,s7,s8"
 
@@ -446,7 +457,7 @@ solaris-x86-64-cc:
 		CC=cc \
 		CFLAGS="-c -fast -xarch=native64 -DHAVE_CRYPT $(OMPFLAGS)" \
 		ASFLAGS="-c -xarch=native64 $(OMPFLAGS)" \
-		LDFLAGS="-s -xarch=native64 $(OMPFLAGS) -lrt" \
+		LDFLAGS="$(LDFLAGS) -xarch=native64 -lrt" \
 		OPT_NORMAL="" \
 		OPT_INLINE="-xinline=s1,s2,s3,s4,s5,s6,s7,s8"
 
@@ -465,7 +476,7 @@ solaris-x86-sse2-cc:
 		CC=cc \
 		CFLAGS="-c -fast -xarch=native -DHAVE_CRYPT $(OMPFLAGS)" \
 		ASFLAGS="-c -xarch=native $(OMPFLAGS)" \
-		LDFLAGS="-s -xarch=native $(OMPFLAGS) -lrt" \
+		LDFLAGS="$(LDFLAGS) -xarch=native -lrt" \
 		OPT_NORMAL="" \
 		OPT_INLINE="-xinline=s1,s2,s3,s4,s5,s6,s7,s8"
 
@@ -483,7 +494,7 @@ solaris-x86-mmx-cc:
 		CC=cc \
 		CFLAGS="-c -fast -xarch=native -DHAVE_CRYPT $(OMPFLAGS)" \
 		ASFLAGS="-c -xarch=native $(OMPFLAGS)" \
-		LDFLAGS="-s -xarch=native $(OMPFLAGS) -lrt" \
+		LDFLAGS="$(LDFLAGS) -xarch=native -lrt" \
 		OPT_NORMAL="" \
 		OPT_INLINE="-xinline=s1,s2,s3,s4,s5,s6,s7,s8"
 
@@ -503,7 +514,7 @@ solaris-x86-any-cc:
 		CC=cc \
 		CFLAGS="-c -xO4 -DHAVE_CRYPT $(OMPFLAGS)" \
 		ASFLAGS="-c $(OMPFLAGS)" \
-		LDFLAGS="-s $(OMPFLAGS) -lc -lrt" \
+		LDFLAGS="$(LDFLAGS) -lrt" \
 		OPT_NORMAL="" \
 		OPT_INLINE="-xinline=s1,s2,s3,s4,s5,s6,s7,s8"
 
@@ -514,7 +525,7 @@ solaris-x86-any-gcc:
 		SHELL=/bin/sh \
 		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o solaris-x86.o" \
 		CFLAGS="$(CFLAGS) -DHAVE_CRYPT" \
-		LDFLAGS="$(LDFLAGS) -lc -lrt"
+		LDFLAGS="$(LDFLAGS) -lrt"
 
 # Older versions of Sun's assembler had a line length restriction (and some
 # other problems, which affect newer versions as well and which are worked
@@ -570,7 +581,7 @@ aix-ppc32:
 	$(MAKE) $(PROJ) \
 		CC=cc \
 		CFLAGS="-c -qunroll=2 -qarch=ppc -qchars=signed" \
-		LDFLAGS="-s -lbsd" \
+		LDFLAGS="$(LDFLAGS) -lbsd" \
 		OPT_NORMAL="-O2" \
 		OPT_INLINE="-O3 -Q=99 -w"
 
@@ -715,7 +726,6 @@ hpux-pa-risc-cc:
 	$(MAKE) $(PROJ) \
 		CC=cc \
 		CFLAGS="-c -Aa -D_HPUX_SOURCE -DANSI_CPP" \
-		LDFLAGS="-s" \
 		OPT_NORMAL="+O2" \
 		OPT_INLINE="+O3 +Oinline"
 
@@ -724,7 +734,7 @@ irix-mips64-r10k:
 	$(MAKE) $(PROJ) \
 		CC=cc \
 		CFLAGS="-c -O2 -64 -mips4 -r10000 -signed" \
-		LDFLAGS="-s -64 -mips4 -r10000" \
+		LDFLAGS="$(LDFLAGS) -64 -mips4 -r10000" \
 		OPT_NORMAL="-LNO:opt=1 -OPT:Olimit=2194" \
 		OPT_INLINE="-INLINE:all"
 
@@ -733,7 +743,7 @@ irix-mips64:
 	$(MAKE) $(PROJ) \
 		CC=cc \
 		CFLAGS="-c -O2 -64 -mips3 -signed" \
-		LDFLAGS="-s -64 -mips3" \
+		LDFLAGS="$(LDFLAGS) -64 -mips3" \
 		OPT_NORMAL="-LNO:opt=1 -OPT:Olimit=2194" \
 		OPT_INLINE="-INLINE:all"
 
@@ -742,7 +752,7 @@ irix-mips32:
 	$(MAKE) $(PROJ) \
 		CC=cc \
 		CFLAGS="-c -O2 -32 -signed" \
-		LDFLAGS="-s -32" \
+		LDFLAGS="$(LDFLAGS) -32" \
 		OPT_NORMAL="-LNO:opt=1 -OPT:Olimit=2194" \
 		OPT_INLINE="-INLINE:all"
 
@@ -764,14 +774,13 @@ win32-cygwin-x86-sse2:
 	$(CP) x86-sse.h arch.h
 	$(MAKE) $(PROJ_WIN32) \
 		JOHN_OBJS="$(JOHN_OBJS) x86.o x86-sse.o" \
-		CFLAGS="$(CFLAGS) -mpreferred-stack-boundary=2" \
 		ASFLAGS="$(ASFLAGS) -DUNDERSCORES"
 
 win32-cygwin-x86-mmx:
 	$(CP) x86-mmx.h arch.h
 	$(MAKE) $(PROJ_WIN32) \
 		JOHN_OBJS="$(JOHN_OBJS) x86.o x86-mmx.o" \
-		CFLAGS="$(CFLAGS) -mpreferred-stack-boundary=2" \
+		CFLAGS="$(CFLAGS) -mpreferred-stack-boundary=3" \
 		ASFLAGS="$(ASFLAGS) -DUNDERSCORES"
 
 win32-cygwin-x86-any:
@@ -850,7 +859,7 @@ john.com: john.asm
 	@echo Use Borland TASM/TLINK to make JOHN.COM
 
 ../run/john.exe: $(JOHN_OBJS)
-	$(LD) $(JOHN_OBJS) -lkernel32 -o ../run/john.exe
+	$(LD) $(JOHN_OBJS) $(LDFLAGS) -lkernel32 -o ../run/john.exe
 	strip ../run/john.exe
 
 ../run/unshadow.exe: symlink.c
@@ -871,6 +880,9 @@ DES_bs_b.o: DES_bs_b.c sboxes.c nonstd.c sboxes-s.c
 
 miscnl.o: misc.c
 	$(CC) $(CFLAGS) $(OPT_NORMAL) -D_JOHN_MISC_NO_LOG misc.c -o miscnl.o
+
+john.o: john.c
+	$(CC) $(CFLAGS_MAIN) $(OPT_NORMAL) $*.c
 
 .c.o:
 	$(CC) $(CFLAGS) $(OPT_NORMAL) $*.c

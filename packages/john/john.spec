@@ -1,10 +1,14 @@
-# $Owl: Owl/packages/john/john.spec,v 1.123.2.1 2011/09/07 06:07:54 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.123.2.2 2012/01/25 23:57:17 solar Exp $
+
+%define BUILD_AVX 0
+%define BUILD_XOP 0
+%define BUILD_OMP 0
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.8
+Version: 1.7.9.3
 %define charsets_version 20051216
-Release: owl1
+Release: owl1.3.0.1
 License: GPL
 Group: Applications/System
 URL: http://www.openwall.com/john/
@@ -20,43 +24,150 @@ of other hash types are supported as well.
 %prep
 %setup -q -a 1
 
-%ifarch x86_64
 %define cflags -c %optflags -Wall -DJOHN_SYSTEMWIDE=1
-%else
-%define cflags -c %optflags -finline-limit=2000 --param inline-unit-growth=2000 -Wall -DJOHN_SYSTEMWIDE=1
-%endif
-%define with_cpu_fallback 0
+%define with_fallback 0
 
 %build
 cd src
+
 %ifarch %ix86
-%define with_cpu_fallback 1
-%ifarch athlon i786 i886 i986
+# non-OpenMP builds
+%define with_fallback 1
+%ifarch athlon
 %__make linux-x86-mmx CFLAGS='%cflags'
 %else
 %__make linux-x86-any CFLAGS='%cflags'
 %{!?_without_check:%{!?_without_test:%__make check}}
-mv ../run/john ../run/john-non-mmx
+mv ../run/john ../run/john-%buildarch
 %__make clean
-%__make linux-x86-mmx CFLAGS='%cflags -DCPU_FALLBACK=1'
+FALLBACK='\"john-%buildarch\"'
+%__make linux-x86-mmx CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
 %endif
 %{!?_without_check:%{!?_without_test:%__make check}}
-mv ../run/john ../run/john-non-sse
+mv ../run/john ../run/john-mmx
 %__make clean
-%__make linux-x86-sse2 CFLAGS='%cflags -DCPU_FALLBACK=1'
+FALLBACK='\"john-mmx\"'
+%__make linux-x86-sse2 CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
+%define john_last john-sse2
+%if %BUILD_AVX
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-sse2
+%__make clean
+FALLBACK='\"john-sse2\"'
+%__make linux-x86-avx CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
+%define john_last john-avx
+%if %BUILD_XOP
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-avx
+%__make clean
+FALLBACK='\"john-avx\"'
+%__make linux-x86-xop CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
+%define john_last john-xop
 %endif
+%endif
+# OpenMP builds
+%if %BUILD_OMP
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/%john_last
+%__make clean
+%ifarch athlon
+OMP_FALLBACK='"john-mmx"'
+%__make linux-x86-mmx CFLAGS='%cflags -fopenmp -mmmx' CFLAGS_MAIN="%cflags -fopenmp -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS='-fopenmp -mmmx'
+%else
+OMP_FALLBACK='\"john-%buildarch\"'
+%__make linux-x86-any CFLAGS="%cflags -fopenmp -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS=-fopenmp
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-omp-%buildarch
+%__make clean
+CPU_FALLBACK='"john-omp-%buildarch"'
+OMP_FALLBACK='"john-mmx"'
+%__make linux-x86-mmx CFLAGS='%cflags -fopenmp -mmmx' CFLAGS_MAIN="%cflags -fopenmp -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$CPU_FALLBACK' -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS='-fopenmp -mmmx'
+%endif
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-omp-mmx
+%__make clean
+CPU_FALLBACK='"john-omp-mmx"'
+OMP_FALLBACK='"john-sse2"'
+%__make linux-x86-sse2 CFLAGS='%cflags -fopenmp -msse2' CFLAGS_MAIN="%cflags -fopenmp -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$CPU_FALLBACK' -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS='-fopenmp -msse2'
+%if %BUILD_AVX
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-omp-sse2
+%__make clean
+CPU_FALLBACK='\"john-omp-sse2\"'
+OMP_FALLBACK='\"john-avx\"'
+%__make linux-x86-avx CFLAGS="%cflags -fopenmp -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$CPU_FALLBACK' -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS=-fopenmp
+%if %BUILD_XOP
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-omp-avx
+%__make clean
+CPU_FALLBACK='\"john-omp-avx\"'
+OMP_FALLBACK='\"john-xop\"'
+%__make linux-x86-xop CFLAGS="%cflags -fopenmp -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$CPU_FALLBACK' -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'"  OMPFLAGS=-fopenmp
+%endif
+%endif
+%endif
+%endif
+
 %ifarch x86_64
+# non-OpenMP builds
 %__make linux-x86-64 CFLAGS='%cflags'
+%define john_last john-sse2
+%if %BUILD_AVX
+%define with_fallback 1
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-sse2
+%__make clean
+FALLBACK='\"john-sse2\"'
+%__make linux-x86-64-avx CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
+%define john_last john-avx
+%if %BUILD_XOP
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-avx
+%__make clean
+FALLBACK='\"john-avx\"'
+%__make linux-x86-64-xop CFLAGS="%cflags -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$FALLBACK'"
+%define john_last john-xop
 %endif
+%endif
+# OpenMP builds
+%if %BUILD_OMP
+%define with_fallback 1
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/%john_last
+%__make clean
+OMP_FALLBACK='\"john-sse2\"'
+%__make linux-x86-64 CFLAGS="%cflags -fopenmp -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS=-fopenmp
+%if %BUILD_AVX
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-omp-sse2
+%__make clean
+CPU_FALLBACK='\"john-omp-sse2\"'
+OMP_FALLBACK='\"john-avx\"'
+%__make linux-x86-64-avx CFLAGS="%cflags -fopenmp -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$CPU_FALLBACK' -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS=-fopenmp
+%if %BUILD_XOP
+%{!?_without_check:%{!?_without_test:%__make check}}
+mv ../run/john ../run/john-omp-avx
+%__make clean
+CPU_FALLBACK='\"john-omp-avx\"'
+OMP_FALLBACK='\"john-xop\"'
+%__make linux-x86-64-xop CFLAGS="%cflags -fopenmp -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$CPU_FALLBACK' -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'"  OMPFLAGS=-fopenmp
+%endif
+%endif
+%endif
+%endif
+
 %ifarch alpha alphaev5 alphaev56 alphapca56 alphaev6 alphaev67
 %__make linux-alpha CFLAGS='%cflags'
 %endif
+
 %ifarch sparc sparcv9
 %__make linux-sparc CFLAGS='%cflags'
 %endif
+
 %ifarch ppc
 %__make linux-ppc32 CFLAGS='%cflags'
 %endif
+
 %{!?_without_check:%{!?_without_test:%__make check}}
 
 %install
@@ -64,21 +175,21 @@ rm -rf %buildroot
 mkdir -p %buildroot{%_bindir,%_datadir/john}
 install -m 700 run/john %buildroot%_bindir/
 cp -a run/un* %buildroot%_bindir/
-%if %with_cpu_fallback
+%if %with_fallback
 mkdir -p %buildroot%_libexecdir/john
 install -m 700 run/john-* %buildroot%_libexecdir/john/
 %endif
 install -m 644 -p run/{john.conf,password.lst} \
 	john-charsets-%charsets_version/*.chr \
 	%buildroot%_datadir/john/
-install -m 644 -p run/mailer doc/
+install -m 644 -p run/{mailer,relbench} doc/
 
 %files
 %defattr(-,root,root)
 %doc doc/*
 %attr(750,root,wheel) %_bindir/john
 %_bindir/un*
-%if %with_cpu_fallback
+%if %with_fallback
 %dir %_libexecdir/john
 %attr(750,root,wheel) %_libexecdir/john/*
 %endif
@@ -88,6 +199,83 @@ install -m 644 -p run/mailer doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Wed Jan 25 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.3-owl1.3.0.1
+- Revision for Owl 3.0-stable, with current-specific BUILD_* options disabled.
+
+* Sun Jan 15 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.3-owl1
+- Implemented bitmaps for fast initial comparison of computed hashes against
+those loaded for cracking, applied before hash table lookups.
+
+* Sat Jan 14 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.2-owl1
+- Enhanced the support for DES-based tripcodes by making use of the bitslice
+DES implementation and supporting OpenMP parallelization.
+- Tuned the hash table size thresholds based on testing on saltless hashes on a
+Core 2'ish CPU.
+- Updated the FAQ.
+
+* Mon Nov 28 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.9.1-owl1
+- With 32-bit x86 builds and at least MMX enabled, the "two hashes at a time"
+code for bcrypt is now enabled for GCC 4.2 and newer.  This change is made
+based on benchmark results for different builds made with different versions of
+GCC on CPUs ranging from Pentium 3 to Core i7.  Previously, this code was only
+enabled for x86-64 and/or OpenMP-enabled builds.
+- Assorted minor corrections to Cygwin builds were made.
+
+* Wed Nov 23 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.9-owl1
+- Suppress crypt_fmt's warnings about unsupported hashes for pot file entries.
+- In OpenMP-enabled builds, added support for fallback to a non-OpenMP build
+when the requested thread count is 1.
+- Enabled AVX, XOP, and OpenMP builds (with fallbacks).
+- Changed the CPU fallback program names used by the Owl package to be
+"positive" (e.g., "john-mmx" as fallback from an SSE2 build) rather than
+"negative" (e.g., "john-non-sse").
+
+* Tue Nov 22 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.9-owl1
+- Added runtime detection of Intel AVX and AMD XOP instruction set extensions,
+with optional fallback to an alternate program binary (not enabled in the Owl
+package yet).
+
+* Mon Nov 21 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.8-owl1
+- The "--make-charset" option now uses floating-point rather than 64-bit
+integer operations, which allows for larger CHARSET_* settings in params.h.
+- Added optional parallelization of the MD5-based crypt(3) code with OpenMP
+(although OpenMP is not enabled in the Owl package yet).
+- Added relbench, a Perl script to compare two "john --test" benchmark runs,
+such as for different machines, "make" targets, C compilers, optimization
+options, or/and versions of John the Ripper.
+- Additional public lists of "top N passwords" have been merged into the
+bundled common passwords list, and some insufficiently common passwords were
+removed from the list.
+
+* Sat Nov 19 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.7-owl1
+- Added support for the "$2y$" prefix of bcrypt hashes.
+- Added two more hash table sizes (16M and 128M entries) for faster processing
+of very large numbers of hashes per salt (over 1M).
+
+* Sat Oct 29 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.6-owl1
+- Call external mode functions via direct pointers to virtual machine code and
+without redundant checks for non-NULL.
+- Use gcc's __builtin_expect() in the gcc-specific version of the external mode
+virtual machine implementation.
+
+* Tue Oct 25 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.5-owl1
+- Added -Os to OPT_INLINE to deal with a performance regression otherwise seen
+with gcc 4.6.1 (as compared to 4.4.x and 4.5.x), albeit not in the Owl package
+yet (since we're currently using assembly code in place of most of DES_bs_b.c,
+which will change when we enable OpenMP).
+
+* Mon Oct 24 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8.4-owl1
+- Added optional parallelization of the bitslice DES code with OpenMP (not
+enabled in the Owl package yet).
+- Replaced the bitslice DES key setup algorithm with a faster one, which
+significantly improves performance at LM hashes, as well as at DES-based
+crypt(3) hashes when there's just one salt (or very few salts).
+- Optimized the DES S-box x86-64 (16-register SSE2) assembly code.
+- Added support for 10-character DES-based tripcodes (not optimized yet).
+- Added two pre-defined external mode variables: "abort" and "status", which
+let an external mode request the current cracking session to be aborted or the
+status line to be displayed, respectively.
+
 * Wed Jun 22 2011 Solar Designer <solar-at-owl.openwall.com> 1.7.8-owl1
 - The bitslice DES S-box expressions have been replaced with those generated
 by Roman Rusakov specifically for John the Ripper.  The corresponding assembly

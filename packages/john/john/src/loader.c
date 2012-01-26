@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-2000,2003,2005,2010,2011 by Solar Designer
+ * Copyright (c) 1996-2000,2003,2005,2010-2012 by Solar Designer
  */
 
 #include <stdio.h>
@@ -21,6 +21,7 @@
 
 #ifdef HAVE_CRYPT
 extern struct fmt_main fmt_crypt;
+int ldr_in_pot = 0;
 #endif
 
 /*
@@ -137,9 +138,9 @@ void ldr_init_database(struct db_main *db, struct db_options *options)
 static void ldr_init_password_hash(struct db_main *db)
 {
 	int (*func)(void *binary);
-	int size = PASSWORD_HASH_SIZES - 1;
+	int size = PASSWORD_HASH_SIZE_FOR_LDR;
 
-	if (mem_saving_level >= 2)
+	if (size > 0 && mem_saving_level >= 2)
 		size--;
 
 	do {
@@ -224,7 +225,7 @@ static int ldr_split_line(char **login, char **ciphertext,
 
 /* Check for NIS stuff */
 	if ((!strcmp(*login, "+") || !strncmp(*login, "+@", 2)) &&
-	    strlen(*ciphertext) < 13 && strncmp(*ciphertext, "$dummy$", 7))
+	    strlen(*ciphertext) < 10 && strncmp(*ciphertext, "$dummy$", 7))
 		return 0;
 
 	if (!**ciphertext && !line) {
@@ -236,9 +237,10 @@ static int ldr_split_line(char **login, char **ciphertext,
 		p += strlen(p) - 1;
 		while (p > *ciphertext && (*p == ' ' || *p == '\t')) p--;
 		p++;
-/* Some valid dummy hashes may be shorter than 13 characters, so don't subject
+/* Some valid dummy hashes may be shorter than 10 characters, so don't subject
  * them to the length checks. */
-		if (strncmp(*ciphertext, "$dummy$", 7)) {
+		if (strncmp(*ciphertext, "$dummy$", 7) &&
+		    p - *ciphertext != 10 /* not tripcode */) {
 /* Check for a special case: possibly a traditional crypt(3) hash with
  * whitespace in its invalid salt.  Only support such hashes at the very start
  * of a line (no leading whitespace other than the invalid salt). */
@@ -409,6 +411,21 @@ static struct list_main *ldr_init_words(char *login, char *gecos, char *home)
 	return words;
 }
 
+/*
+ * Use a smaller alignment for binary ciphertexts and salts that are smaller
+ * than ARCH_SIZE bytes.  This saves some memory when dealing with 32-bit
+ * values on a 64-bit system.
+ */
+static void *alloc_copy_autoalign(size_t size, void *src)
+{
+	size_t align = MEM_ALIGN_NONE;
+	if (size >= ARCH_SIZE)
+		align = MEM_ALIGN_WORD;
+	else if (size >= 4)
+		align = 4;
+	return mem_alloc_copy(size, align, src);
+}
+
 static void ldr_load_pw_line(struct db_main *db, char *line)
 {
 	static int skip_dupe_checking = 0;
@@ -504,11 +521,11 @@ static void ldr_load_pw_line(struct db_main *db, char *line)
 				mem_alloc_tiny(salt_size, MEM_ALIGN_WORD);
 			current_salt->next = last_salt;
 
-			current_salt->salt = mem_alloc_copy(
-				format->params.salt_size, MEM_ALIGN_WORD,
-				salt);
+			current_salt->salt = alloc_copy_autoalign(
+				format->params.salt_size, salt);
 
 			current_salt->index = fmt_dummy_hash;
+			current_salt->bitmap = NULL;
 			current_salt->list = NULL;
 			current_salt->hash = &current_salt->list;
 			current_salt->hash_size = -1;
@@ -533,8 +550,8 @@ static void ldr_load_pw_line(struct db_main *db, char *line)
 		db->password_hash[pw_hash] = current_pw;
 		current_pw->next_hash = last_pw;
 
-		current_pw->binary = mem_alloc_copy(
-			format->params.binary_size, MEM_ALIGN_WORD, binary);
+		current_pw->binary = alloc_copy_autoalign(
+			format->params.binary_size, binary);
 
 		current_pw->source = str_alloc_copy(piece);
 
@@ -593,8 +610,15 @@ static void ldr_load_pot_line(struct db_main *db, char *line)
 
 void ldr_load_pot_file(struct db_main *db, char *name)
 {
-	if (db->format)
+	if (db->format) {
+#ifdef HAVE_CRYPT
+		ldr_in_pot = 1;
+#endif
 		read_file(db, name, RF_ALLOW_MISSING, ldr_load_pot_line);
+#ifdef HAVE_CRYPT
+		ldr_in_pot = 0;
+#endif
+	}
 }
 
 /*
@@ -697,6 +721,7 @@ static void ldr_init_hash_for_salt(struct db_main *db, struct db_salt *salt)
 {
 	struct db_password *current;
 	int (*hash_func)(void *binary);
+	int bitmap_size, hash_size;
 	int hash;
 
 	if (salt->hash_size < 0) {
@@ -710,10 +735,21 @@ static void ldr_init_hash_for_salt(struct db_main *db, struct db_salt *salt)
 		return;
 	}
 
-	salt->hash = mem_alloc_tiny(password_hash_sizes[salt->hash_size] *
-	    sizeof(struct db_password *), MEM_ALIGN_WORD);
-	memset(salt->hash, 0, password_hash_sizes[salt->hash_size] *
-	    sizeof(struct db_password *));
+	bitmap_size = password_hash_sizes[salt->hash_size];
+	{
+		size_t size = (bitmap_size +
+		    sizeof(*salt->bitmap) * 8 - 1) /
+		    (sizeof(*salt->bitmap) * 8) * sizeof(*salt->bitmap);
+		salt->bitmap = mem_alloc_tiny(size, sizeof(*salt->bitmap));
+		memset(salt->bitmap, 0, size);
+	}
+
+	hash_size = bitmap_size >> PASSWORD_HASH_SHR;
+	if (hash_size > 1) {
+		size_t size = hash_size * sizeof(struct db_password *);
+		salt->hash = mem_alloc_tiny(size, MEM_ALIGN_WORD);
+		memset(salt->hash, 0, size);
+	}
 
 	salt->index = db->format->methods.get_hash[salt->hash_size];
 
@@ -723,8 +759,14 @@ static void ldr_init_hash_for_salt(struct db_main *db, struct db_salt *salt)
 	if ((current = salt->list))
 	do {
 		hash = hash_func(current->binary);
-		current->next_hash = salt->hash[hash];
-		salt->hash[hash] = current;
+		salt->bitmap[hash / (sizeof(*salt->bitmap) * 8)] |=
+		    1U << (hash % (sizeof(*salt->bitmap) * 8));
+		if (hash_size > 1) {
+			hash >>= PASSWORD_HASH_SHR;
+			current->next_hash = salt->hash[hash];
+			salt->hash[hash] = current;
+		} else
+			current->next_hash = current->next;
 		salt->count++;
 	} while ((current = current->next));
 }
@@ -746,13 +788,7 @@ static void ldr_init_hash(struct db_main *db)
  * hash table) vs. the complexity of DES_bs_cmp_all() for all computed hashes
  * at once (but calling it for each loaded hash individually).
  */
-		threshold = db->format->params.min_keys_per_crypt * 5;
-#if DES_BS_VECTOR
-		threshold /= ARCH_BITS_LOG * DES_BS_VECTOR;
-#else
-		threshold /= ARCH_BITS_LOG;
-#endif
-		threshold++;
+		threshold = 5 * ARCH_BITS / ARCH_BITS_LOG + 1;
 	}
 
 	if ((current = db->salts))
@@ -787,63 +823,6 @@ void ldr_fix_database(struct db_main *db)
 	ldr_init_hash(db);
 
 	db->loaded = 1;
-}
-
-/*
- * ldr_remove_salt() is called by ldr_remove_hash() when it happens to remove
- * the last password hash for a salt.
- */
-static void ldr_remove_salt(struct db_main *db, struct db_salt *salt)
-{
-	struct db_salt **current;
-
-	db->salt_count--;
-
-	current = &db->salts;
-	while (*current != salt)
-		current = &(*current)->next;
-	*current = salt->next;
-}
-
-void ldr_remove_hash(struct db_main *db, struct db_salt *salt,
-	struct db_password *pw)
-{
-	struct db_password **current;
-	int hash;
-
-	db->password_count--;
-
-	if (!--salt->count) {
-		salt->list = NULL; /* "single crack" mode might care */
-		ldr_remove_salt(db, salt);
-		return;
-	}
-
-/*
- * If there's no hash table for this salt, assume that next_hash fields are
- * unused and don't need to be updated.  Only bother with the list.
- */
-	if (salt->hash_size < 0) {
-		current = &salt->list;
-		while (*current != pw)
-			current = &(*current)->next;
-		*current = pw->next;
-		pw->binary = NULL;
-		return;
-	}
-
-	hash = db->format->methods.binary_hash[salt->hash_size](pw->binary);
-	current = &salt->hash[hash];
-	while (*current != pw)
-		current = &(*current)->next_hash;
-	*current = pw->next_hash;
-
-/*
- * If there's a hash table for this salt, assume that the list is only used by
- * "single crack" mode, so mark the entry for removal by "single crack" mode
- * code in case that's what we're running, instead of traversing the list here.
- */
-	pw->binary = NULL;
 }
 
 static int ldr_cracked_hash(char *ciphertext)
@@ -905,7 +884,13 @@ static void ldr_show_pot_line(struct db_main *db, char *line)
 
 void ldr_show_pot_file(struct db_main *db, char *name)
 {
+#ifdef HAVE_CRYPT
+	ldr_in_pot = 1;
+#endif
 	read_file(db, name, RF_ALLOW_MISSING, ldr_show_pot_line);
+#ifdef HAVE_CRYPT
+	ldr_in_pot = 0;
+#endif
 }
 
 static void ldr_show_pw_line(struct db_main *db, char *line)

@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-2002,2008,2010 by Solar Designer
+ * Copyright (c) 1996-2002,2008,2010,2011 by Solar Designer
  */
 
 /*
@@ -33,7 +33,7 @@
 #ifndef CPU_FALLBACK
 #define CPU_FALLBACK			0
 #endif
-#if CPU_FALLBACK
+#if CPU_FALLBACK && !defined(CPU_FALLBACK_BINARY)
 #define CPU_FALLBACK_BINARY		"john-non-mmx"
 #endif
 
@@ -45,7 +45,7 @@
 #define DES_EXTB			0
 #define DES_COPY			1
 #define DES_STD_ALGORITHM_NAME		"48/64 4K MMX"
-#if defined(__MMX__) && 0
+#if defined(__MMX__) && defined(_OPENMP)
 #define DES_BS_ASM			0
 #if 1
 #define DES_BS_VECTOR			2
@@ -63,11 +63,17 @@
 #define DES_BS				1
 #define DES_BS_EXPAND			1
 
+#ifdef _OPENMP
+#define MD5_ASM				0
+#else
 #define MD5_ASM				1
+#endif
 #define MD5_X2				0
 #define MD5_IMM				1
 
-#ifdef _OPENMP
+#if defined(_OPENMP) || \
+    (defined(__GNUC__) && \
+    (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 2)))
 #define BF_ASM				0
 #define BF_X2				1
 #else

@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-2011 by Solar Designer
+ * Copyright (c) 1996-2012 by Solar Designer
  */
 
 #include <stdio.h>
@@ -18,6 +18,7 @@
 #include "recovery.h"
 #include "options.h"
 #include "bench.h"
+#include "external.h"
 
 struct options_main options;
 
@@ -60,25 +61,19 @@ static struct opt_entry opt_list[] = {
 		OPT_FMT_ADD_LIST_MULTI, &options.loader.shells},
 	{"salts", FLG_SALTS, FLG_SALTS, FLG_PASSWD, OPT_REQ_PARAM,
 		"%d", &options.loader.min_pps},
+	{"save-memory", FLG_SAVEMEM, FLG_SAVEMEM, 0, OPT_REQ_PARAM,
+		"%u", &mem_saving_level},
 	{"format", FLG_FORMAT, FLG_FORMAT,
 		0, FLG_STDOUT | OPT_REQ_PARAM,
 		OPT_FMT_STR_ALLOC, &options.format},
-	{"save-memory", FLG_SAVEMEM, FLG_SAVEMEM, 0, OPT_REQ_PARAM,
-		"%u", &mem_saving_level},
 	{NULL}
 };
 
 #define JOHN_COPYRIGHT "Solar Designer"
 
-#ifdef HAVE_CRYPT
-#define MAYBE_CRYPT "/crypt"
-#else
-#define MAYBE_CRYPT ""
-#endif
-
 #define JOHN_USAGE \
 "John the Ripper password cracker, version " JOHN_VERSION "\n" \
-"Copyright (c) 1996-2011 by " JOHN_COPYRIGHT "\n" \
+"Copyright (c) 1996-2012 by " JOHN_COPYRIGHT "\n" \
 "Homepage: http://www.openwall.com/john/\n" \
 "\n" \
 "Usage: %s [OPTIONS] [PASSWORD-FILES]\n" \
@@ -99,16 +94,39 @@ static struct opt_entry opt_list[] = {
 "--shells=[-]SHELL[,..]     load users with[out] this (these) shell(s) only\n" \
 "--salts=[-]COUNT           load salts with[out] at least COUNT passwords " \
 	"only\n" \
-"--format=NAME              force hash type NAME: " \
-	"DES/BSDI/MD5/BF/AFS/LM" MAYBE_CRYPT "\n" \
-"--save-memory=LEVEL        enable memory saving, at LEVEL 1..3\n"
+"--save-memory=LEVEL        enable memory saving, at LEVEL 1..3\n" \
+"--format=NAME              force hash type NAME: "
+
+#define JOHN_USAGE_INDENT \
+"                           "
+
+static void print_usage(char *name)
+{
+	int column;
+	struct fmt_main *format;
+
+	printf(JOHN_USAGE, name);
+
+	column = strrchr(JOHN_USAGE, '\0') - strrchr(JOHN_USAGE, '\n') - 1;
+	format = fmt_list;
+	do {
+		char *label = format->params.label;
+		int length = strlen(label) + (format->next != NULL);
+		column += length;
+		if (column > 80) {
+			printf("\n" JOHN_USAGE_INDENT);
+			column = strlen(JOHN_USAGE_INDENT) + length;
+		}
+		printf("%s%c", label, format->next ? '/' : '\n');
+	} while ((format = format->next));
+
+	exit(0);
+}
 
 void opt_init(char *name, int argc, char **argv)
 {
-	if (argc < 2) {
-		printf(JOHN_USAGE, name);
-		exit(0);
-	}
+	if (argc < 2)
+		print_usage(name);
 
 	memset(&options, 0, sizeof(options));
 
@@ -123,10 +141,16 @@ void opt_init(char *name, int argc, char **argv)
 
 	opt_process(opt_list, &options.flags, argv);
 
-	if ((options.flags &
-	    (FLG_EXTERNAL_CHK | FLG_CRACKING_CHK | FLG_MAKECHR_CHK)) ==
-	    FLG_EXTERNAL_CHK)
-		options.flags |= FLG_CRACKING_SET;
+	ext_flags = 0;
+	if (options.flags & FLG_EXTERNAL_CHK) {
+		if (options.flags & (FLG_CRACKING_CHK | FLG_MAKECHR_CHK)) {
+			ext_flags = EXT_REQ_FILTER | EXT_USES_FILTER;
+		} else {
+			options.flags |= FLG_CRACKING_SET;
+			ext_flags = EXT_REQ_GENERATE |
+			    EXT_USES_GENERATE | EXT_USES_FILTER;
+		}
+	}
 
 	if (!(options.flags & FLG_ACTION))
 		options.flags |= FLG_BATCH_SET;

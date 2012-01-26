@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-98,2010,2011 by Solar Designer
+ * Copyright (c) 1996-98,2010-2012 by Solar Designer
  */
 
 /*
@@ -43,18 +43,18 @@ struct db_password {
  * Buffered keys hash table entry.
  */
 struct db_keys_hash_entry {
-/* Index of next key with the same hash */
+/* Index of next key with the same hash, or -1 if none */
 	short next;
 
 /* Byte offset of this key in the buffer */
-	short offset;
+	unsigned short offset;
 };
 
 /*
  * Buffered keys hash.
  */
 struct db_keys_hash {
-/* The hash table, maps to indices for the list below */
+/* The hash table, maps to indices for the list below; -1 means empty bucket */
 	short hash[SINGLE_HASH_SIZE];
 
 /* List of keys with the same hash, allocated as min_keys_per_crypt entries */
@@ -99,9 +99,14 @@ struct db_salt {
 /* Salt in internal representation */
 	void *salt;
 
-/* Pointer to a hash function to get the index of password list to be
- * compared against the crypt_all() method output with given index. The
- * function always returns zero if there's no hash table for this salt. */
+/* Bitmap indicating whether a computed hash is potentially present in the list
+ * and hash table below.  Normally, the bitmap is large enough that most of its
+ * bits are zero. */
+	unsigned int *bitmap;
+
+/* Pointer to a hash function to get the bit index into the bitmap above for
+ * the crypt_all() method output with given index.  The function always returns
+ * zero if there's no bitmap for this salt. */
 	int (*index)(int index);
 
 /* List of passwords with this salt */
@@ -194,6 +199,11 @@ struct db_main {
 	struct fmt_main *format;
 };
 
+#ifdef HAVE_CRYPT
+/* Non-zero while the loader is processing the pot file */
+extern int ldr_in_pot;
+#endif
+
 /*
  * Initializes the database before loading.
  */
@@ -213,12 +223,6 @@ extern void ldr_load_pot_file(struct db_main *db, char *name);
  * Fixes the database after loading.
  */
 extern void ldr_fix_database(struct db_main *db);
-
-/*
- * Updates the database after a password has been cracked.
- */
-extern void ldr_remove_hash(struct db_main *db, struct db_salt *salt,
-	struct db_password *pw);
 
 /*
  * Loads cracked passwords into the database.

@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-2001,2005,2010 by Solar Designer
+ * Copyright (c) 1996-2001,2005,2010-2012 by Solar Designer
  */
 
 #include <string.h>
@@ -38,15 +38,23 @@ static struct fmt_tests tests[] = {
 
 #define ALGORITHM_NAME			DES_BS_ALGORITHM_NAME
 
-#define BINARY_SIZE			ARCH_SIZE
+#define BINARY_SIZE			sizeof(ARCH_WORD_32)
 #define SALT_SIZE			0
 
 #define MIN_KEYS_PER_CRYPT		DES_BS_DEPTH
 #define MAX_KEYS_PER_CRYPT		DES_BS_DEPTH
 
+#if DES_bs_mt
+struct fmt_main fmt_LM;
+#endif
+
 static void init(void)
 {
-	DES_bs_init(1);
+	DES_bs_init(1, DES_bs_cpt);
+#if DES_bs_mt
+	fmt_LM.params.min_keys_per_crypt = DES_bs_min_kpc;
+	fmt_LM.params.max_keys_per_crypt = DES_bs_max_kpc;
+#endif
 }
 
 static int valid(char *ciphertext)
@@ -105,62 +113,42 @@ static void *get_binary(char *ciphertext)
 
 static int binary_hash_0(void *binary)
 {
-	return *(ARCH_WORD *)binary & 0xF;
+	return *(ARCH_WORD_32 *)binary & 0xF;
 }
 
 static int binary_hash_1(void *binary)
 {
-	return *(ARCH_WORD *)binary & 0xFF;
+	return *(ARCH_WORD_32 *)binary & 0xFF;
 }
 
 static int binary_hash_2(void *binary)
 {
-	return *(ARCH_WORD *)binary & 0xFFF;
+	return *(ARCH_WORD_32 *)binary & 0xFFF;
 }
 
 static int binary_hash_3(void *binary)
 {
-	return *(ARCH_WORD *)binary & 0xFFFF;
+	return *(ARCH_WORD_32 *)binary & 0xFFFF;
 }
 
 static int binary_hash_4(void *binary)
 {
-	return *(ARCH_WORD *)binary & 0xFFFFF;
+	return *(ARCH_WORD_32 *)binary & 0xFFFFF;
 }
 
-static int get_hash_0(int index)
+static int binary_hash_5(void *binary)
 {
-	return DES_bs_get_hash(index, 4);
+	return *(ARCH_WORD_32 *)binary & 0xFFFFFF;
 }
 
-static int get_hash_1(int index)
+static int binary_hash_6(void *binary)
 {
-	return DES_bs_get_hash(index, 8);
-}
-
-static int get_hash_2(int index)
-{
-	return DES_bs_get_hash(index, 12);
-}
-
-static int get_hash_3(int index)
-{
-	return DES_bs_get_hash(index, 16);
-}
-
-static int get_hash_4(int index)
-{
-	return DES_bs_get_hash(index, 20);
-}
-
-static int cmp_all(void *binary, int count)
-{
-	return DES_bs_cmp_all((ARCH_WORD *)binary);
+	return *(ARCH_WORD_32 *)binary & 0x7FFFFFF;
 }
 
 static int cmp_one(void *binary, int index)
 {
-	return DES_bs_cmp_one((ARCH_WORD *)binary, 32, index);
+	return DES_bs_cmp_one((ARCH_WORD_32 *)binary, 32, index);
 }
 
 static int cmp_exact(char *source, int index)
@@ -170,11 +158,21 @@ static int cmp_exact(char *source, int index)
 
 static char *get_key(int index)
 {
-#if !DES_BS_VECTOR && ARCH_BITS >= 64
-	return (char *)DES_bs_all.E.extras.keys[index];
-#else
-	return (char *)DES_bs_all.keys[index];
-#endif
+	static char out[8];
+	unsigned char *src;
+	char *dst;
+
+	init_t();
+
+	src = DES_bs_all.pxkeys[index];
+	dst = out;
+	while (dst < &out[7] && (*dst = *src)) {
+		src += sizeof(DES_bs_vector) * 8;
+		dst++;
+	}
+	*dst = 0;
+
+	return out;
 }
 
 struct fmt_main fmt_LM = {
@@ -189,6 +187,9 @@ struct fmt_main fmt_LM = {
 		SALT_SIZE,
 		MIN_KEYS_PER_CRYPT,
 		MAX_KEYS_PER_CRYPT,
+#if DES_bs_mt
+		FMT_OMP |
+#endif
 		FMT_8_BIT | FMT_BS | FMT_SPLIT_UNIFIES_CASE,
 		tests
 	}, {
@@ -202,22 +203,26 @@ struct fmt_main fmt_LM = {
 			binary_hash_1,
 			binary_hash_2,
 			binary_hash_3,
-			binary_hash_4
+			binary_hash_4,
+			binary_hash_5,
+			binary_hash_6
 		},
 		fmt_default_salt_hash,
 		fmt_default_set_salt,
 		DES_bs_set_key_LM,
 		get_key,
-		DES_bs_clear_keys_LM,
-		(void (*)(int))DES_bs_crypt_LM,
+		fmt_default_clear_keys,
+		DES_bs_crypt_LM,
 		{
-			get_hash_0,
-			get_hash_1,
-			get_hash_2,
-			get_hash_3,
-			get_hash_4
+			DES_bs_get_hash_0,
+			DES_bs_get_hash_1,
+			DES_bs_get_hash_2,
+			DES_bs_get_hash_3,
+			DES_bs_get_hash_4,
+			DES_bs_get_hash_5,
+			DES_bs_get_hash_6
 		},
-		cmp_all,
+		(int (*)(void *, int))DES_bs_cmp_all,
 		cmp_one,
 		cmp_exact
 	}
