@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.123.2.2 2012/01/25 23:57:17 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.123.2.3 2012/02/09 15:13:39 solar Exp $
 
 %define BUILD_AVX 0
 %define BUILD_XOP 0
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.9.3
+Version: 1.7.9.4
 %define charsets_version 20051216
 Release: owl1.3.0.1
 License: GPL
@@ -199,8 +199,12 @@ install -m 644 -p run/{mailer,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Wed Jan 25 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.3-owl1.3.0.1
+* Thu Feb 09 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.4-owl1.3.0.1
 - Revision for Owl 3.0-stable, with current-specific BUILD_* options disabled.
+
+* Thu Feb 09 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.4-owl1
+- Fixed a bug in the Keyboard external mode (uninitialized variables on
+"--restore" or when minlength is greater than 1).
 
 * Sun Jan 15 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.3-owl1
 - Implemented bitmaps for fast initial comparison of computed hashes against
