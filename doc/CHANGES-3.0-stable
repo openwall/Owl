@@ -42,6 +42,15 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl 3.0-stable.
 
+(2011/08/23 - 2012/02/09)
+2012/02/09	Package: john
+John the Ripper has been enhanced in numerous ways, bringing it up to
+version 1.7.9.4.  Some of the enhancements require a newer version of
+GCC than what we have in Owl 3.0-stable, hence they have been disabled
+for the Owl 3.0-stable build (but are enabled in Owl-current).
+Reference:
+http://www.openwall.com/lists/john-users/2011/11/23/2
+
 (2012/01/25)
 2012/01/25	Package: kernel
 SECURITY FIX	Severity: low to high, local, active
@@ -120,15 +129,6 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2723
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2942
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3209
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3188
-
-(2011/08/23 - 2012/01/15)
-2012/01/25	Package: john
-John the Ripper has been enhanced in numerous ways, bringing it up to
-version 1.7.9.3.  Some of the enhancements require a newer version of
-GCC than what we have in Owl 3.0-stable, hence they have been disabled
-for the Owl 3.0-stable build (but are enabled in Owl-current).
-Reference:
-http://www.openwall.com/lists/john-users/2011/11/23/2
 
 (2011/12/27)
 2012/01/25	Package: hardlink
@@ -519,4 +519,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.23 2012/02/06 10:23:53 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.24 2012/02/09 15:15:14 solar Exp $
