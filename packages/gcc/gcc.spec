@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.68 2011/11/04 02:52:13 solar Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.69 2012/02/12 17:40:30 segoon Exp $
 
 # The only supported frontend for now is GXX.
 # Testsuite is not supported because of its requirement for additional
@@ -11,7 +11,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: 4.6.2
-Release: owl2
+Release: owl3
 Epoch: 1
 License: GPLv3+
 Group: Development/Languages
@@ -24,6 +24,8 @@ Source2: gcc-g++-%version.tar.xz
 # ftp://ftp.gnu.org/gnu/gcc/gcc-%version/gcc-g++-%version.tar.bz2
 # Signature: ftp://ftp.gnu.org/gnu/gcc/gcc-%version/gcc-g++-%version.tar.bz2.sig
 %endif
+Patch0: gcc-4.6.2-ubuntu-owl-defaults-relro.diff
+Patch1: gcc-4.6.2-ubuntu-owl-defaults-now.diff
 
 PreReq: /sbin/install-info
 Requires: binutils
@@ -162,6 +164,8 @@ and -lmudflapth.
 %setup -q -T -D -b 2
 %endif
 %{?_with_test:%setup -q -T -D -b 6}
+%patch0 -p2
+%patch1 -p1
 
 # Use %%optflags_lib for this entire package until we figure out how to
 # properly have just gcc's libraries built with a separate set of flags.
@@ -445,6 +449,12 @@ fi
 %_libdir/libmudflapth.a
 
 %changelog
+* Sun Feb 12 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:4.6.2-owl3
+- Enabled -Wl,-z,relro and -Wl,-z,now by default.  In most cases the
+performance impact is negligible.  To disable them in cases where it is not
+pass -Wl,-z,norelro and -Wl,-z,lazy to gcc, respectively.  Note: ld still used
+-z norelro and -z lazy by default; only gcc's defaults are changed.
+
 * Fri Nov 04 2011 Solar Designer <solar-at-owl.openwall.com> 1:4.6.2-owl2
 - Use %%optflags_lib for this entire package until we figure out how to
 properly have just gcc's libraries built with a separate set of flags.
