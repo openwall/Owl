@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.54 2010/12/04 03:28:57 solar Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.55 2012/02/12 17:44:45 segoon Exp $
 
 Summary: Postfix mail system.
 Name: postfix
 Version: 2.4.15
-Release: owl1
+Release: owl2
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
@@ -39,6 +39,7 @@ Patch16: postfix-2.4.6-alt-owl-doc.diff
 Patch17: postfix-2.4.8-owl-safe_open.diff
 Patch18: postfix-2.4.8-owl-postalias-no-hostname.diff
 Patch19: postfix-2.4.15-owl-version.diff
+Patch20: postfix-2.4.15-owl-linux-3.diff
 PreReq: /sbin/chkconfig, grep, shadow-utils
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: owl-startup
@@ -99,6 +100,7 @@ compatible enough to not upset your users.
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
+%patch20 -p1
 
 install -pm644 %_sourcedir/README.Owl README_FILES/
 
@@ -370,6 +372,9 @@ fi
 %attr(666,root,root) %ghost %queue_directory/dev/log
 
 %changelog
+* Sun Feb 12 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:2.4.15-owl2
+- Fixed build failure on Linux 3.x.
+
 * Sat Dec 04 2010 Solar Designer <solar-at-owl.openwall.com> 1:2.4.15-owl1
 - Updated to 2.4.15.
 

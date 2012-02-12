@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.55 2010/01/26 17:18:56 solar Exp $
+# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.56 2012/02/12 18:47:35 segoon Exp $
 
 # We do not officially support the DHCP client because it is rather
 # complicated, yet it runs entirely as root, which we find an
@@ -10,7 +10,7 @@
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0.7
-Release: owl1
+Release: owl2
 License: ISC License
 Group: System Environment/Daemons
 URL: https://www.isc.org/software/dhcp
@@ -34,6 +34,7 @@ Patch12: dhcp-3.0.7-owl-alt-drop-root.diff
 Patch13: dhcp-3.0.7-alt-format.diff
 Patch14: dhcp-3.0.7-up-dhclient-bound.diff
 Patch15: dhcp-3.0.7-deb-CVE-2009-1892.diff
+Patch16: dhcp-3.0.7-owl-linux-3.diff
 PreReq: grep, shadow-utils
 BuildRequires: groff, libcap-devel
 BuildRoot: /override/%name-%version
@@ -108,6 +109,7 @@ subnet.  The DHCP relay takes care of this for the client.
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 
 find server -type f -not -name Makefile\* -print0 |
 	xargs -r0 grep -FZl DBDIR -- |
@@ -235,6 +237,9 @@ fi
 %_mandir/man8/dhcrelay.8*
 
 %changelog
+* Sun Feb 12 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0.7-owl2
+- Fixed build failure on Linux 3.x.
+
 * Wed Jul 15 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0.7-owl1
 - Updated to 3.0.7.
 - Fixed potential DHCP server crash in certain configurations

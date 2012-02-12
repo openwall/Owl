@@ -1,0 +1,13 @@
+diff -uNp -r postfix-2.4.15.old/makedefs postfix-2.4.15/makedefs
+--- postfix-2.4.15.old/makedefs	2010-03-23 00:05:45 +0000
++++ postfix-2.4.15/makedefs	2012-02-02 12:40:10 +0000
+@@ -240,7 +240,8 @@ case "$SYSTEM.$RELEASE" in
+     Linux.1*)	SYSTYPE=LINUX1
+ 		SYSLIBS="-ldb"
+ 		;;
+-    Linux.2*)	SYSTYPE=LINUX2
++    Linux.[23]*)
++		SYSTYPE=LINUX2
+ 		# Postfix no longer needs DB 1.85 compatibility
+ 		if [ -f /usr/include/db.h ]
+ 		then

@@ -1,0 +1,11 @@
+diff -uNp -r dhcp-3.0.7.old/configure dhcp-3.0.7/configure
+--- dhcp-3.0.7.old/configure	2004-09-10 21:02:30 +0000
++++ dhcp-3.0.7/configure	2012-02-02 12:30:34 +0000
+@@ -104,6 +104,7 @@ if [ "$sysname" = "" ]; then
+ 	     2) sysname=linux-2.2 ;;
+ 	     *) sysname=linux-2.2 ;;
+ 	   esac;;
++	3) sysname=linux-2.2 ;;
+       esac;;
+     SunOS)
+       release=`uname -r`
