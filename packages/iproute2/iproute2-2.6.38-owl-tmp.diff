@@ -1,0 +1,123 @@
+diff -uNp -r iproute2-2.6.38.old/configure iproute2-2.6.38/configure
+--- iproute2-2.6.38.old/configure	2011-03-17 17:05:47 +0000
++++ iproute2-2.6.38/configure	2012-02-15 11:34:44 +0000
+@@ -5,9 +5,14 @@ INCLUDE=${1:-"$PWD/include"}
+ 
+ TABLES=
+ 
++TMPDIR="`mktemp -dt iproute.XXXXXXXXXX`" || exit
++trap 'rm -rf -- "$TMPDIR"' EXIT
++trap 'trap - EXIT; rm -rf -- "$TMPDIR"; exit 1' HUP INT QUIT TERM
++
++
+ check_atm()
+ {
+-cat >/tmp/atmtest.c <<EOF
++cat >$TMPDIR/atmtest.c <<EOF
+ #include <atm.h>
+ int main(int argc, char **argv) {
+ 	struct atm_qos qos;
+@@ -15,7 +20,7 @@ int main(int argc, char **argv) {
+ 	return 0;
+ }
+ EOF
+-gcc -I$INCLUDE -o /tmp/atmtest /tmp/atmtest.c -latm >/dev/null 2>&1 
++gcc -I$INCLUDE -o $TMPDIR/atmtest $TMPDIR/atmtest.c -latm >/dev/null 2>&1 
+ if [ $? -eq 0 ]
+ then
+     echo "TC_CONFIG_ATM:=y" >>Config
+@@ -23,13 +28,13 @@ then
+ else
+     echo no
+ fi
+-rm -f /tmp/atmtest.c /tmp/atmtest
++rm -f $TMPDIR/atmtest.c $TMPDIR/atmtest
+ }
+ 
+ check_xt()
+ {
+ #check if we have xtables from iptables >= 1.4.5.
+-cat >/tmp/ipttest.c <<EOF
++cat >$TMPDIR/ipttest.c <<EOF
+ #include <xtables.h>
+ #include <linux/netfilter.h>
+ static struct xtables_globals test_globals = {
+@@ -49,12 +54,12 @@ int main(int argc, char **argv)
+ 
+ EOF
+ 
+-if gcc -I$INCLUDE $IPTC -o /tmp/ipttest /tmp/ipttest.c $IPTL -ldl -lxtables >/dev/null 2>&1
++if gcc -I$INCLUDE $IPTC -o $TMPDIR/ipttest $TMPDIR/ipttest.c $IPTL -ldl -lxtables >/dev/null 2>&1
+ then
+ 	echo "TC_CONFIG_XT:=y" >>Config
+ 	echo "using xtables"
+ fi
+-rm -f /tmp/ipttest.c /tmp/ipttest
++rm -f $TMPDIR/ipttest.c $TMPDIR/ipttest
+ }
+ 
+ check_xt_old()
+@@ -66,7 +71,7 @@ then
+ fi
+ 
+ #check if we need dont our internal header ..
+-cat >/tmp/ipttest.c <<EOF
++cat >$TMPDIR/ipttest.c <<EOF
+ #include <xtables.h>
+ char *lib_dir;
+ unsigned int global_option_offset = 0;
+@@ -86,14 +91,14 @@ int main(int argc, char **argv) {
+ }
+ 
+ EOF
+-gcc -I$INCLUDE $IPTC -o /tmp/ipttest /tmp/ipttest.c $IPTL -ldl >/dev/null 2>&1
++gcc -I$INCLUDE $IPTC -o $TMPDIR/ipttest $TMPDIR/ipttest.c $IPTL -ldl >/dev/null 2>&1
+ 
+ if [ $? -eq 0 ]
+ then
+ 	echo "TC_CONFIG_XT_OLD:=y" >>Config
+ 	echo "using old xtables (no need for xt-internal.h)"
+ fi
+-rm -f /tmp/ipttest.c /tmp/ipttest
++rm -f $TMPDIR/ipttest.c $TMPDIR/ipttest
+ }
+ 
+ check_xt_old_internal_h()
+@@ -105,7 +110,7 @@ then
+ fi
+ 
+ #check if we need our own internal.h
+-cat >/tmp/ipttest.c <<EOF
++cat >$TMPDIR/ipttest.c <<EOF
+ #include <xtables.h>
+ #include "xt-internal.h"
+ char *lib_dir;
+@@ -126,14 +131,14 @@ int main(int argc, char **argv) {
+ }
+ 
+ EOF
+-gcc -I$INCLUDE $IPTC -o /tmp/ipttest /tmp/ipttest.c $IPTL -ldl >/dev/null 2>&1
++gcc -I$INCLUDE $IPTC -o $TMPDIR/ipttest $TMPDIR/ipttest.c $IPTL -ldl >/dev/null 2>&1
+ 
+ if [ $? -eq 0 ]
+ then
+ 	echo "using old xtables with xt-internal.h"
+ 	echo "TC_CONFIG_XT_OLD_H:=y" >>Config
+ fi
+-rm -f /tmp/ipttest.c /tmp/ipttest
++rm -f $TMPDIR/ipttest.c $TMPDIR/ipttest
+ }
+ 
+ check_ipt()
+diff -uNp -r iproute2-2.6.38.old/examples/dhcp-client-script iproute2-2.6.38/examples/dhcp-client-script
+--- iproute2-2.6.38.old/examples/dhcp-client-script	2011-03-17 17:05:47 +0000
++++ iproute2-2.6.38/examples/dhcp-client-script	2012-02-15 11:36:18 +0000
+@@ -14,7 +14,7 @@
+ # we should install and preserve.
+ #
+ 
+-exec >> /tmp/DHS.log 2>&1
++exec >> /var/log/DHS.log 2>&1
+ 
+ echo dhc-script $* reason=$reason
+ set | grep "^\(old_\|new_\|check_\)"
