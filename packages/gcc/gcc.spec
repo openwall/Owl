@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.70 2012/02/18 17:50:47 solar Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.71 2012/02/18 18:57:03 solar Exp $
 
 # The only supported frontend for now is GXX.
 # Testsuite is not supported because of its requirement for additional
@@ -410,7 +410,7 @@ fi
 
 %files -n libgcc%gcc_branch-plugin-devel
 %defattr(-,root,root)
-%_libdir/gcc/%_target_platform/%version/plugin/include
+%_libdir/gcc/%_target_platform/%version/plugin
 %_infodir/libquadmath.info*
 %_libdir/libquadmath.a
 %_libdir/libssp.a
@@ -429,7 +429,7 @@ fi
 %defattr(-,root,root)
 %dir %_libdir/gcc/%_target_platform/%version
 %dir %_libdir/gcc/%_target_platform/%version/include
-%_libdir/gcc/%_target_platform/%version/plugin/include
+%_libdir/gcc/%_target_platform/%version/plugin
 %_libdir/gcc/%_target_platform/%version/include/omp.h
 %dir %_libdir/gcc/%_target_platform/%version
 %_infodir/libgomp*.info*
@@ -450,6 +450,9 @@ fi
 * Sat Feb 18 2012 Solar Designer <solar-at-owl.openwall.com> 1:4.6.2-owl4
 - Revised the texinfo documentation patch on our use of -Wl,-z,relro and
 -Wl,-z,now, and on how to disable these.
+- List the plugin directory instead of just plugin/include in file lists;
+otherwise the plugin directory is not owned by any package and is thus not
+removed on gcc version upgrade (e.g., it was not on 4.6.1 to 4.6.2 upgrade).
 
 * Sun Feb 12 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:4.6.2-owl3
 - Enabled -Wl,-z,relro and -Wl,-z,now by default.  In most cases the
