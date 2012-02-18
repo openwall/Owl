@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.127 2011/10/20 12:59:11 segoon Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.128 2012/02/18 19:48:24 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
-%define BUILD_LOCALES_UTF8 0
+%define BUILD_LOCALES_UTF8 1
 
 %define basevers 2.3.6
 #%%define snapshot 20050427
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 1.2
-Release: owl17
+Release: owl18
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
@@ -483,8 +483,11 @@ fi
 %endif
 
 %changelog
+* Sat Feb 18 2012 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl18
+- Set BUILD_LOCALES_UTF8 to 1.
+
 * Thu Oct 20 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.3.6-owl17
-- Fixed build failure and SEGFAULT in __sincos() with gcc >= 4.3.
+- Fixed build failure and segfault in __sincos() with gcc >= 4.3.
 
 * Sun Oct 09 2011 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl16
 - Excluded the zoneinfo files (now part of tzdata package).
