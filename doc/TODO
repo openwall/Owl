@@ -3,12 +3,12 @@ This is the public Owl to-do list.
 
 	Owl 4.0 roadmap (lists only tasks that are not completed yet).
 
-Support a package repository, possibly with Zypper, yum, or apt (package
-one of these - and its prerequisites).
+Support a package repository, possibly with Zypper, yum, or APT-RPM
+(package one of these - and its prerequisites).
 
-Toolchain and libraries updates (gcc, glibc, OpenSSL, etc.)  Drop
-pre-3.0 compatibility stuff (most notably the old libstdc++ binaries),
-likely introduce new compatibility stuff to support upgrades from 3.0.
+Toolchain and libraries updates:
+gcc, OpenSSL - done (but will need minor updates before release);
+glibc - in progress.
 
 After or along with the toolchain and library updates, make other
 package updates that we didn't dare to make shortly before 3.0 (OpenSSH,
@@ -17,17 +17,18 @@ new tools/libraries, just update it along with those tool/library
 updates.  Otherwise, update it after the tool/library updates.)
 
 Packages to consider and likely add (second batch, after toolchain and
-libraries update): tcpdump (or tshark?), up to two newbie-friendly text
-and hex editor(s) (consider: nano, le, dhex, beye), wget (or put it in
-the repository only).
+libraries update): tcpdump (or tshark?), net2pcap, up to two
+newbie-friendly text and hex editor(s) (consider: nano, le, dhex, beye),
+wget (or put it in the repository only).
+
+DHCP client with privsep.
 
 PPP/PPPoE/PPTP support (add userland packages).
 
-Full LAMP stack in base system (add Apache, PHP, MySQL).
+Full LAMP stack in base system (add Apache, PHP, MySQL or its fork).
 
-With the LAMP stack added, we will have to start requiring DVD media
-(will exceed 700 MB CD-R), exclude source code from (some of) our ISOs,
-or start using a compressed filesystem.
+Consider using a compressed filesystem to avoid requiring DVD media
+or excluding source code.
 
 UTF-8 support.  In Owl 3.0, we have building of UTF-8 locales disabled
 in glibc.spec by default, and we have UTF-8 support disabled when
@@ -40,7 +41,7 @@ Move to OpenVZ's RHEL6 branch kernels.
 IPv6 support (networking startup scripts, installer, default kernel
 config).  Need to get the networking scripts replaced first (Simon?)
 
-Replace LILO with Syslinux (ISOLINUX, EXTLINUX).
+Replace LILO with Syslinux (ISOLINUX, EXTLINUX) - done for ISOs.
 
 Add a GPT-aware disk partitioning tool (parted?), make it available
 from the installer.
@@ -60,4 +61,4 @@ User's Guide - review and edit the draft, make it public, then identify
 and add important missing chapters (adding/removing users, managing
 OpenVZ containers, maybe something else).
 
-$Owl: Owl/doc/TODO,v 1.207 2011/02/06 14:34:29 solar Exp $
+$Owl: Owl/doc/TODO,v 1.208 2012/02/18 19:43:18 solar Exp $
