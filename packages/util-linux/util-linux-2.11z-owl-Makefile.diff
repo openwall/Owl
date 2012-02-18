@@ -64,3 +64,32 @@
  endif
  endif
  
+--- util-linux-2.11z.orig/sys-utils/Makefile	2001-11-09 17:13:50 +0000
++++ util-linux-2.11z/sys-utils/Makefile	2012-02-18 16:28:20 +0000
+@@ -37,10 +37,11 @@
+ endif
+ endif
+ 
++MAN8:=$(MAN8) rdev.8
+ ifeq "$(ARCH)" "intel"
+-MAN8:=$(MAN8) rdev.8 ramsize.8 rootflags.8 vidmode.8
+-USRSBIN:=$(USRSBIN) rdev
++MAN8:=$(MAN8) ramsize.8 rootflags.8 vidmode.8
+ endif
++USRSBIN:=$(USRSBIN) rdev
+ 
+ # Where to put datebase files?
+ 
+@@ -87,9 +88,9 @@
+ 	$(INSTALLBIN) $(USRBIN) $(USRBINDIR)
+ 	$(INSTALLBIN) $(USRSBIN) $(USRSBINDIR)
+ ifeq "$(ARCH)" "intel"
+-	(cd $(USRSBINDIR); ln -sf rdev ramsize)
+-	(cd $(USRSBINDIR); ln -sf rdev vidmode)
+-	(cd $(USRSBINDIR); ln -sf rdev rootflags)
++	ln -sf rdev $(USRSBINDIR)/ramsize
++	ln -sf rdev $(USRSBINDIR)/vidmode
++	ln -sf rdev $(USRSBINDIR)/rootflags
+ endif
+ 	$(INSTALLDIR) $(MAN1DIR) $(MAN8DIR) $(INFODIR)
+ 	$(INSTALLMAN) $(MAN1) $(MAN1DIR)

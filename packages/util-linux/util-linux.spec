@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.51 2011/09/13 16:26:43 segoon Exp $
+# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.52 2012/02/18 16:32:06 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -7,7 +7,7 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.11z
-Release: owl15
+Release: owl16
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%version.tar.bz2
@@ -263,12 +263,12 @@ fi
 %_mandir/man8/renice.8*
 %_mandir/man8/setsid.8*
 
-%ifarch %ix86
 %_sbindir/rdev
+%_mandir/man8/rdev.8*
+%ifarch %ix86
 %_sbindir/ramsize
 %_sbindir/rootflags
 %_sbindir/vidmode
-%_mandir/man8/rdev.8*
 %_mandir/man8/ramsize.8*
 %_mandir/man8/rootflags.8*
 %_mandir/man8/vidmode.8*
@@ -348,6 +348,10 @@ fi
 %endif
 
 %changelog
+* Sat Feb 18 2012 Solar Designer <solar-at-owl.openwall.com> 2.11z-owl16
+- Build and package %_sbindir/rdev also on x86_64 and non-x86 since part of its
+functionality is not arch-specific and it is required by hdparm's wiper.sh.
+
 * Tue Sep 13 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.11z-owl15
 - Disable fsck.minix and mkfs.minix compilation.  They are not used
 nowadays and fail to build with gcc 4.6.1.
@@ -383,7 +387,7 @@ where the definition of _syscall5() is needed for _llseek().
 * Tue Oct 18 2005 Alexandr D. Kanevskiy <kad-at-owl.openwall.com> 2.11z-owl6
 - Also package /sbin/fsck.minix, /sbin/mkfs.minix, and /usr/bin/cytune for
 sparc and sparcv9 architectures.
-   
+
 * Tue Sep 13 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.11z-owl5
 - Backported upstream fix to umount, to avoid unintentional grant of
 privileges by "umount -r".
