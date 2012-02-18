@@ -51,6 +51,20 @@ Enabled building of UTF-8 locales by default (adds 6.5 MB to glibc .rpm
 package size and 36 MB to installed system size on a filesystem with
 4 KB blocks, unfortunately).
 
+2012/02/12 -
+2012/02/18	Package: gcc; Owl/build/.rpmmacros
+Enabled -Wl,-z,relro and -Wl,-z,now by default as a security hardening
+measure, rebuilt all packages.  In most cases the performance impact is
+non-existent or negligible.  To disable these options (for whatever
+reason), pass -Wl,-z,norelro and -Wl,-z,lazy to gcc, respectively.
+Note: ld(1) still uses -z norelro and -z lazy by default; only gcc's
+defaults are changed.  (We already had -Wl,-z,relro in
+Owl/build/.rpmmacros since 2011/11/04; now that change is reverted in
+favor of gcc's change of default, and we've also added -Wl,-z,now.)
+References:
+http://isisblogs.poly.edu/2011/06/01/relro-relocation-read-only/
+http://tk-blog.blogspot.com/2009/02/relro-not-so-well-known-memory.html
+
 2012/01/25	Package: kernel
 SECURITY FIX	Severity: low to high, local, active
 Updated to 2.6.18-274.17.1.el5.028stab097.1.  Of the security issues
@@ -588,4 +602,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.78 2012/02/18 20:14:38 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.79 2012/02/18 20:27:17 solar Exp $
