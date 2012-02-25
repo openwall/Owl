@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.18-274.18.1.el5.028stab098.1.owl1
-# Sat Feb 25 08:23:16 2012
+# Sat Feb 25 08:23:32 2012
 #
 CONFIG_X86_32=y
 CONFIG_GENERIC_TIME=y
@@ -1640,7 +1640,13 @@ CONFIG_SUNRPC_GSS=m
 CONFIG_RPCSEC_GSS_KRB5=m
 # CONFIG_RPCSEC_GSS_SPKM3 is not set
 # CONFIG_SMB_FS is not set
-# CONFIG_CIFS is not set
+CONFIG_CIFS=m
+# CONFIG_CIFS_STATS is not set
+CONFIG_CIFS_WEAK_PW_HASH=y
+CONFIG_CIFS_XATTR=y
+CONFIG_CIFS_POSIX=y
+# CONFIG_CIFS_DEBUG2 is not set
+CONFIG_CIFS_EXPERIMENTAL=y
 # CONFIG_NCP_FS is not set
 # CONFIG_CODA_FS is not set
 # CONFIG_AFS_FS is not set
