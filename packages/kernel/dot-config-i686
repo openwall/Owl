@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.18-274.12.1.el5.028stab096.1.owl1
-# Tue Dec 27 06:06:00 2011
+# Linux kernel version: 2.6.18-274.18.1.el5.028stab098.1.owl1
+# Sat Feb 25 08:22:43 2012
 #
 CONFIG_X86_32=y
 CONFIG_GENERIC_TIME=y
