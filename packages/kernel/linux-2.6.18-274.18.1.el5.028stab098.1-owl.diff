@@ -579,8 +579,28 @@ diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/Kconfig linux-2.6.18-274.18
  	  This file system is a part of Virtuozzo. It intoduces a fake
 diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/compat.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/compat.c
 --- linux-2.6.18-274.18.1.el5.028stab098.1/fs/compat.c	2012-02-14 09:21:08 +0000
-+++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/compat.c	2012-02-21 14:24:17 +0000
-@@ -1751,6 +1751,19 @@ int compat_do_execve(char * filename,
++++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/compat.c	2012-02-25 05:49:31 +0000
+@@ -57,6 +57,10 @@
+ #include <asm/mmu_context.h>
+ #include <asm/ioctls.h>
+ 
++#ifdef CONFIG_X86_32
++#include <asm/atomic64_32.h>
++#endif
++
+ #ifdef CONFIG_QUOTA_COMPAT
+ #include <linux/quota-compat.h>
+ #endif
+@@ -1734,6 +1738,8 @@ asmlinkage long sys32_quotactl(unsigned
+ 	return ret;
+ }
+ 
++extern atomic64_t global_exec_counter;
++
+ /*
+  * compat_do_execve() is mostly a copy of do_execve(), with the exception
+  * that it processes 32 bit argv and envp pointers.
+@@ -1751,6 +1757,19 @@ int compat_do_execve(char * filename,
  	if (retval)
  		return retval;
  
@@ -600,10 +620,29 @@ diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/compat.c linux-2.6.18-274.1
  	retval = -ENOMEM;
  	bprm = kzalloc(sizeof(*bprm), GFP_KERNEL);
  	if (!bprm)
+@@ -1808,6 +1827,7 @@ int compat_do_execve(char * filename,
+ 	retval = search_binary_handler(bprm, regs);
+ 	if (retval >= 0) {
+ 		/* execve success */
++		current->exec_id = atomic64_inc_return(&global_exec_counter);
+ 		security_bprm_free(bprm);
+ 		acct_update_integrals(current);
+ 		kfree(bprm);
 diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/exec.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/exec.c
 --- linux-2.6.18-274.18.1.el5.028stab098.1/fs/exec.c	2012-02-14 09:21:08 +0000
-+++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/exec.c	2012-02-21 14:23:53 +0000
-@@ -231,7 +231,8 @@ struct page *get_arg_page(struct linux_b
++++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/exec.c	2012-02-25 05:49:15 +0000
+@@ -62,6 +62,10 @@
+ #include <asm/mmu_context.h>
+ #include <asm/tlb.h>
+ 
++#ifdef CONFIG_X86_32
++#include <asm/atomic64_32.h>
++#endif
++
+ #ifdef CONFIG_KMOD
+ #include <linux/kmod.h>
+ #endif
+@@ -231,7 +235,8 @@ struct page *get_arg_page(struct linux_b
  		 *  - the program will have a reasonable amount of stack left
  		 *    to work from.
  		 */
@@ -613,7 +652,16 @@ diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/exec.c linux-2.6.18-274.18.
  			put_page(page);
  			return NULL;
  		}
-@@ -1475,6 +1476,19 @@ int do_execve(char * filename,
+@@ -1459,6 +1464,8 @@ int search_binary_handler(struct linux_b
+ 
+ EXPORT_SYMBOL(search_binary_handler);
+ 
++atomic64_t global_exec_counter = ATOMIC64_INIT(0);
++
+ /*
+  * sys_execve() executes a new program.
+  */
+@@ -1475,6 +1482,19 @@ int do_execve(char * filename,
  	if (retval)
  		return retval;
  
@@ -633,9 +681,17 @@ diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/exec.c linux-2.6.18-274.18.
  	retval = -ENOMEM;
  	bprm = kzalloc(sizeof(*bprm), GFP_KERNEL);
  	if (!bprm)
+@@ -1532,6 +1552,7 @@ int do_execve(char * filename,
+ 	retval = search_binary_handler(bprm,regs);
+ 	if (retval >= 0) {
+ 		/* execve success */
++		current->exec_id = atomic64_inc_return(&global_exec_counter);
+ 		free_arg_pages(bprm);
+ 		security_bprm_free(bprm);
+ 		acct_update_integrals(current);
 diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/proc/base.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/proc/base.c
 --- linux-2.6.18-274.18.1.el5.028stab098.1/fs/proc/base.c	2012-02-14 09:21:08 +0000
-+++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/proc/base.c	2012-02-21 14:05:02 +0000
++++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/proc/base.c	2012-02-25 03:44:38 +0000
 @@ -276,7 +276,7 @@ static struct pid_entry tgid_base_stuff[
  	E(PROC_TGID_IO,             "io",  S_IFREG|S_IRUSR),
  #endif
@@ -654,6 +710,16 @@ diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/proc/base.c linux-2.6.18-27
  #endif
  
  	{0,0,NULL,0}
+@@ -1010,6 +1010,9 @@ static ssize_t mem_read(struct file * fi
+ 	if (file->private_data != (void*)((long)current->self_exec_id))
+ 		goto out_put;
+ 
++	if (!mm->dumpable && task == current)
++		goto out_put;
++
+ 	ret = 0;
+  
+ 	while (count > 0) {
 diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/proc/proc_misc.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/proc/proc_misc.c
 --- linux-2.6.18-274.18.1.el5.028stab098.1/fs/proc/proc_misc.c	2012-02-14 09:21:09 +0000
 +++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/proc/proc_misc.c	2012-02-21 14:05:02 +0000
@@ -666,6 +732,38 @@ diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/proc/proc_misc.c linux-2.6.
  #ifdef CONFIG_DEBUG_SLAB_LEAK
  	create_seq_entry("slab_allocators", 0 ,&proc_slabstats_operations);
  #endif
+diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/proc/task_mmu.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/proc/task_mmu.c
+--- linux-2.6.18-274.18.1.el5.028stab098.1/fs/proc/task_mmu.c	2012-02-14 09:21:08 +0000
++++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/proc/task_mmu.c	2012-02-25 03:19:39 +0000
+@@ -177,6 +177,9 @@ static int show_map_internal(struct seq_
+ 	dev_t dev = 0;
+ 	int len;
+ 
++	if (current->exec_id != m->exec_id)
++		return 0;
++
+ 	if (file) {
+ 		struct inode *inode = vma->vm_file->f_dentry->d_inode;
+ 		dev = inode->i_sb->s_dev;
+diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/seq_file.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/seq_file.c
+--- linux-2.6.18-274.18.1.el5.028stab098.1/fs/seq_file.c	2012-02-14 09:21:08 +0000
++++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/seq_file.c	2012-02-25 03:22:11 +0000
+@@ -9,6 +9,7 @@
+ #include <linux/module.h>
+ #include <linux/seq_file.h>
+ #include <linux/slab.h>
++#include <linux/sched.h>
+ 
+ #include <asm/uaccess.h>
+ #include <asm/page.h>
+@@ -39,6 +40,7 @@ int seq_open(struct file *file, struct s
+ 	memset(p, 0, sizeof(*p));
+ 	mutex_init(&p->lock);
+ 	p->op = op;
++	p->exec_id = current->exec_id;
+ 
+ 	/*
+ 	 * Wrappers around seq_open(e.g. swaps_open) need to be
 diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/sysfs/inode.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/sysfs/inode.c
 --- linux-2.6.18-274.18.1.el5.028stab098.1/fs/sysfs/inode.c	2012-02-14 09:21:08 +0000
 +++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/sysfs/inode.c	2012-02-21 14:05:02 +0000
@@ -730,6 +828,29 @@ diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/include/linux/dmar.h linux-2.6
  static inline int alloc_irte(struct intel_iommu *iommu, int irq, u16 count)
  {
  	return -1;
+diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/include/linux/sched.h linux-2.6.18-274.18.1.el5.028stab098.1-owl/include/linux/sched.h
+--- linux-2.6.18-274.18.1.el5.028stab098.1/include/linux/sched.h	2012-02-14 09:21:08 +0000
++++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/include/linux/sched.h	2012-02-25 03:26:25 +0000
+@@ -1212,6 +1212,8 @@ struct task_struct {
+ 	unsigned long	magic;
+ 	struct inode	*ino;
+ #endif
++
++	u64 exec_id;
+ };
+ 
+ static inline pid_t process_group(struct task_struct *tsk)
+diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/include/linux/seq_file.h linux-2.6.18-274.18.1.el5.028stab098.1-owl/include/linux/seq_file.h
+--- linux-2.6.18-274.18.1.el5.028stab098.1/include/linux/seq_file.h	2012-02-14 09:21:02 +0000
++++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/include/linux/seq_file.h	2012-02-25 03:27:43 +0000
+@@ -22,6 +22,7 @@ struct seq_file {
+ 	struct mutex lock;
+ 	struct seq_operations *op;
+ 	void *private;
++	u64 exec_id;
+ };
+ 
+ struct seq_operations {
 diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/include/linux/sysctl.h linux-2.6.18-274.18.1.el5.028stab098.1-owl/include/linux/sysctl.h
 --- linux-2.6.18-274.18.1.el5.028stab098.1/include/linux/sysctl.h	2012-02-14 09:21:08 +0000
 +++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/include/linux/sysctl.h	2012-02-21 14:05:02 +0000
@@ -1199,6 +1320,19 @@ diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/kernel/ve/vecalls.c linux-2.6.
   
  	return 0;
  }
+diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/mm/mempolicy.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/mm/mempolicy.c
+--- linux-2.6.18-274.18.1.el5.028stab098.1/mm/mempolicy.c	2012-02-14 09:21:09 +0000
++++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/mm/mempolicy.c	2012-02-25 03:29:06 +0000
+@@ -1840,6 +1840,9 @@ int show_numa_map(struct seq_file *m, vo
+ 	int n;
+ 	char buffer[50];
+ 
++	if (current->exec_id != m->exec_id)
++		return 0;
++
+ 	if (!mm)
+ 		return 0;
+ 
 diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/net/core/dev.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/net/core/dev.c
 --- linux-2.6.18-274.18.1.el5.028stab098.1/net/core/dev.c	2012-02-14 09:21:09 +0000
 +++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/net/core/dev.c	2012-02-21 14:05:02 +0000
