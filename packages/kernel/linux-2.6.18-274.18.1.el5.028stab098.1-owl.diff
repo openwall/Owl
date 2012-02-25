@@ -577,22 +577,12 @@ diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/Kconfig linux-2.6.18-274.18
  	default m
  	help
  	  This file system is a part of Virtuozzo. It intoduces a fake
-diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/exec.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/exec.c
---- linux-2.6.18-274.18.1.el5.028stab098.1/fs/exec.c	2012-02-14 09:21:08 +0000
-+++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/exec.c	2012-02-21 14:05:02 +0000
-@@ -231,7 +231,8 @@ struct page *get_arg_page(struct linux_b
- 		 *  - the program will have a reasonable amount of stack left
- 		 *    to work from.
- 		 */
--		if (size > rlim[RLIMIT_STACK].rlim_cur / 4) {
-+		if (size > rlim[RLIMIT_STACK].rlim_cur / 4 ||
-+		    size > MAX_ARG_STACK) {
- 			put_page(page);
- 			return NULL;
- 		}
-@@ -1471,6 +1472,19 @@ int do_execve(char * filename,
- 	struct file *file;
- 	int retval;
+diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/compat.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/compat.c
+--- linux-2.6.18-274.18.1.el5.028stab098.1/fs/compat.c	2012-02-14 09:21:08 +0000
++++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/compat.c	2012-02-21 14:24:17 +0000
+@@ -1751,6 +1751,19 @@ int compat_do_execve(char * filename,
+ 	if (retval)
+ 		return retval;
  
 +	/*
 +	 * We check for RLIMIT_NPROC in execve() instead of set_user() because
@@ -607,9 +597,42 @@ diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/exec.c linux-2.6.18-274.18.
 +		goto out_ret;
 +	}
 +
- 	retval = virtinfo_gencall(VIRTINFO_DOEXECVE, NULL);
+ 	retval = -ENOMEM;
+ 	bprm = kzalloc(sizeof(*bprm), GFP_KERNEL);
+ 	if (!bprm)
+diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/exec.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/exec.c
+--- linux-2.6.18-274.18.1.el5.028stab098.1/fs/exec.c	2012-02-14 09:21:08 +0000
++++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/exec.c	2012-02-21 14:23:53 +0000
+@@ -231,7 +231,8 @@ struct page *get_arg_page(struct linux_b
+ 		 *  - the program will have a reasonable amount of stack left
+ 		 *    to work from.
+ 		 */
+-		if (size > rlim[RLIMIT_STACK].rlim_cur / 4) {
++		if (size > rlim[RLIMIT_STACK].rlim_cur / 4 ||
++		    size > MAX_ARG_STACK) {
+ 			put_page(page);
+ 			return NULL;
+ 		}
+@@ -1475,6 +1476,19 @@ int do_execve(char * filename,
  	if (retval)
  		return retval;
+ 
++	/*
++	 * We check for RLIMIT_NPROC in execve() instead of set_user() because
++	 * too many poorly written programs don't check setuid() return code.
++	 * The check in execve() does the same thing for programs doing
++	 * setuid()+execve(), but without similar security issues.
++	 */
++	if (atomic_read(&current->user->processes) >
++	    current->signal->rlim[RLIMIT_NPROC].rlim_cur &&
++	    current->uid != 0) {
++		retval = -EAGAIN;
++		goto out_ret;
++	}
++
+ 	retval = -ENOMEM;
+ 	bprm = kzalloc(sizeof(*bprm), GFP_KERNEL);
+ 	if (!bprm)
 diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/fs/proc/base.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/proc/base.c
 --- linux-2.6.18-274.18.1.el5.028stab098.1/fs/proc/base.c	2012-02-14 09:21:08 +0000
 +++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/fs/proc/base.c	2012-02-21 14:05:02 +0000

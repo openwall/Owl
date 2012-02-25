@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.74 2012/02/25 07:40:55 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.75 2012/02/25 07:45:50 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -106,6 +106,8 @@ done
 %changelog
 * Sat Feb 25 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.18.1.el5.028stab098.1.owl1
 - Updated to 2.6.18-274.18.1.el5.028stab098.1.
+- Introduced the previously missed RLIMIT_NPROC check into fs/compat.c:
+compat_do_execve() (used by 32-bit program binaries on 64-bit kernel).
 
 * Wed Jan 25 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.17.1.el5.028stab097.1.owl1
 - Updated to 2.6.18-274.17.1.el5.028stab097.1.
