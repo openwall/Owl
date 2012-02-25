@@ -46,6 +46,21 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2012/02/25	Package: kernel
+Updated to 2.6.18-274.18.1.el5.028stab098.1.  Introduced the previously
+missed RLIMIT_NPROC check into fs/compat.c: compat_do_execve() (used by
+32-bit program binaries on 64-bit kernel).  Introduced protection
+against unintended self-read by a SUID/SGID program of /proc/<pid>/mem
+and /proc/<pid>/*maps files, based on approaches taken in recent
+grsecurity patches.  Made the kernel.dmesg_restrict sysctl tri-state and
+container-aware.  Enabled CONFIG_NFSD=m, CONFIG_CIFS=m,
+CONFIG_NET_SCHED=y, CONFIG_NET_RADIO=y, CONFIG_PCCARD=m and lots of WiFi
+drivers as modules.
+References:
+http://wiki.openvz.org/Download/kernel/rhel5/028stab098.1
+http://rhn.redhat.com/errata/RHSA-2012-0107.html
+http://www.openwall.com/lists/oss-security/2012/02/08/2
+
 2012/02/18	Package: glibc
 Enabled building of UTF-8 locales by default (adds 6.5 MB to glibc .rpm
 package size and 36 MB to installed system size on a filesystem with
@@ -602,4 +617,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.79 2012/02/18 20:27:17 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.80 2012/02/25 08:27:04 solar Exp $
