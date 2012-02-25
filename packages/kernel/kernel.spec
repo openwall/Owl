@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.79 2012/02/25 08:07:10 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.80 2012/02/25 08:09:03 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -112,7 +112,7 @@ compat_do_execve() (used by 32-bit program binaries on 64-bit kernel).
 /proc/<pid>/mem and /proc/<pid>/*maps files, based on approaches taken in
 recent grsecurity patches.
 - Made the dmesg_restrict sysctl tri-state and container-aware.
-- CONFIG_NFSD=m, CONFIG_CIFS=m
+- CONFIG_NFSD=m, CONFIG_CIFS=m, CONFIG_NET_SCHED=y
 
 * Wed Jan 25 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.17.1.el5.028stab097.1.owl1
 - Updated to 2.6.18-274.17.1.el5.028stab097.1.
