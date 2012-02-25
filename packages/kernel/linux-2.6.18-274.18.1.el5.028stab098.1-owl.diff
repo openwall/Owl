@@ -578,12 +578,12 @@ diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/drivers/net/bonding/bond_main.
  void bond_set_mode_ops(struct bonding *bond, int mode)
 diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/drivers/net/loopback.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/drivers/net/loopback.c
 --- linux-2.6.18-274.18.1.el5.028stab098.1/drivers/net/loopback.c	2012-02-14 09:21:07 +0000
-+++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/drivers/net/loopback.c	2012-02-21 14:05:02 +0000
++++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/drivers/net/loopback.c	2012-02-25 05:58:37 +0000
 @@ -286,5 +286,13 @@ int __init loopback_init(void)
  	return register_netdev(&loopback_dev);
  };
  
-+#if 0
++#if __GNUC__ >= 4
 +/*
 + * With gcc 3.4.5:
 + * drivers/net/loopback.c:289: error: initializer element is not constant
