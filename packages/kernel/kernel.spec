@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.81 2012/02/25 08:12:39 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.82 2012/02/25 08:16:16 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -113,7 +113,7 @@ compat_do_execve() (used by 32-bit program binaries on 64-bit kernel).
 recent grsecurity patches.
 - Made the dmesg_restrict sysctl tri-state and container-aware.
 - CONFIG_NFSD=m, CONFIG_CIFS=m, CONFIG_NET_SCHED=y, CONFIG_NET_RADIO=y and lots
-of WiFi drivers as modules.
+of WiFi drivers as modules, CONFIG_PCCARD=m and relevant WiFi drivers.
 
 * Wed Jan 25 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.17.1.el5.028stab097.1.owl1
 - Updated to 2.6.18-274.17.1.el5.028stab097.1.
