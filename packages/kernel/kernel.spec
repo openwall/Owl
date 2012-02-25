@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.76 2012/02/25 07:54:33 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.77 2012/02/25 07:58:11 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -111,6 +111,7 @@ compat_do_execve() (used by 32-bit program binaries on 64-bit kernel).
 - Introduced protection against unintended self-read by a SUID/SGID program of
 /proc/<pid>/mem and /proc/<pid>/*maps files, based on approaches taken in
 recent grsecurity patches.
+- Made the dmesg_restrict sysctl tri-state and container-aware.
 
 * Wed Jan 25 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.17.1.el5.028stab097.1.owl1
 - Updated to 2.6.18-274.17.1.el5.028stab097.1.

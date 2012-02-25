@@ -1,3 +1,30 @@
+diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/Documentation/sysctl/kernel.txt linux-2.6.18-274.18.1.el5.028stab098.1-owl/Documentation/sysctl/kernel.txt
+--- linux-2.6.18-274.18.1.el5.028stab098.1/Documentation/sysctl/kernel.txt	2012-02-14 09:20:58 +0000
++++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/Documentation/sysctl/kernel.txt	2012-02-25 04:38:11 +0000
+@@ -137,14 +137,18 @@ to decide what to do with it.
+ 
+ dmesg_restrict:
+ 
+-This toggle indicates whether unprivileged users are prevented from using
++This indicates whether unprivileged users are prevented from using
+ dmesg(8) to view messages from the kernel's log buffer.  When
+-dmesg_restrict is set to (0) there are no restrictions.  When
+-dmesg_restrict is set set to (1), users must have CAP_SYS_ADMIN to use
+-dmesg(8).
++dmesg_restrict is set to 0 there are no restrictions.  When
++dmesg_restrict is set to 1, users must have CAP_SYS_ADMIN to use
++dmesg(8) on the hardware node and CAP_VE_SYS_ADMIN in containers
++(so that the in-container root may view that container's kernel
++messages such as from iptables).  When dmesg_restrict is set to 2,
++users must have CAP_SYS_ADMIN to use dmesg(8), without the exception
++for containers.
+ 
+ The kernel config option CONFIG_SECURITY_DMESG_RESTRICT sets the default
+-value of dmesg_restrict.
++value of dmesg_restrict to either 0 or 1.
+ 
+ ==============================================================
+ 
 diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/Makefile linux-2.6.18-274.18.1.el5.028stab098.1-owl/Makefile
 --- linux-2.6.18-274.18.1.el5.028stab098.1/Makefile	2012-02-14 09:21:07 +0000
 +++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/Makefile	2012-02-21 14:06:27 +0000
@@ -1297,6 +1324,26 @@ diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/kernel/sys.c linux-2.6.18-274.
  		return -EAGAIN;
  	}
  
+diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/kernel/sysctl.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/kernel/sysctl.c
+--- linux-2.6.18-274.18.1.el5.028stab098.1/kernel/sysctl.c	2012-02-14 09:21:09 +0000
++++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/kernel/sysctl.c	2012-02-25 04:21:30 +0000
+@@ -139,6 +139,7 @@ static int threehundred = 300;
+ 
+ static int zero;
+ static int one = 1;
++static int two = 2;
+ static int one_hundred = 100;
+ 
+ /* this is needed for the proc_dointvec_minmax for [fs_]overflow UID and GID */
+@@ -953,7 +954,7 @@ static ctl_table kern_table[] = {
+ 		.mode           = 0644,
+ 		.proc_handler   = &proc_dointvec_minmax,
+ 		.extra1         = &zero,
+-		.extra2         = &one,
++		.extra2         = &two,
+ 	},
+ 	{
+ 		.ctl_name	= KERN_NGROUPS_MAX,
 diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/kernel/ve/ve.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/kernel/ve/ve.c
 --- linux-2.6.18-274.18.1.el5.028stab098.1/kernel/ve/ve.c	2012-02-14 09:21:09 +0000
 +++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/kernel/ve/ve.c	2012-02-21 14:05:02 +0000
@@ -2671,6 +2718,39 @@ diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/scripts/mkcompile_h linux-2.6.
    echo \#define LINUX_COMPILER \"`$CC -v 2>&1 | tail -n 1`\"
  ) > .tmpcompile
  
+diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/security/Kconfig linux-2.6.18-274.18.1.el5.028stab098.1-owl/security/Kconfig
+--- linux-2.6.18-274.18.1.el5.028stab098.1/security/Kconfig	2012-02-14 09:21:09 +0000
++++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/security/Kconfig	2012-02-25 04:31:56 +0000
+@@ -49,7 +49,7 @@ config SECURITY_DMESG_RESTRICT
+ 	  syslog via dmesg(8).
+ 
+ 	  If this option is not selected, no restrictions will be enforced
+-	  unless the dmesg_restrict sysctl is explicitly set to (1).
++	  unless the dmesg_restrict sysctl is explicitly set to 1 or 2.
+ 
+ 	  If you are unsure how to answer this question, answer N.
+ 
+diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/security/commoncap.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/security/commoncap.c
+--- linux-2.6.18-274.18.1.el5.028stab098.1/security/commoncap.c	2012-02-14 09:21:09 +0000
++++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/security/commoncap.c	2012-02-25 04:30:16 +0000
+@@ -315,8 +315,15 @@ void cap_task_reparent_to_init (struct t
+ 
+ int cap_syslog (int type)
+ {
+-	if (dmesg_restrict && !capable(CAP_SYS_ADMIN))
+-		return -EPERM;
++	if (dmesg_restrict) {
++		if (dmesg_restrict > 1 || ve_is_super(get_exec_env())) {
++			if (!capable(CAP_SYS_ADMIN))
++				return -EPERM;
++		} else {
++			if (!capable(CAP_VE_SYS_ADMIN))
++				return -EPERM;
++		}
++	}
+ 
+ 	if ((type != 3 && type != 10) && !capable(CAP_VE_SYS_ADMIN))
+ 		return -EPERM;
 diff -urpN linux-2.6.18-274.18.1.el5.028stab098.1/security/min_addr.c linux-2.6.18-274.18.1.el5.028stab098.1-owl/security/min_addr.c
 --- linux-2.6.18-274.18.1.el5.028stab098.1/security/min_addr.c	2012-02-14 09:21:09 +0000
 +++ linux-2.6.18-274.18.1.el5.028stab098.1-owl/security/min_addr.c	2012-02-21 14:05:02 +0000
