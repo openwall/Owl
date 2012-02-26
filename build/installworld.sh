@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installworld.sh,v 1.46 2011/11/04 01:11:14 solar Exp $
+# $Owl: Owl/build/installworld.sh,v 1.47 2012/02/26 17:50:17 solar Exp $
 
 . installworld.conf
 
@@ -213,6 +213,7 @@ fi
 
 grep -v ^# $HOME/installorder.conf |
 while read PACKAGES; do
+	PACKAGES_SUBSET=
 	FILES=
 	for TOKEN in $PACKAGES; do
 		PACKAGE=${TOKEN#[A-Za-z]:}
@@ -235,6 +236,7 @@ while read PACKAGES; do
 				;;
 			esac
 		fi
+		PACKAGES_SUBSET="$PACKAGES_SUBSET $PACKAGE"
 # XXX: When multiple versions of a package are present, this will pick one
 # of those, but not always the latest one (not for "-owl9" vs. "-owl10").
 		REGEX="^${PACKAGE}-[^-]*[0-9][^-]*-[^-]*[0-9][^-]*\..*\.rpm\$"
@@ -251,8 +253,10 @@ while read PACKAGES; do
 	$RPM $RPM_FLAGS --root $ROOT --define "home $HOME" $FLAGS $FILES && \
 		continue
 	mkdir -p $HOME/tmp-work/failures/
-	touch $HOME/tmp-work/failures/$PACKAGE
-	log "Failed $PACKAGES"
+	for PACKAGE in $PACKAGES_SUBSET; do
+		touch $HOME/tmp-work/failures/$PACKAGE
+	done
+	log "Failed${PACKAGES_SUBSET}"
 done
 
 if [ "$NEED_FAKE" = yes ]; then
@@ -271,7 +275,7 @@ if [ "$NEED_ARCH_TAG" = yes ]; then
 	fi
 fi
 
-FAILED="`cd $HOME/tmp-work/failures/ 2>/dev/null && ls`"
+FAILED="`cd $HOME/tmp-work/failures/ 2>/dev/null && echo *`"
 
 log "Removing temporary files"
 rm -rf $HOME/tmp-work $ROOT/$HOME/tmp-work
