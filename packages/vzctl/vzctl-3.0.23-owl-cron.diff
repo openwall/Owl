@@ -19,7 +19,7 @@ diff -urp vzctl-3.0.23.orig/etc/cron.d/vz.in vzctl-3.0.23/etc/cron.d/vz.in
 +# if the server crashes, then not only the recorded usage will be way off, but
 +# also any manually set per-user and per-group quotas inside the containers
 +# will be lost.
-+2,7,12,17,22,27,32,37,42,47,52,57 * * * * root /usr/sbin/vzlist -H -o veid | xargs -r -n1 /usr/sbin/vzquota stat > /dev/null
++2,7,12,17,22,27,32,37,42,47,52,57 * * * * root /usr/sbin/vzlist -H -o veid | xargs -ri /usr/sbin/vzquota stat '{}' -t > /dev/null
 diff -urp vzctl-3.0.23.orig/etc/init.d/vz-redhat.in vzctl-3.0.23/etc/init.d/vz-redhat.in
 --- vzctl-3.0.23.orig/etc/init.d/vz-redhat.in	2008-10-30 13:24:43 +0000
 +++ vzctl-3.0.23/etc/init.d/vz-redhat.in	2010-12-06 12:23:25 +0000
