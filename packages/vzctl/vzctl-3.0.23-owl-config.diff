@@ -1,13 +1,40 @@
-diff -ur vzctl-3.0.23.orig/etc/vz.conf vzctl-3.0.23/etc/vz.conf
+diff -urp vzctl-3.0.23.orig/etc/vz.conf vzctl-3.0.23/etc/vz.conf
 --- vzctl-3.0.23.orig/etc/vz.conf	2008-10-30 13:24:43 +0000
-+++ vzctl-3.0.23/etc/vz.conf	2009-11-23 04:11:15 +0000
-@@ -14,8 +14,8 @@
++++ vzctl-3.0.23/etc/vz.conf	2012-02-27 07:36:56 +0000
+@@ -12,10 +12,34 @@ VERBOSE=0
+ 
+ ## Disk quota parameters
  DISK_QUOTA=yes
++# VZFASTBOOT affects service "vz" startup after unclean shutdown.  Valid
++# settings are: no, yes, extreme.  "no" means that disk usage info for each CT
++# is recalculated before the CT is started up.  "yes" means that initially all
++# CTs are started up with possibly inconsistent disk usage info, but then
++# they're stopped for disk usage info recalculation and started back up one by
++# one.  (On a system with multiple CTs, VZFASTBOOT=yes reduces downtime for
++# individual CTs as compared to the VZFASTBOOT=no setting while nevertheless
++# ensuring that eventually the disk usage info will be corrected.)  "extreme"
++# means that disk usage info is never recalculated and may remain inconsistent
++# (hopefully, just slightly inconsistent, since normally we have a cron job
++# that updates the records on disk every 5 minutes).  While "no" is a safe
++# initial default, in practice "extreme" is often a necessity for systems with
++# large numbers of files, especially on fragmented filesystem(s) on hard disks
++# (as opposed to faster media such as SSDs).
  VZFASTBOOT=no
  
 -# Disable module loading. If set, vz initscript do not load any modules.
-+# Disable module loading. If set, vz initscript does not load any modules.
- #MODULES_DISABLED=yes
+-#MODULES_DISABLED=yes
++# Disable loading of some or all kernel modules on service "vz" startup.  If
++# MODULES_DISABLED is set to "no" or not set at all, a default set of modules
++# will be loaded.  If this is changed to "yes", no modules will be loaded (and
++# OpenVZ will only have a chance to work if either the modules are already
++# loaded or the required functionality is built right into the kernel image).
++# If specific modules are listed here, then just those modules and their
++# prerequisites will be skipped.  On Owl, we list "vzcpt vzrst" on this line by
++# default because only a subset of OpenVZ servers use this functionality, yet
++# these modules would bring in several others, including ip_conntrack, which
++# has performance overhead and which by default introduces a relatively low
++# connection count limit, which is easily hit in a DDoS attack.
++MODULES_DISABLED="vzcpt vzrst"
  
  # The name of the device whose IP address will be used as source IP for CT.
  # By default automatically assigned.

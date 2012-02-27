@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vzctl/vzctl.spec,v 1.11 2012/02/27 06:57:20 solar Exp $
+# $Owl: Owl/packages/vzctl/vzctl.spec,v 1.12 2012/02/27 07:42:53 solar Exp $
 
 Summary: OpenVZ containers control utility.
 Name: vzctl
@@ -92,6 +92,8 @@ the only valid values were "yes" and "no", which are still supported as well).
 - Added support for VZFASTBOOT=extreme, which fully skips quota recalculation.
 - In the quota file update cron job, pass the "-t" option to "vzquota stat"
 such that per-user and per-group disk usage and quotas are actually updated.
+- In the default /etc/vz/vz.conf, documented VZFASTBOOT and MODULES_DISABLED in
+detail (including the new settings), and set MODULES_DISABLED="vzcpt vzrst".
 
 * Sun Oct 09 2011 Solar Designer <solar-at-owl.openwall.com> 3.0.23-owl7
 - No longer set MODULES_DISABLED=yes in the default config since our new
