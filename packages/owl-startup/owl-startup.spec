@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.91 2011/10/26 01:39:46 solar Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.92 2012/02/27 07:55:19 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
-Version: 0.42
+Version: 0.43
 Release: owl1
 License: GPL
 Group: System Environment/Base
@@ -172,6 +172,11 @@ fi
 %doc redhat
 
 %changelog
+* Mon Feb 27 2012 Solar Designer <solar-at-owl.openwall.com> 0.43-owl1
+- Allow for /etc/rc.d/init.d/clock to be missing such that we can actually
+remove it in OpenVZ container templates, where it only causes container
+startup/shutdown delays while not doing anything useful.
+
 * Wed Oct 26 2011 Solar Designer <solar-at-owl.openwall.com> 0.42-owl1
 - Added VLAN support patch by Piotr Meyer, even though this approach might be
 temporary (we're likely to move to using iproute2 for this).

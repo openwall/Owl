@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.30 2011/01/24 06:31:14 solar Exp $
+# $Owl: Owl/packages/owl-startup/rc.sysinit,v 1.31 2012/02/27 07:55:19 solar Exp $
 
 repair_fs()
 {
@@ -74,7 +74,9 @@ if [ -e /.Owl-CD-ROM ]; then
 fi
 
 # Set the system time from the hardware clock.
-. /etc/rc.d/init.d/clock
+if [ -e /etc/rc.d/init.d/clock ]; then
+	. /etc/rc.d/init.d/clock
+fi
 
 # Enable swapping, silently skip devices that do not exist.
 swapon -ae
