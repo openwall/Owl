@@ -1,6 +1,6 @@
 diff -urp vzctl-3.0.23.orig/etc/init.d/vz-redhat.in vzctl-3.0.23/etc/init.d/vz-redhat.in
 --- vzctl-3.0.23.orig/etc/init.d/vz-redhat.in	2008-10-30 13:24:43 +0000
-+++ vzctl-3.0.23/etc/init.d/vz-redhat.in	2012-02-27 06:39:33 +0000
++++ vzctl-3.0.23/etc/init.d/vz-redhat.in	2012-02-27 06:41:21 +0000
 @@ -19,7 +19,7 @@
  # OpenVZ startup script, used for redhat and debian related distributions.
  
@@ -9,4 +9,43 @@ diff -urp vzctl-3.0.23.orig/etc/init.d/vz-redhat.in vzctl-3.0.23/etc/init.d/vz-r
 +# chkconfig: - 96 88
  # description: OpenVZ startup script.
  ###
+ 
+@@ -57,22 +57,30 @@ MODULES_OTHER=
+ NET_MODULES=
+ IPT_MODULES=
+ 
++clean_module_list()
++{
++	local mod
++	for mod in $*; do
++		echo "${MODULES_DISABLED}" | fgrep -qw "${mod}" || echo "${mod}"
++	done
++}
++
+ if [ "${MODULES_DISABLED}" != "yes" ]; then
+-	PRELOAD_MODULES="af_packet"
+-	MODULES="vzmon vzdquota vzdev"
++	PRELOAD_MODULES=`clean_module_list af_packet`
++	MODULES=`clean_module_list vzmon vzdquota vzdev`
+ 	CPT_MODULES="vzcpt vzrst"
+-	MODULES_OTHER="vzcompat ${CPT_MODULES}"
++	MODULES_OTHER=`clean_module_list vzcompat ${CPT_MODULES}`
+ 	VNET_MODULES="vznetdev vznet"
+ 	VETH_MODULES="vzethdev"
+-	NET_MODULES="${VNET_MODULES} ${VETH_MODULES}"
++	NET_MODULES=`clean_module_list ${VNET_MODULES} ${VETH_MODULES}`
+ 	if [ "${VZWDOG}" = "yes" ]; then
+-		MODULES="${MODULES} vzwdog"
++		MODULES=`clean_module_list ${MODULES} vzwdog`
+ 	fi
+-	IPT_MODULES="ip_tables ${IPTABLES} xt_tcpudp"
++	IPT_MODULES=`clean_module_list ip_tables ${IPTABLES} xt_tcpudp`
+ 	if [ "${IPV6}" = "yes" ]; then
+-    		IPT_MODULES="${IPT_MODULES} ${IP6TABLES}"
++		IPT_MODULES=`clean_module_list ${IPT_MODULES} ${IP6TABLES}`
+ 	fi
+-	VZFS_MODULES="simfs"
++	VZFS_MODULES=`clean_module_list simfs`
+ fi
+ 
  

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vzctl/vzctl.spec,v 1.9 2012/02/27 06:51:50 solar Exp $
+# $Owl: Owl/packages/vzctl/vzctl.spec,v 1.10 2012/02/27 06:54:15 solar Exp $
 
 Summary: OpenVZ containers control utility.
 Name: vzctl
@@ -87,6 +87,8 @@ fi
 - Don't enable the "vz" service by default, but initialize OpenVZ even when no
 containers are configured to start if the service is started anyway (this
 reverts the change made in 3.0.23-owl3).
+- In MODULES_DISABLED, support listing the module names to disable (previously,
+the only valid values were "yes" and "no", which are still supported as well).
 - In the quota file update cron job, pass the "-t" option to "vzquota stat"
 such that per-user and per-group disk usage and quotas are actually updated.
 
