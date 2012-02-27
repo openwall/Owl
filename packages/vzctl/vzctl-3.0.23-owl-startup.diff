@@ -1,6 +1,6 @@
 diff -urp vzctl-3.0.23.orig/etc/init.d/vz-redhat.in vzctl-3.0.23/etc/init.d/vz-redhat.in
 --- vzctl-3.0.23.orig/etc/init.d/vz-redhat.in	2008-10-30 13:24:43 +0000
-+++ vzctl-3.0.23/etc/init.d/vz-redhat.in	2012-02-27 06:41:21 +0000
++++ vzctl-3.0.23/etc/init.d/vz-redhat.in	2012-02-27 06:43:17 +0000
 @@ -19,7 +19,7 @@
  # OpenVZ startup script, used for redhat and debian related distributions.
  
@@ -49,3 +49,19 @@ diff -urp vzctl-3.0.23.orig/etc/init.d/vz-redhat.in vzctl-3.0.23/etc/init.d/vz-r
  fi
  
  
+@@ -374,13 +382,13 @@ start_ves()
+ 	for veid in $velist; do
+ 		[ "${veid}" = "0" ] && continue
+ 		__echo "Starting CT ${veid}: "
+-		if [ "x${VZFASTBOOT}" = "xyes" -a "x${DISK_QUOTA}" = "xyes" ];
++		if [ \( "x${VZFASTBOOT}" = "xyes" -o "x${VZFASTBOOT}" = "xextreme" \) -a "x${DISK_QUOTA}" = "xyes" ];
+ 		then
+ 			$VZQUOTA stat ${veid} >/dev/null 2>&1
+ 			if [ $? -eq 6 ]; then
+ 				if $VZQUOTA show ${veid} 2>&1 | grep "vzquota : (warning) Quota is running" >/dev/null 2>&1; then
+ 					$VZQUOTA on ${veid} --nocheck >/dev/null 2>&1
+-					need_restart="${need_restart} ${veid}"
++					test "x${VZFASTBOOT}" = "xextreme" || need_restart="${need_restart} ${veid}"
+ 				fi
+ 			fi
+ 		fi
