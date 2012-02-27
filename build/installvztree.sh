@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installvztree.sh,v 1.14 2011/10/29 22:26:11 solar Exp $
+# $Owl: Owl/build/installvztree.sh,v 1.15 2012/02/27 07:58:55 solar Exp $
 
 set -e
 
@@ -53,6 +53,8 @@ echo "`date '+%Y %b %e %H:%M:%S'`: Started"
 log "Removing SSH host keys"
 cd "$ROOT/etc"
 rm ssh/ssh_host_*
+log "Removing /etc/rc.d/init.d/clock"
+rm rc.d/init.d/clock
 
 log "Updating config files"
 cat >> fstab << EOF
