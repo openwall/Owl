@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/iproute2/iproute2.spec,v 1.26 2012/02/15 12:37:38 segoon Exp $
+# $Owl: Owl/packages/iproute2/iproute2.spec,v 1.27 2012/02/27 08:51:31 solar Exp $
 
 Summary: Enhanced IP routing and network devices configuration tools.
 Name: iproute2
 Version: 2.6.38
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/System
 Source0: http://devresources.linuxfoundation.org/dev/iproute2/download/%name-%version.tar.bz2
@@ -14,6 +14,7 @@ Patch2: iproute2-2.6.18-alt-ip-man.diff
 Patch3: iproute2-2.6.28-alt-format.diff
 Patch4: iproute2-2.6.38-owl-warnings.diff
 Patch5: iproute2-2.6.38-owl-tmp.diff
+Patch6: iproute2-2.6.38-owl-configure.diff
 Provides: iproute = %version
 Obsoletes: iproute
 BuildRequires: db4-devel, bison
@@ -34,6 +35,7 @@ utilities (ip, tc, rtmon, rtacct, ifstat, nstat, rtstat, ss).
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %{expand:%%define optflags %optflags -Wall -Wstrict-prototypes}
 
@@ -72,6 +74,9 @@ ln -sf lnstat %buildroot/%_sbindir/ctstat
 %_mandir/man*/*
 
 %changelog
+* Mon Feb 27 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.38-owl3
+- Search for the iptables library directory under /lib64 before /lib.
+
 * Wed Feb 15 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.38-owl2
 - Fixed arbitrary file overwrite at build stage and in dhclient sample script.
 
