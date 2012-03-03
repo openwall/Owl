@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.71 2012/02/18 18:57:03 solar Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.72 2012/03/03 17:35:09 solar Exp $
 
 # The only supported frontend for now is GXX.
 # Testsuite is not supported because of its requirement for additional
@@ -10,8 +10,8 @@
 
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
-Version: 4.6.2
-Release: owl4
+Version: 4.6.3
+Release: owl1
 Epoch: 1
 License: GPLv3+
 Group: Development/Languages
@@ -447,6 +447,9 @@ fi
 %_libdir/libmudflapth.a
 
 %changelog
+* Sat Mar 03 2012 Solar Designer <solar-at-owl.openwall.com> 1:4.6.3-owl1
+- Updated to 4.6.3.
+
 * Sat Feb 18 2012 Solar Designer <solar-at-owl.openwall.com> 1:4.6.2-owl4
 - Revised the texinfo documentation patch on our use of -Wl,-z,relro and
 -Wl,-z,now, and on how to disable these.
