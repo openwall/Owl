@@ -46,10 +46,10 @@ another GNU/*/Linux system is sometimes possible, but tricky and
 requires that you slowly produce an Owl system with multiple iterations
 of "make buildworld" and "make installworld".
 
-Here are some build times (hours:minutes) for Owl 3.0, so that you
-know what to expect:
+Here are some build times (hours:minutes) for Owl-current shortly after
+our update to gcc 4.6.x, so that you know what to expect:
 
-Core 2 Duo E6550, 2.33 GHz, 2 GB				0:55
+Core 2 Quad Q8400, 2.66 GHz, 6 GB				0:46
 
 These are for the default set of tests ("RUN_TESTS=" in buildworld.conf
 commented out, missing, or set to an empty string).  The build times
@@ -107,4 +107,4 @@ where "name" is the name of the source package.  For foreign packages
 (SRPMs) built with the Owl build environment you also need to include
 the version number part in "name".
 
-$Owl: Owl/doc/BUILD,v 1.47 2012/02/18 19:51:33 solar Exp $
+$Owl: Owl/doc/BUILD,v 1.48 2012/03/03 17:42:48 solar Exp $
