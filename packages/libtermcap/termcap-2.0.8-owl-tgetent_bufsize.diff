@@ -1,0 +1,12 @@
+diff -urp termcap-2.0.8.orig/termcap.c termcap-2.0.8/termcap.c
+--- termcap-2.0.8.orig/termcap.c	1996-04-16 03:23:23 +0000
++++ termcap-2.0.8/termcap.c	2012-04-09 08:48:17 +0000
+@@ -43,7 +43,7 @@ static short speeds[] = {
+ speed_t ospeed;
+ int tputs_baud_rate;
+ char PC;
+-int tgetent_bufsize = 1024;
++int tgetent_bufsize = 2048;
+ 
+ /* We store a terminal description in a linked list. */
+ struct tc_ent {

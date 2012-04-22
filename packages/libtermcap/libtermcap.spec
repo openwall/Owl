@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/libtermcap/libtermcap.spec,v 1.17 2006/04/04 00:28:35 ldv Exp $
+# $Owl: Owl/packages/libtermcap/libtermcap.spec,v 1.18 2012/04/22 19:22:29 solar Exp $
 
 Summary: A basic system library for accessing the termcap database.
 Name: libtermcap
 Version: 2.0.8
-Release: owl7
+Release: owl8
 License: LGPL
 Group: System Environment/Libraries
 Source: ftp://sunsite.unc.edu/pub/Linux/GCC/termcap-2.0.8.tar.gz
@@ -16,6 +16,7 @@ Patch5: termcap-2.0.8-rh-glibc-2.1.diff
 Patch6: termcap-2.0.8-rh-ignore-p.diff
 Patch7: termcap-2.0.8-rh-xref.diff
 Patch8: termcap-2.0.8-rh-glibc-2.2.diff
+Patch9: termcap-2.0.8-owl-tgetent_bufsize.diff
 PreReq: /sbin/ldconfig
 Requires: /etc/termcap
 BuildRequires: texinfo
@@ -50,6 +51,7 @@ developing programs which will access the termcap database.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 %build
 %__make CFLAGS="%optflags -I."
@@ -96,6 +98,9 @@ fi
 %_includedir/termcap.h
 
 %changelog
+* Mon Apr 09 2012 Mesut Can Gurle <mesutcang-at-gmail.com> 2.0.8-owl8
+- Increased tgetent_bufsize to 2048.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.0.8-owl7
 - Corrected info files installation.
 
