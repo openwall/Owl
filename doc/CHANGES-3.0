@@ -592,8 +592,6 @@ Updated to 2.2.2.
 SECURITY FIX	Severity: none to high, local, active
 Updated to Linux 2.4.37.7-ow1.  The 2.4.37.7 kernel fixes a number of
 security-related bugs.
-Reference:
-http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.7
 
 2009/10/25	kernel
 SECURITY FIX	Severity: none to medium, local, active
@@ -601,8 +599,6 @@ Updated to Linux 2.4.37.6-ow1.  The 2.4.37.6 kernel fixes a number of
 information leak vulnerabilities.  One of these was already fixed in
 2.4.37.5-ow1, and the remaining ones may or may not affect specific
 systems depending on both kernel and userspace configuration.
-Reference:
-http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.6
 
 2009/10/24	Package: xinetd
 Updated to 2.3.14.
@@ -680,7 +676,6 @@ support for any socket types via which the bug is known to be
 triggerable.  More importantly, Linux 2.4.37.5-ow1 adds a fix for the
 sigaltstack local information leak affecting 64-bit kernel builds.
 References:
-http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.5
 http://lists.openwall.net/bugtraq/2009/08/13/11
 http://www.openwall.com/lists/oss-security/2009/08/14/2
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-2692
@@ -747,8 +742,6 @@ Updated to 1.20.1.
 Updated to Linux 2.4.37.4-ow1.  The 2.4.37.4 kernel integrates a
 replacement for the "personality" hardening measure introduced in
 2.4.37.3-ow1.
-Reference:
-http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.4
 
 2009/07/29	Package: chkconfig
 Updated to 1.3.42.
@@ -785,7 +778,6 @@ to bypass the vm.mmap_min_addr restriction via SUID-root programs with a
 certain class of design errors in them.  Similar changes were introduced
 into 2.6.x kernels recently.
 References:
-http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.3
 http://git.kernel.org/linus/a3ca86aea507904148870946d599e07a340b39bf
 http://www.openwall.com/lists/oss-security/2009/07/16/1
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-1895
@@ -833,8 +825,6 @@ Updated to 1.3.38.
 SECURITY FIX	Severity: none to high, remote, active
 Updated to Linux 2.4.37.2-ow1.  The 2.4.37.2 kernel release adds several
 bug fixes, including security-relevant ones.
-Reference:
-http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.2
 
 2009/07/07	Package: openssh
 SECURITY FIX	Severity: none to high, remote, active
@@ -1559,4 +1549,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.302 2011/05/03 12:36:51 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.303 2012/04/29 23:46:30 solar Exp $
