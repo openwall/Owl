@@ -47,9 +47,7 @@ SECURITY FIX	Severity: none to medium, remote, active
 Updated to Linux 2.4.37.9-ow1.  The 2.4.37.9 kernel fixes an e1000
 Ethernet driver issue that could have allowed remote attackers to bypass
 packet filters.
-References:
-http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.8
-http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.9
+Reference:
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-4536
 
 (2010/01/20)
@@ -70,8 +68,6 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0001
 SECURITY FIX	Severity: none to high, local, active
 Updated to Linux 2.4.37.7-ow1.  The 2.4.37.7 kernel fixes a number of
 security-related bugs.
-Reference:
-http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.7
 
 (2009/10/25)
 2009/10/25	kernel
@@ -80,8 +76,6 @@ Updated to Linux 2.4.37.6-ow1.  The 2.4.37.6 kernel fixes a number of
 information leak vulnerabilities.  One of these was already fixed in
 2.4.37.5-ow1, and the remaining ones may or may not affect specific
 systems depending on both kernel and userspace configuration.
-Reference:
-http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.6
 
 (2009/08/23)
 2009/08/23	kernel
@@ -97,7 +91,6 @@ support for any socket types via which the bug is known to be
 triggerable.  More importantly, Linux 2.4.37.5-ow1 adds a fix for the
 sigaltstack local information leak affecting 64-bit kernel builds.
 References:
-http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.5
 http://lists.openwall.net/bugtraq/2009/08/13/11
 http://www.openwall.com/lists/oss-security/2009/08/14/2
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-2692
@@ -135,8 +128,6 @@ of design errors in them.  Finally, the update adds several
 security-relevant fixes to the RTL-8169 NIC driver, and makes other
 assorted changes.
 References:
-http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.3
-http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.4
 http://git.kernel.org/linus/a3ca86aea507904148870946d599e07a340b39bf
 http://www.openwall.com/lists/oss-security/2009/07/16/1
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-1895
@@ -164,8 +155,6 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-0696
 SECURITY FIX	Severity: none to high, remote, active
 Updated to Linux 2.4.37.2-ow1.  The 2.4.37.2 kernel release adds several
 bug fixes, including security-relevant ones.
-Reference:
-http://www.kernel.org/pub/linux/kernel/v2.4/ChangeLog-2.4.37.2
 
 (2009/07/07)
 2009/07/07	Package: openssh
@@ -614,4 +603,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.79 2011/05/04 12:39:29 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.80 2012/04/29 23:49:48 solar Exp $
