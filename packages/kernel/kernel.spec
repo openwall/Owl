@@ -1,23 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.82 2012/02/25 08:16:16 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.83 2012/05/05 20:46:46 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 274.18.1.el5.028stab098.1
+%define ovzversion 308.4.1.el5.028stab100.2
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5/028stab098.1
+URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab100.2
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab098.1/patches/patch-274.18.1.el5.028stab098.1-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab098.1/patches/patch-274.18.1.el5.028stab098.1-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab100.2/patches/patch-308.4.1.el5.028stab100.2-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab100.2/patches/patch-308.4.1.el5.028stab100.2-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -104,6 +104,13 @@ done
 %files fake
 
 %changelog
+* Sun May 06 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-308.4.1.el5.028stab100.2.owl1
+- Updated to 2.6.18-308.4.1.el5.028stab100.2.
+- Reverted the dmesg_restrict sysctl tri-state feature in favor of the approach
+taken by OpenVZ as discussed at http://bugzilla.openvz.org/show_bug.cgi?id=2197
+- In drivers/net/bnx2x/bnx2x_main.c, wrapped the hacks needed for building with
+gcc 3.4.5 (Owl 3.0-stable) in #if __GNUC__ < 4 ... #endif.
+
 * Sat Feb 25 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.18.1.el5.028stab098.1.owl1
 - Updated to 2.6.18-274.18.1.el5.028stab098.1.
 - Introduced the previously missed RLIMIT_NPROC check into fs/compat.c:

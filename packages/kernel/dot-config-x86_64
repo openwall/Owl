@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.18-274.18.1.el5.028stab098.1.owl1
-# Sat Feb 25 09:37:48 2012
+# Linux kernel version: 2.6.18-308.4.1.el5.028stab100.2.owl1
+# Sun May  6 00:22:52 2012
 #
 CONFIG_X86_64=y
 CONFIG_64BIT=y
@@ -1445,6 +1445,7 @@ CONFIG_USB_STORAGE=y
 # USB Input Devices
 #
 CONFIG_USB_HID=y
+CONFIG_HIDRAW=y
 CONFIG_USB_HIDINPUT=y
 # CONFIG_USB_HIDINPUT_POWERBOOK is not set
 # CONFIG_HID_FF is not set
