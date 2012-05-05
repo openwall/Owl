@@ -756,13 +756,26 @@ diff -urpN linux-2.6.18-308.4.1.el5.028stab100.2/fs/proc/proc_misc.c linux-2.6.1
  #endif
 diff -urpN linux-2.6.18-308.4.1.el5.028stab100.2/fs/proc/task_mmu.c linux-2.6.18-308.4.1.el5.028stab100.2-owl/fs/proc/task_mmu.c
 --- linux-2.6.18-308.4.1.el5.028stab100.2/fs/proc/task_mmu.c	2012-05-03 04:08:20 +0000
-+++ linux-2.6.18-308.4.1.el5.028stab100.2-owl/fs/proc/task_mmu.c	2012-05-05 14:15:57 +0000
-@@ -177,6 +177,9 @@ static int show_map_internal(struct seq_
++++ linux-2.6.18-308.4.1.el5.028stab100.2-owl/fs/proc/task_mmu.c	2012-05-05 15:08:52 +0000
+@@ -166,7 +166,7 @@ static int show_map_internal(struct seq_
+ 	struct proc_maps_private *priv = m->private;
+ 	struct task_struct *task = priv->task;
+ #ifdef __i386__
+-	struct mm_struct *tmm = get_task_mm(task);
++	struct mm_struct *tmm;
+ #endif
+ 	struct vm_area_struct *vma = v;
+ 	struct mm_struct *mm = vma->vm_mm;
+@@ -177,6 +177,13 @@ static int show_map_internal(struct seq_
  	dev_t dev = 0;
  	int len;
  
 +	if (current->exec_id != m->exec_id)
 +		return 0;
++
++#ifdef __i386__
++	tmm = get_task_mm(task);
++#endif
 +
  	if (file) {
  		struct inode *inode = vma->vm_file->f_dentry->d_inode;

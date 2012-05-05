@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.83 2012/05/05 20:46:46 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.84 2012/05/05 20:53:22 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -110,6 +110,8 @@ done
 taken by OpenVZ as discussed at http://bugzilla.openvz.org/show_bug.cgi?id=2197
 - In drivers/net/bnx2x/bnx2x_main.c, wrapped the hacks needed for building with
 gcc 3.4.5 (Owl 3.0-stable) in #if __GNUC__ < 4 ... #endif.
+- In fs/proc/task_mmu.c: show_map_internal(), corrected the struct mm_struct
+leak on i686 that was introduced in 2.6.18-274.18.1.el5.028stab098.1.owl1.
 
 * Sat Feb 25 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.18.1.el5.028stab098.1.owl1
 - Updated to 2.6.18-274.18.1.el5.028stab098.1.
