@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.78 2011/07/26 03:52:44 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.79 2012/05/06 22:43:49 solar Exp $
 
 %define shlib_soversion 10
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 1.0.0d
-Release: owl2
+Version: 1.0.0i
+Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -19,16 +19,16 @@ Patch3: openssl-1.0.0b-rh-enginesdir.diff
 Patch4: openssl-1.0.0b-rh-rpath.diff
 Patch5: openssl-0.9.8b-rh-test-use-localhost.diff
 Patch6: openssl-1.0.0b-rh-default-paths.diff
-Patch7: openssl-1.0.0b-rh-bad-mime.diff
-Patch8: openssl-1.0.0b-rh-man.diff
-Patch9: openssl-1.0.0b-rh-x509.diff
-Patch10: openssl-1.0.0b-rh-version-engines.diff
-Patch11: openssl-1.0.0-beta5-rh-cipher-change.diff
-Patch12: openssl-1.0.0b-rh-alt-ipv6-apps.diff
-Patch13: openssl-1.0.0b-rh-env-nozlib.diff
-Patch14: openssl-1.0.0-beta4-rh-dtls1-abi.diff
-Patch15: openssl-1.0.0d-owl-warnings.diff
-Patch16: openssl-1.0.0d-suse-env.diff
+Patch7: openssl-1.0.0i-rh-owl-man.diff
+Patch8: openssl-1.0.0b-rh-x509.diff
+Patch9: openssl-1.0.0b-rh-version-engines.diff
+Patch10: openssl-1.0.0-beta5-rh-cipher-change.diff
+Patch11: openssl-1.0.0b-rh-alt-ipv6-apps.diff
+Patch12: openssl-1.0.0b-rh-env-nozlib.diff
+Patch13: openssl-1.0.0-beta4-rh-dtls1-abi.diff
+Patch14: openssl-1.0.0d-owl-warnings.diff
+Patch15: openssl-1.0.0d-suse-env.diff
+Patch16: openssl-1.0.0i-owl-cms-tkey-fix.diff
 BuildRequires: perl, diffutils
 # Due to sed -i.
 BuildRequires: sed >= 4.1.1
@@ -252,6 +252,9 @@ bzip2 -9 docs/doc/ssleay.txt
 %exclude  %_datadir/ssl/misc/tsget
 
 %changelog
+* Sun May 06 2012 Solar Designer <solar-at-owl.openwall.com> 1.0.0i-owl1
+- Updated to 1.0.0i.
+
 * Tue Jul 26 2011 Solar Designer <solar-at-owl.openwall.com> 1.0.0d-owl2
 - Added a patch by Sebastian Krahmer of SUSE to protect more of the getenv()
 calls with !OPENSSL_issetugid() checks.
