@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.61 2011/10/31 08:15:27 segoon Exp $
+# $Owl: Owl/packages/owl-cdrom/owl-cdrom.spec,v 1.62 2012/05/06 17:12:38 solar Exp $
 
 Summary: Directory hierarchy changes and files needed for bootable CD-ROMs.
 Name: owl-cdrom
-Version: 1.15
+Version: 1.16
 Release: owl1
 License: public domain
 Group: System Environment/Base
@@ -79,6 +79,10 @@ fi
 %dir /owl
 
 %changelog
+* Sun May 06 2012 Solar Designer <solar-at-owl.openwall.com> 1.16-owl1
+- Dropped the "rescue" boot menu option now that due to our use of ISOLINUX the
+user may fully override the kernel parameters.
+
 * Mon Oct 31 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.15-owl1
 - Changed dashes in the kernel image name with underscores as ISOLINUX
 doesn't understand dashes.
