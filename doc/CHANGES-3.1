@@ -47,7 +47,30 @@ clarify the specific issue(s) and their severities in the description.
 	Changes made between Owl 3.0 and Owl-current.
 
 2012/05/06	Package: openssl
-Updated to 1.0.0i.
+SECURITY FIX	Severity: medium/high, remote/indirect, active/passive
+Updated to 1.0.0i, which corrects numerous vulnerabilities discovered
+since 1.0.0d (the version we had in Owl-current before).  The attack
+vectors and worst case impact of these vulnerabilities vary.  The ASN1
+BIO vulnerability (CVE-2012-2110) discovered by Tavis Ormandy of Google
+Security Team and patched specifically in the 1.0.0i release in April
+potentially allows for arbitrary code execution, but is not triggerable
+via OpenSSL's SSL/TLS code, whereas worst case impact of other
+vulnerabilities corrected with this update is lower.
+References:
+http://www.openssl.org/news/secadv_20120419.txt
+http://lists.openwall.net/full-disclosure/2012/04/19/4
+http://www.openwall.com/lists/oss-security/2012/04/22/2
+http://www.openwall.com/lists/oss-security/2012/04/22/3
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-2110
+http://www.openssl.org/news/secadv_20120312.txt
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-0884
+http://www.openssl.org/news/secadv_20120104.txt
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-4108
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-4576
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-4577
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-4619
+http://www.openssl.org/news/secadv_20110906.txt
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3207
 
 2012/05/06	Package: kernel
 SECURITY FIX	Severity: low to high, local, active
@@ -651,4 +674,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.86 2012/05/06 22:45:30 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.87 2012/05/07 22:05:19 solar Exp $
