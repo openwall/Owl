@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/syslinux/syslinux.spec,v 1.6 2012/05/08 19:18:43 solar Exp $
+# $Owl: Owl/packages/syslinux/syslinux.spec,v 1.7 2012/05/08 19:36:37 solar Exp $
 
 Summary: A collection of boot loaders for the Linux operating system.
 Name: syslinux
-Version: 4.04
-Release: owl3
+Version: 4.05
+Release: owl1
 License: GPLv2+
 Group: Applications/System
 URL: http://www.syslinux.org
@@ -145,6 +145,9 @@ else
 fi
 
 %changelog
+* Tue May 08 2012 Solar Designer <solar-at-owl.openwall.com> 4.05-owl1
+- Updated to 4.05.
+
 * Tue May 08 2012 Solar Designer <solar-at-owl.openwall.com> 4.04-owl3
 - Disabled packaging of keytab-lilo because the LILO package provides a program
 of the same name on Owl.
