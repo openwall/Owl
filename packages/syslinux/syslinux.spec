@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/syslinux/syslinux.spec,v 1.5 2012/05/08 19:13:39 solar Exp $
+# $Owl: Owl/packages/syslinux/syslinux.spec,v 1.6 2012/05/08 19:18:43 solar Exp $
 
 Summary: A collection of boot loaders for the Linux operating system.
 Name: syslinux
@@ -6,8 +6,7 @@ Version: 4.04
 Release: owl3
 License: GPLv2+
 Group: Applications/System
-# "The Syslinux website is currently out of order."
-#URL: http://syslinux.zytor.com/wiki/index.php/The_Syslinux_Project
+URL: http://www.syslinux.org
 Source0: http://www.kernel.org/pub/linux/utils/boot/syslinux/%name-%version.tar.xz
 # Signature: https://www.kernel.org/pub/linux/utils/boot/syslinux/%name-%version.tar.sign
 ExclusiveArch: %ix86 x86_64
