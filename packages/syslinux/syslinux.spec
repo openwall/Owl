@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/syslinux/syslinux.spec,v 1.4 2011/10/30 00:23:12 solar Exp $
+# $Owl: Owl/packages/syslinux/syslinux.spec,v 1.5 2012/05/08 19:13:39 solar Exp $
 
 Summary: A collection of boot loaders for the Linux operating system.
 Name: syslinux
 Version: 4.04
-Release: owl2
+Release: owl3
 License: GPLv2+
 Group: Applications/System
 # "The Syslinux website is currently out of order."
@@ -108,19 +108,22 @@ cd %buildroot/etc && ln -s ../boot/extlinux/extlinux.conf .
 %_mandir/man1/lss16toppm*
 %_mandir/man1/ppmtolss16*
 %_mandir/man1/syslinux2ansi*
-%_bindir/keytab-lilo
 %_bindir/lss16toppm
-%_bindir/md5pass
 %_bindir/mkdiskimage
 %_bindir/ppmtolss16
 %_bindir/pxelinux-options
-%_bindir/sha1pass
 %_bindir/syslinux2ansi
 %_bindir/isohybrid.pl
+# Packaging of keytab-lilo is disabled because the LILO package provides a
+# program of the same name on Owl.
+%exclude %_bindir/keytab-lilo
+# The below two are disabled because they depend on perl(Crypt::PasswdMD5) and
+# perl(Digest::SHA1), which are not part of Owl.
+%exclude %_bindir/md5pass
+%exclude %_bindir/sha1pass
 
 %files devel
 %defattr(-,root,root)
-%dir %_datadir/syslinux/com32
 %_datadir/syslinux/com32
 
 %files extlinux
@@ -143,6 +146,12 @@ else
 fi
 
 %changelog
+* Tue May 08 2012 Solar Designer <solar-at-owl.openwall.com> 4.04-owl3
+- Disabled packaging of keytab-lilo because the LILO package provides a program
+of the same name on Owl.
+- Disabled packaging of md5pass and sha1pass because they depend on
+perl(Crypt::PasswdMD5) and perl(Digest::SHA1), which are not part of Owl.
+
 * Sat Oct 29 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4.04-owl2
 - Remove precompiled object files in %prep.
 
