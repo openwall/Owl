@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/syslinux/syslinux.spec,v 1.7 2012/05/08 19:36:37 solar Exp $
+# $Owl: Owl/packages/syslinux/syslinux.spec,v 1.8 2012/05/08 19:59:57 solar Exp $
 
 Summary: A collection of boot loaders for the Linux operating system.
 Name: syslinux
@@ -9,6 +9,7 @@ Group: Applications/System
 URL: http://www.syslinux.org
 Source0: http://www.kernel.org/pub/linux/utils/boot/syslinux/%name-%version.tar.xz
 # Signature: https://www.kernel.org/pub/linux/utils/boot/syslinux/%name-%version.tar.sign
+Patch0: syslinux-4.05-owl-iso-dash.diff
 ExclusiveArch: %ix86 x86_64
 BuildRoot: /override/%name-%version
 
@@ -57,6 +58,7 @@ booting in the /tftpboot directory.
 
 %prep
 %setup -q -n syslinux-%version
+%patch0 -p1
 %__make clean
 
 %build
@@ -147,6 +149,7 @@ fi
 %changelog
 * Tue May 08 2012 Solar Designer <solar-at-owl.openwall.com> 4.05-owl1
 - Updated to 4.05.
+- Added support for dashes in filenames being looked up on ISO filesystems.
 
 * Tue May 08 2012 Solar Designer <solar-at-owl.openwall.com> 4.04-owl3
 - Disabled packaging of keytab-lilo because the LILO package provides a program
