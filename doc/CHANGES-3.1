@@ -104,6 +104,7 @@ Updated to 9.39, added packaging of the wiper.sh script (SSD trimming).
 Updated to 4.6.3.
 
 2012/02/25	Package: kernel
+SECURITY FIX	Severity: none to high, local, active
 Updated to 2.6.18-274.18.1.el5.028stab098.1.  Introduced the previously
 missed RLIMIT_NPROC check into fs/compat.c: compat_do_execve() (used by
 32-bit program binaries on 64-bit kernel).  Introduced protection
@@ -117,6 +118,10 @@ References:
 http://wiki.openvz.org/Download/kernel/rhel5/028stab098.1
 http://rhn.redhat.com/errata/RHSA-2012-0107.html
 http://www.openwall.com/lists/oss-security/2012/02/08/2
+http://www.openwall.com/lists/oss-security/2012/01/04/18
+http://www.openwall.com/lists/oss-security/2012/05/08/1
+https://bugzilla.redhat.com/show_bug.cgi?id=771764
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-0028
 
 2012/02/18	Package: glibc
 Enabled building of UTF-8 locales by default (adds 6.5 MB to glibc .rpm
@@ -674,4 +679,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.87 2012/05/07 22:05:19 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.88 2012/05/08 01:22:51 solar Exp $
