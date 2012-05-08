@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/hdparm/hdparm.spec,v 1.29 2012/04/22 19:26:24 solar Exp $
+# $Owl: Owl/packages/hdparm/hdparm.spec,v 1.30 2012/05/08 22:16:01 solar Exp $
 
 Summary: An utility for displaying and/or setting hard disk parameters.
 Name: hdparm
 Version: 9.39
-Release: owl1
-License: BSD-style
+Release: owl2
+License: BSD-style, GPLv2
 Group: Applications/System
 URL: http://sourceforge.net/projects/hdparm/
 Source: http://prdownloads.sourceforge.net/hdparm/hdparm-%version.tar.gz
@@ -20,26 +20,23 @@ older IDE driver subsystem.
 
 %build
 CFLAGS='%optflags' %__make CC=%__cc LDFLAGS= STRIP=echo
-cp -p wiper/README.txt README.wiper
 
 %install
 rm -rf %buildroot
 install -D -m755 hdparm %buildroot/sbin/hdparm
 install -pD -m644 hdparm.8 %buildroot%_mandir/man8/hdparm.8
-install -p -m755 wiper/wiper.sh %buildroot/sbin/
-
-# We don't package wiper/ yet.  When we do, we'll likely package it as
-# "documentation" initially and we'll need to add a warning/disclaimer
-# about the security risk of running it on a mounted filesystem tree.
 
 %files
 %defattr(-,root,root)
-%doc hdparm.lsm Changelog LICENSE.TXT README.acoustic TODO README.wiper
+%doc hdparm.lsm Changelog LICENSE.TXT README.acoustic TODO wiper/
 /sbin/hdparm
-/sbin/wiper.sh
 %_mandir/man8/hdparm.8*
 
 %changelog
+* Tue May 08 2012 Solar Designer <solar-at-owl.openwall.com> 9.39-owl2
+- Package wiper.sh and related files as documentation only such that
+wiper/README.txt is hopefully noticed and read before the script is used.
+
 * Sun Apr 01 2012 Mesut Can Gurle <mesutcang-at-gmail.com> 9.39-owl1
 - Updated to 9.39.
 - Added wiper.sh installation
