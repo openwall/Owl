@@ -46,6 +46,11 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2012/05/08	Package: lftp
+Updated to 4.3.6.  Corrected an assertion failure with torrent peer id
+generation when the lftp PID is above 65535.  Added a patch proposed by
+upstream to always obtain and report exact file timestamps.
+
 2012/05/06	Package: openssl
 SECURITY FIX	Severity: medium/high, remote/indirect, active/passive
 Updated to 1.0.0i, which corrects numerous vulnerabilities discovered
@@ -679,4 +684,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.88 2012/05/08 01:22:51 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.89 2012/05/08 18:40:25 solar Exp $
