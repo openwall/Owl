@@ -1,13 +1,15 @@
-# $Owl: Owl/packages/lftp/lftp.spec,v 1.43 2010/11/25 14:24:27 segoon Exp $
+# $Owl: Owl/packages/lftp/lftp.spec,v 1.44 2012/05/08 18:21:41 solar Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
-Version: 4.1.1
+Version: 4.3.6
 Release: owl1
 License: GPLv3+
 Group: Applications/Internet
 URL: http://lftp.yar.ru
 Source: http://ftp.yars.free.net/pub/source/lftp/lftp-%version.tar.xz
+Patch0: lftp-4.3.6-owl-torrent-my_peer_id.diff
+Patch1: lftp-4.3.6-up-need_exact_time.diff
 Requires: less
 BuildRequires: openssl-devel >= 0.9.7g-owl1, readline-devel >= 0:4.3
 BuildRequires: ncurses-devel, gettext
@@ -25,6 +27,8 @@ command completion, command history, and a lot more.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
 bzip2 -9k NEWS
 
 %build
@@ -72,6 +76,14 @@ fi
 %_datadir/locale/*/LC_MESSAGES/lftp.mo
 
 %changelog
+* Tue May 08 2012 Solar Designer <solar-at-owl.openwall.com> 4.3.6-owl1
+- Updated to 4.3.6.
+- Corrected an assertion failure with torrent my_peer_id generation when the
+lftp PID is above 0xffff (patch accepted upstream).
+- Added a patch proposed by upstream to always obtain and report exact file
+timestamps.  Thanks to Mesut Can Gurle for identifying the corresponding
+Red Hat patch and Bugzilla entry, which prompted our inquiry to upstream.
+
 * Thu Nov 25 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4.1.1-owl1
 - Updated to 4.1.1.
 - Dropped owl-warnings and owl-sentinel patches (fixed in upstream).

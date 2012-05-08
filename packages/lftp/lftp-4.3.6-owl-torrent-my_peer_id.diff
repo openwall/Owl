@@ -1,0 +1,11 @@
+--- lftp-4.3.6/src/Torrent.cc.orig	2012-02-14 10:09:24 +0000
++++ lftp-4.3.6/src/Torrent.cc	2012-04-12 18:56:46 +0000
+@@ -173,7 +173,7 @@ Torrent::Torrent(const char *mf,const ch
+    }
+    if(!my_peer_id) {
+       my_peer_id.set("-lftp43-");
+-      my_peer_id.appendf("%04x",(unsigned)getpid());
++      my_peer_id.appendf("%04x",(unsigned)getpid() & 0xffff);
+       my_peer_id.appendf("%08x",(unsigned)now.UnixTime());
+       assert(my_peer_id.length()==PEER_ID_LEN);
+    }
