@@ -1,0 +1,164 @@
+diff -uNp -r binutils-2.22.52.0.1/bfd/doc/bfd.texinfo binutils-2.22.52.0.1.new/bfd/doc/bfd.texinfo
+--- binutils-2.22.52.0.1/bfd/doc/bfd.texinfo	2012-01-31 23:46:04 +0000
++++ binutils-2.22.52.0.1.new/bfd/doc/bfd.texinfo	2012-02-14 09:37:06.260387793 +0000
+@@ -9,7 +9,8 @@
+ @ifnottex
+ @dircategory Software development
+ @direntry
+-* Bfd: (bfd).                   The Binary File Descriptor library.
++* Bfd: (bfd).                                   The Binary File Descriptor
++                                                library.
+ @end direntry
+ @end ifnottex
+ 
+diff -uNp -r binutils-2.22.52.0.1/binutils/doc/binutils.texi binutils-2.22.52.0.1.new/binutils/doc/binutils.texi
+--- binutils-2.22.52.0.1/binutils/doc/binutils.texi	2012-01-31 23:46:04 +0000
++++ binutils-2.22.52.0.1.new/binutils/doc/binutils.texi	2012-02-14 09:40:45.081472785 +0000
+@@ -26,28 +26,40 @@ section entitled ``GNU Free Documentatio
+ 
+ @dircategory Software development
+ @direntry
+-* Binutils: (binutils).         The GNU binary utilities.
++* Binutils: (binutils).                         The GNU binary utilities.
+ @end direntry
+ 
+ @dircategory Individual utilities
+ @direntry
+-* addr2line: (binutils)addr2line. Convert addresses to file and line.
+-* ar: (binutils)ar.               Create, modify, and extract from archives.
+-* c++filt: (binutils)c++filt.	  Filter to demangle encoded C++ symbols.
+-* cxxfilt: (binutils)c++filt.     MS-DOS name for c++filt.
+-* dlltool: (binutils)dlltool.	  Create files needed to build and use DLLs.
+-* nlmconv: (binutils)nlmconv.     Converts object code into an NLM.
+-* nm: (binutils)nm.               List symbols from object files.
+-* objcopy: (binutils)objcopy.	  Copy and translate object files.
+-* objdump: (binutils)objdump.     Display information from object files.
+-* ranlib: (binutils)ranlib.       Generate index to archive contents.
+-* readelf: (binutils)readelf.	  Display the contents of ELF format files.
+-* size: (binutils)size.           List section sizes and total size.
+-* strings: (binutils)strings.     List printable strings from files.
+-* strip: (binutils)strip.         Discard symbols.
+-* elfedit: (binutils)elfedit.     Update the ELF header of ELF files.
+-* windmc: (binutils)windmc.	  Generator for Windows message resources.
+-* windres: (binutils)windres.	  Manipulate Windows resources.
++* addr2line: (binutils)addr2line.               Convert addresses to file and
++                                                line.
++* ar: (binutils)ar.                             Create, modify, and extract from
++                                                archives.
++* c++filt: (binutils)c++filt.	                Filter to demangle encoded C++
++                                                symbols.
++
++* cxxfilt: (binutils)c++filt.                   MS-DOS name for c++filt.
++* dlltool: (binutils)dlltool.	                Create files needed to build and
++                                                use DLLs.
++* nlmconv: (binutils)nlmconv.                   Converts object code into an NLM.
++* nm: (binutils)nm.                             List symbols from object files.
++* objcopy: (binutils)objcopy.	                Copy and translate object files.
++* objdump: (binutils)objdump.                   Display information from object
++                                                files.
++* ranlib: (binutils)ranlib.                     Generate index to archive
++                                                contents.
++* readelf: (binutils)readelf.	                Display the contents of ELF
++                                                format files.
++* size: (binutils)size.                         List section sizes and total
++                                                size.
++* strings: (binutils)strings.                   List printable strings from
++                                                files.
++* strip: (binutils)strip.                       Discard symbols.
++* elfedit: (binutils)elfedit.                   Update the ELF header of ELF
++                                                files.
++* windmc: (binutils)windmc.	                Generator for Windows message
++                                                resources.
++* windres: (binutils)windres.	                Manipulate Windows resources.
+ @end direntry
+ 
+ @titlepage
+diff -uNp -r binutils-2.22.52.0.1/etc/standards.texi binutils-2.22.52.0.1.new/etc/standards.texi
+--- binutils-2.22.52.0.1/etc/standards.texi	2012-01-31 23:46:04 +0000
++++ binutils-2.22.52.0.1.new/etc/standards.texi	2012-02-14 09:41:51.489802175 +0000
+@@ -8,7 +8,7 @@
+ 
+ @dircategory GNU organization
+ @direntry
+-* Standards: (standards).       GNU coding standards.
++* Standards: (standards).                       GNU coding standards.
+ @end direntry
+ 
+ @c @setchapternewpage odd
+diff -uNp -r binutils-2.22.52.0.1/gas/doc/as.texinfo binutils-2.22.52.0.1.new/gas/doc/as.texinfo
+--- binutils-2.22.52.0.1/gas/doc/as.texinfo	2012-01-31 23:46:04 +0000
++++ binutils-2.22.52.0.1.new/gas/doc/as.texinfo	2012-02-14 09:42:25.837972880 +0000
+@@ -90,8 +90,8 @@
+ @ifnottex
+ @dircategory Software development
+ @direntry
+-* As: (as).                     The GNU assembler.
+-* Gas: (as).                    The GNU assembler.
++* As: (as).                                     The GNU assembler.
++* Gas: (as).                                    The GNU assembler.
+ @end direntry
+ @end ifnottex
+ 
+diff -uNp -r binutils-2.22.52.0.1/gprof/gprof.texi binutils-2.22.52.0.1.new/gprof/gprof.texi
+--- binutils-2.22.52.0.1/gprof/gprof.texi	2012-01-31 23:46:04 +0000
++++ binutils-2.22.52.0.1.new/gprof/gprof.texi	2012-02-14 09:42:48.406084519 +0000
+@@ -15,7 +15,8 @@
+ @c manuals to an info tree.  zoo@cygnus.com is developing this facility.
+ @dircategory Software development
+ @direntry
+-* gprof: (gprof).                Profiling your program's execution
++* gprof: (gprof).                               Profiling your program's
++                                                execution
+ @end direntry
+ @end ifnottex
+ 
+diff -uNp -r binutils-2.22.52.0.1/ld/ldint.texinfo binutils-2.22.52.0.1.new/ld/ldint.texinfo
+--- binutils-2.22.52.0.1/ld/ldint.texinfo	2012-01-31 23:46:04 +0000
++++ binutils-2.22.52.0.1.new/ld/ldint.texinfo	2012-02-14 09:45:32.578898629 +0000
+@@ -7,7 +7,7 @@
+ @ifnottex
+ @dircategory Software development
+ @direntry
+-* Ld-Internals: (ldint).	The GNU linker internals.
++* Ld-Internals: (ldint).	                The GNU linker internals.
+ @end direntry
+ @end ifnottex
+ 
+@@ -84,11 +84,11 @@ Documentation License.  A copy of the li
+ section entitled "GNU Free Documentation License".
+ 
+ @menu
+-* README::			The README File
+-* Emulations::			How linker emulations are generated
+-* Emulation Walkthrough::	A Walkthrough of a Typical Emulation
+-* Architecture Specific::	Some Architecture Specific Notes
+-* GNU Free Documentation License::  GNU Free Documentation License
++* README::			                The README File
++* Emulations::			                How linker emulations are generated
++* Emulation Walkthrough::	                A Walkthrough of a Typical Emulation
++* Architecture Specific::	                Some Architecture Specific Notes
++* GNU Free Documentation License::              GNU Free Documentation License
+ @end menu
+ 
+ @node README
+@@ -604,7 +604,7 @@ specific platforms.  Currently, only Int
+ of that, only the auto-import behavior for DLLs).
+ 
+ @menu
+-* ix86::                        Intel x86
++* ix86::                                        Intel x86
+ @end menu
+ 
+ @node ix86
+diff -uNp -r binutils-2.22.52.0.1/ld/ld.texinfo binutils-2.22.52.0.1.new/ld/ld.texinfo
+--- binutils-2.22.52.0.1/ld/ld.texinfo	2012-01-31 23:46:04 +0000
++++ binutils-2.22.52.0.1.new/ld/ld.texinfo	2012-02-14 09:45:58.103025086 +0000
+@@ -43,7 +43,7 @@
+ @ifnottex
+ @dircategory Software development
+ @direntry
+-* Ld: (ld).                       The GNU linker.
++* Ld: (ld).                                     The GNU linker.
+ @end direntry
+ @end ifnottex
+ 

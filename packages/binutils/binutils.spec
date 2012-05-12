@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/binutils/binutils.spec,v 1.27 2010/10/11 11:50:12 segoon Exp $
+# $Owl: Owl/packages/binutils/binutils.spec,v 1.28 2012/05/12 11:57:52 segoon Exp $
 
 %define BUILD_HJL 1
 
@@ -8,8 +8,8 @@
 
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.20.51.0.11
-Release: owl3
+Version: 2.22.52.0.1
+Release: owl1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils/
@@ -18,9 +18,8 @@ Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%version.tar.xz
 %else
 Source: ftp://ftp.gnu.org/gnu/binutils/binutils-%version.tar.gz
 %endif
-Patch0: binutils-2.20.51.0.11-owl-info.diff
+Patch0: binutils-2.22.52.0.1-owl-info.diff
 Patch1: binutils-2.20.51.0.11-rh-robustify3.diff
-Patch2: binutils-2.20.51.0.11-owl-tmp.diff
 PreReq: /sbin/ldconfig, /sbin/install-info
 ExcludeArch: ia64
 BuildRequires: texinfo, gettext, flex, bison, libtool
@@ -45,7 +44,6 @@ addresses to file and line).
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 # Apply additional Linux patches.
 #( cd bfd && make headers )
@@ -163,6 +161,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/*.mo
 
 %changelog
+* Tue Feb 14 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.22.52.0.1-owl1
+- Updated to 2.22.52.0.1.
+
 * Mon Oct 11 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.20.51.0.11-owl3
 - Packaged new documentation files.
 
