@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/modutils/modutils.spec,v 1.28 2010/07/26 03:45:57 solar Exp $
+# $Owl: Owl/packages/modutils/modutils.spec,v 1.29 2012/06/05 17:14:21 solar Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
 Version: 2.4.27
-Release: owl5
+Release: owl6
 License: GPL
 Group: System Environment/Kernel
 Source0: ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.4/modutils-%version.tar.bz2
@@ -100,9 +100,12 @@ fi
 %doc CREDITS ChangeLog.bz2 README TODO example/kallsyms.c include/kallsyms.h
 /sbin/*
 %_mandir/*/*
-/etc/modules.conf
+%config(noreplace) /etc/modules.conf
 
 %changelog
+* Tue Jun 05 2012 Solar Designer <solar-at-owl.openwall.com> 2.4.27-owl6
+- Marked /etc/modules.conf %%config(noreplace).
+
 * Mon Jul 26 2010 Solar Designer <solar-at-owl.openwall.com> 2.4.27-owl5
 - Install an empty /etc/modules.conf to make "depmod -A" work right (otherwise
 it'd always assume that the dependencies are out of date), as well as to have
