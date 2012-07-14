@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.156 2012/02/09 14:59:44 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.157 2012/07/14 14:20:27 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.9.4
+Version: 1.7.9.5
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -199,6 +199,11 @@ install -m 644 -p run/{mailer,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sat Jul 14 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.5-owl1
+- When cracking LM hashes, don't store the ASCII encodings of the hashes in
+memory, but instead reconstruct them from the binary hashes for writing into
+john.pot when a password gets cracked.
+
 * Thu Feb 09 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.4-owl1
 - Fixed a bug in the Keyboard external mode (uninitialized variables on
 "--restore" or when minlength is greater than 1).
