@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.157 2012/07/14 14:20:27 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.158 2012/07/17 12:51:31 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.9.5
+Version: 1.7.9.6
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -199,6 +199,11 @@ install -m 644 -p run/{mailer,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Tue Jul 17 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.6-owl1
+- Specify the alignment of binary ciphertexts and salts explicitly.
+- Corrected the loading of hashes on a line on their own, which was broken in
+1.7.9.5.  Thanks to JimF and magnum.
+
 * Sat Jul 14 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.5-owl1
 - When cracking LM hashes, don't store the ASCII encodings of the hashes in
 memory, but instead reconstruct them from the binary hashes for writing into
