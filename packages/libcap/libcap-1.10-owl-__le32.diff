@@ -1,0 +1,22 @@
+diff -uNp -r libcap-1.10.old/libcap/include/sys/capability.h libcap-1.10/libcap/include/sys/capability.h
+--- libcap-1.10.old/libcap/include/sys/capability.h	1999-11-18 06:19:21 +0000
++++ libcap-1.10/libcap/include/sys/capability.h	2012-07-05 19:39:11 +0000
+@@ -21,6 +21,7 @@ extern "C" {
+  */
+ 
+ #include <sys/types.h>
++#include <linux/types.h>
+ #include <linux/capability.h>
+ 
+ /*
+diff -uNp -r libcap-1.10.old/libcap/_makenames.c libcap-1.10/libcap/_makenames.c
+--- libcap-1.10.old/libcap/_makenames.c	1999-05-14 04:46:15 +0000
++++ libcap-1.10/libcap/_makenames.c	2012-07-05 19:38:48 +0000
+@@ -9,6 +9,7 @@
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <linux/types.h>
+ #include <linux/capability.h>
+ 
+ /*

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/libcap/libcap.spec,v 1.14 2006/04/03 21:57:30 ldv Exp $
+# $Owl: Owl/packages/libcap/libcap.spec,v 1.15 2012/07/22 18:27:09 segoon Exp $
 
 Summary: Library for getting and setting POSIX.1e capabilities.
 Name: libcap
 Version: 1.10
-Release: owl4
+Release: owl5
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.kernel.org/pub/linux/libs/security/linux-privs/
@@ -16,6 +16,7 @@ Patch3: libcap-1.10-alt-warnings.diff
 Patch4: libcap-1.10-rh-alt-makenames.diff
 Patch5: libcap-1.10-alt-userland.diff
 Patch6: libcap-1.10-alt-cap_file.diff
+Patch7: libcap-1.10-owl-__le32.diff
 BuildRoot: /override/%name-%version
 
 %description
@@ -88,6 +89,9 @@ ln -s ../../%_lib/"$soname" "%buildroot%_libdir/libcap.so"
 %_mandir/man3/*
 
 %changelog
+* Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.10-owl5
+- Fixed build failure with headers of Linux 2.6.32.
+
 * Tue Apr 04 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.10-owl4
 - Synced with libcap-1.10-alt15:
 - Relocated development library to %_libdir.

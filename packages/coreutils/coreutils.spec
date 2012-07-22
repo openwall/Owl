@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.31 2010/09/22 10:45:58 segoon Exp $
+# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.32 2012/07/22 18:29:41 segoon Exp $
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
 Version: 5.97
-Release: owl5
+Release: owl6
 License: GPL
 Group: System Environment/Base
 URL: http://www.gnu.org/software/%name/
@@ -256,6 +256,9 @@ fi
 %doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
+* Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.97-owl6
+- Fixed build failure with headers of Linux 2.6.32.
+
 * Wed Sep 22 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.97-owl5
 - Added .lzma, .txz and .xz suffixes to DIR_COLORS.
 

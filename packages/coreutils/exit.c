@@ -1,4 +1,6 @@
-#ifdef __i386__
+#include <linux/version.h>
+
+#if (defined(__i386__) && (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 18)))
 
 static int errno;
 #define __KERNEL__

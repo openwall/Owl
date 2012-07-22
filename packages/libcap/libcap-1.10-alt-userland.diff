@@ -1,5 +1,6 @@
---- libcap-1.10/libcap/include/sys/capability.h.orig	1999-11-18 09:19:21 +0300
-+++ libcap-1.10/libcap/include/sys/capability.h	2003-08-27 21:09:51 +0400
+diff -uNp -r libcap-1.10.old/libcap/include/sys/capability.h libcap-1.10/libcap/include/sys/capability.h
+--- libcap-1.10.old/libcap/include/sys/capability.h	1999-11-18 06:19:21 +0000
++++ libcap-1.10/libcap/include/sys/capability.h	2012-06-28 15:52:00 +0000
 @@ -4,6 +4,7 @@
   * 
   * Copyright (C) 1997   Aleph One
@@ -8,10 +9,12 @@
   *
   * defunct POSIX.1e Standard: 25.2 Capabilities           <sys/capability.h>
   */
-@@ -21,8 +22,46 @@
+@@ -21,8 +22,48 @@ extern "C" {
   */
  
  #include <sys/types.h>
++#include <stdint.h>
++#include <linux/types.h>
 +
 +/*
 + * Make sure we can be included from userland by preventing

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.62 2011/10/11 19:06:54 segoon Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.63 2012/07/22 18:27:44 segoon Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -24,7 +24,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.8
-Release: owl8
+Release: owl9
 Epoch: 4
 License: GPL
 Group: Development/Languages
@@ -50,6 +50,7 @@ Patch27: perl-5.8.8-up-rh-CVE-2008-1927.diff
 Patch28: perl-5.8.8-up-rh-Safe.diff
 Patch29: perl-5.8.8-up-rh-rmtree.diff
 Patch30: perl-5.8.8-owl-makedepend.diff
+Patch31: perl-5.8.8-owl-PAGE_SIZE.diff
 Provides: perl(:WITH_PERLIO)
 %if %BUILD_THREADS
 %define thread_arch -thread-multi
@@ -121,6 +122,7 @@ introduce security holes.
 %patch28 -p1
 %patch29 -p1
 %patch30 -p1
+%patch31 -p1
 
 find . -name '*.orig' -delete
 
@@ -307,6 +309,9 @@ chmod -R u+w %buildroot
 %endif
 
 %changelog
+* Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4:5.8.8-owl9
+- Fixed build failure with headers of Linux 2.6.32.
+
 * Tue Oct 11 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4:5.8.8-owl8
 - Also disabled op/time.t test as it wrongly relies on debatable performance
 assumptions.  This test occasionally fails because the assumptions are wrong.
