@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.52 2012/02/18 16:32:06 solar Exp $
+# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.53 2012/07/22 18:26:20 segoon Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -7,7 +7,7 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.11z
-Release: owl16
+Release: owl17
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%version.tar.bz2
@@ -29,6 +29,7 @@ Patch10: util-linux-2.11z-owl-hwclock.diff
 Patch11: util-linux-2.11z-up-pivot_root.diff
 Patch12: util-linux-2.11z-owl-_syscall5.diff
 Patch13: util-linux-2.11z-owl-minix.diff
+Patch14: util-linux-2.11z-owl-ext2_llseek.diff
 %if %BUILD_CRYPTO
 Patch100: util-linux-2.11z-crypto-v3.diff.bz2
 %endif
@@ -92,6 +93,7 @@ to query the status of a loop device.
 %ifarch %ix86 x86_64
 %patch13 -p1
 %endif
+%patch14 -p1
 %if %BUILD_CRYPTO
 %patch100 -p1
 %endif
@@ -100,8 +102,9 @@ to query the status of a loop device.
 unset LINGUAS || :
 CC="%__cc" \
 CFLAGS="%optflags -Wno-strict-aliasing" \
-LDFLAGS="" \
 ./configure
+
+echo 'LIBCURSES+= -ltinfo' >> make_include
 %__make RPM_OPT_FLAGS="%optflags -Wno-strict-aliasing"
 %__cc %optflags -static -nostartfiles -Dmain=_start -Dexit=_exit \
 	%_sourcedir/nologin.c -o nologin
@@ -348,6 +351,10 @@ fi
 %endif
 
 %changelog
+* Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.11z-owl17
+- Added -ltinfo into LDFLAGS to fix build error under binutils >= 2.21.
+- Used plain lseek(2) instead of ext2_llseek().
+
 * Sat Feb 18 2012 Solar Designer <solar-at-owl.openwall.com> 2.11z-owl16
 - Build and package %_sbindir/rdev also on x86_64 and non-x86 since part of its
 functionality is not arch-specific and it is required by hdparm's wiper.sh.

@@ -1,0 +1,87 @@
+diff -uNrp util-linux-2.11z.old/fdisk/cfdisk.c util-linux-2.11z/fdisk/cfdisk.c
+--- util-linux-2.11z.old/fdisk/cfdisk.c	2002-11-26 19:44:33.000000000 +0300
++++ util-linux-2.11z/fdisk/cfdisk.c	2012-07-05 18:31:08.005305898 +0400
+@@ -88,8 +88,7 @@ typedef long long ext2_loff_t;
+ typedef long      ext2_loff_t;
+ #endif
+ 
+-extern ext2_loff_t ext2_llseek(unsigned int fd, ext2_loff_t offset,
+-			       unsigned int origin);
++#define ext2_llseek lseek
+ 
+ #define VERSION UTIL_LINUX_VERSION
+ 
+diff -uNrp util-linux-2.11z.old/fdisk/fdisk.h util-linux-2.11z/fdisk/fdisk.h
+--- util-linux-2.11z.old/fdisk/fdisk.h	2001-09-14 03:05:35.000000000 +0400
++++ util-linux-2.11z/fdisk/fdisk.h	2012-07-05 18:31:19.853364685 +0400
+@@ -32,9 +32,7 @@ typedef long long ext2_loff_t;
+ typedef long      ext2_loff_t;
+ #endif
+ 
+-extern ext2_loff_t ext2_llseek(unsigned int fd,
+-			       ext2_loff_t offset,
+-			       unsigned int origin);
++#define ext2_llseek lseek
+ 
+ struct partition {
+ 	unsigned char boot_ind;         /* 0x80 - active */
+diff -uNrp util-linux-2.11z.old/fdisk/llseek.c util-linux-2.11z/fdisk/llseek.c
+--- util-linux-2.11z.old/fdisk/llseek.c	2002-10-31 16:44:31.000000000 +0300
++++ util-linux-2.11z/fdisk/llseek.c	2012-07-05 18:31:29.485412422 +0400
+@@ -16,7 +16,7 @@ typedef long long       ext2_loff_t;
+ typedef long            ext2_loff_t;
+ #endif
+ 
+-extern ext2_loff_t ext2_llseek (unsigned int, ext2_loff_t, unsigned int);
++#define ext2_llseek lseek
+ 
+ #ifdef __linux__
+ 
+diff -uNrp util-linux-2.11z.old/fdisk/Makefile util-linux-2.11z/fdisk/Makefile
+--- util-linux-2.11z.old/fdisk/Makefile	2002-11-24 20:33:58.000000000 +0300
++++ util-linux-2.11z/fdisk/Makefile	2012-07-05 18:25:46.395711146 +0400
+@@ -39,7 +39,7 @@ else
+ endif
+ endif
+ 
+-cfdisk: cfdisk.o llseek.o i386_sys_types.o $(LIB)/xstrncpy.o
++cfdisk: cfdisk.o i386_sys_types.o $(LIB)/xstrncpy.o
+ ifeq "$(HAVE_SLANG)" "yes"
+ 	$(CC) $(LDFLAGS) $^ -o $@ $(LIBSLANG)
+ else
+@@ -55,7 +55,7 @@ activate: sfdisk
+ 	rm -f activate
+ 	ln -s sfdisk activate
+ 
+-fdisk: fdisk.o llseek.o fdiskbsdlabel.o fdisksgilabel.o fdisksunlabel.o \
++fdisk: fdisk.o fdiskbsdlabel.o fdisksgilabel.o fdisksunlabel.o \
+ 	fdiskaixlabel.o i386_sys_types.o partname.o
+ fdisk.o: fdisk.c fdisk.h
+ fdiskbsdlabel.o: fdiskbsdlabel.c fdisk.h fdiskbsdlabel.h
+diff -uNrp util-linux-2.11z.old/fdisk/sfdisk.c util-linux-2.11z/fdisk/sfdisk.c
+--- util-linux-2.11z.old/fdisk/sfdisk.c	2003-01-28 21:18:03.000000000 +0300
++++ util-linux-2.11z/fdisk/sfdisk.c	2012-07-05 18:35:50.754708000 +0400
+@@ -130,11 +130,6 @@ fatal(char *s, ...) {
+  *
+  * Note: we use 512-byte sectors here, irrespective of the hardware ss.
+  */
+-#if !defined (__alpha__) && !defined (__ia64__) && !defined (__x86_64__) && !defined (__s390x__)
+-static
+-_syscall5(int,  _llseek,  uint,  fd, ulong, hi, ulong, lo,
+-       loff_t *, res, uint, wh);
+-#endif
+ 
+ static int
+ sseek(char *dev, unsigned int fd, unsigned long s) {
+@@ -142,11 +137,7 @@ sseek(char *dev, unsigned int fd, unsign
+     in = ((loff_t) s << 9);
+     out = 1;
+ 
+-#if !defined (__alpha__) && !defined (__ia64__) && !defined (__x86_64__) && !defined (__s390x__)
+-    if (_llseek (fd, in>>32, in & 0xffffffff, &out, SEEK_SET) != 0) {
+-#else
+     if ((out = lseek(fd, in, SEEK_SET)) != in) {
+-#endif
+ 	perror("llseek");
+ 	error(_("seek error on %s - cannot seek to %lu\n"), dev, s);
+ 	return 0;
