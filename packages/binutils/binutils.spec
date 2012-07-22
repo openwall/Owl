@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/binutils/binutils.spec,v 1.28 2012/05/12 11:57:52 segoon Exp $
+# $Owl: Owl/packages/binutils/binutils.spec,v 1.29 2012/07/22 18:36:48 segoon Exp $
 
 %define BUILD_HJL 1
 
@@ -9,7 +9,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.22.52.0.1
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils/
@@ -93,6 +93,7 @@ CFLAGS="%optflags" ../configure \
 	--mandir=%_mandir \
 	--infodir=%_infodir \
 	--enable-shared \
+	--disable-initfini-array \
 	$ADDITIONAL_TARGETS
 %__make tooldir=%_prefix all
 %__make tooldir=%_prefix info
@@ -161,6 +162,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/*.mo
 
 %changelog
+* Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.22.52.0.1-owl2
+- Temporarily disable initfini array to build glibc 2.3.6.
+
 * Tue Feb 14 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.22.52.0.1-owl1
 - Updated to 2.22.52.0.1.
 

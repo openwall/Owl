@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/mutt/mutt.spec,v 1.27 2010/01/26 17:18:56 solar Exp $
+# $Owl: Owl/packages/mutt/mutt.spec,v 1.28 2012/07/22 19:55:53 segoon Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
 Version: 1.4.2.3
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Internet
 URL: http://www.mutt.org
@@ -44,6 +44,7 @@ and more.
 
 %build
 autoreconf -fisv
+export LDFLAGS=-ltinfo
 %configure \
 	--with-docdir=%_docdir/mutt-%version \
 	--enable-pop --enable-imap \
@@ -83,6 +84,9 @@ cat contrib/gpg.rc %_sourcedir/Muttrc-color >> %buildroot/%_sysconfdir/Muttrc
 %exclude %_mandir/man1/mutt_dotlock.*
 
 %changelog
+* Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.4.2.3-owl2
+- Added -ltinfo into LDFLAGS to fix build error under binutils >= 2.21.
+
 * Wed May 30 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.4.2.3-owl1
 - Updated to 1.4.2.3.  This release fixes msgid validation in APOP
 authentication (CVE-2007-1558) and potential buffer overflow in passwd

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.93 2011/10/10 05:16:41 solar Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.94 2012/07/22 18:54:07 segoon Exp $
 
 %define WITH_PYTHON 0
 
@@ -8,7 +8,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl27
+Release: owl28
 License: GPL
 Group: System Environment/Base
 # ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -200,6 +200,7 @@ pushd file
 # We add -DMAGIC=path to configure to make sure that default magic file will
 # be searched for in the directory where "file" package stores it (this will
 # be unneeded once we separate "file" from "rpm")
+export LDFLAGS="-lrpmio -lpopt -lrpmdb -lrpm"
 CFLAGS="%optflags -DMAGIC='\"/usr/share/magic\"'" \
 ./configure \
 	--host=%_target_platform \
@@ -514,6 +515,9 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4.2-owl28
+- Added multiple -lXXX into LDFLAGS to fix build error under binutils >= 2.21.
+
 * Mon Oct 10 2011 Solar Designer <solar-at-owl.openwall.com> 4.2-owl27
 - Added a patch for CVE-2011-3378 (crash and potential arbitrary code execution
 on malformed package file headers) taken from RHEL 4 update package

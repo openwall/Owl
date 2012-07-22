@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/telnet/telnet.spec,v 1.12 2005/11/16 13:32:45 solar Exp $
+# $Owl: Owl/packages/telnet/telnet.spec,v 1.13 2012/07/22 18:37:14 segoon Exp $
 
 Summary: The client program for the telnet remote login protocol.
 Name: telnet
 Version: 3.0
-Release: owl3
+Release: owl4
 License: BSD
 Group: Applications/Internet
 Source0: telnet-%version-20011117.tar.bz2
@@ -46,7 +46,7 @@ will support remote logins into the host machine.
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-CFLAGS="-c %optflags" make
+CFLAGS="-c %optflags" make LDFLAGS=-ltinfo
 
 %install
 rm -rf %buildroot
@@ -80,6 +80,9 @@ grep -q ^telnetd: /etc/passwd ||
 %_mandir/man8/telnetd.8*
 
 %changelog
+* Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0-owl4
+- Added -ltinfo into LDFLAGS to fix build error under binutils >= 2.21.
+
 * Tue Jun 28 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.0-owl3
 - Build with -Wall; fixed compilation warnings.
 

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/psmisc/psmisc.spec,v 1.17 2006/06/06 00:31:58 ldv Exp $
+# $Owl: Owl/packages/psmisc/psmisc.spec,v 1.18 2012/07/22 18:37:45 segoon Exp $
 
 Summary: Utilities for managing processes on your system.
 Name: psmisc
 Version: 21.5
-Release: owl4
+Release: owl5
 License: GPL
 Group: Applications/System
 URL: http://psmisc.sourceforge.net
@@ -31,7 +31,7 @@ bzip2 -9k ChangeLog
 
 %build
 %configure --disable-rpath
-%__make all
+%__make all LDFLAGS=-ltinfo
 
 %install
 rm -rf %buildroot
@@ -54,6 +54,9 @@ mv .%_bindir/fuser sbin/
 %_mandir/man1/pstree.1*
 
 %changelog
+* Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 21.5-owl5
+- Added -ltinfo into LDFLAGS to fix build error under binutils >= 2.21.
+
 * Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 21.5-owl4
 - Backported upstream change to fix build with new GNU make.
 

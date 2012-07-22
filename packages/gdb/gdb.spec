@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gdb/gdb.spec,v 1.28 2010/10/31 04:22:02 solar Exp $
+# $Owl: Owl/packages/gdb/gdb.spec,v 1.29 2012/07/22 18:36:18 segoon Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
 Version: 6.3
-Release: owl4
+Release: owl5
 License: GPL
 Group: Development/Debuggers
 URL: http://www.gnu.org/software/gdb/
@@ -47,6 +47,8 @@ supported compiler, such as those from the GNU Compiler Collection.
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+
+%{expand:%%define optflags %optflags -ltinfo}
 
 %build
 # readline texinfo files are needed to generate gdb documentation
@@ -112,6 +114,9 @@ fi
 %_infodir/stabs.info*
 
 %changelog
+* Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 6.3-owl5
+- Added -ltinfo into LDFLAGS to fix build error under binutils >= 2.21.
+
 * Mon Oct 30 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 6.3-owl4
 - Fixed bounds type check in Ada support, patch from Alexander Kanevskiy.
 

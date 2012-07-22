@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/procps/Attic/procps.spec,v 1.33 2010/12/04 01:53:23 solar Exp $
+# $Owl: Owl/packages/procps/Attic/procps.spec,v 1.34 2012/07/22 18:34:02 segoon Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
 Version: 3.2.5
-Release: owl9
+Release: owl10
 License: GPL and LGPL
 Group: System Environment/Base
 URL: http://procps.sf.net
@@ -69,7 +69,7 @@ skill, slabtop, snice, sysctl, tload, top, uptime, vmstat, w, and watch.
 %patch33 -p1
 
 %build
-%__make CC="%__cc" CFLAGS="%optflags"
+%__make CC="%__cc" CFLAGS="%optflags" LDFLAGS=-ltinfo
 
 %install
 rm -rf %buildroot
@@ -88,6 +88,10 @@ rm -rf %buildroot
 %_mandir/man?/*
 
 %changelog
+* Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.2.5-owl10
+- Added -ltinfo into LDFLAGS to fix build error under binutils >= 2.21.
+- Fixed build failure with headers of Linux 2.6.32.
+
 * Wed Dec 01 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.2.5-owl9
 - Fixed parsing warnings of ps(1) and top(1) man pages.
 

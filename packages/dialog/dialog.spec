@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/dialog/dialog.spec,v 1.20 2006/01/03 23:50:14 mci Exp $
+# $Owl: Owl/packages/dialog/dialog.spec,v 1.21 2012/07/22 18:31:57 segoon Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog
 Version: 1.0
 %define original_date 20051219
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/System
 Source: ftp://dickey.his.com/dialog/%name-%version-%original_date.tgz
@@ -44,6 +44,7 @@ The following types of boxes are at your disposal:
 %{expand:%%define optflags %optflags -Wall}
 
 %build
+export LDFLAGS=-ltinfo
 %configure
 make
 
@@ -61,6 +62,9 @@ bzip2 -9q CHANGES
 %_mandir/man1/dialog.*
 
 %changelog
+* Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.0-owl3
+- Added -ltinfo into LDFLAGS to fix build error under binutils >= 2.21.
+
 * Wed Jan 04 2006 Michail Litvak <mci-at-owl.openwall.com> 1.0-owl2
 - bzip2'ed changelog and archived samples to reduce packet size.
 - Improved -tmp patch.
