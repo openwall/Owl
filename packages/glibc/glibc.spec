@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.128 2012/02/18 19:48:24 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.129 2012/07/23 16:21:14 segoon Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 1.2
-Release: owl18
+Release: owl19
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
@@ -82,6 +82,8 @@ Patch411: glibc-2.3.5-owl-alt-sanitize-env.diff
 Patch412: glibc-2.3.6-owl-crypt-wb.diff
 Patch413: glibc-2.3.6-owl-rh-pld-linker.diff
 Patch414: glibc-2.3.6-owl-gcc-4.3.diff
+Patch415: glibc-2.3.6-up-memcmp.diff
+Patch416: glibc-2.3.6-up-ld_linux.diff
 
 Requires: /etc/nsswitch.conf
 Provides: glibc-crypt_blowfish = %crypt_bf_version, ldconfig
@@ -259,6 +261,8 @@ install -pm644 %_sourcedir/crypt_freesec.[ch] crypt/
 if [ "`gcc --version | head -n 1 | grep -oE '[0-9.]+' | tr . 0`" -gt 40300 ]; then
 %patch414 -p1
 fi
+%patch415 -p1
+%patch416 -p1
 
 # XXX: check sparcv9 builds and probably fix this.
 #%ifarch sparcv9
@@ -483,6 +487,9 @@ fi
 %endif
 
 %changelog
+* Mon Jul 23 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.3.6-owl19
+- Fixed build failure under binutils >= 2.21.
+
 * Sat Feb 18 2012 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl18
 - Set BUILD_LOCALES_UTF8 to 1.
 

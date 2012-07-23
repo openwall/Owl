@@ -1,0 +1,20 @@
+diff -uNp -r glibc-2.3.6.old/sysdeps/i386/i686/memcmp.S glibc-2.3.6/sysdeps/i386/i686/memcmp.S
+--- glibc-2.3.6.old/sysdeps/i386/i686/memcmp.S	2004-04-01 23:28:37 +0000
++++ glibc-2.3.6/sysdeps/i386/i686/memcmp.S	2012-07-17 08:31:35 +0000
+@@ -350,6 +350,7 @@ L(set):
+ 	sbbl	$-1, %eax
+ 	popl	%esi
+ 	RETURN
++END (BP_SYM (memcmp))
+ 
+ 	.section	.rodata
+ 	ALIGN (2)
+@@ -387,8 +388,6 @@ L(table_32bytes) :
+ 	.long	L(30bytes) - . + 0x78
+ 	.long	L(31bytes) - . + 0x7c
+ 
+-END (BP_SYM (memcmp))
+-
+ #undef bcmp
+ weak_alias (BP_SYM (memcmp), BP_SYM (bcmp))
+ libc_hidden_builtin_def (BP_SYM (memcmp))

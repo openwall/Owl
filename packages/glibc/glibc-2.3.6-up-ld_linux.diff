@@ -1,0 +1,11 @@
+diff -uNp -r glibc-2.3.6.old/Makerules glibc-2.3.6/Makerules
+--- glibc-2.3.6.old/Makerules	2004-12-15 18:52:39 +0000
++++ glibc-2.3.6/Makerules	2012-07-17 14:26:49 +0000
+@@ -970,6 +970,7 @@ $(inst_libdir)/libc.so: $(common-objpfx)
+ 	 cat $<; \
+ 	 echo 'GROUP ( $(slibdir)/libc.so$(libc.so-version)' \
+ 	      '$(libdir)/$(patsubst %,$(libtype.oS),$(libprefix)$(libc-name))'\
++	      ' AS_NEEDED (' $(slibdir)/$(rtld-installed-name) ') ' \
+ 	      ')' \
+ 	) > $@.new
+ 	mv -f $@.new $@
