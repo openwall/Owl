@@ -1,20 +1,19 @@
-# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.27 2010/12/04 01:35:23 solar Exp $
+# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.28 2012/07/23 08:16:04 gremlin Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
-Version: 6.17.00
-Release: owl3
+Version: 6.18.01
+Release: owl1
 License: BSD
 Group: System Environment/Shells
 URL: http://www.tcsh.org/Home
-Source0: ftp://ftp.astron.com/pub/tcsh/%name-%version.tar.bz2
+Source0: ftp://ftp.astron.com/pub/tcsh/%name-%version.tar.gz
 Source1: csh.login
 Source2: csh.cshrc
-Patch0: tcsh-6.17.00-owl-tmp.diff
-Patch1: tcsh-6.17.00-owl-config.diff
-Patch2: tcsh-6.17.00-rh-printexitvalue.diff
-Patch3: tcsh-6.17.00-rh-signal.diff
-Patch4: tcsh-6.17.00-owl-warnings.diff
+Source3: skel.tcshrc
+Patch0: tcsh-6.18.01-owl-tmp.diff
+Patch1: tcsh-6.18.01-owl-config.diff
+Patch2: tcsh-6.18.01-owl-warnings.diff
 PreReq: fileutils, grep
 Requires(postun): sed >= 4.0.9
 BuildRequires: perl, groff, libtermcap-devel, glibc-utils
@@ -34,8 +33,6 @@ like syntax.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
 
 %define	_bindir	/bin
 
@@ -58,26 +55,27 @@ nroff -me eight-bit.me > eight-bit.txt
 
 while read lang language; do
 	dest=%buildroot%_datadir/locale/$lang/LC_MESSAGES
-	if test -f tcsh.$language.cat; then
+	if test -f nls/$language.cat; then
 		mkdir -p $dest
-		install -m 644 tcsh.$language.cat $dest/tcsh
+		install -m 644 nls/$language.cat $dest/tcsh.mo
 	fi
 done << EOF
-de german
-el greek
 en C
-es spanish
 et et
 fi finnish
 fr french
+de german
+el greek
 it italian
 ja ja
 pl pl
 ru russian
+es spanish
 uk ukrainian
 EOF
 
-mkdir -p %buildroot/etc
+mkdir -p %buildroot/etc/skel
+install -pm 644 %_sourcedir/skel.tcshrc %buildroot/etc/skel/.tcshrc
 install -pm 644 %_sourcedir/csh.{login,cshrc} %buildroot/etc/
 
 %post
@@ -93,12 +91,21 @@ fi
 %defattr(-,root,root)
 %doc NewThings FAQ eight-bit.txt complete.tcsh Fixes tcsh.html
 %config(noreplace) /etc/csh.*
+%config(noreplace) /etc/skel/.tcshrc
 %_bindir/tcsh
 %_bindir/csh
 %_mandir/*/*
 %_datadir/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
+* Mon Jul 23 2012 Gremlin from Kremlin <gremlin-at-owl.openwall.com> 6.18.01-owl1
+- Updated to 6.18.01
+- Dropped obsolete and recreated actual patches
+- Re-enabled color output for built-in "ls-F" command
+- Moved most settings from csh.login to csh.cshrc
+- Added /etc/skel/.tcshrc file
+- Added some examples to the configuration files
+
 * Sat Dec 04 2010 Solar Designer <solar-at-owl.openwall.com> 6.17.00-owl3
 - Revised the default shell prompt per gremlin@'s suggestion.
 

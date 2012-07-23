@@ -1,0 +1,12 @@
+diff -pruN tcsh-6.18.01.orig/tw.parse.c tcsh-6.18.01/tw.parse.c
+--- tcsh-6.18.01.orig/tw.parse.c	2011-04-14 18:33:05 +0400
++++ tcsh-6.18.01/tw.parse.c	2012-06-10 15:10:25 +0400
+@@ -2207,7 +2207,7 @@ print_by_column(Char *dir, Char *items[]
+ 		}
+ 		else {
+ 		    /* Print filename followed by '/' or '*' or ' ' */
+-		    xprintf("%-S%c", items[i], filetype(dir, items[i]));
++		    xprintf("%-S%c", items[i], (char)filetype(dir, items[i]));
+ 		    wx++;
+ 		}
+ #endif /* COLOR_LS_F */

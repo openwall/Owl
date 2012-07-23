@@ -1,0 +1,12 @@
+diff -pruN tcsh-6.18.01.orig/config_f.h tcsh-6.18.01/config_f.h
+--- tcsh-6.18.01.orig/config_f.h	2011-02-05 23:34:55 +0300
++++ tcsh-6.18.01/config_f.h	2012-06-10 14:53:19 +0400
+@@ -94,7 +94,7 @@
+  *		on the name of the tty, and environment.
+  *		Does not make sense in the modern window systems!
+  */
+-#define AUTOLOGOUT
++#undef AUTOLOGOUT
+ 
+ /*
+  * SUSPENDED	Newer shells say 'Suspended' instead of 'Stopped'.

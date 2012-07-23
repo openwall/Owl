@@ -1,0 +1,12 @@
+diff -pruN tcsh-6.18.01.orig/sh.c tcsh-6.18.01/sh.c
+--- tcsh-6.18.01.orig/sh.c	2011-11-29 22:38:54 +0400
++++ tcsh-6.18.01/sh.c	2012-06-10 15:58:51 +0400
+@@ -821,7 +821,7 @@ main(int argc, char **argv)
+ 	char *tmpdir = getenv ("TMPDIR");
+ 	if (!tmpdir)
+ 	    tmpdir = "/tmp";
+-	shtemp = Strspl(SAVE(tmpdir), SAVE("/sh" TMP_TEMPLATE)); /* For << */
++	shtemp = Strspl(SAVE(tmpdir), SAVE("/tcsh" TMP_TEMPLATE)); /* For << */
+     }
+ #else /* !HAVE_MKSTEMP */
+     shtemp = Strspl(STRtmpsh, doldol);	/* For << */

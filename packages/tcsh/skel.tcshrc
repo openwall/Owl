@@ -1,0 +1,56 @@
+# $Owl: Owl/packages/tcsh/skel.tcshrc,v 1.1 2012/07/23 08:16:04 gremlin Exp $
+
+# ~/.tcshrc - user's tcsh settings
+
+setenv SHELL `which tcsh`
+
+# Some locales (e.g. Russian) have inadequate defaults...
+#unsetenv LC_ALL LANG
+#setenv LC_CTYPE "ru_RU.KOI8-R"
+#setenv LC_TIME "ru_RU.KOI8-R"
+#setenv LC_MEASUREMENT "ru_RU.KOI8-R"
+#setenv LC_COLLATE "ru_RU.KOI8-R"
+##setenv LC_NUMERIC "C"
+
+##test -d "${$HOME}/bin" && setenv PATH "${PATH}:${$HOME}/bin"
+
+if ($?prompt) then
+##	set autolist = ambiguous
+##	set ellipsis
+	set history=1000
+	set nonomatch
+
+	set prompt='%n@%m:%~ %# '
+# Bangpath-style:
+#	set prompt='%m\\!%n %~ %# '
+
+	unset autologout
+	unset savehist
+
+##	alias bc 'bc -lq'
+##	alias hd 'hexdump -C'
+
+##	alias ls 'ls-F -Ca'
+##	alias lh 'ls-F -lha'
+##	alias ll 'ls-F -la'
+##	alias psg 'ps wax | grep -v grep | egrep -i'
+##	alias psl 'ps wax | less'
+##	alias tcpdump 'tcpdump -enlvvx -s 4096'
+##	alias tcpdump 'tcpdump -enlvvA -s 4096'
+
+##	if ( -s ~/.ssh/known_hosts ) then
+##	 set ssh_known_hosts = \
+##	  `cat ~/.ssh/known_hosts | sed -re 's, .*,,g;s/,/\n/g;' | sort | uniq`
+##	 complete ssh 'n/*/$ssh_known_hosts/'
+##	endif
+
+	unalias d
+	unalias dir
+	unalias v
+	unalias vdir
+
+	complete cd 'p/1/d/'
+	complete exec 'p/1/c/'
+	complete which 'n/*/c/'
+##	complete kill 'p/*/`ps wax | awk \{print\ \$1\}`/'
+endif
