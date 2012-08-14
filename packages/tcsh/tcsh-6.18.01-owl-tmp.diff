@@ -1,6 +1,6 @@
-diff -pruN tcsh-6.18.01.orig/sh.c tcsh-6.18.01/sh.c
---- tcsh-6.18.01.orig/sh.c	2011-11-29 22:38:54 +0400
-+++ tcsh-6.18.01/sh.c	2012-06-10 15:58:51 +0400
+diff -urp tcsh-6.18.01.orig/sh.c tcsh-6.18.01/sh.c
+--- tcsh-6.18.01.orig/sh.c	2011-11-29 18:38:54 +0000
++++ tcsh-6.18.01/sh.c	2012-06-10 11:58:51 +0000
 @@ -821,7 +821,7 @@ main(int argc, char **argv)
  	char *tmpdir = getenv ("TMPDIR");
  	if (!tmpdir)
@@ -10,3 +10,20 @@ diff -pruN tcsh-6.18.01.orig/sh.c tcsh-6.18.01/sh.c
      }
  #else /* !HAVE_MKSTEMP */
      shtemp = Strspl(STRtmpsh, doldol);	/* For << */
+diff -urp tcsh-6.18.01.orig/tcsh.man tcsh-6.18.01/tcsh.man
+--- tcsh-6.18.01.orig/tcsh.man	2012-02-13 16:33:50 +0000
++++ tcsh-6.18.01/tcsh.man	2012-08-14 02:16:43 +0000
+@@ -5033,8 +5033,11 @@ Read by login shells at logout after \fI
+ .I /bin/sh
+ Used to interpret shell scripts not starting with a `#'.
+ .TP 16
+-.I /tmp/sh*
+-Temporary file for `<<'.
++.I $TMPDIR/tcsh.*
++Temporary files for `<<'.
++.TP 16
++.I /tmp/tcsh.*
++Same as above, but used when $TMPDIR is not set.
+ .TP 16
+ .I /etc/passwd
+ Source of home directories for `~name' substitutions.
