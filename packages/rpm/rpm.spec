@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.94 2012/07/22 18:54:07 segoon Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.95 2012/08/14 16:52:03 segoon Exp $
 
 %define WITH_PYTHON 0
 
@@ -8,7 +8,7 @@
 Summary: The Red Hat package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl28
+Release: owl29
 License: GPL
 Group: System Environment/Base
 # ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
@@ -62,6 +62,7 @@ Patch40: rpm-4.2-owl-xz-payload.diff
 Patch41: rpm-4.2-owl-remove-unsafe-perms.diff
 Patch42: rpm-4.2-rh-header-sanity.diff
 Patch43: rpm-4.2-owl-beecrypt-configure.diff
+Patch44: rpm-4.2-owl-fix-Makefile.diff
 PreReq: /sbin/ldconfig
 PreReq: sh-utils, fileutils, mktemp, gawk
 Requires: findutils, diffutils, gzip
@@ -181,6 +182,7 @@ rm -r tests
 %patch41 -p1
 %patch42 -p1
 %patch43 -p1
+%patch44 -p1
 
 bzip2 -9k CHANGES
 
@@ -200,7 +202,6 @@ pushd file
 # We add -DMAGIC=path to configure to make sure that default magic file will
 # be searched for in the directory where "file" package stores it (this will
 # be unneeded once we separate "file" from "rpm")
-export LDFLAGS="-lrpmio -lpopt -lrpmdb -lrpm"
 CFLAGS="%optflags -DMAGIC='\"/usr/share/magic\"'" \
 ./configure \
 	--host=%_target_platform \
@@ -515,6 +516,11 @@ fi
 %__includedir/popt.h
 
 %changelog
+* Tue Aug 14 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4.2-owl29
+- Instead of using -lXXX used specific libXXX.la files from the build tree.
+Old scheme wrongly used system libraries insteaf of in-tree libraries.  It
+added a dependency of rpm-devel package for building rpm.
+
 * Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4.2-owl28
 - Added multiple -lXXX into LDFLAGS to fix build error under binutils >= 2.21.
 
