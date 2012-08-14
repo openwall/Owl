@@ -105,12 +105,4 @@ support for Python language bindings.  Moreover, Red Hat's rpm-python
 subpackage might not install correctly in conjunction with our main
 RPM package due to RPM version differences.
 
-
-	The Owl slang package is lacking UTF-8 support.
-
-On Red Hat Linux, UTF-8 support is added into S-Lang with a patch.  We
-don't do that.  If another package requires S-Lang with UTF-8 support,
-the workaround is simply to replace our slang package with Red Hat's.
-There are no dependencies on our version of slang within Owl itself.
-
-$Owl: Owl/doc/REDHAT,v 1.13 2010/12/14 16:37:05 solar Exp $
+$Owl: Owl/doc/REDHAT,v 1.14 2012/08/14 05:17:49 solar Exp $

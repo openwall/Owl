@@ -108,13 +108,4 @@ Da Python kein Bestandteil von Owl ist, stellen wir RPM ohne Unterstützung
 von Python zur Verfügung.  Zudem kann Red Hat's rpm-python Paket wegen
 Versionskonflikten mit unserem RPM Paket nicht richtig installiert werden.
 
-
-	Das Owl slang Paket hat keine Unterstützung für UTF-8.
-
-Red Hat hat dem S-Lang Paket UTF-8 Unterstützung mittels einem Patch
-hinzugefügt.  Dies machen wir nicht.  Sollte ein anderes Paket S-Lang
-mit UTF-8 Unterstützung benötigen kann man einfach unser slang Paket
-mit dem von Red Hat ersetzen, da es innerhalb von Owl keine Abhängigkeiten
-zu dem slang Paket gibt.
-
-$Owl: Owl/doc/de/REDHAT,v 1.6 2010/03/23 01:01:57 solar Exp $
+$Owl: Owl/doc/de/REDHAT,v 1.7 2012/08/14 05:17:49 solar Exp $
