@@ -46,6 +46,16 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2012/08/14	Package: glibc
+Corrected the processing of '\x80' characters in extended DES-based
+crypt(3) hashes.  A related issue affecting traditional DES-based
+crypt(3) hashes is known as CVE-2012-2143 in other projects using the
+same FreeSec code, but luckily in Owl we've been using this code only
+for the extended hashes (continuing to use upstream glibc's UFC-crypt
+for traditional ones), and these were only affected in terms of
+compatibility (with BSD/OS and certain other implementations), but not
+security.  Hence, this is not a security fix.
+
 2012/08/14	Package: slang
 Dropped S-Lang from Owl.  We never made use of it in Owl itself.
 
@@ -699,4 +709,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.95 2012/08/14 05:17:49 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.96 2012/08/14 07:38:07 solar Exp $
