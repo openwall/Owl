@@ -82,7 +82,7 @@ void IfaceHierChoice::AddDir(const ScriptVariable& name)
         Item **tmp = last;
         while(*tmp && (
                (*tmp)->stick_on_top ||
-               (*tmp)->children && (*tmp)->name.Strcasecmp(name)<0))
+               ((*tmp)->children && (*tmp)->name.Strcasecmp(name)<0)))
         {
             tmp = &((*tmp)->next);
         }

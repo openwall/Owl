@@ -9,7 +9,7 @@ void install_packages(OwlInstallInterface *the_iface)
 {
     the_iface->ExecWindow("Installing packages");
     chdir(the_config->WorldDir().c_str());
-    putenv("KERNEL_FAKE=no");
+    putenv((char*)"KERNEL_FAKE=no");
     ExecAndWait mkinst(the_config->MakePath().c_str(),
                 the_config->InstallWorldTarget().c_str(), (const char *)0);
     unsetenv("KERNEL_FAKE");

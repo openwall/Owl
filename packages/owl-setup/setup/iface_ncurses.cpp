@@ -759,7 +759,7 @@ NcursesOwlInstallInterface::QueryString(const ScriptVariable& prompt,
 
     entry = newCDKEntry((CDKSCREEN*)cdkscreen, CENTER, CENTER,
                         (char*)prom_v.Join("\n").c_str(),
-                        "",
+                        (char*)"",
                         work_with_colors ?
                             COLOR_PAIR(cp_selection)|A_BOLD
                             : A_NORMAL,

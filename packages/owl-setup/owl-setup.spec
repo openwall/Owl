@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.106 2010/12/09 16:25:18 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.107 2012/08/14 08:21:07 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
-Version: 1.2.5
+Version: 1.2.6
 Release: owl1
 License: relaxed BSD and (L)GPL-compatible; libraries under LGPL
 Group: System Environment/Base
@@ -34,6 +34,10 @@ rm -rf %buildroot
 %_mandir/man8/settle.8*
 
 %changelog
+* Tue Aug 14 2012 Solar Designer <solar-at-owl.openwall.com> 1.2.6-owl1
+- Explicitly link with -ltinfo (required after our binutils upgrade).
+- Fixed compiler warnings.
+
 * Thu Dec 09 2010 Solar Designer <solar-at-owl.openwall.com> 1.2.5-owl1
 - Propagate some kernel parameters (acpi*, no*) from the running system into
 the new lilo.conf.

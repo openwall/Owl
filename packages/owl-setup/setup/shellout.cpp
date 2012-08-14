@@ -16,7 +16,7 @@ void run_shell(OwlInstallInterface *the_iface)
                           "type \"exit\" to leave it");
     if(fork() == 0) {
         setenv("PS1", "# ", 1);
-        execl(s, s, 0);
+        execl(s, s, (const char *)0);
         exit(1);
     }
     int status;

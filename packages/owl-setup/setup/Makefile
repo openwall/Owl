@@ -6,7 +6,7 @@ INSTALL = install
 WITH_NCURSES = yes
 
 ifeq ($(WITH_NCURSES), yes)
-CURSES_LIBS = -lcdk -lmenu -lncurses
+CURSES_LIBS = -lcdk -lmenu -lncurses -ltinfo
 CURSES_OBJ = iface_ncurses.o curs_detect.o
 #CURSES_FLAGS = -DNCURSES_ENABLE
 CURSES_FLAGS = -DNCURSES_ENABLE -DNCURSES_DEFAULT
@@ -19,13 +19,13 @@ endif
 
 ifeq ($(DEBUG_INFO), yes)
 ifndef CXXFLAGS
-CXXFLAGS = -Wall -g -O0 -fomit-frame-pointer
+CXXFLAGS = -Wall -Wno-unused-value -g -O0 -fomit-frame-pointer
 endif
 CXXFLAGS += $(CURSES_FLAGS)
 LDFLAGS =
 else
 ifndef CXXFLAGS
-CXXFLAGS = -Wall -O2 -fomit-frame-pointer
+CXXFLAGS = -Wall -Wno-unused-value -O2 -fomit-frame-pointer
 endif
 CXXFLAGS += $(CURSES_FLAGS)
 LDFLAGS = -s
