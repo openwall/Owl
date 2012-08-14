@@ -1,13 +1,14 @@
-# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.28 2012/07/23 08:16:04 gremlin Exp $
+# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.29 2012/08/14 06:12:50 solar Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
 Version: 6.18.01
-Release: owl1
+Release: owl2
 License: BSD
 Group: System Environment/Shells
 URL: http://www.tcsh.org/Home
-Source0: ftp://ftp.astron.com/pub/tcsh/%name-%version.tar.gz
+# ftp://ftp.astron.com/pub/tcsh/%name-%version.tar.gz
+Source0: %name-%version.tar.xz
 Source1: csh.login
 Source2: csh.cshrc
 Source3: skel.tcshrc
@@ -98,6 +99,12 @@ fi
 %_datadir/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
+* Tue Aug 14 2012 Solar Designer <solar-at-owl.openwall.com> 6.18.01-owl2
+- Re-introduced the man page patch to reflect the naming of temporary files.
+- Revised the default settings to have fewer personal preferences and to be
+more consistent with the settings that we use for bash.
+- Use xz-compressed Source tarball.
+
 * Mon Jul 23 2012 Gremlin from Kremlin <gremlin-at-owl.openwall.com> 6.18.01-owl1
 - Updated to 6.18.01
 - Dropped obsolete and recreated actual patches
