@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.72 2012/03/03 17:35:09 solar Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.73 2012/08/14 06:48:32 solar Exp $
 
 # The only supported frontend for now is GXX.
 # Testsuite is not supported because of its requirement for additional
@@ -11,7 +11,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: 4.6.3
-Release: owl1
+Release: owl2
 Epoch: 1
 License: GPLv3+
 Group: Development/Languages
@@ -364,7 +364,7 @@ fi
 %_libdir/gcc/%_target_platform/%version/lto1
 %_libdir/gcc/%_target_platform/%version/lto-wrapper
 %exclude %_libdir/gcc/%_target_platform/%version/*.la
-%_libdir/gcc/%_target_platform/%version/liblto_plugin.so.0.0.0
+%_libdir/gcc/%_target_platform/%version/liblto_plugin.so*
 
 %files -n cpp
 %defattr(-,root,root)
@@ -447,6 +447,9 @@ fi
 %_libdir/libmudflapth.a
 
 %changelog
+* Tue Aug 14 2012 Solar Designer <solar-at-owl.openwall.com> 1:4.6.3-owl2
+- Correctly package liblto_plugin.so*
+
 * Sat Mar 03 2012 Solar Designer <solar-at-owl.openwall.com> 1:4.6.3-owl1
 - Updated to 4.6.3.
 
