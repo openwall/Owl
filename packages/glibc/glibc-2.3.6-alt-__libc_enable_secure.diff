@@ -1,0 +1,18 @@
+--- glibc-2.3.6/elf/Versions.orig	2005-05-23 01:53:37 +0000
++++ glibc-2.3.6/elf/Versions	2012-08-14 03:49:11 +0000
+@@ -32,6 +32,7 @@
+     calloc; free; malloc; realloc; __libc_memalign;
+ 
+     _r_debug;
++    __libc_enable_secure;
+   }
+   GLIBC_2.1 {
+     # functions used in other libraries
+@@ -45,7 +46,6 @@
+   }
+   GLIBC_PRIVATE {
+     # Those are in the dynamic linker, but used by libc.so.
+-    __libc_enable_secure;
+     _dl_argv;
+     _dl_out_of_memory;
+     _dl_starting_up;

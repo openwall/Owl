@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.129 2012/07/23 16:21:14 segoon Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.130 2012/08/14 05:06:53 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 1.2
-Release: owl19
+Release: owl20
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
@@ -65,6 +65,7 @@ Patch310: glibc-2.3.5-alt-i18n.diff
 Patch311: glibc-2.3.5-alt-relocate-helper-libs.diff
 Patch312: glibc-2.3.5-alt-linux-dl-execstack.diff
 Patch313: glibc-2.3.5-alt-assume_kernel.diff
+Patch314: glibc-2.3.6-alt-__libc_enable_secure.diff
 
 # Owl
 Patch400: glibc-2.3.3-owl-crypt_freesec.diff
@@ -219,6 +220,8 @@ compatibility package with necessary binaries of old libdb libraries.
 # fix _dl_osversion_init(), _dl_non_dynamic_init() and
 # dl_main() functions to not assume too old kernel version
 %patch313 -p1
+# move __libc_enable_secure from GLIBC_PRIVATE to GLIBC_2.0
+%patch314 -p1
 
 # Owl
 echo "Applying crypt_blowfish patch:"
@@ -487,6 +490,11 @@ fi
 %endif
 
 %changelog
+* Tue Aug 14 2012 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl20
+- Moved __libc_enable_secure from GLIBC_PRIVATE to GLIBC_2.0 like it's been
+done in ALT Linux.  Technically, __libc_enable_secure has always been a valid
+interface for use by other packages on Owl.
+
 * Mon Jul 23 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.3.6-owl19
 - Fixed build failure under binutils >= 2.21.
 
