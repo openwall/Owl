@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.130 2012/08/14 05:06:53 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.131 2012/08/14 07:31:12 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -491,6 +491,12 @@ fi
 
 %changelog
 * Tue Aug 14 2012 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl20
+- Corrected the processing of '\x80' characters in crypt_freesec.c.  This is
+the issue known as CVE-2012-2143 in other projects using the FreeSec code, but
+luckily in Owl we've been using this code only for the "extended" hashes
+(continuing to use glibc's UFC-crypt for "traditional" ones), and these were
+only affected in terms of compatibility (with BSD/OS and certain other
+implementations), but not security.
 - Moved __libc_enable_secure from GLIBC_PRIVATE to GLIBC_2.0 like it's been
 done in ALT Linux.  Technically, __libc_enable_secure has always been a valid
 interface for use by other packages on Owl.
