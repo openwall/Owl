@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/msulogin/msulogin/msulogin.spec,v 1.7 2005/11/16 13:16:56 solar Exp $
+# $Owl: Owl/packages/msulogin/msulogin/msulogin.spec,v 1.8 2012/08/15 06:46:32 solar Exp $
 
 Summary: The single user mode login program (sulogin).
 Name: msulogin
-Version: 0.9.1
+Version: 1.0
 Release: owl1
-License: relaxed BSD and (L)GPL-compatible
+License: BSD-compatible
 Group: System Environment/Base
 URL: http://www.openwall.com/msulogin/
 Source: ftp://ftp.openwall.com/pub/projects/msulogin/%name-%version.tar.gz
@@ -33,6 +33,11 @@ make install DESTDIR=%buildroot MANDIR=%_mandir
 %_mandir/man8/sulogin.8*
 
 %changelog
+* Wed Aug 15 2012 Solar Designer <solar-at-owl.openwall.com> 1.0-owl1
+- Handle possible NULL returns from crypt().
+- Handle possible failure of tcgetattr().
+- Switched to heavily cut-down BSD license.
+
 * Fri May 23 2003 Solar Designer <solar-at-owl.openwall.com> 0.9.1-owl1
 - Avoid a race condition in the handling of timeout pointed out by
 Pavel Kankovsky on owl-devel.
