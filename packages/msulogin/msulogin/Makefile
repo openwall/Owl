@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/msulogin/msulogin/Makefile,v 1.2 2005/11/16 13:16:56 solar Exp $
+# $Owl: Owl/packages/msulogin/msulogin/Makefile,v 1.3 2012/08/15 06:34:45 solar Exp $
 
 CC = gcc
 LD = gcc
 MKDIR = mkdir -p
 INSTALL = install -c
-CFLAGS = -c -Wall -O2 -fomit-frame-pointer
+CFLAGS = -c -Wall -W -O2 -fomit-frame-pointer
 LDFLAGS = -s
 LIBS = -lcrypt
 
