@@ -11,7 +11,7 @@
  * Copyright (c) 2003 by Solar Designer <solar at owl.openwall.com>.
  * See LICENSE.
  *
- * $Owl: Owl/packages/msulogin/msulogin/sulogin.c,v 1.4 2005/11/16 17:26:53 solar Exp $
+ * $Owl: Owl/packages/msulogin/msulogin/sulogin.c,v 1.5 2012/08/15 06:30:42 solar Exp $
  */
 
 #include <stdio.h>
@@ -113,6 +113,11 @@ static struct passwd *getspwnam(const char *user)
 	return pw;
 }
 
+/*
+ * As currently implemented, we don't avoid timing leaks for valid vs. not
+ * usernames and hashes.  However, we do reduce timing leaks for root vs.
+ * non-root accounts.
+ */
 static int valid(struct passwd *pw, const char *pass)
 {
 	int retval;
@@ -120,8 +125,13 @@ static int valid(struct passwd *pw, const char *pass)
 	if (!pw)
 		return 0;
 
-	retval = (!pw->pw_passwd[0] && !pass[0]) ||
-	    !strcmp(crypt(pass, pw->pw_passwd), pw->pw_passwd);
+	retval = !pass[0] && !pw->pw_passwd[0];
+
+	if (!retval && strlen(pw->pw_passwd) >= 13) {
+		const char *hash = crypt(pass, pw->pw_passwd);
+		if (hash)
+			retval = !strcmp(hash, pw->pw_passwd);
+	}
 
 	if (pw->pw_uid != 0)
 		retval = 0;
