@@ -11,7 +11,7 @@
  * Copyright (c) 2003 by Solar Designer <solar at owl.openwall.com>.
  * See LICENSE.
  *
- * $Owl: Owl/packages/msulogin/msulogin/sulogin.c,v 1.5 2012/08/15 06:30:42 solar Exp $
+ * $Owl: Owl/packages/msulogin/msulogin/sulogin.c,v 1.6 2012/08/15 06:33:53 solar Exp $
  */
 
 #include <stdio.h>
@@ -43,6 +43,7 @@ typedef enum {
 
 static void handle_alarm(int signum)
 {
+	(void) signum;
 	siglongjmp(jmp_alarm, 1);
 }
 
@@ -204,9 +205,11 @@ static int sulogin(void)
 		if (state != S_WORKING)
 			break;
 
-		t = s;
-		t.c_lflag &= ~(ECHO|ISIG);
-		tty_changed = (tcsetattr(in, TCSAFLUSH, &t) == 0);
+		if (tty_saved) {
+			t = s;
+			t.c_lflag &= ~(ECHO|ISIG);
+			tty_changed = (tcsetattr(in, TCSAFLUSH, &t) == 0);
+		}
 
 		putline_fd("Password: ", out);
 		if ((retval = getline_fd(pass, sizeof(pass), in)) < 0)
