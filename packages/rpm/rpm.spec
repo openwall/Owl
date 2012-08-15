@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.95 2012/08/14 16:52:03 segoon Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.96 2012/08/15 02:26:52 solar Exp $
 
 %define WITH_PYTHON 0
 
@@ -62,7 +62,7 @@ Patch40: rpm-4.2-owl-xz-payload.diff
 Patch41: rpm-4.2-owl-remove-unsafe-perms.diff
 Patch42: rpm-4.2-rh-header-sanity.diff
 Patch43: rpm-4.2-owl-beecrypt-configure.diff
-Patch44: rpm-4.2-owl-fix-Makefile.diff
+Patch44: rpm-4.2-owl-Makefile.diff
 PreReq: /sbin/ldconfig
 PreReq: sh-utils, fileutils, mktemp, gawk
 Requires: findutils, diffutils, gzip
