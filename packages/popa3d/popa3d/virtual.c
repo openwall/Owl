@@ -175,8 +175,11 @@ struct passwd *virtual_userpass(char *user, char *pass, int *known)
 	endpwent();
 
 	result = NULL;
-	if (!strcmp(crypt(pass, passwd), passwd) && !fail)
-		result = pw;
+	{
+		char *computed_hash = crypt(pass, passwd);
+		if (computed_hash && !strcmp(computed_hash, passwd) && !fail)
+			result = pw;
+	}
 
 	memset(auth, 0, sizeof(auth));
 

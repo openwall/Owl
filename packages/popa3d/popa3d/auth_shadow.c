@@ -52,9 +52,11 @@ struct passwd *auth_userpass(char *user, char *pass, int *known)
 		if (!(spw = getspnam(user)) || !pw || !*spw->sp_pwdp ||
 		    *spw->sp_pwdp == '*' || *spw->sp_pwdp == '!')
 			crypt(pass, AUTH_DUMMY_SALT);
-		else
-		if (!strcmp(crypt(pass, spw->sp_pwdp), spw->sp_pwdp))
-			result = 1;
+		else {
+			char *hash = crypt(pass, spw->sp_pwdp);
+			if (hash && !strcmp(hash, spw->sp_pwdp))
+				result = 1;
+		}
 		write(channel[1], &result, 1);
 		exit(0);
 	}

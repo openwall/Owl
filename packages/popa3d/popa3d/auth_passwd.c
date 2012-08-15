@@ -26,9 +26,11 @@ struct passwd *auth_userpass(char *user, char *pass, int *known)
 	if (!pw || !*pw->pw_passwd ||
 	    *pw->pw_passwd == '*' || *pw->pw_passwd == '!')
 		crypt(pass, AUTH_DUMMY_SALT);
-	else
-	if (!strcmp(crypt(pass, pw->pw_passwd), pw->pw_passwd))
-		result = pw;
+	else {
+		char *hash = crypt(pass, pw->pw_passwd);
+		if (hash && !strcmp(hash, pw->pw_passwd))
+			result = pw;
+	}
 
 	if (pw)
 		memset(pw->pw_passwd, 0, strlen(pw->pw_passwd));
