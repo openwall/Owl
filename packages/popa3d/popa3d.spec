@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/popa3d/popa3d.spec,v 1.51 2006/05/23 00:15:04 solar Exp $
+# $Owl: Owl/packages/popa3d/popa3d.spec,v 1.52 2012/08/15 09:29:16 solar Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
-Version: 1.0.2
+Version: 1.0.3
 Release: owl1
-License: relaxed BSD and (L)GPL-compatible
+License: BSD-compatible
 Group: System Environment/Daemons
 URL: http://www.openwall.com/popa3d/
 Source0: ftp://ftp.openwall.com/pub/projects/popa3d/popa3d-%version.tar.gz
@@ -74,6 +74,12 @@ fi
 %doc CHANGES CONTACT DESIGN LICENSE
 
 %changelog
+* Wed Aug 15 2012 Solar Designer <solar-at-owl.openwall.com> 1.0.3-owl1
+- Handle possible NULL returns from crypt().
+- Revised the included MD5 routines to help the compiler detect a common
+subexpression between steps in round 3.
+- Switched to heavily cut-down BSD license.
+
 * Tue May 23 2006 Solar Designer <solar-at-owl.openwall.com> 1.0.2-owl1
 - A couple of optimizations specific to x86-64 have been applied to the
 included MD5 routines.

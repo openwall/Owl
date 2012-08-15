@@ -1,3 +1,13 @@
+	Changes made between 1.0.2 and 1.0.3 (2012/08/15).
+
+Handle possible NULL returns from crypt(3).
+
+Revised the included MD5 routines to help the compiler detect a common
+subexpression between steps in round 3.
+
+Switched to heavily cut-down BSD license.
+
+
 	Changes made between 1.0.1 and 1.0.2 (2006/05/23).
 
 A couple of optimizations specific to x86-64 have been applied to the
@@ -116,4 +126,4 @@ code size.
 Added a popa3d(8) manual page based on the one Camiel Dobbelaar wrote
 for OpenBSD.
 
-$Owl: Owl/packages/popa3d/popa3d/CHANGES,v 1.11 2006/05/23 00:15:04 solar Exp $
+$Owl: Owl/packages/popa3d/popa3d/CHANGES,v 1.12 2012/08/15 09:29:17 solar Exp $
