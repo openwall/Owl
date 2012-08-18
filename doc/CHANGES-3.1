@@ -46,6 +46,25 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2012/08/18	Package: openssl
+SECURITY FIX	Severity: none to medium, remote, passive to active
+Updated to 1.0.0j.  This release corrects a buffer over-read flaw in the
+handling of CBC mode ciphersuites in DTLS.  No DTLS-using programs are
+included in Owl, so it'd take a third-party program to make this flaw
+actually triggerable on Owl.
+References:
+http://www.openssl.org/news/secadv_20120510.txt
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-2333
+
+2012/08/18	Package: xinetd
+SECURITY FIX	Severity: none to medium, remote, active
+Updated to 2.3.15, which corrects an access control bypass vulnerability
+in the normally disabled tcpmux service.
+References:
+http://www.openwall.com/lists/oss-security/2012/05/09/5
+https://bugzilla.redhat.com/show_bug.cgi?id=790940
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-0862
+
 2012/08/18	Package: kernel
 SECURITY FIX	Severity: low, local, active
 Updated to 2.6.18-308.11.1.el5.028stab102.1.  The corresponding RHEL5
@@ -723,4 +742,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.97 2012/08/18 18:21:34 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.98 2012/08/18 21:30:11 solar Exp $
