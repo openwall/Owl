@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.79 2012/05/06 22:43:49 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.80 2012/08/18 21:09:01 solar Exp $
 
 %define shlib_soversion 10
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 1.0.0i
+Version: 1.0.0j
 Release: owl1
 License: distributable
 Group: System Environment/Libraries
@@ -28,7 +28,6 @@ Patch12: openssl-1.0.0b-rh-env-nozlib.diff
 Patch13: openssl-1.0.0-beta4-rh-dtls1-abi.diff
 Patch14: openssl-1.0.0d-owl-warnings.diff
 Patch15: openssl-1.0.0d-suse-env.diff
-Patch16: openssl-1.0.0i-owl-cms-tkey-fix.diff
 BuildRequires: perl, diffutils
 # Due to sed -i.
 BuildRequires: sed >= 4.1.1
@@ -115,7 +114,6 @@ This package contains some miscellaneous Perl scripts.
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
-%patch16 -p1
 
 bzip2 -9k CHANGES CHANGES.SSLeay
 
@@ -252,6 +250,9 @@ bzip2 -9 docs/doc/ssleay.txt
 %exclude  %_datadir/ssl/misc/tsget
 
 %changelog
+* Sat Aug 18 2012 Solar Designer <solar-at-owl.openwall.com> 1.0.0j-owl1
+- Updated to 1.0.0j.
+
 * Sun May 06 2012 Solar Designer <solar-at-owl.openwall.com> 1.0.0i-owl1
 - Updated to 1.0.0i.
 
