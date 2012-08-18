@@ -2678,6 +2678,18 @@ diff -urpN linux-2.6.18-308.11.1.el5.028stab102.1/net/socket.c linux-2.6.18-308.
  		break;
  	default:
  		return -EAFNOSUPPORT;
+diff -urpN linux-2.6.18-308.11.1.el5.028stab102.1/scripts/kconfig/lxdialog/check-lxdialog.sh linux-2.6.18-308.11.1.el5.028stab102.1-owl/scripts/kconfig/lxdialog/check-lxdialog.sh
+--- linux-2.6.18-308.11.1.el5.028stab102.1/scripts/kconfig/lxdialog/check-lxdialog.sh	2006-09-20 03:42:06 +0000
++++ linux-2.6.18-308.11.1.el5.028stab102.1-owl/scripts/kconfig/lxdialog/check-lxdialog.sh	2012-08-18 16:53:51 +0000
+@@ -11,7 +11,7 @@ ldflags()
+ 	fi
+ 	$cc -print-file-name=libncurses.so | grep -q /
+ 	if [ $? -eq 0 ]; then
+-		echo '-lncurses'
++		echo '-lncurses -ltinfo'
+ 		exit
+ 	fi
+ 	$cc -print-file-name=libcurses.so | grep -q /
 diff -urpN linux-2.6.18-308.11.1.el5.028stab102.1/scripts/mkcompile_h linux-2.6.18-308.11.1.el5.028stab102.1-owl/scripts/mkcompile_h
 --- linux-2.6.18-308.11.1.el5.028stab102.1/scripts/mkcompile_h	2006-09-20 03:42:06 +0000
 +++ linux-2.6.18-308.11.1.el5.028stab102.1-owl/scripts/mkcompile_h	2011-07-27 04:03:04 +0000

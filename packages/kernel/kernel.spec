@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.85 2012/08/18 16:41:19 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.86 2012/08/18 17:14:33 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -106,6 +106,7 @@ done
 %changelog
 * Sat Aug 18 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-308.11.1.el5.028stab102.1.owl1
 - Updated to 2.6.18-308.11.1.el5.028stab102.1.
+- Made "make menuconfig" work with new binutils (added -ltinfo).
 
 * Sun May 06 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-308.4.1.el5.028stab100.2.owl1
 - Updated to 2.6.18-308.4.1.el5.028stab100.2.
