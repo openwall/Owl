@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/xinetd/xinetd.spec,v 1.41 2009/10/24 11:30:34 solar Exp $
+# $Owl: Owl/packages/xinetd/xinetd.spec,v 1.42 2012/08/18 20:53:49 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
-Version: 2.3.14
+Version: 2.3.15
 Release: owl1
 License: BSD with minor restrictions
 Group: System Environment/Daemons
@@ -18,14 +18,13 @@ Source7: xinetd-echo
 Source8: xinetd-uecho
 Source9: xinetd-chargen
 Source10: xinetd-uchargen
-Patch0: xinetd-2.3.14-up-warnings.diff
-Patch1: xinetd-2.3.14-up-revert-bad_port_check.diff
-Patch2: xinetd-2.3.14-owl-fixes.diff
-Patch3: xinetd-2.3.13-alt-pidfile.diff
-Patch4: xinetd-2.3.13-alt-parse_inet_addresses.diff
+Patch0: xinetd-2.3.15-owl-bad_port_check.diff
+Patch1: xinetd-2.3.15-owl-fixes.diff
+Patch2: xinetd-2.3.13-alt-pidfile.diff
+Patch3: xinetd-2.3.13-alt-parse_inet_addresses.diff
+Patch4: xinetd-2.3.14-rh-man.diff
 Patch5: xinetd-2.3.14-owl-man.diff
-Patch6: xinetd-2.3.12-rh-tcp_rpc.diff
-Patch7: xinetd-2.3.14-rh-man.diff
+Patch6: xinetd-2.3.15-owl-man-no-selinux.diff
 PreReq: /sbin/chkconfig
 Requires: tcp_wrappers >= 7.6-owl3.2
 Provides: inetd
@@ -56,7 +55,6 @@ limits on the number of servers that can be started, among other things.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
 bzip2 -9k CHANGELOG
 
 %{expand:%%define optflags %optflags -Wall -W -Wno-unused -Wno-switch}
@@ -121,6 +119,9 @@ fi
 %_mandir/*/*
 
 %changelog
+* Sat Aug 18 2012 Solar Designer <solar-at-owl.openwall.com> 2.3.15-owl1
+- Updated to 2.3.15.
+
 * Sat Oct 24 2009 Solar Designer <solar-at-owl.openwall.com> 2.3.14-owl1
 - Updated to 2.3.14, but reverted upstream's removal of bad_port_check().
 - Added range checks to parse_int()-like functions in xinetd/util.c as needed
