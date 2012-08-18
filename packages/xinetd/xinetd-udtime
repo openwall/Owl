@@ -2,7 +2,7 @@
 # description: A daytime server. This is the udp \
 # version.
 
-service daytime-udp
+service daytime
 {
 	type		= INTERNAL
 	id		= daytime-dgram

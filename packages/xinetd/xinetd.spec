@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/xinetd/xinetd.spec,v 1.42 2012/08/18 20:53:49 solar Exp $
+# $Owl: Owl/packages/xinetd/xinetd.spec,v 1.43 2012/08/18 20:56:15 solar Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
@@ -121,6 +121,7 @@ fi
 %changelog
 * Sat Aug 18 2012 Solar Designer <solar-at-owl.openwall.com> 2.3.15-owl1
 - Updated to 2.3.15.
+- Corrected builtin UDP service names in the provided config files.
 
 * Sat Oct 24 2009 Solar Designer <solar-at-owl.openwall.com> 2.3.14-owl1
 - Updated to 2.3.14, but reverted upstream's removal of bad_port_check().
