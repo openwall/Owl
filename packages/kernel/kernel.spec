@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.88 2012/10/19 15:49:26 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.89 2012/10/19 19:21:33 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 %{?!BUILD_DEVEL: %define BUILD_DEVEL 1}
@@ -89,10 +89,6 @@ cp %_sourcedir/dot-config-%_target_cpu .config
 
 %build
 %__make nonint_oldconfig
-%__make fs/
-cp .config ~/logs/config-%_target_cpu
-exit 1
-
 %__make bzImage
 
 %if %BUILD_MODULES
@@ -209,7 +205,7 @@ cp -a Documentation/ %buildroot/%_datadir/doc/kernel-doc-%version/
 %endif
 
 %changelog
-* Fri Oct 19 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> xxx-owl1
+* Fri Oct 19 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.32-042stab062.2
 - Switched to RHEL6'ish branch of OpenVZ kernels, version 2.6.32-042stab062.2.
 - Ported numerous security features from upstream kernel, Grsecurity/PaX and Ow patches:
 HARDEN_STACK allows root to define more strict GNU_STACK handling policy, e.g. completely ignore it.
