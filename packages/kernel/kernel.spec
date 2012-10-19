@@ -1,23 +1,24 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.87 2012/08/18 17:20:17 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.88 2012/10/19 15:49:26 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
+%{?!BUILD_DEVEL: %define BUILD_DEVEL 1}
+%{?!BUILD_DOCUMENTATION: %define BUILD_DOCUMENTATION 1}
 
 Summary: The Linux kernel.
 Name: kernel
-Version: 2.6.18
-%define ovzversion 308.11.1.el5.028stab102.1
+Version: 2.6.32
+%define ovzversion 042stab062.2
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab102.1
-Source0: linux-2.6.18.tar.xz
-# Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
-# Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
+URL: http://wiki.openvz.org/Download/kernel/rhel6/042stab062.2
+Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.32.tar.xz
+# Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.32.tar.xz.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab102.1/patches/patch-308.11.1.el5.028stab102.1-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab102.1/patches/patch-308.11.1.el5.028stab102.1-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel6-2.6.32/042stab062.2/patches/patch-042stab062.2-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel6-2.6.32/042stab062.2/patches/patch-042stab062.2-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -26,7 +27,7 @@ BuildRoot: /override/%name-%version
 
 %description
 The Linux kernel with OpenVZ container-based virtualization, from OpenVZ
-project's "rhel5" branch.
+project's "rhel6" branch.
 
 %package headers
 Summary: The Linux kernel header files.
@@ -46,6 +47,40 @@ Provides: kernel = %version-%release, kernel-drm = 4.3.0
 A fake Linux kernel package for use in OpenVZ containers and the like to
 satisfy possible dependencies of other packages.
 
+%if %BUILD_MODULES
+%package firmware
+Summary: Firmware for Linux kernel drivers
+Group: Development/System
+
+%description firmware
+Kernel-firmware includes firmware files required for some devices to
+operate.
+%endif
+
+%if %BUILD_DEVEL
+%package devel
+Summary: Devel package for building external kernel modules
+Group: System Environment/Kernel
+
+%description devel
+This package provides kernel headers and makefiles sufficient to build modules
+against the %version-%release kernel package.
+%endif
+
+%if %BUILD_DOCUMENTATION
+%package doc
+Summary: Various documentation bits found in the kernel source
+Group: Documentation
+
+%description doc
+This package contains documentation files from the kernel
+source. Various bits of information about the Linux kernel and the
+device drivers shipped with it are documented in these files.
+
+You'll want to install this package if you need a reference to the
+options that can be passed to Linux kernel modules at load time.
+%endif
+
 %prep
 %setup -q -n linux-%version
 %patch0 -p1
@@ -53,9 +88,13 @@ satisfy possible dependencies of other packages.
 cp %_sourcedir/dot-config-%_target_cpu .config
 
 %build
-#yes '' | %__make oldconfig
 %__make nonint_oldconfig
+%__make fs/
+cp .config ~/logs/config-%_target_cpu
+exit 1
+
 %__make bzImage
+
 %if %BUILD_MODULES
 %__make modules
 %endif
@@ -71,30 +110,77 @@ install -m 644 System.map \
 install -m 644 .config \
 	%buildroot/boot/config-%version-%release
 
-cp -a include/{linux,asm,asm-generic,asm-%_arch,ub} \
-	%buildroot%_includedir/
-
 %if %BUILD_MODULES
 INSTALL_MOD_PATH=%buildroot %__make modules_install
 %endif
 
-# Remove possible symlinks that we're replacing with directories (or we'd
-# follow the symlinks and replace files at their destination).
-# Note that "asm" will remain a symlink and "ub" was never a symlink, so we
-# don't remove these two here.
-%pre headers
-for f in %_includedir/{linux,asm-generic,asm-%_arch}; do
-	test -L $f && rm -v $f || :
-done
+%__make headers_install INSTALL_HDR_PATH=%buildroot/usr/
+find %buildroot/usr/ \( -name .install -o -name ..install.cmd \) -delete
+
+
+%if %BUILD_DEVEL
+#
+# Create a light version of source directory to build external modules.
+# Based on Ubuntu's build script.
+#
+# This light version contains:
+# 1) .config, Module.symvers
+# 2) all sorts of Makefile, Kconfig, Kbuild, shell/perl/lds scripts
+# 3) dvb and video headers outside of root include/ directory
+# 4) scripts/, include/
+# 4) include files inside of arch/
+
+%define srcdir /usr/src/linux-headers-%version-%release
+
+install -d -m 755 %buildroot/%srcdir/
+install -m 644 .config \
+	    %buildroot/%srcdir/
+install -m 644 Module.symvers \
+	    %buildroot/%srcdir/
+install -m 644 System.map \
+	    %buildroot/%srcdir/
+
+find . \
+	-path './include/*' -prune \
+	-o -path './scripts/*' -prune -o -type f \
+	\( -name 'Makefile*' -o -name 'Kconfig*' -o -name 'Kbuild*' -o \
+	   -name '*.sh' -o -name '*.lds' \) \
+	-print | cpio -pd --preserve-modification-time %buildroot/%srcdir/
+
+#install -d %buildroot/%srcdir/drivers/media/dvb/dvb-core/
+#install -d %buildroot/%srcdir/drivers/media/video/
+#cp -a drivers/media/dvb/dvb-core/*.h %buildroot/%srcdir/drivers/media/dvb/dvb-core
+#cp -a drivers/media/video/*.h %buildroot/%srcdir/drivers/media/video
+#cp -a drivers/media/dvb/frontends/*.h %buildroot/%srcdir/drivers/media/dvb/frontends
+
+install -D -m 644 drivers/media/dvb/dvb-core/*.h %buildroot/%srcdir/drivers/media/dvb/dvb-core
+install -D -m 644 drivers/media/video/*.h %buildroot/%srcdir/drivers/media/video
+install -D -m 644 drivers/media/dvb/frontends/*.h %buildroot/%srcdir/drivers/media/dvb/frontends
+
+cp -a scripts include arch %buildroot/%srcdir/
+
+# Remove python scripts which add /usr/bin/python dependency
+find %buildroot/ \( -name '*.py' -o -name '*.pl' -o -name '*.PL' \) -delete
+rm `find %buildroot/ | xargs file | grep -i python | cut -d: -f1`
+
+%define moddir /lib/modules/%version-%release
+
+install -d -m 755 %buildroot/%moddir/
+rm -f %buildroot/%moddir/build
+ln -s %srcdir \
+	%buildroot/%moddir/build
+%endif
+
+%if %BUILD_DOCUMENTATION
+install -d -m 755 %buildroot/%_datadir/doc/kernel-doc-%version/
+cp -a Documentation/ %buildroot/%_datadir/doc/kernel-doc-%version/
+%endif
 
 %files
 %defattr(-,root,root)
 /boot/*-%version-%release
 %if %BUILD_MODULES
-/lib/modules/%version-%release
-# These would be symlinks to our build tree
-%exclude /lib/modules/%version-%release/build
-%exclude /lib/modules/%version-%release/source
+/lib/modules/%version-%release/
 %endif
 
 %files headers
@@ -103,7 +189,52 @@ done
 
 %files fake
 
+%if %BUILD_DEVEL
+%files devel
+%defattr(-,root,root)
+/usr/src/linux-headers-%version-%release/
+/lib/modules/%version-%release/build
+%endif
+
+%if %BUILD_MODULES
+%files firmware
+%defattr(-,root,root)
+/lib/firmware/
+%endif
+
+%if %BUILD_DOCUMENTATION
+%files doc
+%defattr(-,root,root)
+%_datadir/doc/kernel-doc-%version/
+%endif
+
 %changelog
+* Fri Oct 19 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> xxx-owl1
+- Switched to RHEL6'ish branch of OpenVZ kernels, version 2.6.32-042stab062.2.
+- Ported numerous security features from upstream kernel, Grsecurity/PaX and Ow patches:
+HARDEN_STACK allows root to define more strict GNU_STACK handling policy, e.g. completely ignore it.
+HARDEN_VM86 allows root to limit vm86*() syscalls to SYS_RAWIO/SYS_ADMIN capable processes.
+HARDEN_LINK and HARDEN_FIFO restricts hardlink, syslink, and FIFO creation and usage.
+SYSFS_RESTRICT defines umask for sysfs files.
+PAX_USERCOPY and PAX_REFCOUNT identifies some sort of user-to-kernel/kernel-to-user overflows
+and reference counter overflows, respectively, and prevents exploitation of them.
+Implemented log spoofing protection and bitness locking inside of OpenVZ containers.
+Read more in config options' help texts and kernel documentation files.
+- RHEL6 kernel already contains several security features which were already ported by
+RedHat: HARDEN_PROC and HARDEN_SHM.
+- Dropped Owl's old i686 and x86_64 config files and switched to OpenVZ based config files.
+- Enabled numerous config options (or switched from =m to =y):
+ATA_PIIX, BLK_DEV_DM, PATA_MPIIX, SATA_AHCI, BLK_DEV_SD, BLK_DEV_SR, IDE, JBD, JBD2,
+MD_LINEAR, MD_RAID0, MD_RAID1, MD_RAID456, DM_MIRROR, DM_MULTIPATH, DM_RAID, DM_RAID45,
+E1000, EXT2_FS, EXT3_FS, EXT4_FS.
+- Disabled all tracing features as they don't work yet with our gcc 4.7 (it might need old gcc 4.2
+used in RHEL6):
+FTRACE_SYSCALLS, EVENT_TRACING, BOOT_TRACER, BLK_DEV_IO_TRACE, POWER_TRACER, KMEMTRACE,
+SCHED_TRACER, SYSPROF_TRACER, TRACING.
+- DEBUG_INFO=n.
+- Introduced -devel subpackage which contains devel headers for kernel modules compilation.
+Introduced -firmware and -doc subpackages.
+
 * Sat Aug 18 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-308.11.1.el5.028stab102.1.owl1
 - Updated to 2.6.18-308.11.1.el5.028stab102.1.
 - Made "make menuconfig" work with new binutils (added -ltinfo).
