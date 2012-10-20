@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/make/make.spec,v 1.16 2009/09/09 21:42:14 ldv Exp $
+# $Owl: Owl/packages/make/make.spec,v 1.17 2012/10/20 14:15:08 segoon Exp $
 
 Summary: A GNU tool which simplifies the build process for users.
 Name: make
-Version: 3.81
+Version: 3.82
 Release: owl1
 License: GPL
 Group: Development/Tools
@@ -59,6 +59,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/make.mo
 
 %changelog
+* Sat Oct 20 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.82-owl1
+- Updated to 3.82.
+
 * Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.81-owl1
 - Updated to 3.81.
 
