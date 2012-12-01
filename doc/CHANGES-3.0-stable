@@ -42,6 +42,39 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl 3.0-stable.
 
+2012/12/01  Package: kernel
+SECURITY FIX    Severity: low/low to high, remote/local, active
+Updated to 308.8.2.el5.028stab101.1.  Of the security issues
+mentioned in the Red Hat advisory referenced below, 5 are relevant to
+Owl's build of the kernel.  A robust futex issue allows local user to
+write into privileged child process' memory.  As Owl does not have any
+SUID binaries by default (only having some SGIDs), the impact of this
+flaw on default installs of Owl was greatly reduced (CVE-2012-0028).
+Two ext4 issues allow local user to emit BUG() and crash the system
+(CVE-2011-3638, CVE-2011-4086).  An IGMP issue allows remote attackers
+to cause kernel panic (divide-by-zero, CVE-2012-0207).  The last issue
+consists in a lack of input data checks which allows local user to cause
+a DoS (CPU consumption) by creating large nested epoll structures
+(CVE-2011-1083).  All other security issues are relevant to components
+which are not enabled in Owl's kernel: Virtio, IPv6, and Xen supervisor.
+References:
+http://wiki.openvz.org/Download/kernel/rhel5/028stab098.1
+http://wiki.openvz.org/Download/kernel/rhel5/028stab099.3
+http://wiki.openvz.org/Download/kernel/rhel5/028stab101.1
+http://rhn.redhat.com/errata/RHSA-2012-0107.html
+http://rhn.redhat.com/errata/RHSA-2012-0150.html
+http://rhn.redhat.com/errata/RHSA-2012-0480.html
+http://rhn.redhat.com/errata/RHSA-2012-0721.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3638
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-4086
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-0028
+http://www.openwall.com/lists/oss-security/2012/01/04/17
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-0207
+http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=654876
+http://womble.decadent.org.uk/blog/igmp-denial-of-service-in-linux-cve-2012-0207.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-1083
+http://seclists.org/oss-sec/2011/q1/337
+
 (2011/08/23 - 2012/02/09)
 2012/02/09	Package: john
 John the Ripper has been enhanced in numerous ways, bringing it up to
@@ -519,4 +552,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.24 2012/02/09 15:15:14 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.25 2012/12/01 15:19:23 segoon Exp $
