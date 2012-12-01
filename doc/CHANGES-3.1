@@ -46,6 +46,15 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2012/12/01      Package: kernel
+Updated to 2.6.32-042stab065.3.  Enabled multiple drivers for KVM guest:
+NET_9P_VIRTIO=y, VIRTIO_BLK=y, SCSI_VIRTIO=y, VIRTIO_NET=y,
+VIRTIO_CONSOLE=y, HW_RANDOM_VIRTIO=y, VIRTIO=y, VIRTIO_RING=y,
+VIRTIO_PCI=y, VIRTIO_BALLOON=y.  For more information please look at rpm
+changelog.
+References:
+http://wiki.openvz.org/Download/kernel/rhel6/042stab065.3
+
 2012/10/20      Package: make
 Updated to 3.82.
 
@@ -764,4 +773,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.100 2012/10/20 14:16:17 segoon Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.101 2012/12/01 15:34:39 segoon Exp $
