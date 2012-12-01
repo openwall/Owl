@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.89 2012/10/19 19:21:33 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.90 2012/12/01 15:29:36 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 %{?!BUILD_DEVEL: %define BUILD_DEVEL 1}
@@ -7,18 +7,18 @@
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.32
-%define ovzversion 042stab062.2
+%define ovzversion 042stab065.3
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel6/042stab062.2
+URL: http://wiki.openvz.org/Download/kernel/rhel6/042stab065.3
 Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.32.tar.xz
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.32.tar.xz.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel6-2.6.32/042stab062.2/patches/patch-042stab062.2-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel6-2.6.32/042stab062.2/patches/patch-042stab062.2-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel6-2.6.32/042stab065.3/patches/patch-042stab065.3-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel6-2.6.32/042stab065.3/patches/patch-042stab065.3-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -90,6 +90,7 @@ cp %_sourcedir/dot-config-%_target_cpu .config
 %build
 %__make nonint_oldconfig
 %__make bzImage
+
 
 %if %BUILD_MODULES
 %__make modules
@@ -205,7 +206,16 @@ cp -a Documentation/ %buildroot/%_datadir/doc/kernel-doc-%version/
 %endif
 
 %changelog
-* Fri Oct 19 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.32-042stab062.2
+* Tue Nov 27 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.32-042stab065.3.owl1
+- Updated to 2.6.32-042stab065.3.
+- Fixed compilation issue with %BUILD_MODULES=1 and make 3.82.  For more information
+look at https://patchwork.kernel.org/patch/1296801/.
+- Fixed compilation issue with CONFIG_NFS_FS=n.
+- Enabled multiple drivers for KVM guest: NET_9P_VIRTIO=y, VIRTIO_BLK=y, SCSI_VIRTIO=y,
+VIRTIO_NET=y, VIRTIO_CONSOLE=y, HW_RANDOM_VIRTIO=y, VIRTIO=y, VIRTIO_RING=y, VIRTIO_PCI=y,
+VIRTIO_BALLOON=y.
+
+* Fri Oct 19 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.32-042stab062.2.owl1
 - Switched to RHEL6'ish branch of OpenVZ kernels, version 2.6.32-042stab062.2.
 - Ported numerous security features from upstream kernel, Grsecurity/PaX and Ow patches:
 HARDEN_STACK allows root to define more strict GNU_STACK handling policy, e.g. completely ignore it.
