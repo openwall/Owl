@@ -1172,7 +1172,7 @@ diff -uNrp -X exclude-diff-names linux-2.6.18-ovz/Makefile linux-2.6.18/Makefile
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -prep
-+EXTRAVERSION = -308.8.2.el5.028stab101.1.owl1
++EXTRAVERSION = -308.8.2.el5.028stab101.1.owl2
  RHEL_MAJOR = 5
  RHEL_MINOR = 8
  NAME=Avast! A bilge rat!

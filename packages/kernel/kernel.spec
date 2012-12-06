@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.7 2012/12/01 15:18:34 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.8 2012/12/06 13:42:01 segoon Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 308.8.2.el5.028stab101.1
-Release: %ovzversion.owl1
+Release: %ovzversion.owl2
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab097.1
@@ -107,6 +107,9 @@ done
 %files fake
 
 %changelog
+* Thu Dec 06 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-308.8.2.el5.028stab101.1.owl2
+- CONFIG_EFI_PARTITION=y to enable GPT partitions handling.
+
 * Fri Nov 30 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-308.8.2.el5.028stab101.1.owl1
 - Updated to 2.6.18-308.8.2.el5.028stab101.1.  It fixes several security
 issues, 5 of which are related to Owl default configuration: A robust futex
