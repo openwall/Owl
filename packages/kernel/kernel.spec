@@ -1,23 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.9 2013/02/20 23:06:11 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.10 2013/02/20 23:35:06 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 274.17.1.el5.028stab097.1
-Release: %ovzversion.owl1
+%define ovzversion 308.11.1.el5.028stab102.1
+Release: %ovzversion.owl0.3.0.1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab097.1
+URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab102.1
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab097.1/patches/patch-274.17.1.el5.028stab097.1-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab097.1/patches/patch-274.17.1.el5.028stab097.1-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab102.1/patches/patch-308.11.1.el5.028stab102.1-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab102.1/patches/patch-308.11.1.el5.028stab102.1-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -104,6 +104,30 @@ done
 %files fake
 
 %changelog
+* Sat Aug 18 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-308.11.1.el5.028stab102.1.owl0.3.0.1
+- Updated to 2.6.18-308.11.1.el5.028stab102.1.
+- Made "make menuconfig" work with new binutils (added -ltinfo).
+- Support builds with CONFIG_IP_PING=n.
+
+* Sun May 06 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-308.4.1.el5.028stab100.2.owl0.3.0.1
+- Updated to 2.6.18-308.4.1.el5.028stab100.2.
+- Reverted the dmesg_restrict sysctl tri-state feature in favor of the approach
+taken by OpenVZ as discussed at http://bugzilla.openvz.org/show_bug.cgi?id=2197
+- In drivers/net/bnx2x/bnx2x_main.c, wrapped the hacks needed for building with
+gcc 3.4.5 (Owl 3.0-stable) in #if __GNUC__ < 4 ... #endif.
+- In fs/proc/task_mmu.c: show_map_internal(), corrected the struct mm_struct
+leak on i686 that was introduced in 2.6.18-274.18.1.el5.028stab098.1.owl1.
+
+* Sat Feb 25 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.18.1.el5.028stab098.1.owl0.3.0.1
+- Updated to 2.6.18-274.18.1.el5.028stab098.1.
+- Introduced the previously missed RLIMIT_NPROC check into fs/compat.c:
+compat_do_execve() (used by 32-bit program binaries on 64-bit kernel).
+- Introduced protection against unintended self-read by a SUID/SGID program of
+/proc/<pid>/mem and /proc/<pid>/*maps files, based on approaches taken in
+recent grsecurity patches.
+- Made the dmesg_restrict sysctl tri-state and container-aware.
+- CONFIG_NFSD=m.
+
 * Wed Jan 25 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.17.1.el5.028stab097.1.owl1
 - Updated to 2.6.18-274.17.1.el5.028stab097.1.
 
