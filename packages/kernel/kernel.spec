@@ -1,12 +1,12 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.8 2012/12/06 13:42:01 segoon Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.9 2013/02/20 23:06:11 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 308.8.2.el5.028stab101.1
-Release: %ovzversion.owl2
+%define ovzversion 274.17.1.el5.028stab097.1
+Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab097.1
@@ -16,8 +16,8 @@ Source0: linux-2.6.18.tar.xz
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab101.1/patches/patch-308.8.2.el5.028stab101.1-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab101.1/patches/patch-308.8.2.el5.028stab101.1-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab097.1/patches/patch-274.17.1.el5.028stab097.1-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab097.1/patches/patch-274.17.1.el5.028stab097.1-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -78,9 +78,6 @@ cp -a include/{linux,asm,asm-generic,asm-%_arch,ub} \
 INSTALL_MOD_PATH=%buildroot %__make modules_install
 %endif
 
-# We need <= 2.88 Mb kernel for floppy
-ls -l %buildroot/boot/vmlinuz-%version-%release
-
 # Remove possible symlinks that we're replacing with directories (or we'd
 # follow the symlinks and replace files at their destination).
 # Note that "asm" will remain a symlink and "ub" was never a symlink, so we
@@ -107,33 +104,6 @@ done
 %files fake
 
 %changelog
-* Thu Dec 06 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-308.8.2.el5.028stab101.1.owl2
-- CONFIG_EFI_PARTITION=y to enable GPT partitions handling.
-
-* Fri Nov 30 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.6.18-308.8.2.el5.028stab101.1.owl1
-- Updated to 2.6.18-308.8.2.el5.028stab101.1.  It fixes several security
-issues, 5 of which are related to Owl default configuration: A robust futex
-issue allows local user to write into privileged child process' memory.  As Owl
-does not have any SUID binaries by default (only having some SGIDs), the impact
-of this flaw on default installs of Owl was greatly reduced (CVE-2012-0028).
-Two ext4 issues allow local user to emit BUG() and crash the system
-(CVE-2011-3638, CVE-2011-4086).  An IGMP issue allows remote attackers to cause
-kernel panic (divide-by-zero, CVE-2012-0207).  The last issue consists in a
-lack of input data checks which allows local user to cause a DoS (CPU
-consumption) by creating large nested epoll structures (CVE-2011-1083).
-More detailed description see at:
-http://wiki.openvz.org/Download/kernel/rhel5/028stab098.1
-http://wiki.openvz.org/Download/kernel/rhel5/028stab099.3
-http://wiki.openvz.org/Download/kernel/rhel5/028stab101.1
-http://rhn.redhat.com/errata/RHSA-2012-0107.html
-http://rhn.redhat.com/errata/RHSA-2012-0150.html
-http://rhn.redhat.com/errata/RHSA-2012-0480.html
-http://rhn.redhat.com/errata/RHSA-2012-0721.html
-http://www.openwall.com/lists/oss-security/2012/01/04/17
-http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=654876
-http://womble.decadent.org.uk/blog/igmp-denial-of-service-in-linux-cve-2012-0207.html
-http://seclists.org/oss-sec/2011/q1/337
-
 * Wed Jan 25 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-274.17.1.el5.028stab097.1.owl1
 - Updated to 2.6.18-274.17.1.el5.028stab097.1.
 
