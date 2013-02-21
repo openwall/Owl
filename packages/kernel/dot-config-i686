@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.18-308.20.1.el5.028stab104.3.owl1
-# Thu Feb 21 04:03:50 2013
+# Linux kernel version: 2.6.18-308.20.1.el5.028stab104.3.owl0.3.0.1
+# Thu Feb 21 18:45:01 2013
 #
 CONFIG_X86_32=y
 CONFIG_GENERIC_TIME=y
@@ -1667,7 +1667,7 @@ CONFIG_SOLARIS_X86_PARTITION=y
 # CONFIG_ULTRIX_PARTITION is not set
 # CONFIG_SUN_PARTITION is not set
 # CONFIG_KARMA_PARTITION is not set
-# CONFIG_EFI_PARTITION is not set
+CONFIG_EFI_PARTITION=y
 
 #
 # Native Language Support

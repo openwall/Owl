@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.11 2013/02/21 01:24:02 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.12 2013/02/21 15:57:07 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -106,6 +106,7 @@ done
 %changelog
 * Thu Feb 21 2013 Solar Designer <solar-at-owl.openwall.com> 2.6.18-308.20.1.el5.028stab104.3.owl0.3.0.1
 - Updated to 2.6.18-308.20.1.el5.028stab104.3.
+- CONFIG_EFI_PARTITION=y
 - In dot-config-x86_64, changed CONFIG_ATL1 from =y to =m for the kernel to fit
 on a 2.88 MB "floppy" as required for Owl 3.0-stable's CDs.
 
