@@ -46,37 +46,6 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
-2012/12/01      Package: kernel
-Updated to 2.6.32-042stab065.3.  Enabled multiple drivers for KVM guest:
-NET_9P_VIRTIO=y, VIRTIO_BLK=y, SCSI_VIRTIO=y, VIRTIO_NET=y,
-VIRTIO_CONSOLE=y, HW_RANDOM_VIRTIO=y, VIRTIO=y, VIRTIO_RING=y,
-VIRTIO_PCI=y, VIRTIO_BALLOON=y.  For more information please look at rpm
-changelog.
-References:
-http://wiki.openvz.org/Download/kernel/rhel6/042stab065.3
-
-2012/10/20      Package: make
-Updated to 3.82.
-
-2012/10/19      Package: kernel
-Updated to 2.6.32-042stab062.2, switched to RHEL6-stable OpenVZ kernel
-branch.  RHEL6-based kernel adds two security features: HARDEN_PROC and
-HARDEN_SHM.  Also multiple security features were ported from upstream
-kernel, Grsecurity/PaX, and Ow patches: HARDEN_STACK, HARDEN_VM86,
-HARDEN_LINK, HARDEN_FIFO, SYSFS_RESTRICT, PAX_USERCOPY, PAX_REFCOUNT,
-log spoofing protection, bitness locking inside of OpenVZ containers.
-Dropped Owl's old i686 and x86_64 config files and switched to OpenVZ
-based config files.  Enabled numerous config options (or switched from
-=m to =y): ATA_PIIX, BLK_DEV_DM, PATA_MPIIX, SATA_AHCI, BLK_DEV_SD,
-BLK_DEV_SR, IDE, JBD, JBD2, MD_LINEAR, MD_RAID0, MD_RAID1, MD_RAID456,
-DM_MIRROR, DM_MULTIPATH, DM_RAID, DM_RAID45, E1000, EXT2_FS, EXT3_FS,
-EXT4_FS.  Disabled all tracing features as they don't work yet with our
-gcc 4.7: FTRACE_SYSCALLS, EVENT_TRACING, BOOT_TRACER, BLK_DEV_IO_TRACE,
-POWER_TRACER, KMEMTRACE, SCHED_TRACER, SYSPROF_TRACER, TRACING.
-Introduced -devel, -firmware, and -doc subpackages.  For more info, see
-the changelog for the kernel package, Kconfig help texts, and
-Documentation/* files in the kernel source directory.
-
 2012/08/18	Package: openssl
 SECURITY FIX	Severity: none to medium, remote, passive to active
 Updated to 1.0.0j.  This release corrects a buffer over-read flaw in the
@@ -773,4 +742,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.101 2012/12/01 15:34:39 segoon Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.102 2013/02/21 21:58:00 solar Exp $
