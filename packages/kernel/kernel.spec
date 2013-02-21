@@ -1,23 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.91 2013/02/21 21:58:01 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.92 2013/02/21 22:18:33 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 308.11.1.el5.028stab102.1
+%define ovzversion 308.20.1.el5.028stab104.3
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab102.1
+URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab104.3
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab102.1/patches/patch-308.11.1.el5.028stab102.1-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab102.1/patches/patch-308.11.1.el5.028stab102.1-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab104.3/patches/patch-308.20.1.el5.028stab104.3-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab104.3/patches/patch-308.20.1.el5.028stab104.3-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -104,6 +104,10 @@ done
 %files fake
 
 %changelog
+* Thu Feb 21 2013 Solar Designer <solar-at-owl.openwall.com> 2.6.18-308.20.1.el5.028stab104.3.owl1
+- Updated to 2.6.18-308.20.1.el5.028stab104.3.
+- CONFIG_EFI_PARTITION=y
+
 * Sat Aug 18 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-308.11.1.el5.028stab102.1.owl1
 - Updated to 2.6.18-308.11.1.el5.028stab102.1.
 - Made "make menuconfig" work with new binutils (added -ltinfo).
