@@ -48,15 +48,15 @@ clarify the specific issue(s) and their severities in the description.
 
 2013/02/22	Package: gnupg
 SECURITY FIX	Severity: medium, indirect, passive
-Updated to 1.4.13.  The update fixes a memory corruption bug
-(CVE-2012-6085).  The bug allowed an attacket to crash "gpg" program and
-corrupt the public keyring database file.  Arbitrary code execution
-is not possible because an attacker cannot control the corrupted data.
-However, the corrupted data is stored in the keyring, so the corruption
-is kept persistent.  The keyring can be manually restored by recovering
-from backup "pubring.gpg~" file (which is created by "gpg" itself).
+Updated to 1.4.13.  This version fixes a memory corruption bug
+(CVE-2012-6085).  The bug allowed an attacker to crash gpg(1) and
+corrupt the public keyring database file.  Arbitrary code execution was
+not possible because the attacker cannot control the corrupted data.
+The corrupted data is stored in the keyring file, so the DoS effect is
+persistent, but the keyring can be manually restored by recovering from
+the pubring.gpg~ backup file (which is created by gpg(1) itself).
 References:
-https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-6085
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-6085
 https://bugzilla.redhat.com/show_bug.cgi?id=891142
 http://www.openwall.com/lists/oss-security/2013/01/01/6
 
@@ -778,4 +778,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.105 2013/02/22 18:23:35 segoon Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.106 2013/02/22 19:22:56 solar Exp $
