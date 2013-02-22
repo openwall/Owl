@@ -46,6 +46,28 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2013/02/22	Package: kernel
+SECURITY FIX	Severity: none to low, local/indirect, active/passive
+Updated to 2.6.18-308.20.1.el5.028stab104.3.  Enabled
+CONFIG_EFI_PARTITION=y (GUID Partition Table (GPT) support) and
+CONFIG_SOUND=m (the sound card driver subsystem) with the same set of
+drivers as in RHEL5.  The corresponding RHEL5 kernel updates fix a
+divide-by-zero flaw in the ext4 filesystem code (CVE-2012-2100), which
+could be triggered via a corrupted ext4 filesystem.  This is only a
+security issue if untrusted users are permitted to mount filesystems
+or/and when mounting filesystems from untrusted sources; other and worse
+attacks are likely possible in those cases, thereby making this one fix
+relatively unimportant.  Red Hat has also fixed a flaw in the dl2k
+driver (CVE-2012-2313), which is not included in our kernel builds.
+References:
+http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab104.3
+http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab104.2
+http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab104.1
+http://rhn.redhat.com/errata/RHSA-2012-1445.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-2100
+http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab103.1
+http://rhn.redhat.com/errata/RHSA-2012-1174.html
+
 2012/08/18	Package: openssl
 SECURITY FIX	Severity: none to medium, remote, passive to active
 Updated to 1.0.0j.  This release corrects a buffer over-read flaw in the
@@ -742,4 +764,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.102 2013/02/21 21:58:00 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.103 2013/02/22 15:05:06 solar Exp $
