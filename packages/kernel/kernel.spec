@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.93 2013/02/21 23:02:31 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.94 2013/02/22 19:04:07 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -104,12 +104,12 @@ done
 %files fake
 
 %changelog
-* Thu Feb 21 2013 Solar Designer <solar-at-owl.openwall.com> 2.6.18-308.20.1.el5.028stab104.3.owl1
+* Fri Feb 22 2013 Solar Designer <solar-at-owl.openwall.com> 2.6.18-308.20.1.el5.028stab104.3.owl1
 - Updated to 2.6.18-308.20.1.el5.028stab104.3.
 - CONFIG_EFI_PARTITION=y
 - CONFIG_SOUND=m with the same set of sound drivers as in RHEL5, except that
 we don't enable CONFIG_SND_FM801_TEA575X_BOOL as that would bring in a video
-capture subsystem.
+capture subsystem, but we do enable CONFIG_SND_SUPPORT_OLD_API=y.
 
 * Sat Aug 18 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.18-308.11.1.el5.028stab102.1.owl1
 - Updated to 2.6.18-308.11.1.el5.028stab102.1.
