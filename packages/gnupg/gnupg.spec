@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.48.2.1 2011/09/07 07:16:54 solar Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.48.2.2 2013/02/23 02:09:50 solar Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.4.11
-Release: owl2
+Version: 1.4.13
+Release: owl1
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
@@ -12,9 +12,9 @@ Source0: %name-%version.tar.xz
 # Signature: ftp://ftp.gnupg.org/gcrypt/gnupg/%name-%version.tar.bz2.sig
 Source1: gpgsplit.1
 Source2: lspgpot.1
-Patch0: gnupg-1.4.11-alt-ru.po.diff
+Patch0: gnupg-1.4.13-alt-ru.po.diff
 Patch1: gnupg-1.4.3-alt-always-trust.diff
-Patch2: gnupg-1.4.2-alt-cp1251.diff
+Patch2: gnupg-1.4.13-alt-cp1251.diff
 Patch3: gnupg-1.4.2-fw-secret-key-checks.diff
 Patch4: gnupg-1.4.11-alt-owl-info.diff
 Patch5: gnupg-1.4.11-owl-setuid.diff
@@ -103,6 +103,14 @@ fi
 %exclude %_datadir/gnupg/FAQ
 
 %changelog
+* Fri Feb 22 2013 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.4.13-owl1
+- Updated to 1.4.13.
+- Fixed a memory corruption and public keyring database corruption bug on
+malformed key importing.  For the details see:
+https://bugzilla.redhat.com/show_bug.cgi?id=891142
+https://bugs.g10code.com/gnupg/issue1455
+- Updated -alt-ru.po and -alt-cp1251 patches.
+
 * Wed Apr 06 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.4.11-owl2
 - Removed a dependency on libusb.  Reported by Chris Bopp.
 
