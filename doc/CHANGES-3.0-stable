@@ -19,14 +19,16 @@ Per our current conventions, a Denial of Service (DoS) vulnerability is
 generally considered to have a "low" risk impact (even if it is a
 "remote, active" one, which is to be considered separately as it may
 make the vulnerability fairly critical under specific circumstances).
-Some examples of "medium" impact vulnerabilities would be bugs enabling
-non-critical information leaks, cryptographic signature forgeries,
-and/or sending of or accepting spoofed/forged network traffic (where
-such behavior was unexpected), as long as they would not directly allow
-for a "high" impact attack.  Finally, a typical "high" impact
-vulnerability would allow for privilege escalation such as ability to
-execute code as another user ID than the attacker's (a "local" attack)
-or without "legitimately" having such an ability (a "remote" attack).
+Some examples of "medium" impact vulnerabilities would be persistent DoS
+(where the DoS effect does not go away with a (sub)system restart), data
+loss, bugs enabling non-critical information leaks, cryptographic
+signature forgeries, and/or sending of or accepting spoofed/forged
+network traffic (where such behavior was unexpected), as long as they
+would not directly allow for a "high" impact attack.  Finally, a typical
+"high" impact vulnerability would allow for privilege escalation such as
+ability to execute code as another user ID than the attacker's (a
+"local" attack) or without "legitimately" having such an ability (a
+"remote" attack).
 
 The metrics specified are generally those for a worst case scenario,
 however in certain cases ranges such as "none to low" or/and "local to
@@ -571,4 +573,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.27 2013/02/23 01:49:59 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.28 2013/02/23 01:53:20 solar Exp $
