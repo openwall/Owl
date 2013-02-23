@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.132 2013/02/23 16:08:02 segoon Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.133 2013/02/23 16:09:15 segoon Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -499,7 +499,6 @@ fi
 - Backported a fix for TLS handling bug which triggered 'assert' on Firefox
 startup.
 http://www.openwall.com/lists/owl-dev/2013/02/23/2
-
 
 * Tue Aug 14 2012 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl20
 - Corrected the processing of '\x80' characters in crypt_freesec.c.  This is
