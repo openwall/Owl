@@ -49,7 +49,10 @@ clarify the specific issue(s) and their severities in the description.
 SECURITY FIX	Severity: low/low to high, remote/local, active
 Updated to 2.6.18-308.20.1.el5.028stab104.3.  Enabled CONFIG_NFSD=m (NFS
 server support) and CONFIG_EFI_PARTITION=y (GUID Partition Table (GPT)
-support).  Introduced the previously missed RLIMIT_NPROC check into
+support), on x86_64 changed CONFIG_ATL1 from =y to =m (requiring that
+the Attansic L1 Gigabit Ethernet driver be loaded manually if needed)
+because of the kernel size constraint that we have in Owl 3.0-stable.
+Introduced the previously missed RLIMIT_NPROC check into
 fs/compat.c: compat_do_execve() (used by 32-bit program binaries on
 64-bit kernel).  Introduced protection against unintended self-read by a
 SUID/SGID program of /proc/<pid>/mem and /proc/<pid>/*maps files, based
@@ -573,4 +576,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.28 2013/02/23 01:53:20 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.29 2013/02/23 02:07:51 solar Exp $
