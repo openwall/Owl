@@ -44,6 +44,16 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl 3.0-stable.
 
+(2012/08/18)
+2013/02/23	Package: xinetd
+SECURITY FIX	Severity: none to medium, remote, active
+Updated to 2.3.15, which corrects an access control bypass vulnerability
+in the normally disabled tcpmux service.
+References:
+http://www.openwall.com/lists/oss-security/2012/05/09/5
+https://bugzilla.redhat.com/show_bug.cgi?id=790940
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-0862
+
 (2012/08/14)
 2013/02/23	Package: glibc
 Corrected the processing of '\x80' characters in extended DES-based
@@ -602,4 +612,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.31 2013/02/23 02:24:56 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.32 2013/02/23 02:31:37 solar Exp $

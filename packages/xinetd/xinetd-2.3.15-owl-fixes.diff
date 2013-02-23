@@ -1,6 +1,6 @@
-diff -urp xinetd-2.3.14.orig/libs/src/portable/cvt.c xinetd-2.3.14/libs/src/portable/cvt.c
---- xinetd-2.3.14.orig/libs/src/portable/cvt.c	2003-02-19 17:29:27 +0000
-+++ xinetd-2.3.14/libs/src/portable/cvt.c	2009-10-24 08:12:48 +0000
+diff -urp xinetd-2.3.15.orig/libs/src/portable/cvt.c xinetd-2.3.15/libs/src/portable/cvt.c
+--- xinetd-2.3.15.orig/libs/src/portable/cvt.c	2003-02-19 17:29:27 +0000
++++ xinetd-2.3.15/libs/src/portable/cvt.c	2009-10-24 08:12:48 +0000
 @@ -115,7 +115,7 @@ APPEND (FUNC_PREFIX, fcvt_r) (FLOAT_TYPE
         return -1;
  
@@ -19,9 +19,9 @@ diff -urp xinetd-2.3.14.orig/libs/src/portable/cvt.c xinetd-2.3.14/libs/src/port
  
         if (*decpt == 1 && buf[0] == '0' && value != 0.0) {
            /* We must not have leading zeroes.  Strip them all out and
-diff -urp xinetd-2.3.14.orig/libs/src/portable/inet_aton.c xinetd-2.3.14/libs/src/portable/inet_aton.c
---- xinetd-2.3.14.orig/libs/src/portable/inet_aton.c	2003-02-19 17:29:27 +0000
-+++ xinetd-2.3.14/libs/src/portable/inet_aton.c	2009-10-24 08:01:28 +0000
+diff -urp xinetd-2.3.15.orig/libs/src/portable/inet_aton.c xinetd-2.3.15/libs/src/portable/inet_aton.c
+--- xinetd-2.3.15.orig/libs/src/portable/inet_aton.c	2003-02-19 17:29:27 +0000
++++ xinetd-2.3.15/libs/src/portable/inet_aton.c	2009-10-24 08:01:28 +0000
 @@ -103,11 +103,11 @@ inet_aton(const char *cp, struct in_addr
  {
  	register uint32_t val;
@@ -70,9 +70,9 @@ diff -urp xinetd-2.3.14.orig/libs/src/portable/inet_aton.c xinetd-2.3.14/libs/sr
  		} else
  			break;
  	}
-diff -urp xinetd-2.3.14.orig/libs/src/portable/strcasecmp.c xinetd-2.3.14/libs/src/portable/strcasecmp.c
---- xinetd-2.3.14.orig/libs/src/portable/strcasecmp.c	2003-02-19 17:29:27 +0000
-+++ xinetd-2.3.14/libs/src/portable/strcasecmp.c	2009-10-24 08:18:20 +0000
+diff -urp xinetd-2.3.15.orig/libs/src/portable/strcasecmp.c xinetd-2.3.15/libs/src/portable/strcasecmp.c
+--- xinetd-2.3.15.orig/libs/src/portable/strcasecmp.c	2003-02-19 17:29:27 +0000
++++ xinetd-2.3.15/libs/src/portable/strcasecmp.c	2009-10-24 08:18:20 +0000
 @@ -8,8 +8,8 @@ strcasecmp(s1, s2)
  	*us1 = (const u_char *)s1,
  	*us2 = (const u_char *)s2;
@@ -84,9 +84,9 @@ diff -urp xinetd-2.3.14.orig/libs/src/portable/strcasecmp.c xinetd-2.3.14/libs/s
 -	return (tolower(*us1) - tolower(*--us2));
 +	return (tolower((int)*us1) - tolower((int)*--us2));
  }
-diff -urp xinetd-2.3.14.orig/libs/src/sio/sprint.c xinetd-2.3.14/libs/src/sio/sprint.c
---- xinetd-2.3.14.orig/libs/src/sio/sprint.c	2003-03-09 19:27:07 +0000
-+++ xinetd-2.3.14/libs/src/sio/sprint.c	2009-10-24 08:14:19 +0000
+diff -urp xinetd-2.3.15.orig/libs/src/sio/sprint.c xinetd-2.3.15/libs/src/sio/sprint.c
+--- xinetd-2.3.15.orig/libs/src/sio/sprint.c	2007-09-20 17:01:52 +0000
++++ xinetd-2.3.15/libs/src/sio/sprint.c	2012-08-18 20:29:21 +0000
 @@ -84,7 +84,7 @@ static char S_NULL[S_NULL_LEN+1] = "(nul
  
  #define STR_TO_DEC( str, num )						\
@@ -105,7 +105,7 @@ diff -urp xinetd-2.3.14.orig/libs/src/sio/sprint.c xinetd-2.3.14/libs/src/sio/sp
  	{
  		*len = strlen( strcpy( buf, p ) ) ;
  		*is_negative = FALSE ;
-@@ -406,7 +406,8 @@ int __sio_converter( __sio_od_t *odp, in
+@@ -406,7 +406,8 @@ ssize_t __sio_converter( __sio_od_t *odp
  			/*
  			 * Try to avoid checking for flags, width or precision
  			 */
@@ -115,7 +115,7 @@ diff -urp xinetd-2.3.14.orig/libs/src/sio/sprint.c xinetd-2.3.14/libs/src/sio/sp
  			{
  				/*
  				 * Recognize flags: -, #, BLANK, +
-@@ -430,7 +431,7 @@ int __sio_converter( __sio_od_t *odp, in
+@@ -430,7 +431,7 @@ ssize_t __sio_converter( __sio_od_t *odp
  				/*
  				 * Check if a width was specified
  				 */
@@ -124,7 +124,7 @@ diff -urp xinetd-2.3.14.orig/libs/src/sio/sprint.c xinetd-2.3.14/libs/src/sio/sp
  				{
  					STR_TO_DEC( fmt, min_width ) ;
  					adjust_width = YES ;
-@@ -456,7 +457,7 @@ int __sio_converter( __sio_od_t *odp, in
+@@ -456,7 +457,7 @@ ssize_t __sio_converter( __sio_od_t *odp
  				{
  					adjust_precision = YES ;
  					fmt++ ;
@@ -133,9 +133,9 @@ diff -urp xinetd-2.3.14.orig/libs/src/sio/sprint.c xinetd-2.3.14/libs/src/sio/sp
  					{
  						STR_TO_DEC( fmt, precision ) ;
  					}
-diff -urp xinetd-2.3.14.orig/libs/src/str/strutil.c xinetd-2.3.14/libs/src/str/strutil.c
---- xinetd-2.3.14.orig/libs/src/str/strutil.c	2003-06-01 14:09:43 +0000
-+++ xinetd-2.3.14/libs/src/str/strutil.c	2009-10-24 08:11:35 +0000
+diff -urp xinetd-2.3.15.orig/libs/src/str/strutil.c xinetd-2.3.15/libs/src/str/strutil.c
+--- xinetd-2.3.15.orig/libs/src/str/strutil.c	2003-06-01 14:09:43 +0000
++++ xinetd-2.3.15/libs/src/str/strutil.c	2009-10-24 08:11:35 +0000
 @@ -25,7 +25,7 @@
   */
  char *str_casefind( register char *str, char *sstr )
@@ -145,7 +145,7 @@ diff -urp xinetd-2.3.14.orig/libs/src/str/strutil.c xinetd-2.3.14/libs/src/str/s
  
  	if ( ssfc == 0 )
  		return( str ) ;
-@@ -36,7 +36,7 @@ char *str_casefind( register char *str, 
+@@ -36,7 +36,7 @@ char *str_casefind( register char *str,
  	while ( *str )
  	{
  		char *current = str ;
@@ -154,7 +154,7 @@ diff -urp xinetd-2.3.14.orig/libs/src/str/strutil.c xinetd-2.3.14/libs/src/str/s
  		char *sp ;							/* string pointer */
  		char *ssp ;							/* sub-string pointer */
  
-@@ -47,8 +47,8 @@ char *str_casefind( register char *str, 
+@@ -47,8 +47,8 @@ char *str_casefind( register char *str,
  		
  		for ( sp = str, ssp = sstr ;; sp++, ssp++ )
  		{
@@ -165,9 +165,9 @@ diff -urp xinetd-2.3.14.orig/libs/src/str/strutil.c xinetd-2.3.14/libs/src/str/s
  
  			/*
  			 * End-of-substring means we got a match
-diff -urp xinetd-2.3.14.orig/xinetd/addr.c xinetd-2.3.14/xinetd/addr.c
---- xinetd-2.3.14.orig/xinetd/addr.c	2005-04-08 21:23:07 +0000
-+++ xinetd-2.3.14/xinetd/addr.c	2009-10-24 08:16:02 +0000
+diff -urp xinetd-2.3.15.orig/xinetd/addr.c xinetd-2.3.15/xinetd/addr.c
+--- xinetd-2.3.15.orig/xinetd/addr.c	2007-09-20 17:01:52 +0000
++++ xinetd-2.3.15/xinetd/addr.c	2012-08-18 20:29:21 +0000
 @@ -276,7 +276,7 @@ int check_hostname( const char *addr )
  
     for (i = 0; addr[i]; ++i)
@@ -195,10 +195,26 @@ diff -urp xinetd-2.3.14.orig/xinetd/addr.c xinetd-2.3.14/xinetd/addr.c
           {
              num = num * 10 + str_addr[i] - '0' ;
              continue ;
-diff -urp xinetd-2.3.14.orig/xinetd/ident.c xinetd-2.3.14/xinetd/ident.c
---- xinetd-2.3.14.orig/xinetd/ident.c	2005-10-05 17:20:11 +0000
-+++ xinetd-2.3.14/xinetd/ident.c	2009-10-24 07:59:06 +0000
-@@ -241,7 +241,7 @@ static char *verify_line( char *line, 
+diff -urp xinetd-2.3.15.orig/xinetd/connection.c xinetd-2.3.15/xinetd/connection.c
+--- xinetd-2.3.15.orig/xinetd/connection.c	2007-09-20 17:01:52 +0000
++++ xinetd-2.3.15/xinetd/connection.c	2012-08-18 20:34:44 +0000
+@@ -218,11 +218,7 @@ void conn_dump( const connection_s *cp,
+ 
+    tabprint( fd, 1, "service = %s\n", SVC_ID( cp->co_sp ) ) ;
+    tabprint( fd, 1, "descriptor = %d\n", cp->co_descriptor ) ;
+-#if defined(__GNUC__) && !defined(__arch64__) && !defined(__alpha__)
+-   tabprint( fd, 1, "flags = %#llx\n", cp->co_flags ) ;
+-#else
+-   tabprint( fd, 1, "flags = %#lx\n", cp->co_flags ) ;
+-#endif
++   tabprint( fd, 1, "flags = %#llx\n", (unsigned long long)cp->co_flags ) ;
+    tabprint( fd, 1, "remote_address = %s,%d\n", name,
+                               ntohs( cp->co_remote_address.sa_in.sin_port ) ) ;
+ }
+diff -urp xinetd-2.3.15.orig/xinetd/ident.c xinetd-2.3.15/xinetd/ident.c
+--- xinetd-2.3.15.orig/xinetd/ident.c	2007-09-20 17:01:52 +0000
++++ xinetd-2.3.15/xinetd/ident.c	2012-08-18 20:29:21 +0000
+@@ -241,7 +241,7 @@ static char *verify_line( char *line,
        unsigned int line_id_len = strlen( line_id ) ;
  
        start = p+1 ;
@@ -207,7 +223,7 @@ diff -urp xinetd-2.3.14.orig/xinetd/ident.c xinetd-2.3.14/xinetd/ident.c
        if ( *p == NUL )
           return( NULL ) ;
        start = p ;
-@@ -250,10 +250,10 @@ static char *verify_line( char *line, 
+@@ -250,10 +250,10 @@ static char *verify_line( char *line,
        start += line_id_len ;      /* skip it */
     }
  
@@ -220,9 +236,41 @@ diff -urp xinetd-2.3.14.orig/xinetd/ident.c xinetd-2.3.14/xinetd/ident.c
     if ( *p == NUL )
        return( NULL ) ;
     return( p ) ;
-diff -urp xinetd-2.3.14.orig/xinetd/parsers.c xinetd-2.3.14/xinetd/parsers.c
---- xinetd-2.3.14.orig/xinetd/parsers.c	2005-10-05 21:45:41 +0000
-+++ xinetd-2.3.14/xinetd/parsers.c	2009-10-24 07:56:33 +0000
+diff -urp xinetd-2.3.15.orig/xinetd/itox.c xinetd-2.3.15/xinetd/itox.c
+--- xinetd-2.3.15.orig/xinetd/itox.c	2007-09-20 17:13:24 +0000
++++ xinetd-2.3.15/xinetd/itox.c	2012-08-18 20:30:36 +0000
+@@ -31,8 +31,8 @@ str_h strp ;
+ int line_count ;
+ static void print_line( const char *name, const char *value );
+ static char *next_word( const char *description );
+-static char *make_string_cat( register unsigned count, ... );
+-static char *make_pathname( register unsigned count, ... );
++static char *make_string_cat( unsigned count, ... );
++static char *make_pathname( unsigned count, ... );
+ 
+ 
+ /*
+@@ -219,7 +219,7 @@ static char *next_word( const char *desc
+ 	return( word ) ;
+ }
+ 
+-static char *make_string_cat( register unsigned count, ... )
++static char *make_string_cat( unsigned count, ... )
+ {
+    va_list ap ;
+    register unsigned i ;
+@@ -268,7 +268,7 @@ static char *make_string_cat( register u
+    return newstring ;
+ }
+ 
+-static char *make_pathname( register unsigned count, ... )
++static char *make_pathname( unsigned count, ... )
+ {
+    va_list ap ;
+    register unsigned i ;
+diff -urp xinetd-2.3.15.orig/xinetd/parsers.c xinetd-2.3.15/xinetd/parsers.c
+--- xinetd-2.3.15.orig/xinetd/parsers.c	2007-09-20 17:01:52 +0000
++++ xinetd-2.3.15/xinetd/parsers.c	2012-08-18 20:29:21 +0000
 @@ -793,7 +793,7 @@ static int get_limit( char *limit_str, r
     }
  
@@ -232,9 +280,9 @@ diff -urp xinetd-2.3.14.orig/xinetd/parsers.c xinetd-2.3.14/xinetd/parsers.c
        p--;
  
     if (*p == 'k' || *p == 'K') {
-diff -urp xinetd-2.3.14.orig/xinetd/parsesup.c xinetd-2.3.14/xinetd/parsesup.c
---- xinetd-2.3.14.orig/xinetd/parsesup.c	2003-05-31 21:58:58 +0000
-+++ xinetd-2.3.14/xinetd/parsesup.c	2009-10-24 07:58:25 +0000
+diff -urp xinetd-2.3.15.orig/xinetd/parsesup.c xinetd-2.3.15/xinetd/parsesup.c
+--- xinetd-2.3.15.orig/xinetd/parsesup.c	2003-05-31 21:58:58 +0000
++++ xinetd-2.3.15/xinetd/parsesup.c	2009-10-24 07:58:25 +0000
 @@ -39,7 +39,7 @@ char *next_line( int fd )
        for ( p = line ;; p++ )
           if ( *p == NUL || *p == COMMENT_BEGIN )
@@ -280,9 +328,9 @@ diff -urp xinetd-2.3.14.orig/xinetd/parsesup.c xinetd-2.3.14/xinetd/parsesup.c
           return( FALSE ) ;
     return( target_char != ch ) ;
  }
-diff -urp xinetd-2.3.14.orig/xinetd/sensor.c xinetd-2.3.14/xinetd/sensor.c
---- xinetd-2.3.14.orig/xinetd/sensor.c	2003-08-06 06:12:10 +0000
-+++ xinetd-2.3.14/xinetd/sensor.c	2005-06-28 16:11:39 +0000
+diff -urp xinetd-2.3.15.orig/xinetd/sensor.c xinetd-2.3.15/xinetd/sensor.c
+--- xinetd-2.3.15.orig/xinetd/sensor.c	2007-09-20 17:01:52 +0000
++++ xinetd-2.3.15/xinetd/sensor.c	2012-08-18 20:29:21 +0000
 @@ -100,21 +100,22 @@ void process_sensor( const struct servic
  	 {
  	    /* Here again, eh?...update time stamp. */
@@ -327,10 +375,10 @@ diff -urp xinetd-2.3.14.orig/xinetd/sensor.c xinetd-2.3.14/xinetd/sensor.c
  	    continue;
  
  	 if (difftime(nowtime, (time_t)stored_time) >= 0.0)
-diff -urp xinetd-2.3.14.orig/xinetd/time.c xinetd-2.3.14/xinetd/time.c
---- xinetd-2.3.14.orig/xinetd/time.c	2003-02-19 17:29:28 +0000
-+++ xinetd-2.3.14/xinetd/time.c	2009-10-24 08:16:17 +0000
-@@ -66,7 +66,7 @@ static int get_num( int *nump, 
+diff -urp xinetd-2.3.15.orig/xinetd/time.c xinetd-2.3.15/xinetd/time.c
+--- xinetd-2.3.15.orig/xinetd/time.c	2003-02-19 17:29:28 +0000
++++ xinetd-2.3.15/xinetd/time.c	2009-10-24 08:16:17 +0000
+@@ -66,7 +66,7 @@ static int get_num( int *nump,
     const char *func = "get_num" ;
     int i = 0;
  
@@ -339,10 +387,10 @@ diff -urp xinetd-2.3.14.orig/xinetd/time.c xinetd-2.3.14/xinetd/time.c
     {
        *nump *= 10 ;
        *nump += s[i] - '0' ;
-diff -urp xinetd-2.3.14.orig/xinetd/util.c xinetd-2.3.14/xinetd/util.c
---- xinetd-2.3.14.orig/xinetd/util.c	2005-10-05 21:45:41 +0000
-+++ xinetd-2.3.14/xinetd/util.c	2009-10-24 10:20:29 +0000
-@@ -274,10 +274,12 @@ int parse_int(const char *str, int base,
+diff -urp xinetd-2.3.15.orig/xinetd/util.c xinetd-2.3.15/xinetd/util.c
+--- xinetd-2.3.15.orig/xinetd/util.c	2007-09-20 17:01:52 +0000
++++ xinetd-2.3.15/xinetd/util.c	2012-08-18 20:29:21 +0000
+@@ -275,10 +275,12 @@ int parse_int(const char *str, int base,
  	errno = 0;
  	strtol_res = strtol(str, (char **)&endptr, base);
  
@@ -357,7 +405,7 @@ diff -urp xinetd-2.3.14.orig/xinetd/util.c xinetd-2.3.14/xinetd/util.c
  				endptr++;
  			term = NUL;
  		}
-@@ -297,7 +299,15 @@ int parse_uint(const char *str, int base
+@@ -298,7 +300,15 @@ int parse_uint(const char *str, int base
  	unsigned long long tmp;
  	int ret;
  	ret = parse_ull(str, base, term, &tmp);
@@ -374,7 +422,7 @@ diff -urp xinetd-2.3.14.orig/xinetd/util.c xinetd-2.3.14/xinetd/util.c
  	return ret;
  }
  
-@@ -316,7 +326,8 @@ int parse_ull(const char *str, int base,
+@@ -317,7 +327,8 @@ int parse_ull(const char *str, int base,
  	if (errno == 0 && *str != NUL) {
  		/* Special case: -1 means allow trailing whitespace */
  		if (term == -1) {
@@ -384,7 +432,7 @@ diff -urp xinetd-2.3.14.orig/xinetd/util.c xinetd-2.3.14/xinetd/util.c
  				endptr++;
  			term = NUL;
  		}
-@@ -343,12 +354,8 @@ int parse_base10(const char *str, int *r
+@@ -344,12 +355,8 @@ int parse_base10(const char *str, int *r
  
  bool_int parse_all_digits(const char *ptr)
  {

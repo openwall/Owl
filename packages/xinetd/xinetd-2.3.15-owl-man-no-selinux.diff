@@ -1,0 +1,13 @@
+diff -urp xinetd-2.3.15.orig/xinetd/xinetd.conf.man xinetd-2.3.15/xinetd/xinetd.conf.man
+--- xinetd-2.3.15.orig/xinetd/xinetd.conf.man	2007-09-20 14:58:27 +0000
++++ xinetd-2.3.15/xinetd/xinetd.conf.man	2012-08-18 20:13:50 +0000
+@@ -145,9 +145,6 @@ Sets the service to be an IPv4 service (
+ .B IPv6
+ Sets the service to be an IPv6 service (AF_INET6), if IPv6 is available on the system.
+ .TP
+-.B LABELED
+-The LABELED flag will tell xinetd to change the child processes SE Linux context to match that of the incoming connection as it starts the service. This only works for external tcp non-waiting servers and is an error if applied to an internal, udp, or tcp-wait server.
+-.TP
+ .B REUSE
+ The REUSE flag is deprecated.  All services now implicitly use the REUSE flag.
+ .RE
