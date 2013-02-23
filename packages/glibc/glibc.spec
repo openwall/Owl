@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.120.2.2 2011/10/24 19:53:45 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.120.2.3 2013/02/23 02:24:56 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 1.2
-Release: owl16
+Release: owl16.3.0.1
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
@@ -471,6 +471,14 @@ fi
 %endif
 
 %changelog
+* Sat Feb 23 2013 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl16.3.0.1
+- Corrected the processing of '\x80' characters in crypt_freesec.c.  This is
+the issue known as CVE-2012-2143 in other projects using the FreeSec code, but
+luckily in Owl we've been using this code only for the "extended" hashes
+(continuing to use glibc's UFC-crypt for "traditional" ones), and these were
+only affected in terms of compatibility (with BSD/OS and certain other
+implementations), but not security.
+
 * Sun Oct 09 2011 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl16
 - Excluded the zoneinfo files (now part of tzdata package).
 

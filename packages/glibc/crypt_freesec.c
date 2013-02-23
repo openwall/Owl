@@ -37,8 +37,8 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	$Owl: Owl/packages/glibc/crypt_freesec.c,v 1.6 2010/02/20 14:45:06 solar Exp $
- *	$Id: Owl/packages/glibc/crypt_freesec.c,v 1.6 2010/02/20 14:45:06 solar Exp $
+ *	$Owl: Owl/packages/glibc/crypt_freesec.c,v 1.6.2.1 2013/02/23 02:24:56 solar Exp $
+ *	$Id: Owl/packages/glibc/crypt_freesec.c,v 1.6.2.1 2013/02/23 02:24:56 solar Exp $
  *
  * This is an original implementation of the DES and the crypt(3) interfaces
  * by David Burren <davidb at werj.com.au>.
@@ -630,7 +630,8 @@ _crypt_extended_r(const char *key, const char *setting,
 	 */
 	q = (u_char *) keybuf;
 	while (q - (u_char *) keybuf < sizeof(keybuf)) {
-		if ((*q++ = *key << 1))
+		*q++ = *key << 1;
+		if (*key)
 			key++;
 	}
 	if (des_setkey((u_char *) keybuf, data))
@@ -760,6 +761,8 @@ static struct {
 	{"_J9..SDizxmRI1GjnQuE", "zxyDPWgydbQjgq"},
 	{"_K9..SaltNrQgIYUAeoY", "726 even"},
 	{"_J9..SDSD5YGyRCr4W4c", ""},
+	{"_01234567IBjxKliXXRQ", "\xc3\x80" "1234abcd"},
+	{"_012345678OSGpGQRVHA", "\xc3\x80" "9234abcd"},
 /* "old"-style, valid salts */
 	{"CCNf8Sbh3HDfQ", "U*U*U*U*"},
 	{"CCX.K.MFy4Ois", "U*U***U"},
@@ -771,6 +774,8 @@ static struct {
 	{"A9RXdR23Y.cY6", "password"},
 	{"ZziFATVXHo2.6", "password"},
 	{"zZDDIZ0NOlPzw", "password"},
+	{"99PxawtsTfX56", "\xc3\x80" "1234abcd"},
+	{"99jcVcGxUZOWk", "\xc3\x80" "9234abcd"},
 /* "old"-style, "reasonable" invalid salts, UFC-crypt behavior expected */
 	{"\001\002wyd0KZo65Jo", "password"},
 	{"a_C10Dk/ExaG.", "password"},
