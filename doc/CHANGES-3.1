@@ -205,24 +205,36 @@ Updated to 9.39, added packaging of the wiper.sh script (SSD trimming).
 Updated to 4.6.3.
 
 2012/02/25	Package: kernel
-SECURITY FIX	Severity: none to high, local, active
-Updated to 2.6.18-274.18.1.el5.028stab098.1.  Introduced the previously
-missed RLIMIT_NPROC check into fs/compat.c: compat_do_execve() (used by
-32-bit program binaries on 64-bit kernel).  Introduced protection
-against unintended self-read by a SUID/SGID program of /proc/<pid>/mem
-and /proc/<pid>/*maps files, based on approaches taken in recent
-grsecurity patches.  Made the kernel.dmesg_restrict sysctl tri-state and
+SECURITY FIX	Severity: low/low to high, remote/local, active
+Updated to 2.6.18-274.18.1.el5.028stab098.1, which fixes an IGMP remote
+DoS over LAN (CVE-2012-0207), two ext4 filesystem local DoS flaws
+(CVE-2011-3638, CVE-2011-4086), and a flaw in handling of robust list
+pointers of user-space held futexes across execve(2) calls
+(CVE-2012-0028), which could be used for privilege escalation via a
+SUID/SGID program that is multi-threaded or/and has a memory-mapped
+device, file, or shared memory segment (Owl does not include such
+SUID/SGID programs).  Introduced the previously missed RLIMIT_NPROC
+check into fs/compat.c: compat_do_execve() (used by 32-bit program
+binaries on 64-bit kernel).  Introduced protection against unintended
+self-read by a SUID/SGID program of /proc/<pid>/mem and
+/proc/<pid>/*maps files, based on approaches taken in recent grsecurity
+patches.  Made the kernel.dmesg_restrict sysctl tri-state and
 container-aware.  Enabled CONFIG_NFSD=m, CONFIG_CIFS=m,
 CONFIG_NET_SCHED=y, CONFIG_NET_RADIO=y, CONFIG_PCCARD=m and lots of WiFi
 drivers as modules.
 References:
 http://wiki.openvz.org/Download/kernel/rhel5/028stab098.1
 http://rhn.redhat.com/errata/RHSA-2012-0107.html
-http://www.openwall.com/lists/oss-security/2012/02/08/2
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-0207
+http://womble.decadent.org.uk/blog/igmp-denial-of-service-in-linux-cve-2012-0207.html
+http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=654876
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3638
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-4086
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-0028
 http://www.openwall.com/lists/oss-security/2012/01/04/18
 http://www.openwall.com/lists/oss-security/2012/05/08/1
 https://bugzilla.redhat.com/show_bug.cgi?id=771764
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-0028
+http://www.openwall.com/lists/oss-security/2012/02/08/2
 
 2012/02/18	Package: glibc
 Enabled building of UTF-8 locales by default (adds 6.5 MB to glibc .rpm
@@ -780,4 +792,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.107 2013/02/22 19:24:10 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.108 2013/02/23 00:46:06 solar Exp $
