@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.120.2.3 2013/02/23 02:24:56 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.120.2.4 2013/02/23 18:23:25 segoon Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 1.2
-Release: owl16.3.0.1
+Release: owl16.3.0.2
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
@@ -40,6 +40,7 @@ Source6: strlcpy.3
 Patch0: glibc-2.3.5-cvs-20050427-canonicalize.diff
 Patch1: glibc-2.3.6-cvs-20051116-divdi3.diff
 Patch2: glibc-2.3.6-cvs-20060103-ctermid.diff
+Patch3: glibc-2.3.6-cvs-tls_static_nelem.diff
 
 # RH
 Patch100: glibc-2.3.5-fedora.diff
@@ -172,6 +173,11 @@ compatibility package with necessary binaries of old libdb libraries.
 
 # remove inappropriate __nonnull attribute from ctermid
 %patch2 -p0
+
+
+# Handle GL(dl_tls_static_nelem) == GL(dl_tls_max_dtv_idx) case
+# git: 167d5acc0d83877cb8651571fd27d8367281a5b9
+%patch3 -p1
 
 # RH
 # usual glibc-fedora.patch
@@ -471,6 +477,11 @@ fi
 %endif
 
 %changelog
+* Sat Feb 23 2013 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.3.6-owl16.3.0.2
+- Backported a fix for TLS handling bug which triggered 'assert' on Firefox
+startup.
+http://www.openwall.com/lists/owl-dev/2013/02/23/2
+
 * Sat Feb 23 2013 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl16.3.0.1
 - Corrected the processing of '\x80' characters in crypt_freesec.c.  This is
 the issue known as CVE-2012-2143 in other projects using the FreeSec code, but
