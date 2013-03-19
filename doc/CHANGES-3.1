@@ -48,6 +48,34 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2013/03/19	Package: kernel
+SECURITY FIX	Severity: high, local/indirect, active/passive
+Updated to 2.6.18-348.3.1.el5.028stab106.1.  The corresponding RHEL5
+kernel updates fix a number of vulnerabilities, CVE IDs for the relevant
+ones of which are referenced below.  Most importantly, this fixes a
+PTRACE_SETREGS vs. process death race condition (CVE-2013-0871), which
+could allow a non-privileged local user to execute arbitrary code in the
+kernel and thus escalate their privileges to root, escape from an OpenVZ
+container, etc.  (However, the risk probability might have been low due
+to the race being difficult to win.)
+References:
+http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab106.1
+http://rhn.redhat.com/errata/RHSA-2013-0621.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-0871
+http://www.openwall.com/lists/oss-security/2013/02/15/16
+http://rhn.redhat.com/errata/RHSA-2013-0594.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-3400
+http://www.openwall.com/lists/oss-security/2012/07/03/1
+http://rhn.redhat.com/errata/RHSA-2013-0168.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-1568
+http://www.openwall.com/lists/oss-security/2012/03/20/4
+http://rhn.redhat.com/errata/RHBA-2013-0006.html
+http://rhn.redhat.com/errata/RHSA-2012-1540.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-4508
+http://www.openwall.com/lists/oss-security/2012/10/25/1
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-3552
+http://www.openwall.com/lists/oss-security/2012/08/31/11
+
 2013/02/23	Package: glibc
 Backported a fix for a TLS handling bug that manifested itself as an
 assertion failure on startup of some third-party program binaries, as
@@ -798,4 +826,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.109 2013/03/19 05:33:27 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.110 2013/03/19 06:07:54 solar Exp $
