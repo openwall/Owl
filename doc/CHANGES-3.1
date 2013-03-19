@@ -48,6 +48,12 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2013/02/23	Package: glibc
+Backported a fix for a TLS handling bug that manifested itself as an
+assertion failure on startup of some third-party program binaries, as
+reproduced with Mozilla's build of Firefox 17.0.1:
+http://www.openwall.com/lists/owl-dev/2013/02/23/2
+
 2013/02/22	Package: gnupg
 SECURITY FIX	Severity: medium, indirect, passive
 Updated to 1.4.13.  This version fixes a memory corruption bug
@@ -792,4 +798,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.108 2013/02/23 00:46:06 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.109 2013/03/19 05:33:27 solar Exp $
