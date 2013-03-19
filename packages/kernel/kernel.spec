@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.95 2013/02/22 19:43:27 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.96 2013/03/19 04:42:10 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 308.20.1.el5.028stab104.3
+%define ovzversion 348.3.1.el5.028stab106.1
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
@@ -16,8 +16,8 @@ Source0: linux-2.6.18.tar.xz
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab104.3/patches/patch-308.20.1.el5.028stab104.3-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab104.3/patches/patch-308.20.1.el5.028stab104.3-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab106.1/patches/patch-348.3.1.el5.028stab106.1-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab106.1/patches/patch-348.3.1.el5.028stab106.1-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -104,6 +104,9 @@ done
 %files fake
 
 %changelog
+* Tue Mar 19 2013 Solar Designer <solar-at-owl.openwall.com> 2.6.18-348.3.1.el5.028stab106.1.owl1
+- Updated to 2.6.18-348.3.1.el5.028stab106.1.
+
 * Fri Feb 22 2013 Solar Designer <solar-at-owl.openwall.com> 2.6.18-308.20.1.el5.028stab104.3.owl1
 - Updated to 2.6.18-308.20.1.el5.028stab104.3.
 - CONFIG_EFI_PARTITION=y

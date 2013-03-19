@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.18-308.20.1.el5.028stab104.3.owl1
-# Fri Feb 22 02:52:53 2013
+# Linux kernel version: 2.6.18-348.3.1.el5.028stab106.1.owl1
+# Tue Mar 19 08:38:38 2013
 #
 CONFIG_X86_32=y
 CONFIG_GENERIC_TIME=y
@@ -1893,6 +1893,11 @@ CONFIG_NET_DMA=y
 #
 CONFIG_INTEL_IOATDMA_V3=m
 # CONFIG_UIO is not set
+
+#
+# Microsoft Hyper-V guest support
+#
+# CONFIG_HYPERV is not set
 
 #
 # File systems

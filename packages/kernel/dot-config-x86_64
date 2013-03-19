@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.18-308.20.1.el5.028stab104.3.owl1
-# Fri Feb 22 02:35:25 2013
+# Linux kernel version: 2.6.18-348.3.1.el5.028stab106.1.owl1
+# Tue Mar 19 07:41:08 2013
 #
 CONFIG_X86_64=y
 CONFIG_64BIT=y
@@ -1733,6 +1733,11 @@ CONFIG_INTEL_IOATDMA_V3=m
 # CONFIG_UIO is not set
 
 #
+# Microsoft Hyper-V guest support
+#
+# CONFIG_HYPERV is not set
+
+#
 # Firmware Drivers
 #
 # CONFIG_EDD is not set
@@ -1950,6 +1955,7 @@ CONFIG_NLS_UTF8=m
 # CONFIG_PROFILING is not set
 CONFIG_HAVE_OPTPROBES=y
 # CONFIG_KPROBES is not set
+CONFIG_HAVE_SYSCALL_TRACEPOINTS=y
 
 #
 # Kernel hacking
