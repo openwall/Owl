@@ -4,11 +4,11 @@ http://www.openwall.com/Owl/
 
 Owl can be downloaded from the following official mirrors:
 
-ftp://mirrors.kernel.org/openwall/Owl/	(USA & EU)
+ftp://mirrors.kernel.org/openwall/Owl/	(USA)
 	http://mirrors.kernel.org/openwall/Owl/
 	rsync://mirrors.kernel.org/mirrors/openwall/Owl/
-ftp://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/	(USA)
-	http://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/
+ftp://distro.ibiblio.org/openwall/Owl/	(USA)
+	http://distro.ibiblio.org/openwall/Owl/
 ftp://ftp1.ru.openwall.com/pub/Owl/	(Moscow, Russia)
 ftp://ftp2.ru.openwall.com/pub/Owl/	(Moscow, Russia)
 ftp://ftp.fr.openwall.com/pub/Owl/	(France)
@@ -16,9 +16,6 @@ ftp://ftp.cz.openwall.com/pub/Owl/	(Czech Republic)
 ftp://ftp.linux.kiev.ua/pub/Owl/	(Ukraine)
 	http://ftp.linux.kiev.ua/pub/Owl/
 	rsync://ftp.linux.kiev.ua/pub/Owl/
-ftp://gd.tuwien.ac.at/opsys/linux/openwall/Owl/	(Austria)
-	http://gd.tuwien.ac.at/opsys/linux/openwall/Owl/
-	rsync://gd.tuwien.ac.at/opsys/linux/openwall/Owl/
 ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Germany)
 ftp://ftp.cc.uoc.gr/mirrors/linux/openwall/Owl/	(Greece)
 	http://ftp.cc.uoc.gr/mirrors/linux/openwall/Owl/
@@ -80,4 +77,4 @@ Finally, the CVSweb interface is provided at:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/DOWNLOAD,v 1.49.2.3 2011/10/24 20:31:00 solar Exp $
+$Owl: Owl/doc/DOWNLOAD,v 1.49.2.4 2013/03/22 06:46:19 solar Exp $
