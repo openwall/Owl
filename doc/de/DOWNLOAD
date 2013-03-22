@@ -13,9 +13,6 @@ ftp://ftp.cz.openwall.com/pub/Owl/	(Tschechien)
 ftp://ftp.linux.kiev.ua/pub/Owl/	(Ukraine)
 	http://ftp.linux.kiev.ua/pub/Owl/
 	rsync://ftp.linux.kiev.ua/pub/Owl/
-ftp://gd.tuwien.ac.at/opsys/linux/openwall/Owl/	(Österreich)
-	http://gd.tuwien.ac.at/opsys/linux/openwall/Owl/
-	rsync://gd.tuwien.ac.at/opsys/linux/openwall/Owl/
 ftp://ftp.cc.uoc.gr/mirrors/linux/openwall/Owl/	(Griechenland)
 	http://ftp.cc.uoc.gr/mirrors/linux/openwall/Owl/
 ftp://mirrors.kernel.org/openwall/Owl/	(USA)
@@ -78,4 +75,4 @@ Wir bieten zudem auch ein CVSweb-Interface an:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/de/DOWNLOAD,v 1.49 2013/03/22 06:20:28 solar Exp $
+$Owl: Owl/doc/de/DOWNLOAD,v 1.50 2013/03/22 06:23:41 solar Exp $
