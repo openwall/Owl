@@ -20,8 +20,8 @@ ftp://gd.tuwien.ac.at/opsys/linux/openwall/Owl/	(Autriche)
 ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Allemagne)
 ftp://ftp.cc.uoc.gr/mirrors/linux/openwall/Owl/	(Grèce)
 	http://ftp.cc.uoc.gr/mirrors/linux/openwall/Owl/
-ftp://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/	(États-Unis)
-	http://distro.ibiblio.org/pub/linux/distributions/openwall/Owl/
+ftp://distro.ibiblio.org/openwall/Owl/	(États-Unis)
+	http://distro.ibiblio.org/openwall/Owl/
 ftp://mirror.optusnet.com.au/pub/Owl/	(Australie)
 	http://mirror.optusnet.com.au/pub/Owl/
 
@@ -69,4 +69,4 @@ utiliser la compression avec chaque méthode d'accès au serveur CVS anonyme,
 typiquement en spécifiant l'option -z3 à CVS et/ou "Compression yes" dans le
 fichier de configuration du client SSH.
 
-$Owl: Owl/doc/fr/DOWNLOAD,v 1.35 2011/10/24 08:58:09 solar Exp $
+$Owl: Owl/doc/fr/DOWNLOAD,v 1.36 2013/03/22 06:18:03 solar Exp $
