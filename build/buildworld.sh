@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/buildworld.sh,v 1.53 2010/12/14 11:10:24 solar Exp $
+# $Owl: Owl/build/buildworld.sh,v 1.53.2.1 2013/04/07 22:44:17 solar Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -325,7 +325,17 @@ detect()
 	test -n "$PROCESSORS" || detect_proc
 	if [ -n "$PACKAGE" ]; then
 		test -n "$MAKEFLAGS" || MAKEFLAGS="-j $PROCESSORS"
+		if [ "$PROCESSORS" -lt 2 ]; then
+# "pigz -11" requires at least 2 threads currently
+			test -n "$PIGZ" || PIGZ="-p 2"
+		else
+			test -n "$PIGZ" || PIGZ="-p $PROCESSORS"
+		fi
 		PROCESSORS=1
+	else
+# If we build multiple packages in parallel, reduce per-package parallelism
+# (pigz would use up to 8 threads by default).
+		test -n "$PIGZ" || PIGZ="-p 2"
 	fi
 	test -n "$BUILDHOST" || BUILDHOST="`hostname -f`"
 	test -n "$BUILDHOST" || BUILDHOST="localhost.localdomain"
