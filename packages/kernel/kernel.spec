@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.12 2013/02/21 15:57:07 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.13 2013/04/07 22:41:11 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 308.20.1.el5.028stab104.3
-Release: %ovzversion.owl0.3.0.1
+Release: %ovzversion.owl0.3.0.2
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab104.3
@@ -15,6 +15,8 @@ Source0: linux-2.6.18.tar.xz
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
+%define pigzversion 2.3
+Source10: pigz-%pigzversion.tar.gz
 Patch0: patch-%ovzversion-combined.xz
 # http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab104.3/patches/patch-308.20.1.el5.028stab104.3-combined.gz
 # Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab104.3/patches/patch-308.20.1.el5.028stab104.3-combined.gz.asc
@@ -47,12 +49,19 @@ A fake Linux kernel package for use in OpenVZ containers and the like to
 satisfy possible dependencies of other packages.
 
 %prep
-%setup -q -n linux-%version
+%setup -q -n linux-%version -a10
 %patch0 -p1
 %patch1 -p1
 cp %_sourcedir/dot-config-%_target_cpu .config
 
+sed -ri 's/(-lpthread -lz)/\1 -lm/' pigz-%pigzversion/Makefile
+sed -i "s, gzip -f -9 , `pwd`/pigz-%pigzversion/pigz -f -11 ," scripts/Makefile.lib
+
 %build
+pushd pigz-%pigzversion
+make CC=%__cc CFLAGS='%optflags'
+popd
+
 #yes '' | %__make oldconfig
 %__make nonint_oldconfig
 %__make bzImage
@@ -104,6 +113,10 @@ done
 %files fake
 
 %changelog
+* Sun Apr 07 2013 Solar Designer <solar-at-owl.openwall.com> 2.6.18-308.20.1.el5.028stab104.3.owl0.3.0.2
+- Use "pigz -11" (Zopfli) to compress the kernel.
+- In dot-config-x86_64, changed CONFIG_ATL1 from =m back to =y.
+
 * Thu Feb 21 2013 Solar Designer <solar-at-owl.openwall.com> 2.6.18-308.20.1.el5.028stab104.3.owl0.3.0.1
 - Updated to 2.6.18-308.20.1.el5.028stab104.3.
 - CONFIG_EFI_PARTITION=y
