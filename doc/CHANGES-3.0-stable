@@ -56,7 +56,7 @@ kernel and thus escalate their privileges to root, escape from an OpenVZ
 container, etc.  (However, the risk probability might have been low due
 to the race being difficult to win.)
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab106.1
+https://openvz.org/Download/kernel/rhel5/028stab106.2
 http://rhn.redhat.com/errata/RHSA-2013-0621.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-0871
 http://www.openwall.com/lists/oss-security/2013/02/15/16
@@ -652,4 +652,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.34 2013/04/08 00:39:25 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.35 2013/04/08 00:53:46 solar Exp $
