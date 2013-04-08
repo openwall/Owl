@@ -44,6 +44,39 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl 3.0-stable.
 
+(2013/03/19 - 2013/04/07)
+2013/04/08	Package: kernel
+SECURITY FIX	Severity: high, local/indirect, active/passive
+Updated to 2.6.18-348.3.1.el5.028stab106.2.  The corresponding RHEL5
+kernel updates fix a number of vulnerabilities, CVE IDs for the relevant
+ones of which are referenced below.  Most importantly, this fixes a
+PTRACE_SETREGS vs. process death race condition (CVE-2013-0871), which
+could allow a non-privileged local user to execute arbitrary code in the
+kernel and thus escalate their privileges to root, escape from an OpenVZ
+container, etc.  (However, the risk probability might have been low due
+to the race being difficult to win.)
+References:
+http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab106.1
+http://rhn.redhat.com/errata/RHSA-2013-0621.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-0871
+http://www.openwall.com/lists/oss-security/2013/02/15/16
+http://rhn.redhat.com/errata/RHSA-2013-0594.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-3400
+http://www.openwall.com/lists/oss-security/2012/07/03/1
+http://rhn.redhat.com/errata/RHSA-2013-0168.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-1568
+http://www.openwall.com/lists/oss-security/2012/03/20/4
+http://rhn.redhat.com/errata/RHBA-2013-0006.html
+http://rhn.redhat.com/errata/RHSA-2012-1540.html
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-4508
+http://www.openwall.com/lists/oss-security/2012/10/25/1
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-3552
+http://www.openwall.com/lists/oss-security/2012/08/31/11
+
+2013/04/07	Package: kernel
+Use "pigz -11" (Zopfli) to compress the kernel.  On x86_64 changed
+CONFIG_ATL1 from =m back to =y.
+
 (2013/02/23)
 2013/02/23	Package: glibc
 Backported a fix for a TLS handling bug that manifested itself as an
@@ -619,4 +652,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.33 2013/03/19 06:21:40 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.34 2013/04/08 00:39:25 solar Exp $
