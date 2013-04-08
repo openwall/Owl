@@ -1,15 +1,15 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.13 2013/04/07 22:41:11 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.36.2.14 2013/04/08 00:23:36 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 308.20.1.el5.028stab104.3
-Release: %ovzversion.owl0.3.0.2
+%define ovzversion 348.3.1.el5.028stab106.2
+Release: %ovzversion.owl0.3.0.1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab104.3
+URL: https://openvz.org/Download/kernel/rhel5/028stab106.2
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
@@ -18,8 +18,8 @@ Source2: dot-config-x86_64
 %define pigzversion 2.3
 Source10: pigz-%pigzversion.tar.gz
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab104.3/patches/patch-308.20.1.el5.028stab104.3-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab104.3/patches/patch-308.20.1.el5.028stab104.3-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab106.2/patches/patch-348.3.1.el5.028stab106.2-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab106.2/patches/patch-348.3.1.el5.028stab106.2-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -113,6 +113,9 @@ done
 %files fake
 
 %changelog
+* Mon Apr 08 2013 Solar Designer <solar-at-owl.openwall.com> 2.6.18-348.3.1.el5.028stab106.2.owl0.3.0.1
+- Updated to 2.6.18-348.3.1.el5.028stab106.2.
+
 * Sun Apr 07 2013 Solar Designer <solar-at-owl.openwall.com> 2.6.18-308.20.1.el5.028stab104.3.owl0.3.0.2
 - Use "pigz -11" (Zopfli) to compress the kernel.
 - In dot-config-x86_64, changed CONFIG_ATL1 from =m back to =y.
