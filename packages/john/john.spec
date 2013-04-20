@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.159 2013/02/21 21:46:50 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.160 2013/04/20 01:49:40 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.9.7
+Version: 1.7.9.8
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -199,6 +199,12 @@ install -m 644 -p run/{mailer,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sat Apr 20 2013 Solar Designer <solar-at-owl.openwall.com> 1.7.9.8-owl1
+- The formats interface has been enhanced to better support GPU implementations
+(in jumbo), as well as fast hashes on multi-CPU systems (not yet made use of).
+- In the generic crypt(3) format, handle possible NULL returns from crypt() and
+crypt_r().
+
 * Thu Aug 23 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.7-owl1
 - Fixed a bug introduced in 1.7.9.5 where --show would omit the first hex digit
 of LM hashes.  Thanks to magnum for reporting this and providing the patch.
