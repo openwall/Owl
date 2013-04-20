@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.160 2013/04/20 01:49:40 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.161 2013/04/20 03:04:26 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -72,7 +72,7 @@ mv ../run/john ../run/%john_last
 %__make clean
 %ifarch athlon
 OMP_FALLBACK='"john-mmx"'
-%__make linux-x86-mmx CFLAGS='%cflags -fopenmp -mmmx' CFLAGS_MAIN="%cflags -fopenmp -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS='-fopenmp -mmmx'
+%__make linux-x86-mmx CFLAGS='%cflags -fopenmp -mmmx' CFLAGS_MAIN="%cflags -fopenmp -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK' -DHAVE_CRYPT" OMPFLAGS='-fopenmp -mmmx'
 %else
 OMP_FALLBACK='\"john-%buildarch\"'
 %__make linux-x86-any CFLAGS="%cflags -fopenmp -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS=-fopenmp
@@ -81,14 +81,14 @@ mv ../run/john ../run/john-omp-%buildarch
 %__make clean
 CPU_FALLBACK='"john-omp-%buildarch"'
 OMP_FALLBACK='"john-mmx"'
-%__make linux-x86-mmx CFLAGS='%cflags -fopenmp -mmmx' CFLAGS_MAIN="%cflags -fopenmp -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$CPU_FALLBACK' -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS='-fopenmp -mmmx'
+%__make linux-x86-mmx CFLAGS='%cflags -fopenmp -mmmx' CFLAGS_MAIN="%cflags -fopenmp -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$CPU_FALLBACK' -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK' -DHAVE_CRYPT" OMPFLAGS='-fopenmp -mmmx'
 %endif
 %{!?_without_check:%{!?_without_test:%__make check}}
 mv ../run/john ../run/john-omp-mmx
 %__make clean
 CPU_FALLBACK='"john-omp-mmx"'
 OMP_FALLBACK='"john-sse2"'
-%__make linux-x86-sse2 CFLAGS='%cflags -fopenmp -msse2' CFLAGS_MAIN="%cflags -fopenmp -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$CPU_FALLBACK' -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK'" OMPFLAGS='-fopenmp -msse2'
+%__make linux-x86-sse2 CFLAGS='%cflags -fopenmp -msse2' CFLAGS_MAIN="%cflags -fopenmp -DCPU_FALLBACK=1 -DCPU_FALLBACK_BINARY='$CPU_FALLBACK' -DOMP_FALLBACK=1 -DOMP_FALLBACK_BINARY='$OMP_FALLBACK' -DHAVE_CRYPT" OMPFLAGS='-fopenmp -msse2'
 %if %BUILD_AVX
 %{!?_without_check:%{!?_without_test:%__make check}}
 mv ../run/john ../run/john-omp-sse2
@@ -204,6 +204,9 @@ install -m 644 -p run/{mailer,relbench} doc/
 (in jumbo), as well as fast hashes on multi-CPU systems (not yet made use of).
 - In the generic crypt(3) format, handle possible NULL returns from crypt() and
 crypt_r().
+- In this spec file, added explicit -DHAVE_CRYPT to make invocations that
+override CFLAGS_MAIN (before this fix, OpenMP-enabled builds for MMX and for
+SSE2 in the i686 package happened to lack generic crypt(3) support).
 
 * Thu Aug 23 2012 Solar Designer <solar-at-owl.openwall.com> 1.7.9.7-owl1
 - Fixed a bug introduced in 1.7.9.5 where --show would omit the first hex digit
