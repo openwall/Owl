@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.162 2013/04/27 00:13:38 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.163 2013/04/27 23:47:00 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.9.9
+Version: 1.7.9.10
 %define charsets_version 20051216
 Release: owl1
 License: GPL
@@ -199,6 +199,9 @@ install -m 644 -p run/{mailer,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sat Apr 27 2013 Solar Designer <solar-at-owl.openwall.com> 1.7.9.10-owl1
+- Status reporting has been enhanced.
+
 * Sat Apr 27 2013 Solar Designer <solar-at-owl.openwall.com> 1.7.9.9-owl1
 - Incremental mode has been revised.
 
