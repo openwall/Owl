@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.169 2013/05/30 03:11:02 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.170 2013/05/30 03:37:01 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,14 +6,14 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.7.9.15
-%define charsets_version 20051216
+Version: 1.8.0
+%define charsets_version 20130529
 Release: owl1
 License: GPL
 Group: Applications/System
 URL: http://www.openwall.com/john/
 Source0: john-%version.tar.gz
-Source1: john-charsets-%charsets_version.tar.bz2
+Source1: john-charsets-%charsets_version.tar.xz
 BuildRoot: /override/%name-%version
 
 %description
@@ -199,7 +199,7 @@ install -m 644 -p run/{mailer,makechr,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
-* Thu May 30 2013 Solar Designer <solar-at-owl.openwall.com> 1.7.9.15-owl1
+* Thu May 30 2013 Solar Designer <solar-at-owl.openwall.com> 1.8.0-owl1
 - In incremental mode charset file generation, revised and tuned the estimated
 cracks calculation based on actual testing.
 - Revised the pre-defined incremental modes, as well as external mode filters
