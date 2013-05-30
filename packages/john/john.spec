@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.168 2013/05/30 00:54:19 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.169 2013/05/30 03:11:02 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -205,6 +205,7 @@ cracks calculation based on actual testing.
 - Revised the pre-defined incremental modes, as well as external mode filters
 that are used to generate .chr files.
 - Added makechr, a script to (re-)generate the .chr files.
+- In the external mode compiler, treat character literals as unsigned.
 - Updated the documentation.
 - Relaxed the license for many source files to cut-down BSD.
 - Relaxed the license for John the Ripper as a whole from GPLv2 (exact version)
