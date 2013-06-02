@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.170 2013/05/30 03:37:01 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.171 2013/06/02 23:53:33 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.8.0
+Version: 1.8.0.1
 %define charsets_version 20130529
 Release: owl1
 License: GPL
@@ -199,6 +199,10 @@ install -m 644 -p run/{mailer,makechr,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Jun 03 2013 Solar Designer <solar-at-owl.openwall.com> 1.8.0.1-owl1
+- Added linux-arm32le and linux-arm32le-neon make targets (not made use of in
+Owl yet).
+
 * Thu May 30 2013 Solar Designer <solar-at-owl.openwall.com> 1.8.0-owl1
 - In incremental mode charset file generation, revised and tuned the estimated
 cracks calculation based on actual testing.
