@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/strace/strace.spec,v 1.28 2012/05/02 20:53:23 ldv Exp $
+# $Owl: Owl/packages/strace/strace.spec,v 1.29 2013/06/05 21:57:21 ldv Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
-Version: 4.7
+Version: 4.8
 Release: owl1
 License: BSD
 Group: Development/Debuggers
@@ -45,7 +45,7 @@ rm -rf %buildroot
 
 %files
 %defattr(-,root,root)
-%doc ChangeLog*.xz COPYRIGHT CREDITS NEWS README
+%doc ChangeLog*.xz COPYING CREDITS NEWS README
 %_bindir/strace
 %_bindir/strace-log-merge
 %_mandir/man1/strace.1*
@@ -55,6 +55,9 @@ rm -rf %buildroot
 %_bindir/strace-graph
 
 %changelog
+* Wed Jun 05 2013 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.8-owl1
+- Updated to 4.8.
+
 * Wed May 02 2012 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.7-owl1
 - Updated to 4.7.
 
