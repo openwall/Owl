@@ -145,7 +145,6 @@ master zones, such as 127.in-addr.arpa, which are usable for the attack.
 BIND's own access controls (such as the "allow-query" directive) are
 ineffective against the attack.
 References:
-https://www.isc.org/node/474
 http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=538975
 http://www.kb.cert.org/vuls/id/725188
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-0696
@@ -241,7 +240,6 @@ SECURITY FIX	Severity: medium, remote, active
 Updated to 9.3.5-P1, which additionally randomizes UDP query ports to
 improve resilience to DNS cache poisoning attacks.
 References:
-http://www.isc.org/sw/bind/forgery-resilience.php
 http://www.kb.cert.org/vuls/id/800113
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-1447
 
@@ -603,4 +601,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.80 2012/04/29 23:49:48 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.81 2013/06/08 09:21:45 solar Exp $
