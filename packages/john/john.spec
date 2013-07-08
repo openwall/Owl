@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.171 2013/06/02 23:53:33 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.172 2013/07/08 09:57:18 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.8.0.1
+Version: 1.8.0.2
 %define charsets_version 20130529
 Release: owl1
 License: GPL
@@ -199,6 +199,10 @@ install -m 644 -p run/{mailer,makechr,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Mon Jul 08 2013 Solar Designer <solar-at-owl.openwall.com> 1.8.0.2-owl1
+- Fixed a bug where "Warning: no OpenMP support for this hash type" could be
+printed in "--stdout" mode.
+
 * Mon Jun 03 2013 Solar Designer <solar-at-owl.openwall.com> 1.8.0.1-owl1
 - Added linux-arm32le and linux-arm32le-neon make targets (not made use of in
 Owl yet).
