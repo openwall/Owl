@@ -132,6 +132,27 @@ diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/arch/x86_64/Makefile linux-2.6.
  OBJCOPYFLAGS	:= -O binary -R .note -R .comment -S
  LDFLAGS_vmlinux :=
  CHECKFLAGS      += -D__x86_64__ -m64
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/arch/x86_64/pci/mmconfig.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/arch/x86_64/pci/mmconfig.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/arch/x86_64/pci/mmconfig.c	2014-04-30 18:13:09 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/arch/x86_64/pci/mmconfig.c	2014-06-08 18:05:41 +0000
+@@ -188,7 +188,7 @@ static unsigned long get_mmcfg_aper(stru
+ #endif
+ 		/* trust acpi values for end & start bus number */
+ 		printk(KERN_INFO
+-		       "PCI: Using acpi max pci bus value of 0x%lx \n",
++		       "PCI: Using acpi max pci bus value of 0x%x \n",
+ 		       cfg->end_bus_number - cfg->start_bus_number + 1);
+ 		mmcfg_aper = tmp_mmcfg_aper;
+ 		if (mmcfg_aper < MMCONFIG_APER_MIN) 
+@@ -198,7 +198,7 @@ static unsigned long get_mmcfg_aper(stru
+ 	} else {
+ 		if (tmp_mmcfg_aper < MMCONFIG_APER_MAX) {
+ 			printk(KERN_ERR "Warning: pci_mmcfg_init marking %dMB "
+-			       "space uncacheable.\nMCFG table requires %dMB "
++			       "space uncacheable.\nMCFG table requires %ldMB "
+ 			       "uncacheable only. Try booting with "
+ 			       "acpi_mcfg_max_pci_bus_num=on\n",
+ 			       MMCONFIG_APER_MAX >> 20, tmp_mmcfg_aper >> 20);
 diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/arch/x86_64/vdso/Makefile linux-2.6.18-371.8.1.el5.028stab113.1-owl/arch/x86_64/vdso/Makefile
 --- linux-2.6.18-371.8.1.el5.028stab113.1/arch/x86_64/vdso/Makefile	2014-04-30 18:13:14 +0000
 +++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/arch/x86_64/vdso/Makefile	2014-06-08 14:39:13 +0000
@@ -296,6 +317,23 @@ diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/drivers/block/cciss.c linux-2.6
  /**
   * blk_rq_bytes - Returns bytes left to complete in the entire request
   * @rq: the request being processed
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/drivers/block/pktcdvd.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/block/pktcdvd.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/drivers/block/pktcdvd.c	2014-04-30 18:13:09 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/block/pktcdvd.c	2014-06-08 18:25:23 +0000
+@@ -1804,11 +1804,11 @@ static int pkt_media_speed(struct pktcdv
+ 		return ret;
+ 	}
+ 
+-	if (!buf[6] & 0x40) {
++	if (!(buf[6] & 0x40)) {
+ 		printk("pktcdvd: Disc type is not CD-RW\n");
+ 		return 1;
+ 	}
+-	if (!buf[6] & 0x4) {
++	if (!(buf[6] & 0x4)) {
+ 		printk("pktcdvd: A1 values on media are not valid, maybe not CDRW?\n");
+ 		return 1;
+ 	}
 diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/drivers/char/keyboard.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/char/keyboard.c
 --- linux-2.6.18-371.8.1.el5.028stab113.1/drivers/char/keyboard.c	2014-04-30 18:13:14 +0000
 +++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/char/keyboard.c	2014-06-08 14:39:13 +0000
@@ -332,6 +370,27 @@ diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/drivers/dca/Kconfig linux-2.6.1
  	depends on DMA_ENGINE_V3 && PCI
  	default m
  	---help---
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/drivers/firmware/dell_rbu.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/firmware/dell_rbu.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/drivers/firmware/dell_rbu.c	2014-04-30 18:13:09 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/firmware/dell_rbu.c	2014-06-08 21:29:44 +0000
+@@ -227,7 +227,7 @@ static int packetize_data(void *data, si
+ 	int packet_length;
+ 	u8 *temp;
+ 	u8 *end = (u8 *) data + length;
+-	pr_debug("packetize_data: data length %d\n", length);
++	pr_debug("packetize_data: data length %lu\n", (unsigned long)length);
+ 	if (!rbu_data.packetsize) {
+ 		printk(KERN_WARNING
+ 			"dell_rbu: packetsize not specified\n");
+@@ -249,7 +249,7 @@ static int packetize_data(void *data, si
+ 		if ((rc = create_packet(temp, packet_length)))
+ 			return rc;
+ 
+-		pr_debug("%lu:%lu\n", temp, (end - temp));
++		pr_debug("%lu:%lu\n", (unsigned long)temp, (end - temp));
+ 		temp += packet_length;
+ 	}
+ 
 diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/drivers/message/fusion/Kconfig linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/message/fusion/Kconfig
 --- linux-2.6.18-371.8.1.el5.028stab113.1/drivers/message/fusion/Kconfig	2014-04-30 18:13:09 +0000
 +++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/message/fusion/Kconfig	2014-06-08 14:39:13 +0000
@@ -569,6 +628,96 @@ diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/drivers/net/loopback.c linux-2.
  EXPORT_SYMBOL(loopback_dev);
 +#endif
  EXPORT_SYMBOL(templ_loopback_dev);
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/drivers/net/wireless/airo.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/net/wireless/airo.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/drivers/net/wireless/airo.c	2014-04-30 18:13:10 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/net/wireless/airo.c	2014-06-08 21:44:49 +0000
+@@ -6372,7 +6372,7 @@ static int airo_set_encode(struct net_de
+ 			set_wep_key(local, index, NULL, 0, perm, 1);
+ 		} else
+ 			/* Don't complain if only change the mode */
+-			if(!dwrq->flags & IW_ENCODE_MODE) {
++			if (!(dwrq->flags & IW_ENCODE_MODE)) {
+ 				return -EINVAL;
+ 			}
+ 	}
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/drivers/net/wireless/atmel.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/net/wireless/atmel.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/drivers/net/wireless/atmel.c	2006-09-20 03:42:06 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/net/wireless/atmel.c	2014-06-08 21:45:40 +0000
+@@ -1766,7 +1766,7 @@ static int atmel_set_encode(struct net_d
+ 			priv->default_key = index;
+ 		} else
+ 			/* Don't complain if only change the mode */
+-			if (!dwrq->flags & IW_ENCODE_MODE) {
++			if (!(dwrq->flags & IW_ENCODE_MODE)) {
+ 				return -EINVAL;
+ 			}
+ 	}
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/drivers/net/wireless/prism54/isl_ioctl.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/net/wireless/prism54/isl_ioctl.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/drivers/net/wireless/prism54/isl_ioctl.c	2006-09-20 03:42:06 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/net/wireless/prism54/isl_ioctl.c	2014-06-08 21:48:02 +0000
+@@ -1081,7 +1081,7 @@ prism54_set_encode(struct net_device *nd
+ 			    mgt_set_request(priv, DOT11_OID_DEFKEYID, 0,
+ 					    &index);
+ 		} else {
+-			if (!dwrq->flags & IW_ENCODE_MODE) {
++			if (!(dwrq->flags & IW_ENCODE_MODE)) {
+ 				/* we cannot do anything. Complain. */
+ 				return -EINVAL;
+ 			}
+@@ -2115,7 +2115,7 @@ prism2_ioctl_set_encryption(struct net_d
+ 			    mgt_set_request(priv, DOT11_OID_DEFKEYID, 0,
+ 					    &index);
+ 		} else {
+-			if (!param->u.crypt.flags & IW_ENCODE_MODE) {
++			if (!(param->u.crypt.flags & IW_ENCODE_MODE)) {
+ 				/* we cannot do anything. Complain. */
+ 				return -EINVAL;
+ 			}
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/drivers/pci/dmar.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/pci/dmar.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/drivers/pci/dmar.c	2014-04-30 18:13:11 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/pci/dmar.c	2014-06-08 18:19:25 +0000
+@@ -715,7 +715,7 @@ int alloc_iommu(struct dmar_drhd_unit *d
+ 	 * are few.
+ 	 */
+ 	if (cap_ndoms(iommu->cap) > 4*1024) {
+-		pr_info("IOMMU %llx: Number of IOMMU domains reduced from %dK to 4K\n",
++		pr_info("IOMMU %llx: Number of IOMMU domains reduced from %luK to 4K\n",
+ 			(unsigned long long)drhd->reg_base_addr,
+ 			cap_ndoms(iommu->cap)/1024);
+ 		iommu->cap = (iommu->cap & (~(uint64_t)0x7)) | 0x04;
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/drivers/scsi/st.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/scsi/st.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/drivers/scsi/st.c	2014-04-30 18:13:16 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/scsi/st.c	2014-06-08 21:43:18 +0000
+@@ -2891,7 +2891,7 @@ static int st_int_ioctl(struct scsi_tape
+ 			    !(STp->use_pf & PF_TESTED)) {
+ 				/* Try the other possible state of Page Format if not
+ 				   already tried */
+-				STp->use_pf = !STp->use_pf | PF_TESTED;
++				STp->use_pf = (STp->use_pf ^ USE_PF) | PF_TESTED;
+ 				st_release_request(SRpnt);
+ 				SRpnt = NULL;
+ 				return st_int_ioctl(STp, cmd_in, arg);
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/drivers/serial/8250_early.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/serial/8250_early.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/drivers/serial/8250_early.c	2006-09-20 03:42:06 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/drivers/serial/8250_early.c	2014-06-08 18:20:52 +0000
+@@ -74,7 +74,7 @@ static void __init wait_for_xmitr(struct
+ 	}
+ }
+ 
+-static void __init putc(struct uart_port *port, int c)
++static void __init uart_putc(struct uart_port *port, int c)
+ {
+ 	wait_for_xmitr(port);
+ 	serial_out(port, UART_TX, c);
+@@ -89,7 +89,7 @@ static void __init early_uart_write(stru
+ 	ier = serial_in(port, UART_IER);
+ 	serial_out(port, UART_IER, 0);
+ 
+-	uart_console_write(port, s, count, putc);
++	uart_console_write(port, s, count, uart_putc);
+ 
+ 	/* Wait for transmitter to become empty and restore the IER */
+ 	wait_for_xmitr(port);
 diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/fs/Kconfig linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/Kconfig
 --- linux-2.6.18-371.8.1.el5.028stab113.1/fs/Kconfig	2014-04-30 18:13:16 +0000
 +++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/Kconfig	2014-06-08 14:39:13 +0000
@@ -580,6 +729,18 @@ diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/fs/Kconfig linux-2.6.18-371.8.1
  	default m
  	help
  	  This file system is a part of Virtuozzo. It intoduces a fake
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/fs/block_dev.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/block_dev.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/fs/block_dev.c	2014-04-30 18:13:16 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/block_dev.c	2014-06-08 17:34:40 +0000
+@@ -1262,7 +1262,7 @@ static ssize_t blkdev_file_aio_write(str
+ 
+ 	percpu_down_read(&bdev->bd_block_size_semaphore);
+ 
+-	ret = generic_file_aio_write_nolock(iocb, iov, nr_segs, &iocb->ki_pos);
++	ret = generic_file_aio_write_nolock(iocb, iov, nr_segs, iocb->ki_pos);
+ 
+ 	percpu_up_read(&bdev->bd_block_size_semaphore);
+ 
 diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/fs/compat.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/compat.c
 --- linux-2.6.18-371.8.1.el5.028stab113.1/fs/compat.c	2014-04-30 18:13:16 +0000
 +++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/compat.c	2014-06-08 14:39:13 +0000
@@ -692,6 +853,107 @@ diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/fs/exec.c linux-2.6.18-371.8.1.
  		free_arg_pages(bprm);
  		security_bprm_free(bprm);
  		acct_update_integrals(current);
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/fs/filesystems.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/filesystems.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/fs/filesystems.c	2014-04-30 18:13:16 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/filesystems.c	2014-06-08 18:09:41 +0000
+@@ -252,7 +252,7 @@ int check_fs_presence(const char *name)
+ 	res = fs_index(name);
+ 	set_fs(curr_fs);
+ 
+-	return (res < 0) ? : 0;
++	return (res < 0) ? res : 0;
+ }
+ EXPORT_SYMBOL(check_fs_presence);
+ 
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/fs/namespace.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/namespace.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/fs/namespace.c	2014-04-30 18:13:16 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/namespace.c	2014-06-08 17:50:12 +0000
+@@ -1005,7 +1005,7 @@ void replace_mount(struct vfsmount *src_
+ 	path_release(&dst_nd);
+ 	release_mounts(&umount_list);
+ 
+-	return 0;
++	return;
+ }
+ EXPORT_SYMBOL_GPL(replace_mount);
+ 
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/fs/nfs/inode.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/nfs/inode.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/fs/nfs/inode.c	2014-04-30 18:13:16 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/nfs/inode.c	2014-06-08 21:25:32 +0000
+@@ -513,26 +513,30 @@ nfs_fhget(struct super_block *sb, struct
+ 			inode->i_uid = fattr->uid;
+ 		if (fattr->valid & NFS_ATTR_FATTR_GROUP)
+ 			inode->i_gid = fattr->gid;
+-		if (fattr->valid & NFS_ATTR_FATTR_BLOCKS_USED)
+-			blocks = fattr->du.nfs2.blocks;
+-		if (fattr->valid & NFS_ATTR_FATTR_SPACE_USED) {
+-			/*
+-			 * report the blocks in 512byte units
+-			 */
+-			blocks = nfs_calc_block_size(fattr->du.nfs3.used);
+-		}
+-		if (qi && qi->inode) {
+-			inode->i_blocks = 0;
+-			/* Before I forgot this _again_. inode is still
+-			 * not attached to dentry. If vzquota is on, it
+-			 * is OK, it is initialized already.
+-			 * But if it was initialized to be out of quota
+-			 * subtree, vzquota tries to reinitialize it.
+-			 * And fails.
+-			 */
+-			DQUOT_SYNC_BLOCKS(inode, blocks);
+-		} else {
+-			inode->i_blocks = blocks;
++		if (fattr->valid &
++		    (NFS_ATTR_FATTR_BLOCKS_USED | NFS_ATTR_FATTR_SPACE_USED)) {
++			if (fattr->valid & NFS_ATTR_FATTR_BLOCKS_USED) {
++				blocks = fattr->du.nfs2.blocks;
++			} else {
++				/*
++				 * report the blocks in 512byte units
++				 */
++				blocks = nfs_calc_block_size(
++				    fattr->du.nfs3.used);
++			}
++			if (qi && qi->inode) {
++				inode->i_blocks = 0;
++				/* Before I forgot this _again_. inode is still
++				 * not attached to dentry. If vzquota is on, it
++				 * is OK, it is initialized already.
++				 * But if it was initialized to be out of quota
++				 * subtree, vzquota tries to reinitialize it.
++				 * And fails.
++				 */
++				DQUOT_SYNC_BLOCKS(inode, blocks);
++			} else {
++				inode->i_blocks = blocks;
++			}
+ 		}
+ 		nfsi->attrtimeo = NFS_MINATTRTIMEO(inode);
+ 		nfsi->attrtimeo_timestamp = jiffies;
+@@ -930,17 +934,16 @@ static void nfs_sync_blocks(struct inode
+ {
+ 	blkcnt_t blocks;
+ 
+-	if (unlikely((fattr->valid & NFS_ATTR_FATTR) == 0))
+-		return;
+-
++	if (fattr->valid & NFS_ATTR_FATTR_BLOCKS_USED) {
++		blocks = fattr->du.nfs2.blocks;
++	} else
+ 	if (fattr->valid & NFS_ATTR_FATTR_SPACE_USED) {
+ 		/*
+ 		 * report the blocks in 512byte units
+ 		 */
+ 		blocks = nfs_calc_block_size(fattr->du.nfs3.used);
+- 	}
+-	if (fattr->valid & NFS_ATTR_FATTR_BLOCKS_USED)
+-		blocks = fattr->du.nfs2.blocks;
++ 	} else
++		return;
+ 
+ 	DQUOT_SYNC_BLOCKS(inode, blocks);
+ }
 diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/fs/proc/base.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/proc/base.c
 --- linux-2.6.18-371.8.1.el5.028stab113.1/fs/proc/base.c	2014-04-30 18:13:16 +0000
 +++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/proc/base.c	2014-06-08 14:39:13 +0000
@@ -780,6 +1042,20 @@ diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/fs/seq_file.c linux-2.6.18-371.
  
  	/*
  	 * Wrappers around seq_open(e.g. swaps_open) need to be
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/fs/sysfs/file.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/sysfs/file.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/fs/sysfs/file.c	2014-04-30 18:13:16 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/sysfs/file.c	2014-06-08 18:07:01 +0000
+@@ -159,8 +159,8 @@ sysfs_read_file(struct file *file, char
+ 		if ((retval = fill_read_buffer(file->f_dentry,buffer)))
+ 			goto out;
+ 	}
+-	pr_debug("%s: count = %d, ppos = %lld, buf = %s\n",
+-		 __FUNCTION__,count,*ppos,buffer->page);
++	pr_debug("%s: count = %lu, ppos = %lld, buf = %s\n",
++		 __FUNCTION__,(unsigned long)count,*ppos,buffer->page);
+ 	retval = flush_read_buffer(buffer,buf,count,ppos);
+ out:
+ 	up(&buffer->sem);
 diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/fs/sysfs/inode.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/sysfs/inode.c
 --- linux-2.6.18-371.8.1.el5.028stab113.1/fs/sysfs/inode.c	2014-04-30 18:13:16 +0000
 +++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/fs/sysfs/inode.c	2014-06-08 14:39:13 +0000
@@ -1203,6 +1479,27 @@ diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/kernel/kallsyms.c linux-2.6.18-
  	if (entry)
  		entry->proc_fops = &kallsyms_operations;
  	return 0;
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/kernel/module.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/kernel/module.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/kernel/module.c	2014-04-30 18:13:16 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/kernel/module.c	2014-06-08 17:54:49 +0000
+@@ -1729,7 +1729,7 @@ static struct module *load_module(void _
+ 	mod = (void *)sechdrs[modindex].sh_addr;
+ 	mod->gpgsig_ok = gpgsig_ok;
+ 
+-#if CONFIG_MODULE_SIG
++#ifdef CONFIG_MODULE_SIG
+ 	if (!mod->gpgsig_ok)
+ 		add_taint_module(mod, TAINT_UNSIGNED_MODULE);
+ #endif
+@@ -2347,7 +2347,7 @@ static char *taint_flags(unsigned int ta
+ 			buf[bx++] = 'P';
+ 		if (taints & TAINT_FORCED_MODULE)
+ 			buf[bx++] = 'F';
+-#if CONFIG_MODULE_SIG
++#ifdef CONFIG_MODULE_SIG
+ 		if (taints & TAINT_UNSIGNED_MODULE)
+ 			buf[bx++] = 'U';
+ #endif
 diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/kernel/mutex.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/kernel/mutex.c
 --- linux-2.6.18-371.8.1.el5.028stab113.1/kernel/mutex.c	2014-04-30 18:13:16 +0000
 +++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/kernel/mutex.c	2014-06-08 14:39:13 +0000
@@ -1281,6 +1578,37 @@ diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/kernel/printk.c linux-2.6.18-37
  	return do_syslog(type, buf, len);
  }
  
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/kernel/ptrace.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/kernel/ptrace.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/kernel/ptrace.c	2014-04-30 18:13:16 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/kernel/ptrace.c	2014-06-08 18:00:29 +0000
+@@ -1470,7 +1470,7 @@ found:
+ 	BUG_ON(state->parent != tsk);
+ 	rcu_read_unlock();
+ 
+-	pr_debug("%d ptrace_do_wait (%d) found %d code %x (%u/%d)\n",
++	pr_debug("%d ptrace_do_wait (%d) found %d code %x (%ld/%d)\n",
+ 		 current->pid, tsk->pid, p->pid, exit_code,
+ 		 p->exit_state, p->exit_signal);
+ 
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/kernel/relay.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/kernel/relay.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/kernel/relay.c	2014-04-30 18:13:13 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/kernel/relay.c	2014-06-08 17:58:54 +0000
+@@ -502,6 +502,7 @@ static inline void setup_callbacks(struc
+ 	chan->cb = cb;
+ }
+ 
++#ifdef CONFIG_HOTPLUG_CPU
+ /**
+  *
+  * 	relay_hotcpu_callback - CPU hotplug callback
+@@ -542,6 +543,7 @@ static int __cpuinit relay_hotcpu_callba
+ 	}
+ 	return NOTIFY_OK;
+ }
++#endif
+ 
+ /**
+  *	relay_open - create a new relay channel
 diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/kernel/sched.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/kernel/sched.c
 --- linux-2.6.18-371.8.1.el5.028stab113.1/kernel/sched.c	2014-04-30 18:13:17 +0000
 +++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/kernel/sched.c	2014-06-08 14:39:13 +0000
@@ -1349,6 +1677,82 @@ diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/mm/mempolicy.c linux-2.6.18-371
  	if (!mm)
  		return 0;
  
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/mm/oom_kill.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/mm/oom_kill.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/mm/oom_kill.c	2014-04-30 18:13:16 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/mm/oom_kill.c	2014-06-08 16:35:07 +0000
+@@ -280,7 +280,7 @@ static void __oom_kill_task(struct task_
+ 
+ 	if (virtinfo_notifier_call(VITYPE_GENERAL, VIRTINFO_OOMKILL, p)
+ 			& NOTIFY_FAIL)
+-		return 1;
++		return;
+ 
+ 	task_lock(p);
+ 	if (!p->mm || p->mm == &init_mm) {
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/mm/page-writeback.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/mm/page-writeback.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/mm/page-writeback.c	2014-04-30 18:13:16 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/mm/page-writeback.c	2014-06-08 16:52:55 +0000
+@@ -152,20 +152,19 @@ get_dirty_limits(long *pbackground, long
+ 				global_page_state(NR_ANON_PAGES)) * 100) /
+ 					total_pages;
+ 
+-	if (vm_dirty_bytes)
+-		dirty = DIV_ROUND_UP(vm_dirty_bytes, PAGE_SIZE);
+-	else {
+-		dirty_ratio = vm_dirty_ratio;
++	dirty_ratio = vm_dirty_ratio;
+ 
+-		/* if vm_dirty_ratio is 100 dont limit to 1/2 unmapped_ratio */
+-		if ((dirty_ratio > unmapped_ratio / 2) && (dirty_ratio != 100))
+-			dirty_ratio = unmapped_ratio / 2;
++	/* if vm_dirty_ratio is 100 dont limit to 1/2 unmapped_ratio */
++	if ((dirty_ratio > unmapped_ratio / 2) && (dirty_ratio != 100))
++		dirty_ratio = unmapped_ratio / 2;
+ 
+-		if (dirty_ratio < 5)
+-			dirty_ratio = 5;
++	if (dirty_ratio < 5)
++		dirty_ratio = 5;
+ 
++	if (vm_dirty_bytes)
++		dirty = DIV_ROUND_UP(vm_dirty_bytes, PAGE_SIZE);
++	else
+ 		dirty = (dirty_ratio * available_memory) / 100;
+-	}
+ 
+ 	if (dirty_background_bytes)
+ 		background = DIV_ROUND_UP(dirty_background_bytes, PAGE_SIZE);
+diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/mm/page_alloc.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/mm/page_alloc.c
+--- linux-2.6.18-371.8.1.el5.028stab113.1/mm/page_alloc.c	2014-04-30 18:13:16 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/mm/page_alloc.c	2014-06-08 16:43:26 +0000
+@@ -1052,7 +1052,7 @@ nofail_alloc:
+ 	if (!wait)
+ 		goto nopage;
+ 
+-	if (test_thread_flag(TIF_MEMDIE) && !(gfp_mask & __GFP_NOFAIL) || would_oom_kill)
++	if ((test_thread_flag(TIF_MEMDIE) && !(gfp_mask & __GFP_NOFAIL)) || would_oom_kill)
+ 		goto nopage;
+ 	cond_resched();
+ 
+@@ -1446,7 +1446,7 @@ void show_free_areas(void)
+ 		printk("= %lukB\n", K(total));
+ 	}
+ 
+-	printk("%d pagecache pages\n", global_page_state(NR_FILE_PAGES));
++	printk("%ld pagecache pages\n", global_page_state(NR_FILE_PAGES));
+ 
+ 	show_swap_cache_info();
+ }
+@@ -1462,7 +1462,9 @@ void show_free_areas(void)
+ #define ZONELIST_ORDER_NODE	(0)
+ #define ZONELIST_ORDER_ZONE	(1)
+ 
++#ifdef CONFIG_NUMA
+ static int zonelist_order = ZONELIST_ORDER_NODE;
++#endif
+ 
+ /*
+  * Builds allocation fallback zone lists.
 diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/net/core/dev.c linux-2.6.18-371.8.1.el5.028stab113.1-owl/net/core/dev.c
 --- linux-2.6.18-371.8.1.el5.028stab113.1/net/core/dev.c	2014-04-30 18:13:17 +0000
 +++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/net/core/dev.c	2014-06-08 14:39:13 +0000
