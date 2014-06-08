@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.80 2012/08/18 21:09:01 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.81 2014/06/08 13:37:19 solar Exp $
 
 %define shlib_soversion 10
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 1.0.0j
+Version: 1.0.0m
 Release: owl1
 License: distributable
 Group: System Environment/Libraries
@@ -19,15 +19,14 @@ Patch3: openssl-1.0.0b-rh-enginesdir.diff
 Patch4: openssl-1.0.0b-rh-rpath.diff
 Patch5: openssl-0.9.8b-rh-test-use-localhost.diff
 Patch6: openssl-1.0.0b-rh-default-paths.diff
-Patch7: openssl-1.0.0i-rh-owl-man.diff
+Patch7: openssl-1.0.0m-rh-owl-man.diff
 Patch8: openssl-1.0.0b-rh-x509.diff
 Patch9: openssl-1.0.0b-rh-version-engines.diff
 Patch10: openssl-1.0.0-beta5-rh-cipher-change.diff
-Patch11: openssl-1.0.0b-rh-alt-ipv6-apps.diff
-Patch12: openssl-1.0.0b-rh-env-nozlib.diff
-Patch13: openssl-1.0.0-beta4-rh-dtls1-abi.diff
-Patch14: openssl-1.0.0d-owl-warnings.diff
-Patch15: openssl-1.0.0d-suse-env.diff
+Patch11: openssl-1.0.0b-rh-env-nozlib.diff
+Patch12: openssl-1.0.0-beta4-rh-dtls1-abi.diff
+Patch13: openssl-1.0.0m-owl-warnings.diff
+Patch14: openssl-1.0.0d-suse-env.diff
 BuildRequires: perl, diffutils
 # Due to sed -i.
 BuildRequires: sed >= 4.1.1
@@ -113,7 +112,6 @@ This package contains some miscellaneous Perl scripts.
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
-%patch15 -p1
 
 bzip2 -9k CHANGES CHANGES.SSLeay
 
@@ -250,6 +248,11 @@ bzip2 -9 docs/doc/ssleay.txt
 %exclude  %_datadir/ssl/misc/tsget
 
 %changelog
+* Sun Jun 08 2014 Solar Designer <solar-at-owl.openwall.com> 1.0.0m-owl1
+- Updated to 1.0.0m.
+- Dropped openssl-1.0.0b-rh-alt-ipv6-apps.diff to reduce differences from
+upstream and avoid needing to maintain and test this functionality on our own.
+
 * Sat Aug 18 2012 Solar Designer <solar-at-owl.openwall.com> 1.0.0j-owl1
 - Updated to 1.0.0j.
 

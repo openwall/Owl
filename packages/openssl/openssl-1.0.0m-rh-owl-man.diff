@@ -1,27 +1,6 @@
-diff -urp openssl-1.0.0i.orig/doc/apps/openssl.pod openssl-1.0.0i/doc/apps/openssl.pod
---- openssl-1.0.0i.orig/doc/apps/openssl.pod	2010-01-21 18:46:28 +0000
-+++ openssl-1.0.0i/doc/apps/openssl.pod	2012-05-06 18:54:13 +0000
-@@ -287,8 +287,6 @@ SHA Digest
- 
- SHA-1 Digest
- 
--=back
--
- =item B<sha224>
- 
- SHA-224 Digest
-@@ -305,6 +303,8 @@ SHA-384 Digest
- 
- SHA-512 Digest
- 
-+=back
-+
- =head2 ENCODING AND CIPHER COMMANDS
- 
- =over 10
-diff -urp openssl-1.0.0i.orig/doc/crypto/EVP_DigestInit.pod openssl-1.0.0i/doc/crypto/EVP_DigestInit.pod
---- openssl-1.0.0i.orig/doc/crypto/EVP_DigestInit.pod	2012-04-10 22:28:34 +0000
-+++ openssl-1.0.0i/doc/crypto/EVP_DigestInit.pod	2012-05-06 19:13:07 +0000
+diff -urp openssl-1.0.0m.orig/doc/crypto/EVP_DigestInit.pod openssl-1.0.0m/doc/crypto/EVP_DigestInit.pod
+--- openssl-1.0.0m.orig/doc/crypto/EVP_DigestInit.pod	2014-06-05 09:41:31 +0000
++++ openssl-1.0.0m/doc/crypto/EVP_DigestInit.pod	2014-06-08 13:05:17 +0000
 @@ -51,15 +51,14 @@ EVP digest routines
   const EVP_MD *EVP_md5(void);
   const EVP_MD *EVP_sha(void);
@@ -61,9 +40,9 @@ diff -urp openssl-1.0.0i.orig/doc/crypto/EVP_DigestInit.pod openssl-1.0.0i/doc/c
  EVP_dss1(), EVP_mdc2() and EVP_ripemd160() return pointers to the
  corresponding EVP_MD structures.
  
-diff -urp openssl-1.0.0i.orig/doc/crypto/EVP_EncryptInit.pod openssl-1.0.0i/doc/crypto/EVP_EncryptInit.pod
---- openssl-1.0.0i.orig/doc/crypto/EVP_EncryptInit.pod	2005-04-15 16:01:35 +0000
-+++ openssl-1.0.0i/doc/crypto/EVP_EncryptInit.pod	2012-05-06 18:54:13 +0000
+diff -urp openssl-1.0.0m.orig/doc/crypto/EVP_EncryptInit.pod openssl-1.0.0m/doc/crypto/EVP_EncryptInit.pod
+--- openssl-1.0.0m.orig/doc/crypto/EVP_EncryptInit.pod	2014-06-05 09:41:31 +0000
++++ openssl-1.0.0m/doc/crypto/EVP_EncryptInit.pod	2014-06-08 13:05:17 +0000
 @@ -91,6 +91,32 @@ EVP_CIPHER_CTX_set_padding - EVP cipher
   int EVP_CIPHER_param_to_asn1(EVP_CIPHER_CTX *c, ASN1_TYPE *type);
   int EVP_CIPHER_asn1_to_param(EVP_CIPHER_CTX *c, ASN1_TYPE *type);
