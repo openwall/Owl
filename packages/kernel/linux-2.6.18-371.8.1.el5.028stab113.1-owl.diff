@@ -26,7 +26,16 @@ diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/Makefile linux-2.6.18-371.8.1.e
  NAME=Avast! A bilge rat!
 diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/arch/i386/Kconfig linux-2.6.18-371.8.1.el5.028stab113.1-owl/arch/i386/Kconfig
 --- linux-2.6.18-371.8.1.el5.028stab113.1/arch/i386/Kconfig	2014-04-30 18:13:14 +0000
-+++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/arch/i386/Kconfig	2014-06-08 14:39:13 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/arch/i386/Kconfig	2014-06-08 15:49:35 +0000
+@@ -63,7 +63,7 @@ config DMI
+ 	default y
+ 
+ config ARCH_RANDOM
+-	def_bool y
++	def_bool n
+ 	prompt "x86 architectural random number generator" if EXPERT
+ 	---help---
+ 	  Enable the x86 architectural RDRAND instruction
 @@ -1246,7 +1246,6 @@ config SCx200HR_TIMER
  
  config K8_NB
@@ -93,7 +102,16 @@ diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/arch/i386/kernel/vmlinux.lds.S 
    STABS_DEBUG
 diff -urpN linux-2.6.18-371.8.1.el5.028stab113.1/arch/x86_64/Kconfig linux-2.6.18-371.8.1.el5.028stab113.1-owl/arch/x86_64/Kconfig
 --- linux-2.6.18-371.8.1.el5.028stab113.1/arch/x86_64/Kconfig	2014-04-30 18:13:14 +0000
-+++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/arch/x86_64/Kconfig	2014-06-08 14:39:13 +0000
++++ linux-2.6.18-371.8.1.el5.028stab113.1-owl/arch/x86_64/Kconfig	2014-06-08 15:49:44 +0000
+@@ -95,7 +95,7 @@ config AUDIT_ARCH
+ 	default y
+ 
+ config ARCH_RANDOM
+-	def_bool y
++	def_bool n
+ 	prompt "x86 architectural random number generator" if EXPERT
+ 	---help---
+ 	  Enable the x86 architectural RDRAND instruction
 @@ -485,6 +485,7 @@ config IOMMU
  	default y
  	select SWIOTLB

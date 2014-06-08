@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.98 2014/06/08 15:21:20 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.99 2014/06/08 16:08:08 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -106,6 +106,11 @@ done
 %changelog
 * Sun Jun 08 2014 Solar Designer <solar-at-owl.openwall.com> 2.6.18-371.8.1.el5.028stab113.1.owl1
 - Updated to 2.6.18-371.8.1.el5.028stab113.1.
+- Disabled the new option CONFIG_ARCH_RANDOM in our patch, as this option would
+otherwise be forcibly enabled.  The RDRAND support code backported to RHEL 5.10
+and enabled with this option suffers from the security risks discussed after
+that code had been introduced into mainline (in particular, get_random_bytes()
+may be less random under VMs than it was otherwise), so let's keep it disabled.
 
 * Sun Apr 07 2013 Solar Designer <solar-at-owl.openwall.com> 2.6.18-348.3.1.el5.028stab106.2.owl1
 - Updated to 2.6.18-348.3.1.el5.028stab106.2.
