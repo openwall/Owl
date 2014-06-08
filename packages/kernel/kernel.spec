@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.99 2014/06/08 16:08:08 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.100 2014/06/08 16:14:00 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -111,6 +111,7 @@ otherwise be forcibly enabled.  The RDRAND support code backported to RHEL 5.10
 and enabled with this option suffers from the security risks discussed after
 that code had been introduced into mainline (in particular, get_random_bytes()
 may be less random under VMs than it was otherwise), so let's keep it disabled.
+- Enabled CONFIG_CPU_FREQ* and related options like in RHEL.
 
 * Sun Apr 07 2013 Solar Designer <solar-at-owl.openwall.com> 2.6.18-348.3.1.el5.028stab106.2.owl1
 - Updated to 2.6.18-348.3.1.el5.028stab106.2.
