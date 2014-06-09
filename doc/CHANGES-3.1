@@ -48,6 +48,28 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2014/06/09	Package: kernel
+SECURITY FIX	Severity: high?, local, active
+Updated to 2.6.18-371.8.1.el5.028stab113.1, which is based on RHEL 5.10,
+and contains numerous security fixes compared to the kernel revision we
+were using before.  Disabled this new kernel revision's RDRAND support
+because it suffers from the security risks discussed after that code had
+been introduced into mainline kernels (in particular, get_random_bytes()
+could be less random under VMs).  Enabled CPU frequency scaling, which
+is needed on some modern servers to enable Intel's Turbo Boost (enabling
+it in BIOS settings only is often not enough).  To use it, load a module
+appropriate for your hardware (e.g., "modprobe acpi-cpufreq") and
+control the CPU frequency via sysfs (turbo is typically enabled by
+setting the frequency on all logical CPUs to be nominally 1 KHz higher
+than the CPU's highest non-turbo base frequency).
+References:
+https://openvz.org/Download/kernel/rhel5-testing/028stab113.1
+https://openvz.org/Download/kernel/rhel5/028stab112.3
+https://openvz.org/Download/kernel/rhel5/028stab110.1
+https://openvz.org/Download/kernel/rhel5/028stab108.1
+https://openvz.org/Download/kernel/rhel5/028stab107.2
+https://openvz.org/Download/kernel/rhel5/028stab107.1
+
 2014/06/08	Package: openssl
 SECURITY FIX	Severity: medium, remote, passive
 Updated to 1.0.0m, which includes a fix for CCS Injection vulnerability
@@ -854,4 +876,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.118 2014/06/09 02:11:47 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.119 2014/06/09 02:34:27 solar Exp $
