@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.101 2014/06/08 21:57:26 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.102 2014/06/09 01:53:01 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -111,7 +111,8 @@ otherwise be forcibly enabled.  The RDRAND support code backported to RHEL 5.10
 and enabled with this option suffers from the security risks discussed after
 that code had been introduced into mainline (in particular, get_random_bytes()
 may be less random under VMs than it was otherwise), so let's keep it disabled.
-- Enabled CONFIG_CPU_FREQ* and related options like in RHEL.
+- Enabled CONFIG_CPU_FREQ* and related options like in RHEL, except that
+CONFIG_X86_LONGRUN (for Transmeta CPUs) is not enabled.
 - Patched many RHEL kernel bugs due to our gcc warnings (newer than what RHEL5
 is normally built with).
 
