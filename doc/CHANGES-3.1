@@ -74,8 +74,10 @@ https://openvz.org/Download/kernel/rhel5/028stab107.1
 SECURITY FIX	Severity: medium, remote, passive
 Updated to 1.0.0m, which includes a fix for CCS Injection vulnerability
 (CVE-2014-0224) and more.
-Reference:
+References:
 http://www.openwall.com/lists/oss-security/2014/06/05/18
+https://www.openssl.org/news/secadv_20140605.txt
+http://ccsinjection.lepidum.co.jp
 
 2013/04/20 -
 2013/07/08	Package: john
@@ -175,7 +177,7 @@ handling of CBC mode ciphersuites in DTLS.  No DTLS-using programs are
 included in Owl, so it'd take a third-party program to make this flaw
 actually triggerable on Owl.
 References:
-http://www.openssl.org/news/secadv_20120510.txt
+https://www.openssl.org/news/secadv_20120510.txt
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-2333
 
 2012/08/18	Package: xinetd
@@ -242,19 +244,19 @@ potentially allows for arbitrary code execution, but is not triggerable
 via OpenSSL's SSL/TLS code, whereas worst case impact of other
 vulnerabilities corrected with this update is lower.
 References:
-http://www.openssl.org/news/secadv_20120419.txt
+https://www.openssl.org/news/secadv_20120419.txt
 http://lists.openwall.net/full-disclosure/2012/04/19/4
 http://www.openwall.com/lists/oss-security/2012/04/22/2
 http://www.openwall.com/lists/oss-security/2012/04/22/3
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-2110
-http://www.openssl.org/news/secadv_20120312.txt
+https://www.openssl.org/news/secadv_20120312.txt
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-0884
-http://www.openssl.org/news/secadv_20120104.txt
+https://www.openssl.org/news/secadv_20120104.txt
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-4108
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-4576
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-4577
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-4619
-http://www.openssl.org/news/secadv_20110906.txt
+https://www.openssl.org/news/secadv_20110906.txt
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3207
 
 2012/05/06	Package: kernel
@@ -876,4 +878,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.120 2014/06/14 17:56:19 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.121 2014/06/14 18:42:24 solar Exp $
