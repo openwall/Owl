@@ -6,9 +6,6 @@ Owl доступна на следующих официальных зеркалах:
 
 ftp://ftp1.ru.openwall.com/pub/Owl/	(Россия - Москва)
 ftp://ftp2.ru.openwall.com/pub/Owl/	(Россия - Москва)
-ftp://ftp.linux.kiev.ua/pub/Owl/	(Украина)
-	http://ftp.linux.kiev.ua/pub/Owl/
-	rsync://ftp.linux.kiev.ua/pub/Owl/
 ftp://ftp.fr.openwall.com/pub/Owl/	(Франция)
 ftp://ftp.cz.openwall.com/pub/Owl/	(Чешская Республика)
 ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Германия)
@@ -69,4 +66,4 @@ CVSROOT=anoncvs@anoncvs.owl.openwall.com:/cvs
 
 Интерфейс CVSweb доступен по адресу http://cvsweb.openwall.com
 
-$Owl: Owl/doc/ru/DOWNLOAD,v 1.44 2013/03/22 06:23:41 solar Exp $
+$Owl: Owl/doc/ru/DOWNLOAD,v 1.45 2014/06/14 18:08:41 solar Exp $
