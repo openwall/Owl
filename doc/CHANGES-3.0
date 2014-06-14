@@ -1256,7 +1256,7 @@ with a symbolic link could specify files to be extracted to outside of
 the intended directory tree).
 References:
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-6097
-http://lists.grok.org.uk/pipermail/full-disclosure/2006-November/050812.html
+http://lists.openwall.net/full-disclosure/2006/11/21/20
 
 2006/11/19	Package: rpm
 Backported upstream fix for potential heap buffer overflow in
@@ -1547,4 +1547,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.305 2014/03/10 04:40:33 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.306 2014/06/14 17:53:45 solar Exp $
