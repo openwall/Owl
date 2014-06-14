@@ -49,7 +49,7 @@ clarify the specific issue(s) and their severities in the description.
 	Changes made between Owl 3.0 and Owl-current.
 
 2014/06/09	Package: kernel
-SECURITY FIX	Severity: high?, local, active
+SECURITY FIX	Severity: high, local, active
 Updated to 2.6.18-371.8.1.el5.028stab113.1, which is based on RHEL 5.10,
 and contains numerous security fixes compared to the kernel revision we
 were using before.  Disabled this new kernel revision's RDRAND support
@@ -64,11 +64,19 @@ setting the frequency on all logical CPUs to be nominally 1 KHz higher
 than the CPU's highest non-turbo base frequency).
 References:
 https://openvz.org/Download/kernel/rhel5-testing/028stab113.1
+https://rhn.redhat.com/errata/RHSA-2014-0433.html
 https://openvz.org/Download/kernel/rhel5/028stab112.3
+https://rhn.redhat.com/errata/RHSA-2014-0285.html
+https://rhn.redhat.com/errata/RHSA-2014-0108.html
 https://openvz.org/Download/kernel/rhel5/028stab110.1
+https://rhn.redhat.com/errata/RHSA-2013-1790.html
+https://rhn.redhat.com/errata/RHSA-2013-1348.html
 https://openvz.org/Download/kernel/rhel5/028stab108.1
+https://rhn.redhat.com/errata/RHSA-2013-1166.html
 https://openvz.org/Download/kernel/rhel5/028stab107.2
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-2224
 https://openvz.org/Download/kernel/rhel5/028stab107.1
+https://rhn.redhat.com/errata/RHSA-2013-0747.html
 
 2014/06/08	Package: openssl
 SECURITY FIX	Severity: medium, remote, passive
@@ -878,4 +886,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.121 2014/06/14 18:42:24 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.122 2014/06/14 19:05:33 solar Exp $
