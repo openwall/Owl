@@ -218,7 +218,7 @@ http://wiki.openvz.org/Download/kernel/rhel5/028stab070.5
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3081
 https://bugzilla.redhat.com/show_bug.cgi?id=634457
 https://rhn.redhat.com/errata/RHSA-2010-0704.html
-https://access.redhat.com/site/articles/40258
+https://access.redhat.com/articles/40258
 
 2010/09/21	Package: grep
 Updated to 2.7.
@@ -1547,4 +1547,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.307 2014/06/14 17:56:19 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.308 2014/07/05 08:30:39 solar Exp $
