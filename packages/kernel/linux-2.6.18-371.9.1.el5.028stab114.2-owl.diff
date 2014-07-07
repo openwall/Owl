@@ -139,7 +139,7 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/arch/x86_64/kernel/ptrace.c lin
  			return -EIO;
  		value &= 0xffff;
  		break;
-+	case offsetof(struct user_regs_struct,ip):
++	case offsetof(struct user_regs_struct,rip):
 +		if (value >= TASK_SIZE_OF(child))
 +			return -EIO;
 +		break;
