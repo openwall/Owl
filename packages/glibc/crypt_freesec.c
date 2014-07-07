@@ -37,8 +37,8 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	$Owl: Owl/packages/glibc/crypt_freesec.c,v 1.7 2012/08/14 07:31:12 solar Exp $
- *	$Id: Owl/packages/glibc/crypt_freesec.c,v 1.7 2012/08/14 07:31:12 solar Exp $
+ *	$Owl: Owl/packages/glibc/crypt_freesec.c,v 1.8 2014/07/07 15:44:50 solar Exp $
+ *	$Id: Owl/packages/glibc/crypt_freesec.c,v 1.8 2014/07/07 15:44:50 solar Exp $
  *
  * This is an original implementation of the DES and the crypt(3) interfaces
  * by David Burren <davidb at werj.com.au>.
@@ -219,7 +219,6 @@ _crypt_extended_init(void)
 	u_int32_t *p, *il, *ir, *fl, *fr;
 	u_int32_t *bits28, *bits24;
 	u_char inv_key_perm[64];
-	u_char u_key_perm[56];
 	u_char inv_comp_perm[56];
 	u_char init_perm[64], final_perm[64];
 	u_char u_sbox[8][64];
@@ -261,7 +260,6 @@ _crypt_extended_init(void)
 	 * compression permutation.
 	 */
 	for (i = 0; i < 56; i++) {
-		u_key_perm[i] = key_perm[i] - 1;
 		inv_key_perm[key_perm[i] - 1] = i;
 		inv_comp_perm[i] = 255;
 	}
