@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.136 2014/07/07 13:21:25 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.137 2014/07/07 15:19:04 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -10,7 +10,7 @@
 Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
-%define crypt_bf_version 1.2
+%define crypt_bf_version 1.3
 Release: owl22
 License: LGPL
 Group: System Environment/Libraries
@@ -496,6 +496,7 @@ fi
 
 %changelog
 * Mon Jul 07 2014 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl22
+- Added OpenBSD 5.5+ "$2b$" prefix support to crypt_blowfish (same as "$2y$").
 - Replaced the bug 11449 fix introduced in 2.3.6-owl10 with its upstream
 revision, which also introduces a read barrier as needed for the PowerPC memory
 model as well as because of possible read re-ordering by the compiler.
