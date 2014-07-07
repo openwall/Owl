@@ -1,6 +1,6 @@
-diff -puNr glibc-2.3.3-200406160000.orig/crypt/Makefile glibc-2.3.3-200406160000/crypt/Makefile
---- glibc-2.3.3-200406160000.orig/crypt/Makefile	Sat Jan  8 03:10:29 2005
-+++ glibc-2.3.3-200406160000/crypt/Makefile	Sat Jan  8 03:15:19 2005
+diff -urp glibc-2.3.6-crypt_blowfish/crypt/Makefile glibc-2.3.6/crypt/Makefile
+--- glibc-2.3.6-crypt_blowfish/crypt/Makefile	2014-07-07 13:01:31 +0000
++++ glibc-2.3.6/crypt/Makefile	2014-07-07 13:02:16 +0000
 @@ -28,7 +28,7 @@ distribute := md5.h
  extra-libs := libcrypt
  extra-libs-others := $(extra-libs)
@@ -10,10 +10,10 @@ diff -puNr glibc-2.3.3-200406160000.orig/crypt/Makefile glibc-2.3.3-200406160000
  
  tests = cert md5test md5c-test
  
-diff -puNr glibc-2.3.3-200406160000.orig/crypt/wrapper.c glibc-2.3.3-200406160000/crypt/wrapper.c
---- glibc-2.3.3-200406160000.orig/crypt/wrapper.c	Fri Nov  8 01:38:44 2002
-+++ glibc-2.3.3-200406160000/crypt/wrapper.c	Mon Mar 29 20:01:03 2010
-@@ -105,32 +105,74 @@ static char *_crypt_retval_magic(char *r
+diff -urp glibc-2.3.6-crypt_blowfish/crypt/wrapper.c glibc-2.3.6/crypt/wrapper.c
+--- glibc-2.3.6-crypt_blowfish/crypt/wrapper.c	2011-07-16 15:22:53 +0000
++++ glibc-2.3.6/crypt/wrapper.c	2014-07-07 13:02:16 +0000
+@@ -103,32 +103,74 @@ static char *_crypt_retval_magic(char *r
   * its initialization code.  Thus, it is important that our multiple hashing
   * algorithms either don't conflict with each other in their use of the
   * data area or reset the initialized field themselves whenever required.
@@ -95,7 +95,7 @@ diff -puNr glibc-2.3.3-200406160000.orig/crypt/wrapper.c glibc-2.3.3-20040616000
  	if (setting[0] == '$' && setting[1] == '2') {
  		if (_crypt_data_alloc(data, size, CRYPT_OUTPUT_SIZE))
  			return NULL;
-@@ -141,13 +183,27 @@ char *__crypt_ra(__const char *key, __co
+@@ -139,13 +181,27 @@ char *__crypt_ra(__const char *key, __co
  			return NULL;
  		return __md5_crypt_r(key, setting, (char *)*data, *size);
  	}

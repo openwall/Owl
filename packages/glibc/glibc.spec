@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.134 2014/07/07 13:13:17 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.135 2014/07/07 13:17:58 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -69,7 +69,7 @@ Patch313: glibc-2.3.5-alt-assume_kernel.diff
 Patch314: glibc-2.3.6-alt-__libc_enable_secure.diff
 
 # Owl
-Patch400: glibc-2.3.3-owl-crypt_freesec.diff
+Patch400: glibc-2.3.6-owl-crypt_freesec.diff
 Patch401: glibc-2.3.5-owl-alt-res_randomid.diff
 Patch402: glibc-2.3.2-owl-iscntrl.diff
 Patch403: glibc-2.3.6-owl-alt-ldd.diff
