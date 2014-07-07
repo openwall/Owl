@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.51 2013/02/22 17:09:26 segoon Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.52 2014/07/07 10:06:41 solar Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.4.13
+Version: 1.4.18
 Release: owl1
 License: GPL
 Group: Applications/Cryptography
@@ -12,12 +12,9 @@ Source0: %name-%version.tar.xz
 # Signature: ftp://ftp.gnupg.org/gcrypt/gnupg/%name-%version.tar.bz2.sig
 Source1: gpgsplit.1
 Source2: lspgpot.1
-Patch0: gnupg-1.4.13-alt-ru.po.diff
-Patch1: gnupg-1.4.3-alt-always-trust.diff
-Patch2: gnupg-1.4.13-alt-cp1251.diff
-Patch3: gnupg-1.4.2-fw-secret-key-checks.diff
-Patch4: gnupg-1.4.11-alt-owl-info.diff
-Patch5: gnupg-1.4.11-owl-setuid.diff
+Patch0: gnupg-1.4.18-alt.diff
+Patch1: gnupg-1.4.11-alt-owl-info.diff
+Patch2: gnupg-1.4.11-owl-setuid.diff
 PreReq: /sbin/install-info
 Provides: gpg, openpgp
 BuildRequires: zlib-devel, bzip2-devel, texinfo, readline-devel >= 0:4.3
@@ -37,9 +34,6 @@ only IDEA for symmetric-key encryption, which is patented worldwide).
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
 bzip2 -9k NEWS doc/{DETAILS,FAQ}
 
 %build
@@ -61,10 +55,6 @@ install -m755 lspgpot %buildroot%_bindir/lspgpot
 
 install -pm644 %_sourcedir/{gpgsplit,lspgpot}.1 %buildroot%_mandir/man1/
 
-# Move localized manpages to FHS compliant locations
-mkdir -p %buildroot%_mandir/ru/man1
-mv %buildroot%_mandir/man1/gpg.ru.1 %buildroot%_mandir/ru/man1/gpg.1
-
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
 
@@ -73,7 +63,7 @@ rm %buildroot%_infodir/dir
 
 %preun
 if [ $1 -eq 0 ]; then
-        /sbin/install-info --delete %_infodir/gnupg1.info %_infodir/dir
+	/sbin/install-info --delete %_infodir/gnupg1.info %_infodir/dir
 fi
 
 %triggerpostun -- %name < 1.4.6
@@ -94,7 +84,6 @@ fi
 %_datadir/locale/*/*/*
 %_libdir/%name
 %_mandir/man1/*
-%_mandir/ru/man1/gpg.*
 %_mandir/man7/gnupg.*
 %_infodir/gnupg1.*
 %_libexecdir/*
@@ -103,6 +92,10 @@ fi
 %exclude %_datadir/gnupg/FAQ
 
 %changelog
+* Mon Jul 07 2014 Solar Designer <solar-at-owl.openwall.com> 1.4.18-owl1
+- Updated to 1.4.18.
+- Switched to using a combined ALT Linux patch.
+
 * Fri Feb 22 2013 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.4.13-owl1
 - Updated to 1.4.13.
 - Fixed a memory corruption and public keyring database corruption bug on
