@@ -14,13 +14,13 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/Documentation/sysctl/kernel.txt
  value of dmesg_restrict.
 diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/Makefile linux-2.6.18-371.9.1.el5.028stab114.2-owl/Makefile
 --- linux-2.6.18-371.9.1.el5.028stab114.2/Makefile	2014-06-30 06:58:47 +0000
-+++ linux-2.6.18-371.9.1.el5.028stab114.2-owl/Makefile	2014-07-07 07:51:17 +0000
++++ linux-2.6.18-371.9.1.el5.028stab114.2-owl/Makefile	2014-07-07 08:15:56 +0000
 @@ -1,7 +1,7 @@
  VERSION = 2
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -prep
-+EXTRAVERSION = -371.9.1.el5.028stab114.2.owl0
++EXTRAVERSION = -371.9.1.el5.028stab114.2.owl1
  RHEL_MAJOR = 5
  RHEL_MINOR = 10
  NAME=Avast! A bilge rat!
@@ -132,6 +132,20 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/arch/x86_64/Makefile linux-2.6.
  OBJCOPYFLAGS	:= -O binary -R .note -R .comment -S
  LDFLAGS_vmlinux :=
  CHECKFLAGS      += -D__x86_64__ -m64
+diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/arch/x86_64/kernel/ptrace.c linux-2.6.18-371.9.1.el5.028stab114.2-owl/arch/x86_64/kernel/ptrace.c
+--- linux-2.6.18-371.9.1.el5.028stab114.2/arch/x86_64/kernel/ptrace.c	2014-06-30 06:58:47 +0000
++++ linux-2.6.18-371.9.1.el5.028stab114.2-owl/arch/x86_64/kernel/ptrace.c	2014-07-07 08:09:18 +0000
+@@ -314,6 +314,10 @@ static int putreg(struct task_struct *ch
+ 			return -EIO;
+ 		value &= 0xffff;
+ 		break;
++	case offsetof(struct user_regs_struct,ip):
++		if (value >= TASK_SIZE_OF(child))
++			return -EIO;
++		break;
+ 	}
+ 	put_stack_long(child, regno - sizeof(struct pt_regs), value);
+ 	return 0;
 diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/arch/x86_64/pci/mmconfig.c linux-2.6.18-371.9.1.el5.028stab114.2-owl/arch/x86_64/pci/mmconfig.c
 --- linux-2.6.18-371.9.1.el5.028stab114.2/arch/x86_64/pci/mmconfig.c	2014-06-30 06:58:42 +0000
 +++ linux-2.6.18-371.9.1.el5.028stab114.2-owl/arch/x86_64/pci/mmconfig.c	2014-07-07 07:48:16 +0000

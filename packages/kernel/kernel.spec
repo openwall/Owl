@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.103 2014/07/07 08:15:24 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.104 2014/07/07 08:18:02 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 371.9.1.el5.028stab114.2
-Release: %ovzversion.owl0
+Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://openvz.org/Download/kernel/rhel5-testing/028stab114.2
@@ -104,8 +104,9 @@ done
 %files fake
 
 %changelog
-* Mon Jul 07 2014 Solar Designer <solar-at-owl.openwall.com> 2.6.18-371.9.1.el5.028stab114.2.owl0
+* Mon Jul 07 2014 Solar Designer <solar-at-owl.openwall.com> 2.6.18-371.9.1.el5.028stab114.2.owl1
 - Updated to 2.6.18-371.9.1.el5.028stab114.2.
+- Added a fix for the ptrace SYSRET vulnerability (CVE-2014-4699).
 
 * Sun Jun 08 2014 Solar Designer <solar-at-owl.openwall.com> 2.6.18-371.8.1.el5.028stab113.1.owl1
 - Updated to 2.6.18-371.8.1.el5.028stab113.1.
