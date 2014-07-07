@@ -1,23 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.102 2014/06/09 01:53:01 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.103 2014/07/07 08:15:24 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 371.8.1.el5.028stab113.1
-Release: %ovzversion.owl1
+%define ovzversion 371.9.1.el5.028stab114.2
+Release: %ovzversion.owl0
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://openvz.org/Download/kernel/rhel5-testing/028stab113.1
+URL: http://openvz.org/Download/kernel/rhel5-testing/028stab114.2
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab113.1/patches/patch-371.8.1.el5.028stab113.1-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab113.1/patches/patch-371.8.1.el5.028stab113.1-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab114.2/patches/patch-371.9.1.el5.028stab114.2-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab114.2/patches/patch-371.9.1.el5.028stab114.2-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 PreReq: basesystem
 Provides: kernel-drm = 4.3.0
@@ -104,6 +104,9 @@ done
 %files fake
 
 %changelog
+* Mon Jul 07 2014 Solar Designer <solar-at-owl.openwall.com> 2.6.18-371.9.1.el5.028stab114.2.owl0
+- Updated to 2.6.18-371.9.1.el5.028stab114.2.
+
 * Sun Jun 08 2014 Solar Designer <solar-at-owl.openwall.com> 2.6.18-371.8.1.el5.028stab113.1.owl1
 - Updated to 2.6.18-371.8.1.el5.028stab113.1.
 - Disabled the new option CONFIG_ARCH_RANDOM in our patch, as this option would
