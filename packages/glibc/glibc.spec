@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.133 2013/02/23 16:09:15 segoon Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.134 2014/07/07 13:13:17 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 1.2
-Release: owl21
+Release: owl22
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
@@ -81,7 +81,7 @@ Patch408: glibc-2.3.2-owl-tmpfile.diff
 Patch409: glibc-2.3.3-owl-tmp-scripts.diff
 Patch410: glibc-2.3.3-owl-rpcgen-cpp.diff
 Patch411: glibc-2.3.5-owl-alt-sanitize-env.diff
-Patch412: glibc-2.3.6-owl-crypt-wb.diff
+Patch412: glibc-2.3.6-up-crypt-barrier.diff
 Patch413: glibc-2.3.6-owl-rh-pld-linker.diff
 Patch414: glibc-2.3.6-owl-gcc-4.3.diff
 Patch415: glibc-2.3.6-up-memcmp.diff
@@ -495,6 +495,13 @@ fi
 %endif
 
 %changelog
+* Mon Jul 07 2014 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl22
+- Replaced the bug 11449 fix introduced in 2.3.6-owl10 with its upstream
+revision, which also introduces a read barrier as needed for the PowerPC memory
+model as well as because of possible read re-ordering by the compiler.
+Thanks to Abdullah Muzahid:
+https://sourceware.org/bugzilla/show_bug.cgi?id=11449#c3
+
 * Sat Feb 23 2013 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.3.6-owl21
 - Backported a fix for TLS handling bug which triggered 'assert' on Firefox
 startup.

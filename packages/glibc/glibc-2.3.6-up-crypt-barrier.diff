@@ -1,0 +1,27 @@
+diff -urp glibc-2.3.6.orig/crypt/crypt_util.c glibc-2.3.6/crypt/crypt_util.c
+--- glibc-2.3.6.orig/crypt/crypt_util.c	2002-11-03 00:58:59 +0000
++++ glibc-2.3.6/crypt/crypt_util.c	2014-07-07 12:53:19 +0000
+@@ -262,6 +262,7 @@ static ufc_long efp[16][64][2];
+ struct crypt_data _ufc_foobar;
+ 
+ #ifdef __GNU_LIBRARY__
++#include <atomic.h>
+ #include <bits/libc-lock.h>
+ 
+ __libc_lock_define_initialized (static, _ufc_tables_lock)
+@@ -468,12 +469,14 @@ __init_des_r(__data)
+ 	  efp[comes_from_word][word_value][o_long] |= mask2;
+       }
+     }
++    atomic_write_barrier ();
+     small_tables_initialized = 1;
+ #ifdef __GNU_LIBRARY__
+ small_tables_done:
+     __libc_lock_unlock(_ufc_tables_lock);
+ #endif
+-  }
++  } else
++    atomic_read_barrier ();
+ 
+   /*
+    * Create the sb tables:
