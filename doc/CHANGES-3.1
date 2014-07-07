@@ -48,6 +48,12 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.0 and Owl-current.
 
+2014/07/07	Package: gnupg
+SECURITY FIX	Severity: medium, local/indirect, passive
+Updated to 1.4.18.  Fixed since 1.4.13 are DoS via compressed data
+(CVE-2013-4402, CVE-2014-4617) and RSA side-channel vulnerabilities
+(CVE-2013-4242, CVE-2013-4576).
+
 2014/07/07	Package: kernel
 SECURITY FIX	Severity: high, local, active
 Updated to 2.6.18-371.9.1.el5.028stab114.2.  Added a fix for the ptrace
@@ -897,4 +903,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.123 2014/07/07 09:10:49 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.124 2014/07/07 10:19:55 solar Exp $
