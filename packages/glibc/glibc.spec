@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.135 2014/07/07 13:17:58 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.136 2014/07/07 13:21:25 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -501,6 +501,7 @@ revision, which also introduces a read barrier as needed for the PowerPC memory
 model as well as because of possible read re-ordering by the compiler.
 Thanks to Abdullah Muzahid:
 https://sourceware.org/bugzilla/show_bug.cgi?id=11449#c3
+- Added atomic_read_barrier() after FreeSec initialization check as well.
 
 * Sat Feb 23 2013 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.3.6-owl21
 - Backported a fix for TLS handling bug which triggered 'assert' on Firefox

@@ -12,8 +12,8 @@ diff -urp glibc-2.3.6-crypt_blowfish/crypt/Makefile glibc-2.3.6/crypt/Makefile
  
 diff -urp glibc-2.3.6-crypt_blowfish/crypt/wrapper.c glibc-2.3.6/crypt/wrapper.c
 --- glibc-2.3.6-crypt_blowfish/crypt/wrapper.c	2011-07-16 15:22:53 +0000
-+++ glibc-2.3.6/crypt/wrapper.c	2014-07-07 13:02:16 +0000
-@@ -103,32 +103,74 @@ static char *_crypt_retval_magic(char *r
++++ glibc-2.3.6/crypt/wrapper.c	2014-07-07 13:03:35 +0000
+@@ -103,32 +103,77 @@ static char *_crypt_retval_magic(char *r
   * its initialization code.  Thus, it is important that our multiple hashing
   * algorithms either don't conflict with each other in their use of the
   * data area or reset the initialized field themselves whenever required.
@@ -40,7 +40,10 @@ diff -urp glibc-2.3.6-crypt_blowfish/crypt/wrapper.c glibc-2.3.6/crypt/wrapper.c
 +{
 +	static volatile sig_atomic_t initialized = 0;
 +
-+	if (initialized) return;
++	if (initialized) {
++		atomic_read_barrier();
++		return;
++	}
 +
 +	__libc_lock_lock(_crypt_extended_init_lock);
 +	if (!initialized) {
@@ -95,7 +98,7 @@ diff -urp glibc-2.3.6-crypt_blowfish/crypt/wrapper.c glibc-2.3.6/crypt/wrapper.c
  	if (setting[0] == '$' && setting[1] == '2') {
  		if (_crypt_data_alloc(data, size, CRYPT_OUTPUT_SIZE))
  			return NULL;
-@@ -139,13 +181,27 @@ char *__crypt_ra(__const char *key, __co
+@@ -139,13 +184,27 @@ char *__crypt_ra(__const char *key, __co
  			return NULL;
  		return __md5_crypt_r(key, setting, (char *)*data, *size);
  	}
