@@ -58,15 +58,19 @@ Updated to 1.4.18.  Fixed since 1.4.13 are DoS via compressed data
 (CVE-2013-4242, CVE-2013-4576).
 
 2014/07/07	Package: kernel
-SECURITY FIX	Severity: high, local, active
-Updated to 2.6.18-371.9.1.el5.028stab114.2.  Added a fix for the ptrace
-SYSRET vulnerability (CVE-2014-4699), which could allow for DoS or
-privilege escalation in x86_64 kernel builds running on Intel CPUs.
+SECURITY FIX	Severity: none to high, local, active
+Updated to 2.6.18-371.9.1.el5.028stab114.2, which contains security
+fixes for the floppy disk driver in case a /dev/fd* device is accessible
+to a non-trusted user (normally not the case on Owl).  Added a hardening
+measure against the ptrace SYSRET vulnerability (CVE-2014-4699), which
+could allow for DoS or privilege escalation in x86_64 kernel builds
+running on Intel CPUs, even though RHEL5 kernels are currently
+understood to be unaffected.
 References:
 http://openvz.org/Download/kernel/rhel5-testing/028stab114.2
 https://rhn.redhat.com/errata/RHSA-2014-0740.html
-http://www.openwall.com/lists/oss-security/2014/07/04/4
-http://www.openwall.com/lists/oss-security/2014/07/05/4
+http://www.openwall.com/lists/oss-security/2014/07/08/16
+http://www.openwall.com/lists/oss-security/2014/07/08/9
 
 2014/06/09	Package: kernel
 SECURITY FIX	Severity: high, local, active
@@ -906,4 +910,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.125 2014/07/07 21:29:03 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.126 2014/07/09 09:29:54 solar Exp $
