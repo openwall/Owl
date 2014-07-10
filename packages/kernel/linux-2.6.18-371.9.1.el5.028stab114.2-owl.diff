@@ -20,7 +20,7 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/Makefile linux-2.6.18-371.9.1.e
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -prep
-+EXTRAVERSION = -371.9.1.el5.028stab114.2.owl1
++EXTRAVERSION = -371.9.1.el5.028stab114.2.owl2
  RHEL_MAJOR = 5
  RHEL_MINOR = 10
  NAME=Avast! A bilge rat!
@@ -1994,8 +1994,8 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/icmp.c linux-2.6.18-37
  		.handler = icmp_discard,
 diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/ping.c linux-2.6.18-371.9.1.el5.028stab114.2-owl/net/ipv4/ping.c
 --- linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/ping.c	1970-01-01 00:00:00 +0000
-+++ linux-2.6.18-371.9.1.el5.028stab114.2-owl/net/ipv4/ping.c	2014-06-08 15:03:55 +0000
-@@ -0,0 +1,1019 @@
++++ linux-2.6.18-371.9.1.el5.028stab114.2-owl/net/ipv4/ping.c	2014-07-10 10:03:01 +0000
+@@ -0,0 +1,1022 @@
 +/*
 + * INET		An implementation of the TCP/IP protocol suite for the LINUX
 + *		operating system.  INET is implemented using the  BSD Socket
@@ -2699,6 +2699,9 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/ping.c linux-2.6.18-37
 +
 +	if (flags & MSG_OOB)
 +		goto out;
++
++	if (addr_len)
++		*addr_len = sizeof(*sin);
 +
 +	if (flags & MSG_ERRQUEUE)
 +		return ip_recv_error(sk, msg, len, addr_len);
