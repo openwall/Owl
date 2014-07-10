@@ -14,7 +14,7 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/Documentation/sysctl/kernel.txt
  value of dmesg_restrict.
 diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/Makefile linux-2.6.18-371.9.1.el5.028stab114.2-owl/Makefile
 --- linux-2.6.18-371.9.1.el5.028stab114.2/Makefile	2014-06-30 06:58:47 +0000
-+++ linux-2.6.18-371.9.1.el5.028stab114.2-owl/Makefile	2014-07-07 08:15:56 +0000
++++ linux-2.6.18-371.9.1.el5.028stab114.2-owl/Makefile	2014-07-10 10:35:09 +0000
 @@ -1,7 +1,7 @@
  VERSION = 2
  PATCHLEVEL = 6
@@ -1994,8 +1994,8 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/icmp.c linux-2.6.18-37
  		.handler = icmp_discard,
 diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/ping.c linux-2.6.18-371.9.1.el5.028stab114.2-owl/net/ipv4/ping.c
 --- linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/ping.c	1970-01-01 00:00:00 +0000
-+++ linux-2.6.18-371.9.1.el5.028stab114.2-owl/net/ipv4/ping.c	2014-07-10 10:03:01 +0000
-@@ -0,0 +1,1022 @@
++++ linux-2.6.18-371.9.1.el5.028stab114.2-owl/net/ipv4/ping.c	2014-07-10 10:47:30 +0000
+@@ -0,0 +1,1012 @@
 +/*
 + * INET		An implementation of the TCP/IP protocol suite for the LINUX
 + *		operating system.  INET is implemented using the  BSD Socket
@@ -2012,7 +2012,6 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/ping.c linux-2.6.18-37
 + *
 + * Authors:	Vasiliy Kulikov / Openwall (for Linux 2.6.18),
 + *		Pavel Kankovsky (for Linux 2.4.32)
-+ *
 + */
 +
 +#include <asm/system.h>
@@ -2043,7 +2042,6 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/ping.c linux-2.6.18-37
 +#include <net/inet_common.h>
 +#include <net/checksum.h>
 +
-+
 +#ifdef CONFIG_SYSCTL
 +
 +/*
@@ -2070,12 +2068,14 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/ping.c linux-2.6.18-37
 +}
 +
 +static inline struct hlist_head *ping_hashslot(struct ping_table *table,
-+					     struct ve_struct *net, unsigned num)
++					       struct ve_struct *net,
++					       unsigned num)
 +{
 +	return &table->hash[ping_hashfn(net, num, PING_HTABLE_MASK)];
 +}
 +
-+void __inet_get_ping_group_range(gid_t *data, gid_t *low, gid_t *high)
++static inline void __inet_get_ping_group_range(gid_t *data,
++					       gid_t *low, gid_t *high)
 +{
 +	unsigned seq;
 +	do {
@@ -2086,14 +2086,15 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/ping.c linux-2.6.18-37
 +	} while (read_seqretry(&ping_group_range_lock, seq));
 +}
 +
-+void inet_get_ping_group_range_net(struct ve_struct *net, gid_t *low, gid_t *high)
++static void inet_get_ping_group_range_net(struct ve_struct *net,
++					  gid_t *low, gid_t *high)
 +{
 +	gid_t *data = net->ping_group_range;
 +	__inet_get_ping_group_range(data, low, high);
 +}
 +
 +/* Update system visible IP port range */
-+void set_ping_group_range(gid_t *data, gid_t range[2])
++static inline void set_ping_group_range(gid_t *data, gid_t range[2])
 +{
 +	write_seqlock(&ping_group_range_lock);
 +	data[0] = range[0];
@@ -2103,8 +2104,8 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/ping.c linux-2.6.18-37
 +
 +/* Validate changes from /proc interface. */
 +int ipv4_ping_group_range(ctl_table *table, int write, struct file *filep,
-+				 void __user *buffer,
-+				 size_t *lenp, loff_t *ppos)
++			  void __user *buffer,
++			  size_t *lenp, loff_t *ppos)
 +{
 +	int ret;
 +	gid_t range[2];
@@ -2201,12 +2202,8 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/ping.c linux-2.6.18-37
 +static void ping_v4_unhash(struct sock *sk)
 +{
 +	struct inet_sock *isk = inet_sk(sk);
-+	struct ve_struct *env = sk->owner_env;
 +	ping_debug("ping_v4_unhash(isk=%p,isk->num=%u)\n", isk, isk->num);
 +	if (sk_hashed(sk)) {
-+		struct hlist_head *hslot;
-+
-+		hslot = ping_hashslot(&ping_table, env, isk->num);
 +		write_lock_bh(&ping_table.lock);
 +		sk_del_node_init(sk);
 +		sock_put(sk);
@@ -2305,7 +2302,6 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/ping.c linux-2.6.18-37
 +	unsigned short snum;
 +	int chk_addr_ret;
 +	int err;
-+	//struct ve_struct *env = sk->owner_env;
 +
 +	if (addr_len < sizeof(struct sockaddr_in))
 +		return -EINVAL;
@@ -2318,8 +2314,7 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/ping.c linux-2.6.18-37
 +		chk_addr_ret = RTN_LOCAL;
 +
 +	if ((sysctl_ip_nonlocal_bind == 0 &&
-+	    isk->freebind == 0 && // isk->transparent == 0 &&
-+	     chk_addr_ret != RTN_LOCAL) ||
++	    isk->freebind == 0 && chk_addr_ret != RTN_LOCAL) ||
 +	    chk_addr_ret == RTN_MULTICAST ||
 +	    chk_addr_ret == RTN_BROADCAST)
 +		return -EADDRNOTAVAIL;
@@ -2519,7 +2514,6 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/ping.c linux-2.6.18-37
 +	u32 saddr, daddr;
 +	u8  tos;
 +	int err;
-+	//struct ve_struct *env = sk->owner_env;
 +
 +	ping_debug("ping_sendmsg(sk=%p,sk->num=%u)\n", isk, isk->num);
 +
@@ -2609,8 +2603,6 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/ping.c linux-2.6.18-37
 +						.tos = tos } },
 +				    .proto = IPPROTO_ICMP,
 +		};
-+
-+		//struct ve_struct *net = env;
 +
 +		security_sk_classify_flow(sk, &fl);
 +		err = ip_route_output_flow(&rt, &fl, sk, 1);
@@ -2762,7 +2754,6 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/ping.c linux-2.6.18-37
 +void ping_rcv(struct sk_buff *skb)
 +{
 +	struct sock *sk;
-+	//struct ve_struct *net = dev_net(skb->dev);
 +	struct iphdr *iph = ip_hdr(skb);
 +	struct icmphdr *icmph = icmp_hdr(skb);
 +	u32 saddr = iph->saddr;
@@ -2816,7 +2807,6 @@ diff -urpN linux-2.6.18-371.9.1.el5.028stab114.2/net/ipv4/ping.c linux-2.6.18-37
 +{
 +	struct sock *sk;
 +	struct ping_iter_state *state = seq->private;
-+	//struct ve_struct *net = seq_file_net(seq);
 +	struct ve_struct *net = get_exec_env();
 +
 +	for (state->bucket = start; state->bucket < PING_HTABLE_SIZE;
