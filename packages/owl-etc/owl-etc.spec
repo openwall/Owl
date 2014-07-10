@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.80 2011/09/06 23:15:11 solar Exp $
+# $Owl: Owl/packages/owl-etc/owl-etc.spec,v 1.80.2.1 2014/07/10 17:51:45 solar Exp $
 
 Summary: Initial set of configuration files.
 Name: owl-etc
 Version: 1.2
-Release: owl1
+Release: owl1.3.1.1
 License: public domain
 Group: System Environment/Base
 Source0: passwd
@@ -162,6 +162,9 @@ rm -f /etc/{passwd,shadow,group}.rpmnew
 %dir %attr(755,root,root) /etc/sysconfig
 
 %changelog
+* Thu Jul 10 2014 Solar Designer <solar-at-owl.openwall.com> 1.2-owl1.3.1.1
+- 3.1-stable.
+
 * Tue Sep 06 2011 Solar Designer <solar-at-owl.openwall.com> 1.2-owl1
 - Added /etc/owl-release.
 
