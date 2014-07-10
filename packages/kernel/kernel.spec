@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.104 2014/07/07 08:18:02 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.105 2014/07/10 10:19:16 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -106,7 +106,8 @@ done
 %changelog
 * Mon Jul 07 2014 Solar Designer <solar-at-owl.openwall.com> 2.6.18-371.9.1.el5.028stab114.2.owl1
 - Updated to 2.6.18-371.9.1.el5.028stab114.2.
-- Added a fix for the ptrace SYSRET vulnerability (CVE-2014-4699).
+- Added a hardening measure against the ptrace SYSRET vulnerability
+(CVE-2014-4699), even though RHEL5 kernels are understood to be unaffected.
 
 * Sun Jun 08 2014 Solar Designer <solar-at-owl.openwall.com> 2.6.18-371.8.1.el5.028stab113.1.owl1
 - Updated to 2.6.18-371.8.1.el5.028stab113.1.
