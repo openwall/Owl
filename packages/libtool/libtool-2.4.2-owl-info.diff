@@ -1,0 +1,22 @@
+diff -puNr libtool-2.4.2.orig/doc/libtool.texi libtool-2.4.2/doc/libtool.texi
+--- libtool-2.4.2.orig/doc/libtool.texi	2011-10-17 10:17:05 +0000
++++ libtool-2.4.2/doc/libtool.texi	2014-06-15 11:18:54 +0000
+@@ -13,14 +13,15 @@
+ 
+ @dircategory GNU programming tools
+ @direntry
+-* Libtool: (libtool).           Generic shared library support script.
++* Libtool: (libtool).				Generic shared library
++						support script.
+ @end direntry
+ 
+ @dircategory Individual utilities
+ @direntry
+ * libtool-invocation: (libtool)Invoking libtool.
+-                                                Running the @code{libtool} script.
+-* libtoolize: (libtool)Invoking libtoolize.     Adding libtool support.
++						Running the @code{libtool} script.
++* libtoolize: (libtool)Invoking libtoolize.	Adding libtool support.
+ @end direntry
+ 
+ @ifnottex

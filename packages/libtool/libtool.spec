@@ -1,27 +1,24 @@
-# $Owl: Owl/packages/libtool/libtool.spec,v 1.28 2011/10/11 14:16:18 segoon Exp $
+# $Owl: Owl/packages/libtool/libtool.spec,v 1.29 2014/07/12 13:57:03 galaxy Exp $
 
 Summary: The GNU Libtool, which simplifies the use of shared libraries.
 Name: libtool
-Version: 1.5.22
-Release: owl5
+Version: 2.4.2
+Release: owl1
 License: GPL/LGPL
 Group: Development/Tools
 URL: http://www.gnu.org/software/libtool/
-# ftp://ftp.gnu.org/gnu/libtool/libtool-%version.tar.gz
-Source: libtool-%version.tar.bz2
-Patch0: libtool-1.5.22-alt-tmp.diff
-Patch1: libtool-1.5.18-owl-info.diff
-Patch2: libtool-1.5.22-owl-buildhost.diff
-Patch3: libtool-1.5.18-alt-deb-link_all_deplibs.diff
-Patch4: libtool-1.5.18-alt-ltmain-legacy.diff
-Patch5: libtool-1.5.18-alt-ld.so.conf.diff
-Patch6: libtool-1.5.18-rh-multilib-hack.diff
-Patch7: libtool-1.5.26-up-ltdl.diff
-Patch8: libtool-1.5.22-owl-tests.diff
-PreReq: /sbin/install-info, autoconf, automake, m4, perl
+Source: ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.xz
+Patch0: %name-2.4.2-alt-tmp.diff
+Patch1: %name-2.4.2-owl-info.diff
+Patch2: %name-2.4.2-owl-buildhost.diff
+#Patch3: %name-1.5.18-alt-deb-link_all_deplibs.diff
+#Patch4: %name-1.5.18-alt-ltmain-legacy.diff
+Patch6: %name-2.4.2-rh-multilib-hack.diff
+Requires(post,pre): /sbin/install-info
+Requires: autoconf, automake, m4, perl
 Requires: libtool-libs = %version-%release, mktemp
 Prefix: %_prefix
-BuildRequires: automake >= 1.9, autoconf, texinfo
+BuildRequires: automake >= 1.14, autoconf >= 2.69, texinfo
 BuildRoot: /override/%name-%version
 
 %description
@@ -42,19 +39,15 @@ shared libraries.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
+#patch3 -p1
+#patch4 -p1
 %patch6 -p1
-%patch7 -p1
-%patch8 -p1
 
 %build
 rm doc/libtool.info
 %define __libtoolize echo --
 %configure
 
-%__make -C doc
 %__make
 bzip2 -9fk ChangeLog
 
@@ -79,23 +72,41 @@ if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/libtool.info %_infodir/dir
 fi
 
+%post libs -p /sbin/ldconfig
+%postun libs -p /sbin/ldconfig
+
 %files
-%defattr(-,root,root)
+%defattr(0644,root,root,0755)
 %doc AUTHORS COPYING NEWS README THANKS TODO ChangeLog.bz2
-%_bindir/*
+%attr(0755,root,root) %_bindir/*
 %_infodir/libtool.info*
 %_includedir/ltdl.h
+%dir %_includedir/libltdl
+%_includedir/libltdl/lt_dlloader.h
+%_includedir/libltdl/lt_error.h
+%_includedir/libltdl/lt_system.h
 %_datadir/libtool
 %_libdir/libltdl.so
 %_libdir/libltdl.a
 %_datadir/aclocal/libtool.m4
 %_datadir/aclocal/ltdl.m4
+%_datadir/aclocal/argz.m4
+%_datadir/aclocal/ltoptions.m4
+%_datadir/aclocal/ltsugar.m4
+%_datadir/aclocal/ltversion.m4
+%_datadir/aclocal/lt~obsolete.m4
+%_mandir/man1/libtool.1*
+%_mandir/man1/libtoolize.1*
 
 %files libs
-%defattr(-,root,root)
+%defattr(0644,root,root,0755)
 %_libdir/libltdl.so.*
 
 %changelog
+* Sun Jun 15 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.4.2-owl1
+- Updated to 2.4.2.
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+
 * Tue Oct 11 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.5.22-owl5
 - Patched tagdemo test to be compliant with g++ 4.6.1.
 
