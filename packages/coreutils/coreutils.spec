@@ -1,13 +1,27 @@
-# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.32 2012/07/22 18:29:41 segoon Exp $
+# $Owl: Owl/packages/coreutils/coreutils.spec,v 1.33 2014/07/12 13:49:31 galaxy Exp $
+
+%define def_with() %{expand:%%{!?_with_%1: %%{!?_without_%1: %%global _with_%1 --with-%1%{?2:=%2}}}}
+%define def_without() %{expand:%%{!?_with_%1: %%{!?_without_%1: %%global _without_%1 --without-%1}}}
+%define def_enable() %{expand:%%{!?_with_%1: %%{!?_without_%1: %%global _with_%1 --enable-%1%{?2:=%2}}}}
+%define def_disable() %{expand:%%{!?_with_%1: %%{!?_without_%1: %%global _without_%1 --disable-%1}}}
+
+%def_disable	acl
+%def_disable	xattr
+%def_disable	libcap
+%def_disable	libsmack
+%def_enable	nls
+%def_with	openssl
+%def_without	selinux
+%def_with	gmp
 
 Summary: The GNU versions of common management utilities.
 Name: coreutils
-Version: 5.97
-Release: owl6
+Version: 8.22
+Release: owl1
 License: GPL
 Group: System Environment/Base
 URL: http://www.gnu.org/software/%name/
-Source0: ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.bz2
+Source0: ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.xz
 
 # Additional sources
 # true and false source and man-pages
@@ -15,42 +29,34 @@ Source1: exit.c
 Source2: true.1
 Source3: false.1
 
-Source4: coreutils-ru.po
-
 # shell profile settings and configuration file for colorized ls output
 Source10: colorls.sh
 Source11: colorls.csh
 
-# usleep source and manpage
+# sources from sh-utils
 Source20: usleep.c
 Source21: usleep.1
+Source22: getuseruid.c
+Source23: runas.c
+Source24: runas.1
+Source25: runbg.c
 
-# CVS backports and other candidates for upstream version
-Patch0: coreutils-5.97-cvs-20060628.diff
-Patch1: coreutils-5.91-up-ls-usage.diff
-Patch2: coreutils-5.91-eggert-ls-time-style.diff
-Patch3: coreutils-5.97-up-cut.diff
-Patch4: coreutils-5.97-up-copy_internal.diff
-Patch5: coreutils-5.97-up-new-hashes.diff
-Patch6: coreutils-5.97-up-getpwd-openat.diff
-Patch7: coreutils-5.91-alt-hostname.diff
-Patch8: coreutils-8.1-owl-tests-touch.diff
+Patch0: %name-8.22-owl-gnulib-test-getcwd.diff
+Patch1: %name-8.22-owl-gnulib-test-getlogin.diff
+Patch2: %name-8.22-owl-tests-xattr.diff
 
-# Owl/ALT specific
-Patch10: coreutils-5.92-owl-info-true-false.diff
-Patch11: coreutils-5.97-alt-owl-dircolors.diff
-Patch12: coreutils-5.3.0-alt-without-su-uptime.diff
-Patch13: coreutils-5.3.1-alt-ls-dir-vdir.diff
-Patch14: coreutils-5.91-alt-posix2_version.diff
+Patch3: %name-8.22-alt-chroot-tmp-env-vars.diff
+Patch4: %name-8.22-alt-dircolors.diff
+Patch5: %name-8.22-alt-hostname.diff
+Patch6: %name-8.22-rh-owl-alt-ls-dumbterm.diff
+Patch7: %name-8.22-alt-mksock.diff
+Patch8: %name-8.22-alt-texinfo.diff
+Patch9: %name-8.22-alt-tinfo.diff
+Patch10: %name-8.22-rh-alt-langinfo.diff
+Patch11: %name-8.22-owl-tests-pwd-long.diff
 
-# other
-Patch20: coreutils-5.2.0-rh-install-strip.diff
-Patch21: coreutils-5.3.1-rh-owl-alt-ls-dumbterm.diff
-Patch22: coreutils-5.91-rh-alt-langinfo.diff
-Patch23: coreutils-5.97-rh-cifs.diff
-Patch24: coreutils-5.97-rh-remove_cwd_entries.diff
-
-Provides: stat = %version, fileutils = %version, textutils = %version, sh-utils = %version
+Provides: stat = %version, fileutils = %version
+Provides: textutils = %version, sh-utils = %version
 Obsoletes: stat, fileutils, textutils, sh-utils
 
 # (ldv@): coreutils' version of kill and hostname are cleaner and
@@ -66,10 +72,34 @@ Obsoletes: stat, fileutils, textutils, sh-utils
 # due to /bin/usleep
 #Conflicts: owl-startup
 
-PreReq: /sbin/install-info
-BuildRequires: sed >= 4.1.1, bison >= 2.0, automake >= 1.9.5, m4 >= 1.4.3
+Requires(pre): /sbin/install-info
+BuildRequires: gettext, autoconf >= 2.69, automake >= 1.14, libtool
+BuildRequires: sed >= 4.1.1, bison >= 2.0, m4 >= 1.4.3
 BuildRequires: perl >= 5.6.1
 BuildRequires: libtermcap-devel
+BuildRequires: ncurses-devel
+BuildRequires: texinfo
+%if 0%{?_with_acl:1}
+BuildRequires: libacl-devel
+%endif
+%if 0%{?_with_xattr:1}
+BuildRequires: libattr-devel
+%endif
+%if 0%{?_with_libcap:1}
+BuildRequires: libcap-devel >= 2.24
+%endif
+%if 0%{?_with_libsmack:1}
+BuildRequires: libsmack-devel
+%endif
+%if 0%{?_with_openssl:1}
+BuildRequires: openssl-devel
+%endif
+%if 0%{?_with_selinux:1}
+BuildRequires: libselinux-devel
+%endif
+%if 0%{?_with_gmp:1}
+BuildRequires: gmp-devel
+%endif
 
 BuildRoot: /override/%name-%version
 
@@ -89,127 +119,124 @@ arbitrary limits.
 
 %prep
 %setup -q
-install -pm644 %_sourcedir/coreutils-ru.po po/ru.po
 
-# CVS backports and other candidates for upstream version
-%patch0 -p0
-%patch1 -p0
-%patch2 -p0
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p0
-%patch7 -p1
-%patch8 -p1
+%patch0 -p1 -b .gnulib-test-getcwd
+%patch1 -p1 -b .gnulib-test-getlogin
+%patch2 -p1 -b .owl-tests-xattr
 
-# Owl/ALT specific
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
+%patch3 -p1 -b .chroot-tmp-env-vars
+%patch4 -p1 -b .dircolors
+%patch5 -p1 -b .hostname
+%patch6 -p1 -b .ls-term
+%patch7 -p1 -b .mksock
 
-# other
-%patch20 -p1
-%patch21 -p1
-%patch22 -p1
-%patch23 -p1
-%patch24 -p1
+# We need to regenerate the list of programs for mksock
+build-aux/gen-lists-of-programs.sh --autoconf >m4/cu-progs.m4
+build-aux/gen-lists-of-programs.sh --automake >src/cu-progs.mk
 
-find -type f -name '*.orig' -delete -print
+%patch8 -p1 -b .texinfo
+%patch9 -p1 -b .tinfo
+%patch10 -p1 -b .date-format
+%patch11 -p1 -b .tests-pwd-long.diff
 
-# Get rid of su and uptime
-rm {src,man}/{su,uptime}.*
+# Generate LINGUAS file.
+ls po/*.po 2>/dev/null |
+	sed 's|.*/||; s|\.po$||' >po/LINGUAS
 
-# "dist_" is redundant, as sources are distributed by default
-sed -i 's/dist_man_MANS/man_MANS/g' man/Makefile.am
+gettextize -f -q --symlink
+rm lib/gettext.h
+ln -s '%_datadir/gettext/gettext.h' lib/
+aclocal --force -I m4
+autoreconf -fis
 
 # rm -f for easy CVS vs release builds
 rm -f doc/*.info* man/*.1
 
-# Docs should say /var/run/[uw]tmp, not /etc/[uw]tmp
-sed -i 's,/etc/utmp,/var/run/utmp,g;s,/etc/wtmp,/var/run/wtmp,g' \
-	doc/*.texi man/*
-
-# Stable autoconf is sufficient to build coreutils for GNU/Linux.
-grep -lZ 'AC_PREREQ(2\.59[^)]\+)' m4/*.m4 |
-	xargs -r0 sed -i 's/AC_PREREQ(2\.59[^)]\+)/AC_PREREQ(2.59)/' --
+# Compress (some) docs to save space
+bzip2 -9k NEWS THANKS
 
 %build
-# disable uptime build
-export gnulib_cv_have_boot_time=no
+%configure \
+	--disable-rpath \
+	--exec-prefix=/ \
+	--enable-install-program=arch,hostname \
+	--enable-no-install-program=su,uptime \
+	%{?_with_acl}%{?_without_acl} \
+	%{?_with_xattr}%{?_without_xattr} \
+	%{?_with_libcap}%{?_without_libcap} \
+	%{?_with_libsmack}%{?_without_libsmack} \
+	%{?_with_nls}%{?_without_nls} \
+	%{?_with_openssl}%{?_without_openssl} \
+	%{?_with_selinux}%{?_without_selinux} \
+	%{?_with_gmp}%{?_without_gmp} \
+#
 
-%configure --exec-prefix=/
 %__make -C po update-po
 %__make
 
 # Build our version of true and false
-%__cc %optflags -Wall -W -static -nostartfiles -DSTATUS=0 \
-	%_sourcedir/exit.c -o true
-%__cc %optflags -Wall -W -static -nostartfiles -DSTATUS=1 \
-	%_sourcedir/exit.c -o false
+%__cc %optflags -Wall -W -static -U_FORTIFY_SOURCE -fno-stack-protector \
+	-nostartfiles -static -DSTATUS=0 '%_sourcedir/exit.c' -o true
+%__cc %optflags -Wall -W -static -U_FORTIFY_SOURCE -fno-stack-protector \
+	-nostartfiles -static -DSTATUS=1 '%_sourcedir/exit.c' -o false
 
-# build usleep
-%__cc %optflags %_sourcedir/usleep.c -o usleep
-
-# Compress (some) docs to save space
-bzip2 -9fk ChangeLog NEWS THANKS
-
-%check
-%__make check
-
-./true
-! ./false || false
+# Build additional utilities.
+for n in getuseruid runas runbg usleep; do
+	%__cc %optflags "%_sourcedir/$n.c" -o "$n"
+done
 
 %install
-rm -rf %buildroot
+[ '%buildroot' != '/' -a -d '%buildroot' ] && rm -rf -- '%buildroot'
 %makeinstall
 
 # color-ls shell profile settings and configuration file
-mkdir -p %buildroot/etc/profile.d
-install -pm755 %_sourcedir/colorls.{,c}sh %buildroot/etc/profile.d/
-install -pm644 src/dircolors.hin %buildroot/etc/DIR_COLORS
+mkdir -p '%buildroot/etc/profile.d'
+install -pm755 '%_sourcedir'/colorls.{,c}sh '%buildroot/etc/profile.d/'
+install -pm644 src/dircolors.hin '%buildroot/etc/DIR_COLORS'
 
 # %_bindir -> /bin path relocations
-mkdir -p %buildroot/bin
+mkdir -p '%buildroot/bin'
 for n in \
 	basename cat chgrp chmod chown cp cut date dd df echo \
 	env false hostname kill link ln ls mkdir mknod mv nice \
 	pwd readlink rm rmdir sleep sort stat stty sync touch \
-	true uname unlink \
+	true uname unlink arch mktemp \
 ; do
-	mv %buildroot%_bindir/$n %buildroot/bin/
+	mv "%buildroot%_bindir/$n" '%buildroot/bin/'
 done
 
 # dir and vdir symlinks to ls
-ln -sf ../../bin/ls %buildroot%_bindir/dir
-ln -sf ../../bin/ls %buildroot%_bindir/vdir
+ln -sf ../../bin/ls '%buildroot%_bindir/dir'
+ln -sf ../../bin/ls '%buildroot%_bindir/vdir'
 
 # /bin/*domainname symlinks to hostname - same man-page for all
 for n in dnsdomainname domainname nisdomainname ypdomainname; do
-	ln -s hostname %buildroot/bin/$n
-	echo '.so man1/hostname.1' >%buildroot%_mandir/man1/$n.1
+	ln -s hostname "%buildroot/bin/$n"
+	echo '.so man1/hostname.1' >"%buildroot%_mandir/man1/$n.1"
 done
 
 # test
-ln -sf test %buildroot%_bindir/[
+ln -sf test '%buildroot%_bindir/['
 
 # chroot goes in %_sbindir
-mkdir -p %buildroot%_sbindir
-mv %buildroot%_bindir/chroot %buildroot%_sbindir/
+mkdir -p '%buildroot%_sbindir'
+mv '%buildroot%_bindir/chroot' '%buildroot%_sbindir/'
 
 # Install assembler versions of true and false and their man-pages
-install -pm755 true false %buildroot/bin/
-install -pm644 %_sourcedir/{true,false}.1 %buildroot%_mandir/man1/
+install -pm755 true false '%buildroot/bin/'
+install -pm644 '%_sourcedir'/{true,false}.1 '%buildroot%_mandir/man1/'
 
-# Install usleep and its manpage
-install -pm755 usleep %buildroot/bin/
-install -pm644 %_sourcedir/usleep.1 %buildroot%_mandir/man1/
+# Install additional utilities and their manpages
+install -pm755 getuseruid runas runbg usleep '%buildroot/bin/'
+install -pm644 '%_sourcedir'/{runas,usleep}.1 '%buildroot%_mandir/man1/'
 
 # Backwards compatible symlinks
 for n in env cut; do
-	ln -s ../../bin/$n %buildroot%_bindir/$n
+	ln -s "../../bin/$n" "%buildroot%_bindir/$n"
 done
+
+%find_lang %name || :
+touch '%name.lang'
 
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
@@ -222,10 +249,21 @@ rm %buildroot{/bin,%_mandir/man1}/*domainname*
 
 # /bin/kill is also still in util-linux
 rm %buildroot{/bin,%_mandir/man1}/kill*
+# /bin/arch is also still in util-linux
+rm %buildroot{/bin,%_mandir/man1}/arch*
+
+# /bin/mktemp is also still in mktemp
+rm %buildroot{/bin,%_mandir/man1}/mktemp*
 
 # /bin/usleep is also still in owl-startup
 rm %buildroot{/bin,%_mandir/man1}/usleep*
 ###
+
+%check
+%__make check
+
+./true
+! ./false
 
 %pre
 # Remove info dir entries for fileutils, textutils and sh-utils,
@@ -243,19 +281,22 @@ if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/%name.info %_infodir/dir
 fi
 
-%files
-%defattr(-,root,root)
-%config(noreplace) /etc/DIR_COLORS
-%config(noreplace) /etc/profile.d/*
-/bin/*
-%_bindir/*
-%_sbindir/*
-%_mandir/man?/*
+%files -f %name.lang
+%doc AUTHORS NEWS.bz2 README THANKS.bz2 TODO
+%defattr(0644,root,root,0755)
+%config(noreplace) %_sysconfdir/DIR_COLORS
+%config(noreplace) %attr(0755,root,root) %_sysconfdir/profile.d/colorls.*sh
+%attr(0755,root,root) /bin/*
+%attr(0755,root,root) %_bindir/*
+%attr(0755,root,root) %_sbindir/*
+%_libexecdir/%name/
+%_mandir/man1/*.1*
 %_infodir/*.info*
-%_datadir/locale/*/LC_MESSAGES/coreutils.mo
-%doc ChangeLog.bz2 NEWS.bz2 THANKS.bz2 AUTHORS README TODO
 
 %changelog
+* Sun Jun 22 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 8.22-owl1
+- Updated to 8.22.
+
 * Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.97-owl6
 - Fixed build failure with headers of Linux 2.6.32.
 

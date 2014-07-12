@@ -1,0 +1,97 @@
+diff --git a/doc/coreutils.texi b/doc/coreutils.texi
+index dbc8a8b..4e81173 100644
+--- a/doc/coreutils.texi
++++ b/doc/coreutils.texi
+@@ -10414,15 +10414,17 @@ In most modern shells, @command{false} is a built-in command, so when
+ you use @samp{false} in a script, you're probably using the built-in
+ command, not the one documented here.
+ 
+-@command{false} honors the @option{--help} and @option{--version} options.
++@command{false} ignores all options.
+ 
+-This version of @command{false} is implemented as a C program, and is thus
+-more secure and faster than a shell script implementation, and may safely
+-be used as a dummy shell for the purpose of disabling accounts.
++@strong{Please note} that this system uses a non-GNU version of
++@command{false}, not the version supplied with GNU coreutils.
++The GNU version of @command{false} is a C program that actually honors
++some options.
+ 
+-Note that @command{false} (unlike all other programs documented herein)
+-exits unsuccessfully, even when invoked with
+-@option{--help} or @option{--version}.
++This version of @command{false} is implemented as a tiny C program that
++does not use the dynamic linker or any libraries.  It is thus more secure
++and faster than a shell script implementation, and may safely
++be used as a dummy shell for the purpose of disabling accounts.
+ 
+ Portable programs should not assume that the exit status of
+ @command{false} is 1, as it is greater than 1 on some
+@@ -10446,23 +10448,17 @@ In most modern shells, @command{true} is a built-in command, so when
+ you use @samp{true} in a script, you're probably using the built-in
+ command, not the one documented here.
+ 
+-@command{true} honors the @option{--help} and @option{--version} options.
+-
+-Note, however, that it is possible to cause @command{true}
+-to exit with nonzero status: with the @option{--help} or @option{--version}
+-option, and with standard
+-output already closed or redirected to a file that evokes an I/O error.
+-For example, using a Bourne-compatible shell:
++@command{true} ignores all options.
+ 
+-@example
+-$ ./true --version >&-
+-./true: write error: Bad file number
+-$ ./true --version > /dev/full
+-./true: write error: No space left on device
+-@end example
++@strong{Please note} that this system uses a non-GNU version of
++@command{true}, not the version supplied with GNU coreutils.
++The GNU version of @command{true} is a C program that actually honors
++some options (and may even be caused to exit with nonzero status on
++some subtle error conditions).
+ 
+-This version of @command{true} is implemented as a C program, and is thus
+-more secure and faster than a shell script implementation, and may safely
++This version of @command{true} is implemented as a tiny C program that
++does not use the dynamic linker or any libraries.  It is thus more secure
++and faster than a shell script implementation, and may safely
+ be used as a dummy shell for the purpose of disabling accounts.
+ 
+ @node test invocation
+@@ -12285,8 +12281,8 @@ database to be consulted afresh, and so will give a different result.
+ 
+ @flindex utmp
+ @command{logname} prints the calling user's name, as found in a
+-system-maintained file (often @file{/var/run/utmp} or
+-@file{/etc/utmp}), and exits with a status of 0.  If there is no entry
++system-maintained file (often @file{/var/run/utmp}),
++and exits with a status of 0.  If there is no entry
+ for the calling process, @command{logname} prints
+ an error message and exits with a status of 1.
+ 
+@@ -12361,9 +12357,9 @@ users [@var{file}]
+ @flindex utmp
+ @flindex wtmp
+ With no @var{file} argument, @command{users} extracts its information from
+-a system-maintained file (often @file{/var/run/utmp} or
+-@file{/etc/utmp}).  If a file argument is given, @command{users} uses
+-that file instead.  A common choice is @file{/var/log/wtmp}.
++a system-maintained file (often @file{/var/run/utmp}).
++If a file argument is given, @command{users} uses
++that file instead.  A common choice is @file{/var/run/utmp}.
+ 
+ The only options are @option{--help} and @option{--version}.  @xref{Common
+ options}.
+@@ -12395,8 +12391,8 @@ line, login time, and remote hostname or X display.
+ @flindex utmp
+ @flindex wtmp
+ If given one non-option argument, @command{who} uses that instead of
+-a default system-maintained file (often @file{/var/run/utmp} or
+-@file{/etc/utmp}) as the name of the file containing the record of
++a default system-maintained file (often @file{/var/run/utmp})
++as the name of the file containing the record of
+ users logged on.  @file{/var/log/wtmp} is commonly given as an argument
+ to @command{who} to look at who has previously logged on.
+ 

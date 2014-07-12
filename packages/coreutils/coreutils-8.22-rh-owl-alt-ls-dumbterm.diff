@@ -1,0 +1,24 @@
+diff --git a/src/ls.c b/src/ls.c
+index 30356ac..a9d6645 100644
+--- a/src/ls.c
++++ b/src/ls.c
+@@ -83,6 +83,7 @@
+ 
+ #include "system.h"
+ #include <fnmatch.h>
++#include <termcap.h>
+ 
+ #include "acl.h"
+ #include "argmatch.h"
+@@ -1899,7 +1900,10 @@ decode_switches (int argc, char **argv)
+ 
+             print_with_color = (i == color_always
+                                 || (i == color_if_tty
+-                                    && isatty (STDOUT_FILENO)));
++                                    && isatty (STDOUT_FILENO)
++                                    && getenv("TERM")
++                                    && tgetent(NULL, getenv("TERM")) > 0
++                                    && tgetstr("md", NULL) > 0));
+ 
+             if (print_with_color)
+               {

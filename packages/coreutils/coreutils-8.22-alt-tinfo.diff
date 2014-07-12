@@ -1,0 +1,14 @@
+diff --git a/src/local.mk b/src/local.mk
+index f780ad4..7717524 100644
+--- a/src/local.mk
++++ b/src/local.mk
+@@ -217,6 +218,9 @@ src_mv_LDADD += $(copy_ldadd)
+ src_mv_LDADD += $(remove_ldadd)
+ src_rm_LDADD += $(remove_ldadd)
+ 
++# for tgetent
++src_ls_LDADD += -ltinfo
++
+ # for eaccess, euidaccess
+ copy_ldadd += $(LIB_EACCESS)
+ remove_ldadd += $(LIB_EACCESS)

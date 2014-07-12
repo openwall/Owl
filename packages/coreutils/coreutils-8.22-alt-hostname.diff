@@ -1,18 +1,21 @@
-diff -upk.orig coreutils-5.91.orig/configure.ac coreutils-5.91/configure.ac
---- coreutils-5.91.orig/configure.ac	2005-10-16 09:50:24 +0000
-+++ coreutils-5.91/configure.ac	2005-10-20 11:46:03 +0000
-@@ -246,6 +246,8 @@ AC_CHECK_DECLS([strsignal, sys_siglist, 
- # For src/kill.c and src/printf.c.
- AC_CHECK_DECLS([strtoimax, strtoumax])
+diff --git a/configure.ac b/configure.ac
+index 3c0e100..b6b31fb 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -243,6 +243,8 @@ AC_CHECK_DECLS([strsignal, sys_siglist, _sys_siglist, __sys_siglist], , ,
+   [AC_INCLUDES_DEFAULT
+ #include <signal.h>])
  
 +gt_PREREQ_HOSTNAME
 +
- cu_LIB_CHECK
+ cu_GMP
  
- AM_GNU_GETTEXT([external], [need-ngettext])
-diff -upk.orig coreutils-5.91.orig/m4/hostname.m4 coreutils-5.91/m4/hostname.m4
---- coreutils-5.91.orig/m4/hostname.m4	1970-01-01 00:00:00 +0000
-+++ coreutils-5.91/m4/hostname.m4	2005-10-20 11:14:57 +0000
+ # Build df only if there's a point to it.
+diff --git a/m4/hostname.m4 b/m4/hostname.m4
+new file mode 100644
+index 0000000..a1ef1f9
+--- /dev/null
++++ b/m4/hostname.m4
 @@ -0,0 +1,26 @@
 +# hostname.m4 serial 1 (gettext-0.11)
 +dnl Copyright (C) 2001-2002 Free Software Foundation, Inc.
@@ -40,10 +43,11 @@ diff -upk.orig coreutils-5.91.orig/m4/hostname.m4 coreutils-5.91/m4/hostname.m4
 +    AC_DEFINE(HAVE_IPV6, 1, [Define if <sys/socket.h> defines AF_INET6.])
 +  fi
 +])
-diff -upk.orig coreutils-5.91.orig/src/hostname.c coreutils-5.91/src/hostname.c
---- coreutils-5.91.orig/src/hostname.c	2005-08-23 17:04:10 +0000
-+++ coreutils-5.91/src/hostname.c	2005-10-20 11:14:57 +0000
-@@ -25,7 +25,9 @@
+diff --git a/src/hostname.c b/src/hostname.c
+index bab51ae..b17341c 100644
+--- a/src/hostname.c
++++ b/src/hostname.c
+@@ -24,7 +24,9 @@
  #include "system.h"
  #include "long-options.h"
  #include "error.h"
@@ -52,10 +56,10 @@ diff -upk.orig coreutils-5.91.orig/src/hostname.c coreutils-5.91/src/hostname.c
 +#include "xalloc.h"
  #include "xgethostname.h"
  
- /* The official name of this program (e.g., no `g' prefix).  */
-@@ -33,6 +35,148 @@
+ /* The official name of this program (e.g., no 'g' prefix).  */
+@@ -32,6 +34,148 @@
  
- #define AUTHORS "Jim Meyering"
+ #define AUTHORS proper_name ("Jim Meyering")
  
 +/* Support for using gethostbyname().  */
 +#if HAVE_GETHOSTBYNAME
@@ -199,10 +203,10 @@ diff -upk.orig coreutils-5.91.orig/src/hostname.c coreutils-5.91/src/hostname.c
 +  return domainname;
 +}
 +
- #if HAVE_SETHOSTNAME && !defined sethostname
- int sethostname ();
- #endif
-@@ -48,14 +192,17 @@ sethostname (char *name, size_t namelen)
+ #if !defined HAVE_SETHOSTNAME && defined HAVE_SYSINFO && \
+      defined HAVE_SYS_SYSTEMINFO_H
+ # include <sys/systeminfo.h>
+@@ -43,7 +187,7 @@ sethostname (char *name, size_t namelen)
    return (sysinfo (SI_SET_HOSTNAME, name, namelen) < 0 ? -1 : 0);
  }
  
@@ -210,20 +214,8 @@ diff -upk.orig coreutils-5.91.orig/src/hostname.c coreutils-5.91/src/hostname.c
 +# define HAVE_SETHOSTNAME 1	/* Now we have it... */
  #endif
  
- /* The name this program was run with. */
- char *program_name;
- 
--void
--usage (int status)
-+static void
-+#if defined __GNUC__ && ((__GNUC__ == 2 && __GNUC_MINOR__ >= 5) || __GNUC__ > 2)
-+  __attribute__ ((noreturn))
-+#endif
-+  usage (int status)
- {
-   if (status != EXIT_SUCCESS)
-     fprintf (stderr, _("Try `%s --help' for more information.\n"),
-@@ -65,10 +212,19 @@ usage (int status)
+ void
+@@ -56,10 +200,19 @@ usage (int status)
        printf (_("\
  Usage: %s [NAME]\n\
    or:  %s OPTION\n\
@@ -245,8 +237,8 @@ diff -upk.orig coreutils-5.91.orig/src/hostname.c coreutils-5.91/src/hostname.c
 +"), program_name, program_name);
        fputs (HELP_OPTION_DESCRIPTION, stdout);
        fputs (VERSION_OPTION_DESCRIPTION, stdout);
-       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
-@@ -76,50 +232,258 @@ Print or set the hostname of the current
+       emit_ancillary_info ();
+@@ -67,10 +220,15 @@ Print or set the hostname of the current system.\n\
    exit (status);
  }
  
@@ -262,11 +254,8 @@ diff -upk.orig coreutils-5.91.orig/src/hostname.c coreutils-5.91/src/hostname.c
 +  query_name_t query = host_query;
  
    initialize_main (&argc, &argv);
--  program_name = argv[0];
-+  program_name = program_invocation_short_name;
-   setlocale (LC_ALL, "");
-   bindtextdomain (PACKAGE, LOCALEDIR);
-   textdomain (PACKAGE);
+   set_program_name (argv[0]);
+@@ -80,37 +238,240 @@ main (int argc, char **argv)
  
    atexit (close_stdout);
  
@@ -278,14 +267,14 @@ diff -upk.orig coreutils-5.91.orig/src/hostname.c coreutils-5.91/src/hostname.c
 +      || STREQ (program_name, "ypdomainname"))
 +    query = nis_query;
 +
-   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
- 		      usage, AUTHORS, (char const *) NULL);
+   parse_long_options (argc, argv, PROGRAM_NAME, PACKAGE_NAME, Version,
+                       usage, AUTHORS, (char const *) NULL);
 -  if (getopt_long (argc, argv, "", NULL, NULL) != -1)
 -    usage (EXIT_FAILURE);
 +
 +  /* Parse command line options.  */
 +  while ((optc =
-+	  getopt_long (argc, argv, "dfisyhV", long_options, NULL)) != EOF)
++          getopt_long (argc, argv, "dfisyhV", long_options, NULL)) != EOF)
 +    switch (optc)
 +      {
 +      case 'f':
@@ -352,10 +341,10 @@ diff -upk.orig coreutils-5.91.orig/src/hostname.c coreutils-5.91/src/hostname.c
 -      /* Set hostname to operand.  */
 -      char const *name = argv[optind];
 -      if (sethostname (name, strlen (name)) != 0)
--	error (EXIT_FAILURE, errno, _("cannot set name to %s"), quote (name));
+-        error (EXIT_FAILURE, errno, _("cannot set name to %s"), quote (name));
 -#else
 -      error (EXIT_FAILURE, 0,
--	     _("cannot set hostname; this system lacks the functionality"));
+-             _("cannot set hostname; this system lacks the functionality"));
 -#endif
 +      error (0, 0, _("extra operand %s"), quote (argv[optind + 1]));
 +      usage (EXIT_FAILURE);
@@ -383,10 +372,10 @@ diff -upk.orig coreutils-5.91.orig/src/hostname.c coreutils-5.91/src/hostname.c
      {
 -      hostname = xgethostname ();
 -      if (hostname == NULL)
--	error (EXIT_FAILURE, errno, _("cannot determine hostname"));
+-        error (EXIT_FAILURE, errno, _("cannot determine hostname"));
 +    case default_format:
 +      /* Print the hostname, as returned by the system call.  */
-+      printf ("%s\n", hostname);
+       printf ("%s\n", hostname);
 +      break;
 +
 +    case short_format:
@@ -402,7 +391,7 @@ diff -upk.orig coreutils-5.91.orig/src/hostname.c coreutils-5.91/src/hostname.c
 +      dot = strchr (hostname, '.');
 +      if (dot != NULL)
 +	hostname = dot + 1;
-       printf ("%s\n", hostname);
++      printf ("%s\n", hostname);
 +      break;
 +
 +    case long_format:

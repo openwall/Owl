@@ -1,0 +1,29 @@
+diff --git a/src/dircolors.hin b/src/dircolors.hin
+index 25dfc6e..831dbcb 100644
+--- a/src/dircolors.hin
++++ b/src/dircolors.hin
+@@ -7,7 +7,12 @@
+ # are permitted provided the copyright notice and this notice are preserved.
+ 
+ # The keywords COLOR, OPTIONS, and EIGHTBIT (honored by the
+-# slackware version of dircolors) are recognized but ignored.
++# slackware version of dircolors) are recognized but ignored by GNU dircolors.
++
++# This file goes in the /etc directory, and must be world readable.
++# You can copy this file to .dircolors in your $HOME directory to override
++# the system defaults.  This is also may be handled directly by the
++# /etc/profile.d/color_ls.sh and /etc/profile.d/color_ls.csh scripts.
+ 
+ # Below, there should be one TERM entry for each termtype that is colorizable
+ TERM Eterm
+@@ -96,8 +101,8 @@ EXEC 01;32
+ #.bat 01;32
+ # Or if you want to colorize scripts even if they do not have the
+ # executable bit actually set.
+-#.sh  01;32
+-#.csh 01;32
++.sh  01;32
++.csh 01;32
+ 
+  # archives or compressed (bright red)
+ .tar 01;31

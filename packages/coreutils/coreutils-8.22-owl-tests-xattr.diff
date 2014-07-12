@@ -1,0 +1,23 @@
+diff -puNr coreutils-8.22.orig/tests/misc/xattr.sh coreutils-8.22/tests/misc/xattr.sh
+--- coreutils-8.22.orig/tests/misc/xattr.sh	2013-12-04 14:48:30 +0000
++++ coreutils-8.22/tests/misc/xattr.sh	2014-06-13 14:42:57 +0000
+@@ -103,6 +103,12 @@ rename () does not preserve extended att
+ =================================================================
+ EOF
+ 
++# The following block is evil on packager's system since there is
++# no assurance that so-called "other partition" exists and/or
++# available.  Moreover, that "other partition" should support the
++# extended attributes, which is another complication.  So, we
++# skip the following tests...
++if /bin/false; then
+ # try to set user xattr on file on other partition
+ test_mv=1
+ touch "$b_other" || framework_failure_
+@@ -126,5 +132,6 @@ failed to set xattr of file $b_other
+ =================================================================
+ EOF
+ fi
++fi
+ 
+ Exit $fail

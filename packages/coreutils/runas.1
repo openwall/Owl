@@ -1,0 +1,13 @@
+.\" runas \- sleep some number of microseconds
+.TH runas 1 "2 May 2003" "ALT Linux Team" "ALT Linux"
+.SH NAME
+runas \- run an executable with arbitrary argv[0]
+.SH SYNOPSIS
+.B runas
+\fIargv[0]\fP \fI/path/to/executable\fP [\fIargv[n\-1]\fP]
+.SH DESCRIPTION
+.B runas
+simply runs the executable with the argv list provided.
+It allows you to specify an argv[0] other than the name of the executable.
+.SH OPTIONS
+All options are passed in the argv list to the executable being run.

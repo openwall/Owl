@@ -1,0 +1,13 @@
+--- coreutils-8.22.orig/src/chroot.c	2013-12-04 14:48:30 +0000
++++ coreutils-8.22/src/chroot.c	2014-06-27 20:49:13 +0000
+@@ -262,6 +262,10 @@ main (int argc, char **argv)
+   if (fail)
+     exit (EXIT_CANCELED);
+ 
++  /* These variables are useless inside chroot.  ALT#16024 */
++  unsetenv("TMP");
++  unsetenv("TMPDIR");
++
+   /* Execute the given command.  */
+   execvp (argv[0], argv);
+ 

@@ -1,0 +1,18 @@
+--- coreutils-8.22.orig/tests/misc/pwd-long.sh	2013-12-04 14:48:30 +0000
++++ coreutils-8.22/tests/misc/pwd-long.sh	2014-06-23 13:18:08 +0000
+@@ -20,6 +20,15 @@
+ . "${srcdir=.}/tests/init.sh"; path_prepend_ ./src
+ print_ver_ pwd
+ 
++# A quick hackish check whether we run in a chroot (it's hackish since
++# it works on ext2/3/4 fses only and there are options when it would
++# return a false-positive result, but this is enough to cover most of
++# the cases when Owl is built inside chroot.
++if [ "$(ls -di / | cut -f1 -d' ')" != '2' ]; then
++	echo "${0##*/}: looks like we are running inside a chroot, skipping" >&2
++	exit 77
++fi
++
+ require_readable_root_
+ require_perl_
+ 

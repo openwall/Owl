@@ -1,0 +1,17 @@
+--- coreutils-8.22.orig/gnulib-tests/gnulib.mk	2013-12-05 02:02:24 +1100
++++ coreutils-8.22/gnulib-tests/gnulib.mk	2014-06-14 06:21:01 +1000
+@@ -878,9 +878,11 @@ EXTRA_DIST += test-getloadavg.c signatur
+ 
+ ## begin gnulib module getlogin-tests
+ 
+-TESTS += test-getlogin
+-check_PROGRAMS += test-getlogin
+-EXTRA_DIST += test-getlogin.c signature.h macros.h
++# The test is badly designed and fails when somebody was logged in as
++# another user then used 'su - this_user' to switch accounts.
++#TESTS += test-getlogin
++#check_PROGRAMS += test-getlogin
++#EXTRA_DIST += test-getlogin.c signature.h macros.h
+ 
+ ## end   gnulib module getlogin-tests
+ 
