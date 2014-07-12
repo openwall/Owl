@@ -1,0 +1,22 @@
+diff --git a/lib/autoconf/general.m4 b/lib/autoconf/general.m4
+index adfae1d..51cee30 100644
+--- a/lib/autoconf/general.m4
++++ b/lib/autoconf/general.m4
+@@ -1266,6 +1266,8 @@ AS_UNSET(ac_configure_args1)
+ # WARNING: Use '\'' to represent an apostrophe within the trap.
+ # WARNING: Do not start the trap code with a newline, due to a FreeBSD 4.0 bug.
+ trap 'exit_status=$?
++  # Sanitize IFS.
++  IFS=" ""	$as_nl"
+   # Save into config.log some information that might help in debugging.
+   {
+     echo
+@@ -2178,7 +2180,7 @@ m4_define([AC_SUBST],
+   [m4_fatal([$0: `$1' is not a valid shell variable name])])]dnl
+ [AC_SUBST_TRACE([$1])]dnl
+ [m4_pattern_allow([^$1$])]dnl
+-[m4_ifvaln([$2], [$1=$2])[]]dnl
++[m4_ifvaln([$2], [[$1]=$2])[]]dnl
+ [m4_set_add([_AC_SUBST_VARS], [$1])])# AC_SUBST
+ 
+ 

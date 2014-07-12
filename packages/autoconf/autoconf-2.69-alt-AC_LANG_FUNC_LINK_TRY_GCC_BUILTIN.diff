@@ -1,0 +1,79 @@
+diff --git a/lib/autoconf/c.m4 b/lib/autoconf/c.m4
+index a4fa5d6..371566d 100644
+--- a/lib/autoconf/c.m4
++++ b/lib/autoconf/c.m4
+@@ -153,6 +153,9 @@ m4_define([AC_LANG_FUNC_LINK_TRY(C)],
+    For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+ #define $1 innocuous_$1
+ 
++/* Tell GNU C headers to include stubs.  */
++#define __need_GNU_STUBS_H
++
+ /* System header to define __stub macros and hopefully few prototypes,
+     which can conflict with char $1 (); below.
+     Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+@@ -182,6 +185,19 @@ choke me
+ ], [return $1 ();])])
+ 
+ 
++# AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN(C)(FUNCTION)
++# ----------------------------------------------
++# Test whether the given function is available as a gcc built-in function.
++#
++m4_define([AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN(C)],
++[AC_LANG_PROGRAM(
++[#undef $1
++/* Declare this function with the same prototype as __builtin_$1.
++  This removes a warning about conflicting types for built-in function $1 */
++__typeof__(__builtin_$1) $1;
++__typeof__(__builtin_$1) *f = $1;
++], [return f != $1;])])
++
+ # AC_LANG_BOOL_COMPILE_TRY(C)(PROLOGUE, EXPRESSION)
+ # -------------------------------------------------
+ # Return a program that is valid if EXPRESSION is nonzero.
+diff --git a/lib/autoconf/functions.m4 b/lib/autoconf/functions.m4
+index 6f21fd5..c682c08 100644
+--- a/lib/autoconf/functions.m4
++++ b/lib/autoconf/functions.m4
+@@ -46,7 +46,13 @@ m4_define([_AC_CHECK_FUNC_BODY],
+   AC_CACHE_CHECK([for $[]2], [$[]3],
+   [AC_LINK_IFELSE([AC_LANG_FUNC_LINK_TRY($[]2)],
+ 		  [AS_VAR_SET([$[]3], [yes])],
+-		  [AS_VAR_SET([$[]3], [no])])])
++		  [if test "$GCC" = yes; then
++		     AC_LINK_IFELSE([AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN($[]2)],
++				    [AS_VAR_SET([$[]3], [yes])],
++				    [AS_VAR_SET([$[]3], [no])])
++		   else
++		     AS_VAR_SET([$[]3], [no])
++		   fi])])
+   AS_LINENO_POP
+ ])# _AC_CHECK_FUNC_BODY
+ 
+diff --git a/lib/autoconf/lang.m4 b/lib/autoconf/lang.m4
+index 19852b8..eab0456 100644
+--- a/lib/autoconf/lang.m4
++++ b/lib/autoconf/lang.m4
+@@ -178,6 +178,7 @@ m4_define([AC_LANG_DEFINE],
+ [m4_copy([AC_LANG_PROGRAM($5)], [AC_LANG_PROGRAM($1)])]
+ [m4_copy([AC_LANG_CALL($5)], [AC_LANG_CALL($1)])]
+ [m4_copy([AC_LANG_FUNC_LINK_TRY($5)], [AC_LANG_FUNC_LINK_TRY($1)])]
++[m4_copy([AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN($5)], [AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN($1)])]
+ [m4_copy([AC_LANG_BOOL_COMPILE_TRY($5)], [AC_LANG_BOOL_COMPILE_TRY($1)])]
+ [m4_copy([AC_LANG_INT_SAVE($5)], [AC_LANG_INT_SAVE($1)])]
+ [m4_copy([_AC_LANG_IO_PROGRAM($5)], [_AC_LANG_IO_PROGRAM($1)])])])
+@@ -282,6 +283,13 @@ AC_DEFUN([AC_LANG_FUNC_LINK_TRY],
+ _AC_LANG_DISPATCH([$0], _AC_LANG, $@)])
+ 
+ 
++# AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN(FUNCTION, TYPE)
++# -------------------------------------------------
++AC_DEFUN([AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN],
++[m4_ifval([$1], [], [m4_warn([syntax], [$0: no function given])])dnl
++_AC_LANG_DISPATCH([$0], _AC_LANG, $@)])
++
++
+ # AC_LANG_BOOL_COMPILE_TRY(PROLOGUE, EXPRESSION)
+ # ----------------------------------------------
+ # Produce a program that compiles with success iff the boolean EXPRESSION

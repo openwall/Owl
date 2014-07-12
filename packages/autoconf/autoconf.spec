@@ -1,24 +1,27 @@
-# $Owl: Owl/packages/autoconf/autoconf.spec,v 1.15 2006/06/26 22:13:35 ldv Exp $
+# $Owl: Owl/packages/autoconf/autoconf.spec,v 1.16 2014/07/12 13:47:09 galaxy Exp $
 
 Summary: A GNU tool for automatically configuring source code.
 Name: autoconf
-Version: 2.59
-Release: owl3
+Version: 2.69
+Release: owl1
 License: GPL
 Group: Development/Tools
-Source: ftp://ftp.gnu.org/gnu/autoconf/autoconf-%version.tar.bz2
-Patch0: autoconf-2.59-owl-awk.diff
-Patch1: autoconf-2.59-owl-tmp.diff
-Patch2: autoconf-2.59-alt-warnings.diff
-Patch3: autoconf-2.59-alt-_AC_PATH_X_XMKMF.diff
-Patch4: autoconf-2.59-alt-AC_PROG_CXXCPP.diff
-Patch5: autoconf-2.59-alt-AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN.diff
-Patch6: autoconf-2.59-rh-_AC_PATH_X_DIRECT.diff
-PreReq: /sbin/install-info
-Requires: gawk, m4, mktemp, perl, textutils
+Source: ftp://ftp.gnu.org/gnu/autoconf/autoconf-%version.tar.xz
+Patch0: %name-2.69-owl-awk.diff
+Patch1: %name-2.69-owl-tmp.diff
+Patch2: %name-2.69-alt-_AC_PATH_X_XMKMF.diff
+Patch3: %name-2.59-alt-AC_PROG_CXXCPP.diff
+Patch4: %name-2.69-alt-AC_LANG_FUNC_LINK_TRY_GCC_BUILTIN.diff
+Patch5: %name-2.69-alt-sanitize.diff
+Patch6: %name-2.69-alt-tools.diff
+Patch7: %name-2.69-alt-tests.diff
+Patch8: %name-2.69-alt-up-doc-updates.diff
+Patch9: %name-2.69-owl-skip-test-209.diff
+Requires(pre): /sbin/install-info
+Requires: gawk, m4 >= 1.4.17, perl, textutils
 Requires: mktemp >= 1:1.3.1
 BuildArchitectures: noarch
-BuildRequires: sed, m4, texinfo
+BuildRequires: sed, m4 >= 1.4.17, texinfo
 BuildRoot: /override/%name-%version
 
 %description
@@ -31,13 +34,16 @@ portable and configurable software.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
+%patch0 -p1 -b .awk
+%patch1 -p1 -b .tmp
+%patch2 -p1 -b .AC_PATH
+%patch3 -p1 -b .AC_PROG
+%patch4 -p1 -b .AC_LANG
+%patch5 -p1 -b .sanitize
+%patch6 -p1 -b .tools
+%patch7 -p1 -b .tests
+%patch8 -p1 -b .doc-updates
+%patch9 -p1 -b .skip-test-209
 
 %build
 %configure
@@ -56,6 +62,9 @@ rm %buildroot%_infodir/standards*
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
 
+%check
+%__make check
+
 %post
 /sbin/install-info %_infodir/autoconf.info %_infodir/dir
 
@@ -65,13 +74,21 @@ if [ $1 -eq 0 ]; then
 fi
 
 %files
-%defattr(-,root,root)
-%_bindir/*
+%defattr(0644,root,root,0755)
+%attr(0755,root,root) %_bindir/*
 %_infodir/*.info*
 %_datadir/autoconf
 %_mandir/man1/*
 
 %changelog
+* Sat Jun 14 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.69-owl1
+- Updated to 2.69.
+- Regenerated the -owl-awk patch.
+- Regenerated and enhanced (by including install-sh) the -owl-tmp patch.
+- Dropped the accepted RH patch.
+- Updated ALT Linux patches from http://git.altlinux.org/gears/a/autoconf_2.60.git and introduced some more.
+- Introduced the testsuite in the %%check section.
+
 * Mon Jun 26 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.59-owl3
 - Imported autoconf macros patches from autoconf-2.59-alt5 package.
 

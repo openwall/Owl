@@ -1,0 +1,453 @@
+diff --git a/doc/autoconf.texi b/doc/autoconf.texi
+index 34ca213..03c466a 100644
+--- a/doc/autoconf.texi
++++ b/doc/autoconf.texi
+@@ -15,7 +15,7 @@
+ @c The ARG is an optional argument.  To be used for macro arguments in
+ @c their documentation (@defmac).
+ @macro ovar{varname}
+-@r{[}@var{\varname\}@r{]}@c
++@r{[}@var{\varname\}@r{]}
+ @end macro
+ 
+ @c @dvar(ARG, DEFAULT)
+@@ -23,7 +23,15 @@
+ @c The ARG is an optional argument, defaulting to DEFAULT.  To be used
+ @c for macro arguments in their documentation (@defmac).
+ @macro dvar{varname, default}
+-@r{[}@var{\varname\} = @samp{\default\}@r{]}@c
++@r{[}@var{\varname\} = @samp{\default\}@r{]}
++@end macro
++
++@c @dvarv(ARG, DEFAULT-VAR)
++@c ------------------------
++@c Same as @dvar{ARG, DEFAULT-VAR}, but with @var instead of @samp
++@c around DEFAULT-VAR.
++@macro dvarv{varname, default}
++@r{[}@var{\varname\} = @var{\default\}@r{]}@c
+ @end macro
+ 
+ @c Handling the indexes with Texinfo yields several different problems.
+@@ -1671,8 +1679,9 @@ been updated, or finally, simply in order to install the GNU Build
+ System in a fresh tree.
+ 
+ @command{autoreconf} runs @command{autoconf}, @command{autoheader},
+-@command{aclocal}, @command{automake}, @command{libtoolize}, and
+-@command{autopoint} (when appropriate) repeatedly to update the
++@command{aclocal}, @command{automake}, @command{libtoolize},
++@command{autopoint}, @command{intltoolize}, and @command{gtkdocize}
++(when appropriate) repeatedly to update the
+ GNU Build System in the specified directories and their
+ subdirectories (@pxref{Subdirectories}).  By default, it only remakes
+ those files that are older than their sources.  The environment variables
+@@ -3112,7 +3121,10 @@ versions of @command{make} do not set @code{$<} in explicit rules; they
+ expand it to an empty value.
+ 
+ Instead, Make command lines should always refer to source
+-files by prefixing them with @samp{$(srcdir)/}.  For example:
++files by prefixing them with @samp{$(srcdir)/}.  It's safer
++to quote the source directory name, in case it contains characters that
++are special to the shell.  Because @samp{$(srcdir)} is expanded by Make,
++single-quoting works and is safer than double-quoting.  For example:
+ 
+ @example
+ time.info: time.texinfo
+@@ -3151,12 +3163,12 @@ $(srcdir)/configure: configure.ac aclocal.m4
+         cd '$(srcdir)' && autoconf
+ 
+ # autoheader might not change config.h.in, so touch a stamp file.
+-$(srcdir)/config.h.in: stamp-h.in
++$(srcdir)/config.h.in: stamp-h.in ;
+ $(srcdir)/stamp-h.in: configure.ac aclocal.m4
+         cd '$(srcdir)' && autoheader
+         echo timestamp > '$(srcdir)/stamp-h.in'
+ 
+-config.h: stamp-h
++config.h: stamp-h ;
+ stamp-h: config.h.in config.status
+         ./config.status
+ 
+@@ -4425,7 +4437,7 @@ of the host machine, and therefore, they die when cross-compiling.
+ @caindex file_@var{file}
+ Check whether file @var{file} exists on the native system.  If it is
+ found, execute @var{action-if-found}, otherwise do
+-@var{action-if-not-found}, if given.  The result of this test is cached
++@var{action-if-not-found}, if given.  Cache the result of this test
+ in the @code{ac_cv_file_@var{file}} variable, with characters not
+ suitable for a variable name mapped to underscores.
+ @end defmac
+@@ -4434,11 +4446,12 @@ suitable for a variable name mapped to underscores.
+   @ovar{action-if-not-found})
+ @acindex{CHECK_FILES}
+ @caindex file_@var{file}
+-Executes @code{AC_CHECK_FILE} once for each file listed in @var{files}.
+-Additionally, defines @samp{HAVE_@var{file}} (@pxref{Standard Symbols})
+-for each file found.  The results of each test are cached in the
+-@code{ac_cv_file_@var{file}} variable, with characters not suitable for
+-a variable name mapped to underscores.
++For each file listed in @var{files}, execute @code{AC_CHECK_FILE}
++and perform either @var{action-if-found} or @var{action-if-not-found}.
++Like @code{AC_CHECK_FILE}, this defines @samp{HAVE_@var{file}}
++(@pxref{Standard Symbols}) for each file found and caches the results of
++each test in the @code{ac_cv_file_@var{file}} variable, with characters
++not suitable for a variable name mapped to underscores.
+ @end defmac
+ 
+ 
+@@ -4605,9 +4618,9 @@ solution involves code like the following.
+     (sizeof (x) == sizeof (long double) ? isnan_ld (x) \
+      : sizeof (x) == sizeof (double) ? isnan_d (x) \
+      : isnan_f (x))
+-static inline int isnan_f  (float       x) @{ return x != x; @}
+-static inline int isnan_d  (double      x) @{ return x != x; @}
+-static inline int isnan_ld (long double x) @{ return x != x; @}
++static int isnan_f  (float       x) @{ return x != x; @}
++static int isnan_d  (double      x) @{ return x != x; @}
++static int isnan_ld (long double x) @{ return x != x; @}
+ #endif
+ 
+ #ifndef isinf
+@@ -4615,18 +4628,16 @@ static inline int isnan_ld (long double x) @{ return x != x; @}
+     (sizeof (x) == sizeof (long double) ? isinf_ld (x) \
+      : sizeof (x) == sizeof (double) ? isinf_d (x) \
+      : isinf_f (x))
+-static inline int isinf_f  (float       x)
++static int isinf_f  (float       x)
+ @{ return !isnan (x) && isnan (x - x); @}
+-static inline int isinf_d  (double      x)
++static int isinf_d  (double      x)
+ @{ return !isnan (x) && isnan (x - x); @}
+-static inline int isinf_ld (long double x)
++static int isinf_ld (long double x)
+ @{ return !isnan (x) && isnan (x - x); @}
+ #endif
+ @end smallexample
+ 
+-Use @code{AC_C_INLINE} (@pxref{C Compiler}) so that this code works on
+-compilers that lack the @code{inline} keyword.  Some optimizing
+-compilers mishandle these definitions, but systems with that bug
++Some optimizing compilers mishandle these definitions, but systems with that bug
+ typically have many other floating point corner-case compliance problems
+ anyway, so it's probably not worth worrying about.
+ 
+@@ -5071,9 +5082,8 @@ If the system has the @code{getloadavg} function, define
+ @code{HAVE_GETLOADAVG}, and set @code{GETLOADAVG_LIBS} to any libraries
+ necessary to get that function.  Also add @code{GETLOADAVG_LIBS} to
+ @code{LIBS}.  Otherwise, require an @code{AC_LIBOBJ} replacement for
+-@samp{getloadavg} with source code in @file{@var{dir}/getloadavg.c}, and
+-possibly define several other C preprocessor macros and output
+-variables:
++@samp{getloadavg} and possibly define several other C preprocessor
++macros and output variables:
+ 
+ @enumerate
+ @item
+@@ -8013,10 +8023,10 @@ variables, respectively.  The computed linker flags are cached in
+ @code{ac_cv_f77_libs} or @code{ac_cv_fc_libs}, respectively.
+ @end defmac
+ 
+-@defmac AC_F77_DUMMY_MAIN (@ovar{action-if-found}, @dvar{action-if-not-found, @
+-  AC_MSG_FAILURE})
+-@defmacx AC_FC_DUMMY_MAIN (@ovar{action-if-found}, @dvar{action-if-not-found, @
+-  AC_MSG_FAILURE})
++@defmac AC_F77_DUMMY_MAIN (@ovar{action-if-found}, @
++  @dvar{action-if-not-found, AC_MSG_FAILURE})
++@defmacx AC_FC_DUMMY_MAIN (@ovar{action-if-found}, @
++  @dvar{action-if-not-found, AC_MSG_FAILURE})
+ @acindex{F77_DUMMY_MAIN}
+ @cvindex F77_DUMMY_MAIN
+ @acindex{FC_DUMMY_MAIN}
+@@ -8267,8 +8277,8 @@ results in @code{ac_cv_fc_srcext_@var{ext}} and
+ @code{ac_cv_fc_pp_srcext_@var{ext}} variables, respectively.
+ @end defmac
+ 
+-@defmac AC_FC_PP_DEFINE (@ovar{action-if-success}, @dvar{action-if-failure, @
+-  AC_MSG_FAILURE})
++@defmac AC_FC_PP_DEFINE (@ovar{action-if-success}, @
++  @dvar{action-if-failure, AC_MSG_FAILURE})
+ @acindex{FC_PP_DEFINE}
+ @caindex fc_pp_define
+ 
+@@ -8286,8 +8296,8 @@ The result of this test is cached in the @code{ac_cv_fc_pp_define}
+ variable.
+ @end defmac
+ 
+-@defmac AC_FC_FREEFORM (@ovar{action-if-success}, @dvar{action-if-failure, @
+-  AC_MSG_FAILURE})
++@defmac AC_FC_FREEFORM (@ovar{action-if-success}, @
++  @dvar{action-if-failure, AC_MSG_FAILURE})
+ @acindex{FC_FREEFORM}
+ @caindex fc_freeform
+ 
+@@ -8313,8 +8323,8 @@ The result of this test, or @samp{none} or @samp{unknown}, is cached in
+ the @code{ac_cv_fc_freeform} variable.
+ @end defmac
+ 
+-@defmac AC_FC_FIXEDFORM (@ovar{action-if-success}, @dvar{action-if-failure, @
+-  AC_MSG_FAILURE})
++@defmac AC_FC_FIXEDFORM (@ovar{action-if-success}, @
++  @dvar{action-if-failure, AC_MSG_FAILURE})
+ @acindex{FC_FIXEDFORM}
+ @caindex fc_fixedform
+ 
+@@ -9154,7 +9164,7 @@ on a system with @command{gcc} installed, results in:
+ @example
+ @c If you change this example, adjust tests/compile.at:AC_LANG_SOURCE example.
+ @dots{}
+-# 1 "conftest.c"
++@asis{#} 1 "conftest.c"
+ 
+ #define PACKAGE_NAME "Hello"
+ #define PACKAGE_TARNAME "hello"
+@@ -9199,7 +9209,7 @@ on a system with @command{gcc} installed, results in:
+ @example
+ @c If you change this example, adjust tests/compile.at:AC_LANG_PROGRAM example.
+ @dots{}
+-# 1 "conftest.c"
++@asis{#} 1 "conftest.c"
+ 
+ #define PACKAGE_NAME "Hello"
+ #define PACKAGE_TARNAME "hello"
+@@ -9867,7 +9877,8 @@ output file may contain @code{|#_!!_#|}.)
+ If @var{value} is given, in addition assign it to @var{variable}.
+ 
+ The string @var{variable} is passed to @code{m4_pattern_allow}
+-(@pxref{Forbidden Patterns}).
++(@pxref{Forbidden Patterns}).  @var{variable} is not further expanded,
++even if there is another macro by the same name.
+ @end defmac
+ 
+ @defmac AC_SUBST_FILE (@var{variable})
+@@ -11996,6 +12007,7 @@ stack, and issues an error if there is not a matching pop for every
+ push.
+ @end defmac
+ 
++@anchor{m4_divert_text}
+ @defmac m4_divert_text (@var{diversion}, @ovar{content})
+ @msindex{divert_text}
+ Output @var{content} and a newline into @var{diversion}, without
+@@ -12435,7 +12447,7 @@ list_add_x([1], list)
+ @end example
+ @end defmac
+ 
+-@defmac m4_map_args_pair (@var{macro}, @dvar{macro-end, macro}, @
++@defmac m4_map_args_pair (@var{macro}, @dvarv{macro-end, macro}, @
+   @var{arg}@dots{})
+ @msindex{map_args_pair}
+ For every pair of arguments @var{arg}, invoke @var{macro} with two
+@@ -13015,7 +13027,7 @@ quadrigraphs can be used to work around this.
+ @end defmac
+ 
+ @defmac m4_text_wrap (@var{string}, @ovar{prefix}, @
+-  @dvar{prefix1, @var{prefix}}, @dvar{width, 79})
++  @dvarv{prefix1, prefix}, @dvar{width, 79})
+ @msindex{text_wrap}
+ Break @var{string} into a series of whitespace-separated words, then
+ output those words separated by spaces, and wrapping lines any time the
+@@ -13794,9 +13806,9 @@ undefined if expansion of an indirect variable does not result in a
+ literal variable name.
+ 
+ @defmac AS_LITERAL_IF (@var{expression}, @ovar{if-literal}, @ovar{if-not}, @
+-  @dvar{if-simple-ref, @var{if-not}})
++  @dvarv{if-simple-ref, if-not})
+ @defmacx AS_LITERAL_WORD_IF (@var{expression}, @ovar{if-literal}, @
+-  @ovar{if-not}, @dvar{if-simple-ref, @var{if-not}})
++  @ovar{if-not}, @dvarv{if-simple-ref, if-not})
+ @asindex{LITERAL_IF}
+ @asindex{LITERAL_WORD_IF}
+ If the expansion of @var{expression} is definitely a shell literal,
+@@ -17874,7 +17886,7 @@ for an @command{echo} that does not interpret @samp{\} or leading
+ @samp{-}. With Solaris @command{ksh}, it is possible to use @code{print
+ -r --} for this role instead.
+ 
+-@xref{echo, , Limitations of Shell Builtins} for a discussion of
++@xref{echo, , Limitations of Shell Builtins}, for a discussion of
+ portable alternatives to both @command{printf} and @command{echo}.
+ 
+ 
+@@ -18345,6 +18357,18 @@ $ @kbd{bash-2.05b -c 'trap ":; /bin/true" 0; exit 2'; echo $?}
+ 2
+ @end example
+ 
++Be aware that a trap can be called from any number of places in your
++script, and therefore the trap handler should not make assumptions about
++shell state.  For some examples, if your script temporarily modifies
++@env{IFS}, then the trap should include an initialization back to its
++typical value of space-tab-newline (autoconf does this for generated
++@file{configure} files).  Likewise, if your script changes the current
++working directory at some point after the trap is installed, then your
++trap cannot assume which directory it is in, and should begin by
++changing directories to an absolute path if that is important to the
++cleanup efforts (autotest does this for generated @file{testsuite}
++files).
++
+ @item @command{true}
+ @c -----------------
+ @prindex @command{true}
+@@ -22069,6 +22093,14 @@ actually just the value of the shell variable named
+ @var{package} changed into @samp{_}.  You may use that variable instead,
+ if you wish.
+ 
++Note that @var{action-if-not-given} is not expanded until the point that
++@code{AC_ARG_WITH} was expanded.  If you need the value of
++@code{with_@var{package}} set to a default value by the time argument
++parsing is completed, use @code{m4_divert_text} to the @code{DEFAULTS}
++diversion (@pxref{m4_divert_text}) (if done as an argument to
++@code{AC_ARG_WITH}, also provide non-diverted text to avoid a shell
++syntax error).
++
+ The argument @var{help-string} is a description of the option that
+ looks like this:
+ @example
+@@ -22095,7 +22127,7 @@ AC_ARG_WITH([readline],
+   [AS_HELP_STRING([--with-readline],
+     [support fancy command line editing @@<:@@default=check@@:>@@])],
+   [],
+-  [with_readline=check])
++  [: m4_divert_text([DEFAULTS], [with_readline=check])])
+ 
+ LIBREADLINE=
+ AS_IF([test "x$with_readline" != xno],
+@@ -22222,6 +22254,14 @@ actually just the value of the shell variable named
+ if you wish.  The @var{help-string} argument is like that of
+ @code{AC_ARG_WITH} (@pxref{External Software}).
+ 
++Note that @var{action-if-not-given} is not expanded until the point that
++@code{AC_ARG_ENABLE} was expanded.  If you need the value of
++@code{enable_@var{feature}} set to a default value by the time argument
++parsing is completed, use @code{m4_divert_text} to the @code{DEFAULTS}
++diversion (@pxref{m4_divert_text}) (if done as an argument to
++@code{AC_ARG_ENABLE}, also provide non-diverted text to avoid a shell
++syntax error).
++
+ You should format your @var{help-string} with the macro
+ @code{AS_HELP_STRING} (@pxref{Pretty Help Strings}).
+ 
+@@ -25433,7 +25473,8 @@ For putting Autotest into movement, you need some configuration and
+ makefile machinery.  We recommend, at least if your package uses deep or
+ shallow hierarchies, that you use @file{tests/} as the name of the
+ directory holding all your tests and their makefile.  Here is a
+-check list of things to do.
++check list of things to do, followed by an example, taking into
++consideration whether you are also using Automake.
+ 
+ @itemize @minus
+ 
+@@ -25454,13 +25495,12 @@ we suggest that you also define @code{AT_PACKAGE_NAME},
+ @code{AT_PACKAGE_URL}.
+ @xref{Initializing configure}, for a description of these variables.
+ Be sure to distribute @file{package.m4} and to put it into the source
+-hierarchy: the test suite ought to be shipped!  See below for an example
+-@file{Makefile} excerpt.
++hierarchy: the test suite ought to be shipped!  See below for an example.
+ 
+ @item
+-Invoke @code{AC_CONFIG_TESTDIR}.
++Invoke @code{AC_CONFIG_TESTDIR} in your @file{configure.ac}.
+ 
+-@defmac AC_CONFIG_TESTDIR (@var{directory}, @dvar{test-path, directory})
++@defmac AC_CONFIG_TESTDIR (@var{directory}, @dvarv{test-path, directory})
+ @acindex{CONFIG_TESTDIR}
+ An Autotest test suite is to be configured in @var{directory}.  This
+ macro causes @file{@var{directory}/atconfig} to be created by
+@@ -25474,14 +25514,28 @@ Still within @file{configure.ac}, as appropriate, ensure that some
+ @file{tests/atlocal}.
+ 
+ @item
++Also within your @file{configure.ac}, arrange for the @code{AUTOM4TE}
++variable to be set.
++
++@item
+ The appropriate @file{Makefile} should be modified so the validation in
+-your package is triggered by @samp{make check}.  An example is provided
+-below.
++your package is triggered by @samp{make check}.
+ @end itemize
+ 
+-With Automake, here is a minimal example for inclusion in
+-@file{tests/Makefile.am}, in order to link @samp{make check} with a
+-validation suite.
++The following example demonstrates the above checklist, first by
++assuming that you are using Automake (see below for tweaks to make to
++get the same results without Automake).  Begin by adding the following
++lines to your @file{configure.ac}:
++
++@example
++# Initialize the test suite.
++AC_CONFIG_TESTDIR([tests])
++AC_CONFIG_FILES([tests/Makefile tests/atlocal])
++AM_MISSING_PROG([AUTOM4TE], [autom4te])
++@end example
++
++Next, add the following lines to your @file{tests/Makefile.am}, in order
++to link @samp{make check} with a validation suite.
+ 
+ @example
+ # The `:;' works around a Bash 3.2 bug when the output is not writable.
+@@ -25516,7 +25570,6 @@ clean-local:
+         test ! -f '$(TESTSUITE)' || \
+          $(SHELL) '$(TESTSUITE)' --clean
+ 
+-AUTOM4TE = $(SHELL) $(srcdir)/build-aux/missing --run autom4te
+ AUTOTEST = $(AUTOM4TE) --language=autotest
+ $(TESTSUITE): $(srcdir)/testsuite.at $(srcdir)/package.m4
+         $(AUTOTEST) -I '$(srcdir)' -o $@@.tmp $@@.at
+@@ -25525,16 +25578,27 @@ $(TESTSUITE): $(srcdir)/testsuite.at $(srcdir)/package.m4
+ 
+ Note that the built testsuite is distributed; this is necessary because
+ users might not have Autoconf installed, and thus would not be able to
+-rebuild it.  Likewise, the use of @file{missing} provides the user with
++rebuild it.  Likewise, the use of Automake's @code{AM_MISSING_PROG} will
++arrange for the definition of @code{$AUTOM4TE} within the Makefile to
++provide the user with
+ a nicer error message if they modify a source file to the testsuite, and
+ accidentally trigger the rebuild rules.
+ 
+ You might want to list explicitly the dependencies, i.e., the list of
+ the files @file{testsuite.at} includes.
+ 
+-If you don't use Automake, you should include the above example in
+-@file{tests/@/Makefile.in}, along with additional lines inspired from
+-the following:
++If you don't use Automake, you should make the following tweaks.  In
++your @file{configure.ac}, replace the @code{AM_MISSING_PROG} line above
++with @code{AC_PATH_PROG([AUTOM4TE], [autom4te], [false])}.  You are
++welcome to also try using the @command{missing} script from the Automake
++project instead of @command{false}, to try to get a nicer error message
++when the user modifies prerequisites but did not have Autoconf
++installed, but at that point you may be better off using Automake.
++Then, take the code suggested above for @file{tests/@/Makefile.am} and
++place it in your @file{tests/@/Makefile.in} instead.  Add code to your
++@file{tests/@/Makefile.in} to ensure that @code{$(EXTRA_DIST)} files are
++distributed, as well as adding the following additional lines to prepare
++the set of needed Makefile variables:
+ 
+ @example
+ subdir = tests
+@@ -25544,6 +25608,7 @@ PACKAGE_VERSION = @@PACKAGE_VERSION@@
+ PACKAGE_STRING = @@PACKAGE_STRING@@
+ PACKAGE_BUGREPORT = @@PACKAGE_BUGREPORT@@
+ PACKAGE_URL = @@PACKAGE_URL@@
++AUTOM4TE = @@AUTOM4TE@@
+ 
+ atconfig: $(top_builddir)/config.status
+         cd $(top_builddir) && \
+@@ -25554,14 +25619,10 @@ atlocal: $(srcdir)/atlocal.in $(top_builddir)/config.status
+            $(SHELL) ./config.status $(subdir)/$@@
+ @end example
+ 
+-@noindent
+-and manage to have @code{$(EXTRA_DIST)} distributed.  You will also want
+-to distribute the file @file{build-aux/@/missing} from the Automake
+-project; a copy of this file resides in the Autoconf source tree.
+-
+-With all this in place, and if you have not initialized @samp{TESTSUITEFLAGS}
+-within your makefile, you can fine-tune test suite execution with this
+-variable, for example:
++Using the above example (with or without Automake), and assuming you
++were careful to not initialize @samp{TESTSUITEFLAGS} within your
++makefile, you can now fine-tune test suite execution at runtime by
++altering this variable, for example:
+ 
+ @example
+ make check TESTSUITEFLAGS='-v -d -x 75 -k AC_PROG_CC CFLAGS=-g'

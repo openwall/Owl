@@ -1,0 +1,231 @@
+diff --git a/tests/base.at b/tests/base.at
+index 7979413..d8550df 100644
+--- a/tests/base.at
++++ b/tests/base.at
+@@ -708,3 +708,62 @@ libdir=${exec_prefix}/lib
+ ]])
+ 
+ AT_CLEANUP
++
++## ---------- ##
++## AC_SUBST.  ##
++## ---------- ##
++
++AT_SETUP([AC_SUBST])
++AT_KEYWORDS([AS@&t@_IDENTIFIER_IF])
++
++# Check that a valid variable name is used.
++AT_DATA([configure.ac],
++[[AC_INIT([test], [1])
++AC_SUBST([1], [bar])
++AC_OUTPUT
++]])
++AT_CHECK_AUTOCONF([], [1], [], [stderr])
++AT_CHECK([grep 'not a valid shell variable' stderr], [], [ignore])
++
++AT_DATA([configure.ac],
++[[AC_INIT([test], [1])
++AC_SUBST([], [bar])
++AC_OUTPUT
++]])
++AT_CHECK_AUTOCONF([], [1], [], [stderr])
++AT_CHECK([grep 'not a valid shell variable' stderr], [], [ignore])
++
++AT_DATA([configure.ac],
++[[AC_INIT([test], [1])
++AC_SUBST([*], [bar])
++AC_OUTPUT
++]])
++AT_CHECK_AUTOCONF([], [1], [], [stderr])
++AT_CHECK([grep 'not a valid shell variable' stderr], [], [ignore])
++
++# Make sure AC_SUBST handles variables as expected.
++AT_DATA([file.in],
++[[@FOO@
++@BAR@
++FOO
++]])
++AT_DATA([configure.ac],
++[[AC_INIT([test], [0])
++m4_define([FOO], [baz])
++AC_SUBST([FOO], [bar])
++BAR=one
++AC_SUBST([B@&t@AR])
++BAR=two
++AC_CONFIG_FILES([file])
++AC_OUTPUT
++]])
++
++AT_CHECK_AUTOCONF([], [], [], [stderr])
++AT_CHECK_CONFIGURE
++AT_CHECK([cat file], [],
++[[bar
++two
++FOO
++]])
++
++AT_CLEANUP
+diff --git a/tests/semantics.at b/tests/semantics.at
+index de54cf8..2d6c8d5 100644
+--- a/tests/semantics.at
++++ b/tests/semantics.at
+@@ -164,6 +164,34 @@ AT_CHECK_MACRO([AC_CHECK_FUNCS],
+ ])])
+ 
+ 
++# AC_CHECK_FUNCS after AC_LANG_WERROR
++# -----------------------------------
++# Check that it performs the correct actions:
++# Must define HAVE_PRINTF, but not HAVE_AUTOCONF_FTNIRP
++AT_CHECK_MACRO([AC_CHECK_FUNCS after AC_LANG_WERROR],
++[AC_LANG_WERROR
++AC_CHECK_FUNCS(printf autoconf_ftnirp)],
++[AT_CHECK_DEFINES(
++[/* #undef HAVE_AUTOCONF_FTNIRP */
++#define HAVE_PRINTF 1
++])])
++
++
++# AC_CHECK_FUNCS with gcc -Werror
++# -------------------------------
++# Check that it performs the correct actions:
++# Must define HAVE_PRINTF, but not HAVE_AUTOCONF_FTNIRP
++AT_CHECK_MACRO([AC_CHECK_FUNCS with gcc -Werror],
++[AC_PROG_CC
++test "$GCC" = yes || exit 77
++CFLAGS="${CFLAGS-} -Werror"; export CFLAGS
++AC_CHECK_FUNCS(printf autoconf_ftnirp)],
++[AT_CHECK_DEFINES(
++[/* #undef HAVE_AUTOCONF_FTNIRP */
++#define HAVE_PRINTF 1
++])])
++
++
+ # AC_REPLACE_FUNCS
+ # ----------------
+ # Check that it performs the correct actions: autoconf_ftnirp.c must
+diff --git a/tests/tools.at b/tests/tools.at
+index 31d4aad..2b44f55 100644
+--- a/tests/tools.at
++++ b/tests/tools.at
+@@ -1190,7 +1190,7 @@ AT_CHECK([autoconf])
+ 
+ # If this test fails due to missing entries in lib/autom4te.in, then
+ # comparing the old and new requests is a good place to start debugging:
+-cp autom4te.cache/requests old-requests
++sort autom4te.cache/requests >old-requests
+ echo newer >newer
+ $sleep # if `configure' is regenerated, we want it to be strictly newer,
+        # to catch the error consistently.
+@@ -1198,7 +1198,7 @@ AT_CHECK([aclocal], [], [], [ignore])
+ AT_CHECK([automake --no-force --add-missing], [], [], [ignore])
+ AT_CHECK([autoconf])
+ AT_CHECK([test "`find configure -newer newer`" = "" ||
+-	  { diff old-requests autom4te.cache/requests; exit 1; }],
++	  { sort autom4te.cache/requests | diff old-requests -; exit 1; }],
+ 	 [], [], [],
+ 	 [extract_version=['s/^[^0-9]*\([0-9][^ ]*\).*/\1/;q']
+ 	  automake_version=`automake --version | sed "$extract_version"`
+diff --git a/tests/torture.at b/tests/torture.at
+index 9923305..771c1f1 100644
+--- a/tests/torture.at
++++ b/tests/torture.at
+@@ -1444,10 +1444,7 @@ export CONFIG_SITE
+ # The contents of `inner/', and `inner/innermost/'.
+ AS_MKDIR_P([inner/innermost])
+ 
+-# We have to use configure.in, not configure.ac, if we still want to
+-# be compatible with Automake 1.4: aclocal (run by autoreconf) would
+-# die because it can't find configure.in.
+-AT_DATA([inner/configure.in],
++AT_DATA([inner/configure.ac],
+ [[AC_INIT(GNU Inner, 1.0)
+ AC_CONFIG_SRCDIR([innermost/config.in])
+ AC_ARG_VAR([INNER], [an inner variable])
+@@ -1470,7 +1467,7 @@ prefix=@prefix@
+ AT_DATA([install-sh], [])
+ 
+ # nonexistent is allowed not to exist.
+-AT_DATA([configure.in],
++AT_DATA([configure.ac],
+ [[AC_INIT(GNU Outer, 1.0)
+ AC_ARG_VAR([OUTER], [an outer variable])
+ if false; then
+@@ -1544,12 +1541,12 @@ AT_CHECK([cd builddir && ../configure $configure_options --config-cache],
+ AT_CHECK([grep 'loading .*\.\./config.cache' stdout], [], [ignore])
+ 
+ # Make sure we can run autoreconf on a subdirectory
+-rm -f configure configure.in
++rm -f configure configure.ac
+ AT_CHECK([autoreconf inner], [], [], [ignore])
+ 
+ # Make sure we can pass a configure.ac name
+-AT_CHECK([cd inner && autoreconf configure.in], [], [], [ignore])
+-AT_CHECK([autoreconf inner/configure.in], [], [], [ignore])
++AT_CHECK([cd inner && autoreconf configure.ac], [], [], [ignore])
++AT_CHECK([autoreconf inner/configure.ac], [], [], [ignore])
+ 
+ AT_CLEANUP
+ 
+@@ -1567,7 +1564,7 @@ AT_CHECK([aclocal --version || exit 77], [], [ignore], [ignore])
+ 
+ # The contents of `.'
+ AT_DATA([install-sh], [])
+-AT_DATA([configure.in],
++AT_DATA([configure.ac],
+ [[AC_INIT(GNU Outer, 1.0)
+ AC_ARG_VAR([OUTER], [an outer variable])
+ AC_CONFIG_SUBDIRS([
+@@ -1581,14 +1578,14 @@ AC_OUTPUT
+ AS_MKDIR_P([inner/innermost])
+ AS_MKDIR_P([inner2])
+ 
+-AT_DATA([inner/configure.in],
++AT_DATA([inner/configure.ac],
+ [[AC_INIT(GNU Inner, 1.0)
+ AC_ARG_VAR([INNER], [an inner variable])
+ AC_CONFIG_SUBDIRS(innermost)
+ AC_OUTPUT
+ ]])
+ 
+-AT_DATA([inner/innermost/configure.in],
++AT_DATA([inner/innermost/configure.ac],
+ [[AC_INIT(GNU Innermost, 1.0)
+ AC_ARG_VAR([INNERMOST], [an innermost variable])
+ AC_CONFIG_HEADERS(config.h:config.hin)
+@@ -1599,7 +1596,7 @@ fi
+ AC_OUTPUT
+ ]])
+ 
+-AT_DATA([inner2/configure.in],
++AT_DATA([inner2/configure.ac],
+ [[AC_INIT(GNU Inner 2, 1.0)
+ AC_ARG_VAR([INNER2], [an inner2 variable])
+ AC_OUTPUT
+@@ -1702,7 +1699,7 @@ AT_KEYWORDS([autoreconf])
+ AT_CHECK([aclocal --version || exit 77], [], [ignore], [ignore])
+ 
+ AT_DATA([install-sh], [])
+-AT_DATA([configure.in],
++AT_DATA([configure.ac],
+ [[AC_INIT(GNU Outer, 1.0)
+ AC_CONFIG_SUBDIRS([inner])
+ AC_OUTPUT
+@@ -1741,7 +1738,7 @@ AT_SETUP([Non-literal AC_CONFIG_SUBDIRS])
+ AT_KEYWORDS([autoreconf])
+ 
+ AT_DATA([install-sh], [])
+-AT_DATA([configure.in],
++AT_DATA([configure.ac],
+ [[AC_INIT(GNU Outer, 1.0)
+ 
+ my_subdirs=
+@@ -1816,7 +1813,7 @@ AT_KEYWORDS([autoreconf])
+ AT_CHECK([automake --version || exit 77], [], [stdout], [ignore])
+ AT_CHECK([[grep '[1-9]\.[0-9]' stdout || exit 77]], [], [ignore])
+ 
+-AT_DATA([configure.in],
++AT_DATA([configure.ac],
+ [[AC_INIT(GNU foo, 1.0)
+ AM_INIT_AUTOMAKE
+ AC_CONFIG_FILES([HeeHee])

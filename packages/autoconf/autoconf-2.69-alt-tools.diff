@@ -1,0 +1,192 @@
+diff --git a/bin/autoreconf.in b/bin/autoreconf.in
+index acf25d4..6bb8114 100644
+--- a/bin/autoreconf.in
++++ b/bin/autoreconf.in
+@@ -55,9 +55,9 @@ use strict;
+ $help = "Usage: $0 [OPTION]... [DIRECTORY]...
+ 
+ Run `autoconf' (and `autoheader', `aclocal', `automake', `autopoint'
+-(formerly `gettextize'), and `libtoolize' where appropriate)
+-repeatedly to remake the GNU Build System files in specified
+-DIRECTORIES and their subdirectories (defaulting to `.').
++(formerly `gettextize'), `libtoolize', `intltoolize', and `gtkdocize'
++where appropriate) repeatedly to remake the GNU Build System files in
++specified DIRECTORIES and their subdirectories (defaulting to `.').
+ 
+ By default, it only remakes those files that are older than their
+ sources.  If you install new versions of the GNU Build System,
+@@ -113,6 +113,8 @@ my $automake   = $ENV{'AUTOMAKE'}   || 'automake';
+ my $aclocal    = $ENV{'ACLOCAL'}    || 'aclocal';
+ my $libtoolize = $ENV{'LIBTOOLIZE'} || 'libtoolize';
+ my $autopoint  = $ENV{'AUTOPOINT'}  || 'autopoint';
++my $intltoolize = $ENV{'INTLTOOLIZE'} || 'intltoolize';
++my $gtkdocize  = $ENV{'GTKDOCIZE'}  || 'gtkdocize';
+ my $make       = $ENV{'MAKE'}       || 'make';
+ 
+ # --install -- as --add-missing in other tools.
+@@ -127,6 +129,8 @@ my $aclocal_supports_warnings = 0;
+ my $automake_supports_force_missing = 0;
+ # Does automake support -Wfoo?
+ my $automake_supports_warnings = 0;
++# Does libtoolize support --install?
++my $libtoolize_supports_install = 0;
+ 
+ my @prepend_include;
+ my @include;
+@@ -178,6 +182,8 @@ sub parse_args ()
+       for my $prog ($autoconf, $autoheader,
+ 		    $automake, $aclocal,
+ 		    $autopoint,
++		    $intltoolize,
++		    $gtkdocize,
+ 		    $libtoolize)
+ 	{
+ 	  xsystem ("$prog --version | sed 1q >&2");
+@@ -187,10 +193,12 @@ sub parse_args ()
+ 
+   my $aclocal_help = `$aclocal --help 2>/dev/null`;
+   my $automake_help = `$automake --help 2>/dev/null`;
++  my $libtoolize_help = `$libtoolize --help 2>/dev/null`;
+   $aclocal_supports_force = $aclocal_help =~ /--force/;
+   $aclocal_supports_warnings = $aclocal_help =~ /--warnings/;
+   $automake_supports_force_missing = $automake_help =~ /--force-missing/;
+   $automake_supports_warnings = $automake_help =~ /--warnings/;
++  $libtoolize_supports_install = $libtoolize_help =~ /--install/;
+ 
+   # Dispatch autoreconf's option to the tools.
+   # --include;
+@@ -206,6 +214,8 @@ sub parse_args ()
+       $automake   .= ' --add-missing';
+       $automake   .= ' --copy' unless $symlink;
+       $libtoolize .= ' --copy' unless $symlink;
++      $intltoolize .= ' --copy' unless $symlink;
++      $gtkdocize .= ' --copy' unless $symlink;
+     }
+   # --force;
+   if ($force)
+@@ -218,6 +228,9 @@ sub parse_args ()
+ 	if $automake_supports_force_missing;
+       $autopoint  .= ' --force';
+       $libtoolize .= ' --force';
++      $libtoolize .= ' --install'
++	if $libtoolize_supports_install;
++      $intltoolize .= ' --force';
+     }
+   else
+     {
+@@ -241,6 +254,7 @@ sub parse_args ()
+       $autoconf   .= ' --debug';
+       $autoheader .= ' --debug';
+       $libtoolize .= ' --debug';
++      $intltoolize .= ' --debug';
+     }
+   # --warnings;
+   if (@warning)
+@@ -459,6 +473,8 @@ sub autoreconf_current_directory ()
+   my $uses_libltdl;
+   my $uses_autoheader;
+   my $uses_automake;
++  my $uses_intltool;
++  my $uses_gtkdoc;
+   my @subdir;
+   verb "$configure_ac: tracing";
+   my $traces = new Autom4te::XFile
+@@ -476,6 +492,8 @@ sub autoreconf_current_directory ()
+ 	     'LT_CONFIG_LTDL_DIR',
+ 	     'AM_GNU_GETTEXT',
+ 	     'AM_INIT_AUTOMAKE',
++	     'IT_PROG_INTLTOOL',
++	     'GTK_DOC_CHECK',
+ 	    )
+      . ' |');
+   while ($_ = $traces->getline)
+@@ -490,6 +508,8 @@ sub autoreconf_current_directory ()
+       $uses_libltdl = 1             if $macro eq "LT_CONFIG_LTDL_DIR";
+       $uses_autoheader = 1          if $macro eq "AC_CONFIG_HEADERS";
+       $uses_automake = 1            if $macro eq "AM_INIT_AUTOMAKE";
++      $uses_intltool = 1            if $macro eq "IT_PROG_INTLTOOL";
++      $uses_gtkdoc = 1              if $macro eq "GTK_DOC_CHECK";
+       push @subdir, split (' ', $args[0])
+                                     if $macro eq "AC_CONFIG_SUBDIRS" && $recursive;
+     }
+@@ -555,13 +575,49 @@ sub autoreconf_current_directory ()
+       verb "$configure_ac: not running libtoolize: --install not given";
+     }
+ 
++  # -------------------- #
++  # Running intltoolize. #
++  # -------------------- #
++
++  if (!$uses_intltool)
++    {
++      verb "$configure_ac: not using Intltool";
++    }
++  elsif ($install)
++    {
++      xsystem_hint ("intltoolize is needed because this package uses Intltool", $intltoolize);
++      $rerun_aclocal = 1;
++    }
++  else
++    {
++      verb "$configure_ac: not running intltoolize: --install not given";
++    }
++
++
++  # ------------------ #
++  # Running gtkdocize. #
++  # ------------------ #
++
++  if (!$uses_gtkdoc)
++    {
++      verb "$configure_ac: not using gtk-doc";
++    }
++  elsif ($install)
++    {
++      xsystem_hint ("gtkdocize is needed because this package uses gtk-doc", $gtkdocize);
++      $rerun_aclocal = 1;
++    }
++  else
++    {
++      verb "$configure_ac: not running gtkdocize: --install not given";
++    }
+ 
+ 
+   # ------------------- #
+   # Rerunning aclocal.  #
+   # ------------------- #
+ 
+-  # If we re-installed Libtool or Gettext, the macros might have changed.
++  # If we re-installed Libtool, Gettext or Intltool, the macros might have changed.
+   # Automake also needs an up-to-date aclocal.m4.
+   if ($rerun_aclocal)
+     {
+diff --git a/lib/autom4te.in b/lib/autom4te.in
+index a560501..14be7d8 100644
+--- a/lib/autom4te.in
++++ b/lib/autom4te.in
+@@ -55,6 +55,7 @@ args: --preselect AC_SUBST_TRACE
+ args: --preselect AM_AUTOMAKE_VERSION
+ args: --preselect AM_CONDITIONAL
+ args: --preselect AM_ENABLE_MULTILIB
++args: --preselect AM_EXTRA_RECURSIVE_TARGETS
+ args: --preselect AM_GNU_GETTEXT
+ args: --preselect AM_GNU_GETTEXT_INTL_SUBDIR
+ args: --preselect AM_INIT_AUTOMAKE
+@@ -69,6 +70,8 @@ args: --preselect AM_PROG_CXX_C_O
+ args: --preselect AM_PROG_F77_C_O
+ args: --preselect AM_PROG_FC_C_O
+ args: --preselect AM_PROG_MOC
++# AM_PROG_MKDIR_P will be removed in Automake 1.14.
++args: --preselect AM_PROG_MKDIR_P
+ args: --preselect AM_SILENT_RULES
+ args: --preselect AM_XGETTEXT_OPTION
+ args: --preselect _AM_MAKEFILE_INCLUDE
+@@ -96,6 +99,8 @@ args: --preselect AC_PROG_LIBTOOL
+ args: --preselect LT_INIT
+ args: --preselect LT_CONFIG_LTDL_DIR
+ args: --preselect AM_GNU_GETTEXT
++args: --preselect IT_PROG_INTLTOOL
++args: --preselect GTK_DOC_CHECK
+ end-language: "Autoreconf-preselections"
+ 
+ 

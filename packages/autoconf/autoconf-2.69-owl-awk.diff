@@ -1,0 +1,42 @@
+diff -puNr autoconf-2.69.orig/configure autoconf-2.69/configure
+--- autoconf-2.69.orig/configure	2012-04-25 03:04:50 +0000
++++ autoconf-2.69/configure	2014-06-13 20:54:18 +0000
+@@ -2111,7 +2111,7 @@ case $mkdir_p in
+   */*) mkdir_p="\$(top_builddir)/$mkdir_p" ;;
+ esac
+ 
+-for ac_prog in gawk mawk nawk awk
++for ac_prog in gawk
+ do
+   # Extract the first word of "$ac_prog", so it can be a program name with args.
+ set dummy $ac_prog; ac_word=$2
+diff -puNr autoconf-2.69.orig/doc/autoconf.texi autoconf-2.69/doc/autoconf.texi
+--- autoconf-2.69.orig/doc/autoconf.texi	2012-04-25 02:14:19 +0000
++++ autoconf-2.69/doc/autoconf.texi	2014-06-13 20:57:52 +0000
+@@ -3941,11 +3941,9 @@ in some cases whether they support certa
+ @acindex{PROG_AWK}
+ @ovindex AWK
+ @caindex prog_AWK
+-Check for @code{gawk}, @code{mawk}, @code{nawk}, and @code{awk}, in that
+-order, and set output variable @code{AWK} to the first one that is found.
+-It tries @code{gawk} first because that is reported to be the
+-best implementation.  The result can be overridden by setting the
+-variable @code{AWK} or the cache variable @code{ac_cv_prog_AWK}.
++Set output variable @code{AWK} to @samp{gawk} if @code{gawk} is found.
++The result can be overridden by setting the variable @code{AWK} or the
++cache variable @code{ac_cv_prog_AWK}.
+ 
+ Using this macro is sufficient to avoid the pitfalls of traditional
+ @command{awk} (@pxref{awk, , Limitations of Usual Tools}).
+diff -puNr autoconf-2.69.orig/lib/autoconf/programs.m4 autoconf-2.69/lib/autoconf/programs.m4
+--- autoconf-2.69.orig/lib/autoconf/programs.m4	2012-01-21 13:46:39 +0000
++++ autoconf-2.69/lib/autoconf/programs.m4	2014-06-13 20:54:18 +0000
+@@ -347,7 +347,7 @@ AN_PROGRAM([gawk], [AC_PROG_AWK])
+ AN_PROGRAM([mawk], [AC_PROG_AWK])
+ AN_PROGRAM([nawk], [AC_PROG_AWK])
+ AC_DEFUN([AC_PROG_AWK],
+-[AC_CHECK_PROGS(AWK, gawk mawk nawk awk, )])
++[AC_CHECK_PROGS(AWK, gawk, )])
+ 
+ 
+ # AC_PROG_EGREP
