@@ -1,18 +1,19 @@
-# $Owl: Owl/packages/bison/bison.spec,v 1.36 2010/08/18 17:20:46 segoon Exp $
+# $Owl: Owl/packages/bison/bison.spec,v 1.37 2014/07/12 13:48:50 galaxy Exp $
 
 Summary: A GNU general-purpose parser generator.
 Name: bison
-Version: 2.4.3
+Version: 3.0.2
 Release: owl1
 License: GPLv3+
 Group: Development/Tools
 URL: http://www.gnu.org/software/bison/
-Source: ftp://ftp.gnu.org/gnu/bison/bison-%version.tar.bz2
-# Signature: ftp://ftp.gnu.org/gnu/bison/bison-%version.tar.bz2.sig
-Patch0: bison-2.4.1-owl-info.diff
-Patch1: bison-2.4.3-owl-warnings.diff
-PreReq: /sbin/install-info
+Source: ftp://ftp.gnu.org/gnu/bison/bison-%version.tar.xz
+# Signature: ftp://ftp.gnu.org/gnu/bison/bison-%version.tar.xz.sig
+Patch0: %name-3.0.2-owl-no-man-regen.diff
+Patch1: %name-3.0.2-owl-info.diff
+Requires(post,preun): /sbin/install-info
 BuildRequires: m4 >= 1.4.6
+BuildRequires: gettext >= 0.19.1
 BuildRoot: /override/%name-%version
 
 %description
@@ -31,10 +32,19 @@ to be very proficient in C programming to be able to program with Bison.
 %patch1 -p1
 bzip2 -9k NEWS
 
+gettextize -f -q --symlink
+rm lib/gettext.h
+ln -s '%_datadir/gettext/gettext.h' lib/gettext.h
+aclocal --force -I m4
+autoreconf -fis -I m4
+
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-%configure
+%configure \
+	--disable-rpath \
+#
+
 %__make
 
 %check
@@ -43,6 +53,13 @@ bzip2 -9k NEWS
 %install
 rm -rf %buildroot
 %makeinstall
+
+%find_lang %name || :
+%find_lang %name-runtime || :
+echo '%%defattr(0644,root,root,0755)' > '%name.lst'
+for f in '%name'{,-runtime}.lang ; do
+	grep -vE '^\s*$' "$f" >> '%name.lst'
+done
 
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
@@ -55,18 +72,23 @@ if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/bison.info %_infodir/dir
 fi
 
-%files
-%defattr(-,root,root)
+%files -f %name.lst
+%defattr(0644,root,root,0755)
 %doc AUTHORS COPYING NEWS.bz2 THANKS
-%_mandir/*/*
-%_datadir/aclocal/*
+%attr(0755,root,root) %_bindir/bison
+%attr(0755,root,root) %_bindir/yacc
+%_mandir/man1/bison.1*
+%_mandir/man1/yacc.1*
+%_datadir/aclocal/bison*.m4
 %_datadir/bison
-%_datadir/locale/*/LC_MESSAGES/bison*.mo
 %_infodir/bison.info*
-%_bindir/*
 %_libdir/liby.a
 
 %changelog
+* Thu Jun 19 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.0.2-owl1
+- Updated to 3.0.2.
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+
 * Wed Aug 18 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.4.3-owl1
 - Updated to 2.4.3.
 - Fixed compiler warnings.

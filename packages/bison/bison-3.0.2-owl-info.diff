@@ -1,0 +1,12 @@
+--- bison-3.0.2.orig/doc/bison.texi	2013-10-23 09:44:16 +0000
++++ bison-3.0.2/doc/bison.texi	2014-06-19 15:49:50 +0000
+@@ -54,7 +54,8 @@ freedom.''
+ 
+ @dircategory Software development
+ @direntry
+-* bison: (bison).       GNU parser generator (Yacc replacement).
++* bison: (bison).				@acronym{GNU} parser generator
++						(Yacc replacement).
+ @end direntry
+ 
+ @titlepage

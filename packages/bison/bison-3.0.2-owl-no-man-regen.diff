@@ -1,0 +1,29 @@
+diff -puNr bison-3.0.2.orig/doc/local.mk bison-3.0.2/doc/local.mk
+--- bison-3.0.2.orig/doc/local.mk	2013-10-22 15:34:22 +0000
++++ bison-3.0.2/doc/local.mk	2014-06-19 15:10:24 +0000
+@@ -107,16 +107,16 @@ remove_time_stamp = \
+ 
+ # Depend on configure to get version number changes.
+ $(top_srcdir)/doc/bison.1: doc/bison.help doc/bison.x $(top_srcdir)/configure
+-	$(AM_V_GEN)$(HELP2MAN)			\
+-	    --include=$(top_srcdir)/doc/bison.x	\
+-	    --output=$@.t src/bison$(EXEEXT)
+-	$(AM_V_at)if $(remove_time_stamp) $@ >$@a.t 2>/dev/null &&	 \
+-	   $(remove_time_stamp) $@.t | cmp $@a.t - >/dev/null 2>&1; then \
++#	$(AM_V_GEN)$(HELP2MAN)			\
++#	    --include=$(top_srcdir)/doc/bison.x	\
++#	    --output=$@.t src/bison$(EXEEXT)
++#	$(AM_V_at)if $(remove_time_stamp) $@ >$@a.t 2>/dev/null &&	 \
++#	   $(remove_time_stamp) $@.t | cmp $@a.t - >/dev/null 2>&1; then \
+ 	  touch $@;							 \
+-	else								 \
+-	  mv $@.t $@;							 \
+-	fi
+-	$(AM_V_at)rm -f $@*.t
++#	else								 \
++#	  mv $@.t $@;							 \
++#	fi
++#	$(AM_V_at)rm -f $@*.t
+ 
+ if ENABLE_YACC
+ nodist_man_MANS = doc/yacc.1
