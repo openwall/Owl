@@ -1,17 +1,17 @@
-# $Owl: Owl/packages/m4/m4.spec,v 1.24 2010/09/01 17:27:00 segoon Exp $
+# $Owl: Owl/packages/m4/m4.spec,v 1.25 2014/07/12 13:57:31 galaxy Exp $
 
 Summary: The GNU macro processor.
 Name: m4
-Version: 1.4.15
+Version: 1.4.17
 Release: owl1
 License: GPLv3+
 Group: Applications/Text
 URL: http://www.gnu.org/software/m4/
-Source0: ftp://ftp.gnu.org/gnu/m4/m4-%version.tar.bz2
-# Signature: ftp://ftp.gnu.org/gnu/m4/m4-%version.tar.bz2.sig
+Source0: ftp://ftp.gnu.org/gnu/m4/m4-%version.tar.xz
+# Signature: ftp://ftp.gnu.org/gnu/m4/m4-%version.tar.xz.sig
 Source1: m4.m4
-Patch0: m4-1.4.13-owl-info.diff
-PreReq: /sbin/install-info
+Patch0: m4-1.4.17-owl-info.diff
+Requires(post,preun): /sbin/install-info
 # due to sed -i
 BuildRequires: sed >= 4.1.1
 BuildRequires: texinfo
@@ -46,6 +46,7 @@ export ac_cv_func_mkstemp=yes \
 bzip2 -9k NEWS
 
 %check
+%{expand:%%{!?_with_test: %%{!?_without_test: %%global _without_test --without-test}}}
 %__make check
 
 %install
@@ -73,6 +74,10 @@ fi
 %_datadir/aclocal/m4.m4
 
 %changelog
+* Sat Jun 14 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.4.17-owl1
+- Updated to 1.4.17.
+- Replaced the deprecated preReq tag with Requires(post,preun).
+
 * Wed Sep 01 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.4.15-owl1
 - Updated to 1.4.15.
 
