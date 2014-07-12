@@ -1,0 +1,15 @@
+We are not ready to use the smashing stack protector yet.  The plan
+is to update the glibc package first, then start using the protection
+on _all_ Owl packages.
+
+--- rpm-4.11.2.orig/configure.ac	2014-02-13 06:44:39 +0000
++++ rpm-4.11.2/configure.ac	2014-07-10 14:04:22 +0000
+@@ -37,7 +37,7 @@ fi
+ AS=${AS-as}
+ AC_SUBST(AS)
+ if test "$GCC" = yes; then
+-    cflags_to_try="-fno-strict-aliasing -fstack-protector -Wempty-body"
++    cflags_to_try="-fno-strict-aliasing -Wempty-body"
+     AC_MSG_CHECKING([supported compiler flags])
+     old_cflags=$CFLAGS
+     echo

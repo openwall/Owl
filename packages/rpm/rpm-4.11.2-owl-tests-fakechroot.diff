@@ -1,0 +1,12 @@
+diff -puNr rpm-4.11.2.orig/tests/Makefile.am rpm-4.11.2/tests/Makefile.am
+--- rpm-4.11.2.orig/tests/Makefile.am	2014-07-12 01:32:47 +0000
++++ rpm-4.11.2/tests/Makefile.am	2014-07-12 03:01:50 +0000
+@@ -99,7 +99,7 @@ EXTRA_DIST += atlocal.in
+ testing$(bindir)/rpmbuild: ../rpmbuild
+ 	rm -rf testing
+ 	mkdir -p testing/$(bindir)
+-	ln -s ./$(bindir) testing/bin
++	for l in freebl nspr softokn; do for f in {/usr,}/lib{,64}/lib$${l}?.so ; do if [ "$${f/\?}" = "$$f" ]; then ln -sf "$$f" testing/ ; fi ; done ; done
+ 	(cd ${top_builddir} && \
+ 	          $(MAKE) DESTDIR=`pwd`/${subdir}/testing install)
+ 	cp -r ${srcdir}/data/ testing/

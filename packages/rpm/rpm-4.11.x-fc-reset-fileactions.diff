@@ -1,0 +1,58 @@
+diff --git a/lib/rpmfs.c b/lib/rpmfs.c
+index 764618d..916f6eb 100644
+--- a/lib/rpmfs.c
++++ b/lib/rpmfs.c
+@@ -18,7 +18,7 @@ rpmfs rpmfsNew(rpm_count_t fc, int initState)
+     rpmfs fs = xcalloc(1, sizeof(*fs));
+     fs->fc = fc;
+     fs->actions = xmalloc(fs->fc * sizeof(*fs->actions));
+-    memset(fs->actions, FA_UNKNOWN, fs->fc * sizeof(*fs->actions));
++    rpmfsResetActions(fs);
+     if (initState) {
+ 	fs->states = xmalloc(sizeof(*fs->states) * fs->fc);
+ 	memset(fs->states, RPMFILE_STATE_NORMAL, fs->fc);
+@@ -115,3 +115,10 @@ void rpmfsSetAction(rpmfs fs, unsigned int ix, rpmFileAction action)
+ 	fs->actions[ix] = action;
+     }
+ }
++
++void rpmfsResetActions(rpmfs fs)
++{
++    if (fs && fs->actions) {
++	memset(fs->actions, FA_UNKNOWN, fs->fc * sizeof(*fs->actions));
++    }
++}
+diff --git a/lib/rpmfs.h b/lib/rpmfs.h
+index 5f74753..83f99d1 100644
+--- a/lib/rpmfs.h
++++ b/lib/rpmfs.h
+@@ -57,6 +57,9 @@ rpmFileAction rpmfsGetAction(rpmfs fs, unsigned int ix);
+ RPM_GNUC_INTERNAL
+ void rpmfsSetAction(rpmfs fs, unsigned int ix, rpmFileAction action);
+ 
++RPM_GNUC_INTERNAL
++void rpmfsResetActions(rpmfs fs);
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/lib/transaction.c b/lib/transaction.c
+index 02badc6..09c199a 100644
+--- a/lib/transaction.c
++++ b/lib/transaction.c
+@@ -1323,11 +1323,14 @@ static int rpmtsPrepare(rpmts ts)
+ 
+     rpmlog(RPMLOG_DEBUG, "computing %" PRIu64 " file fingerprints\n", fileCount);
+ 
+-    /* Skip netshared paths, not our i18n files, and excluded docs */
++    /* Reset actions, set skip for netshared paths and excluded files */
+     pi = rpmtsiInit(ts);
+     while ((p = rpmtsiNext(pi, 0)) != NULL) {
+ 	if (rpmfiFC(rpmteFI(p)) == 0)
+ 	    continue;
++	/* Ensure clean state, this could get called more than once. */
++	rpmfs fs = rpmteGetFileStates(p);
++	rpmfsResetActions(fs);
+ 	if (rpmteType(p) == TR_ADDED) {
+ 	    skipInstallFiles(ts, p);
+ 	} else {

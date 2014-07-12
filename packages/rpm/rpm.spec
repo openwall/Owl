@@ -1,75 +1,156 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.96 2012/08/15 02:26:52 solar Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.97 2014/07/12 13:58:45 galaxy Exp $
 
-%define WITH_PYTHON 0
+%define def_with() %{expand:%%{!?_with_%1: %%{!?_without_%1: %%global _with_%1 --with-%1%{?2:=%2}}}}
+%define def_without() %{expand:%%{!?_with_%1: %%{!?_without_%1: %%global _without_%1 --without-%1}}}
+%define def_enable() %{expand:%%{!?_with_%1: %%{!?_without_%1: %%global _with_%1 --enable-%1%{?2:=%2}}}}
+%define def_disable() %{expand:%%{!?_with_%1: %%{!?_without_%1: %%global _without_%1 --disable-%1}}}
 
-%define rpm_version 4.2
-%define popt_version 1.8
+%def_with	rescue
+%def_disable	static
+%def_enable	nls
+%def_disable	python
+%def_enable	plugins
+%def_without	selinux
+# with extternal db or with the bundled one
+%def_without	external
+%def_without	acl
+%def_without	cap
+%def_without	lua
 
-Summary: The Red Hat package management system.
+%define rpm_version 4.11.2
+%define bdb_version 5.3.28
+%define fcr_version 2.17.2
+
+Summary: The RPM package management system.
 Name: rpm
 Version: %rpm_version
-Release: owl29
-License: GPL
+Release: owl1
+License: GPLv2+
 Group: System Environment/Base
-# ftp://ftp.rpm.org/pub/rpm/dist/rpm-4.2.x/rpm-%version.tar.gz
-Source0: rpm-%version.tar.bz2
-Source1: rpminit
-Source2: rpminit.1
-Source3: gendiff
-Source4: configure-presets
-Patch1: rpm-4.2-owl-lite.diff
-Patch2: rpm-4.2-owl-librpmbuild-link.diff
-Patch3: rpm-4.2-owl-static-utils.diff
-Patch4: rpm-4.2-owl-rpmpopt-search.diff
-Patch5: rpm-4.2-owl-elfutils-builtin_expect.diff
-Patch6: rpm-4.2-owl-macros.diff
-Patch7: rpm-4.2-owl-scripts-file.diff
-Patch8: rpm-4.2-owl-tmp-scripts.diff
-Patch9: rpm-4.2-owl-brp-scripts.diff
-Patch10: rpm-4.2-owl-db-umask.diff
-Patch11: rpm-4.2-owl-mtab-message.diff
-# Regenerated Owl 1.1 patches
-Patch12: rpm-4.2-owl-closeall.diff
-Patch14: rpm-4.2-owl-autodeps-symbol-versioning.diff
-Patch15: rpm-4.2-owl-autoreq.diff
-Patch16: rpm-4.2-owl-buildhost.diff
-Patch17: rpm-4.2-owl-popt-sgid.diff
-Patch18: rpm-4.2-owl-rpmrc.diff
-# End of regenerated Owl 1.1 patches
-Patch19: rpm-4.2-owl-vendor-setup.diff
-Patch20: rpm-4.2-owl-install-perms.diff
-# (GM): This one comes from regenerating config files via new automake
-Patch21: rpm-4.2-owl-po-mkinstalldirs.diff
-Patch22: rpm-4.2-owl-libtoolize.diff
-Patch23: rpm-4.2-owl-drop-tests.diff
-Patch24: rpm-4.2-owl-transaction-obsoletes-fix.diff
-Patch25: rpm-4.2-owl-db-open.diff
-Patch26: rpm-4.2-owl-rpmdb-pthread.diff
-Patch27: rpm-4.2-owl-db1-addon.diff
-Patch28: rpm-4.2-owl-fix-configure.diff
-Patch29: rpm-4.2-owl-chroot-ugid.diff
-Patch30: rpm-4.2-owl-rpmal-bounds.diff
-Patch31: rpm-4.2-owl-compare-digest.diff
-Patch32: rpm-4.2-owl-honor-buildtime.diff
-Patch33: rpm-4.2-owl-runScript-umask.diff
-Patch34: rpm-4.2-owl-man.diff
-Patch35: rpm-4.2-cvs-20030515-parseSpec.diff
-Patch36: rpm-4.2-cvs-20050827-check-prereqs.diff
-Patch37: rpm-4.2-cvs-20061030-showQueryPackage.diff
-Patch38: rpm-4.2-rh-owl-build-tar.diff
-Patch39: rpm-4.2-owl-xz-macros.diff
-Patch40: rpm-4.2-owl-xz-payload.diff
-Patch41: rpm-4.2-owl-remove-unsafe-perms.diff
-Patch42: rpm-4.2-rh-header-sanity.diff
-Patch43: rpm-4.2-owl-beecrypt-configure.diff
-Patch44: rpm-4.2-owl-Makefile.diff
-PreReq: /sbin/ldconfig
-PreReq: sh-utils, fileutils, mktemp, gawk
-Requires: findutils, diffutils, gzip
-BuildRequires: libtool >= 1.5.2, automake >= 1.8.3, autoconf >= 2.59
-BuildRequires: gettext >= 0.14.1
+URL: http://www.rpm.org/
+Source0: http://rpm.org/releases/rpm-4.11.x/%name-%version.tar.bz2
+# We are using a stripped down version of the db 5.3 distribution here.
+# This allows us to keep the size of the sources under control. The
+# original tarball was about 34MB (the NC version), our stripped down
+# version is just 1.4MB.  The original distribution can be found at:
+# http://download.oracle.com/berkeley-db/db-%bdb_version.NC.tar.gz
+Source1: db-%bdb_version.tar.xz
+# The fakechroot package is a repackaged version of the upstream one
+# with an addition of the patches directory where we store our patches.
+Source2: fakechroot-%fcr_version.tar.xz
+
+Source11: rpminit
+Source12: rpminit.1
+Source13: gendiff
+Source14: configure-presets
+Source20: rpm.macros
+Source21: rpm.macros.build
+Source22: rpm.macros.build.arch
+Source23: rpm.macros.build.collection
+Source24: rpm.macros.build.conditionals
+Source25: rpm.macros.build.configure
+Source26: rpm.macros.build.debugpkg
+Source27: rpm.macros.build.deps
+Source28: rpm.macros.build.java
+Source29: rpm.macros.build.perl
+Source30: rpm.macros.build.python
+Source31: rpm.macros.build.scriptlets
+Source32: rpm.macros.build.signature
+Source33: rpm.macros.build.specfile
+Source34: rpm.macros.build.tools
+Source35: rpm.macros.sys.filesystem
+Source36: rpm.macros.sys.platform
+Source37: rpm.macros.sys.scriptlets
+Source38: rpm.macros.sys.signature
+Source39: rpm.macros.sys.tools
+
+# Essential fixes (to ensure that the package can be built on our system)
+# [0-99]
+Patch0: %name-4.11.2-owl-DT_GNU_HASH.diff
+
+# Fedora patches (this brings our RPM closer to the well supported
+# upstream version and consequently we are going to benefit from the
+# documentation describing RHEL/CentOS/FC's RPMs)
+# [100-199]
+Patch100: %name-4.11.x-fc-siteconfig.diff
+Patch101: %name-4.9.90-fc-fedora-specspo.diff
+Patch102: %name-4.9.90-fc-no-man-dirs.diff
+Patch103: %name-4.8.1-fc-use-gpg2.diff
+Patch104: %name-4.11.2-fc-double-separator-warning.diff
+
+# the following patches were already submitted and accepted upstream
+Patch105: %name-4.11.x-fc-filter-soname-deps.diff
+Patch106: %name-4.11.x-fc-do-not-filter-ld64.diff
+Patch107: %name-4.11.2-fc-macro-newlines.diff
+Patch108: %name-4.11.x-fc-reset-fileactions.diff
+Patch109: %name-4.11.2-fc-python3-buildsign.diff
+Patch110: %name-4.11.x-fc-rpmdeps-wrap.diff
+Patch111: %name-4.11.2-fc-appdata-prov.diff
+
+# the following were not yet submitted/accepted
+Patch112: %name-4.6.0-fc-niagara.diff
+Patch113: %name-4.7.1-fc-geode-i686.diff
+Patch114: %name-4.9.1.1-fc-ld-flags.diff
+Patch115: %name-4.10.0-fc-dwz-debuginfo.diff
+Patch116: %name-4.10.0-fc-minidebuginfo.diff
+Patch117: %name-4.11.1-fc-sepdebugcrcfix.diff
+Patch118: %name-4.11.0.1-fc-setuppy-fixes.diff
+
+Patch119: %name-4.9.90-fc-armhfp.diff
+Patch120: %name-4.9.0-fc-armhfp-logic.diff
+
+# Our patches and fixes
+# [200-299]
+Patch200: %name-4.11.2-owl-tmp-scripts.diff
+Patch201: %name-4.11.2-owl-brp-scripts.diff
+Patch202: %name-4.11.2-owl-db-umask.diff
+Patch203: %name-4.11.2-owl-closeall.diff
+Patch204: %name-4.11.2-owl-autodeps-symbol-versioning.diff
+Patch205: %name-4.11.2-owl-autoreq.diff
+Patch206: %name-4.11.2-owl-buildhost.diff
+Patch207: %name-4.11.2-owl-rpmrc.diff
+Patch208: %name-4.11.2-owl-chroot-ugid.diff
+Patch209: %name-4.11.2-owl-compare-digest.diff
+Patch210: %name-4.11.2-owl-honor-buildtime.diff
+Patch211: %name-4.11.2-owl-doScriptExec-umask.diff
+Patch212: %name-4.11.2-owl-grammar.diff
+Patch213: %name-4.11.2-owl-remove-unsafe-perms.diff
+Patch214: %name-4.11.2-owl-tests.diff
+Patch215: %name-4.11.2-owl-plugindir.diff
+Patch216: %name-4.11.2-owl-rpmquery-alias.diff
+# the following ensures that our platform macros contain only minimal
+# subset of substitution macros.
+Patch217: %name-4.11.2-owl-macros-platform.diff
+# fix the patch macro to bail out if the patch is a broken symlink
+Patch218: %name-4.11.2-owl-macro-patch.diff
+# get rid of the --disable-dependency-tracking, since it's not always
+# available
+Patch219: %name-4.11.2-owl-macro-configure.diff
+Patch220: %name-4.11.2-owl-no-stack-protector.diff
+Patch221: %name-4.11.2-owl-elfdeps-noexec.diff
+Patch222: %name-4.11.2-owl-db3-configure.diff
+Patch223: %name-4.11.2-owl-db-static-libtool-hack.diff
+# the following patch is a band-aid to run tests through a modern fakechroot
+Patch224: %name-4.11.2-owl-tests-fakechroot.diff
+
+Requires(post,postun): /sbin/ldconfig
+Requires: sh-utils, fileutils, mktemp, gawk
+Requires: coreutils
+BuildRequires: libtool >= 2.4.2, automake >= 1.14, autoconf >= 2.69
+BuildRequires: gettext >= 0.16.1
 BuildRequires: elfutils-libelf-devel >= 0:0.108-owl3
+BuildRequires: bzip2-devel
 BuildRequires: xz-devel
+BuildRequires: libnss-devel
+BuildRequires: libmagic-devel
+BuildRequires: ncurses-devel
+%if 0%{?_with_external:1}
+BuildRequires: db4-devel >= 4.5
+Requires: db4-utils >= 4.5
+%endif
+%if 0%{?_with_acl:1}
+BuildRequires: libacl-devel
+%endif
 BuildRoot: /override/%name-%rpm_version
 
 %description
@@ -82,7 +163,7 @@ the package like its version, a description, etc.
 %package devel
 Summary: Development files for applications which will manipulate RPM packages.
 Group: Development/Libraries
-Requires: %name = %version-%release, popt
+Requires: %name = %version-%release
 
 %description devel
 This package contains the RPM C library and header files.  These
@@ -102,7 +183,7 @@ Requires: file
 This package contains scripts and executable programs that are used to
 build packages using RPM.
 
-%if %WITH_PYTHON
+%if 0%{?_with_python:1}
 %package python
 Summary: Python bindings for apps which will manipulate RPM packages.
 Group: Development/Libraries
@@ -115,110 +196,122 @@ written in the Python programming language to use the interface
 supplied by RPM Package Manager libraries.
 %endif
 
-%package -n popt
-Summary: A C library for parsing command line arguments.
-Version: %popt_version
-Group: System Environment/Libraries
-PreReq: /sbin/ldconfig
+%if 0%{?_with_rescue:1}
+%package rescue
+Summary: Specially compiled RPM binaries for rescue operations.
+Group: System Environment/Rescue Tools
 
-%description -n popt
-popt is a C library for parsing command line arguments.  popt was
-heavily influenced by the getopt() and getopt_long() functions, but it
-improves on them by allowing more powerful argument expansion.  popt
-can parse arbitrary argv[] style arrays and automatically set
-variables based on command line arguments.  popt allows command line
-arguments to be aliased via configuration files and includes utility
-functions for parsing arbitrary strings into argv[] arrays using
-shell-like rules.
+%description rescue
+This package contains binaries linked in a such way that the only
+dynamic dependencies are the libraries residing in /lib, therefore
+these binaries can be used for rescue operations when no filesystems
+except for the root filesystem are available.
+
+Due to the nature of these binaries (they are mostly static) the
+occupied space by this package is quite significant: around 10MB
+on your root filesystem.
+
+Another catch is that you need to be familiar with RPM tools since
+if %_rpmlibdir is not available you will need to provide the
+essential configuration options manually, e.g.:
+
+To get a list of all packages from the database
+# /bin/rpm.rescue --rcfile /dev/null --dbpath=/var/lib/rpm -qa
+
+To rebuild the database saving the new copy in /tmp/db
+# /bin/rpmdb.rescue --rcfile /dev/null --dbpath=/var/lib/rpm \
+  -D '_dbpath_rebuild /tmp/db' -D '_rpmlock_path /tmp' --rebuilddb
+
+To extract the content of a package into the current directory
+# /bin/rpm2cpio.rescue package-1.2.3.%_arch.rpm | cpio -mid
+%endif
 
 %prep
-# RPM 3.0.6 magic: after definition of version for popt the version
-# macro is set to the popt version -- but this is not correct.
-%define	version	%rpm_version
-%setup -q
+%setup -q %{?_without_external:-a 1} -a 2
 
-# XXX: RPM tests have known tmp issues :(
-rm -r tests
+%patch0 -p1 -b .DT_GNU_HASH
 
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
-%patch17 -p1
-%patch18 -p1
-%patch19 -p1
-%patch20 -p1
-%patch21 -p1
-%patch22 -p1
-%patch23 -p1
-%patch24 -p1
-%patch25 -p1
-%patch26 -p1
-%patch27 -p1
-%patch28 -p1
-%patch29 -p1
-%patch30 -p1
-%patch31 -p1
-%patch32 -p1
-%patch33 -p1
-%patch34 -p1
-%patch35 -p0
-%patch36 -p0
-%patch37 -p0
-%patch38 -p1
-%patch39 -p1
-%patch40 -p1
-%patch41 -p1
-%patch42 -p1
-%patch43 -p1
-%patch44 -p1
+%patch100 -p1 -b .siteconfig
+# the following two are strictly Fedora-specific
+#patch101 -p1 -b .fedora-specspo
+#patch102 -p1 -b .no-man-dirs
+%patch103 -p1 -b .use-gpg2
+%patch104 -p1 -b .double-sep-warning
+%patch105 -p1 -b .filter-soname-deps
+# I belive that the comparison is somewhat broken in the next patch,
+# but there is no risk (they compare less than intended :) ) -- (GM)
+%patch106 -p1 -b .dont-filter-ld64
+# we may want to enable the following fix since we don't have that
+# much legacy packages and the patch addresses an annoying issue.
+#patch107 -p1 -b .macro-newlines
+%patch108 -p1 -b .reset-fileactions
+%patch109 -p1 -b .python3-buildsign
+%patch110 -p1 -b .rpmdeps-wrap
+%patch111 -p1 -b .appdata-prov
+%patch112 -p1 -b .niagara
+%patch113 -p1 -b .geode
+%patch114 -p1 -b .ldflags
+# patch #117 uses glibc 2.9's types from <endian.h>, we don't need the
+# functionality provided by these patches as now, so I disabled them.
+# eventually, our glibc will be up to date and then we may want to
+# re-enable the patches.
+#patch115 -p1 -b .dwz-debuginfo
+#patch116 -p1 -b .minidebuginfo
+#patch117 -p1 -b .sepdebugcrcfix
+%patch118 -p1 -b .setuppy-fixes
 
-bzip2 -9k CHANGES
+%patch119 -p1 -b .armhfp
+# this patch cant be applied on softfp builds
+%ifnarch armv3l armv4b armv4l armv4tl armv5tel armv5tejl armv6l armv7l
+%patch120 -p1 -b .armhfp-logic
+%endif
+
+%patch200 -p1 -b .tmp-scripts
+%patch201 -p1 -b .brp-scripts
+%patch203 -p1 -b .closeall
+%patch204 -p1 -b .autodeps-symbol-versioning
+%patch205 -p1 -b .autoreq
+%patch206 -p1 -b .buildhost
+%patch207 -p1 -b .rpmrc
+%patch208 -p1 -b .chroot-ugid
+%patch209 -p1 -b .compare-digest
+%patch210 -p1 -b .honor-buildtime
+%patch211 -p1 -b .doScriptExec-umask
+%patch212 -p1 -b .grammar
+%patch213 -p1 -b .remove-unsafe-perms
+%patch214 -p1 -b .tests
+%patch215 -p1 -b .plugindir
+%patch216 -p1 -b .rpmquery-alias
+%patch217 -p1 -b .macros-platform
+%patch218 -p1 -b .macro-patch
+%patch219 -p1 -b .macro-configure
+%patch220 -p1 -b .stack-protector
+%patch221 -p1 -b .elfdeps-noexec
+%patch222 -p1 -b .db3-configure
+sed -i '/#set -x/s,^#,,' db3/configure
+
+%if 0%{?_without_external:1}
+ln -s $(ls -1td db-%{bdb_version}*/ | %__sed 's,/\+$,,g;q') db
+%patch202 -p1 -b .db-umask.diff
+%patch223 -p1 -b .db-static-libtool-hack
+%endif
+
+%patch224 -p1 -b .tests-fakechroot
+
+cat << EOF > m4/noop.m4
+AC_DEFUN([PKG_PROG_PKG_CONFIG], [])dnl
+AC_DEFUN([PKG_CHECK_MODULES], [])dnl
+EOF
+
+autoreconf -fis
 
 # Replace gendiff with our implementation
-install -p -m 755 %_sourcedir/gendiff .
+mv scripts/gendiff scripts/gendiff.orig
+install -p -m 755 '%_sourcedir/gendiff' scripts/
 
-# Remove libelf archive just in case
-rm -r elfutils
+bzip2 -9k ChangeLog
 
 %build
-CC=gcc
-CXX=g++
-export CC CXX
-# Prepare libfmagic archive and save it to the rpmio subdirectory.
-# Also, put patchlevel.h to the tools directory (it is needed by rpmfile.c)
-pushd file
-# We add -DMAGIC=path to configure to make sure that default magic file will
-# be searched for in the directory where "file" package stores it (this will
-# be unneeded once we separate "file" from "rpm")
-CFLAGS="%optflags -DMAGIC='\"/usr/share/magic\"'" \
-./configure \
-	--host=%_target_platform \
-	--build=%_target_platform \
-	--target=%_target_platform \
-	--program-transform-name=
-%__make libfmagic.la
-cp -rp .libs libfmagic.la ../rpmio/
-cp -p patchlevel.h ../tools/
-popd
-rm -r file
-
-%define _noVersionedDependencies 1
-
-# XXX legacy requires './' payload prefix to be omitted from RPM packages.
-%define _noPayloadPrefix 1
-
 %define __usr            /usr
 %define __usrsrc         %__usr/src
 %define __var            /var
@@ -245,148 +338,266 @@ rm -r file
 %define __mandir         %__datadir/man
 %define _rpmlibdir       %__prefix/lib/rpm
 
-# XXX rpm needs functioning nptl for configure tests
-unset LD_ASSUME_KERNEL || :
-%if %WITH_PYTHON
-%define with_python_option "--with-python=%with_python_version"
-%else
-%define with_python_option "--without-python"
+prepare()
+{
+	CC='%__cc' \
+	CXX='%__cxx' \
+	CPPFLAGS="$(nspr-config --cflags) $(nss-config --cflags) -D_GNU_SOURCE" \
+	CFLAGS='%optflags -Wall -fPIC -fno-strict-aliasing' \
+	__FAKECHROOT="$(pwd)/tests/fakechroot" \
+	../configure \
+		--host='%_target_platform' \
+		--with-vendor=openwall \
+		--prefix='%__usr' \
+		--bindir='%__bindir' \
+		--sbindir='%__sbindir' \
+		--libexecdir='%__libexecdir' \
+		--datarootdir='%__datadir' \
+		--sysconfdir='%__sysconfdir' \
+		--sharedstatedir='%__sharedstatedir' \
+		--localstatedir='%__localstatedir' \
+		--libdir='%__libdir' \
+		--includedir='%__includedir' \
+		--oldincludedir='%__oldincludedir' \
+		--infodir='%__infodir' \
+		--mandir='%__mandir' \
+		--enable-largefile \
+		--disable-rpath \
+		"$@"
+}
+
+mkdir 'obj-%_arch.normal'
+cd 'obj-%_arch.normal'
+%if 0%{?_without_external:1}
+ln -s ../db
 %endif
+prepare \
+	--enable-shared \
+	%{?_with_static}%{?_without_static} \
+	%{?_with_nls} %{?_without_nls} \
+	%{?_with_python}%{?_without_python} \
+	%{?_with_plugins}%{?_without_plugins} \
+	%{?_with_selinux}%{?_without_selinux} \
+	%{?_with_external}%{?_without_external}-db \
+	%{?_with_acl}%{?_without_acl} \
+	%{?_with_cap}%{?_without_cap} \
+	%{?_with_lua}%{?_without_lua} \
+	--without-beecrypt \
+#
+ln -s ../../tests/fakechroot tests/
+cd ..
 
-unset LINGUAS || :
-libtoolize --force --copy
-for ltmain in */ltmain.sh; do
-	rm $ltmain
-	ln -s ../ltmain.sh $ltmain
-done
-
-# this one is for db/dist/ltmain.sh
-for ltmain in */*/ltmain.sh; do
-	rm $ltmain
-	ln -s ../../ltmain.sh $ltmain
-done
-
-aclocal
-automake -f
-autoconf
-# This build does not use %%optflags yet, because
-# build with %%optflags produces unusable executables.
-ac_cv_header_libelf_h=no ac_cv_header_gelf_h=no \
-./configure \
-	--host=%_target_platform \
-	--build=%_target_platform \
-	--target=%_target_platform \
-	--program-transform-name= \
-	--prefix=%__prefix \
-	--sysconfdir=%__sysconfdir \
-	--localstatedir=%__localstatedir \
-	--infodir=%__infodir \
-	--mandir=%__mandir \
-	--disable-rpath \
-	--without-javaglue \
-	%with_python_option \
-	--disable-posixmutexes
+cd 'obj-%_arch.normal'
 %__make
+
 # Check whether it works at all
-./rpmi --showrc >/dev/null
 ./rpm --showrc >/dev/null
 
+cd ..
+
+%if 0%{?_with_rescue:1}
+mkdir 'obj-%_arch.rescue'
+cd 'obj-%_arch.rescue'
+%if 0%{?_without_external:1}
+ln -s ../db
+%endif
+# NOTE: we require static libraries here since we need to link (mostly)
+#       static versions of /bin/rpm, rpmdb, and possibly rpm2cpio .
+prepare \
+	--enable-static \
+	--disable-shared \
+	--disable-nls \
+	--disable-python \
+	--disable-plugins \
+	--without-beecrypt \
+	--without-selinux \
+	--without-cap \
+	--without-acl \
+	--without-lua \
+	%{?_with_external}%{?_without_external}-db \
+#
+ln -s ../../tests/fakechroot tests/
+
+cat << "EOF" > mostly-static.sh
+#!/bin/sh
+cmd='%__cc'
+arg="$1"
+while [ -n "$arg" ]; do
+        case "$arg" in
+                [./]*.so) [ -f "${arg%%.so}.a" ] && arg="${arg%%.so}.a"
+                        ;;
+                -ldl|-lpthread|-lnss?) ;;
+                -l*)    obj=$(%__cc -print-file-name="lib${arg#-l}.a")
+                        [ "$obj" = "lib${arg#-l}.a" ] || arg="$obj"
+                        ;;
+        esac
+        cmd="$cmd $arg" ; shift ; arg="$1"
+done
+echo Executing: $cmd
+exec $cmd
+EOF
+chmod +x mostly-static.sh
+
+# We have a trick in our sleeve ... :)
+%__make CCLD="$(pwd)/mostly-static.sh"
+
+# Check whether it works at all
+./rpm --showrc >/dev/null
+
+cd ..
+%endif
+
 %install
-rm -rf %buildroot
+[ '%buildroot' != '/' -a -d '%buildroot' ] && rm -rf -- '%buildroot'
 
+cd 'obj-%_arch.normal'
 %__make DESTDIR="%buildroot" install
+cd ..
 
-mkdir -p %buildroot%__sysconfdir/rpm
-mkdir -p %buildroot%__localstatedir/spool/repackage
-mkdir -p %buildroot%__localstatedir/lib/rpm
+%if 0%{?_with_rescue:1}
+# transfer our mostly static binaries for the rescue mode
+cp -a 'obj-%_arch.rescue/rpm' '%buildroot/bin/rpm.rescue'
+cp -a 'obj-%_arch.rescue/rpmdb' '%buildroot/bin/rpmdb.rescue'
+cp -a 'obj-%_arch.rescue/rpm2cpio' '%buildroot/bin/rpm2cpio.rescue'
+%endif
+
+mkdir -p '%buildroot%__sysconfdir/rpm'
+mkdir -p '%buildroot%_rpmlibdir/macros.d'
+mkdir -p '%buildroot%__localstatedir/spool/repackage'
+mkdir -p '%buildroot%__localstatedir/lib/rpm'
 for dbi in \
-    Basenames Conflictname Dirnames Group Installtid Name Packages \
-    Providename Provideversion Requirename Requireversion Triggername \
-    Filemd5s Pubkeys Sha1header Sigmd5 \
+    Basenames Conflictname Dirnames Group Installtid Name Obsoletename \
+    Packages Providename Requirename Triggername Sha1header Sigmd5 \
+    Filemd5s Pubkeys \
     __db.001 __db.002 __db.003 __db.004 __db.005 __db.006 __db.007 \
     __db.008 __db.009
 do
-	touch %buildroot%__localstatedir/lib/rpm/$dbi
+	touch '%buildroot%__localstatedir'/lib/rpm/$dbi
 done
 
-# Fix rpmpopt
-ln -s rpmpopt-%rpm_version %buildroot%_rpmlibdir/rpmpopt
+%if 0%{?_with_external:1}
+for dbutil in dump load recover stat upgrade verify
+do
+	# XXX: need to calculate relative path from absolute here
+	ln -sv ../../bin/db_$dbutil '%buildroot%_rpmlibdir'/rpmdb_$dbutil
+done
+%endif
+
+%if 0%{?_with_plugins:1}
+%if %_lib == lib64
+mv '%buildroot%__libdir/rpm/plugins' '%buildroot%_rpmlibdir/'
+%endif
+%endif
 
 # Remove unpackaged files
 #
-# beecrypt library was linked statically into rpm, we do not need to provide it
-rm -r %buildroot%__includedir/beecrypt
-rm %buildroot%__libdir/libbeecrypt.*
-# these scripts have nothing to do in Owl
-rm %buildroot%_rpmlibdir/{Specfile.pm,cpanflute*,rpmdiff*,sql*,tcl*,trpm}
-# unneeded crontab, logrotate config, xinetd config
-rm %buildroot%_rpmlibdir/rpm.{daily,log,xinetd}
-# outdated man pages
-rm -r %buildroot%__mandir/{fr,ja,ko,pl,ru,sk}
-# .la files
-rm %buildroot%__libdir/*.la
+find '%buildroot' -type f -name '*.la' -delete
 
-# XXX: glibc 2.3.2 update -- this file isn't created
-#rm %buildroot%__datadir/locale/locale.alias
+# the platform directory under %%_rpmlibdir contains too many platforms.
+# let's pick the ones we support and drop all the rest.  All in all, the
+# platform subdirectory contains just the macros file tweaked toward the
+# corresponding platform, hence can be easily recreated.
+mv -- '%buildroot%_rpmlibdir/platform'{,.orig}
+mkdir '%buildroot%_rpmlibdir/platform'
+mv -- '%buildroot%_rpmlibdir/platform'.orig/{i?86,x86_64,pentium*,athlon,geode,noarch}-linux \
+	'%buildroot%_rpmlibdir/platform/'
+rm -r -- '%buildroot%_rpmlibdir/platform.orig'
 
-install -p -m 755 %_sourcedir/rpminit %buildroot%__bindir/
-install -p -m 644 %_sourcedir/rpminit.1 %buildroot%__mandir/man1/
-install -p -m 644 %_sourcedir/configure-presets %buildroot%__bindir/
+# unneeded crontab, logrotate config, valgrind config
+rm -- '%buildroot%_rpmlibdir'/rpm.{daily,log,supp}
+# i18n man pages (let's stick to English only for now)
+rm -r -- '%buildroot%__mandir'/??
 
-echo "%%defattr(-,root,root)"
-platforms="`echo %buildroot%_rpmlibdir/*/macros | sed 's#/macros##g; s#%buildroot%__prefix/lib/##g'`"
-for platform in $platforms; do
-	echo "%%attr(0755,root,root) %%dir %__prefix/lib/$platform" >> platforms.list
-	echo "%%attr(0644,root,root) %%verify(not md5 size mtime) %%config(missingok,noreplace) %__prefix/lib/$platform/macros" >> platforms.list
+install -p -m 755 '%_sourcedir/rpminit' '%buildroot%__bindir/'
+install -p -m 644 '%_sourcedir/rpminit.1' '%buildroot%__mandir/man1/'
+install -p -m 644 '%_sourcedir/configure-presets' '%buildroot%__bindir/'
+
+# install macro definitions
+install -p -m 644 '%_sourcedir/rpm.macros' \
+	'%buildroot%_rpmlibdir/macros'
+for f in '%_sourcedir/rpm.macros'.* ; do
+	install -p -m 644 "$f" \
+		"%buildroot%_rpmlibdir/macros.d/${f#%_sourcedir/rpm.}"
 done
+# update essential macros in macros.sys.platform
+sed -i 's,@host@,%_host,;
+	s,@host_alias@,%_host_alias,;
+	s,@host_cpu@,%_host_cpu,;
+	s,@host_vendor@,%_host_vendor,;
+	s,@host_os@,%_host_os,' \
+		'%buildroot%_rpmlibdir/macros.d/macros.sys.platform'
 
-%pre
-if [ -f /var/lib/rpm/packages.rpm ]; then
-	if [ -f /var/lib/rpm/Packages ]; then
-		cat << EOF
-You have both /var/lib/rpm/packages.rpm	(db1 format installed packages
-headers) and /var/lib/rpm/Packages (db3 format installed package headers).
-Let's try to determine which one of these is in use...
+# it's possible that there are no language files, e.g. if the package
+# was built with the --disable-nls option, hence we need to be ready
+# for that.
+%find_lang %name || :
+touch '%name.lang'
 
+%check
+%{expand:%%{!?_with_test: %%{!?_without_test: %%global _with_test --with-test}}}
+if [ -z "$(hostname -f 2>/dev/null)" ]; then
+	cat << EOF
+WARNING: our quick check indicates that the host name assigned to this
+         environment ($(hostname 2>/dev/null)) cannot be canonicalized.
+         There are more than a hundred tests in RPM's testsuite which rely
+         on a properly configured host name.
+
+         The quickest fix for this issue would be to run 'hostname',
+         and add the displayed host name to /etc/hosts (the file should
+         be world-readable, e.g. 'chmod 0644 /etc/hosts').
 EOF
-
-		if [ /var/lib/rpm/Packages -ot /var/lib/rpm/packages.rpm ]; then
-			cat << EOF
-/var/lib/rpm/Packages is older than /var/lib/rpm/packages.rpm.  We cannot
-determine which of these databases is actual.  Please remove (or at least
-rename) one of these files, then try installing this package again.
-EOF
-			exit 1
-		fi
-
-		cat << EOF
-/var/lib/rpm/Packages is newer than /var/lib/rpm/packages.rpm, perhaps
-we've converted db1 format database to db3 format and then proceeded to
-use the db3 one.  You'll need to remove the db1 format database files
-(/var/lib/rpm/*.rpm) once installation completes.
-
-Install will continue in 10 seconds...
-EOF
-		sleep 10
-	else
-		cat << EOF
-The old RPM database (db1 format) was found.  Unfortunately, we cannot
-automatically convert this database during installation of this
-package due to a "chicken and egg" problem.  To convert old RPM database
-to the new database format extract "rpmd" binary from this package and
-run "rpmd --rebuilddb" manually.
-EOF
-		exit 1
-	fi
+	exit 1
 fi
+
+# RPM's testsuite requires fakechroot, let's build one right here
+ln -sf $(ls -1td fakechroot-*/ | %__sed 's,/\+$,,g;q') fakechroot
+pushd fakechroot
+for f in patches/*.diff ; do
+	patch -p1 -Z < "$f"
+done
+# disable tests thet fail if the fake chroot directory is too deep
+sed -i 's,t/socket-af_unix\.t,,' test/Makefile.am
+autoreconf -fis -I m4
+CFLAGS='%optflags -fPIC' \
+%configure
+%__make
+# fakechroot's testsuite is picky about the current working directory
+cd "$(pwd -P)"
+%__make check
+popd
+
+cat << EOF > tests/fakechroot
+#!/bin/bash
+# fix paths since RPM testsuite is really broken in regard to the modern
+# fakechroot that emulates almost a proper chroot environment.
+args=("\$@")
+for (( i=0 ; i < \${#args[@]} ; i++ )); do
+        args[\$i]=\${args[i]//\$FAKECHROOT_BASE}
+done
+set -- "\${args[@]}"
+unset args
+LD_LIBRARY_PATH=\${LD_LIBRARY_PATH//\$FAKECHROOT_BASE} \
+PATH=/usr/bin:/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin \
+PYTHONPATH=\${PYTHONPATH//\$FAKECHROOT_BASE} \
+RPM_CONFIGDIR=\${RPM_CONFIGDIR//\$FAKECHROOT_BASE} \
+RPM_POPTEXEC_PATH=\${RPM_POPTEXEC_PATH//\$FAKECHROOT_BASE} \
+HOME=/ \
+TOPDIR=/build \
+LD_PRELOAD=$(pwd)/fakechroot/src/.libs/libfakechroot.so "\$@"
+EOF
+chmod +x tests/fakechroot
+
+# now we are ready to test
+cd 'obj-%_arch.normal'
+%__make check
+%if 0%{?_with_rescue:1}
+cd '../obj-%_arch.rescue'
+%__make check
+%endif
+cd ..
 
 %post
 /sbin/ldconfig
-
-if [ ! -e %__sysconfdir/rpm/macros -a -e %__sysconfdir/rpmrc -a \
-    -f %_rpmlibdir/convertrpmrc.sh ]; then
-	sh %_rpmlibdir/convertrpmrc.sh &> /dev/null
-fi
 
 # ToDo: (GM): It is good to run "rpmd --rebuilddb" after upgrading rpm, but
 # it is not so trivial. Rebuild process has to start _after_ this package is
@@ -410,112 +621,160 @@ if [ -f $RPMDBDIR/__db.001 -a "`wc -c < $RPMDBDIR/__db.001`" -le 8192 ]; then
 	rm -f $RPMDBDIR/__db.00?
 fi
 
-%post -n popt -p /sbin/ldconfig
-%postun -n popt -p /sbin/ldconfig
-
-%files -f platforms.list
-%defattr(-,root,root)
-%doc CHANGES.bz2 GROUPS RPM-GPG-KEY RPM-PGP-KEY doc/manual/*
-/bin/rpm
+%files -f %name.lang
+%defattr(0644,root,root,0755)
+%doc ChangeLog.bz2 COPYING CREDITS
 %dir %__sysconfdir/rpm
-%__bindir/gendiff
-%__bindir/rpm2cpio
-%__bindir/rpmdb
-%__bindir/rpme
-%__bindir/rpmi
-%__bindir/rpmu
-%__bindir/rpmgraph
-%__bindir/rpminit
-%__bindir/rpmquery
-%__bindir/rpmsign
-%__bindir/rpmverify
-%__libdir/librpm-%rpm_version.so
-%__libdir/librpmdb-%rpm_version.so
-%__libdir/librpmio-%rpm_version.so
-%config %__prefix/lib/rpmpopt
-%config %__prefix/lib/rpmrc
-
 %dir %__localstatedir/lib/rpm
-%ghost %attr(0644,root,root) %verify(not md5 size mtime) %config(missingok,noreplace) %__localstatedir/lib/rpm/*
-%dir %__localstatedir/spool/repackage
-
-%dir %_rpmlibdir
-%_rpmlibdir/convertrpmrc.sh
-%config(missingok,noreplace) %_rpmlibdir/macros
-%_rpmlibdir/rpm2cpio.sh
-%_rpmlibdir/rpmcache
-%_rpmlibdir/rpmdb*
-%_rpmlibdir/rpmd
-%_rpmlibdir/rpme
-%_rpmlibdir/rpmi
-%_rpmlibdir/rpmk
-%_rpmlibdir/rpmq
-%_rpmlibdir/rpmu
-%_rpmlibdir/rpmv
-%config %_rpmlibdir/rpmpopt*
-%config(noreplace) %_rpmlibdir/rpmrc*
-%_rpmlibdir/tgpg
-%_rpmlibdir/u_pkg.sh
-
-%__mandir/man1/gendiff.1*
-%__mandir/man1/rpminit.1*
+%ghost %config(missingok,noreplace) %verify(not md5 size mtime) %__localstatedir/lib/rpm/[A-Z]*
+%ghost %attr(0600,root,root) %verify(not md5 size mtime)  %__localstatedir/lib/rpm/__db.*
+%attr(0755,root,root) /bin/rpm
+%attr(0755,root,root) %__bindir/rpm2cpio
+%attr(0755,root,root) %__bindir/rpmdb
+%attr(0755,root,root) %__bindir/rpmgraph
+%attr(0755,root,root) %__bindir/rpmkeys
+%attr(0755,root,root) %__bindir/rpmsign
+# the following 2 are symlinks, so not %%attr() for them
+%__bindir/rpmquery
+%__bindir/rpmverify
+%__libdir/librpm.so.*
+%__libdir/librpmio.so.*
+%__libdir/librpmsign.so.*
 %__mandir/man8/rpm.8*
 %__mandir/man8/rpm2cpio.8*
-%__mandir/man8/rpmcache.8*
+%__mandir/man8/rpmdb.8*
 %__mandir/man8/rpmgraph.8*
+%__mandir/man8/rpmkeys.8*
+%__mandir/man8/rpmsign.8*
+%if 0
+%__mandir/*/man8/rpm.8*
+%__mandir/*/man8/rpm2cpio.8*
+%__mandir/*/man8/rpmgraph.8*
+%endif
+%dir %_rpmlibdir
+%_rpmlibdir/rpmpopt-4.11.2
+%_rpmlibdir/rpmrc
+%_rpmlibdir/macros
+%dir %_rpmlibdir/macros.d
+%attr(0644,root,root) %_rpmlibdir/macros.d/macros.sys.*
+%_rpmlibdir/platform
+%dir %__localstatedir/spool/repackage
 
-%__datadir/locale/*/LC_MESSAGES/rpm.mo
+%attr(0755,root,root) %_rpmlibdir/rpmdb_dump
+%attr(0755,root,root) %_rpmlibdir/rpmdb_load
+%attr(0755,root,root) %_rpmlibdir/rpmdb_recover
+%attr(0755,root,root) %_rpmlibdir/rpmdb_stat
+%attr(0755,root,root) %_rpmlibdir/rpmdb_upgrade
+%attr(0755,root,root) %_rpmlibdir/rpmdb_verify
+
+%if 0%{?_with_plugins:1}
+%dir %_rpmlibdir/plugins
+%_rpmlibdir/plugins/exec.so
+%else
+%exclude %_rpmlibdir/plugins/exec.so
+%endif
 
 %files build
-%defattr(-,root,root)
-%__bindir/configure-presets
-%__bindir/rpmbuild
-%__libdir/librpmbuild-%rpm_version.so
-%_rpmlibdir/brp-*
-%_rpmlibdir/check-files
-%_rpmlibdir/check-prereqs
-%_rpmlibdir/config.*
-%_rpmlibdir/cross-build
-%_rpmlibdir/debugedit
-%_rpmlibdir/find-debuginfo.sh
-%_rpmlibdir/find-lang.sh
-%_rpmlibdir/find-prov*
-%_rpmlibdir/find-req*
-%_rpmlibdir/get_magic.pl
-%_rpmlibdir/getpo.sh
-%_rpmlibdir/*.req
-%_rpmlibdir/*.prov
-%_rpmlibdir/javadeps
-%_rpmlibdir/mkinstalldirs
-%_rpmlibdir/perldeps.pl
-%_rpmlibdir/rpm[bt]
-%_rpmlibdir/rpmdeps
-%_rpmlibdir/rpmfile
-%_rpmlibdir/vpkg-*.sh
+%doc doc/manual/[a-z]*
+%attr(0644,root,root) %__bindir/configure-presets
+%attr(0755,root,root) %__bindir/gendiff
+%attr(0755,root,root) %__bindir/rpmbuild
+%attr(0755,root,root) %__bindir/rpminit
+%attr(0755,root,root) %__bindir/rpmspec
+%__libdir/librpmbuild.so.*
+%__libdir/pkgconfig/rpm.pc
+%attr(0755,root,root) %_rpmlibdir/appdata.prov
+%attr(0755,root,root) %_rpmlibdir/brp-compress
+%attr(0755,root,root) %_rpmlibdir/brp-java-gcjcompile
+%attr(0755,root,root) %_rpmlibdir/brp-python-bytecompile
+%attr(0755,root,root) %_rpmlibdir/brp-python-hardlink
+%attr(0755,root,root) %_rpmlibdir/brp-strip
+%attr(0755,root,root) %_rpmlibdir/brp-strip-comment-note
+%attr(0755,root,root) %_rpmlibdir/brp-strip-shared
+%attr(0755,root,root) %_rpmlibdir/brp-strip-static-archive
+%attr(0755,root,root) %_rpmlibdir/check-buildroot
+%attr(0755,root,root) %_rpmlibdir/check-files
+%attr(0755,root,root) %_rpmlibdir/check-prereqs
+%attr(0755,root,root) %_rpmlibdir/check-rpaths
+%attr(0755,root,root) %_rpmlibdir/check-rpaths-worker
+%attr(0755,root,root) %_rpmlibdir/config.guess
+%attr(0755,root,root) %_rpmlibdir/config.sub
+%attr(0755,root,root) %_rpmlibdir/debugedit
+%attr(0755,root,root) %_rpmlibdir/desktop-file.prov
+%attr(0755,root,root) %_rpmlibdir/elfdeps
+%attr(0755,root,root) %_rpmlibdir/find-debuginfo.sh
+%attr(0755,root,root) %_rpmlibdir/find-lang.sh
+%attr(0755,root,root) %_rpmlibdir/find-provides
+%attr(0755,root,root) %_rpmlibdir/find-requires
+%attr(0755,root,root) %_rpmlibdir/fontconfig.prov
+%attr(0755,root,root) %_rpmlibdir/libtooldeps.sh
+%attr(0644,root,root) %_rpmlibdir/macros.d/macros.build
+%attr(0644,root,root) %_rpmlibdir/macros.d/macros.build.*
+%attr(0755,root,root) %_rpmlibdir/mkinstalldirs
+%attr(0755,root,root) %_rpmlibdir/mono-find-provides
+%attr(0755,root,root) %_rpmlibdir/mono-find-requires
+%attr(0755,root,root) %_rpmlibdir/ocaml-find-provides.sh
+%attr(0755,root,root) %_rpmlibdir/ocaml-find-requires.sh
+%attr(0755,root,root) %_rpmlibdir/osgideps.pl
+%attr(0755,root,root) %_rpmlibdir/perl.prov
+%attr(0755,root,root) %_rpmlibdir/perl.req
+# the following script was supposed to be a replacement for perl.prov and
+# perl.req, but it seems it failed.  RPM isn't configured to use it, yet
+# including it brings a dependency on Module::ScanDeps::DataFeed .
+%exclude %attr(0755,root,root) %_rpmlibdir/perldeps.pl
+%attr(0755,root,root) %_rpmlibdir/pkgconfigdeps.sh
+%attr(0755,root,root) %_rpmlibdir/pythondeps.sh
+%attr(0755,root,root) %_rpmlibdir/rpm2cpio.sh
+%attr(0755,root,root) %_rpmlibdir/rpmdb_loadcvt
+%attr(0755,root,root) %_rpmlibdir/rpmdeps
+%attr(0755,root,root) %_rpmlibdir/script.req
+%attr(0755,root,root) %_rpmlibdir/tcl.req
+%attr(0755,root,root) %_rpmlibdir/tgpg
+%dir %_rpmlibdir/fileattrs
+%_rpmlibdir/fileattrs/*.attr
+%_rpmlibdir/macros.perl
+%_rpmlibdir/macros.php
+%_rpmlibdir/macros.python
+%__mandir/man1/gendiff.1*
+%__mandir/man1/rpminit.1*
 %__mandir/man8/rpmbuild.8*
 %__mandir/man8/rpmdeps.8*
+%__mandir/man8/rpmspec.8*
+%if 0
+%__mandir/*/man8/rpmbuild.8*
+%__mandir/*/man1/gendiff.1*
+%__mandir/*/man8/rpmdeps.8*
+%endif
 
 %files devel
-%defattr(-,root,root)
+%defattr(0644,root,root,0755)
 %__includedir/rpm
-%__libdir/librpm*.a
 %__libdir/librpm.so
 %__libdir/librpmbuild.so
-%__libdir/librpmdb.so
 %__libdir/librpmio.so
+%__libdir/librpmsign.so
+%if 0%{?_with_static:1}
+%__libdir/librpm.a
+%__libdir/librpmbuild.a
+%__libdir/librpmio.a
+%__libdir/librpmsign.a
+%endif
 
-%files -n popt
-%defattr(-,root,root)
-%__libdir/libpopt.so.*
-%__datadir/locale/*/LC_MESSAGES/popt.mo
-%__mandir/man3/popt.3*
-
-# XXX These may end up in popt-devel but it hardly seems worth the effort now.
-%__libdir/libpopt.a
-%__libdir/libpopt.so
-%__includedir/popt.h
+%if 0%{?_with_rescue:1}
+%files rescue
+%defattr(0644,root,root,0755)
+%attr(0755,root,root) /bin/rpm*.rescue
+%endif
 
 %changelog
+* Thu Jun 19 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.11.2-owl1
+- Updated to 4.11.2.
+- Regenerated applicable patches, dropped ones which are no longer
+applicable or were implemented upstream.
+- Introduced a testsuite to check the resulting binaries.
+- Introduced an option to build a special, rescue version of rpm, rpmdb,
+and rpm2cpio.
+
 * Tue Aug 14 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4.2-owl29
 - Instead of using -lXXX used specific libXXX.la files from the build tree.
 Old scheme wrongly used system libraries insteaf of in-tree libraries.  It
@@ -645,7 +904,7 @@ dependency checker.
 - Removed "create" from __dbi_cdb definition in macros.in, because it breaks upgrade logic
 - Modified %%pre section to be more friendly to end-user
 
-* Mon May 05 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.17
+* Wed May 05 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.17
 - Finally fixed the problem with db environment opens inside & outside chroot.
 
 * Mon Mar 22 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.16

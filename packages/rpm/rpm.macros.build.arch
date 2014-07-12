@@ -1,0 +1,23 @@
+#------------------------------------------------------------------------------
+# arch macro for all Intel i?86 compatibile processors
+#  (Note: This macro (and it's analogues) will probably be obsoleted when
+#   rpm can use regular expressions against target platforms in macro
+#   conditionals.
+#
+%ix86   i386 i486 i586 i686 pentium3 pentium4 athlon geode
+
+#------------------------------------------------------------------------------
+# arch macro for all supported ARM processors
+%arm	armv3l armv4b armv4l armv4tl armv5tel armv5tejl armv6l armv7l armv7hl armv7hnl
+
+#------------------------------------------------------------------------------
+# arch macro for all supported Sparc processors
+%sparc sparc sparcv8 sparcv9 sparcv9v sparc64 sparc64v
+
+#------------------------------------------------------------------------------
+# arch macro for all supported Alpha processors
+%alpha	alpha alphaev56 alphaev6 alphaev67
+
+#------------------------------------------------------------------------------
+# arch macro for all supported PowerPC 64 processors
+%power64	ppc64 ppc64p7 ppc64le

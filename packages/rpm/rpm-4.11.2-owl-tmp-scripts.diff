@@ -1,0 +1,86 @@
+diff -puNr rpm-4.11.2.orig/scripts/check-files rpm-4.11.2/scripts/check-files
+--- rpm-4.11.2.orig/scripts/check-files	2014-02-05 13:04:02 +0000
++++ rpm-4.11.2/scripts/check-files	2014-06-17 16:28:42 +0000
+@@ -20,10 +20,10 @@ fi
+ 
+ # Create temporary file listing files in the manifest
+ [ -n "$TMPDIR" ] || TMPDIR="/tmp"
+-FILES_DISK=`mktemp "${TMPDIR}/rpmXXXXXX"`
++FILES_DISK=`mktemp -t rpmXXXXXXXXXX`
+ 
+ # Ensure temporary file is cleaned up when we exit
+-trap "rm -f \"${FILES_DISK}\"" 0 2 3 5 10 13 15
++trap 'ec=$? ; rm -f -- "${FILES_DISK}" ; exit $rc' 0 2 3 5 10 13 15
+ 
+ # Find non-directory files in the build root and compare to the manifest.
+ # TODO: regex chars in last sed(1) expression should be escaped
+diff -puNr rpm-4.11.2.orig/scripts/tgpg rpm-4.11.2/scripts/tgpg
+--- rpm-4.11.2.orig/scripts/tgpg	2012-11-07 12:55:24 +0000
++++ rpm-4.11.2/scripts/tgpg	2014-06-17 16:32:53 +0000
+@@ -8,8 +8,9 @@ do
+ 	exit 1
+     fi
+ 
+-    plaintext=`mktemp ${TMPDIR:-/tmp}/tgpg-$$.XXXXXX`
+-    detached=`mktemp ${TMPDIR:-/tmp}/tgpg-$$.XXXXXX`
++    plaintext=`mktemp -t tgpg-$$.XXXXXXXXXX`
++    detached=`mktemp -t tgpg-$$.XXXXXXXXXX`
++    trap 'rc=$? ; rm -f -- "$plaintext" "$detached"; exit $rc' 0 1 2 3 13 15
+ 
+ # --- Extract detached signature
+     rpm -qp -vv --qf '%{siggpg:armor}' $pkg > $detached
+diff -puNr rpm-4.11.2.orig/scripts/vpkg-provides.sh rpm-4.11.2/scripts/vpkg-provides.sh
+--- rpm-4.11.2.orig/scripts/vpkg-provides.sh	2014-02-05 13:04:02 +0000
++++ rpm-4.11.2/scripts/vpkg-provides.sh	2014-06-17 17:10:10 +0000
+@@ -232,11 +232,9 @@ fi
+ 
+ 
+ 
+-provides_tmp=${TMPDIR:-/tmp}/provides.$$
+-if test -f $provides_tmp ; then
+-	echo "$provides_tmp already exists.  Exiting."
+-	exit 11
+-fi
++provides_tmp="`mktemp -t provides.XXXXXXXXXX`"
++sum_tmp="`mktemp -t sum.XXXXXXXXXX`"
++trap 'rc=$? ; rm -f -- "$provides_tmp" "$sum_tmp"; exit $rc' 0 1 2 3 13 15
+ 
+ #
+ # iterate through all the directories in shlib_dirs, looking for shared
+@@ -247,12 +245,6 @@ do
+ 	find $d -type f -print 2>/dev/null | grep -E -v \'$ignore_dirs\' | $find_provides >> $provides_tmp
+ done
+ 
+-sum_tmp=${TMPDIR:-/tmp}/sum.$$
+-if test -f $sum_tmp ; then
+-	echo "$sum_tmp already exists.  Exiting."
+-	exit 11
+-fi
+-
+ #
+ # iterate through all the directories in shlib_dirs, record the sum
+ #
+@@ -344,7 +336,7 @@ cat <<_EIEIO_
+ 
+ %verifyscript
+ 
+-PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/ucb:/usr/bsd
++PATH=/bin:/usr/local/bin:/usr/bin:/sbin:/usr/local/sbin:/usr/sbin
+ export PATH
+ 
+ sum_current_tmp=\${TMPDIR:-/tmp}/rpm.sum.current.\$\$
+@@ -353,11 +345,9 @@ if test -f \$sum_current_tmp ; then
+ 	exit 11
+ fi
+ 
+-sum_package_tmp=\${TMPDIR:-/tmp}/rpm.sum.package.\$\$
+-if test -f \$sum_package_tmp ; then
+-	echo "\$sum_package_tmp already exists.  Exiting."
+-	exit 11
+-fi
++sum_current_tmp="\`mktemp -t rpm.sum.current.XXXXXX\`"
++sum_package_tmp="\`mktemp -t rpm.sum.package.XXXXXX\`"
++trap 'rc=\$? ; rm -f -- "\$sum_current_tmp" "\$sum_package_tmp"; exit \$rc' 0 1 2 3 13 15
+ 
+ for d in `echo $shlib_dirs | sed -e 's/:/ /g'`
+ do

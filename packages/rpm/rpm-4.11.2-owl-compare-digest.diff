@@ -1,0 +1,103 @@
+diff -puNr rpm-4.11.2.orig/lib/depends.c rpm-4.11.2/lib/depends.c
+--- rpm-4.11.2.orig/lib/depends.c	2014-02-05 13:04:01 +0000
++++ rpm-4.11.2/lib/depends.c	2014-06-18 09:24:39 +0000
+@@ -151,6 +151,22 @@ static int skipColor(rpm_color_t tscolor
+     return tscolor && color && ocolor && !(color & ocolor);
+ }
+ 
++static int rpmDigestCompare(Header first, Header second)
++{
++    const char * one, * two;
++
++    one = headerGetString(first, RPMTAG_SHA1HEADER);
++    two = headerGetString(second, RPMTAG_SHA1HEADER);
++
++    if (one && two)
++       return strcmp(one, two);
++    if (one && !two)
++       return 1;
++    if (!one && two)
++       return -1;
++    return 0;
++}
++
+ /* Add erase elements for older packages of same color (if any). */
+ static int addUpgradeErasures(rpmts ts, rpm_color_t tscolor,
+ 				rpmte p, rpm_color_t hcolor, Header h)
+@@ -164,8 +180,8 @@ static int addUpgradeErasures(rpmts ts,
+ 	if (skipColor(tscolor, hcolor, headerGetNumber(oh, RPMTAG_HEADERCOLOR)))
+ 	    continue;
+ 
+-	/* Skip packages that contain identical NEVR. */
+-	if (rpmVersionCompare(h, oh) == 0)
++	/* Skip identical packages. */
++	if (rpmDigestCompare(h, oh) == 0 && rpmVersionCompare(h, oh) == 0)
+ 	    continue;
+ 
+ 	if (removePackage(ts, oh, p)) {
+diff -puNr rpm-4.11.2.orig/lib/psm.c rpm-4.11.2/lib/psm.c
+--- rpm-4.11.2.orig/lib/psm.c	2013-12-09 07:45:39 +0000
++++ rpm-4.11.2/lib/psm.c	2014-06-18 09:52:57 +0000
+@@ -684,6 +684,7 @@ static void markReplacedInstance(rpmts t
+     rpmdbSetIteratorRE(mi, RPMTAG_EPOCH, RPMMIRE_STRCMP, rpmteE(te));
+     rpmdbSetIteratorRE(mi, RPMTAG_VERSION, RPMMIRE_STRCMP, rpmteV(te));
+     rpmdbSetIteratorRE(mi, RPMTAG_RELEASE, RPMMIRE_STRCMP, rpmteR(te));
++    rpmdbSetIteratorRE(mi, RPMTAG_SHA1HEADER, RPMMIRE_STRCMP, rpmteDigest(te));
+     /* XXX shouldn't we also do this on colorless transactions? */
+     if (rpmtsColor(ts)) {
+ 	rpmdbSetIteratorRE(mi, RPMTAG_ARCH, RPMMIRE_STRCMP, rpmteA(te));
+diff -puNr rpm-4.11.2.orig/lib/rpmte.c rpm-4.11.2/lib/rpmte.c
+--- rpm-4.11.2.orig/lib/rpmte.c	2014-02-05 13:04:02 +0000
++++ rpm-4.11.2/lib/rpmte.c	2014-06-18 10:15:07 +0000
+@@ -37,6 +37,7 @@ struct rpmte_s {
+     char * release;		/*!< Release: */
+     char * arch;		/*!< Architecture hint. */
+     char * os;			/*!< Operating system hint. */
++    char * digest;		/*!< Header's SHA1 digest. */
+     int isSource;		/*!< (TR_ADDED) source rpm? */
+ 
+     rpmte depends;              /*!< Package updated by this package (ERASE te) */
+@@ -232,6 +233,7 @@ static int addTE(rpmte p, Header h, fnpy
+     
+     p->NEVR = headerGetAsString(h, RPMTAG_NEVR);
+     p->NEVRA = headerGetAsString(h, RPMTAG_NEVRA);
++    p->digest = headerGetAsString(h, RPMTAG_SHA1HEADER);
+ 
+     p->nrelocs = 0;
+     p->relocs = NULL;
+@@ -317,6 +319,7 @@ rpmte rpmteFree(rpmte te)
+ 	free(te->release);
+ 	free(te->NEVR);
+ 	free(te->NEVRA);
++	free(te->digest);
+ 
+ 	fdFree(te->fd);
+ 	rpmfiFree(te->fi);
+@@ -537,6 +540,10 @@ const char * rpmteNEVRA(rpmte te)
+ {
+     return (te != NULL ? te->NEVRA : NULL);
+ }
++const char * rpmteDigest(rpmte te)
++{
++    return (te != NULL ? te->digest : NULL);
++}
+ 
+ FD_t rpmteSetFd(rpmte te, FD_t fd)
+ {
+diff -puNr rpm-4.11.2.orig/lib/rpmte.h rpm-4.11.2/lib/rpmte.h
+--- rpm-4.11.2.orig/lib/rpmte.h	2012-11-07 12:55:24 +0000
++++ rpm-4.11.2/lib/rpmte.h	2014-06-18 10:08:26 +0000
+@@ -95,6 +95,13 @@ const char * rpmteO(rpmte te);
+ int rpmteIsSource(rpmte te);
+ 
+ /** \ingroup rpmte
++ * Retrieve digest string of transaction element.
++ * @param te		transaction element
++ * @return		digest string
++ */
++const char * rpmteDigest(rpmte te);
++
++/** \ingroup rpmte
+  * Retrieve color bits of transaction element.
+  * @param te		transaction element
+  * @return		color bits

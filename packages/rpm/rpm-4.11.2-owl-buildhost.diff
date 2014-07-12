@@ -1,0 +1,81 @@
+diff -puNr rpm-4.11.2.orig/build/pack.c rpm-4.11.2/build/pack.c
+--- rpm-4.11.2.orig/build/pack.c	2014-02-05 13:04:01 +0000
++++ rpm-4.11.2/build/pack.c	2014-06-17 19:00:29 +0000
+@@ -317,7 +317,10 @@ static rpmRC writeRPM(Package pkg, unsig
+ 
+     /* Create and add the cookie */
+     if (cookie) {
+-	rasprintf(cookie, "%s %d", buildHost(), (int) (*getBuildTime()));
++        const char *buildHost_ = headerGetString(pkg->header, RPMTAG_BUILDHOST);
++        if (!buildHost_)
++		buildHost_ = buildHost();
++	rasprintf(cookie, "%s %d", buildHost_, (int) (*getBuildTime()));
+ 	headerPutString(pkg->header, RPMTAG_COOKIE, *cookie);
+     }
+     
+@@ -562,7 +565,8 @@ rpmRC packageBinaries(rpmSpec spec, cons
+ 	headerCopyTags(spec->packages->header, pkg->header, copyTags);
+ 	
+ 	headerPutString(pkg->header, RPMTAG_RPMVERSION, VERSION);
+-	headerPutString(pkg->header, RPMTAG_BUILDHOST, buildHost());
++	if (!headerGetString(pkg->header, RPMTAG_BUILDHOST))
++	    headerPutString(pkg->header, RPMTAG_BUILDHOST, buildHost());
+ 	headerPutUint32(pkg->header, RPMTAG_BUILDTIME, getBuildTime(), 1);
+ 
+ 	if (spec->sourcePkgId != NULL) {
+@@ -643,7 +647,8 @@ rpmRC packageSources(rpmSpec spec, char
+ 
+     /* Add some cruft */
+     headerPutString(sourcePkg->header, RPMTAG_RPMVERSION, VERSION);
+-    headerPutString(sourcePkg->header, RPMTAG_BUILDHOST, buildHost());
++    if (!headerGetString(sourcePkg->header, RPMTAG_BUILDHOST))
++        headerPutString(sourcePkg->header, RPMTAG_BUILDHOST, buildHost());
+     headerPutUint32(sourcePkg->header, RPMTAG_BUILDTIME, getBuildTime(), 1);
+ 
+     /* XXX this should be %_srpmdir */
+diff -puNr rpm-4.11.2.orig/build/parsePreamble.c rpm-4.11.2/build/parsePreamble.c
+--- rpm-4.11.2.orig/build/parsePreamble.c	2014-02-05 13:04:01 +0000
++++ rpm-4.11.2/build/parsePreamble.c	2014-06-17 19:04:24 +0000
+@@ -42,6 +42,7 @@ static const rpmTagVal copyTagsDuringPar
+     RPMTAG_CHANGELOGNAME,
+     RPMTAG_CHANGELOGTEXT,
+     RPMTAG_PREFIXES,
++    RPMTAG_BUILDHOST,
+     RPMTAG_DISTTAG,
+     RPMTAG_BUGURL,
+     RPMTAG_GROUP,
+@@ -516,6 +517,7 @@ static struct optionalTag {
+     { RPMTAG_PACKAGER,		"%{packager}" },
+     { RPMTAG_DISTRIBUTION,	"%{distribution}" },
+     { RPMTAG_DISTURL,		"%{disturl}" },
++    { RPMTAG_BUILDHOST,		"%{buildhost}" },
+     { RPMTAG_BUGURL,		"%{bugurl}" },
+     { -1, NULL }
+ };
+@@ -697,6 +699,7 @@ static rpmRC handlePreambleTag(rpmSpec s
+     case RPMTAG_VENDOR:
+     case RPMTAG_LICENSE:
+     case RPMTAG_PACKAGER:
++    case RPMTAG_BUILDHOST:
+ 	if (!*lang) {
+ 	    headerPutString(pkg->header, tag, field);
+ 	} else if (!((spec->flags & RPMSPEC_NOLANG) &&
+@@ -867,6 +870,7 @@ static struct PreambleRec_s const preamb
+     {RPMTAG_RELEASE,		0, 0, LEN_AND_STR("release")},
+     {RPMTAG_EPOCH,		0, 0, LEN_AND_STR("epoch")},
+     {RPMTAG_SUMMARY,		1, 0, LEN_AND_STR("summary")},
++    {RPMTAG_BUILDHOST,		1, 0, LEN_AND_STR("buildhost")},
+     {RPMTAG_LICENSE,		0, 0, LEN_AND_STR("license")},
+     {RPMTAG_DISTRIBUTION,	0, 0, LEN_AND_STR("distribution")},
+     {RPMTAG_DISTURL,		0, 0, LEN_AND_STR("disturl")},
+diff -puNr rpm-4.11.2.orig/build/parseSpec.c rpm-4.11.2/build/parseSpec.c
+--- rpm-4.11.2.orig/build/parseSpec.c	2014-02-05 13:04:01 +0000
++++ rpm-4.11.2/build/parseSpec.c	2014-06-17 18:41:27 +0000
+@@ -446,6 +446,7 @@ static const rpmTagVal sourceTags[] = {
+     RPMTAG_CHANGELOGTEXT,
+     RPMTAG_URL,
+     RPMTAG_BUGURL,
++    RPMTAG_BUILDHOST,
+     RPMTAG_HEADERI18NTABLE,
+     RPMTAG_VCS,
+     0

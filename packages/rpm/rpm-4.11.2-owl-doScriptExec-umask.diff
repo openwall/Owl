@@ -1,0 +1,11 @@
+diff -puNr rpm-4.11.2.orig/lib/rpmscript.c rpm-4.11.2/lib/rpmscript.c
+--- rpm-4.11.2.orig/lib/rpmscript.c	2013-07-03 09:25:56 +0000
++++ rpm-4.11.2/lib/rpmscript.c	2014-06-18 10:32:00 +0000
+@@ -169,6 +169,7 @@ static void doScriptExec(int selinux, AR
+ 	}
+ 
+ 	if (xx == 0) {
++	    umask(022);
+ 	    xx = execv(argv[0], argv);
+ 	}
+     }

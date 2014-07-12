@@ -1,0 +1,113 @@
+#==============================================================================
+# ---- specfile macros.
+#	Macro(s) here can be used reliably for reproducible builds.
+#	(Note: Above is the goal, below are the macros under development)
+#
+# The configure macro runs autoconf configure script with platform specific
+# directory structure (--prefix, --libdir etc) and compiler flags
+# such as CFLAGS.
+#
+# The configure macro should be invoked as %configure (rather than %{configure})
+# because the rest of the arguments will be expanded using %*.
+#
+%_configure ./configure
+%configure \
+  CFLAGS="${CFLAGS:-%optflags}" ; export CFLAGS ; \
+  CXXFLAGS="${CXXFLAGS:-%optflags}" ; export CXXFLAGS ; \
+  FFLAGS="${FFLAGS:-%optflags}" ; export FFLAGS ; \
+  %{_configure} --host=%{_host} --build=%{_build} \\\
+	%{?_program_prefix:--program-prefix=%_program_prefix} \\\
+	--prefix=%{_prefix} \\\
+	--exec-prefix=%{_exec_prefix} \\\
+	--bindir=%{_bindir} \\\
+	--sbindir=%{_sbindir} \\\
+	--sysconfdir=%{_sysconfdir} \\\
+	--datadir=%{_datadir} \\\
+	--includedir=%{_includedir} \\\
+	--libdir=%{_libdir} \\\
+	--libexecdir=%{_libexecdir} \\\
+	--localstatedir=%{_localstatedir} \\\
+	--sharedstatedir=%{_sharedstatedir} \\\
+	--mandir=%{_mandir} \\\
+	--infodir=%{_infodir}
+
+#------------------------------------------------------------------------------
+# The make install analogue of %configure for modern autotools:
+%make_install %{__make} install DESTDIR=%{?buildroot}
+
+#------------------------------------------------------------------------------
+# Former make install analogue, kept for compatibility and for old/broken
+#  packages that don't support DESTDIR properly.
+%makeinstall \
+  %{__make} \\\
+	prefix=%{?buildroot:%{buildroot}}%{_prefix} \\\
+	exec_prefix=%{?buildroot:%{buildroot}}%{_exec_prefix} \\\
+	bindir=%{?buildroot:%{buildroot}}%{_bindir} \\\
+	sbindir=%{?buildroot:%{buildroot}}%{_sbindir} \\\
+	sysconfdir=%{?buildroot:%{buildroot}}%{_sysconfdir} \\\
+	datadir=%{?buildroot:%{buildroot}}%{_datadir} \\\
+	includedir=%{?buildroot:%{buildroot}}%{_includedir} \\\
+	libdir=%{?buildroot:%{buildroot}}%{_libdir} \\\
+	libexecdir=%{?buildroot:%{buildroot}}%{_libexecdir} \\\
+	localstatedir=%{?buildroot:%{buildroot}}%{_localstatedir} \\\
+	sharedstatedir=%{?buildroot:%{buildroot}}%{_sharedstatedir} \\\
+	mandir=%{?buildroot:%{buildroot}}%{_mandir} \\\
+	infodir=%{?buildroot:%{buildroot}}%{_infodir} \\\
+  install
+
+#------------------------------------------------------------------------------
+# The GNUconfigure macro does the following:
+#       update config.guess and config.sub.
+#       regenerate all autoconf/automake files
+#       optionally change to a directory (make the directory if requested).
+#       run configure with correct prefix, platform, and CFLAGS.
+#       optionally restore current directory.
+#
+# Based on autogen.sh from GNOME and original GNUconfigure
+#
+%GNUconfigure(MCs:)      \
+  CFLAGS="${CFLAGS:-%optflags}" ; export CFLAGS; \
+  LDFLAGS="${LDFLAGS:-%{-s:-s}}"  ; export LDFLAGS; \
+  %{-C:_mydir="`pwd`"; %{-M: %{__mkdir} -p %{-C*};} cd %{-C*}} \
+  dirs="`find ${_mydir} -name configure.in -print`"; export dirs; \
+    for coin in `echo ${dirs}` \
+do \
+  dr=`dirname ${coin}`; \
+if test -f ${dr}/NO-AUTO-GEN; then \
+ : \
+else \
+     macrodirs=`sed -n -e 's,AM_ACLOCAL_INCLUDE(\(.*\)),\1,gp' < ${coin}`; \
+    ( cd ${dr}; \
+      aclocalinclude="${ACLOCAL_FLAGS}"; \
+      for k in ${macrodirs}; do \
+        if test -d ${k}; then \
+          aclocalinclude="${aclocalinclude} -I ${k}"; \
+        ##else \
+        ##  echo "**Warning**: No such directory \`${k}'.  Ignored." \
+        fi \
+      done \
+      if grep "^AM_GNU_GETTEXT" configure.in >/dev/null; then \
+        if grep "sed.*POTFILES" configure.in >/dev/null; then \
+          : do nothing -- we still have an old unmodified configure.in \
+        else \
+          test -r ${dr}/aclocal.m4 || touch ${dr}/aclocal.m4; \
+          echo "no" | gettextize --force --copy; \
+          test -r ${dr}/aclocal.m4 && %{__chmod} u+w ${dr}/aclocal.m4; \
+        fi \
+      fi \
+      if grep "^AM_PROG_LIBTOOL" configure.in >/dev/null; then \
+        %{__libtoolize} --force --copy; \
+      fi \
+      aclocal ${aclocalinclude}; \
+      if grep "^AM_CONFIG_HEADER" configure.in >/dev/null; then \
+        %{__autoheader}; \
+      fi \
+      echo "Running automake --gnu ${am_opt} ..."; \
+      %{__automake} --add-missing --gnu ${am_opt}; \
+      %{__autoconf}; \
+    ); \
+  fi \
+done \
+  %{-C:${_mydir}}%{!-C:.}/configure --prefix=%{_prefix} --exec-prefix=%{_exec_prefix} --bindir=%{_bindir} --sbindir=%{_sbindir} --sysconfdir=%{_sysconfdir} --datadir=%{_datadir} --includedir=%{_includedir} --libdir=%{_libdir} --libexecdir=%{_libexecdir} --localstatedir=%{_localstatedir} --sharedstatedir=%{_sharedstatedir} --mandir=%{_mandir} --infodir=%{_infodir} %* ; \
+  %{-C:cd ${_mydir}; unset _mydir}
+

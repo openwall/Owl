@@ -1,0 +1,207 @@
+diff -puNr rpm-4.11.2.orig/tests/Makefile.am rpm-4.11.2/tests/Makefile.am
+--- rpm-4.11.2.orig/tests/Makefile.am	2014-02-05 13:04:02 +0000
++++ rpm-4.11.2/tests/Makefile.am	2014-06-18 15:08:15 +0000
+@@ -90,6 +90,7 @@ atlocal:      atlocal.in Makefile
+ 	  -e "s,[@]usrbindir[@],$(bindir)," \
+ 	  -e "s,[@]usrlibdir[@],$(libdir)," \
+ 	  -e "s,[@]RPMCONFIGDIR[@],$(rpmconfigdir)," \
++	  -e "s,[@]__FAKECHROOT[@],@__FAKECHROOT@," \
+ 	< $(srcdir)/atlocal.in > atlocal
+ DISTCLEANFILES = atlocal
+ EXTRA_DIST += atlocal.in
+@@ -106,7 +107,7 @@ testing$(bindir)/rpmbuild: ../rpmbuild
+ 	for node in stdin stderr stdout null; do ln -s /dev/$${node} testing/dev/$${node}; done
+ 	for cf in hosts resolv.conf passwd shadow group gshadow mtab fstab; do [ -f /etc/$${cf} ] && ln -s /etc/$${cf} testing/etc/$${cf}; done
+ 	ln -s ../$(bindir) testing/usr/bin
+-	for prog in gzip cat patch tar sh ln chmod rm mkdir uname grep sed find file mktemp cut sort diff touch; do p=`which $${prog}`; ln -s $${p} testing/$${p}; done
++	for prog in gzip cat patch tar sh ln chmod rm rmdir mkdir uname grep sed find file mktemp cut sort diff touch; do p=`which $${prog}`; ln -s $${p} testing/$${p}; done
+ 	for d in /proc /sys /selinux /etc/selinux; do if [ -d $${d} ]; then ln -s $${d} testing/$${d}; fi; done
+ 	(cd testing/magic && file -C)
+ 
+@@ -115,7 +115,8 @@ check_DATA += testing$(bindir)/rpmbuild
+ 
+ if HAVE_FAKECHROOT
+ check-local: $(check_DATA)
+-	$(SHELL) '$(TESTSUITE)' $(TESTSUITEFLAGS) ||:
++	[ -d "testing/${TMPDIR}" ] || mkdir -p "testing/${TMPDIR}"
++	$(SHELL) '$(TESTSUITE)' $(TESTSUITEFLAGS)
+ else
+ check-local:
+ 	echo "you need to have fakechroot installed"
+diff -puNr rpm-4.11.2.orig/tests/Makefile.in rpm-4.11.2/tests/Makefile.in
+--- rpm-4.11.2.orig/tests/Makefile.in	2014-06-17 16:01:43 +0000
++++ rpm-4.11.2/tests/Makefile.in	2014-06-18 15:12:36 +0000
+@@ -596,6 +596,7 @@ atlocal:    atlocal.in Makefile
+ 	  -e "s,[@]usrbindir[@],$(bindir)," \
+ 	  -e "s,[@]usrlibdir[@],$(libdir)," \
+ 	  -e "s,[@]RPMCONFIGDIR[@],$(rpmconfigdir)," \
++	  -e "s,[@]__FAKECHROOT[@],@__FAKECHROOT@," \
+ 	< $(srcdir)/atlocal.in > atlocal
+ 
+ # Hack: Abusing testing$(bindir)/rpmbuild as stamp file
+@@ -610,12 +611,13 @@ testing$(bindir)/rpmbuild: ../rpmbuild
+ 	for node in stdin stderr stdout null; do ln -s /dev/$${node} testing/dev/$${node}; done
+ 	for cf in hosts resolv.conf passwd shadow group gshadow mtab fstab; do [ -f /etc/$${cf} ] && ln -s /etc/$${cf} testing/etc/$${cf}; done
+ 	ln -s ../$(bindir) testing/usr/bin
+-	for prog in gzip cat patch tar sh ln chmod rm mkdir uname grep sed find file mktemp cut sort diff touch; do p=`which $${prog}`; ln -s $${p} testing/$${p}; done
++	for prog in gzip cat patch tar sh ln chmod rm rmdir mkdir uname grep sed find file mktemp cut sort diff touch; do p=`which $${prog}`; ln -s $${p} testing/$${p}; done
+ 	for d in /proc /sys /selinux /etc/selinux; do if [ -d $${d} ]; then ln -s $${d} testing/$${d}; fi; done
+ 	(cd testing/magic && file -C)
+ 
+ @HAVE_FAKECHROOT_TRUE@check-local: $(check_DATA)
+-@HAVE_FAKECHROOT_TRUE@	$(SHELL) '$(TESTSUITE)' $(TESTSUITEFLAGS) ||:
++@HAVE_FAKECHROOT_TRUE@	[ -d "testing/${TMPDIR}" ] || mkdir -p "testing/${TMPDIR}"
++@HAVE_FAKECHROOT_TRUE@	$(SHELL) '$(TESTSUITE)' $(TESTSUITEFLAGS)
+ @HAVE_FAKECHROOT_FALSE@check-local:
+ @HAVE_FAKECHROOT_FALSE@	echo "you need to have fakechroot installed"
+ @HAVE_FAKECHROOT_FALSE@	exit 1
+diff -puNr rpm-4.11.2.orig/tests/atlocal.in rpm-4.11.2/tests/atlocal.in
+--- rpm-4.11.2.orig/tests/atlocal.in	2014-02-05 13:04:02 +0000
++++ rpm-4.11.2/tests/atlocal.in	2014-06-18 15:04:14 +0000
+@@ -3,7 +3,7 @@ export LD_LIBRARY_PATH
+ PATH="${abs_builddir}/testing@rpmbindir@:${abs_builddir}/testing@usrbindir@:$PATH"
+ export PATH
+ 
+-PYLIBDIR=`python -c "from distutils.sysconfig import get_python_lib; import sys; sys.stdout.write(get_python_lib(1))"`
++PYLIBDIR=$(python -c "from distutils.sysconfig import get_python_lib; import sys; sys.stdout.write(get_python_lib(1))" 2>/dev/null)
+ PYTHONPATH="${abs_builddir}/testing${PYLIBDIR}"
+ export PYTHONPATH
+ 
+@@ -30,6 +30,6 @@ function run()
+ function runroot()
+ {
+     (cd ${RPMTEST} && \
+-     MAGIC="/magic/magic" FAKECHROOT_BASE="${RPMTEST}" fakechroot "$@" --define "_topdir /build"
++     MAGIC="/magic/magic" FAKECHROOT_BASE="${RPMTEST}" @__FAKECHROOT@ "$@" --define "_topdir /build"
+     )
+ }
+diff -puNr rpm-4.11.2.orig/tests/data/SPECS/hlinktest.spec rpm-4.11.2/tests/data/SPECS/hlinktest.spec
+--- rpm-4.11.2.orig/tests/data/SPECS/hlinktest.spec	2014-02-05 13:04:02 +0000
++++ rpm-4.11.2/tests/data/SPECS/hlinktest.spec	2014-07-11 10:50:28 +0000
+@@ -5,6 +5,7 @@ Release:          1
+ License:          Testing
+ Group:            Testing
+ BuildArch:	  noarch
++AutoReq:	  no
+ %description
+   
+ %install
+diff -puNr rpm-4.11.2.orig/tests/data/SPECS/replacetest.spec rpm-4.11.2/tests/data/SPECS/replacetest.spec
+--- rpm-4.11.2.orig/tests/data/SPECS/replacetest.spec	2013-11-22 10:31:31 +0000
++++ rpm-4.11.2/tests/data/SPECS/replacetest.spec	2014-06-18 14:36:23 +0000
+@@ -9,6 +9,7 @@ Summary:	Testing file replacement behavi
+ Group:		Testing
+ License:	GPL
+ BuildArch:	noarch
++AutoReq:	no
+ 
+ %description
+ %{summary}
+@@ -38,7 +39,7 @@ echo FOO > $RPM_BUILD_ROOT/opt/goo
+ rm -rf $RPM_BUILD_ROOT
+ 
+ %if 0%{?havepretrans}
+-%pretrans -p <lua>
++%pretrans
+ %{fixit}
+ %endif
+ 
+diff -puNr rpm-4.11.2.orig/tests/data/SPECS/verifyscript.spec rpm-4.11.2/tests/data/SPECS/verifyscript.spec
+--- rpm-4.11.2.orig/tests/data/SPECS/verifyscript.spec	2012-11-07 12:55:24 +0000
++++ rpm-4.11.2/tests/data/SPECS/verifyscript.spec	2014-06-18 15:15:14 +0000
+@@ -10,10 +10,11 @@ BuildArch:	noarch
+ %description
+ %{summary}
+ 
+-%verifyscript -p <lua>
+-if not posix.access("/var/checkme", "f") then
+-   error("bad")
+-end
++%verifyscript
++if [ ! -f /var/checkme ]; then
++	echo bad
++	exit 1
++fi
+ 
+ %files
+ %defattr(-,root,root)
+diff -puNr rpm-4.11.2.orig/tests/rpmmacro.at rpm-4.11.2/tests/rpmmacro.at
+--- rpm-4.11.2.orig/tests/rpmmacro.at	2012-11-07 12:55:24 +0000
++++ rpm-4.11.2/tests/rpmmacro.at	2014-06-18 14:05:42 +0000
+@@ -91,6 +91,7 @@ AT_CLEANUP
+ 
+ AT_SETUP([simple lua --eval])
+ AT_KEYWORDS([macros lua])
++AT_SKIP_IF([R=$(runroot rpm --eval '%{lua:print("OK")}'); test $R = '%{lua:print("OK")}' ])
+ AT_CHECK([
+ runroot rpm --eval '%{lua:print(5*5)}'
+ ],
+@@ -101,6 +102,7 @@ AT_CLEANUP
+ 
+ AT_SETUP([lua rpm extensions])
+ AT_KEYWORDS([macros lua])
++AT_SKIP_IF([R=$(runroot rpm --eval '%{lua:print("OK")}'); test $R = '%{lua:print("OK")}' ])
+ AT_CHECK([
+ runroot rpm --eval '%{lua: rpm.define("foo bar") print(rpm.expand("%{foo}"))}'
+ ],
+@@ -111,6 +113,7 @@ AT_CLEANUP
+ 
+ AT_SETUP([lua posix extensions])
+ AT_KEYWORDS([macros lua])
++AT_SKIP_IF([R=$(runroot rpm --eval '%{lua:print("OK")}'); test $R = '%{lua:print("OK")}' ])
+ AT_CHECK([
+ runroot rpm \
+   --eval '%{lua: posix.putenv("LUATEST=ok") print(posix.getenv("LUATEST"))}'
+@@ -122,6 +125,7 @@ AT_CLEANUP
+ 
+ AT_SETUP([lua script exit behavior])
+ AT_KEYWORDS([macros lua])
++AT_SKIP_IF([R=$(runroot rpm --eval '%{lua:print("OK")}'); test $R = '%{lua:print("OK")}' ])
+ AT_CHECK([
+ runroot rpm \
+   --eval '%{lua: os.exit()}))}'
+diff -puNr rpm-4.11.2.orig/tests/rpmreplace.at rpm-4.11.2/tests/rpmreplace.at
+--- rpm-4.11.2.orig/tests/rpmreplace.at	2013-11-22 10:31:31 +0000
++++ rpm-4.11.2/tests/rpmreplace.at	2014-06-18 14:48:42 +0000
+@@ -557,7 +557,7 @@ runroot rpmbuild --quiet -bb \
+         --define "ver 2.0" \
+ 	--define "filetype link" \
+ 	--define "filedata goo" \
+-	--define "fixit posix.rmdir('/opt/foo')" \
++	--define "fixit rmdir /opt/foo" \
+           /data/SPECS/replacetest.spec
+ 
+ runroot rpm -U "${TOPDIR}"/RPMS/noarch/replacetest-1.0-1.noarch.rpm
+diff -puNr rpm-4.11.2.orig/tests/rpmvercmp.at rpm-4.11.2/tests/rpmvercmp.at
+--- rpm-4.11.2.orig/tests/rpmvercmp.at	2013-11-22 10:26:02 +0000
++++ rpm-4.11.2/tests/rpmvercmp.at	2014-06-18 14:09:05 +0000
+@@ -3,6 +3,7 @@
+ m4_define([RPMVERCMP],[
+ AT_SETUP([rpmvercmp($1, $2) = $3])
+ AT_KEYWORDS([vercmp])
++AT_SKIP_IF([R=$(runroot rpm --eval '%{lua:print("OK")}'); test $R = '%{lua:print("OK")}' ])
+ AT_CHECK([runroot rpm --eval '%{lua: print(rpm.vercmp("$1", "$2"))}'], [0], [$3
+ ], [])
+ AT_CLEANUP
+diff -puNr rpm-4.11.2.orig/tests/local.at rpm-4.11.2/tests/local.at
+--- rpm-4.11.2.orig/tests/local.at	2012-11-07 12:55:24 +0000
++++ rpm-4.11.2/tests/local.at	2014-06-18 14:35:27 +0000
+@@ -27,6 +27,7 @@ AT_CHECK([RPMPY_RUN([$1])], [], [$2], [$
+ m4_define([RPMPY_TEST],[
+ AT_SETUP([$1])
+ AT_KEYWORDS([python])
++AT_SKIP_IF([! python --version >/dev/null 2>&1])
+ RPMDB_CLEAR
+ RPMDB_INIT
+ RPMPY_CHECK([$2], [$3], [$4])
+diff -puNr rpm-4.11.2.orig/tests/rpmpython.at rpm-4.11.2/tests/rpmpython.at
+--- rpm-4.11.2.orig/tests/rpmpython.at	2014-02-05 13:04:02 +0000
++++ rpm-4.11.2/tests/rpmpython.at	2014-06-18 14:33:13 +0000
+@@ -183,6 +183,7 @@ for e in ts:
+ 
+ AT_SETUP([database iterators])
+ AT_KEYWORDS([python rpmdb])
++AT_SKIP_IF([! python --version >/dev/null 2>/dev/null])
+ AT_CHECK([
+ RPMDB_CLEAR
+ RPMDB_INIT

@@ -1,0 +1,88 @@
+diff -puNr rpm-4.11.2.orig/macros.in rpm-4.11.2/macros.in
+--- rpm-4.11.2.orig/macros.in	2014-06-30 01:09:56 +0000
++++ rpm-4.11.2/macros.in	2014-06-30 01:32:55 +0000
+@@ -610,9 +610,19 @@ package or when debugging this package.\
+ %_isa			%{?__isa:(%{__isa})}%{!?__isa:%{nil}}
+ 
+ #
+-# Define per-arch and per-os defaults. Normally overridden by per-target macros.
++# Define per-arch and per-os defaults. Can be overridden by per-target macros.
+ %__arch_install_post	%{nil}
+-%__os_install_post	%{___build_post}
++%__os_install_post    \
++    %{_rpmconfigdir}/brp-compress \
++    %{_rpmconfigdir}/brp-strip %{__strip} \
++    %{_rpmconfigdir}/brp-strip-static-archive %{__strip} \
++    %{_rpmconfigdir}/brp-strip-comment-note %{__strip} %{__objdump} \
++%{nil}
++
++%_smp_mflags %([ -z "$RPM_BUILD_NCPUS" ] \\\
++	&& RPM_BUILD_NCPUS=$(/usr/bin/getconf _NPROCESSORS_ONLN); \\\
++	[ -n "$RPM_BUILD_NCPUS" -a -z "${RPM_BUILD_NCPUS//[[:digit:]]}" -a "$RPM_BUILD_NCPUS" -gt 1 ] \\\
++	&& echo "-j$RPM_BUILD_NCPUS")
+ 
+ # Macro to fix broken permissions in sources
+ %_fixperms      %{__chmod} -Rf @FIXPERMS@
+diff -puNr rpm-4.11.2.orig/platform.in rpm-4.11.2/platform.in
+--- rpm-4.11.2.orig/platform.in	2012-11-07 12:55:24 +0000
++++ rpm-4.11.2/platform.in	2014-06-30 01:33:24 +0000
+@@ -23,58 +23,6 @@
+ %_transaction_color	@RPMCANONCOLOR@
+ 
+ #==============================================================================
+-# ---- configure macros.
++# ---- configure macros that depend on the platform.
+ #
+-%_prefix		@prefix@
+-%_exec_prefix		@exec_prefix@
+-%_bindir		@bindir@
+-%_sbindir		@sbindir@
+-%_libexecdir		@libexecdir@
+-%_datarootdir		@datarootdir@
+-%_datadir		@datadir@
+-%_sysconfdir		@sysconfdir@
+-%_sharedstatedir	@sharedstatedir@
+-%_localstatedir		@localstatedir@
+ %_lib			@LIB@
+-%_libdir		@exec_prefix@/@LIB@
+-%_includedir		@includedir@
+-%_oldincludedir		@oldincludedir@
+-%_infodir		@infodir@
+-%_mandir		@mandir@
+-%_initddir		%{_sysconfdir}/rc.d/init.d
+-# Deprecated misspelling, present for backwards compatibility.
+-%_initrddir		%{_initddir}
+-
+-%_defaultdocdir		%{_datadir}/doc
+-
+-%_smp_mflags %([ -z "$RPM_BUILD_NCPUS" ] \\\
+-	&& RPM_BUILD_NCPUS="`/usr/bin/getconf _NPROCESSORS_ONLN`"; \\\
+-	[ "$RPM_BUILD_NCPUS" -gt 1 ] && echo "-j$RPM_BUILD_NCPUS")
+-
+-#==============================================================================
+-# ---- Build policy macros.
+-#
+-#---------------------------------------------------------------------
+-#	Expanded at end of %install scriptlet.
+-#
+-
+-%__arch_install_post   @ARCH_INSTALL_POST@
+-
+-%__os_install_post    \
+-    %{_rpmconfigdir}/brp-compress \
+-    %{_rpmconfigdir}/brp-strip %{__strip} \
+-    %{_rpmconfigdir}/brp-strip-static-archive %{__strip} \
+-    %{_rpmconfigdir}/brp-strip-comment-note %{__strip} %{__objdump} \
+-%{nil}
+-
+-%__spec_install_post\
+-    %{?__debug_package:%{__debug_install_post}}\
+-    %{__arch_install_post}\
+-    %{__os_install_post}\
+-%{nil}
+-
+-@apple@#---------------------------------------------------------------------
+-@apple@#	Apple Darwin vendor specific macros
+-@apple@#
+-@apple@%_use_internal_dependency_generator     0
+-@apple@%__so	dylib

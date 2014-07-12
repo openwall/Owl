@@ -1,0 +1,12 @@
+diff --git a/scripts/Makefile.am b/scripts/Makefile.am
+index 7656c80..d1aeeba 100644
+--- a/scripts/Makefile.am
++++ b/scripts/Makefile.am
+@@ -23,6 +23,7 @@ EXTRA_DIST = \
+ 	macros.perl macros.php macros.python
+ 
+ rpmconfig_SCRIPTS = \
++	appdata.prov \
+ 	brp-compress brp-python-bytecompile brp-java-gcjcompile \
+ 	brp-strip brp-strip-comment-note brp-python-hardlink \
+ 	brp-strip-shared brp-strip-static-archive \

@@ -1,0 +1,383 @@
+--- rpm-4.11.2.orig/lib/query.c	2014-02-05 13:04:02 +0000
++++ rpm-4.11.2/lib/query.c	2014-06-18 11:03:25 +0000
+@@ -195,7 +195,7 @@ int showQueryPackage(QVA_t qva, rpmts ts
+ 		free(add);
+ 	    } else {
+ 		rpmlog(RPMLOG_ERR,
+-			_("package has not file owner/group lists\n"));
++			_("package has no file owner/group lists\n"));
+ 	    }
+ 
+ 	    rasprintf(&add, " %s %s %u %s",
+diff -puNr rpm-4.11.2.orig/po/br.po rpm-4.11.2/po/br.po
+--- rpm-4.11.2.orig/po/br.po	2014-02-05 13:07:58 +0000
++++ rpm-4.11.2/po/br.po	2014-06-18 11:02:47 +0000
+@@ -2310,7 +2310,7 @@ msgid "(unknown %3d) "
+ msgstr ""
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr ""
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/ca.po rpm-4.11.2/po/ca.po
+--- rpm-4.11.2.orig/po/ca.po	2014-02-05 13:07:58 +0000
++++ rpm-4.11.2/po/ca.po	2014-06-18 11:02:47 +0000
+@@ -2368,7 +2368,7 @@ msgid "(unknown %3d) "
+ msgstr "(%3d desconegut) "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "el paquet no té propietari dels fitxers/llistes de grup\n"
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/cs.po rpm-4.11.2/po/cs.po
+--- rpm-4.11.2.orig/po/cs.po	2014-02-05 13:07:58 +0000
++++ rpm-4.11.2/po/cs.po	2014-06-18 11:02:47 +0000
+@@ -2331,7 +2331,7 @@ msgid "(unknown %3d) "
+ msgstr "(neznámý %3d) "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "balíček nemá vlastníka souboru ani seznamy skupin\n"
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/da.po rpm-4.11.2/po/da.po
+--- rpm-4.11.2.orig/po/da.po	2014-02-05 13:07:58 +0000
++++ rpm-4.11.2/po/da.po	2014-06-18 11:02:47 +0000
+@@ -2326,7 +2326,7 @@ msgid "(unknown %3d) "
+ msgstr "(ukendt %3d)  "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr ""
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/de.po rpm-4.11.2/po/de.po
+--- rpm-4.11.2.orig/po/de.po	2014-02-05 13:07:58 +0000
++++ rpm-4.11.2/po/de.po	2014-06-18 11:02:47 +0000
+@@ -2376,7 +2376,7 @@ msgid "(unknown %3d) "
+ msgstr "(unbekannt %3d)"
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "Paket hat keine Eigentümer-/Gruppen-Liste\n"
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/el.po rpm-4.11.2/po/el.po
+--- rpm-4.11.2.orig/po/el.po	2014-02-05 13:07:58 +0000
++++ rpm-4.11.2/po/el.po	2014-06-18 11:02:47 +0000
+@@ -2311,7 +2311,7 @@ msgid "(unknown %3d) "
+ msgstr ""
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr ""
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/eo.po rpm-4.11.2/po/eo.po
+--- rpm-4.11.2.orig/po/eo.po	2014-02-05 13:07:58 +0000
++++ rpm-4.11.2/po/eo.po	2014-06-18 11:02:47 +0000
+@@ -2342,7 +2342,7 @@ msgid "(unknown %3d) "
+ msgstr "(nekonata %3d)"
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "pako ne enhavas listojn de dosieraj estroj kaj grupoj\n"
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/es.po rpm-4.11.2/po/es.po
+--- rpm-4.11.2.orig/po/es.po	2014-02-05 13:07:58 +0000
++++ rpm-4.11.2/po/es.po	2014-06-18 11:02:47 +0000
+@@ -2385,7 +2385,7 @@ msgid "(unknown %3d) "
+ msgstr "(desconocido %3d) "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "el paquete no tiene lista de propietario/grupo de archivo\n"
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/fi.po rpm-4.11.2/po/fi.po
+--- rpm-4.11.2.orig/po/fi.po	2014-02-05 13:07:58 +0000
++++ rpm-4.11.2/po/fi.po	2014-06-18 11:02:47 +0000
+@@ -2329,7 +2329,7 @@ msgid "(unknown %3d) "
+ msgstr "(tuntematon %3d)"
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr ""
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/fr.po rpm-4.11.2/po/fr.po
+--- rpm-4.11.2.orig/po/fr.po	2014-02-05 13:07:58 +0000
++++ rpm-4.11.2/po/fr.po	2014-06-18 11:02:47 +0000
+@@ -2382,7 +2382,7 @@ msgid "(unknown %3d) "
+ msgstr "(%3d iconnu)  "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "le paquet n'as pas de liste de possesseurs/groupes de fichiers\n"
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/is.po rpm-4.11.2/po/is.po
+--- rpm-4.11.2.orig/po/is.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/is.po	2014-06-18 11:02:47 +0000
+@@ -2309,7 +2309,7 @@ msgid "(unknown %3d) "
+ msgstr ""
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr ""
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/it.po rpm-4.11.2/po/it.po
+--- rpm-4.11.2.orig/po/it.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/it.po	2014-06-18 11:02:47 +0000
+@@ -2377,7 +2377,7 @@ msgid "(unknown %3d) "
+ msgstr "(sconosciuto %3d) "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "il pacchetto non possiede alcun elenco gruppo/proprietario dei file\n"
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/ja.po rpm-4.11.2/po/ja.po
+--- rpm-4.11.2.orig/po/ja.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/ja.po	2014-06-18 11:02:47 +0000
+@@ -2346,7 +2346,7 @@ msgid "(unknown %3d) "
+ msgstr "(未知の %3d)  "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "パッケージはファイル所有者/グループ一覧を持っていません。\n"
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/ko.po rpm-4.11.2/po/ko.po
+--- rpm-4.11.2.orig/po/ko.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/ko.po	2014-06-18 11:02:47 +0000
+@@ -2332,7 +2332,7 @@ msgid "(unknown %3d) "
+ msgstr "(알 수 없는 %3d)    "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr ""
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/ms.po rpm-4.11.2/po/ms.po
+--- rpm-4.11.2.orig/po/ms.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/ms.po	2014-06-18 11:02:47 +0000
+@@ -2309,7 +2309,7 @@ msgid "(unknown %3d) "
+ msgstr ""
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr ""
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/nb.po rpm-4.11.2/po/nb.po
+--- rpm-4.11.2.orig/po/nb.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/nb.po	2014-06-18 11:02:47 +0000
+@@ -2323,7 +2323,7 @@ msgid "(unknown %3d) "
+ msgstr "(ukjent %3d)  "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr ""
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/nl.po rpm-4.11.2/po/nl.po
+--- rpm-4.11.2.orig/po/nl.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/nl.po	2014-06-18 11:02:47 +0000
+@@ -2308,7 +2308,7 @@ msgid "(unknown %3d) "
+ msgstr "(onbekende %3d) "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr ""
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/pl.po rpm-4.11.2/po/pl.po
+--- rpm-4.11.2.orig/po/pl.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/pl.po	2014-06-18 11:02:47 +0000
+@@ -2356,7 +2356,7 @@ msgid "(unknown %3d) "
+ msgstr "(nieznany %3d) "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "pakiet nie posiada list właścicieli/grup plików\n"
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/pt.po rpm-4.11.2/po/pt.po
+--- rpm-4.11.2.orig/po/pt.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/pt.po	2014-06-18 11:02:47 +0000
+@@ -2340,7 +2340,7 @@ msgid "(unknown %3d) "
+ msgstr "(desconhecido %3d)"
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr ""
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/pt_BR.po rpm-4.11.2/po/pt_BR.po
+--- rpm-4.11.2.orig/po/pt_BR.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/pt_BR.po	2014-06-18 11:02:47 +0000
+@@ -2358,7 +2358,7 @@ msgid "(unknown %3d) "
+ msgstr "(%3d desconhecido) "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "o pacote não tem listas de proprietários/grupos\n"
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/ru.po rpm-4.11.2/po/ru.po
+--- rpm-4.11.2.orig/po/ru.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/ru.po	2014-06-18 11:02:47 +0000
+@@ -2344,7 +2344,7 @@ msgid "(unknown %3d) "
+ msgstr "(неизв. %3d)  "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "пакет не содержит списков владельцев/групп-владельцев файлов\n"
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/sk.po rpm-4.11.2/po/sk.po
+--- rpm-4.11.2.orig/po/sk.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/sk.po	2014-06-18 11:02:47 +0000
+@@ -2341,7 +2341,7 @@ msgid "(unknown %3d) "
+ msgstr "(neznámy %d)  "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "balíček nemá vlastníka súboru ani zoznamy skupín\n"
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/sl.po rpm-4.11.2/po/sl.po
+--- rpm-4.11.2.orig/po/sl.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/sl.po	2014-06-18 11:02:47 +0000
+@@ -2318,7 +2318,7 @@ msgid "(unknown %3d) "
+ msgstr "(neznano %3d) "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr ""
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/sr.po rpm-4.11.2/po/sr.po
+--- rpm-4.11.2.orig/po/sr.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/sr.po	2014-06-18 11:02:47 +0000
+@@ -2332,7 +2332,7 @@ msgid "(unknown %3d) "
+ msgstr "(непознат %3d) "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "пакет нема спискове власника/групе датотека\n"
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/sr@latin.po rpm-4.11.2/po/sr@latin.po
+--- rpm-4.11.2.orig/po/sr@latin.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/sr@latin.po	2014-06-18 11:02:47 +0000
+@@ -2334,7 +2334,7 @@ msgid "(unknown %3d) "
+ msgstr "(nepoznat %3d) "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "paket nema spiskove vlasnika/grupe datoteka\n"
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/sv.po rpm-4.11.2/po/sv.po
+--- rpm-4.11.2.orig/po/sv.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/sv.po	2014-06-18 11:02:47 +0000
+@@ -2338,7 +2338,7 @@ msgid "(unknown %3d) "
+ msgstr "(okänd %3d)   "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "paketet har inte filägare-/-grupplistor\n"
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/te.po rpm-4.11.2/po/te.po
+--- rpm-4.11.2.orig/po/te.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/te.po	2014-06-18 11:02:47 +0000
+@@ -2315,7 +2315,7 @@ msgid "(unknown %3d) "
+ msgstr ""
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr ""
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/tr.po rpm-4.11.2/po/tr.po
+--- rpm-4.11.2.orig/po/tr.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/tr.po	2014-06-18 11:02:47 +0000
+@@ -2341,7 +2341,7 @@ msgid "(unknown %3d) "
+ msgstr "(bilinmeyen %3d)"
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr ""
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/uk.po rpm-4.11.2/po/uk.po
+--- rpm-4.11.2.orig/po/uk.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/uk.po	2014-06-18 11:02:47 +0000
+@@ -2367,7 +2367,7 @@ msgid "(unknown %3d) "
+ msgstr "(невідомий %3d) "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "у пакунку немає списків власника/групи файлів\n"
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/zh_CN.po rpm-4.11.2/po/zh_CN.po
+--- rpm-4.11.2.orig/po/zh_CN.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/zh_CN.po	2014-06-18 11:02:47 +0000
+@@ -2324,7 +2324,7 @@ msgid "(unknown %3d) "
+ msgstr "(未知 %3d) "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "软件包中没有文件的所有者/群组列表\n"
+ 
+ #: lib/query.c:229
+diff -puNr rpm-4.11.2.orig/po/zh_TW.po rpm-4.11.2/po/zh_TW.po
+--- rpm-4.11.2.orig/po/zh_TW.po	2014-02-05 13:07:59 +0000
++++ rpm-4.11.2/po/zh_TW.po	2014-06-18 11:02:47 +0000
+@@ -2320,7 +2320,7 @@ msgid "(unknown %3d) "
+ msgstr "(未知的 %3d) "
+ 
+ #: lib/query.c:198
+-msgid "package has not file owner/group lists\n"
++msgid "package has no file owner/group lists\n"
+ msgstr "套件內沒有檔案擁有者/群組記錄\n"
+ 
+ #: lib/query.c:229

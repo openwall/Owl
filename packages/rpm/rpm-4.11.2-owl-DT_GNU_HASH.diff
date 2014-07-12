@@ -1,0 +1,17 @@
+Owl does not support DT_GNU_HASH yet, so we are applying a quick
+fix for now.
+
+--- rpm-4.11.2.orig/tools/elfdeps.c	2014-02-05 13:04:02 +0000
++++ rpm-4.11.2/tools/elfdeps.c	2014-06-16 00:25:41 +0000
+@@ -163,9 +163,11 @@ static void processDynamic(Elf_Scn *scn,
+ 	    case DT_HASH:
+ 		ei->gotHASH = 1;
+ 		break;
++/*
+ 	    case DT_GNU_HASH:
+ 		ei->gotGNUHASH = 1;
+ 		break;
++*/
+ 	    case DT_DEBUG:
+ 		ei->gotDEBUG = 1;
+ 		break;

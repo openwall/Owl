@@ -1,0 +1,9 @@
+#	The output binary package file name template used when building
+#	binary packages.
+#
+# XXX	Note: escaped %% for use in headerSprintf()
+%_build_name_fmt	%%{ARCH}/%%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm
+#	A template used to generate the output binary package file name
+#	(legacy).
+%_rpmfilename           %{_build_name_fmt}
+

@@ -1,0 +1,36 @@
+diff -puNr rpm-4.11.2.orig/macros.in rpm-4.11.2/macros.in
+--- rpm-4.11.2.orig/macros.in	2014-06-18 16:32:55 +0000
++++ rpm-4.11.2/macros.in	2014-06-18 18:38:05 +0000
+@@ -1029,7 +1029,7 @@ done \
+ 
+ #------------------------------------------------------------------------------
+ # Collection specific macros
+-%__plugindir		%{_libdir}/rpm-plugins
++%__plugindir		%{_libdir}/rpm/plugins
+ %__collection_font	%{__plugindir}/exec.so /usr/bin/fc-cache
+ %__collection_java	%{__plugindir}/exec.so /usr/bin/rebuild-gcj-db
+ %__collection_sepolicy		%{__plugindir}/sepolicy.so
+diff -puNr rpm-4.11.2.orig/plugins/Makefile.am rpm-4.11.2/plugins/Makefile.am
+--- rpm-4.11.2.orig/plugins/Makefile.am	2013-11-22 10:31:31 +0000
++++ rpm-4.11.2/plugins/Makefile.am	2014-06-18 18:36:43 +0000
+@@ -11,7 +11,7 @@ AM_CPPFLAGS += -DLIBRPMALIAS_FILENAME="\
+ 
+ AM_LDFLAGS = -avoid-version -module -shared
+ 
+-pluginsdir = $(libdir)/rpm-plugins
++pluginsdir = $(libdir)/rpm/plugins
+ 
+ plugins_LTLIBRARIES = exec.la
+ 
+diff -puNr rpm-4.11.2.orig/plugins/Makefile.in rpm-4.11.2/plugins/Makefile.in
+--- rpm-4.11.2.orig/plugins/Makefile.in	2014-06-18 16:30:23 +0000
++++ rpm-4.11.2/plugins/Makefile.in	2014-06-18 18:37:06 +0000
+@@ -442,7 +442,7 @@ AM_CPPFLAGS = -I$(top_builddir) -I$(top_
+ 	-DLOCALSTATEDIR="\"$(localstatedir)\"" \
+ 	-DLIBRPMALIAS_FILENAME="\"rpmpopt-${VERSION}\""
+ AM_LDFLAGS = -avoid-version -module -shared
+-pluginsdir = $(libdir)/rpm-plugins
++pluginsdir = $(libdir)/rpm/plugins
+ plugins_LTLIBRARIES = exec.la $(am__append_1)
+ exec_la_SOURCES = plugin.h exec.c
+ exec_la_LIBADD = $(top_builddir)/lib/librpm.la $(top_builddir)/rpmio/librpmio.la

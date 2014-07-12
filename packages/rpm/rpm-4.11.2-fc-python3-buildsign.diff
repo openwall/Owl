@@ -1,0 +1,38 @@
+commit 0073376965ee8d8df63c21b0da634fc315c97d0b
+Author: Panu Matilainen <pmatilai@redhat.com>
+Date:   Thu Feb 13 12:54:41 2014 +0200
+
+    Fix build and sign module initialization in python3 (RhBug:1064758)
+    
+    - PyInit_foo() name needs to match the module name. Doh.
+
+diff --git a/python/rpmbmodule.c b/python/rpmbmodule.c
+index f6e1491..ad30570 100644
+--- a/python/rpmbmodule.c
++++ b/python/rpmbmodule.c
+@@ -66,8 +66,8 @@ static struct PyModuleDef moduledef = {
+     NULL         /* m_free */
+ };
+ 
+-PyObject * PyInit__rpm(void);	/* XXX eliminate gcc warning */
+-PyObject * PyInit__rpm(void)
++PyObject * PyInit__rpmb(void);	/* XXX eliminate gcc warning */
++PyObject * PyInit__rpmb(void)
+ {
+     PyObject *m;
+ 
+diff --git a/python/rpmsmodule.c b/python/rpmsmodule.c
+index 3eb2403..653f4bf 100644
+--- a/python/rpmsmodule.c
++++ b/python/rpmsmodule.c
+@@ -66,8 +66,8 @@ static struct PyModuleDef moduledef = {
+     NULL         /* m_free */
+ };
+ 
+-PyObject * PyInit__rpm(void);	/* XXX eliminate gcc warning */
+-PyObject * PyInit__rpm(void)
++PyObject * PyInit__rpms(void);	/* XXX eliminate gcc warning */
++PyObject * PyInit__rpms(void)
+ {
+     PyObject *m;
+ 

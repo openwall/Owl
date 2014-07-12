@@ -1,0 +1,57 @@
+diff -puNr rpm-4.11.2.orig/lib/fsm.c rpm-4.11.2/lib/fsm.c
+--- rpm-4.11.2.orig/lib/fsm.c	2014-02-05 13:04:02 +0000
++++ rpm-4.11.2/lib/fsm.c	2014-06-18 11:40:44 +0000
+@@ -1344,10 +1344,22 @@ static int fsmSymlink(const char *opath,
+ 
+ static int fsmUnlink(const char *path, cpioMapFlags mapFlags)
+ {
++    struct stat stb;
++    int saved_errno, saved_rc;
+     int rc = 0;
+     if (mapFlags & CPIO_SBIT_CHECK)
+         removeSBITS(path);
++    saved_rc = lstat(path, &stb);
++    if (!saved_rc && !S_ISLNK(stb.st_mode))
++        saved_rc = chmod(path, 0);
++    saved_errno = errno;
++    if (saved_rc && saved_errno == ENOENT)
++        saved_rc = 0;
+     rc = unlink(path);
++    if (!rc && saved_rc) {
++        rc = saved_rc;
++        errno = saved_errno;
++    }
+     if (_fsm_debug)
+ 	rpmlog(RPMLOG_DEBUG, " %8s (%s) %s\n", __func__,
+ 	       path, (rc < 0 ? strerror(errno) : ""));
+@@ -1359,9 +1371,18 @@ static int fsmUnlink(const char *path, c
+ static int fsmRename(const char *opath, const char *path,
+ 		     cpioMapFlags mapFlags)
+ {
++    struct stat stb;
++    int saved_errno, saved_rc;
++    int rc = 0;
+     if (mapFlags & CPIO_SBIT_CHECK)
+         removeSBITS(path);
+-    int rc = rename(opath, path);
++    saved_rc = lstat(path, &stb);
++    if (!saved_rc && !S_ISLNK(stb.st_mode))
++        saved_rc = chmod(path, 0);
++    saved_errno = errno;
++    if (saved_rc && saved_errno == ENOENT)
++        saved_rc = 0;
++    rc = rename(opath, path);
+ #if defined(ETXTBSY) && defined(__HPUX__)
+     /* XXX HP-UX (and other os'es) don't permit rename to busy files. */
+     if (rc && errno == ETXTBSY) {
+@@ -1372,6 +1393,10 @@ static int fsmRename(const char *opath,
+ 	free(rmpath);
+     }
+ #endif
++    if (!rc && saved_rc) {
++        rc = saved_rc;
++        errno = saved_errno;
++    }
+     if (_fsm_debug)
+ 	rpmlog(RPMLOG_DEBUG, " %8s (%s, %s) %s\n", __func__,
+ 	       opath, path, (rc < 0 ? strerror(errno) : ""));

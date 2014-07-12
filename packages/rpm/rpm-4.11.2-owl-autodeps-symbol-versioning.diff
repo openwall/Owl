@@ -1,0 +1,24 @@
+diff -puNr rpm-4.11.2.orig/autodeps/find-requires rpm-4.11.2/autodeps/find-requires
+--- rpm-4.11.2.orig/autodeps/find-requires	2012-11-07 12:55:24 +0000
++++ rpm-4.11.2/autodeps/find-requires	2014-06-17 18:28:46 +0000
+@@ -112,7 +112,7 @@ for f in $liblist $exelist ; do
+ 	    sub(/:/, "", $3);
+ 	    LIBNAME=$3;
+ 	}
+-	(START==2) && (LIBNAME!="") && ($4!="") && (($4~/^GLIBC_*/) || ($4~/^GCC_*/)) {
++	(START==2) && (LIBNAME!="") && ($4!="") {
+ 	    print LIBNAME "(" $4 ")'$lib64'";
+ 	}
+     '
+diff -puNr rpm-4.11.2.orig/autodeps/linux.req rpm-4.11.2/autodeps/linux.req
+--- rpm-4.11.2.orig/autodeps/linux.req	2012-11-07 12:55:24 +0000
++++ rpm-4.11.2/autodeps/linux.req	2014-06-17 18:28:46 +0000
+@@ -112,7 +112,7 @@ for f in $liblist $exelist ; do
+ 	    sub(/:/, "", $3);
+ 	    LIBNAME=$3;
+ 	}
+-	(START==2) && (LIBNAME!="") && ($4!="") && (($4~/^GLIBC_*/) || ($4~/^GCC_*/)) {
++	(START==2) && (LIBNAME!="") && ($4!="") {
+ 	    print LIBNAME "(" $4 ")'$lib64'";
+ 	}
+     '

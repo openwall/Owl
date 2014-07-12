@@ -1,0 +1,17 @@
+diff -up rpm-4.11.2/build/parseReqs.c.double-sep-warning rpm-4.11.2/build/parseReqs.c
+--- rpm-4.11.2/build/parseReqs.c.double-sep-warning	2014-02-18 08:59:32.692891895 +0200
++++ rpm-4.11.2/build/parseReqs.c	2014-02-18 09:00:17.572769945 +0200
+@@ -166,8 +166,11 @@ rpmRC parseRCPOT(rpmSpec spec, Package p
+ 	    if (rpmCharCheck(spec, EVR, ve-v, ".-_+:%{}~")) goto exit;
+ 
+             /* While ':' and '-' are valid, only one of each is valid. */
+-	    if (checkSep(EVR, '-', &emsg) || checkSep(EVR, ':', &emsg))
+-		goto exit;
++	    if (checkSep(EVR, '-', &emsg) || checkSep(EVR, ':', &emsg)) {
++		rpmlog(RPMLOG_WARNING, _("line %d: %s: %s\n"),
++		       spec->lineNum, emsg, spec->line);
++		emsg = _free(emsg);
++	    }
+ 
+ 	    re = ve;	/* ==> next token after EVR string starts here */
+ 	} else

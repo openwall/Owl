@@ -1,0 +1,182 @@
+diff -puNr rpm-4.11.2.orig/lib/rpmug.c rpm-4.11.2/lib/rpmug.c
+--- rpm-4.11.2.orig/lib/rpmug.c	2014-02-05 13:04:37 +0000
++++ rpm-4.11.2/lib/rpmug.c	2014-06-18 08:24:36 +0000
+@@ -6,10 +6,133 @@
+ #include <rpm/rpmlog.h>
+ #include <rpm/rpmstring.h>
+ 
++#include <stdlib.h>
++#include <stdio.h>
++#include <string.h>
++#include <errno.h>
++
+ #include "lib/misc.h"
+ #include "lib/rpmug.h"
+ #include "debug.h"
+ 
++#define LINE_SIZE 0x400 /* Assume enough length for single passwd/group line */
++
++static char *fgetl(char *s, int size, FILE *stream)
++{
++    char *res, *pos;
++    int c;
++
++    if ((res = fgets(s, size, stream))) {
++       if (!*res) return res;
++
++       pos = res + strlen(res) - 1;
++       if (*pos == '\n') {
++           *pos = 0;
++           if (pos > res)
++               if (*--pos == '\r') *pos = 0;
++       } else
++           if ((c = getc(stream)) == '\n') {
++               if (*pos == '\r') *pos = 0;
++           } else
++               while (c != EOF && c != '\n')
++                   c = getc(stream);
++    }
++
++    return res;
++}
++
++/*
++ * Read /etc/passwd, search for "name" account and retrieve uid into "uid".
++ */
++static int get_uid_by_name(const char *name, uid_t *uid)
++{
++    FILE *file;
++    int result = 0;
++    char *line;
++
++    if ((line = malloc(LINE_SIZE)) == NULL) return -1;
++
++    if (!(file = fopen("/etc/passwd", "r"))) result = -1;
++
++    if (!result) {
++       long id = -1;
++       while ((fgetl(line, LINE_SIZE, file))) {
++           char *account = strtok(line, ":");
++           if (account && !strcmp(account, name)) {
++               char *p;
++               if (strtok(NULL, ":") && (p = strtok(NULL, ":")) && strtok(NULL, ":")) {
++                   char *error;
++                   errno = 0;
++                   id = strtol(p, &error, 10);
++                   if (errno || !*p || *error || id < 0 || (long)(uid_t)id != id) {
++                       id = -1;
++                   }
++                   else {
++                       *uid = id;
++                       break;
++                   }
++               }
++           }
++       }
++
++       if (ferror(file))
++           result = -1;
++       fclose(file);
++
++       if (id == -1) result = -1;
++    }
++
++    free(line);
++
++    return result;
++}
++
++/*
++ * Read /etc/group, search for "name" account and retrieve gid into "gid".
++ */
++static int get_gid_by_name(const char *name, gid_t *gid)
++{
++    FILE *file;
++    int result = 0;
++    char *line;
++
++    if ((line = malloc(LINE_SIZE)) == NULL) return -1;
++
++    if (!(file = fopen("/etc/group", "r"))) result = -1;
++
++    if (!result) {
++       long id = -1;
++       while ((fgetl(line, LINE_SIZE, file))) {
++           char *account = strtok(line, ":");
++           if (account && !strcmp(account, name)) {
++               char *p;
++               if (strtok(NULL, ":") && (p = strtok(NULL, ":"))) {
++                   char *error;
++                   errno = 0;
++                   id = strtol(p, &error, 10);
++                   if (errno || !*p || *error || id < 0 || (long)(gid_t)id != id) {
++                       id = -1;
++                   }
++                   else {
++                       *gid = id;
++                       break;
++                   }
++               }
++           }
++       }
++
++       if (ferror(file))
++           result = -1;
++       fclose(file);
++
++       if (id == -1) result = -1;
++    }
++
++    free(line);
++
++    return result;
++}
++
+ /* 
+  * These really ought to use hash tables. I just made the
+  * guess that most files would be owned by root or the same person/group
+@@ -50,7 +173,14 @@ int rpmugUid(const char * thisUname, uid
+ 	    /* FIX: shrug */
+ 	    endpwent();
+ 	    pwent = getpwnam(thisUname);
+-	    if (pwent == NULL) return -1;
++	    if (pwent == NULL) {
++                uid_t id = 0;
++                if (get_uid_by_name(thisUname, &id) == 0) {
++                    lastUid = *uid = id;
++                    return 0;
++                }
++                return -1;
++            }
+ 	}
+ 
+ 	lastUid = pwent->pw_uid;
+@@ -94,6 +224,11 @@ int rpmugGid(const char * thisGname, gid
+ 	    endgrent();
+ 	    grent = getgrnam(thisGname);
+ 	    if (grent == NULL) {
++                gid_t id = 0;
++                if (get_gid_by_name(thisGname, &id) == 0) {
++                    lastGid = *gid = id;
++                    return 0;
++                }
+ 		return -1;
+ 	    }
+ 	}
+@@ -169,16 +304,6 @@ const char * rpmugGname(gid_t gid)
+ 
+ int rpmugInit(void)
+ {
+-    static int libsLoaded = 0;
+-
+-    if (!libsLoaded) {
+-	(void) getpwnam("root");
+-	endpwent();
+-	(void) getgrnam("root");
+-	endgrent();
+-	(void) gethostbyname("localhost");
+-    }
+-
+     return 0;
+ }
+ 

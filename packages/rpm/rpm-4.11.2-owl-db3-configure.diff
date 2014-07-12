@@ -1,0 +1,20 @@
+diff -puNr rpm-4.11.2.orig/db3/configure rpm-4.11.2/db3/configure
+--- rpm-4.11.2.orig/db3/configure	2012-11-07 12:55:24 +0000
++++ rpm-4.11.2/db3/configure	2014-07-06 09:17:15 +0000
+@@ -7,12 +7,10 @@
+ 
+ rm -f config.cache
+ 
+-# XXX edit CFLAGS= ... out of invocation args ???
+-ARGS="`echo $* | sed -e 's% [^ ]*CFLAGS=[^ ]*%%' -e 's% -[^-][^ ]*%%g' -e 's% --param=[^ ]*%%g' -e 's%--cache-file=.*$%%'`"
+-
+-CC="$CC" CFLAGS="$CFLAGS" $db_dist/configure $ARGS \
+-	--enable-shared --enable-static \
+-	--with-uniquename=_rpmdb --srcdir=$db_dist
++"$db_dist/configure" "$@" \
++	--disable-shared --enable-static \
++	--disable-{partition,queue,replication,cxx,debug,java,sql,stl,tcl,dbm} \
++	--with-uniquename=_rpmdb "--srcdir=$db_dist"
+ 
+ mv Makefile Makefile.orig
+ cat Makefile.orig | sed -e '/^install[:-]/c\

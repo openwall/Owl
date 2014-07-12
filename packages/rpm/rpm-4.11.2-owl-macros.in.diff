@@ -1,0 +1,28 @@
+--- rpm-4.11.2.orig/macros.in	2014-07-01 20:22:09 +0000
++++ rpm-4.11.2/macros.in	2014-07-04 09:52:16 +0000
+@@ -801,25 +801,6 @@ package or when debugging this package.\
+ #%__spec_triggerin_post		%{nil}
+ 
+ #==============================================================================
+-# ---- configure macros.
+-#	Macro(s) slavishly copied from autoconf's config.status.
+-#
+-%_prefix		@prefix@
+-%_exec_prefix		%{_prefix}
+-%_bindir		%{_exec_prefix}/bin
+-%_sbindir		%{_exec_prefix}/sbin
+-%_libexecdir		%{_exec_prefix}/libexec
+-%_datadir		%{_prefix}/share
+-%_sysconfdir		/etc
+-%_sharedstatedir	%{_prefix}/com
+-%_localstatedir		%{_prefix}/var
+-%_lib			lib
+-%_libdir		%{_exec_prefix}/%{_lib}
+-%_includedir		%{_prefix}/include
+-%_infodir		%{_datadir}/info
+-%_mandir		%{_datadir}/man
+-
+-#==============================================================================
+ # ---- config.guess platform macros.
+ #	Macro(s) similar to the tokens used by configure.
+ #

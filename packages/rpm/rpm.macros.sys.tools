@@ -1,0 +1,30 @@
+#==============================================================================
+# ---- Generally useful tools macros.
+#
+%__awk		gawk
+%__bzip2	bzip2
+%__cat		cat
+%__chgrp	chgrp
+%__chmod	chmod
+%__chown	chown
+%__cp		cp
+%__cpio		cpio
+%__file		file
+%__gpg		gpg
+%__grep		grep
+%__gzip		gzip
+%__id		id
+%__id_u		%__id -u
+%__install	install
+%__ln_s		ln -s
+%__xz		xz
+%__make		make
+%__mkdir	mkdir
+%__mkdir_p	%__mkdir -p
+%__mv		mv
+%__patch	patch
+%__rm		rm
+%__sed		sed
+%__ssh		ssh
+%__tar		tar
+%__unzip	unzip

@@ -1,0 +1,51 @@
+diff -puNr rpm-4.11.2.orig/scripts/brp-strip rpm-4.11.2/scripts/brp-strip
+--- rpm-4.11.2.orig/scripts/brp-strip	2012-11-07 12:55:24 +0000
++++ rpm-4.11.2/scripts/brp-strip	2014-06-17 17:20:09 +0000
+@@ -15,6 +15,6 @@ esac
+ for f in `find "$RPM_BUILD_ROOT" -type f \( -perm -0100 -or -perm -0010 -or -perm -0001 \) -exec file {} \; | \
+         grep -v "^${RPM_BUILD_ROOT}/\?usr/lib/debug"  | \
+ 	grep -v ' shared object,' | \
+-	sed -n -e 's/^\(.*\):[ 	]*ELF.*, not stripped/\1/p'`; do
+-	$STRIP -g "$f" || :
++	sed -n -e 's/^\(.*\):.*[[:space:]]*ELF.*, not stripped/\1/p'`; do
++	$STRIP "$f" || :
+ done
+diff -puNr rpm-4.11.2.orig/scripts/brp-strip-comment-note rpm-4.11.2/scripts/brp-strip-comment-note
+--- rpm-4.11.2.orig/scripts/brp-strip-comment-note	2012-11-07 12:55:24 +0000
++++ rpm-4.11.2/scripts/brp-strip-comment-note	2014-06-17 17:21:55 +0000
+@@ -16,9 +16,9 @@ esac
+ # for already stripped elf files in the build root
+ for f in `find "$RPM_BUILD_ROOT" -type f \( -perm -0100 -or -perm -0010 -or -perm -0001 \) -exec file {} \; | \
+         grep -v "^${RPM_BUILD_ROOT}/\?usr/lib/debug"  | \
+-	sed -n -e 's/^\(.*\):[ 	]*ELF.*, stripped/\1/p'`; do
++	sed -n -e 's/^\(.*\):.*[[:space:]]*ELF.*, stripped/\1/p'`; do
+ 	note="-R .note"
+-	if $OBJDUMP -h $f | grep '^[ 	]*[0-9]*[ 	]*.note[ 	]' -A 1 | \
++	if $OBJDUMP -h $f | grep '^[[:space:]]*[0-9]*[[:space:]]*.note[[:space:]]' -A 1 | \
+ 		grep ALLOC >/dev/null; then
+ 		note=
+ 	fi
+diff -puNr rpm-4.11.2.orig/scripts/brp-strip-shared rpm-4.11.2/scripts/brp-strip-shared
+--- rpm-4.11.2.orig/scripts/brp-strip-shared	2012-11-07 12:55:24 +0000
++++ rpm-4.11.2/scripts/brp-strip-shared	2014-06-17 17:17:44 +0000
+@@ -20,6 +20,6 @@ esac
+ for f in `find "$RPM_BUILD_ROOT" -type f -a -exec file {} \; | \
+         grep -v "^${RPM_BUILD_ROOT}/\?usr/lib/debug"  | \
+ 	grep ' shared object,' | \
+-	sed -n -e 's/^\(.*\):[ 	]*ELF.*, not stripped/\1/p'`; do
+-	$STRIP --strip-unneeded "$f"
++	sed -n -e 's/^\(.*\):.*[[:space:]]*ELF.*, not stripped/\1/p'`; do
++	$STRIP --strip-unneeded "$f" || :
+ done
+diff -puNr rpm-4.11.2.orig/scripts/brp-strip-static-archive rpm-4.11.2/scripts/brp-strip-static-archive
+--- rpm-4.11.2.orig/scripts/brp-strip-static-archive	2012-11-07 12:55:24 +0000
++++ rpm-4.11.2/scripts/brp-strip-static-archive	2014-06-17 17:19:13 +0000
+@@ -15,6 +15,6 @@ esac
+ for f in `find "$RPM_BUILD_ROOT" -type f -a -exec file {} \; | \
+         grep -v "^${RPM_BUILD_ROOT}/\?usr/lib/debug"  | \
+ 	grep 'current ar archive' | \
+-	sed -n -e 's/^\(.*\):[ 	]*current ar archive/\1/p'`; do
+-	$STRIP -g "$f"
++	sed -n -e 's/^\(.*\):.*[[:space:]]*current ar archive[[:space:]]*/\1/p'`; do
++	$STRIP -g "$f" || :
+ done

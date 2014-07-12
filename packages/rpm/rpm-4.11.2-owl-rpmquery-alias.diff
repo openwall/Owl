@@ -1,0 +1,12 @@
+--- rpm-4.11.2.orig/rpmpopt.in	2014-02-05 13:04:02 +0000
++++ rpm-4.11.2/rpmpopt.in	2014-06-27 18:19:22 +0000
+@@ -157,6 +157,9 @@
+ rpm	exec --verifydb		rpmdb --verifydb
+ rpm	exec --specfile		rpmspec -q
+ 
++# Owl build environment uses rpmquery a lot, so let's keep it compatible
++rpmquery	exec --specfile	rpmspec -q
++
+ #==============================================================================
+ rpmbuild alias --ftpport		--define '_httpport !#:+'
+ rpmbuild alias --ftpproxy	--define '_httpproxy !#:+'

@@ -1,0 +1,39 @@
+#
+# Use internal dependency generator rather than external helpers?
+%_use_internal_dependency_generator	1
+
+#
+# Filter GLIBC_PRIVATE Provides: and Requires:
+%_filter_GLIBC_PRIVATE			0
+
+#
+# Path to scripts to autogenerate package dependencies,
+#
+# Note: Used if _use_internal_dependency_generator is zero.
+#%__find_provides	%{_rpmconfigdir}/rpmdeps --provides
+#%__find_requires	%{_rpmconfigdir}/rpmdeps --requires
+%__find_provides	%{_rpmconfigdir}/find-provides
+%__find_requires	%{_rpmconfigdir}/find-requires
+#%__find_conflicts	???
+#%__find_obsoletes	???
+
+# 
+# Path to file attribute classifications for automatic dependency 
+# extraction, used when _use_internal_dependency_generator
+# is used (on by default). Files can have any number of attributes
+# attached to them, and dependencies are separately extracted for
+# each attribute.
+# 
+# To define a new file attribute called "myattr", add a file named
+# "myattr" to this directory, defining the requires and/or provides
+# finder script(s) + magic and/or path pattern regex(es).
+# provides finder and 
+# %__myattr_requires	path + args to requires finder script for <myattr>
+# %__myattr_provides	path + args to provides finder script for <myattr>
+# %__myattr_magic	libmagic classification match regex
+# %__myattr_path	path based classification match regex
+# %__myattr_flags	flags to control behavior (just "exeonly" for now)
+# %__myattr_exclude_magic	exclude by magic regex
+# %__myattr_exclude_path	exclude by path regex
+#
+%_fileattrsdir		%{_rpmconfigdir}/fileattrs

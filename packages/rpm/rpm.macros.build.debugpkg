@@ -1,0 +1,28 @@
+#
+#	Path to script that creates debug symbols in a /usr/lib/debug
+#	shadow tree.
+#
+#	A spec file can %%define _find_debuginfo_opts to pass options to
+#	the script.  See the script for details.
+#
+%__debug_install_post   \
+   '%_rpmconfigdir/find-debuginfo.sh' %{?_missing_build_ids_terminate_build:--strict-build-id} %{?_find_debuginfo_opts} '%{_builddir}/%{?buildsubdir}'\
+%{nil}
+
+#	Template for debug information sub-package.
+%debug_package \
+%ifnarch noarch\
+%global __debug_package 1\
+%package debuginfo\
+Summary: Debug information for package %{name}\
+Group: Development/Debug\
+AutoReqProv: 0\
+%description debuginfo\
+This package provides debug information for package %name.\
+Debug information is useful when developing applications that use this\
+package or when debugging this package.\
+%files debuginfo -f debugfiles.list\
+%defattr(0644,root,root,0755)\
+%endif\
+%{nil}
+

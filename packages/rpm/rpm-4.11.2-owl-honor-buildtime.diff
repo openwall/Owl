@@ -1,0 +1,137 @@
+diff -puNr rpm-4.11.2.orig/lib/rpmte.c rpm-4.11.2/lib/rpmte.c
+--- rpm-4.11.2.orig/lib/rpmte.c	2014-06-30 02:11:16 +0000
++++ rpm-4.11.2/lib/rpmte.c	2014-06-30 03:19:47 +0000
+@@ -38,6 +38,7 @@ struct rpmte_s {
+     char * arch;		/*!< Architecture hint. */
+     char * os;			/*!< Operating system hint. */
+     char * digest;		/*!< Header's SHA1 digest. */
++    char * buildtime;		/*!< Build time */
+     int isSource;		/*!< (TR_ADDED) source rpm? */
+ 
+     rpmte depends;              /*!< Package updated by this package (ERASE te) */
+@@ -220,6 +221,7 @@ static int addTE(rpmte p, Header h, fnpy
+     if (p->name == NULL || p->version == NULL || p->release == NULL)
+ 	goto exit;
+ 
++    p->buildtime = headerGetAsString(h, RPMTAG_BUILDTIME);
+     p->epoch = headerGetAsString(h, RPMTAG_EPOCH);
+ 
+     p->arch = headerGetAsString(h, RPMTAG_ARCH);
+@@ -544,6 +546,10 @@ const char * rpmteDigest(rpmte te)
+ {
+     return (te != NULL ? te->digest : NULL);
+ }
++const char * rpmteBuildtime(rpmte te)
++{
++    return (te != NULL ? te->buildtime : NULL);
++}
+ 
+ FD_t rpmteSetFd(rpmte te, FD_t fd)
+ {
+diff -puNr rpm-4.11.2.orig/lib/rpmte.h rpm-4.11.2/lib/rpmte.h
+--- rpm-4.11.2.orig/lib/rpmte.h	2014-06-30 02:11:16 +0000
++++ rpm-4.11.2/lib/rpmte.h	2014-06-30 03:09:52 +0000
+@@ -102,6 +102,13 @@ int rpmteIsSource(rpmte te);
+ const char * rpmteDigest(rpmte te);
+ 
+ /** \ingroup rpmte
++ * Retrieve buildtime of transaction element.
++ * @param te		transaction element
++ * @return		buildtime
++ */
++const char * rpmteBuildtime(rpmte te);
++
++/** \ingroup rpmte
+  * Retrieve color bits of transaction element.
+  * @param te		transaction element
+  * @return		color bits
+diff -puNr rpm-4.11.2.orig/lib/rpmvercmp.c rpm-4.11.2/lib/rpmvercmp.c
+--- rpm-4.11.2.orig/lib/rpmvercmp.c	2014-02-05 13:04:02 +0000
++++ rpm-4.11.2/lib/rpmvercmp.c	2014-06-30 03:20:40 +0000
+@@ -121,6 +121,29 @@ int rpmvercmp(const char * a, const char
+     if (!*one) return -1; else return 1;
+ }
+ 
++static int update_honor_buildtime(void)
++{
++    static int honor_buildtime = -1;
++
++    if (honor_buildtime < 0)
++       honor_buildtime = rpmExpandNumeric("%{?_upgrade_honor_buildtime}%{?!_upgrade_honor_buildtime:1}") ? 1 : 0;
++
++    return honor_buildtime;
++}
++
++static int rpmBuildTimeCompare(Header first, Header second)
++{
++    /* Missing build time becomes zero here, which is what we want */
++    uint32_t btimeOne = headerGetNumber(first, RPMTAG_BUILDTIME);
++    uint32_t btimeTwo = headerGetNumber(second, RPMTAG_BUILDTIME);
++
++    if (btimeOne < btimeTwo)
++       return -1;
++    if (btimeOne > btimeTwo)
++       return 1;
++    return 0;
++}
++
+ int rpmVersionCompare(Header first, Header second)
+ {
+     /* Missing epoch becomes zero here, which is what we want */
+@@ -138,6 +161,13 @@ int rpmVersionCompare(Header first, Head
+     if (rc)
+ 	return rc;
+ 
+-    return rpmvercmp(headerGetString(first, RPMTAG_RELEASE),
++    rc = rpmvercmp(headerGetString(first, RPMTAG_RELEASE),
+ 		     headerGetString(second, RPMTAG_RELEASE));
++    if (rc)
++	return rc;
++
++    if (update_honor_buildtime())
++        return rpmBuildTimeCompare(first, second);
++
++    return 0;
+ }
+diff -puNr rpm-4.11.2.orig/lib/transaction.c rpm-4.11.2/lib/transaction.c
+--- rpm-4.11.2.orig/lib/transaction.c	2014-06-30 02:11:16 +0000
++++ rpm-4.11.2/lib/transaction.c	2014-06-30 02:57:02 +0000
+@@ -1094,6 +1094,16 @@ void checkInstalledFiles(rpmts ts, uint6
+     rpmdbFreeIterator(mi);
+ }
+ 
++static int update_honor_buildtime(void)
++{
++    static int honor_buildtime = -1;
++
++    if (honor_buildtime < 0)
++        honor_buildtime = rpmExpandNumeric("%{?_upgrade_honor_buildtime}%{?!_upgrade_honor_buildtime:1}") ? 1 : 0;
++
++    return honor_buildtime;
++}
++
+ #define badArch(_a) (rpmMachineScore(RPM_MACHTABLE_INSTARCH, (_a)) == 0)
+ #define badOs(_a) (rpmMachineScore(RPM_MACHTABLE_INSTOS, (_a)) == 0)
+ 
+@@ -1137,6 +1147,8 @@ static rpmps checkProblems(rpmts ts)
+ 	    rpmdbSetIteratorRE(mi, RPMTAG_EPOCH, RPMMIRE_STRCMP, rpmteE(p));
+ 	    rpmdbSetIteratorRE(mi, RPMTAG_VERSION, RPMMIRE_STRCMP, rpmteV(p));
+ 	    rpmdbSetIteratorRE(mi, RPMTAG_RELEASE, RPMMIRE_STRCMP, rpmteR(p));
++            if (update_honor_buildtime())
++	        rpmdbSetIteratorRE(mi, RPMTAG_BUILDTIME, RPMMIRE_STRCMP, rpmteBuildtime(p));
+ 	    if (tscolor) {
+ 		rpmdbSetIteratorRE(mi, RPMTAG_ARCH, RPMMIRE_STRCMP, rpmteA(p));
+ 		rpmdbSetIteratorRE(mi, RPMTAG_OS, RPMMIRE_STRCMP, rpmteO(p));
+diff -puNr rpm-4.11.2.orig/rpmpopt.in rpm-4.11.2/rpmpopt.in
+--- rpm-4.11.2.orig/rpmpopt.in	2014-02-05 13:04:02 +0000
++++ rpm-4.11.2/rpmpopt.in	2014-06-30 03:18:35 +0000
+@@ -131,6 +131,9 @@ rpm	alias --filerequire --qf '[%{FILENAM
+ rpm	alias --filecaps --qf '[%{FILENAMES}\t%|FILECAPS?{%{FILECAPS}}|\n]' \
+ 	--POPTdesc=$"list file names with POSIX1.e capabilities"
+ 
++rpm	alias --ignorebuildtime --define '_upgrade_honor_buildtime 0' \
++	--POPTdesc=$"ignore package build time during update decisions"
++
+ # colon separated i18n domains to use as PO catalogue lookaside for
+ # retrieving header group/description/summary.
+ rpm alias --i18ndomains --define '_i18ndomains !#:+'

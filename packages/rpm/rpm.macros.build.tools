@@ -1,0 +1,21 @@
+#==============================================================================
+# ---- Build system path macros.
+#
+%__ar			ar
+%__as			as
+%__cc			gcc
+%__cpp			%__cc -E
+%__cxx			g++
+%__ld			ld
+%__nm			nm
+%__objcopy		objcopy
+%__objdump		objdump
+%__ranlib		ranlib
+%__strip		strip
+
+%__libtoolize		libtoolize
+%__aclocal		aclocal
+%__autoheader		autoheader
+%__automake		automake
+%__autoconf		autoconf
+

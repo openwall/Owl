@@ -1,0 +1,12 @@
+diff -puNr rpm-4.11.2.orig/build/parseScript.c rpm-4.11.2/build/parseScript.c
+--- rpm-4.11.2.orig/build/parseScript.c	2014-02-05 13:04:01 +0000
++++ rpm-4.11.2/build/parseScript.c	2014-06-17 18:34:08 +0000
+@@ -300,7 +300,7 @@ int parseScript(rpmSpec spec, int parseP
+ 		 _("line %d: unsupported internal script: %s\n"),
+ 		 spec->lineNum, progArgv[0]);
+ 	goto exit;
+-    } else {
++    } else if (pkg->autoReq) {
+         (void) addReqProv(pkg, RPMTAG_REQUIRENAME,
+ 		progArgv[0], NULL, (tagflags | RPMSENSE_INTERP), 0);
+     }

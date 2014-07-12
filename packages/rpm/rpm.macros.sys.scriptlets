@@ -1,0 +1,15 @@
+# XXX We don't expand pre/post install scriptlets (yet).
+#%__spec_pre_pre		%{nil}
+#%__spec_pre_post		%{nil}
+#%__spec_post_pre		%{nil}
+#%__spec_post_post		%{nil}
+#%__spec_preun_pre		%{nil}
+#%__spec_preun_post		%{nil}
+#%__spec_postun_pre		%{nil}
+#%__spec_postun_post		%{nil}
+#%__spec_triggerpostun_pre	%{nil}
+#%__spec_triggerpostun_post	%{nil}
+#%__spec_triggerun_pre		%{nil}
+#%__spec_triggerun_post		%{nil}
+#%__spec_triggerin_pre		%{nil}
+#%__spec_triggerin_post		%{nil}

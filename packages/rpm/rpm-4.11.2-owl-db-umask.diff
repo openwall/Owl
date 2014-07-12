@@ -1,0 +1,28 @@
+diff -puNr rpm-4.11.2.orig/db/src/os/os_handle.c rpm-4.11.2/db/src/os/os_handle.c
+--- rpm-4.11.2.orig/db/src/os/os_handle.c	2013-09-09 15:35:09 +0000
++++ rpm-4.11.2/db/src/os/os_handle.c	2014-06-17 17:31:18 +0000
+@@ -60,6 +60,8 @@ __os_openhandle(env, name, flags, mode,
+ 
+ 	retries = 0;
+ 	for (nrepeat = 1; nrepeat < 4; ++nrepeat) {
++		/* This is a dirty hack to avoid umasking of permission bits */
++		mode_t old_umask = umask(022);
+ 		ret = 0;
+ #ifdef	HAVE_VXWORKS
+ 		/*
+@@ -91,6 +93,7 @@ __os_openhandle(env, name, flags, mode,
+ 					 */
+ 					DB_END_SINGLE_THREAD;
+ 					ret = EEXIST;
++					umask(old_umask); /* restore original umask */
+ 					goto err;
+ 				}
+ 				/*
+@@ -122,6 +125,7 @@ __os_openhandle(env, name, flags, mode,
+ #else
+ 		fhp->fd = open(name, flags, mode);
+ #endif
++		umask(old_umask); /* restore original umask */
+ 		if (fhp->fd != -1) {
+ 			ret = 0;
+ 			break;

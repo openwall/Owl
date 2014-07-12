@@ -1,0 +1,13 @@
+diff -puNr rpm-4.11.2.orig/macros.in rpm-4.11.2/macros.in
+--- rpm-4.11.2.orig/macros.in	2014-06-30 02:01:20 +0000
++++ rpm-4.11.2/macros.in	2014-06-30 02:03:06 +0000
+@@ -857,8 +857,7 @@ package or when debugging this package.\
+   CXXFLAGS="${CXXFLAGS:-%optflags}" ; export CXXFLAGS ; \
+   FFLAGS="${FFLAGS:-%optflags}" ; export FFLAGS ; \
+   %{_configure} --host=%{_host} --build=%{_build} \\\
+-	--program-prefix=%{?_program_prefix} \\\
+-	--disable-dependency-tracking \\\
++	%{?_program_prefix:--program-prefix=%_program_prefix} \\\
+ 	--prefix=%{_prefix} \\\
+ 	--exec-prefix=%{_exec_prefix} \\\
+ 	--bindir=%{_bindir} \\\

@@ -1,0 +1,27 @@
+#==============================================================================
+# ---- GPG/PGP/PGP5 signature macros.
+#	These macros are used during the normal operation of RPM.
+#	For macros defining the signing of packages during the build
+#	operation of RPM see macros.build.signature.
+
+# XXX rpm >= 4.1 verifies signatures internally
+#%__gpg_verify_cmd	%__gpg \
+#	--batch --no-verbose --verify --no-secmem-warning \
+#	'%__signature_filename' '%__plaintext_filename'
+#
+# XXX rpm-4.1 verifies prelinked libraries using a prelink undo helper.
+#	Normally this macro is defined in /etc/rpm/macros.prelink, installed
+#	with the prelink package. If the macro is undefined, then prelinked
+#	shared libraries contents are MD5 digest verified (as usual), rather
+#	than MD5 verifying the output of the prelink undo helper.
+#
+#	Note: The 2nd token is used as argv[0] and "library" is a
+#	placeholder that will be deleted and replaced with the appropriate
+#	library file path.
+#%__prelink_undo_cmd     /usr/sbin/prelink prelink -y library
+
+# Horowitz Key Protocol server configuration
+#
+%_hkp_keyserver         http://pgp.mit.edu
+%_hkp_keyserver_port    11371
+%_hkp_keyserver_query   %_hkp_keyserver:%_hkp_keyserver_port/pks/lookup?op=get&search=0x
