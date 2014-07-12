@@ -1,35 +1,35 @@
-diff -uNrp file-5.04.orig/magic/Magdir/animation file-5.04/magic/Magdir/animation
---- file-5.04.orig/magic/Magdir/animation	2010-09-01 15:05:24 +0000
-+++ file-5.04/magic/Magdir/animation	2010-09-01 15:09:42 +0000
-@@ -705,14 +705,24 @@
+diff -puNr file-5.19.orig/magic/Magdir/animation file-5.19/magic/Magdir/animation
+--- file-5.19.orig/magic/Magdir/animation	2014-04-30 23:28:03 +0000
++++ file-5.19/magic/Magdir/animation	2014-06-15 17:37:06 +0000
+@@ -715,14 +715,24 @@
  !:mime  video/x-ms-asf
  
  # MNG Video Format, <URL:http://www.libpng.org/pub/mng/spec/>
-+# 0x8a M N G 0x0d 0x0a 0x1a 0x0a [4-byte pad] 
++# 0x8a M N G 0x0d 0x0a 0x1a 0x0a [4-byte pad]
 +# M H D R [4-byte width][4-byte height][4-byte ticks][4-byte layers]
 +# [4-byte frame][4-byte time][4-byte profile]
  0	string			\x8aMNG		MNG video data,
  !:mime	video/x-mng
  >4	belong			!0x0d0a1a0a	CORRUPTED,
  >4	belong			0x0d0a1a0a
- >>16    belong	x				%ld x
-->>20    belong	x				%ld
-+>>20    belong	x				%ld,
-+>>24	belong	x				%ld tps,
-+>>28	belong	x				%ld layers,
-+>>32	belong	x				%ld frames,
-+>>36	belong	x				%ld time,
-+>>40	belong	x				profile = %ld
+ >>16    belong	x				%d x
+->>20    belong	x				%d
++>>20    belong	x				%d,
++>>24    belong  x				%d tps,
++>>28    belong  x				%d layers,
++>>32    belong  x				%d frames,
++>>36    belong  x				%d time,
++>>40    belong  x				profile = %d
  
  # JNG Video Format, <URL:http://www.libpng.org/pub/mng/spec/>
-+# 0x8b J N G 0x0d 0x0a 0x1a 0x0a [4-byte pad] 
++# 0x8b J N G 0x0d 0x0a 0x1a 0x0a [4-byte pad]
 +# J H D R [4-byte width][4-byte height]
  0	string			\x8bJNG		JNG video data,
  !:mime	video/x-jng
  >4	belong			!0x0d0a1a0a	CORRUPTED,
-diff -uNrp file-5.04.orig/magic/Magdir/audio file-5.04/magic/Magdir/audio
---- file-5.04.orig/magic/Magdir/audio	2010-09-01 15:05:24 +0000
-+++ file-5.04/magic/Magdir/audio	2010-09-01 15:05:44 +0000
+diff -puNr file-5.19.orig/magic/Magdir/audio file-5.19/magic/Magdir/audio
+--- file-5.19.orig/magic/Magdir/audio	2014-05-14 23:30:28 +0000
++++ file-5.19/magic/Magdir/audio	2014-06-15 17:31:19 +0000
 @@ -137,8 +137,8 @@
  #0	string		FAR		Module sound data
  #>4	string		>\15		Title: "%s"
@@ -41,11 +41,11 @@ diff -uNrp file-5.04.orig/magic/Magdir/audio file-5.04/magic/Magdir/audio
  
  # Gravis UltraSound patches
  # From <ache@nagual.ru>
-diff -uNrp file-5.04.orig/magic/Magdir/macintosh file-5.04/magic/Magdir/macintosh
---- file-5.04.orig/magic/Magdir/macintosh	2010-09-01 15:05:24 +0000
-+++ file-5.04/magic/Magdir/macintosh	2010-09-01 15:11:22 +0000
-@@ -263,116 +263,5 @@
- 0	string		$FL2		SPSS System File
+diff -puNr file-5.19.orig/magic/Magdir/macintosh file-5.19/magic/Magdir/macintosh
+--- file-5.19.orig/magic/Magdir/macintosh	2014-04-28 14:01:16 +0000
++++ file-5.19/magic/Magdir/macintosh	2014-06-15 17:41:27 +0000
+@@ -266,117 +266,6 @@
+ 0	string		$FL3		SPSS System File
  >24	string		x		%s
  
 -# Macintosh filesystem data
@@ -70,7 +70,7 @@ diff -uNrp file-5.04.orig/magic/Magdir/macintosh file-5.04/magic/Magdir/macintos
 ->0x412	beshort			x		number of blocks: %d,
 ->0x424	pstring			x		volume name: %s
 -
--# "BD" is has many false positives
+-# "BD" gives many false positives
 -#0x400	beshort			0x4244		Macintosh HFS data
 -#>0	beshort			0x4C4B		(bootable)
 -#>0x40a	beshort			&0x8000		(locked)
@@ -161,9 +161,10 @@ diff -uNrp file-5.04.orig/magic/Magdir/macintosh file-5.04/magic/Magdir/macintos
 -
  # From: Remi Mommsen <mommsen@slac.stanford.edu>
  0		string		BOMStore	Mac OS X bill of materials (BOM) file
-diff -uNrp file-5.04.orig/magic/Magdir/mcrypt file-5.04/magic/Magdir/mcrypt
---- file-5.04.orig/magic/Magdir/mcrypt	2010-09-01 15:05:24 +0000
-+++ file-5.04/magic/Magdir/mcrypt	2010-09-01 15:05:44 +0000
+ 
+diff -puNr file-5.19.orig/magic/Magdir/mcrypt file-5.19/magic/Magdir/mcrypt
+--- file-5.19.orig/magic/Magdir/mcrypt	2014-04-28 14:01:16 +0000
++++ file-5.19/magic/Magdir/mcrypt	2014-06-15 17:31:36 +0000
 @@ -2,14 +2,18 @@
  #------------------------------------------------------------------------------
  # $File: mcrypt,v 1.5 2009/09/19 16:28:10 christos Exp $

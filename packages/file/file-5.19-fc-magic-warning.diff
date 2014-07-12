@@ -1,0 +1,12 @@
+diff -puNr file-5.19.orig/src/apprentice.c file-5.19/src/apprentice.c
+--- file-5.19.orig/src/apprentice.c	2014-06-03 19:01:34 +0000
++++ file-5.19/src/apprentice.c	2014-06-30 05:10:00 +0000
+@@ -437,7 +437,7 @@ apprentice_1(struct magic_set *ms, const
+ #ifndef COMPILE_ONLY
+ 	map = apprentice_map(ms, fn);
+ 	if (map == NULL) {
+-		if (ms->flags & MAGIC_CHECK)
++		if (ms->flags & MAGIC_CHECK && strcmp("/etc/magic", fn) != 0)
+ 			file_magwarn(ms, "using regular magic file `%s'", fn);
+ 		map = apprentice_load(ms, fn, action);
+ 		if (map == NULL)

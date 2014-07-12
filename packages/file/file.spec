@@ -1,26 +1,23 @@
-# $Owl: Owl/packages/file/file.spec,v 1.27 2010/09/02 21:00:23 solar Exp $
+# $Owl: Owl/packages/file/file.spec,v 1.28 2014/07/12 13:50:34 galaxy Exp $
 
 Summary: A utility for determining file types.
 Name: file
-Version: 5.04
-Release: owl2
+Version: 5.19
+Release: owl1
 License: distributable
 Group: Applications/File
 URL: http://www.darwinsys.com/file/
 Source0: ftp://ftp.astron.com/pub/file/file-%version.tar.gz
 Source1: magic.local
-Patch0: file-5.04-rh-alt-compress.diff
-Patch1: file-5.04-deb-owl-fixes.diff
-Patch2: file-5.04-alt-magic.diff
-Patch3: file-5.04-deb-magic.diff
-Patch4: file-5.04-deb-owl-man.diff
-Patch5: file-5.04-deb-doc-manpages-typo.diff
-Patch6: file-5.04-rh-owl-ulaw-segfault.diff
-Patch7: file-5.04-rh-core-prpsinfo.diff
-Patch8: file-5.04-deb-core-trim.diff
+Patch0: %name-5.19-rh-alt-compress.diff
+Patch1: %name-5.19-deb-owl-fixes.diff
+Patch2: %name-5.19-alt-magic.diff
+Patch3: %name-5.19-owl-deb-magic.diff
+Patch4: %name-5.19-deb-owl-man.diff
+Patch5: %name-5.19-fc-magic-warning.diff
 Prefix: %_prefix
 Requires: libmagic = %version-%release
-BuildRequires: zlib-devel, automake, autoconf
+BuildRequires: zlib-devel, automake, autoconf >= 2.69
 BuildRoot: /override/%name-%version
 
 %description
@@ -47,58 +44,81 @@ magic files.
 
 %prep
 %setup -q
+
+# if a patch touches the magic database, apply it without -b, otherwise
+# the compilation of the database may (and likely will) fail.
+
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
+
+# Patches can generate *.orig files, which can't stay in the magic dir,
+# otherwise there will be problems with compiling magic file!
+find magic/Magdir -type f -name '*.orig' -ls -delete
+
+autoreconf -fis -I m4
 
 %{expand:%%define optflags %optflags -D_GNU_SOURCE -Wall}
 
 %build
-autoreconf -f
-%configure --enable-fsect-man5
+%configure \
+	--disable-rpath \
+	--enable-fsect-man5 \
+#
+
 %__make
 
 %install
-rm -rf %buildroot
-mkdir -p %buildroot%_bindir
-mkdir -p %buildroot%_mandir/man{1,5}
-mkdir -p %buildroot%_datadir
+rm -rf -- '%buildroot'
+mkdir -p '%buildroot%_bindir'
+mkdir -p '%buildroot%_mandir'/man{1,5}
+mkdir -p '%buildroot%_datadir'
 
 %makeinstall
-install -p -D -m 644 %_sourcedir/magic.local %buildroot/etc/magic
+install -p -D -m 644 '%_sourcedir/magic.local' '%buildroot%_sysconfdir/magic'
 
-ln -s file/magic %buildroot%_datadir/magic
-ln -s file/magic.mime %buildroot%_datadir/magic.mime
+cat magic/Magdir/* > '%buildroot%_datadir/misc/magic'
+ln -s misc/magic '%buildroot%_datadir/magic'
 
-rm %buildroot%_libdir/*.la
+# remove unpackaged files
+find '%buildroot%_libdir' -type f -name '*.la' -ls -delete
+
+%check
+%__make check
+
+%post -n libmagic -p /sbin/ldconfig
+%postun -n libmagic -p /sbin/ldconfig
 
 %files
-%defattr(-,root,root)
+%defattr(0644,root,root,0755)
 %doc COPYING ChangeLog README TODO
 %config(noreplace) /etc/magic
-%_bindir/*
+%attr(0755,root,root) %_bindir/file
 %_datadir/misc/magic*
-%_mandir/man1/*
-%_mandir/man5/*
+%_datadir/magic
+%_mandir/man1/file.1*
+%_mandir/man5/magic.5*
 
 %files -n libmagic
-%defattr(-,root,root)
-%_libdir/*.so.*
+%defattr(0644,root,root,0755)
+%_libdir/libmagic.so.*
 
 %files -n libmagic-devel
-%defattr(-,root,root)
-%_libdir/*.so
-%_libdir/*.a
-%_includedir/*
-%_mandir/man3/*
+%defattr(0644,root,root,0755)
+%_libdir/libmagic.so
+%_includedir/magic.h
+%_mandir/man3/libmagic.3*
 
 %changelog
+* Mon Jun 16 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 5.19-owl1
+- Updated to 5.19.
+- Regenerated patches, dropped ones which were accepted upstream.
+- Introduced the %%check section.
+- Made filelists more specific, not to rely on upstream decided permissions.
+
 * Thu Sep 02 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.04-owl2
 - Silenced incorrect 'from' field message, patch from Fedora:
 https://bugzilla.redhat.com/show_bug.cgi?id=599695
@@ -147,6 +167,6 @@ to do their work.
 * Thu Jan 31 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Thu Nov 29 2000 Michail Litvak <mci-at-owl.openwall.com>
+* Wed Nov 29 2000 Michail Litvak <mci-at-owl.openwall.com>
 - Imported from RH and updated to 3.33
 - added some patches from Debian and RH

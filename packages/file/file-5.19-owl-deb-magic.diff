@@ -1,0 +1,11 @@
+diff -puNr file-5.19.orig/magic/Header file-5.19/magic/Header
+--- file-5.19.orig/magic/Header	2010-10-07 01:13:42 +0000
++++ file-5.19/magic/Header	2014-06-15 17:45:32 +0000
+@@ -1,5 +1,6 @@
+ # Magic data for file(1) command.
+-# Format is described in magic(files), where:
++# Format is described in magic(5).
+ # files is 5 on V7 and BSD, 4 on SV, and ?? on SVID.
+ # Don't edit this file, edit /etc/magic or send your magic improvements
+ # to the maintainers, at file@mx.gw.com
++

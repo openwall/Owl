@@ -1,38 +1,39 @@
-diff -uNrp file-5.04.orig/src/compress.c file-5.04/src/compress.c
---- file-5.04.orig/src/compress.c	2010-09-01 15:05:24 +0000
-+++ file-5.04/src/compress.c	2010-09-01 15:57:55 +0000
-@@ -373,6 +373,7 @@ uncompressbuf(struct magic_set *ms, int 
-     const unsigned char *old, unsigned char **newch, size_t n)
+diff -puNr file-5.19.orig/src/compress.c file-5.19/src/compress.c
+--- file-5.19.orig/src/compress.c	2014-01-05 15:55:21 +0000
++++ file-5.19/src/compress.c	2014-06-15 17:16:01 +0000
+@@ -378,7 +378,7 @@ uncompressbuf(struct magic_set *ms, int
  {
  	int fdin[2], fdout[2];
-+	pid_t pid1 = -1, pid2 = -1;
  	ssize_t r;
+-	pid_t pid;
++	pid_t pid1 = -1, pid2 = -1;
  
  #ifdef BUILTIN_DECOMPRESS
-@@ -387,7 +388,7 @@ uncompressbuf(struct magic_set *ms, int 
+         /* FIXME: This doesn't cope with bzip2 */
+@@ -392,7 +392,7 @@ uncompressbuf(struct magic_set *ms, int
  		file_error(ms, errno, "cannot create pipe");	
  		return NODATA;
  	}
--	switch (fork()) {
-+	switch ((pid1=fork())) {
+-	switch (pid = fork()) {
++	switch (pid1 = fork()) {
  	case 0:	/* child */
  		(void) close(0);
  		if (fd != -1) {
-@@ -428,7 +429,7 @@ uncompressbuf(struct magic_set *ms, int 
+@@ -436,7 +436,7 @@ uncompressbuf(struct magic_set *ms, int
  			 * fork again, to avoid blocking because both
  			 * pipes filled
  			 */
 -			switch (fork()) {
-+			switch ((pid2=fork())) {
++			switch (pid2 = fork()) {
  			case 0: /* child */
  				(void)close(fdout[0]);
  				if (swrite(fdin[1], old, n) != (ssize_t)n) {
-@@ -483,12 +484,8 @@ err:
+@@ -491,12 +491,8 @@ err:
  		if (fdin[1] != -1)
  			(void) close(fdin[1]);
  		(void) close(fdout[0]);
 -#ifdef WNOHANG
--		while (waitpid(-1, NULL, WNOHANG) != -1)
+-		while (waitpid(pid, NULL, WNOHANG) != -1)
 -			continue;
 -#else
 -		(void)wait(NULL);

@@ -1,0 +1,37 @@
+diff -puNr file-5.19.orig/src/Makefile.am file-5.19/src/Makefile.am
+--- file-5.19.orig/src/Makefile.am	2013-02-22 14:03:35 +0000
++++ file-5.19/src/Makefile.am	2014-06-15 17:28:01 +0000
+@@ -4,7 +4,7 @@ include_HEADERS = magic.h
+ 
+ bin_PROGRAMS = file
+ 
+-AM_CPPFLAGS = -DMAGIC='"$(MAGIC)"'
++AM_CPPFLAGS = -DMAGIC='"$(sysconfdir)/magic:$(MAGIC)"'
+ AM_CFLAGS = $(CFLAG_VISIBILITY) @WARNINGS@
+ 
+ libmagic_la_SOURCES = magic.c apprentice.c softmagic.c ascmagic.c \
+diff -puNr file-5.19.orig/src/Makefile.in file-5.19/src/Makefile.in
+--- file-5.19.orig/src/Makefile.in	2014-06-12 16:28:23 +0000
++++ file-5.19/src/Makefile.in	2014-06-15 17:28:42 +0000
+@@ -329,7 +329,7 @@ top_srcdir = @top_srcdir@
+ MAGIC = $(pkgdatadir)/magic
+ lib_LTLIBRARIES = libmagic.la
+ include_HEADERS = magic.h
+-AM_CPPFLAGS = -DMAGIC='"$(MAGIC)"'
++AM_CPPFLAGS = -DMAGIC='"$(sysconfdir)/magic:$(MAGIC)"'
+ AM_CFLAGS = $(CFLAG_VISIBILITY) @WARNINGS@
+ libmagic_la_SOURCES = magic.c apprentice.c softmagic.c ascmagic.c \
+ 	encoding.c compress.c is_tar.c readelf.c print.c fsmagic.c \
+diff -puNr file-5.19.orig/src/fsmagic.c file-5.19/src/fsmagic.c
+--- file-5.19.orig/src/fsmagic.c	2014-05-14 23:15:42 +0000
++++ file-5.19/src/fsmagic.c	2014-06-15 17:22:34 +0000
+@@ -164,7 +164,8 @@ file_fsmagic(struct magic_set *ms, const
+ 		if (file_printf(ms, "cannot open `%s' (%s)",
+ 		    fn, strerror(errno)) == -1)
+ 			return -1;
+-		return 0;
++		ms->event_flags |= EVENT_HAD_ERR;
++		return -1;
+ 	}
+ 
+ 	ret = 1;
