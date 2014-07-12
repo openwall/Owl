@@ -1,20 +1,20 @@
-# $Owl: Owl/packages/automake/automake.spec,v 1.20 2009/09/09 16:45:50 ldv Exp $
+# $Owl: Owl/packages/automake/automake.spec,v 1.21 2014/07/12 13:48:12 galaxy Exp $
 
-%define api_version 1.9
+%define api_version 1.14
 
 Summary: A GNU tool for automatically creating Makefiles.
 Name: automake
-Version: %{api_version}.6
-Release: owl2
+Version: %{api_version}.1
+Release: owl1
 License: GPL
 Group: Development/Tools
 URL: http://www.gnu.org/software/automake/
-Source: ftp://ftp.gnu.org/gnu/automake/automake-%version.tar.bz2
-Patch0: automake-1.9.5-owl-info.diff
-Patch1: automake-1.9.5-owl-tmp.diff
-PreReq: /sbin/install-info
+Source: ftp://ftp.gnu.org/gnu/automake/automake-%version.tar.xz
+Patch0: %name-1.14-owl-info.diff
+Patch1: %name-1.14-owl-tmp.diff
+Requires(post,preun): /sbin/install-info
 Requires: perl
-BuildRequires: autoconf >= 2.59
+BuildRequires: autoconf >= 2.65
 BuildRequires: texinfo >= 4.8
 BuildArchitectures: noarch
 BuildRoot: /override/%name-%version
@@ -25,9 +25,18 @@ template files.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-bzip2 -9k ChangeLog NEWS TODO
+%patch0 -p1 -b .info
+%patch1 -p1 -b .tmp
+
+# There is a known issue with the following 2 tests, they fail to run with
+# the recent versions of flex when linked against libfl.so.  If we link
+# them against libfl.a, they are OK, so let's apply this as a temporary
+# workaround here.  We are patching it here since the lib directory is
+# architecture dependent and it would require a non-trivial patch.
+sed -i 's,^[[:space:]]*./configure,LEXLIB="%_libdir/libfl.a" &,' \
+	t/lex-{clean,depend}-cxx.sh
+
+bzip2 -9k ChangeLog NEWS
 
 %build
 %configure
@@ -38,32 +47,63 @@ bzip2 -9k ChangeLog NEWS TODO
 %__make check
 
 %install
-rm -rf %buildroot
+rm -rf -- '%buildroot'
 %makeinstall
 
-mkdir -p %buildroot%_datadir/aclocal
+mkdir -p '%buildroot%_datadir/aclocal'
+
+# suppress the dependencies generation for tap-driver.pl since it uses
+# TAP::Parser which we do not currently provide.
+chmod 0644 '%buildroot%_datadir/automake-%api_version/tap-driver.pl'
 
 # Remove unpackaged files
-rm %buildroot%_infodir/dir
+rm -- '%buildroot%_infodir/dir'
+rm -- '%buildroot%_docdir/%name/'amhello*.tar.*
 
 %post
-/sbin/install-info %_infodir/automake.info %_infodir/dir
+/sbin/install-info '%_infodir/automake.info' '%_infodir/dir'
 
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/automake.info %_infodir/dir
+	/sbin/install-info --delete '%_infodir/automake.info' '%_infodir/dir'
 fi
 
 %files
-%defattr(-,root,root)
-%doc AUTHORS COPYING ChangeLog.bz2 NEWS.bz2 README THANKS TODO.bz2
-%_bindir/*
+%defattr(0644,root,root,0755)
+%doc AUTHORS COPYING ChangeLog.bz2 NEWS.bz2 README THANKS
+%attr(0755,root,root) %_bindir/*
 %_infodir/*.info*
-%_datadir/automake-%api_version
+%dir %_datadir/automake-%api_version
+%_datadir/automake-%api_version/Automake
+%_datadir/automake-%api_version/am
+%_datadir/automake-%api_version/COPYING
+%_datadir/automake-%api_version/INSTALL
+%_datadir/automake-%api_version/texinfo.tex
+%attr(0755,root,root) %_datadir/automake-%api_version/ar-lib
+%attr(0755,root,root) %_datadir/automake-%api_version/compile
+%attr(0755,root,root) %_datadir/automake-%api_version/config.guess
+%attr(0755,root,root) %_datadir/automake-%api_version/config.sub
+%attr(0755,root,root) %_datadir/automake-%api_version/depcomp
+%attr(0755,root,root) %_datadir/automake-%api_version/install-sh
+%attr(0755,root,root) %_datadir/automake-%api_version/mdate-sh
+%attr(0755,root,root) %_datadir/automake-%api_version/missing
+%attr(0755,root,root) %_datadir/automake-%api_version/mkinstalldirs
+%attr(0755,root,root) %_datadir/automake-%api_version/py-compile
+%attr(0755,root,root) %_datadir/automake-%api_version/tap-driver.pl
+%attr(0755,root,root) %_datadir/automake-%api_version/tap-driver.sh
+%attr(0755,root,root) %_datadir/automake-%api_version/test-driver
+%attr(0755,root,root) %_datadir/automake-%api_version/ylwrap
 %_datadir/aclocal-%api_version
 %dir %_datadir/aclocal
+%_datadir/aclocal/README
+%_mandir/man1/aclocal*.1*
+%_mandir/man1/automake*.1*
 
 %changelog
+* Sun Jun 15 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.14.1-owl1
+- Updated to 1.14.1.
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+
 * Sun Aug 30 2009 Solar Designer <solar-at-owl.openwall.com> 1.9.6-owl2
 - Allow for overriding BUILD_TEST without having to edit this spec file.
 

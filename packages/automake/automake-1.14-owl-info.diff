@@ -1,0 +1,20 @@
+diff -puNr automake-1.14.orig/doc/automake.texi automake-1.14/doc/automake.texi
+--- automake-1.14.orig/doc/automake.texi	2013-06-20 08:44:16 +0000
++++ automake-1.14/doc/automake.texi	2014-06-15 06:20:04 +0000
+@@ -38,13 +38,13 @@ section entitled ``GNU Free Documentatio
+ 
+ @dircategory Software development
+ @direntry
+-* Automake: (automake).         Making GNU standards-compliant Makefiles.
++* Automake: (automake).				Making Makefile.in's.
+ @end direntry
+ 
+ @dircategory Individual utilities
+ @direntry
+-* aclocal-invocation: (automake)aclocal Invocation.   Generating aclocal.m4.
+-* automake-invocation: (automake)automake Invocation. Generating Makefile.in.
++* aclocal-invocation: (automake)aclocal Invocation.	Generating aclocal.m4.
++* automake-invocation: (automake)automake Invocation.	Generating Makefile.in.
+ @end direntry
+ 
+ @titlepage

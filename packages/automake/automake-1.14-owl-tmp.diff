@@ -1,6 +1,7 @@
---- automake-1.9.5/doc/automake.texi.orig	2005-02-12 21:16:20 +0000
-+++ automake-1.9.5/doc/automake.texi	2005-05-23 14:05:11 +0000
-@@ -5691,17 +5691,16 @@ path is prefixed with the value of @samp
+diff -puNr automake-1.14.orig/doc/automake.texi automake-1.14/doc/automake.texi
+--- automake-1.14.orig/doc/automake.texi	2013-06-20 08:44:16 +0000
++++ automake-1.14/doc/automake.texi	2014-06-15 06:27:31 +0000
+@@ -8243,17 +8243,16 @@ path is prefixed with the value of @code
  into the install area.  Here is an example of typical DESTDIR usage:
  
  @example
@@ -22,5 +23,5 @@
 +would install @file{$DESTDIR/gnu/bin/foo} and
 +@file{$DESTDIR/gnu/share/aclocal/foo.m4}.
  
- This feature is commonly used to build install images and packages.  For
- more information, see @ref{Makefile Conventions, , , standards, The GNU
+ This feature is commonly used to build install images and packages
+ (@pxref{DESTDIR}).
