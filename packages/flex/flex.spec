@@ -1,19 +1,20 @@
-# $Owl: Owl/packages/flex/flex.spec,v 1.19 2011/09/13 14:21:49 segoon Exp $
+# $Owl: Owl/packages/flex/flex.spec,v 1.20 2014/07/12 13:50:09 galaxy Exp $
 
 Summary: A tool for creating scanners (text pattern recognizers).
 Name: flex
-Version: 2.5.35
-Release: owl2
+Version: 2.5.39
+Release: owl1
 License: GPL
 Group: Development/Tools
 URL: http://flex.sourceforge.net
-Source: flex-%version.tar.xz
-Patch0: flex-2.5.4a-rh-skel.diff
-Patch1: flex-2.5.35-alt-YY_STATE_BUF_SIZE.diff
-Patch2: flex-2.5.35-suse-pic.diff
-Patch3: flex-2.5.35-alt-info.diff
-Patch4: flex-2.5.35-owl-tests.diff
-PreReq: /sbin/install-info
+Source: http://downloads.sourceforge.net/%name/%name-%version.tar.xz
+Patch0: %name-2.5.37-fc-updated-bison-construct.diff
+# re-generation of docs requires textinfo, tex, help2man
+Patch1: %name-2.5.39-owl-skip-docs-build.diff
+Requires(post): /sbin/install-info
+Requires(preun): /sbin/install-info
+BuildRequires: bison >= 2.6.1
+BuildRequires: gettext, libtool, autoconf >= 2.69, automake, m4
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
 
@@ -30,64 +31,89 @@ build process.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
+%patch0 -p1 -b .updated-bison-construct
+%patch1 -p1 -b .skip-docs-build
+
+gettextize -f -q --symlink
+rm gettext.h
+ln -s '%_datadir/gettext/gettext.h'
+aclocal --force -I m4
+autoreconf -fis
 
 %build
-autoconf
-%configure
+
+%configure \
+	--disable-rpath \
+#
+
 %__make
 
 %check
 %__make check
 
 %install
-rm -rf %buildroot
+[ '%buildroot' != '/' -a -d '%buildroot' ] && rm -rf -- '%buildroot'
 
 %makeinstall
 
-pushd %buildroot
-ln -sf flex .%_bindir/lex
-ln -sf flex .%_bindir/flex++
-ln -s libfl.a .%_libdir/libl.a
-ln -s libfl.a .%_libdir/libfl_pic.a
-ln -s flex.1 .%_mandir/man1/lex.1
-ln -s flex.1 .%_mandir/man1/flex++.1
+# since we removed the doc subdir from the build process, we need to
+# install docs ourselves.
+mkdir -p '%buildroot%_mandir/man1/'
+install -p -m644 doc/flex.1 '%buildroot%_mandir/man1/'
+mkdir -p '%buildroot%_infodir/'
+install -p -m644 doc/flex.info* '%buildroot%_infodir/'
+
+/sbin/ldconfig -v -n '%buildroot%_libdir'
+
+pushd '%buildroot'
+ln -sf flex '.%_bindir/lex'
+ln -sf flex '.%_bindir/flex++'
+ln -s flex.1 '.%_mandir/man1/lex.1'
+ln -s flex.1 '.%_mandir/man1/flex++.1'
+ln -s libfl.a '.%_libdir/libl.a'
 popd
 
-#mkdir %buildroot%_infodir
-#install -m 644 MISC/texinfo/flex.info %buildroot%_infodir/
+%find_lang %name || :
+touch '%name.lang'
 
-%find_lang %name
+# remove unpackaged files
+find '%buildroot' -type f -name '*.la' -delete
+rm -r -- '%buildroot%_datadir/doc'
 
 %post
-/sbin/install-info %_infodir/flex.info %_infodir/dir \
-	--entry="* Flex: (flex).                                 A fast scanner generator."
+/sbin/install-info '%_infodir/flex.info' '%_infodir/dir' \
+	--entry="* Flex: (flex).					A fast scanner generator."
 %preun
 if [ $1 -eq 0 ]; then
-	/sbin/install-info --delete %_infodir/flex.info %_infodir/dir \
-		--entry="* Flex: (flex).                                 A fast scanner generator."
+	/sbin/install-info --delete '%_infodir/flex.info' '%_infodir/dir' \
+		--entry="* Flex: (flex).					A fast scanner generator."
 fi
 
 %files -f %name.lang
-%defattr(-,root,root)
+%defattr(0644,root,root,0755)
 %doc AUTHORS COPYING NEWS README THANKS
 # XXX: Consider packaging doc/flex.pdf and examples/ (in some form).
+%attr(0755,root,root) %_bindir/flex
+# symlinks
 %_bindir/lex
-%_bindir/flex
 %_bindir/flex++
-%_mandir/man1/*
-%_infodir/flex.*
+%_mandir/man1/flex.1*
+%_mandir/man1/lex.1*
+%_mandir/man1/flex++.1*
+%_infodir/flex.info*
+%_libdir/libfl.so.*
+%_libdir/libfl_pic.so.*
+%_libdir/libfl.so
+%_libdir/libfl_pic.so
 %_libdir/libl.a
 %_libdir/libfl.a
 %_libdir/libfl_pic.a
 %_prefix/include/FlexLexer.h
-%exclude %_infodir/dir
 
 %changelog
+* Thu Jun 19 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.5.39-owl1
+- Updated to 2.5.39.
+
 * Tue Sep 13 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.5.35-owl2
 - Fixed build bug with gcc 4.6.1.
 

@@ -1,0 +1,11 @@
+diff -puNr flex-2.5.39.orig/Makefile.am flex-2.5.39/Makefile.am
+--- flex-2.5.39.orig/Makefile.am	2014-03-26 12:46:44 +0000
++++ flex-2.5.39/Makefile.am	2014-06-19 17:25:35 +0000
+@@ -117,7 +117,6 @@ BUILT_SOURCES = \
+ SUBDIRS = \
+ 	lib \
+ 	. \
+-	doc \
+ 	examples \
+ 	po \
+ 	tests
