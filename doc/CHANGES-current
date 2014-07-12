@@ -48,6 +48,63 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
-No changes yet.
+2014/07/12	Package: sqlite
+Introduced a new package due to the new RPM requirements.
 
-$Owl: Owl/doc/CHANGES-current,v 1.1 2014/07/10 19:09:32 solar Exp $
+2014/07/12	Package: rpm
+Updated to 4.11.2.
+The payload compression method was changed from bzip2 to xz.
+
+2014/07/12	Package: mpfr
+Updated to 3.1.2 patch-level 8.
+
+2014/07/12	Package: m4
+Updated to 1.4.17.
+
+2014/07/12	Package: libtool
+Updated to 2.4.2.
+
+2014/07/12	Package: libpopt
+Updated to 1.16.
+Introduced the libpopt library as an independent, separate package.
+
+2014/07/12	Package: libnss
+Introduced a new package due to the new RPM requirements.
+
+2014/07/12	Package: libnspr
+Introduced a new package due to the new RPM requirements.
+
+2014/07/12	Package: libnet
+Updated to 1.2-rc3.
+
+2014/07/12	Package: libmpc
+Updated to 1.0.2.
+
+2014/07/12	Package: gmp
+Updated to 6.0.0a.
+
+2014/07/12	Package: gettext
+Updated to 0.19.1.
+
+2014/07/12	Package: gdbm
+Updated to 1.11.
+
+2014/07/12	Package: flex
+Updated to 2.5.39.
+
+2014/07/12	Package: file
+Updated to 5.19.
+
+2014/07/12	Package: coreutils
+Updated to 8.22.
+
+2014/07/12	Package: bison
+Updated to 3.0.2.
+
+2014/07/12	Package: automake
+Updated to 1.14.
+
+2014/07/12	Package: autoconf
+Updated to 2.69.
+
+$Owl: Owl/doc/CHANGES-current,v 1.2 2014/07/12 14:00:03 galaxy Exp $
