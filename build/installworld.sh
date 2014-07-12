@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/installworld.sh,v 1.47 2012/02/26 17:50:17 solar Exp $
+# $Owl: Owl/build/installworld.sh,v 1.48 2014/07/12 17:13:07 galaxy Exp $
 
 . installworld.conf
 
@@ -33,6 +33,8 @@ function clean_death()
 function setup_rpm()
 {
 	local FILE
+	local RPM2CPIO
+	local EXTRACT_RC
 
 	if [ -e /.Owl-CD-ROM -a "$HOME" = /usr/src/world ]; then
 		log "Running off a CD, will use this system's RPM binary"
@@ -41,26 +43,86 @@ function setup_rpm()
 
 	cd $RPMS || exit 1
 
-	FILE="`ls rpm-[0-9]*-*.*.rpm 2>/dev/null | tail -1`"
-	if [ -z "$FILE" ]; then
-		log "Missing RPM package, will use this system's RPM binary"
+	# for rpm-4.11 we need libnss, libnspr (required by libnss),
+	# and libpopt (required by rpm).
+
+	FILE[0]=$(ls rpm-[0-9]*-*.*.rpm 2>/dev/null | tail -1)
+	FILE[1]=$(ls rpm-rescue-[0-9]*-*.*.rpm 2>/dev/null | tail -1)
+	FILE[2]=$(ls libnspr-[0-9]*-*.*.rpm 2>/dev/null | tail -1)
+	FILE[3]=$(ls libnss-[0-9]*-*.*.rpm 2>/dev/null | tail -1)
+	FILE[4]=$(ls libpopt-[0-9]*-*.*.rpm 2>/dev/null | tail -1)
+	if [ -z "${FILE[0]}" -o -z "${FILE[1]}" -o -z "${FILE[2]}" \
+			-o -z "${FILE[3]}" -o -z "${FILE[4]}" ]; then
+		log "Missing RPM package or one of its deps, will use this system's RPM binary"
+		return
+	fi
+
+	RPM2CPIO="$HOME/${0%/*}/rpm2cpio.sh"
+	if [ ! -x "$RPM2CPIO" ]; then
+		log "Missing the rpm2cpio.sh script, will use this system's RPM binary"
 		return
 	fi
 
 	cd $TMPDIR || exit 1
-	log "Extracting the RPM binary"
-	if rpm2cpio $RPMS/$FILE | cpio -id --no-preserve-owner --quiet \
-	    usr/lib/rpm/{rpmi,rpmd,rpmq,rpmrc,macros,rpmpopt\*} && \
+	log "Extracting RPM support files"
+	EXTRACT_RC=0
+
+	# extracting parts from rpm
+	if $RPM2CPIO $RPMS/${FILE[0]} | cpio -id --no-preserve-owner --quiet \
+	    \*usr/lib/rpm/{rpmrc,macros\*,rpmpopt\*} && \
 	    sed -e "s,^\\(macrofiles:\\).*\$,\\1 $TMPDIR/usr/lib/rpm/macros," \
 	    < $TMPDIR/usr/lib/rpm/rpmrc \
 	    > $TMPDIR/usr/lib/rpm/rpmrc-work; then
-		RPM=$TMPDIR/usr/lib/rpm/rpmi
-		RPMD=$TMPDIR/usr/lib/rpm/rpmd
-		RPMQ=$TMPDIR/usr/lib/rpm/rpmq
-		export RPMALIAS_FILENAME="$TMPDIR/usr/lib/rpm/rpmpopt"
+		grep '^[[:space:]]*macrofiles:' $TMPDIR/usr/lib/rpm/rpmrc-work >/dev/null 2>&1 \
+			|| echo "macrofiles: $TMPDIR/usr/lib/rpm/macros" >> $TMPDIR/usr/lib/rpm/rpmrc-work
+		export RPMALIAS_FILENAME=$(ls "$TMPDIR/usr/lib/rpm/rpmpopt"* 2>/dev/null | tail -1)
 		RPM_FLAGS="--rcfile $TMPDIR/usr/lib/rpm/rpmrc-work:$HOME/.rpmrc"
 	else
-		log "Failed to extract RPM, will use this system's RPM binary"
+		log "Failed to extract RPM support files"
+		EXTRACT_RC=1
+	fi
+	# extracting rpm-rescue
+	if $RPM2CPIO $RPMS/${FILE[1]} | cpio -id --no-preserve-owner --quiet \
+	    \*bin/rpm\*.rescue ; then
+		cat << EOF > bin/rpm
+#!/bin/sh
+ARCH=$(uname -m)
+LIB=lib
+case "$ARCH" in
+	*64) LIB="${LIB}64"
+		;;
+esac
+LD_LIBRARY_PATH="$TMPDIR/$LIB:$TMPDIR/usr/$LIB"
+export LD_LIBRARY_PATH
+exec \$0.rescue "\$@"
+EOF
+		chmod 0755 bin/rpm && \
+		cp -a bin/rpm bin/rpmdb && \
+		RPM=$TMPDIR/bin/rpm && \
+		RPMD=$TMPDIR/bin/rpmdb && \
+		RPMQ=$TMPDIR/bin/rpm || \
+		EXTRACT_RC=3
+	else
+		log "Failed to extract RPM binaries"
+		EXTRACT_RC=2
+	fi
+	# extracting libnspr, libnss, and libpopt
+	if $RPM2CPIO $RPMS/${FILE[2]} | cpio -id --no-preserve-owner --quiet && \
+		$RPM2CPIO $RPMS/${FILE[3]} | cpio -id --no-preserve-owner --quiet \*lib\*/lib\* && \
+		$RPM2CPIO $RPMS/${FILE[4]} | cpio -id --no-preserve-owner --quiet \*lib\*/lib\* ; then
+		log "Extracted all parts of RPM"
+	else
+		log "Failed to extract RPM dependencies"
+		EXTRACT_RC=4
+	fi
+
+	if [ $EXTRACT_RC -ne 0 ]; then
+		log "Some errors detected, will use this system's RPM binary"
+		unset RPMALIAS_FILENAME
+		unset RPM_FLAGS
+		RPM=rpm
+		RPMD=rpm
+		RPMQ=rpm
 	fi
 }
 
