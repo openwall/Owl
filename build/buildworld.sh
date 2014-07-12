@@ -1,5 +1,5 @@
 #!/bin/bash
-# $Owl: Owl/build/buildworld.sh,v 1.54 2011/10/29 22:13:27 solar Exp $
+# $Owl: Owl/build/buildworld.sh,v 1.55 2014/07/12 14:02:37 galaxy Exp $
 
 NATIVE_DISTRIBUTION='Openwall GNU/*/Linux'
 NATIVE_VENDOR='Openwall'
@@ -103,7 +103,12 @@ built()
 
 	binaries $SPEC $SOURCE |
 	while read BINARY; do
-		REGEX="^${BINARY}\.[^.]*\.rpm\$"
+		if [ "${BINARY%.$ARCHITECTURE}" != "$BINARY" -o "${BINARY%.noarch}" != "$BINARY" ]; then
+			# RPM 4.11+ includes the arch in the query result
+			REGEX="^${BINARY}\.rpm\$"
+		else
+			REGEX="^${BINARY}\.[^.]*\.rpm\$"
+		fi
 		if [ -z "`ls $HOME/RPMS/ | grep "$REGEX"`" ]; then
 			cat > /dev/null
 			return 1
