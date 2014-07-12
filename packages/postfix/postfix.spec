@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.56 2014/07/12 14:15:14 galaxy Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.57 2014/07/12 17:43:33 galaxy Exp $
 
 Summary: Postfix mail system.
 Name: postfix
@@ -42,6 +42,7 @@ Patch19: postfix-2.4.15-owl-version.diff
 Patch20: postfix-2.4.15-owl-linux-3.diff
 Requires(post,preun): chkconfig, grep, shadow-utils
 Requires(post,postun): /sbin/ldconfig
+Requires(post): diffutils
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: owl-startup
 BuildRequires: db4-devel >= 4.2, pcre-devel, tinycdb-devel, sed >= 4.1.1
@@ -373,9 +374,10 @@ fi
 %attr(666,root,root) %ghost %queue_directory/dev/log
 
 %changelog
-* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:2.4.15-owl3
+* Sun Jul 13 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:2.4.15-owl3
 - Replaced the deprecated PreReq tag with Requires(post,preun).
 - Regenerated the warnings patch since it was fuzzy.
+- Added a missing dependency for diffutils.
 
 * Sun Feb 12 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:2.4.15-owl2
 - Fixed build failure on Linux 3.x.
