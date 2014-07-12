@@ -1,26 +1,19 @@
-# $Owl: Owl/packages/libnet/libnet.spec,v 1.22 2009/10/23 07:36:42 solar Exp $
+# $Owl: Owl/packages/libnet/libnet.spec,v 1.23 2014/07/12 13:54:08 galaxy Exp $
+
+%define ver 1.2
+%define extra rc3
 
 Summary: A library for portable packet creation and injection.
 Name: libnet
-Version: 1.1.3
-%define extra -RC-01
-Release: owl0.2
+Version: %ver%{?extra}
+Release: owl1
 Epoch: 1
 License: BSD
 Group: System Environment/Libraries
-URL: http://packetfactory.openwall.net/projects/libnet/
-# URL: http://www.packetfactory.net/libnet/
-Source: %name-%version%extra-stripped-for-owl-1.tar.bz2
-# The following subdirectories and files have been removed from the tarball:
-# win32 include/win32 sample/win32 src/libnet_link_win32.c src/.libs
-# and files matching the shell pattern .#* anywhere in the tree, as well as
-# CVS directories anywhere in the tree,
-# and a README-stripped file has been added.
-# The size reduced from 1.1 MB to 300 KB.
-# Source: http://www.packetfactory.net/libnet/dist/%name-%version%extra.tar.gz
-Patch0: libnet-1.0.2a-owl-alpha-targets.diff
-PreReq: /sbin/ldconfig
-BuildRequires: libpcap-devel, autoconf
+URL: http://www.sourceforge.net/projects/libnet-dev/
+Source: http://downloads.sourceforge.net/libnet-dev/%name-%ver%{?extra:-%extra}.tar.gz
+#Patch0: libnet-1.0.2a-owl-alpha-targets.diff
+BuildRequires: libpcap-devel, autoconf >= 2.69
 BuildRoot: /override/%name-%version
 
 %description
@@ -41,43 +34,48 @@ This package contains development libraries and C header files needed for
 building applications which use libnet, as well as documentation on libnet.
 
 %prep
-%setup -q -n libnet
-%patch0 -p1
-rm -rf doc/CVS # Remove this directory if present, but don't complain if not
-rm -r doc/{man,libnet.doxygen.conf}
-bzip2 -9 doc/CHANGELOG
+%setup -q -n %name-%ver%{?extra:-%extra}
+#patch0 -p1
+#rm -r doc/{man,libnet.doxygen.conf}
+bzip2 -9fk doc/CHANGELOG
 
 %build
-aclocal
-autoconf
-export ac_cv_libnet_linux_procfs=yes \
-%configure
+autoreconf -fis
+%configure \
+	--enable-shared \
+	--disable-static \
+#
+
 %__make
 
 %install
-rm -rf %buildroot
+[ '%buildroot' != '/' -a -d '%buildroot' ] && rm -rf -- '%buildroot'
 %makeinstall
 
 # Don't package .la files.
-rm %buildroot%_libdir/*.la
+rm -- '%buildroot%_libdir'/*.la
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
-%defattr(-,root,root)
+%defattr(0644,root,root,0755)
 %_libdir/libnet.so.*
 
 %files devel
-%defattr(-,root,root)
-%doc doc/* README
-%_bindir/libnet-config
+%defattr(0644,root,root,0755)
+%doc doc/{C,D,P,R,T}* doc/MIGRATION README
+%attr(0755,root,root) %_bindir/libnet-config
 %_includedir/libnet.h
 %_includedir/libnet
 %_libdir/libnet.so
-%_libdir/libnet.a
+%_mandir/man3/libnet*.3*
 
 %changelog
+* Mon Jun 16 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:1.2rc3-owl1
+- Updated to 1.2-rc3.
+- Dropped the deprecated PreReq tag.
+
 * Fri Feb 03 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:1.1.3-owl0.2
 - Compressed CHANGELOG file.
 
