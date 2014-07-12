@@ -1,7 +1,7 @@
-diff -urk.orig procps-3.2.5.orig/proc/readproc.c procps-3.2.5/proc/readproc.c
---- procps-3.2.5.orig/proc/readproc.c	2005-08-25 21:57:30 +0000
-+++ procps-3.2.5/proc/readproc.c	2005-08-25 21:57:55 +0000
-@@ -492,7 +492,7 @@
+diff -puNr procps-3.2.5.orig/proc/readproc.c procps-3.2.5/proc/readproc.c
+--- procps-3.2.5.orig/proc/readproc.c	2005-01-24 03:15:07 +0000
++++ procps-3.2.5/proc/readproc.c	2014-06-28 18:26:36 +0000
+@@ -491,7 +491,7 @@ int read_cmdline(char *restrict const ds
  // room to spare.
  static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict const p) {
      static struct stat sb;		// stat() buffer
@@ -10,7 +10,7 @@ diff -urk.orig procps-3.2.5.orig/proc/readproc.c procps-3.2.5/proc/readproc.c
      char *restrict const path = PT->path;
      unsigned flags = PT->flags;
  
-@@ -569,7 +569,7 @@
+@@ -568,7 +568,7 @@ next_proc:
  // path is a path to the task, with some room to spare.
  static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict const t, char *restrict const path) {
      static struct stat sb;		// stat() buffer
@@ -19,7 +19,7 @@ diff -urk.orig procps-3.2.5.orig/proc/readproc.c procps-3.2.5/proc/readproc.c
      unsigned flags = PT->flags;
  
  //printf("hhh\n");
-@@ -854,7 +854,7 @@
+@@ -853,7 +853,7 @@ void freeproc(proc_t* p) {
  
  //////////////////////////////////////////////////////////////////////////////////
  void look_up_our_self(proc_t *p) {
@@ -27,8 +27,8 @@ diff -urk.orig procps-3.2.5.orig/proc/readproc.c procps-3.2.5/proc/readproc.c
 +    char sbuf[4096];
  
      if(file2str("/proc/self", "stat", sbuf, sizeof sbuf) == -1){
-         fprintf(stderr, "%s", BAD_OPEN_MESSAGE);
-@@ -984,7 +984,7 @@
+         fprintf(stderr, "Error, do this: mount -t proc none /proc\n");
+@@ -983,7 +983,7 @@ proc_data_t *readproctab2(int(*want_proc
   * and filled out proc_t structure.
   */
  proc_t * get_proc_stats(pid_t pid, proc_t *p) {

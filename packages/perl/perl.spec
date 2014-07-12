@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/perl/perl.spec,v 1.63 2012/07/22 18:27:44 segoon Exp $
+# $Owl: Owl/packages/perl/perl.spec,v 1.64 2014/07/12 14:15:10 galaxy Exp $
 
 %define BUILD_PH 1
 %define BUILD_PH_ALL 0
@@ -24,7 +24,7 @@
 Summary: The Perl programming language.
 Name: perl
 Version: 5.8.8
-Release: owl9
+Release: owl10
 Epoch: 4
 License: GPL
 Group: Development/Languages
@@ -44,7 +44,7 @@ Patch21: perl-5.8.8-alt-MM-uninst.diff
 Patch22: perl-5.8.3-alt-deb-perldoc-INC.diff
 Patch23: perl-5.8.3-rh-lpthread.diff
 Patch24: perl-5.8.3-alt-configure-no-perl.diff
-Patch25: perl-5.8.6-alt-File-Copy-preserve.diff
+Patch25: perl-5.8.8-alt-File-Copy-preserve.diff
 Patch26: perl-5.8.6-alt-pod-vendor-dirs-perlbug34500.diff
 Patch27: perl-5.8.8-up-rh-CVE-2008-1927.diff
 Patch28: perl-5.8.8-up-rh-Safe.diff
@@ -116,6 +116,7 @@ introduce security holes.
 %patch22 -p1
 %patch23 -p1
 %patch24 -p1
+#exit 123
 %patch25 -p1
 %patch26 -p1
 %patch27 -p1
@@ -152,14 +153,18 @@ fi
 
 cat > filter_depends.sh <<EOF
 #!/bin/sh
-%__find_requires $* | grep -vE '(NDBM|perl\(v5\.8\.8\)|perl\(Mac::|perl\(Tk|perl\(VMS::|perl\(FCGI\))'
+%__find_requires $* | grep -vE '(NDBM|perl\(v5\.8\.8\)|perl\(Mac::|perl\(Tk|perl\(VMS::|perl\(FCGI\)|perl\(Pod::Simple::)'
 EOF
 chmod +x filter_depends.sh
 
-%define __find_requires	%_builddir/%name-%version/filter_depends.sh
+# For this package we want to filter out some dependencies, hence we are
+# switching off the internal dependency generator and redefine the external
+# one to use our wrapper.
+%global _use_internal_dependency_generator 0
+%global __find_requires	'%_builddir/%name-%version/filter_depends.sh'
 
 # if we don't run from 'make buildworld' the buildhost macro is undefined
-%{expand: %%define buildhost %{?buildhost:%buildhost}%{?!buildhost:localhost}}
+%{expand:%%global buildhost %{?buildhost:%buildhost}%{?!buildhost:localhost}}
 
 %build
 rm -rf %buildroot
@@ -309,6 +314,11 @@ chmod -R u+w %buildroot
 %endif
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4:5.8.8-owl10
+- Regenereated the File-Copy-preserve patch since it was fuzzy.
+- Disabled the internal dependency generator and declared the external one
+with global instead of define.
+
 * Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4:5.8.8-owl9
 - Fixed build failure with headers of Linux 2.6.32.
 

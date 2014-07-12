@@ -1,33 +1,14 @@
---- time-1.7.orig/version.texi
-+++ time-1.7/version.texi
-@@ -1,3 +1,3 @@
--@set UPDATED 12 June 1996
-+@set UPDATED 8 February 2000
- @set EDITION 1.7
- @set VERSION 1.7
---- time-1.7.orig/time.texi
-+++ time-1.7/time.texi
-@@ -185,6 +185,10 @@
- sys %S
- @end example
- 
-+@item -q
-+@itemx --quiet
-+Suppress non-zero error code from the executed program.
-+
- @item -v
- @itemx --verbose
- @cindex format
---- time-1.7.orig/time.info
-+++ time-1.7/time.info
+diff -puNr time-1.7.orig/time.info time-1.7/time.info
+--- time-1.7.orig/time.info	2014-06-28 18:49:21 +0000
++++ time-1.7/time.info	2014-06-28 18:49:48 +0000
 @@ -1,5 +1,4 @@
 -This is Info file ./time.info, produced by Makeinfo-1.55 from the input
 -file time.texi.
 +This is ./time.info, produced by makeinfo version 4.0 from time.texi.
  
-    This file documents the the GNU `time' command for running programs
- and summarizing the system resources they use.
-@@ -31,7 +30,7 @@
+ START-INFO-DIR-ENTRY
+ * time: (time).                                 GNU time Utility
+@@ -35,7 +34,7 @@ for version 1.7.
  
  * Resource Measurement::  Measuring program resource use.
  
@@ -36,7 +17,7 @@
  
  Measuring Program Resource Use
  
-@@ -58,14 +57,14 @@
+@@ -62,14 +61,14 @@ Measuring Program Resource Use
     The `time' command runs another program, then displays information
  about the resources used by that program, collected by the system while
  the program was running.  You can select which information is reported
@@ -54,7 +35,7 @@
  
     The format of the `time' command is:
  
-@@ -132,6 +131,10 @@
+@@ -136,6 +135,10 @@ Otherwise, the default format built into
            user %U
            sys %S
  
@@ -65,7 +46,7 @@
  `-v'
  `--verbose'
       Use the built-in verbose format, which displays each available
-@@ -174,7 +177,7 @@
+@@ -178,7 +181,7 @@ percent sign.
     The resource specifiers, which are a superset of those recognized by
  the `tcsh' builtin `time' command, are listed below.  Not all resources
  are measured by all versions of Unix, so some of the values might be
@@ -74,7 +55,7 @@
  
  * Menu:
  
-@@ -308,11 +311,11 @@
+@@ -312,11 +315,11 @@ noninteractively or in the background.
  `-o FILE'
  `--output=FILE'
       Write the resource use statistics to FILE.  By default, this
@@ -88,7 +69,7 @@
       of overwriting it.  This option is only useful with the `-o' or
       `--output' option.
  
-@@ -437,7 +440,7 @@
+@@ -441,7 +444,7 @@ COMMAND.
  
  `-a'
  `--append'
@@ -97,7 +78,7 @@
       of overwriting it.
  
  `-f FORMAT'
-@@ -462,17 +465,17 @@
+@@ -466,17 +469,17 @@ COMMAND.
  
  
  Tag Table:
@@ -127,3 +108,25 @@
 +Node: Invoking time13643
  
  End Tag Table
+diff -puNr time-1.7.orig/time.texi time-1.7/time.texi
+--- time-1.7.orig/time.texi	1996-06-12 17:40:29 +0000
++++ time-1.7/time.texi	2014-06-28 18:49:48 +0000
+@@ -185,6 +185,10 @@ user %U
+ sys %S
+ @end example
+ 
++@item -q
++@itemx --quiet
++Suppress non-zero error code from the executed program.
++
+ @item -v
+ @itemx --verbose
+ @cindex format
+diff -puNr time-1.7.orig/version.texi time-1.7/version.texi
+--- time-1.7.orig/version.texi	1996-06-12 17:19:29 +0000
++++ time-1.7/version.texi	2014-06-28 18:49:48 +0000
+@@ -1,3 +1,3 @@
+-@set UPDATED 12 June 1996
++@set UPDATED 8 February 2000
+ @set EDITION 1.7
+ @set VERSION 1.7

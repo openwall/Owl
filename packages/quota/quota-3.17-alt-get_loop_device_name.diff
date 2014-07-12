@@ -1,7 +1,7 @@
-diff -upk.orig quota-3.13.orig/quotasys.c quota-3.13/quotasys.c
---- quota-3.13.orig/quotasys.c	2005-06-24 12:12:16 +0000
-+++ quota-3.13/quotasys.c	2005-06-27 21:37:50 +0000
-@@ -386,12 +386,54 @@ void number2str(unsigned long long num, 
+diff -puNr quota-tools.orig/quotasys.c quota-tools/quotasys.c
+--- quota-tools.orig/quotasys.c	2008-12-17 12:21:58 +0000
++++ quota-tools/quotasys.c	2014-06-28 18:30:34 +0000
+@@ -406,12 +406,54 @@ void number2str(unsigned long long num,
  	sprintf(buf, "%llu", num);
  }
  
@@ -57,8 +57,8 @@ diff -upk.orig quota-3.13.orig/quotasys.c quota-3.13/quotasys.c
  	u_int16_t sbflags;
  	struct xfs_mem_dqinfo info;
  	const char *dev;
-@@ -400,7 +442,13 @@ static int hasxfsquota(struct mntent *mn
- 		return ret;
+@@ -436,7 +478,13 @@ static int hasxfsquota(struct mntent *mn
+ 	}
  
  	memset(&info, 0, sizeof(struct xfs_mem_dqinfo));
 -	if (!quotactl(QCMD(Q_XFS_GETQSTAT, type), dev, 0, (void *)&info)) {
@@ -72,7 +72,7 @@ diff -upk.orig quota-3.13.orig/quotasys.c quota-3.13/quotasys.c
  		sbflags = (info.qs_flags & 0xff00) >> 8;
  		if (type == USRQUOTA && (info.qs_flags & XFS_QUOTA_UDQ_ACCT))
  			ret = 1;
-@@ -424,19 +472,6 @@ static int hasxfsquota(struct mntent *mn
+@@ -460,19 +508,6 @@ static int hasxfsquota(struct mntent *mn
  	return ret;
  }
  
@@ -92,7 +92,7 @@ diff -upk.orig quota-3.13.orig/quotasys.c quota-3.13/quotasys.c
  /*
   *	Check to see if a particular quota is to be enabled (filesystem mounted with proper option)
   */
-@@ -904,32 +939,9 @@ static int cache_mnt_table(int flags)
+@@ -945,32 +980,9 @@ static int cache_mnt_table(int flags)
  					free((char *)devname);
  					continue;	/* We just ignore bind mounts... */
  				}

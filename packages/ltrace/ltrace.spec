@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/ltrace/ltrace.spec,v 1.29 2012/07/22 18:30:29 segoon Exp $
+# $Owl: Owl/packages/ltrace/ltrace.spec,v 1.30 2014/07/12 14:09:31 galaxy Exp $
 
 Summary: Tracks runtime library calls from dynamically linked executables.
 Name: ltrace
@@ -7,9 +7,10 @@ Release: owl2
 License: GPL
 Group: Development/Debuggers
 Source: ftp://ftp.debian.org/debian/pool/main/l/ltrace/ltrace_%version.orig.tar.gz
-Patch0: ltrace-0.5.3-deb-2.1.diff
-Patch1: ltrace-0.5.3-owl-ptrace.diff
-Patch2: ltrace-0.5.3-owl-warnings.diff
+Patch0: %name-0.5.3-deb-2.1.diff
+Patch1: %name-0.5.3-owl-ptrace.diff
+Patch2: %name-0.5.3-owl-warnings.diff
+Patch3: %name-0.5.3-owl-configure.diff
 BuildRequires: elfutils-libelf-devel
 ExclusiveArch: %ix86 x86_64 sparc sparcv9
 BuildRoot: /override/%name-%version
@@ -26,6 +27,7 @@ intercept and print system calls invoked by the process.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 bzip2 -9k ChangeLog
 
 # Build with -D_GNU_SOURCE to get off64_t definition
@@ -37,7 +39,7 @@ bzip2 -9k ChangeLog
 %__make
 
 %install
-%__make DESTDIR=%buildroot mandir=%_mandir install
+%makeinstall
 rm -r %buildroot%_docdir
 
 %files
@@ -48,6 +50,9 @@ rm -r %buildroot%_docdir
 %config(noreplace) /etc/ltrace.conf
 
 %changelog
+* Sat Jun 28 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.5.3-owl3
+- Patched configure to be more GNU configure compatible.
+
 * Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 0.5.3-owl2
 - Dropped an obsoleted iquote patch.
 

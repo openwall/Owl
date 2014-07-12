@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/kbd/kbd.spec,v 1.22 2007/01/03 15:57:58 solar Exp $
+# $Owl: Owl/packages/kbd/kbd.spec,v 1.23 2014/07/12 14:09:20 galaxy Exp $
 
 Summary: Tools for configuring the console.
 Name: kbd
 Version: 1.12
-Release: owl3
+Release: owl4
 License: GPL
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/kbd/kbd-%version.tar.bz2
@@ -31,7 +31,8 @@ Patch17: kbd-1.12-deb-canonical-syms.diff
 Patch18: kbd-1.12-deb-main-argc.diff
 Patch19: kbd-1.12-deb-kbdrate-notty.diff
 Patch20: kbd-1.12-deb-charsets0.diff
-PreReq: /sbin/chkconfig, /sbin/ldconfig
+Requires(post,preun): chkconfig
+Requires(post,postun): /sbin/ldconfig
 Conflicts: util-linux < 2.11
 Provides: console-tools
 Obsoletes: console-tools
@@ -142,6 +143,10 @@ fi
 /lib/kbd/*
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.12-owl4
+- Replaced the deprecated PreReq tag with the corresponding Requires().
+- Regenerated the charset0 patch since it was fuzzy.
+
 * Wed Jan 03 2007 (Croco) <croco-at-owl.openwall.com> 1.12-owl3
 - setsysfont updated to handle the SYSFONTACM variable
 

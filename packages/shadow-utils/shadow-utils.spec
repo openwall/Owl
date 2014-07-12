@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.62 2011/09/13 13:43:18 segoon Exp $
+# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.63 2014/07/12 14:17:04 galaxy Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
 Version: 4.0.4.1
-Release: owl15
+Release: owl16
 Epoch: 2
 License: BSD
 Group: System Environment/Base
@@ -39,6 +39,7 @@ Patch30: shadow-4.0.4.1-owl-tcb.diff
 Patch40: shadow-4.0.4.1-alt-man.diff
 Patch41: shadow-4.0.4.1-alt-configure.diff
 Patch42: shadow-4.0.4.1-owl-name-relaxed.diff
+Patch43: shadow-4.0.4.1-owl-autotools.diff
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: pam >= 0:0.80-owl2, pam_userpass >= 0.5, tcb >= 0.9.8
 Requires: glibc-crypt_blowfish >= 1.2
@@ -77,6 +78,7 @@ shadow password files.
 %patch40 -p1
 %patch41 -p1
 %patch42 -p1
+%patch43 -p1
 
 find . -name '*.orig' -delete
 bzip2 -9k ChangeLog NEWS doc/HOWTO
@@ -86,12 +88,7 @@ bzip2 -9k ChangeLog NEWS doc/HOWTO
 %build
 unset LINGUAS || :
 find lib libmisc src -name '*.c' -print > po/POTFILES.in
-libtoolize --copy --force
-autopoint -f
-aclocal -I m4
-automake -a
-autoheader
-autoconf
+autoreconf -fis -I m4
 CFLAGS="%optflags -DEXTRA_CHECK_HOME_DIR -DSHADOWTCB" \
 %configure \
 	--disable-desrpc --disable-shared \
@@ -241,6 +238,10 @@ fi
 %exclude %_mandir/man8/mkpasswd*
 
 %changelog
+* Fri Jun 20 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2:4.0.4.1-owl16
+- Updated configure.in to be compatible with the new autotools.
+- Regenerated the malloc-cast and crypt_gensalt patches since they were fuzzy.
+
 * Tue Sep 13 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:4.0.4.1-owl15
 - Fixed build bug with gcc 4.6.1.
 
@@ -304,7 +305,7 @@ Properly check the return value from pam_chauthtok() in
 libmisc/pwdcheck.c: passwd_check() that is used by chfn and chsh commands.
 Thanks to Steve Grubb and Martin Schulze.
 
-* Thu Mar 19 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2:4.0.4.1-owl0.3
+* Fri Mar 19 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2:4.0.4.1-owl0.3
 - Removed gettext patch, we are using autopoint now
 - Changed patch number for userdel-path_prefix
 
@@ -405,7 +406,7 @@ changes.
 - Cleaned up all of the patches fixing several bugs and re-coding a few
 pieces; the tcb patch is still far from clean, though.
 
-* Wed Aug 21 2001 Rafal Wojtczuk <nergal-at-owl.openwall.com>
+* Tue Aug 21 2001 Rafal Wojtczuk <nergal-at-owl.openwall.com>
 - fixed mailbox creation, which was wrong in rh patch
 - added USE_TCB to login.defs.5
 

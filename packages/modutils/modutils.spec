@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/modutils/modutils.spec,v 1.29 2012/06/05 17:14:21 solar Exp $
+# $Owl: Owl/packages/modutils/modutils.spec,v 1.30 2014/07/12 14:09:37 galaxy Exp $
 
 Summary: Kernel module utilities.
 Name: modutils
 Version: 2.4.27
-Release: owl6
+Release: owl7
 License: GPL
 Group: System Environment/Kernel
 Source0: ftp://ftp.kernel.org/pub/linux/utils/kernel/modutils/v2.4/modutils-%version.tar.bz2
@@ -26,7 +26,7 @@ Patch13: module-init-tools-3.1-alt-depmod-check-aliases.diff
 Patch14: module-init-tools-3.1-alt-modinfo-legacy.diff
 Patch15: modutils-2.4.27-alt-mit-combined.diff
 Patch16: modutils-2.4.27-alt-owl-doc.diff
-PreReq: /sbin/chkconfig
+Requires(post,preun): chkconfig
 Provides: module-init-tools = %mitver
 Obsoletes: modules
 BuildRequires: flex
@@ -103,6 +103,10 @@ fi
 %config(noreplace) /etc/modules.conf
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.4.27-owl7
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+- Regenerated the fixes and mit-combined patches since they were fuzzy.
+
 * Tue Jun 05 2012 Solar Designer <solar-at-owl.openwall.com> 2.4.27-owl6
 - Marked /etc/modules.conf %%config(noreplace).
 

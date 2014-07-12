@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.16 2006/04/04 00:28:35 ldv Exp $
+# $Owl: Owl/packages/tcp_wrappers/tcp_wrappers.spec,v 1.17 2014/07/12 14:19:25 galaxy Exp $
 
 Summary: A security tool which acts as a wrapper for network services.
 Name: tcp_wrappers
 Version: 7.6
-Release: owl5
+Release: owl6
 License: distributable
 Group: System Environment/Daemons
 Source: ftp.porcupine.org/pub/security/tcp_wrappers_7.6.tar.gz
@@ -59,6 +59,9 @@ ln -s hosts_access.5 %buildroot%_mandir/man5/hosts.deny.5
 %_mandir/man*/*
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 7.6-owl6
+- Regenerated the fix_options patch since it was fuzzy.
+
 * Thu Sep 09 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 7.6-owl5
 - Re-enabled the patch for building with new glibc.
 

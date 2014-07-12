@@ -1,6 +1,7 @@
---- util-linux-2.11z/hwclock/cmos.c.orig	2002-07-07 11:08:47 +0000
-+++ util-linux-2.11z/hwclock/cmos.c	2006-04-11 00:02:16 +0000
-@@ -49,7 +49,7 @@
+diff -puNr util-linux-2.11z.orig/hwclock/cmos.c util-linux-2.11z/hwclock/cmos.c
+--- util-linux-2.11z.orig/hwclock/cmos.c	2002-07-07 11:08:47 +0000
++++ util-linux-2.11z/hwclock/cmos.c	2014-06-28 18:54:37 +0000
+@@ -49,8 +49,8 @@
  
  #include "nls.h"
  
@@ -10,6 +11,7 @@
 +#include <sys/io.h>		/* for inb, outb */
  #elif defined(__alpha__)
  /* <asm/io.h> fails to compile, probably because of u8 etc */
+ extern unsigned int     inb(unsigned long port);
 @@ -214,7 +214,7 @@ set_cmos_access(int Jensen, int funky_to
  
  
@@ -19,7 +21,7 @@
  
  /*
   * Try to do CMOS access atomically, so that no other processes
-@@ -569,7 +569,7 @@ set_hardware_clock_cmos(const struct tm 
+@@ -569,7 +569,7 @@ set_hardware_clock_cmos(const struct tm
  
  static int
  i386_iopl(const int level) {

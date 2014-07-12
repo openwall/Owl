@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/vim/vim.spec,v 1.51 2011/09/15 17:19:08 segoon Exp $
+# $Owl: Owl/packages/vim/vim.spec,v 1.52 2014/07/12 14:19:36 galaxy Exp $
 
 %define BUILD_USE_GPM 0
 %define BUILD_USE_PYTHON 0
@@ -12,7 +12,7 @@ Name: vim
 %define patchlevel 075
 %define vimdir vim%major%minor%alpha
 Version: %major.%minor%{?patchlevel:.%patchlevel}
-Release: owl4
+Release: owl5
 License: Charityware
 Group: Applications/Editors
 URL: http://www.vim.org
@@ -307,16 +307,16 @@ comm -13 filelist.syntax-base filelist.syntax-all > filelist.syntax-rest
 %exclude %_datadir/%name/vim*/lang
 %exclude %_datadir/%name/vim*/spell
 %exclude %_datadir/%name/vim*/tutor
-%_mandir/man1/vim.*
-%_mandir/fr*/man1/vim.*
-%_mandir/it*/man1/vim.*
-%_mandir/pl*/man1/vim.*
-%_mandir/ru*/man1/vim.*
-%_mandir/man1/xxd.*
-%_mandir/fr*/man1/xxd.*
-%_mandir/it*/man1/xxd.*
-%_mandir/pl*/man1/xxd.*
-%_mandir/ru*/man1/xxd.*
+%_mandir/man1/vim.1*
+%_mandir/fr*/man1/vim.1*
+%_mandir/it*/man1/vim.1*
+%_mandir/pl*/man1/vim.1*
+%_mandir/ru*/man1/vim.1*
+%_mandir/man1/xxd.1*
+%_mandir/fr*/man1/xxd.1*
+%_mandir/it*/man1/xxd.1*
+%_mandir/pl*/man1/xxd.1*
+%_mandir/ru*/man1/xxd.1*
 
 %files small
 %defattr(-,root,root)
@@ -324,9 +324,14 @@ comm -13 filelist.syntax-base filelist.syntax-all > filelist.syntax-rest
 /bin/rvi
 /bin/vi
 /bin/vitmp
-%_mandir/man1/rvi.*
-%_mandir/man1/vi.*
-%_mandir/man1/vitmp.*
+%_mandir/man1/rvi.1*
+%_mandir/man1/vi.1*
+%_mandir/man1/vitmp.1*
+%_mandir/man1/ex.1*
+%_mandir/fr*/man1/ex.1*
+%_mandir/it*/man1/ex.1*
+%_mandir/pl*/man1/ex.1*
+%_mandir/ru*/man1/ex.1*
 
 %files enhanced -f filelist.syntax-base
 %defattr(-,root,root)
@@ -335,12 +340,26 @@ comm -13 filelist.syntax-base filelist.syntax-all > filelist.syntax-rest
 %_bindir/view
 %_bindir/vim
 %_bindir/vimdiff
-%_mandir/man1/rvim.*
-%_mandir/man1/vimdiff.*
-%_mandir/fr*/man1/vimdiff.*
-%_mandir/it*/man1/vimdiff.*
-%_mandir/pl*/man1/vimdiff.*
-%_mandir/ru*/man1/vimdiff.*
+%_mandir/man1/vimdiff.1*
+%_mandir/man1/rview.1*
+%_mandir/man1/rvim.1*
+%_mandir/man1/view.1*
+%_mandir/fr*/man1/vimdiff.1*
+%_mandir/it*/man1/vimdiff.1*
+%_mandir/pl*/man1/vimdiff.1*
+%_mandir/ru*/man1/vimdiff.1*
+%_mandir/fr*/man1/rview.1*
+%_mandir/it*/man1/rview.1*
+%_mandir/pl*/man1/rview.1*
+%_mandir/ru*/man1/rview.1*
+%_mandir/fr*/man1/rvim.1*
+%_mandir/it*/man1/rvim.1*
+%_mandir/pl*/man1/rvim.1*
+%_mandir/ru*/man1/rvim.1*
+%_mandir/fr*/man1/view.1*
+%_mandir/it*/man1/view.1*
+%_mandir/pl*/man1/view.1*
+%_mandir/ru*/man1/view.1*
 %dir %_datadir/%name/vim*/syntax/
 
 %files spell
@@ -389,6 +408,9 @@ comm -13 filelist.syntax-base filelist.syntax-all > filelist.syntax-rest
 %endif
 
 %changelog
+* Sat Jun 28 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 7.3.075-owl5
+- Added missing man pages (detected by the newer RPM file check).
+
 * Thu Sep 15 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 7.3.075-owl4
 - Fixed build failure with gcc 4.6.1.
 

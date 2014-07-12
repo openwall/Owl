@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/libusb-compat/libusb-compat.spec,v 1.2 2011/02/07 17:36:10 segoon Exp $
+# $Owl: Owl/packages/libusb-compat/libusb-compat.spec,v 1.3 2014/07/12 14:09:27 galaxy Exp $
 
 Summary: A library which allows userspace access to USB devices.
 Name: libusb-compat
 Version: 0.1.3
-Release: owl1
+Release: owl2
 License: LGPLv2+
 Group: System Environment/Libraries
 URL: http://www.libusb.org/wiki/LibusbCompat0.1
@@ -11,6 +11,7 @@ Source0: http://downloads.sourceforge.net/project/libusb/libusb-compat-0.1/libus
 Patch0: libusb-compat-0.1.3-owl-configure.diff
 Requires: libusb1
 Provides: libusb
+BuildRequires: libtool >= 2.4.2
 BuildRequires: libusb1-devel
 BuildRoot: /override/%name-%version
 
@@ -31,7 +32,7 @@ develop applications that use libusb-compat.
 %prep
 %setup -q
 %patch0 -p1
-autoreconf
+autoreconf -fis -I m4
 
 %build
 # Workaround - we have no pkg-config yet
@@ -62,6 +63,10 @@ rm -rf %buildroot
 %_libdir/libusb.a
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.1.3-owl2
+- Regenerated the configure patch since it was fuzzy.
+- Enforced the regeneration of autotools scripts.
+
 * Sat Feb 05 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 0.1.3-owl1
 - Initial import of Jan Vcelak's spec:
 http://jvcelak.fedorapeople.org/libusb-compat/

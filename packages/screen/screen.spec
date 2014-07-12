@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/screen/screen.spec,v 1.44 2010/08/16 15:11:16 solar Exp $
+# $Owl: Owl/packages/screen/screen.spec,v 1.45 2014/07/12 14:15:25 galaxy Exp $
 
 Summary: A screen manager that supports multiple sessions on one terminal.
 Name: screen
 Version: 4.0.3
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-%version.tar.gz
@@ -15,14 +15,14 @@ Patch3: screen-4.0.2-deb-owl-home-screen-exchange.diff
 Patch4: screen-4.0.2-deb-owl-doc.diff
 Patch5: screen-4.0.2-rh-delete-hack.diff
 Patch6: screen-4.0.2-rh-doc.diff
-Patch7: screen-4.0.2-owl-tmp.diff
+Patch7: screen-4.0.3-owl-tmp.diff
 Patch8: screen-4.0.2-owl-no-fault-handler.diff
 Patch9: screen-4.0.2-alt-utempter.diff
 Patch10: screen-4.0.2-owl-warnings.diff
 Patch11: screen-4.0.2-owl-logging.diff
 Patch12: screen-4.0.2-owl-info.diff
 Patch13: screen-4.0.2-owl-Makefile.diff
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 Requires: tcb, pam_userpass, libutempter
 Prefix: %_prefix
 BuildRequires: pam-devel, pam_userpass-devel, libutempter-devel
@@ -125,6 +125,10 @@ fi
 /usr/share/terminfo/s/screen*
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.0.3-owl2
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+- Regenerated the tmp diff since it was fuzzy.
+
 * Mon Aug 16 2010 Solar Designer <solar-at-owl.openwall.com> 4.0.3-owl1
 - Updated to 4.0.3 (a no-change update since we already had the only change
 between 4.0.2 and 4.0.3 backported).

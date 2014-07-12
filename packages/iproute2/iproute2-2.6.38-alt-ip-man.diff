@@ -1,6 +1,7 @@
---- iproute2-2.6.16-060323/man/man8/ip.8.old	2006-01-03 20:25:29.000000000 +0100
-+++ iproute2-2.6.16-060323/man/man8/ip.8	2006-10-02 15:13:05.000000000 +0200
-@@ -176,6 +176,8 @@ replace " | " monitor " } "
+diff -puNr iproute2-2.6.38.orig/man/man8/ip.8 iproute2-2.6.38/man/man8/ip.8
+--- iproute2-2.6.38.orig/man/man8/ip.8	2011-03-17 17:05:47 +0000
++++ iproute2-2.6.38/man/man8/ip.8	2014-06-28 15:50:20 +0000
+@@ -239,6 +239,8 @@ replace " | " monitor " } "
  .IR NUMBER " ] [ "
  .B  cwnd
  .IR NUMBER " ] [ "
@@ -9,8 +10,8 @@
  .B  ssthresh
  .IR REALM " ] [ "
  .B  realms
-@@ -1080,6 +1079,11 @@ the clamp for congestion window.  It is 
- flag is not used.
+@@ -1656,6 +1658,11 @@ Actual window size is this value multipl
+ The default value is zero, meaning to use Slow Start value.
  
  .TP
 +.BI initcwnd " NUMBER " 

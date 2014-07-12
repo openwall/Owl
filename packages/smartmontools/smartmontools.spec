@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/smartmontools/smartmontools.spec,v 1.4 2010/11/15 21:50:30 solar Exp $
+# $Owl: Owl/packages/smartmontools/smartmontools.spec,v 1.5 2014/07/12 14:17:06 galaxy Exp $
 
 Summary: Control and monitor storage systems using S.M.A.R.T.
 Name: smartmontools
 Version: 5.40
-Release: owl2
+Release: owl3
 License: GPL
 Group: System Environment/Daemons
 URL: http://smartmontools.sourceforge.net/
@@ -12,7 +12,7 @@ Source0: smartmontools-%version.tar.xz
 Source1: smartd.init
 Source2: smartd.sysconfig
 Patch0: smartmontools-5.40-up-megaraid-segfault.diff
-PreReq: /sbin/chkconfig
+Requires(post,preun): chkconfig
 Requires: mailx
 BuildRequires: sed >= 4.1
 BuildRoot: /override/%name-%version
@@ -86,6 +86,9 @@ fi
 %exclude %_docdir/%name-%version/INSTALL
 
 %changelog
+* Mon Jun 30 2014 (galaxyMaster) <galaxy-at-owl.openwall.com> 5.40-owl3
+- Replaced the deprecated PreReq tag wih Requires(post,preun).
+
 * Mon Nov 15 2010 Solar Designer <solar-at-owl.openwall.com> 5.40-owl2
 - Added upstream's change:
 "Linux megaraid: Fix segfault on non-data commands (Ticket #78)".

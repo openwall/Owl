@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/popa3d/popa3d.spec,v 1.52 2012/08/15 09:29:16 solar Exp $
+# $Owl: Owl/packages/popa3d/popa3d.spec,v 1.53 2014/07/12 14:15:12 galaxy Exp $
 
 Summary: Post Office Protocol (POP3) server.
 Name: popa3d
 Version: 1.0.3
-Release: owl1
+Release: owl2
 License: BSD-compatible
 Group: System Environment/Daemons
 URL: http://www.openwall.com/popa3d/
@@ -12,7 +12,7 @@ Source1: params.h
 Source2: popa3d.pam
 Source3: popa3d.init
 Source4: popa3d.xinetd
-PreReq: /sbin/chkconfig, grep, shadow-utils
+Requires(post,preun): chkconfig, grep, shadow-utils
 Requires: /var/empty, pam >= 0:0.80-owl2, pam_userpass, tcb, xinetd
 BuildRequires: pam-devel, pam_userpass-devel
 BuildRoot: /override/%name-%version
@@ -74,6 +74,9 @@ fi
 %doc CHANGES CONTACT DESIGN LICENSE
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.0.3-owl2
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+
 * Wed Aug 15 2012 Solar Designer <solar-at-owl.openwall.com> 1.0.3-owl1
 - Handle possible NULL returns from crypt().
 - Revised the included MD5 routines to help the compiler detect a common

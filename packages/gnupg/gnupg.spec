@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.52 2014/07/07 10:06:41 solar Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.53 2014/07/12 14:09:07 galaxy Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
 Version: 1.4.18
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
@@ -15,7 +15,7 @@ Source2: lspgpot.1
 Patch0: gnupg-1.4.18-alt.diff
 Patch1: gnupg-1.4.11-alt-owl-info.diff
 Patch2: gnupg-1.4.11-owl-setuid.diff
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 Provides: gpg, openpgp
 BuildRequires: zlib-devel, bzip2-devel, texinfo, readline-devel >= 0:4.3
 BuildRequires: rpm-build >= 0:4
@@ -92,6 +92,9 @@ fi
 %exclude %_datadir/gnupg/FAQ
 
 %changelog
+* Thu Jul 10 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.4.18-owl2
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+
 * Mon Jul 07 2014 Solar Designer <solar-at-owl.openwall.com> 1.4.18-owl1
 - Updated to 1.4.18.
 - Switched to using a combined ALT Linux patch.

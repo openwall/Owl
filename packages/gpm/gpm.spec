@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/gpm/gpm.spec,v 1.31 2006/09/18 23:34:47 ldv Exp $
+# $Owl: Owl/packages/gpm/gpm.spec,v 1.32 2014/07/12 14:09:08 galaxy Exp $
 
 %define BUILD_GPM_ROOT 0
 
 Summary: A mouse server for the Linux console.
 Name: gpm
 Version: 1.20.1
-Release: owl3
+Release: owl4
 License: GPL
 Group: System Environment/Daemons
 Source0: http://ftp.schottelius.org/pub/linux/gpm/%name-%version.tar.bz2
@@ -18,8 +18,9 @@ Patch4: gpm-1.20.1-owl-warnings.diff
 Patch5: gpm-1.19.6-owl-info.diff
 Patch6: gpm-1.20.1-owl-autoconf.diff
 Patch7: gpm-1.20.1-owl-broken-headers.diff
-PreReq: /sbin/chkconfig, /sbin/ldconfig, /sbin/install-info
+Requires(post,preun): chkconfig, /sbin/install-info
 BuildRequires: sed, gawk, texinfo, bison, ncurses-devel, automake, autoconf
+BuildRequires: rpm-build >= 0:4.11
 BuildRoot: /override/%name-%version
 
 %description
@@ -77,7 +78,7 @@ cd %buildroot
 chmod +x .%_libdir/libgpm.so.*
 ldconfig -n .%_libdir
 
-install -pD -m755 %_sourcedir/gpm.init .%_initrddir/gpm
+install -pD -m755 %_sourcedir/gpm.init .%_initddir/gpm
 
 # create ghost files
 touch %buildroot%_sysconfdir/gpm-{syn,twiddler}.conf
@@ -98,8 +99,8 @@ rm %buildroot%_mandir/man1/gpm-root.1*
 %pre
 rm -f /var/run/gpm.restart
 if [ $1 -ge 2 ]; then
-	%_initrddir/gpm status && touch /var/run/gpm.restart || :
-	%_initrddir/gpm stop || :
+	%_initddir/gpm status && touch /var/run/gpm.restart || :
+	%_initddir/gpm stop || :
 fi
 
 %post
@@ -107,7 +108,7 @@ if [ $1 -eq 1 ]; then
 	/sbin/chkconfig --add gpm
 fi
 if [ -f /var/run/gpm.restart ]; then
-	%_initrddir/gpm start
+	%_initddir/gpm start
 fi
 rm -f /var/run/gpm.restart
 /sbin/ldconfig
@@ -116,7 +117,7 @@ rm -f /var/run/gpm.restart
 %preun
 if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/gpm.info %_infodir/dir
-	%_initrddir/gpm stop || :
+	%_initddir/gpm stop || :
 	/sbin/chkconfig --del gpm
 fi
 
@@ -131,7 +132,7 @@ fi
 %_mandir/man1/mev.1*
 %_mandir/man8/gpm.8*
 %_libdir/libgpm.so.*
-%config %_initrddir/gpm
+%config %_initddir/gpm
 %config %ghost %_sysconfdir/gpm-syn.conf
 %config %ghost %_sysconfdir/gpm-twiddler.conf
 
@@ -150,6 +151,10 @@ fi
 %endif
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.20.1-owl4
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+- Replaced the deprecated %%_initrddir macro with %%_initddir.
+
 * Tue Sep 19 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.20.1-owl3
 - Fixed build on x86-64 platform.
 - Updated init script to new conventions.

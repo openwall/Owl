@@ -1,15 +1,14 @@
-# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.30 2011/09/06 23:02:07 solar Exp $
+# $Owl: Owl/packages/owl-dev/owl-dev.spec,v 1.31 2014/07/12 14:14:58 galaxy Exp $
 
 Summary: Initial set of device files and MAKEDEV, a script to manage them.
 Name: owl-dev
 Version: 0.15
-Release: owl1
+Release: owl2
 License: public domain
 Group: System Environment/Base
 Source0: MAKEDEV
 Source1: MAKEDEV.8
-PreReq: grep
-PreReq: owl-etc >= 0.18-owl1
+Requires(post): grep, owl-etc >= 0.18-owl1
 Provides: dev
 Obsoletes: MAKEDEV, dev
 BuildArchitectures: noarch
@@ -63,6 +62,9 @@ grep -q ^radio: /etc/group || groupadd -g 122 radio
 %files -f filelist
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.15-owl2
+- Replaced the deprecated PreReq tag with Requires(post).
+
 * Tue Sep 06 2011 Solar Designer <solar-at-owl.openwall.com> 0.15-owl1
 - Create /dev/sd* devices for 16 disks, not just 8 like we did before (patch
 by gremlin@).

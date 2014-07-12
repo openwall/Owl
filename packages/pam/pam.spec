@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/pam/pam.spec,v 1.63 2011/10/24 18:01:56 ldv Exp $
+# $Owl: Owl/packages/pam/pam.spec,v 1.64 2014/07/12 14:15:04 galaxy Exp $
 
 Summary: Pluggable Authentication Modules.
 Name: pam
 Version: 1.1.2
-Release: owl3
+Release: owl4
 %define rh_version 0.99.10-1
 License: GPLv2+ or BSD-style
 Group: System Environment/Base
@@ -30,7 +30,6 @@ Patch8: Linux-PAM-1.1.2-alt-pam_chroot.diff
 Patch9: Linux-PAM-1.1.2-owl-pam_stack.diff
 Patch10: Linux-PAM-1.1.4-up-pam_env-CVE-2011-3148.diff
 Patch11: Linux-PAM-1.1.4-up-pam_env-CVE-2011-3149.diff
-PreReq: /sbin/ldconfig
 Requires: glibc-crypt_blowfish >= 1.2
 # Just to make sure no one misses pam_unix and pam_pwdb, which are now
 # provided by tcb.
@@ -297,6 +296,9 @@ rm %buildroot%docdir/*.pdf
 %docdir/[^ACNm]*
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.1.2-owl4
+- Removed the deprecated PreReq tag.
+
 * Mon Oct 24 2011 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1.2-owl3
 - Applied upstream fixes for two vulnerabilities in pam_env module
 (CVE-2011-3148 and CVE-2011-3149).

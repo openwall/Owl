@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.23 2010/08/25 06:23:19 segoon Exp $
+# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.24 2014/07/12 14:08:49 galaxy Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
 Version: 3.0
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/Text
 URL: http://www.gnu.org/software/diffutils/
@@ -11,7 +11,7 @@ URL: http://www.gnu.org/software/diffutils/
 Source: %name-%version.tar.bz2
 Patch0: diffutils-2.8.7-owl-info.diff
 Patch1: diffutils-3.0-owl-nanoseconds.diff
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 Prefix: %_prefix
 BuildRequires: texinfo
 BuildRequires: rpm-build >= 0:4
@@ -48,6 +48,9 @@ make check
 rm -rf %buildroot
 %makeinstall
 
+%find_lang %name || :
+touch '%name.lang'
+
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
 
@@ -59,19 +62,22 @@ if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/diff.info %_infodir/dir
 fi
 
-%files
+%files -f %name.lang
 %defattr(-,root,root)
 %doc AUTHORS NEWS README THANKS
 %_bindir/*
 %_mandir/*/*
 %_infodir/diff.info*
-%_datadir/locale/*/LC_MESSAGES/diffutils.mo
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.0-owl4
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+- Used %%find_lang.
+
 * Wed Aug 25 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0-owl3
 - Do not use nanoseconds in diffs.
 
-* Wed Aug 24 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0-owl2
+* Tue Aug 24 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0-owl2
 - Packaged diff.1 again (man-pages doesn't provide it anymore).
 
 * Wed Aug 18 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0-owl1

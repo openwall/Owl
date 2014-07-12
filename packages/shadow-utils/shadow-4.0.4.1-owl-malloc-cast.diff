@@ -1,7 +1,8 @@
 diff -puNr shadow-4.0.4.1.orig/libmisc/xmalloc.c shadow-4.0.4.1/libmisc/xmalloc.c
---- shadow-4.0.4.1.orig/libmisc/xmalloc.c	Tue Apr 22 10:59:22 2003
-+++ shadow-4.0.4.1/libmisc/xmalloc.c	Fri Jan  7 02:30:51 2005
-@@ -13,13 +13,13 @@
+--- shadow-4.0.4.1.orig/libmisc/xmalloc.c	2003-04-22 10:59:22 +0000
++++ shadow-4.0.4.1/libmisc/xmalloc.c	2014-06-28 18:40:00 +0000
+@@ -12,14 +12,14 @@
+ #include "rcsid.h"
  RCSID ("$Id: xmalloc.c,v 1.4 2003/04/22 10:59:22 kloczek Exp $")
  #include <stdio.h>
 +#include <stdlib.h>

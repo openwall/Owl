@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.73 2012/08/14 06:48:32 solar Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.74 2014/07/12 14:09:01 galaxy Exp $
 
 # The only supported frontend for now is GXX.
 # Testsuite is not supported because of its requirement for additional
@@ -11,7 +11,7 @@
 Summary: C compiler from the GNU Compiler Collection.
 Name: gcc
 Version: 4.6.3
-Release: owl2
+Release: owl3
 Epoch: 1
 License: GPLv3+
 Group: Development/Languages
@@ -26,7 +26,7 @@ Source2: gcc-g++-%version.tar.xz
 %endif
 Patch0: gcc-4.6.2-owl-defaults-Wl.diff
 
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 Requires: binutils
 Requires: cpp = %epoch:%version-%release
 Requires: libgcc >= %epoch:%version-%release
@@ -41,7 +41,7 @@ as well as documentation which is not limited to just the C compiler.
 %package -n cpp
 Summary: GNU C preprocessor.
 Group: Development/Languages
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 
 %description -n cpp
 cpp (or cccp) is the GNU C Compatible Compiler Preprocessor.  cpp is a
@@ -52,7 +52,7 @@ used independently from the C compiler and the C language.
 %package -n libgcc
 Summary: GCC shared support library.
 Group: System Environment/Libraries
-PreReq: /sbin/ldconfig
+Requires(post,postun): /sbin/ldconfig
 
 %description -n libgcc
 This package contains GCC shared support library which is needed
@@ -83,7 +83,7 @@ programs is available as a separate binary package.
 %package -n libstdc++
 Summary: GNU C++ library.
 Group: System Environment/Libraries
-PreReq: /sbin/ldconfig
+Requires(post,postun): /sbin/ldconfig
 Requires: libgcc >= %epoch:%version-%release
 Obsoletes: gcc-libstdc++
 
@@ -413,7 +413,9 @@ fi
 %_libdir/gcc/%_target_platform/%version/plugin
 %_infodir/libquadmath.info*
 %_libdir/libquadmath.a
+%_libdir/libquadmath.so
 %_libdir/libssp.a
+%_libdir/libssp.so
 %_libdir/libssp_nonshared.a
 
 %files -n libgomp%gcc_branch
@@ -431,7 +433,6 @@ fi
 %dir %_libdir/gcc/%_target_platform/%version/include
 %_libdir/gcc/%_target_platform/%version/plugin
 %_libdir/gcc/%_target_platform/%version/include/omp.h
-%dir %_libdir/gcc/%_target_platform/%version
 %_infodir/libgomp*.info*
 %_libdir/libgomp.a
 %_libdir/libgomp.so
@@ -442,11 +443,17 @@ fi
 %dir %_libdir/gcc/%_target_platform/%version
 %dir %_libdir/gcc/%_target_platform/%version/include
 %_libdir/gcc/%_target_platform/%version/include/mf-runtime.h
-%dir %_libdir/gcc/%_target_platform/%version
 %_libdir/libmudflap.a
+%_libdir/libmudflap.so
 %_libdir/libmudflapth.a
+%_libdir/libmudflapth.so
 
 %changelog
+* Sat Jun 28 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:4.6.3-owl3
+- Replaced deprecated PreReq with the corresponding Requires().
+- Fixed duplicate file listing noticed by the newer RPM.
+- Added some missing development libraries.
+
 * Tue Aug 14 2012 Solar Designer <solar-at-owl.openwall.com> 1:4.6.3-owl2
 - Correctly package liblto_plugin.so*
 
@@ -527,7 +534,7 @@ packages. I hope that after next release of Owl we will drop this crap.
 * Fri Jul 16 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.4.1-owl0
 - Updated to 3.4.1.
 
-* Thu Jun 04 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.4.0-owl0.2
+* Fri Jun 04 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.4.0-owl0.2
 - Updated to 3.4.0.
 - Tested only C and C++ compilers, ObjC has compilation issues when using
 Boehm GC, Ada unsupported by this build.

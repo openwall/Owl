@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/texinfo/texinfo.spec,v 1.31 2009/09/09 16:45:51 ldv Exp $
+# $Owl: Owl/packages/texinfo/texinfo.spec,v 1.32 2014/07/12 14:19:30 galaxy Exp $
 
 Summary: Tools needed to create Texinfo format documentation files.
 Name: texinfo
 Version: 4.8
-Release: owl5
+Release: owl6
 License: GPL
 Group: Applications/Publishing
 Source0: ftp://ftp.gnu.org/gnu/texinfo/texinfo-%version.tar.bz2
@@ -15,7 +15,7 @@ Patch3: texinfo-4.2-rh-owl-data_size-fix.diff
 Patch4: texinfo-4.8-deb-fixes.diff
 Patch5: texinfo-4.8-owl-info.diff
 Patch6: texinfo-4.8-rh-bound.diff
-PreReq: /sbin/install-info, gzip
+Requires(post,preun): /sbin/install-info, gzip
 Prefix: %_prefix
 Requires: mktemp >= 1:1.3.1
 BuildRoot: /override/%name-%version
@@ -28,7 +28,7 @@ Project uses the Texinfo file format for most of its documentation.
 %package -n info
 Summary: A stand-alone TTY-based reader for GNU Texinfo documentation.
 Group: System Environment/Base
-PreReq: gzip
+Requires(post,preun): gzip
 
 %description -n info
 The GNU Project uses the Texinfo file format for much of its
@@ -119,6 +119,9 @@ fi
 %_mandir/man5/info.5*
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.8-owl6
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+
 * Wed May 27 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.8-owl5
 - Compressed all texinfo files.
 

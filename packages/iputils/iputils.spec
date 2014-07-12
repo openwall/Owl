@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/iputils/iputils.spec,v 1.33 2011/05/03 16:54:04 solar Exp $
+# $Owl: Owl/packages/iputils/iputils.spec,v 1.34 2014/07/12 14:09:16 galaxy Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
 Version: s20101006
-Release: owl1
+Release: owl2
 Epoch: 1
 License: mostly BSD, some GPL
 Group: Applications/Internet
@@ -20,13 +20,13 @@ Patch0: iputils-ss020927-rh-owl-cache-reverse-lookups.diff
 Patch1: iputils-s20101006-owl-SO_MARK.diff
 Patch2: iputils-s20101006-owl-libsysfs.diff
 Patch3: iputils-s20101006-owl-pingsock.diff
-Patch4: iputils-20001007-rh-bug23844.diff
+Patch4: iputils-s20101006-rh-bug23844.diff
 Patch5: iputils-s20101006-gentoo-owl-bindnow.diff
 Patch6: iputils-s20101006-rh-ping_cleanup.diff
 Patch7: iputils-s20101006-alt-perror-newline.diff
 Patch8: iputils-s20071127-alt-datalen-fix.diff
 Patch9: iputils-s20101006-owl-warnings.diff
-PreReq: owl-control >= 0.4, owl-control < 2.0
+Requires(pre,post): owl-control >= 0.4, owl-control < 2.0
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
 
@@ -117,6 +117,10 @@ fi
 /etc/control.d/facilities/ping6
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:s20101006-owl2
+- Replaced the deprecated PreReq tag with Requires(pre,post).
+- Regenerated the bug23844 and perror-newline patches since they were fuzzy.
+
 * Mon Mar 28 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:s20101006-owl1
 - Updated to s20101006.
 - Dropped obsoleted patches.
@@ -155,7 +159,7 @@ http://www.openwall.com/lists/owl-users/2009/12/10/3
 * Mon Nov 14 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> ss020927-owl4
 - Removed traceroute6 in favour of the traceroute package.
 
-* Wed Jun 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> ss020927-owl3
+* Sun Jun 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> ss020927-owl3
 - Removed verifying permissions and group owner for ping since it's
 controlled by owl-control facility.
 - Cleaned up the spec.
@@ -181,7 +185,7 @@ during package upgrades.
 - Patched ifenslave to use the SIOCBOND* ioctl's instead of the obsolete
 BOND_* ones when building with Linux 2.4+ kernel headers.
 
-* Wed May 30 2002 Michail Litvak <mci-at-owl.openwall.com>
+* Thu May 30 2002 Michail Litvak <mci-at-owl.openwall.com>
 - ss020124
 - include man pages precompiled from sgml sources
 

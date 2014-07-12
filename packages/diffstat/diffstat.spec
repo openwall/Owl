@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/diffstat/diffstat.spec,v 1.16 2010/10/11 15:17:11 segoon Exp $
+# $Owl: Owl/packages/diffstat/diffstat.spec,v 1.17 2014/07/12 14:08:48 galaxy Exp $
 
 Summary: A utility which provides statistics based on the output of diff.
 Name: diffstat
@@ -42,7 +42,7 @@ rm -rf %buildroot
 - Updated to 1.54.
 - Dropped owl-man and owl-tmp patches (fixed in upstream).
 
-* Fri Aug 21 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.53-owl1
+* Sat Aug 21 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.53-owl1
 - Updated to 1.53.
 
 * Wed Nov 18 2009 Solar Designer <solar-at-owl.openwall.com> 1.51-owl1

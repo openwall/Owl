@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.32 2010/12/05 18:07:35 segoon Exp $
+# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.33 2014/07/12 14:09:36 galaxy Exp $
 
 %define posix_version 2003
 %define posix_release a
@@ -6,7 +6,7 @@
 Summary: Manual (man) pages from the Linux Documentation Project.
 Name: man-pages
 Version: 3.32
-Release: owl1
+Release: owl2
 License: distributable
 Group: Documentation
 Source0: man-pages-%version.tar.xz
@@ -22,7 +22,7 @@ Source5: locale.1
 Source6: localedef.1
 Source7: sprof.1
 Source8: rpcinfo.8
-Patch0: man-pages-3.30-deb-owl-misc.diff
+Patch0: man-pages-3.32-deb-owl-misc.diff
 Patch1: man-pages-3.21-rh-owl-roff-fixes.diff
 Patch2: man-pages-3.21-owl-cc.diff
 Patch3: man-pages-3.21-owl-uselib.diff
@@ -133,6 +133,9 @@ done
 %_mandir/man?p/*
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.32-owl2
+- Regenerated the misc patch since it was fuzzy.
+
 * Sun Dec 05 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.32-owl1
 - Updated to 3.32.
 
@@ -160,7 +163,7 @@ than shadow-utils' version).
 - 3.25
 - Updated patch -deb-owl-misc.
 
-* Thu Jun 23 2009 Michail Litvak <mci-at-owl.openwall.com> 3.21-owl1
+* Tue Jun 23 2009 Michail Litvak <mci-at-owl.openwall.com> 3.21-owl1
 - 3.21
 - Updated patches.
 

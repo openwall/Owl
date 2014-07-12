@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.53 2012/07/22 18:26:20 segoon Exp $
+# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.54 2014/07/12 14:19:34 galaxy Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -7,7 +7,7 @@
 Summary: A collection of basic system utilities.
 Name: util-linux
 Version: 2.11z
-Release: owl17
+Release: owl18
 License: distributable
 Group: System Environment/Base
 Source0: ftp://ftp.kernel.org/pub/linux/utils/util-linux/util-linux-%version.tar.bz2
@@ -33,8 +33,8 @@ Patch14: util-linux-2.11z-owl-ext2_llseek.diff
 %if %BUILD_CRYPTO
 Patch100: util-linux-2.11z-crypto-v3.diff.bz2
 %endif
-PreReq: /sbin/install-info
-PreReq: owl-control >= 0.4, owl-control < 2.0
+Requires(post,preun): /sbin/install-info
+Requires(pre,post): owl-control >= 0.4, owl-control < 2.0
 Obsoletes: fdisk, tunelp
 %ifarch sparc alpha
 Obsoletes: clock
@@ -50,7 +50,7 @@ utilities that are necessary for a Linux system to function.
 %package -n mount
 Summary: Programs for mounting and unmounting filesystems.
 Group: System Environment/Base
-Requires: owl-control >= 0.4, owl-control < 2.0
+Requires(pre,post): owl-control >= 0.4, owl-control < 2.0
 
 %description -n mount
 The mount package contains the mount, umount, swapon and swapoff
@@ -136,6 +136,7 @@ rm %buildroot%_bindir/chsh
 rm %buildroot%_bindir/newgrp
 rm %buildroot%_bindir/raw
 rm %buildroot%_sbindir/vipw
+rm %buildroot%_sbindir/vigr
 rm %buildroot%_mandir/man1/chfn.1*
 rm %buildroot%_mandir/man1/chsh.1*
 rm %buildroot%_mandir/man1/newgrp.1*
@@ -351,6 +352,10 @@ fi
 %endif
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.11z-owl18
+- Replaced the deprecated PreReq tag with the corresponding Requires() tags.
+- Regenerated the hwclock patch since it was fuzzy.
+
 * Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.11z-owl17
 - Added -ltinfo into LDFLAGS to fix build error under binutils >= 2.21.
 - Used plain lseek(2) instead of ext2_llseek().
@@ -411,7 +416,7 @@ privileges by "umount -r".
 - Replaced crypto code from international crypto patch (2.2.18.3) to
 unified util-linux crypto patch by Jari Ruusu.
 
-* Tue Apr 14 2003 Michail Litvak <mci-at-owl.openwall.com> 2.11z.2.2.18.3-owl1
+* Mon Apr 14 2003 Michail Litvak <mci-at-owl.openwall.com> 2.11z.2.2.18.3-owl1
 - 2.11z
 - minor spec file cleanups.
 

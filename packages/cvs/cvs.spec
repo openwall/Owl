@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/cvs/cvs.spec,v 1.37 2010/12/01 07:11:23 solar Exp $
+# $Owl: Owl/packages/cvs/cvs.spec,v 1.38 2014/07/12 14:08:39 galaxy Exp $
 
 Summary: A version control system.
 Name: cvs
 Version: 1.11.23
-Release: owl2
+Release: owl3
 License: GPL
 Group: Development/Tools
 URL: http://www.nongnu.org/cvs/
@@ -36,7 +36,7 @@ Patch24: cvs-1.11.23-alt-noreadlock.diff
 Patch25: cvs-1.11.23-alt-ssh.diff
 Patch26: cvs-1.11.23-alt-testsuit-log.diff
 Patch27: cvs-1.11.23-up-CVE-2010-3846.diff
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 Prefix: %_prefix
 BuildRequires: mktemp >= 1:1.3.1, sed >= 4.1.1, zlib-devel
 BuildRoot: /override/%name-%version
@@ -152,7 +152,9 @@ bzip2 -9 FAQ NEWS
 
 %check
 %{expand:%%{!?_with_test: %%{!?_without_test: %%global _without_test --without-test}}}
-TMPDIR=/tmp %__make check
+mkdir tmp-check
+TMPDIR=$(pwd)/tmp-check %__make check
+rm -rf -- tmp-check
 
 %install
 rm -rf %buildroot
@@ -193,6 +195,12 @@ fi
 %_datadir/cvs
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.11.23-owl3
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+- Fixed an issue with tests by pointing TMPDIR into a subdirectory of the
+build tree, otherwise tests fail on systems where /tmp is mounted with the
+noexec mount options.
+
 * Tue Nov 30 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.11.23-owl2
 - Backported upstream fix for a remote privilege escalation (CVE-2010-3846).
 

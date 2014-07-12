@@ -1,7 +1,8 @@
---- iputils/ping.c~	2006-03-14 14:53:31.000000000 +0200
-+++ iputils/ping.c	2006-03-14 14:55:07.000000000 +0200
-@@ -1216,7 +1216,7 @@
- 	insns[2] = (struct sock_filter)BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __constant_htons(ident), 0, 1);
+diff -puNr iputils-s20101006.orig/ping.c iputils-s20101006/ping.c
+--- iputils-s20101006.orig/ping.c	2014-06-28 16:00:18 +0000
++++ iputils-s20101006/ping.c	2014-06-28 16:01:10 +0000
+@@ -1331,7 +1331,7 @@ void install_filter(void)
+ 	insns[2] = (struct sock_filter)BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, htons(ident), 0, 1);
  
  	if (setsockopt(icmp_sock, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
 -		perror("WARNING: failed to install socket filter\n");

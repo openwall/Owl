@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/iptables/iptables.spec,v 1.28 2011/03/14 21:48:59 solar Exp $
+# $Owl: Owl/packages/iptables/iptables.spec,v 1.29 2014/07/12 14:09:13 galaxy Exp $
 
 %define BUILD_IPV6 0
 
 Summary: Tools for managing Netfilter/iptables packet filtering rules.
 Name: iptables
 Version: 1.4.10
-Release: owl2
+Release: owl3
 License: GPLv2+
 Group: System Environment/Base
 URL: http://www.netfilter.org/projects/iptables/
@@ -18,7 +18,7 @@ Patch3: iptables-1.4.9.1-alt-configure.diff
 Patch4: iptables-1.4.5-rh-alt-eperm.diff
 Patch5: iptables-1.4.10-owl-Makefile.diff
 Patch6: iptables-1.4.9.1-owl-nfnetlink.diff
-PreReq: chkconfig
+Requires(post,preun): chkconfig
 Requires: coreutils, grep, mktemp
 BuildRequires: kernel-headers >= 2.4.4
 BuildRoot: /override/%name-%version
@@ -34,7 +34,7 @@ iptables-based filtering is used on Linux 2.4.x and newer kernels.
 Summary: Tools for managing Netfilter/iptables packet filtering (IPv6).
 Group: System Environment/Base
 URL: http://www.netfilter.org
-PreReq: chkconfig
+Requires(post,preun): chkconfig
 Requires: coreutils, grep, mktemp
 Requires: %name = %version-%release
 
@@ -126,6 +126,7 @@ fi
 %dir /%_lib/iptables
 /%_lib/iptables/libipt*
 /%_lib/iptables/libxt*
+%exclude %_bindir/iptables-xml
 %exclude %_libdir/lib*.so
 %exclude %_includedir/*
 %exclude %_libdir/pkgconfig/*.pc
@@ -144,6 +145,10 @@ fi
 %endif
 
 %changelog
+* Sat Jun 28 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.4.10-owl3
+- Replaced deprecated PreReq with Requires(post,preun).
+- Excluded a newly detected unpackaged file (iptables-xml).
+
 * Mon Mar 14 2011 Solar Designer <solar-at-owl.openwall.com> 1.4.10-owl2
 - Changed the default for IPTABLES_STATUS_ARGS to "-nv".
 

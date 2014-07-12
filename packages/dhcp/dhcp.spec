@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.56 2012/02/12 18:47:35 segoon Exp $
+# $Owl: Owl/packages/dhcp/dhcp.spec,v 1.57 2014/07/12 14:08:44 galaxy Exp $
 
 # We do not officially support the DHCP client because it is rather
 # complicated, yet it runs entirely as root, which we find an
@@ -10,7 +10,7 @@
 Summary: Dynamic Host Configuration Protocol (DHCP) distribution.
 Name: dhcp
 Version: 3.0.7
-Release: owl2
+Release: owl3
 License: ISC License
 Group: System Environment/Daemons
 URL: https://www.isc.org/software/dhcp
@@ -20,7 +20,7 @@ Source1: dhcpd.init
 Source2: dhcpd.conf.sample
 Patch0: dhcp-3.0.7-alt-owl-fixes.diff
 Patch1: dhcp-3.0.6-owl-alt-errwarn.diff
-Patch2: dhcp-3.0.6-alt-daemonize.diff
+Patch2: dhcp-3.0.7-alt-daemonize.diff
 Patch3: dhcp-3.0.6-alt-defaults.diff
 Patch4: dhcp-3.0.6-rh-owl-script.diff
 Patch5: dhcp-3.0.7-owl-support-contact.diff
@@ -35,8 +35,9 @@ Patch13: dhcp-3.0.7-alt-format.diff
 Patch14: dhcp-3.0.7-up-dhclient-bound.diff
 Patch15: dhcp-3.0.7-deb-CVE-2009-1892.diff
 Patch16: dhcp-3.0.7-owl-linux-3.diff
-PreReq: grep, shadow-utils
+Requires(pre): grep, shadow-utils
 BuildRequires: groff, libcap-devel
+BuildRequires: rpm-build >= 0:4.11
 BuildRoot: /override/%name-%version
 
 %description
@@ -52,7 +53,7 @@ handful of miscellaneous files only.
 %package client
 Summary: The ISC DHCP client.
 Group: System Environment/Base
-PreReq: %name = %version-%release
+Requires: %name = %version-%release
 Obsoletes: dhcpcd
 
 %description client
@@ -65,8 +66,9 @@ fail, by statically assigning an address.
 %package server
 Summary: The ISC DHCP server daemon.
 Group: System Environment/Daemons
-PreReq: %name = %version-%release
-PreReq: /sbin/chkconfig, fileutils
+Requires: %name = %version-%release
+Requires(pre): fileutils
+Requires(post,preun): /sbin/chkconfig
 Requires: /var/empty
 Obsoletes: dhcpd
 
@@ -81,7 +83,7 @@ functionality, with certain restrictions.
 %package relay
 Summary: The ISC DHCP relay.
 Group: System Environment/Daemons
-PreReq: %name = %version-%release
+Requires: %name = %version-%release
 Requires: /var/empty
 
 %description relay
@@ -144,7 +146,7 @@ cd %buildroot
 
 mkdir -p var/lib/dhcp/{dhcpd,dhclient}/state
 
-install -pD -m700 %_sourcedir/dhcpd.init .%_initrddir/dhcpd
+install -pD -m700 %_sourcedir/dhcpd.init .%_initddir/dhcpd
 install -p -m600 %_sourcedir/dhcpd.conf.sample etc/
 
 touch var/lib/dhcp/dhcpd/state/dhcpd.leases
@@ -179,20 +181,20 @@ grep -q ^dhcp: /etc/passwd ||
 %pre server
 rm -f /var/run/dhcp.restart
 if [ $1 -ge 2 ]; then
-	%_initrddir/dhcpd status && touch /var/run/dhcp.restart || :
-	%_initrddir/dhcpd stop || :
+	%_initddir/dhcpd status && touch /var/run/dhcp.restart || :
+	%_initddir/dhcpd stop || :
 fi
 
 %post server
 /sbin/chkconfig --add dhcpd
 if [ -f /var/run/dhcp.restart ]; then
-	%_initrddir/dhcpd start
+	%_initddir/dhcpd start
 fi
 rm -f /var/run/dhcp.restart
 
 %preun server
 if [ $1 -eq 0 ]; then
-	%_initrddir/dhcpd stop || :
+	%_initddir/dhcpd stop || :
 	/sbin/chkconfig --del dhcpd
 fi
 
@@ -221,7 +223,7 @@ fi
 %files server
 %defattr(-,root,root)
 %config(noreplace) /etc/sysconfig/dhcpd
-%config %_initrddir/dhcpd
+%config %_initddir/dhcpd
 /etc/dhcpd.conf.sample
 %_sbindir/dhcpd
 %_mandir/man5/dhcpd.conf.5*
@@ -237,6 +239,11 @@ fi
 %_mandir/man8/dhcrelay.8*
 
 %changelog
+* Sat Jun 28 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.0.7-owl3
+- Regenerated the alt-daemonize patch since it was fuzzy.
+- Replaced the deprecated PreReq tag with the corresponding Requires.
+- Replaced the deprecated %%_initrddir macro with %%_initddir.
+
 * Sun Feb 12 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0.7-owl2
 - Fixed build failure on Linux 3.x.
 

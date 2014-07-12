@@ -1,8 +1,9 @@
---- tcp_wrappers_7.6/fix_options.orig     2002-11-09 14:59:06 +0300
-+++ tcp_wrappers_7.6/fix_options.c      2002-11-09 15:06:07 +0300
-@@ -28,6 +28,27 @@
+diff -puNr tcp_wrappers_7.6.orig/fix_options.c tcp_wrappers_7.6/fix_options.c
+--- tcp_wrappers_7.6.orig/fix_options.c	2014-06-28 18:45:23 +0000
++++ tcp_wrappers_7.6/fix_options.c	2014-06-28 18:46:04 +0000
+@@ -28,6 +28,27 @@ static char sccsid[] = "@(#) fix_options
  
- #define BUFFER_SIZE    512             /* Was: BUFSIZ */
+ #define BUFFER_SIZE	512		/* Was: BUFSIZ */
  
 +#include <stdint.h>
 +struct ip_options {

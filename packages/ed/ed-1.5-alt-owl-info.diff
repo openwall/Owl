@@ -1,8 +1,8 @@
---- ed-1.4/doc/ed.texinfo.orig	2009-07-10 11:54:33.000000000 +0000
-+++ ed-1.4/doc/ed.texinfo	2009-08-25 14:00:30.000000000 +0000
+--- ed-1.5.orig/doc/ed.texinfo	2010-08-30 15:23:00 +0000
++++ ed-1.5/doc/ed.texinfo	2014-06-28 00:26:18 +0000
 @@ -8,9 +8,9 @@
- @set UPDATED 10 July 2009
- @set VERSION 1.4
+ @set UPDATED 30 August 2010
+ @set VERSION 1.5
  
 -@dircategory Basics
 +@dircategory Text creation and manipulation

@@ -1,6 +1,6 @@
-diff -uNrp man-pages-3.30/man3/dbopen.3 man-pages-3.30.new/man3/dbopen.3
---- man-pages-3.30/man3/dbopen.3	2010-11-01 17:55:39 +0300
-+++ man-pages-3.30.new/man3/dbopen.3	2010-11-06 20:54:06 +0300
+diff -puNr man-pages-3.32.orig/man3/dbopen.3 man-pages-3.32/man3/dbopen.3
+--- man-pages-3.32.orig/man3/dbopen.3	2010-12-03 07:02:00 +0000
++++ man-pages-3.32/man3/dbopen.3	2014-06-28 16:23:00 +0000
 @@ -40,6 +40,7 @@ dbopen \- database access methods
  .B #include <sys/types.h>
  .B #include <limits.h>
@@ -9,9 +9,9 @@ diff -uNrp man-pages-3.30/man3/dbopen.3 man-pages-3.30.new/man3/dbopen.3
  
  .BI "DB *dbopen(const char *" file ", int " flags ", int " mode \
  ", DBTYPE " type ,
-diff -uNrp man-pages-3.30/man3/fgetpwent.3 man-pages-3.30.new/man3/fgetpwent.3
---- man-pages-3.30/man3/fgetpwent.3	2010-11-01 17:55:39 +0300
-+++ man-pages-3.30.new/man3/fgetpwent.3	2010-11-06 20:54:06 +0300
+diff -puNr man-pages-3.32.orig/man3/fgetpwent.3 man-pages-3.32/man3/fgetpwent.3
+--- man-pages-3.32.orig/man3/fgetpwent.3	2010-12-03 07:02:00 +0000
++++ man-pages-3.32/man3/fgetpwent.3	2014-06-28 16:23:00 +0000
 @@ -67,7 +67,7 @@ The \fIpasswd\fP structure is defined in
  .nf
  struct passwd {
@@ -21,9 +21,9 @@ diff -uNrp man-pages-3.30/man3/fgetpwent.3 man-pages-3.30.new/man3/fgetpwent.3
      uid_t   pw_uid;        /* user ID */
      gid_t   pw_gid;        /* group ID */
      char   *pw_gecos;      /* real name */
-diff -uNrp man-pages-3.30/man3/getpw.3 man-pages-3.30.new/man3/getpw.3
---- man-pages-3.30/man3/getpw.3	2010-11-01 17:55:39 +0300
-+++ man-pages-3.30.new/man3/getpw.3	2010-11-06 20:54:06 +0300
+diff -puNr man-pages-3.32.orig/man3/getpw.3 man-pages-3.32/man3/getpw.3
+--- man-pages-3.32.orig/man3/getpw.3	2010-12-03 07:02:00 +0000
++++ man-pages-3.32/man3/getpw.3	2014-06-28 16:23:00 +0000
 @@ -55,7 +55,7 @@ The \fIpasswd\fP structure is defined in
  .nf
  struct passwd {
@@ -33,9 +33,9 @@ diff -uNrp man-pages-3.30/man3/getpw.3 man-pages-3.30.new/man3/getpw.3
      uid_t   pw_uid;        /* user ID */
      gid_t   pw_gid;        /* group ID */
      char   *pw_gecos;      /* user information */
-diff -uNrp man-pages-3.30/man3/getpwent.3 man-pages-3.30.new/man3/getpwent.3
---- man-pages-3.30/man3/getpwent.3	2010-11-01 17:55:39 +0300
-+++ man-pages-3.30.new/man3/getpwent.3	2010-11-06 20:56:39 +0300
+diff -puNr man-pages-3.32.orig/man3/getpwent.3 man-pages-3.32/man3/getpwent.3
+--- man-pages-3.32.orig/man3/getpwent.3	2010-12-03 07:02:00 +0000
++++ man-pages-3.32/man3/getpwent.3	2014-06-28 16:23:00 +0000
 @@ -86,7 +86,7 @@ The \fIpasswd\fP structure is defined in
  .nf
  struct passwd {
@@ -64,7 +64,7 @@ diff -uNrp man-pages-3.30/man3/getpwent.3 man-pages-3.30.new/man3/getpwent.3
  .SH "RETURN VALUE"
  The
  .BR getpwent ()
-@@ -161,7 +169,10 @@ field is not specified in POSIX, but is 
+@@ -161,7 +169,10 @@ field is not specified in POSIX, but is
  .BR getpwnam (3),
  .BR getpwuid (3),
  .BR putpwent (3),
@@ -74,11 +74,11 @@ diff -uNrp man-pages-3.30/man3/getpwent.3 man-pages-3.30.new/man3/getpwent.3
 +.BR passwd (5),
 +.BR shadow (5)
  .SH COLOPHON
- This page is part of release 3.30 of the Linux
+ This page is part of release 3.32 of the Linux
  .I man-pages
-diff -uNrp man-pages-3.30/man3/getpwent_r.3 man-pages-3.30.new/man3/getpwent_r.3
---- man-pages-3.30/man3/getpwent_r.3	2010-11-01 17:55:39 +0300
-+++ man-pages-3.30.new/man3/getpwent_r.3	2010-11-06 20:54:06 +0300
+diff -puNr man-pages-3.32.orig/man3/getpwent_r.3 man-pages-3.32/man3/getpwent_r.3
+--- man-pages-3.32.orig/man3/getpwent_r.3	2010-12-03 07:02:00 +0000
++++ man-pages-3.32/man3/getpwent_r.3	2014-06-28 16:23:00 +0000
 @@ -68,7 +68,7 @@ as follows:
  .nf
  struct passwd {
@@ -88,9 +88,9 @@ diff -uNrp man-pages-3.30/man3/getpwent_r.3 man-pages-3.30.new/man3/getpwent_r.3
      uid_t    pw_uid;       /* user ID */
      gid_t    pw_gid;       /* group ID */
      char    *pw_gecos;     /* user information */
-diff -uNrp man-pages-3.30/man3/getpwnam.3 man-pages-3.30.new/man3/getpwnam.3
---- man-pages-3.30/man3/getpwnam.3	2010-11-01 17:55:39 +0300
-+++ man-pages-3.30.new/man3/getpwnam.3	2010-11-06 20:54:06 +0300
+diff -puNr man-pages-3.32.orig/man3/getpwnam.3 man-pages-3.32/man3/getpwnam.3
+--- man-pages-3.32.orig/man3/getpwnam.3	2010-12-03 07:02:00 +0000
++++ man-pages-3.32/man3/getpwnam.3	2014-06-28 16:23:00 +0000
 @@ -90,7 +90,7 @@ The \fIpasswd\fP structure is defined in
  .nf
  struct passwd {
@@ -146,11 +146,11 @@ diff -uNrp man-pages-3.30/man3/getpwnam.3 man-pages-3.30.new/man3/getpwnam.3
 +.BR passwd (5),
 +.BR shadow (5)
  .SH COLOPHON
- This page is part of release 3.30 of the Linux
+ This page is part of release 3.32 of the Linux
  .I man-pages
-diff -uNrp man-pages-3.30/man3/nl_langinfo.3 man-pages-3.30.new/man3/nl_langinfo.3
---- man-pages-3.30/man3/nl_langinfo.3	2010-11-01 17:55:40 +0300
-+++ man-pages-3.30.new/man3/nl_langinfo.3	2010-11-06 20:54:06 +0300
+diff -puNr man-pages-3.32.orig/man3/nl_langinfo.3 man-pages-3.32/man3/nl_langinfo.3
+--- man-pages-3.32.orig/man3/nl_langinfo.3	2010-12-03 07:02:01 +0000
++++ man-pages-3.32/man3/nl_langinfo.3	2014-06-28 16:23:00 +0000
 @@ -29,6 +29,8 @@ in a more flexible way than
  does.
  Individual and additional elements of the locale categories can
@@ -160,9 +160,9 @@ diff -uNrp man-pages-3.30/man3/nl_langinfo.3 man-pages-3.30.new/man3/nl_langinfo
  .PP
  Examples for the locale elements that can be specified in \fIitem\fP
  using the constants defined in \fI<langinfo.h>\fP are:
-diff -uNrp man-pages-3.30/man3/putpwent.3 man-pages-3.30.new/man3/putpwent.3
---- man-pages-3.30/man3/putpwent.3	2010-11-01 17:55:40 +0300
-+++ man-pages-3.30.new/man3/putpwent.3	2010-11-06 20:54:06 +0300
+diff -puNr man-pages-3.32.orig/man3/putpwent.3 man-pages-3.32/man3/putpwent.3
+--- man-pages-3.32.orig/man3/putpwent.3	2010-12-03 07:02:01 +0000
++++ man-pages-3.32/man3/putpwent.3	2014-06-28 16:23:00 +0000
 @@ -56,7 +56,7 @@ The \fIpasswd\fP structure is defined in
  .nf
  struct passwd {
@@ -172,9 +172,9 @@ diff -uNrp man-pages-3.30/man3/putpwent.3 man-pages-3.30.new/man3/putpwent.3
      uid_t    pw_uid;         /* user ID */
      gid_t    pw_gid;         /* group ID */
      char    *pw_gecos;       /* real name */
-diff -uNrp man-pages-3.30/man3/qsort.3 man-pages-3.30.new/man3/qsort.3
---- man-pages-3.30/man3/qsort.3	2010-11-01 17:55:40 +0300
-+++ man-pages-3.30.new/man3/qsort.3	2010-11-06 20:54:06 +0300
+diff -puNr man-pages-3.32.orig/man3/qsort.3 man-pages-3.32/man3/qsort.3
+--- man-pages-3.32.orig/man3/qsort.3	2010-12-03 07:02:01 +0000
++++ man-pages-3.32/man3/qsort.3	2014-06-28 16:23:00 +0000
 @@ -106,7 +106,7 @@ main(int argc, char *argv[])
  	exit(EXIT_FAILURE);
      }
@@ -184,9 +184,9 @@ diff -uNrp man-pages-3.30/man3/qsort.3 man-pages-3.30.new/man3/qsort.3
  
      for (j = 1; j < argc; j++)
          puts(argv[j]);
-diff -uNrp man-pages-3.30/man3/tsearch.3 man-pages-3.30.new/man3/tsearch.3
---- man-pages-3.30/man3/tsearch.3	2010-11-01 17:55:40 +0300
-+++ man-pages-3.30.new/man3/tsearch.3	2010-11-06 20:54:06 +0300
+diff -puNr man-pages-3.32.orig/man3/tsearch.3 man-pages-3.32/man3/tsearch.3
+--- man-pages-3.32.orig/man3/tsearch.3	2010-12-03 07:02:02 +0000
++++ man-pages-3.32/man3/tsearch.3	2014-06-28 16:23:00 +0000
 @@ -112,6 +112,8 @@ visit to a leaf node.
  (These symbols are defined in \fI<search.h>\fP.)
  The third argument is the depth of the node, with
@@ -196,9 +196,9 @@ diff -uNrp man-pages-3.30/man3/tsearch.3 man-pages-3.30.new/man3/tsearch.3
  .PP
  (More commonly, \fBpreorder\fP, \fBpostorder\fP, and \fBendorder\fP
  are known as \fBpreorder\fP, \fBinorder\fP, and \fBpostorder\fP:
-diff -uNrp man-pages-3.30/man4/console_codes.4 man-pages-3.30.new/man4/console_codes.4
---- man-pages-3.30/man4/console_codes.4	2010-11-01 17:55:41 +0300
-+++ man-pages-3.30.new/man4/console_codes.4	2010-11-06 20:54:06 +0300
+diff -puNr man-pages-3.32.orig/man4/console_codes.4 man-pages-3.32/man4/console_codes.4
+--- man-pages-3.32.orig/man4/console_codes.4	2010-12-03 07:02:02 +0000
++++ man-pages-3.32/man4/console_codes.4	2014-06-28 16:23:00 +0000
 @@ -17,6 +17,7 @@
  .\" Tiny correction, aeb, 961107.
  .\"
@@ -219,10 +219,10 @@ diff -uNrp man-pages-3.30/man4/console_codes.4 man-pages-3.30.new/man4/console_c
  .TE
  .PP
  It also recognizes ESC % and provides a more complete UTF-8
-diff -uNrp man-pages-3.30/man5/dir_colors.5 man-pages-3.30.new/man5/dir_colors.5
---- man-pages-3.30/man5/dir_colors.5	2010-11-01 17:55:41 +0300
-+++ man-pages-3.30.new/man5/dir_colors.5	2010-11-06 20:54:06 +0300
-@@ -356,6 +356,15 @@ definitions, which are used by ISO 6429 
+diff -puNr man-pages-3.32.orig/man5/dir_colors.5 man-pages-3.32/man5/dir_colors.5
+--- man-pages-3.32.orig/man5/dir_colors.5	2010-12-03 07:02:02 +0000
++++ man-pages-3.32/man5/dir_colors.5	2014-06-28 16:23:00 +0000
+@@ -356,6 +356,15 @@ definitions, which are used by ISO 6429
  The default
  .B ENDCODE
  is undefined.
@@ -238,9 +238,9 @@ diff -uNrp man-pages-3.30/man5/dir_colors.5 man-pages-3.30.new/man5/dir_colors.5
  .SH "SEE ALSO"
  .BR dircolors (1),
  .BR ls (1),
-diff -uNrp man-pages-3.30/man5/nsswitch.conf.5 man-pages-3.30.new/man5/nsswitch.conf.5
---- man-pages-3.30/man5/nsswitch.conf.5	2010-11-01 17:55:41 +0300
-+++ man-pages-3.30.new/man5/nsswitch.conf.5	2010-11-06 20:54:06 +0300
+diff -puNr man-pages-3.32.orig/man5/nsswitch.conf.5 man-pages-3.32/man5/nsswitch.conf.5
+--- man-pages-3.32.orig/man5/nsswitch.conf.5	2010-12-03 07:02:02 +0000
++++ man-pages-3.32/man5/nsswitch.conf.5	2014-06-28 16:23:00 +0000
 @@ -225,6 +225,12 @@ you could have entries of the form +user
  \-user or \-@netgroup (exclude the specified user),
  and + (include every user, except the excluded ones, from the NIS
@@ -254,10 +254,10 @@ diff -uNrp man-pages-3.30/man5/nsswitch.conf.5 man-pages-3.30.new/man5/nsswitch.
  Since most people only put a + at the end of
  .I /etc/passwd
  to include everything from NIS, the switch provides a faster
-diff -uNrp man-pages-3.30/man5/resolv.conf.5 man-pages-3.30.new/man5/resolv.conf.5
---- man-pages-3.30/man5/resolv.conf.5	2010-11-01 17:55:41 +0300
-+++ man-pages-3.30.new/man5/resolv.conf.5	2010-11-06 20:54:06 +0300
-@@ -34,8 +34,8 @@ by the resolver routines the first time 
+diff -puNr man-pages-3.32.orig/man5/resolv.conf.5 man-pages-3.32/man5/resolv.conf.5
+--- man-pages-3.32.orig/man5/resolv.conf.5	2010-12-03 07:02:02 +0000
++++ man-pages-3.32/man5/resolv.conf.5	2014-06-28 16:23:00 +0000
+@@ -34,8 +34,8 @@ by the resolver routines the first time
  The file is designed to be human readable and contains a list of
  keywords with values that provide various types of resolver information.
  .LP
@@ -277,9 +277,9 @@ diff -uNrp man-pages-3.30/man5/resolv.conf.5 man-pages-3.30.new/man5/resolv.conf
  .TP
  .BR ip6-bytestring " (since glibc 2.3.4)"
  sets
-diff -uNrp man-pages-3.30/man5/tzfile.5 man-pages-3.30.new/man5/tzfile.5
---- man-pages-3.30/man5/tzfile.5	2010-11-01 17:55:41 +0300
-+++ man-pages-3.30.new/man5/tzfile.5	2010-11-06 20:54:06 +0300
+diff -puNr man-pages-3.32.orig/man5/tzfile.5 man-pages-3.32/man5/tzfile.5
+--- man-pages-3.32.orig/man5/tzfile.5	2010-12-03 07:02:02 +0000
++++ man-pages-3.32/man5/tzfile.5	2014-06-28 16:23:00 +0000
 @@ -3,9 +3,9 @@
  .\" 1996-06-05 by Arthur David Olson <arthur_david_olson@nih.gov>.
  .TH TZFILE 5 2010-08-31 "" "Linux Programmer's Manual"
@@ -306,25 +306,65 @@ diff -uNrp man-pages-3.30/man5/tzfile.5 man-pages-3.30.new/man5/tzfile.5
 +.BR tzset (3),
  .BR ctime (3)
  .SH COLOPHON
- This page is part of release 3.30 of the Linux
-diff -uNrp man-pages-3.30/man7/AF_LOCAL.7 man-pages-3.30.new/man7/AF_LOCAL.7
---- man-pages-3.30/man7/AF_LOCAL.7	1970-01-01 03:00:00 +0300
-+++ man-pages-3.30.new/man7/AF_LOCAL.7	2010-11-06 20:54:06 +0300
+ This page is part of release 3.32 of the Linux
+diff -puNr man-pages-3.32.orig/man7/AF_LOCAL.7 man-pages-3.32/man7/AF_LOCAL.7
+--- man-pages-3.32.orig/man7/AF_LOCAL.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.32/man7/AF_LOCAL.7	2010-11-06 17:54:06 +0000
 @@ -0,0 +1 @@
 +.so man7/unix.7
-diff -uNrp man-pages-3.30/man7/AF_UNIX.7 man-pages-3.30.new/man7/AF_UNIX.7
---- man-pages-3.30/man7/AF_UNIX.7	1970-01-01 03:00:00 +0300
-+++ man-pages-3.30.new/man7/AF_UNIX.7	2010-11-06 20:54:06 +0300
+diff -puNr man-pages-3.32.orig/man7/AF_UNIX.7 man-pages-3.32/man7/AF_UNIX.7
+--- man-pages-3.32.orig/man7/AF_UNIX.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.32/man7/AF_UNIX.7	2010-11-06 17:54:06 +0000
 @@ -0,0 +1 @@
 +.so man7/unix.7
-diff -uNrp man-pages-3.30/man7/IPPROTO_ICMP.7 man-pages-3.30.new/man7/IPPROTO_ICMP.7
---- man-pages-3.30/man7/IPPROTO_ICMP.7	1970-01-01 03:00:00 +0300
-+++ man-pages-3.30.new/man7/IPPROTO_ICMP.7	2010-11-06 20:54:06 +0300
+diff -puNr man-pages-3.32.orig/man7/IPPROTO_ICMP.7 man-pages-3.32/man7/IPPROTO_ICMP.7
+--- man-pages-3.32.orig/man7/IPPROTO_ICMP.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.32/man7/IPPROTO_ICMP.7	2010-11-06 17:54:06 +0000
 @@ -0,0 +1 @@
 +.so man7/icmp.7
-diff -uNrp man-pages-3.30/man7/man.7 man-pages-3.30.new/man7/man.7
---- man-pages-3.30/man7/man.7	2010-11-01 17:55:41 +0300
-+++ man-pages-3.30.new/man7/man.7	2010-11-06 20:54:06 +0300
+diff -puNr man-pages-3.32.orig/man7/NETLINK_ROUTE.7 man-pages-3.32/man7/NETLINK_ROUTE.7
+--- man-pages-3.32.orig/man7/NETLINK_ROUTE.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.32/man7/NETLINK_ROUTE.7	2010-11-06 17:54:06 +0000
+@@ -0,0 +1 @@
++.so man7/rtnetlink.7
+diff -puNr man-pages-3.32.orig/man7/PF_INET6.7 man-pages-3.32/man7/PF_INET6.7
+--- man-pages-3.32.orig/man7/PF_INET6.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.32/man7/PF_INET6.7	2010-11-06 17:54:06 +0000
+@@ -0,0 +1 @@
++.so man7/ipv6.7
+diff -puNr man-pages-3.32.orig/man7/PF_LOCAL.7 man-pages-3.32/man7/PF_LOCAL.7
+--- man-pages-3.32.orig/man7/PF_LOCAL.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.32/man7/PF_LOCAL.7	2010-11-06 17:54:06 +0000
+@@ -0,0 +1 @@
++.so man7/unix.7
+diff -puNr man-pages-3.32.orig/man7/PF_NETLINK.7 man-pages-3.32/man7/PF_NETLINK.7
+--- man-pages-3.32.orig/man7/PF_NETLINK.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.32/man7/PF_NETLINK.7	2010-11-06 17:54:06 +0000
+@@ -0,0 +1 @@
++.so man7/netlink.7
+diff -puNr man-pages-3.32.orig/man7/PF_PACKET.7 man-pages-3.32/man7/PF_PACKET.7
+--- man-pages-3.32.orig/man7/PF_PACKET.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.32/man7/PF_PACKET.7	2010-11-06 17:54:06 +0000
+@@ -0,0 +1 @@
++.so man7/packet.7
+diff -puNr man-pages-3.32.orig/man7/PF_UNIX.7 man-pages-3.32/man7/PF_UNIX.7
+--- man-pages-3.32.orig/man7/PF_UNIX.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.32/man7/PF_UNIX.7	2010-11-06 17:54:06 +0000
+@@ -0,0 +1 @@
++.so man7/unix.7
+diff -puNr man-pages-3.32.orig/man7/PF_X25.7 man-pages-3.32/man7/PF_X25.7
+--- man-pages-3.32.orig/man7/PF_X25.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.32/man7/PF_X25.7	2010-11-06 17:54:06 +0000
+@@ -0,0 +1 @@
++.so man7/x25.7
+diff -puNr man-pages-3.32.orig/man7/SOCK_RAW.7 man-pages-3.32/man7/SOCK_RAW.7
+--- man-pages-3.32.orig/man7/SOCK_RAW.7	1970-01-01 00:00:00 +0000
++++ man-pages-3.32/man7/SOCK_RAW.7	2010-11-06 17:54:06 +0000
+@@ -0,0 +1 @@
++.so man7/raw.7
+diff -puNr man-pages-3.32.orig/man7/man.7 man-pages-3.32/man7/man.7
+--- man-pages-3.32.orig/man7/man.7	2010-12-03 07:02:03 +0000
++++ man-pages-3.32/man7/man.7	2014-06-28 16:23:00 +0000
 @@ -553,6 +553,7 @@ is not implemented.
  .BR groff (1),
  .BR man (1),
@@ -333,9 +373,9 @@ diff -uNrp man-pages-3.30/man7/man.7 man-pages-3.30.new/man7/man.7
  .BR whatis (1),
  .BR groff_man (7),
  .BR groff_www (7),
-diff -uNrp man-pages-3.30/man7/mdoc.7 man-pages-3.30.new/man7/mdoc.7
---- man-pages-3.30/man7/mdoc.7	2010-11-01 17:55:41 +0300
-+++ man-pages-3.30.new/man7/mdoc.7	2010-11-06 20:54:06 +0300
+diff -puNr man-pages-3.32.orig/man7/mdoc.7 man-pages-3.32/man7/mdoc.7
+--- man-pages-3.32.orig/man7/mdoc.7	2010-12-03 07:02:03 +0000
++++ man-pages-3.32/man7/mdoc.7	2014-06-28 16:23:00 +0000
 @@ -59,7 +59,8 @@ man pages.
  The macro names and their meanings are
  listed below for quick reference; for
@@ -346,43 +386,3 @@ diff -uNrp man-pages-3.30/man7/mdoc.7 man-pages-3.30.new/man7/mdoc.7
  .Xr mdoc.samples 7 .
  .Pp
  Note that this is not the usual macro package for Linux documentation,
-diff -uNrp man-pages-3.30/man7/NETLINK_ROUTE.7 man-pages-3.30.new/man7/NETLINK_ROUTE.7
---- man-pages-3.30/man7/NETLINK_ROUTE.7	1970-01-01 03:00:00 +0300
-+++ man-pages-3.30.new/man7/NETLINK_ROUTE.7	2010-11-06 20:54:06 +0300
-@@ -0,0 +1 @@
-+.so man7/rtnetlink.7
-diff -uNrp man-pages-3.30/man7/PF_INET6.7 man-pages-3.30.new/man7/PF_INET6.7
---- man-pages-3.30/man7/PF_INET6.7	1970-01-01 03:00:00 +0300
-+++ man-pages-3.30.new/man7/PF_INET6.7	2010-11-06 20:54:06 +0300
-@@ -0,0 +1 @@
-+.so man7/ipv6.7
-diff -uNrp man-pages-3.30/man7/PF_LOCAL.7 man-pages-3.30.new/man7/PF_LOCAL.7
---- man-pages-3.30/man7/PF_LOCAL.7	1970-01-01 03:00:00 +0300
-+++ man-pages-3.30.new/man7/PF_LOCAL.7	2010-11-06 20:54:06 +0300
-@@ -0,0 +1 @@
-+.so man7/unix.7
-diff -uNrp man-pages-3.30/man7/PF_NETLINK.7 man-pages-3.30.new/man7/PF_NETLINK.7
---- man-pages-3.30/man7/PF_NETLINK.7	1970-01-01 03:00:00 +0300
-+++ man-pages-3.30.new/man7/PF_NETLINK.7	2010-11-06 20:54:06 +0300
-@@ -0,0 +1 @@
-+.so man7/netlink.7
-diff -uNrp man-pages-3.30/man7/PF_PACKET.7 man-pages-3.30.new/man7/PF_PACKET.7
---- man-pages-3.30/man7/PF_PACKET.7	1970-01-01 03:00:00 +0300
-+++ man-pages-3.30.new/man7/PF_PACKET.7	2010-11-06 20:54:06 +0300
-@@ -0,0 +1 @@
-+.so man7/packet.7
-diff -uNrp man-pages-3.30/man7/PF_UNIX.7 man-pages-3.30.new/man7/PF_UNIX.7
---- man-pages-3.30/man7/PF_UNIX.7	1970-01-01 03:00:00 +0300
-+++ man-pages-3.30.new/man7/PF_UNIX.7	2010-11-06 20:54:06 +0300
-@@ -0,0 +1 @@
-+.so man7/unix.7
-diff -uNrp man-pages-3.30/man7/PF_X25.7 man-pages-3.30.new/man7/PF_X25.7
---- man-pages-3.30/man7/PF_X25.7	1970-01-01 03:00:00 +0300
-+++ man-pages-3.30.new/man7/PF_X25.7	2010-11-06 20:54:06 +0300
-@@ -0,0 +1 @@
-+.so man7/x25.7
-diff -uNrp man-pages-3.30/man7/SOCK_RAW.7 man-pages-3.30.new/man7/SOCK_RAW.7
---- man-pages-3.30/man7/SOCK_RAW.7	1970-01-01 03:00:00 +0300
-+++ man-pages-3.30.new/man7/SOCK_RAW.7	2010-11-06 20:54:06 +0300
-@@ -0,0 +1 @@
-+.so man7/raw.7

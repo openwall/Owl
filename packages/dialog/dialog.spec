@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/dialog/dialog.spec,v 1.21 2012/07/22 18:31:57 segoon Exp $
+# $Owl: Owl/packages/dialog/dialog.spec,v 1.22 2014/07/12 14:08:46 galaxy Exp $
 
 Summary: A utility for creating TTY dialog boxes.
 Name: dialog
@@ -87,7 +87,7 @@ menubox widget without --item-help option.
 - Enforce our new spec file conventions.
 - Build with -Wall (no warnings).
 
-* Sun Jun 13 2001 Michail Litvak <mci-at-owl.openwall.com>
+* Wed Jun 13 2001 Michail Litvak <mci-at-owl.openwall.com>
 - patch to fix bug with fselect mouse lock-up
 
 * Tue Jun 12 2001 Michail Litvak <mci-at-owl.openwall.com>

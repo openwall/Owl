@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/dev86/dev86.spec,v 1.26 2009/08/03 20:47:32 solar Exp $
+# $Owl: Owl/packages/dev86/dev86.spec,v 1.27 2014/07/12 14:08:42 galaxy Exp $
 
 Summary: A real mode 80x86 assembler and linker.
 Name: dev86
@@ -142,7 +142,7 @@ use gcc.
 * Mon Feb 09 2004 Michail Litvak <mci-at-owl.openwall.com> 0.16.0-owl3
 - Use rpm macros instead just paths.
 
-* Thu Mar 20 2002 Michail Litvak <mci-at-owl.openwall.com> 0.16.0-owl2
+* Wed Mar 20 2002 Michail Litvak <mci-at-owl.openwall.com> 0.16.0-owl2
 - fixes to build with -Wall without warnings
 
 * Thu Mar 14 2002 Michail Litvak <mci-at-owl.openwall.com>

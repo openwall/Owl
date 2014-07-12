@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/which/which.spec,v 1.11 2006/06/06 16:18:35 ldv Exp $
+# $Owl: Owl/packages/which/which.spec,v 1.12 2014/07/12 14:19:42 galaxy Exp $
 
 Summary: Displays where a particular program in your path is located.
 Name: which
 Version: 2.16
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/System
 URL: http://www.xs4all.nl/~carlo17/which/
@@ -12,7 +12,7 @@ Source1: which-2.sh
 Source2: which-2.csh
 Patch0: which-2.16-owl-info.diff
 Patch1: which-2.16-rh-alt-fixes.diff
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
 
@@ -57,6 +57,9 @@ fi
 %_mandir/*/*
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.16-owl2
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+
 * Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.16-owl1
 - Updated to 2.16.
 - Packaged documentation in Info format.

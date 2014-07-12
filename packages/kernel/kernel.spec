@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.106 2014/07/10 11:30:40 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.107 2014/07/12 14:09:22 galaxy Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 371.9.1.el5.028stab114.2
-Release: %ovzversion.owl2
+Release: %ovzversion.owl3
 License: GPLv2
 Group: System Environment/Kernel
 URL: http://openvz.org/Download/kernel/rhel5-testing/028stab114.2
@@ -19,7 +19,7 @@ Patch0: patch-%ovzversion-combined.xz
 # http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab114.2/patches/patch-371.9.1.el5.028stab114.2-combined.gz
 # Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab114.2/patches/patch-371.9.1.el5.028stab114.2-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
-PreReq: basesystem
+Requires: basesystem
 Provides: kernel-drm = 4.3.0
 ExclusiveArch: i686 x86_64
 BuildRoot: /override/%name-%version
@@ -104,6 +104,9 @@ done
 %files fake
 
 %changelog
+* Thu Jul 10 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.6.18-371.9.1.el5.028stab114.2.owl3
+- Replaced the deprecated PreReq tag with the Plain Require tag.
+
 * Thu Jul 10 2014 Solar Designer <solar-at-owl.openwall.com> 2.6.18-371.9.1.el5.028stab114.2.owl2
 - Fixed a ping sockets bug introduced in 2.6.18-371.8.1.el5.028stab113.1.owl1,
 which resulted in the ping command printing incorrect responding IP addresses.

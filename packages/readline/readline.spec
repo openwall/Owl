@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/readline/readline.spec,v 1.27 2010/01/26 17:18:57 solar Exp $
+# $Owl: Owl/packages/readline/readline.spec,v 1.28 2014/07/12 14:15:21 galaxy Exp $
 
 Summary: A library for editing typed in command lines.
 Name: readline
 Version: 5.1
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/%name/
@@ -18,7 +18,7 @@ Patch5: readline-5.1-deb-alt-inputrc.diff
 Patch6: readline-5.1-deb-header.diff
 Patch7: readline-5.1-rh-wrap.diff
 Patch8: readline-5.1-owl-info.diff
-PreReq: /sbin/ldconfig, /sbin/install-info
+Requires(post,preun): /sbin/install-info
 Prefix: %_prefix
 BuildRequires: sed >= 4.0.9, texinfo
 BuildRoot: /override/%name-%version
@@ -31,7 +31,7 @@ allowing the user to edit the line with standard emacs editing keys.
 Summary: Files needed to develop programs which use the readline library.
 Group: Development/Libraries
 Requires: %name = %version-%release
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 
 %description devel
 The readline library reads a line from the terminal and returns it,
@@ -137,6 +137,9 @@ fi
 %_libdir/lib*.so
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 5.1-owl2
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+
 * Sun May 21 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 5.1-owl1
 - Updated to 5.1 patchlevel 4.
 - Dropped compatibility symlinks because new libhistory breaks backwards

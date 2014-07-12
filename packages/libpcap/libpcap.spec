@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/libpcap/libpcap.spec,v 1.21 2006/05/30 23:33:36 ldv Exp $
+# $Owl: Owl/packages/libpcap/libpcap.spec,v 1.22 2014/07/12 14:09:25 galaxy Exp $
 
 Summary: Network packet capture library.
 Name: libpcap
 Version: 0.9.4
-Release: owl2
+Release: owl3
 Epoch: 14
 License: BSD
 Group: System Environment/Libraries
@@ -15,7 +15,6 @@ Patch1: libpcap-0.9.4-owl-align.diff
 Patch2: libpcap-0.9.4-owl-static.diff
 Patch3: libpcap-0.9.4-rh-ppp.diff
 Patch4: libpcap-0.9.4-deb-man.diff
-PreReq: /sbin/ldconfig
 %define soname libpcap.so.0
 %define compat_sonames libpcap.so.0.8.2 libpcap.so.0.8.3 libpcap.so.0.9.4
 # Additional provides for better binary compatibility with Fedora.
@@ -94,6 +93,9 @@ ln -s ../pcap-bpf.h %buildroot%_includedir/net/bpf.h
 %_libdir/lib*.a
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 14:0.9.4-owl3
+- Dropped the deprecated PreReq tag.
+
 * Tue Dec 13 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 14:0.9.4-owl2
 - Corrected interpackage dependencies.
 

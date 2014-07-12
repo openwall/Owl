@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/sysklogd/sysklogd.spec,v 1.27 2010/11/09 12:15:11 solar Exp $
+# $Owl: Owl/packages/sysklogd/sysklogd.spec,v 1.28 2014/07/12 14:18:29 galaxy Exp $
 
 Summary: System logging and kernel message trapping daemons.
 Name: sysklogd
 Version: 1.4.1
-Release: owl14
+Release: owl15
 License: BSD for syslogd and GPL for klogd
 Group: System Environment/Daemons
 URL: http://www.infodrom.org/projects/sysklogd/
@@ -31,7 +31,8 @@ Patch15: sysklogd-1.4.2-owl-syslogd-unixcred.diff
 Patch16: sysklogd-1.4.2-up-SO_BSDCOMPAT.diff
 Patch17: sysklogd-1.4.2-owl-ksym_mod-linux.diff
 Patch18: sysklogd-1.4.2-owl-syslogd-no-printsys.diff
-PreReq: shadow-utils, grep, fileutils, /sbin/chkconfig
+Requires(pre): shadow-utils, grep, fileutils
+Requires(post,preun): chkconfig
 Requires: logrotate, /var/empty
 BuildRoot: /override/%name-%version
 
@@ -130,6 +131,9 @@ fi
 %_mandir/*/*
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.4.1-owl15
+- Replaced the deprecated PreReq tag with Requires().
+
 * Tue Nov 09 2010 Solar Designer <solar-at-owl.openwall.com> 1.4.1-owl14
 - In the unixcred patch, stop the search for a PID at the colon.
 - In the unixcred patch, don't log the UID on klogd's messages as long as they

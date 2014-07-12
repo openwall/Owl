@@ -1,4 +1,4 @@
-diff -upk.orig modutils-2.4.27.orig/depmod/Makefile.in modutils-2.4.27/depmod/Makefile.in
+diff -puNr modutils-2.4.27.orig/depmod/Makefile.in modutils-2.4.27/depmod/Makefile.in
 --- modutils-2.4.27.orig/depmod/Makefile.in	2003-10-27 04:42:07 +0000
 +++ modutils-2.4.27/depmod/Makefile.in	2005-01-10 18:11:41 +0000
 @@ -6,6 +6,8 @@ DEFSNOARCH	:= -I$(srcdir)/../include -D_
@@ -19,9 +19,9 @@ diff -upk.orig modutils-2.4.27.orig/depmod/Makefile.in modutils-2.4.27/depmod/Ma
  	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS) $(ZLIB_STATIC)
  
  clean:
-diff -upk.orig modutils-2.4.27.orig/depmod/depmod.c modutils-2.4.27/depmod/depmod.c
---- modutils-2.4.27.orig/depmod/depmod.c	2005-10-26 15:47:49 +0000
-+++ modutils-2.4.27/depmod/depmod.c	2005-10-26 15:48:13 +0000
+diff -puNr modutils-2.4.27.orig/depmod/depmod.c modutils-2.4.27/depmod/depmod.c
+--- modutils-2.4.27.orig/depmod/depmod.c	2014-06-28 16:30:48 +0000
++++ modutils-2.4.27/depmod/depmod.c	2014-06-28 16:31:14 +0000
 @@ -271,6 +271,7 @@ int flag_unresolved_error = 0;
  extern int depmod_main(int argc, char **argv);
  extern int depmod_main_32(int argc, char **argv);
@@ -172,7 +172,7 @@ diff -upk.orig modutils-2.4.27.orig/depmod/depmod.c modutils-2.4.27/depmod/depmo
  	if (stdmode || argc == 0) {
  		/* option -a is the default without arguments */
  		if (argc > 0) {
-diff -upk.orig modutils-2.4.27.orig/include/config.h modutils-2.4.27/include/config.h
+diff -puNr modutils-2.4.27.orig/include/config.h modutils-2.4.27/include/config.h
 --- modutils-2.4.27.orig/include/config.h	2003-10-26 11:28:14 +0000
 +++ modutils-2.4.27/include/config.h	2005-01-10 18:11:41 +0000
 @@ -82,6 +82,13 @@ struct gen_files {
@@ -200,7 +200,7 @@ diff -upk.orig modutils-2.4.27.orig/include/config.h modutils-2.4.27/include/con
  };
  
  extern char *persistdir;
-diff -upk.orig modutils-2.4.27.orig/include/modstat.h modutils-2.4.27/include/modstat.h
+diff -puNr modutils-2.4.27.orig/include/modstat.h modutils-2.4.27/include/modstat.h
 --- modutils-2.4.27.orig/include/modstat.h	2001-01-05 01:45:19 +0000
 +++ modutils-2.4.27/include/modstat.h	2005-01-10 18:11:41 +0000
 @@ -51,5 +51,6 @@ extern size_t nksyms;
@@ -210,9 +210,9 @@ diff -upk.orig modutils-2.4.27.orig/include/modstat.h modutils-2.4.27/include/mo
 +char *getline_wrapped(FILE *file, unsigned int *linenum);
  
  #endif /* _KERNEL_H */
-diff -upk.orig modutils-2.4.27.orig/include/util.h modutils-2.4.27/include/util.h
---- modutils-2.4.27.orig/include/util.h	2005-10-26 15:47:49 +0000
-+++ modutils-2.4.27/include/util.h	2005-10-26 15:48:13 +0000
+diff -puNr modutils-2.4.27.orig/include/util.h modutils-2.4.27/include/util.h
+--- modutils-2.4.27.orig/include/util.h	2014-06-28 16:30:48 +0000
++++ modutils-2.4.27/include/util.h	2014-06-28 16:31:14 +0000
 @@ -34,6 +34,11 @@ char *xstrdup(const char *);
  char *xstrcat(char *, const char *, size_t);
  int   xsystem(const char *, char *const[]);
@@ -225,7 +225,7 @@ diff -upk.orig modutils-2.4.27.orig/include/util.h modutils-2.4.27/include/util.
  
  typedef int (*xftw_func_t)(const char *, const struct stat *);
  extern int xftw(const char *directory, xftw_func_t);
-diff -upk.orig modutils-2.4.27.orig/insmod/Makefile.in modutils-2.4.27/insmod/Makefile.in
+diff -puNr modutils-2.4.27.orig/insmod/Makefile.in modutils-2.4.27/insmod/Makefile.in
 --- modutils-2.4.27.orig/insmod/Makefile.in	2003-10-27 04:42:07 +0000
 +++ modutils-2.4.27/insmod/Makefile.in	2005-10-26 15:48:13 +0000
 @@ -6,11 +6,13 @@ DEFSNOARCH	:= -I$(srcdir)/../include -D_
@@ -270,9 +270,9 @@ diff -upk.orig modutils-2.4.27.orig/insmod/Makefile.in modutils-2.4.27/insmod/Ma
  
  ifdef DEFS64
  TARGETS+=libmodutils.a($(filter-out insmod.o insmod_64.o, $(INSMODOBJS)) combined_insmod.o combined_insmod_64.o)
-diff -upk.orig modutils-2.4.27.orig/insmod/insmod.c modutils-2.4.27/insmod/insmod.c
---- modutils-2.4.27.orig/insmod/insmod.c	2005-10-26 15:47:49 +0000
-+++ modutils-2.4.27/insmod/insmod.c	2005-10-26 15:48:13 +0000
+diff -puNr modutils-2.4.27.orig/insmod/insmod.c modutils-2.4.27/insmod/insmod.c
+--- modutils-2.4.27.orig/insmod/insmod.c	2014-06-28 16:30:48 +0000
++++ modutils-2.4.27/insmod/insmod.c	2014-06-28 16:31:14 +0000
 @@ -72,6 +72,8 @@
  #include <getopt.h>
  #include <sys/stat.h>
@@ -758,7 +758,7 @@ diff -upk.orig modutils-2.4.27.orig/insmod/insmod.c modutils-2.4.27/insmod/insmo
  			error("a module named %s already exists", m_name);
  			goto out;
  		}
-diff -upk.orig modutils-2.4.27.orig/insmod/lsmod.c modutils-2.4.27/insmod/lsmod.c
+diff -puNr modutils-2.4.27.orig/insmod/lsmod.c modutils-2.4.27/insmod/lsmod.c
 --- modutils-2.4.27.orig/insmod/lsmod.c	2002-03-01 00:39:06 +0000
 +++ modutils-2.4.27/insmod/lsmod.c	2005-01-10 18:11:41 +0000
 @@ -37,6 +37,7 @@
@@ -780,9 +780,9 @@ diff -upk.orig modutils-2.4.27.orig/insmod/lsmod.c modutils-2.4.27/insmod/lsmod.
  	error_file = "lsmod";
  
  	while ((i = getopt_long(argc, argv, "Vh",
-diff -upk.orig modutils-2.4.27.orig/insmod/modprobe.c modutils-2.4.27/insmod/modprobe.c
---- modutils-2.4.27.orig/insmod/modprobe.c	2005-10-26 15:47:49 +0000
-+++ modutils-2.4.27/insmod/modprobe.c	2005-10-26 15:48:13 +0000
+diff -puNr modutils-2.4.27.orig/insmod/modprobe.c modutils-2.4.27/insmod/modprobe.c
+--- modutils-2.4.27.orig/insmod/modprobe.c	2014-06-28 16:30:48 +0000
++++ modutils-2.4.27/insmod/modprobe.c	2014-06-28 16:31:14 +0000
 @@ -33,6 +33,9 @@
  #include <limits.h>
  #include <sys/param.h>
@@ -827,7 +827,7 @@ diff -upk.orig modutils-2.4.27.orig/insmod/modprobe.c modutils-2.4.27/insmod/mod
  			return probeall_list[i].opts;
  	}
  	return NULL;
-@@ -161,14 +168,18 @@ static OPT_LIST *any_options(const char 
+@@ -161,14 +168,18 @@ static OPT_LIST *any_options(const char
  	const char *modname;
  	int i;
  
@@ -852,7 +852,7 @@ diff -upk.orig modutils-2.4.27.orig/insmod/modprobe.c modutils-2.4.27/insmod/mod
  	}
  	return NULL;
  }
-@@ -191,15 +202,18 @@ static const char *any_alias(const char 
+@@ -191,15 +202,18 @@ static const char *any_alias(const char
  	 */
  	/* For devfs */
  	if (*mod != '/') {
@@ -1193,9 +1193,9 @@ diff -upk.orig modutils-2.4.27.orig/insmod/modprobe.c modutils-2.4.27/insmod/mod
  			if (!get_kernel_info(K_INFO | K_REFS)) {
  				if (runit)
  					snap_shot_log("get_kernel_info failed");
-diff -upk.orig modutils-2.4.27.orig/insmod/rmmod.c modutils-2.4.27/insmod/rmmod.c
---- modutils-2.4.27.orig/insmod/rmmod.c	2002-07-30 08:00:17 +0000
-+++ modutils-2.4.27/insmod/rmmod.c	2005-01-10 18:11:41 +0000
+diff -puNr modutils-2.4.27.orig/insmod/rmmod.c modutils-2.4.27/insmod/rmmod.c
+--- modutils-2.4.27.orig/insmod/rmmod.c	2014-06-28 16:30:48 +0000
++++ modutils-2.4.27/insmod/rmmod.c	2014-06-28 16:31:14 +0000
 @@ -50,6 +50,7 @@
  #ifdef COMBINE_rmmod
  #define main rmmod_main
@@ -1215,7 +1215,7 @@ diff -upk.orig modutils-2.4.27.orig/insmod/rmmod.c modutils-2.4.27/insmod/rmmod.
  	/*
  	 * Collect the loaded modules before deletion.  delete_module()
  	 * gives no indication that any modules were deleted so we have to
-diff -upk.orig modutils-2.4.27.orig/module-init-tools/Makefile.am modutils-2.4.27/module-init-tools/Makefile.am
+diff -puNr modutils-2.4.27.orig/module-init-tools/Makefile.am modutils-2.4.27/module-init-tools/Makefile.am
 --- modutils-2.4.27.orig/module-init-tools/Makefile.am	2004-07-12 06:11:46 +0000
 +++ modutils-2.4.27/module-init-tools/Makefile.am	2005-01-10 18:11:41 +0000
 @@ -67,6 +67,8 @@ tarball: $(DIST_DIR)/module-init-tools-$
@@ -1227,7 +1227,7 @@ diff -upk.orig modutils-2.4.27.orig/module-init-tools/Makefile.am modutils-2.4.2
  srpm: $(DIST_DIR)/module-init-tools-$(VERSION).tar.gz
  	ln -sf $(DIST_DIR)/module-init-tools-$(VERSION).tar.gz /usr/src/rpm/SOURCES/
  	set -e; RELEASE=`grep '^Release:' /usr/src/rpm/SPECS/modutils.spec | awk '{ print $$2 }'`; \
-diff -upk.orig modutils-2.4.27.orig/module-init-tools/Makefile.in modutils-2.4.27/module-init-tools/Makefile.in
+diff -puNr modutils-2.4.27.orig/module-init-tools/Makefile.in modutils-2.4.27/module-init-tools/Makefile.in
 --- modutils-2.4.27.orig/module-init-tools/Makefile.in	2004-11-15 00:59:48 +0000
 +++ modutils-2.4.27/module-init-tools/Makefile.in	2005-01-10 18:11:41 +0000
 @@ -199,6 +199,7 @@ DIST_COMMON = README AUTHORS COPYING Cha
@@ -1247,9 +1247,9 @@ diff -upk.orig modutils-2.4.27.orig/module-init-tools/Makefile.in modutils-2.4.2
  srpm: $(DIST_DIR)/module-init-tools-$(VERSION).tar.gz
  	ln -sf $(DIST_DIR)/module-init-tools-$(VERSION).tar.gz /usr/src/rpm/SOURCES/
  	set -e; RELEASE=`grep '^Release:' /usr/src/rpm/SPECS/modutils.spec | awk '{ print $$2 }'`; \
-diff -upk.orig modutils-2.4.27.orig/module-init-tools/depmod.c modutils-2.4.27/module-init-tools/depmod.c
---- modutils-2.4.27.orig/module-init-tools/depmod.c	2005-10-26 15:47:50 +0000
-+++ modutils-2.4.27/module-init-tools/depmod.c	2005-10-26 15:48:13 +0000
+diff -puNr modutils-2.4.27.orig/module-init-tools/depmod.c modutils-2.4.27/module-init-tools/depmod.c
+--- modutils-2.4.27.orig/module-init-tools/depmod.c	2014-06-28 16:30:48 +0000
++++ modutils-2.4.27/module-init-tools/depmod.c	2014-06-28 16:31:14 +0000
 @@ -34,6 +34,7 @@
  
  static int verbose;
@@ -1258,7 +1258,7 @@ diff -upk.orig modutils-2.4.27.orig/module-init-tools/depmod.c modutils-2.4.27/m
  
  void fatal(const char *fmt, ...)
  {
-@@ -194,6 +195,8 @@ static int is_version_number(const char 
+@@ -194,6 +195,8 @@ static int is_version_number(const char
  	return (sscanf(version, "%u.%u.%u", &dummy, &dummy, &dummy) == 3);
  }
  
@@ -1276,7 +1276,7 @@ diff -upk.orig modutils-2.4.27.orig/module-init-tools/depmod.c modutils-2.4.27/m
  static void print_usage(const char *name)
  {
  	fprintf(stderr,
-@@ -733,6 +738,7 @@ static int any_modules_newer(const char 
+@@ -733,6 +738,7 @@ static int any_modules_newer(const char
  static int depfile_out_of_date(const char *dirname)
  {
  	struct stat st;
@@ -1329,7 +1329,7 @@ diff -upk.orig modutils-2.4.27.orig/module-init-tools/depmod.c modutils-2.4.27/m
  
  	if (badopt) {
  		fprintf(stderr, "%s: malformed/unrecognized option '%s'\n",
-diff -upk.orig modutils-2.4.27.orig/module-init-tools/insmod.c modutils-2.4.27/module-init-tools/insmod.c
+diff -puNr modutils-2.4.27.orig/module-init-tools/insmod.c modutils-2.4.27/module-init-tools/insmod.c
 --- modutils-2.4.27.orig/module-init-tools/insmod.c	2004-03-31 01:41:46 +0000
 +++ modutils-2.4.27/module-init-tools/insmod.c	2005-01-10 18:11:41 +0000
 @@ -28,7 +28,9 @@
@@ -1402,7 +1402,7 @@ diff -upk.orig modutils-2.4.27.orig/module-init-tools/insmod.c modutils-2.4.27/m
 -	exit(0);
 +	return 0;
  }
-diff -upk.orig modutils-2.4.27.orig/module-init-tools/lsmod.c modutils-2.4.27/module-init-tools/lsmod.c
+diff -puNr modutils-2.4.27.orig/module-init-tools/lsmod.c modutils-2.4.27/module-init-tools/lsmod.c
 --- modutils-2.4.27.orig/module-init-tools/lsmod.c	2003-01-30 01:23:29 +0000
 +++ modutils-2.4.27/module-init-tools/lsmod.c	2005-01-10 18:11:41 +0000
 @@ -27,7 +27,9 @@
@@ -1435,9 +1435,9 @@ diff -upk.orig modutils-2.4.27.orig/module-init-tools/lsmod.c modutils-2.4.27/mo
  
  	if (argc != 1)
  		print_usage("lsmod");
-diff -upk.orig modutils-2.4.27.orig/module-init-tools/modinfo.c modutils-2.4.27/module-init-tools/modinfo.c
---- modutils-2.4.27.orig/module-init-tools/modinfo.c	2005-10-26 15:47:50 +0000
-+++ modutils-2.4.27/module-init-tools/modinfo.c	2005-10-26 15:48:50 +0000
+diff -puNr modutils-2.4.27.orig/module-init-tools/modinfo.c modutils-2.4.27/module-init-tools/modinfo.c
+--- modutils-2.4.27.orig/module-init-tools/modinfo.c	2014-06-28 16:30:48 +0000
++++ modutils-2.4.27/module-init-tools/modinfo.c	2014-06-28 16:31:14 +0000
 @@ -14,7 +14,9 @@
  #include <sys/utsname.h>
  #include <sys/mman.h>
@@ -1528,7 +1528,7 @@ diff -upk.orig modutils-2.4.27.orig/module-init-tools/modinfo.c modutils-2.4.27/
  
  	endian_test.s = 1;
  	if (endian_test.c[1] == 1) my_endian = ELFDATA2MSB;
-diff -upk.orig modutils-2.4.27.orig/module-init-tools/modprobe.c modutils-2.4.27/module-init-tools/modprobe.c
+diff -puNr modutils-2.4.27.orig/module-init-tools/modprobe.c modutils-2.4.27/module-init-tools/modprobe.c
 --- modutils-2.4.27.orig/module-init-tools/modprobe.c	2004-09-30 10:16:19 +0000
 +++ modutils-2.4.27/module-init-tools/modprobe.c	2005-01-10 18:11:41 +0000
 @@ -44,7 +44,10 @@
@@ -1570,7 +1570,7 @@ diff -upk.orig modutils-2.4.27.orig/module-init-tools/modprobe.c modutils-2.4.27
  
  	uname(&buf);
  	while ((opt = getopt_long(argc, argv, "vVC:o:rknqQsclt:aif", options, NULL)) != -1){
-diff -upk.orig modutils-2.4.27.orig/module-init-tools/rmmod.c modutils-2.4.27/module-init-tools/rmmod.c
+diff -puNr modutils-2.4.27.orig/module-init-tools/rmmod.c modutils-2.4.27/module-init-tools/rmmod.c
 --- modutils-2.4.27.orig/module-init-tools/rmmod.c	2004-02-25 07:10:51 +0000
 +++ modutils-2.4.27/module-init-tools/rmmod.c	2005-01-10 18:11:41 +0000
 @@ -27,7 +27,9 @@
@@ -1604,9 +1604,9 @@ diff -upk.orig modutils-2.4.27.orig/module-init-tools/rmmod.c modutils-2.4.27/mo
  
  	while ((opt = getopt_long(argc, argv,
  			"afh?swvV", options, NULL)) != EOF) {
-diff -upk.orig modutils-2.4.27.orig/util/alias.h modutils-2.4.27/util/alias.h
---- modutils-2.4.27.orig/util/alias.h	2005-10-26 15:47:49 +0000
-+++ modutils-2.4.27/util/alias.h	2005-10-26 15:48:13 +0000
+diff -puNr modutils-2.4.27.orig/util/alias.h modutils-2.4.27/util/alias.h
+--- modutils-2.4.27.orig/util/alias.h	2014-06-28 16:30:48 +0000
++++ modutils-2.4.27/util/alias.h	2014-06-28 16:31:14 +0000
 @@ -334,6 +334,10 @@ char *prune[] =
  	"modules.parportmap",
  	"modules.ieee1394map",
@@ -1618,7 +1618,7 @@ diff -upk.orig modutils-2.4.27.orig/util/alias.h modutils-2.4.27/util/alias.h
  	"System.map",
  	".config",
  	"Kerntypes",
-diff -upk.orig modutils-2.4.27.orig/util/config.c modutils-2.4.27/util/config.c
+diff -puNr modutils-2.4.27.orig/util/config.c modutils-2.4.27/util/config.c
 --- modutils-2.4.27.orig/util/config.c	2003-10-26 11:28:14 +0000
 +++ modutils-2.4.27/util/config.c	2005-10-26 15:48:13 +0000
 @@ -111,14 +111,18 @@ int quick = 0;			/* Option -A */
@@ -1704,7 +1704,7 @@ diff -upk.orig modutils-2.4.27.orig/util/config.c modutils-2.4.27/util/config.c
  		if (tmp.st_mtime > gen_file[i].mtime)
  			return 1;	/* Config file is newer. */
  	}
-@@ -1500,7 +1523,7 @@ static int config_add(const char *file, 
+@@ -1500,7 +1523,7 @@ static int config_add(const char *file,
  			else
  				p += 1;
  
@@ -1787,7 +1787,7 @@ diff -upk.orig modutils-2.4.27.orig/util/config.c modutils-2.4.27/util/config.c
 +
 +	return *(unsigned char *)a - *(unsigned char *)b;
 +}
-diff -upk.orig modutils-2.4.27.orig/util/modstat.c modutils-2.4.27/util/modstat.c
+diff -puNr modutils-2.4.27.orig/util/modstat.c modutils-2.4.27/util/modstat.c
 --- modutils-2.4.27.orig/util/modstat.c	2002-11-25 04:01:57 +0000
 +++ modutils-2.4.27/util/modstat.c	2005-01-10 18:11:41 +0000
 @@ -223,6 +223,180 @@ static int new_get_kernel_info(int type)
@@ -1981,12 +1981,12 @@ diff -upk.orig modutils-2.4.27.orig/util/modstat.c modutils-2.4.27/util/modstat.
  	k_new_syscalls = !query_module(NULL, 0, NULL, 0, NULL);
  
  #ifdef COMPAT_2_0
-diff -upk.orig modutils-2.4.27.orig/util/snap_shot.c modutils-2.4.27/util/snap_shot.c
---- modutils-2.4.27.orig/util/snap_shot.c	2002-03-01 00:39:06 +0000
-+++ modutils-2.4.27/util/snap_shot.c	2005-01-10 18:11:41 +0000
-@@ -77,6 +77,10 @@ void snap_shot(const char *module_names,
- 	t = time(NULL);
+diff -puNr modutils-2.4.27.orig/util/snap_shot.c modutils-2.4.27/util/snap_shot.c
+--- modutils-2.4.27.orig/util/snap_shot.c	2014-06-28 16:30:48 +0000
++++ modutils-2.4.27/util/snap_shot.c	2014-06-28 16:31:14 +0000
+@@ -78,6 +78,10 @@ void snap_shot(const char *module_names,
  	local = localtime(&t);
+ 	umask(umask(077) | 022);
  	for (i = 0; i < sizeof(infile)/sizeof(infile[0]); ++i) {
 +		/* /proc/ksyms does not exist under 2.6.x */
 +		if ((i == 0) && kernel_requires_new_utilities)

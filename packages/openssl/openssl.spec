@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.81 2014/06/08 13:37:19 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.82 2014/07/12 14:14:56 galaxy Exp $
 
 %define shlib_soversion 10
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
 Version: 1.0.0m
-Release: owl1
+Release: owl2
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -22,7 +22,7 @@ Patch6: openssl-1.0.0b-rh-default-paths.diff
 Patch7: openssl-1.0.0m-rh-owl-man.diff
 Patch8: openssl-1.0.0b-rh-x509.diff
 Patch9: openssl-1.0.0b-rh-version-engines.diff
-Patch10: openssl-1.0.0-beta5-rh-cipher-change.diff
+Patch10: openssl-1.0.0m-rh-cipher-change.diff
 Patch11: openssl-1.0.0b-rh-env-nozlib.diff
 Patch12: openssl-1.0.0-beta4-rh-dtls1-abi.diff
 Patch13: openssl-1.0.0m-owl-warnings.diff
@@ -107,6 +107,7 @@ This package contains some miscellaneous Perl scripts.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+#exit 123
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -248,6 +249,9 @@ bzip2 -9 docs/doc/ssleay.txt
 %exclude  %_datadir/ssl/misc/tsget
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.0.0m-owl2
+- Regenerated the cipher-change patch since it was fuzzy.
+
 * Sun Jun 08 2014 Solar Designer <solar-at-owl.openwall.com> 1.0.0m-owl1
 - Updated to 1.0.0m.
 - Dropped openssl-1.0.0b-rh-alt-ipv6-apps.diff to reduce differences from
@@ -328,7 +332,7 @@ had a dependency on Perl anyway (possibly something to be resolved later).
 * Thu Mar 18 2004 Solar Designer <solar-at-owl.openwall.com> 0.9.7c-owl3
 - Spec file cleanups for issues introduced with the update to 0.9.7+.
 
-* Tue Mar 04 2004 Michail Litvak <mci-at-owl.openwall.com> 0.9.7c-owl2
+* Thu Mar 04 2004 Michail Litvak <mci-at-owl.openwall.com> 0.9.7c-owl2
 - Apply RH's soname convention.
 - Move libs to /lib and place symlinks to /usr/lib.
 

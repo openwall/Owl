@@ -1,25 +1,26 @@
-# $Owl: Owl/packages/acct/acct.spec,v 1.42 2010/09/01 11:59:55 segoon Exp $
+# $Owl: Owl/packages/acct/acct.spec,v 1.43 2014/07/12 14:08:05 galaxy Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
 Version: 6.5.4
-Release: owl1
+Release: owl2
 License: GPLv3+
 Group: Applications/System
 Source0: ftp://ftp.gnu.org/gnu/acct/%name-%version.tar.gz
 Source1: dump-acct.8
-Source2: acct.init
-Source3: acct.logrotate
-Patch0: acct-6.5.4-owl-doc.diff
-Patch1: acct-6.5.4-owl-devpts.diff
-Patch2: acct-6.5.4-owl-sa-help.diff
-Patch3: acct-6.4pre1-owl-info.diff
-Patch4: acct-6.5.4-alt-time_t.diff
-Patch5: acct-6.5.4-alt-program_name.diff
-Patch6: acct-6.5.4-alt-owl-warnings.diff
-Patch7: acct-6.5.4-owl-gettext.diff
-Patch8: acct-6.5.4-owl-texi.diff
-PreReq: /sbin/install-info, grep, coreutils >= 5.3.0, sed >= 4.0.9
+Source2: %name.init
+Source3: %name.logrotate
+Patch0: %name-6.5.4-owl-doc.diff
+Patch1: %name-6.5.4-owl-devpts.diff
+Patch2: %name-6.5.4-owl-sa-help.diff
+Patch3: %name-6.5.4-owl-info.diff
+Patch4: %name-6.5.4-alt-time_t.diff
+Patch5: %name-6.5.4-alt-program_name.diff
+Patch6: %name-6.5.4-alt-owl-warnings.diff
+Patch7: %name-6.5.4-owl-gettext.diff
+Patch8: %name-6.5.4-owl-texi.diff
+Requires(pre): /sbin/install-info
+Requires: grep, coreutils >= 5.3.0, sed >= 4.0.9
 Provides: psacct
 Obsoletes: psacct
 BuildRequires: sed >= 4.0.9, texinfo
@@ -115,6 +116,9 @@ fi
 %_infodir/*
 
 %changelog
+* Sat Jun 28 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.5.4-owl2
+- Regenerated the owl-info patch since it was fuzzy.
+
 * Wed Sep 01 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 6.5.4-owl1
 - Updated to 6.5.4.
 - Updated patches.
@@ -184,7 +188,7 @@ so I've removed it from this package.
 - improved logrotate config
 - more cleanups...
 
-* Mon Apr 08 2001 Michail Litvak <mci-at-owl.openwall.com>
+* Sun Apr 08 2001 Michail Litvak <mci-at-owl.openwall.com>
 - spec cleanups
 - acct.logrotate and acct.init was rewritten
 - Obsoletes: psacct

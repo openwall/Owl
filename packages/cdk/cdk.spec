@@ -1,17 +1,16 @@
-# $Owl: Owl/packages/cdk/cdk.spec,v 1.9 2006/04/04 00:29:46 ldv Exp $
+# $Owl: Owl/packages/cdk/cdk.spec,v 1.10 2014/07/12 14:08:25 galaxy Exp $
 
 Summary: Curses Development Kit.
 Name: cdk
 Version: 5.0
 %define snapshot 20050424
-Release: owl3
+Release: owl4
 License: BSD
 Group: System Environment/Libraries
 URL: http://invisible-island.net/cdk/
 Source: ftp://invisible-island.net/cdk/cdk-%version-%snapshot.tgz
 Patch0: cdk-5.0-20050424-owl-tmp.diff
-PreReq: /sbin/ldconfig
-BuildRequires: ncurses-devel
+BuildRequires: ncurses-devel, /sbin/ldconfig
 BuildRoot: /override/%name-%version
 
 %description
@@ -60,6 +59,10 @@ rm -rf %buildroot
 %_mandir/man3/*
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 5.0-owl4
+- Dropped the deprecated PreReq tag for /sbin/ldconfig.
+- Added /sbin/ldconfig to the build requirements.
+
 * Thu Mar 30 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 5.0-owl3
 - Added a call to ldconfig(8) in the %%install section to create all necessary
 symbolic links for libraries.

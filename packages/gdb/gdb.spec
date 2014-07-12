@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gdb/gdb.spec,v 1.29 2012/07/22 18:36:18 segoon Exp $
+# $Owl: Owl/packages/gdb/gdb.spec,v 1.30 2014/07/12 14:09:02 galaxy Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
 Version: 6.3
-Release: owl5
+Release: owl6
 License: GPL
 Group: Development/Debuggers
 URL: http://www.gnu.org/software/gdb/
@@ -21,7 +21,7 @@ Patch8: gdb-6.3-rh-gdbtypes.diff
 Patch9: gdb-6.3-cvs-20050526-bfd.diff
 Patch10: gdb-6.3-gentoo-alt-gdbinit.diff
 Patch11: gdb-6.3-owl-desc_bounds.diff
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 BuildRequires: ncurses-devel >= 5.0
 BuildRequires: readline-devel >= 0:4.3
 BuildRequires: libtool, texinfo
@@ -114,6 +114,10 @@ fi
 %_infodir/stabs.info*
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.3-owl6
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+- Regenerated the desc_bounds patch since it was fuzzy.
+
 * Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 6.3-owl5
 - Added -ltinfo into LDFLAGS to fix build error under binutils >= 2.21.
 
@@ -134,7 +138,7 @@ fi
 - Imported patch from Gentoo that fixes .gdbinit issue (CAN-2005-1705).
 - Corrected info files installation.
 
-* Fri Jan 15 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.1.1-owl2
+* Sat Jan 15 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.1.1-owl2
 - Used %%__make macro instead of plain "make".
 
 * Thu Jul 08 2004 Michail Litvak <mci-at-owl.openwall.com> 6.1.1-owl1

@@ -1,0 +1,11 @@
+--- ltrace-0.5.3.orig/configure	2014-06-28 04:15:13 +0000
++++ ltrace-0.5.3/configure	2014-06-28 04:19:51 +0000
+@@ -99,7 +99,7 @@ do
+   fi
+   case $x_option in
+     --*=* | *=*)
+-      x_var=`echo $x_option | sed 's/^--//' | sed 's/=.*//'`
++      x_var=`echo $x_option | sed 's/^--//' | sed 's/=.*//; s/-/_/g'`
+       x_val=`echo $x_option | sed 's/^.*=//'`
+       eval $x_var=$x_val
+       ;;

@@ -1,5 +1,6 @@
---- iproute2-2.6.18-061002/ip/ifcfg.orig	2006-10-02 23:13:34 +0300
-+++ iproute2-2.6.18-061002/ip/ifcfg	2006-10-12 15:50:40 +0300
+diff -puNr iproute2-2.6.38.orig/ip/ifcfg iproute2-2.6.38/ip/ifcfg
+--- iproute2-2.6.38.orig/ip/ifcfg	2011-03-17 17:05:47 +0000
++++ iproute2-2.6.38/ip/ifcfg	2014-06-28 15:44:53 +0000
 @@ -1,4 +1,6 @@
 -#! /bin/bash
 +#! /bin/sh
@@ -8,7 +9,7 @@
  
  CheckForwarding () {
    local sbase fwd
-@@ -22,17 +24,17 @@
+@@ -22,17 +24,17 @@ ABCMaskLen () {
    local class;
  
    class=${1%%.*}
@@ -31,7 +32,7 @@
    echo "Usage: ifcfg DEV [[add|del [ADDR[/LEN]] [PEER] | stop]" 1>&2
    echo "       add - add new address" 1>&2
    echo "       del - delete address" 1>&2
-@@ -66,12 +68,12 @@
+@@ -66,12 +68,12 @@ esac
  
  ipaddr=
  pfxlen=
@@ -46,7 +47,7 @@
      echo "$1 is bad IP address." 1>&2
      exit 1
    fi
-@@ -79,8 +81,8 @@
+@@ -79,8 +81,8 @@ fi
  shift
  
  peer=$1
@@ -57,7 +58,7 @@
      echo "Peer address with non-trivial netmask." 1>&2
      exit 1
    fi
-@@ -90,14 +92,14 @@
+@@ -90,14 +92,14 @@ else
      echo "Missing IP address argument." 1>&2
      exit 1
    fi
@@ -74,7 +75,7 @@
    label=
  fi
  
-@@ -112,7 +114,7 @@
+@@ -112,7 +114,7 @@ if ! ip link set up dev $dev ; then
    echo "Error: cannot enable interface $dev." 1>&2
    exit 1
  fi
@@ -83,9 +84,9 @@
  
  if ! arping -q -c 2 -w 3 -D -I $dev $ipaddr ; then
    echo "Error: some host already uses address $ipaddr on $dev." 1>&2
-@@ -131,14 +133,14 @@
+@@ -131,14 +133,14 @@ noarp=$?
  
- ip route add unreachable 224.0.0.0/24 >& /dev/null 
+ ip route add unreachable 224.0.0.0/24 >& /dev/null
  ip route add unreachable 255.255.255.255 >& /dev/null
 -if [ `ip link ls $dev | grep -c MULTICAST` -ge 1 ]; then
 +if [ "`ip link ls $dev | grep -c MULTICAST`" -ge 1 ]; then

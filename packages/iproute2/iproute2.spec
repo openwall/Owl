@@ -1,16 +1,16 @@
-# $Owl: Owl/packages/iproute2/iproute2.spec,v 1.27 2012/02/27 08:51:31 solar Exp $
+# $Owl: Owl/packages/iproute2/iproute2.spec,v 1.28 2014/07/12 14:09:12 galaxy Exp $
 
 Summary: Enhanced IP routing and network devices configuration tools.
 Name: iproute2
 Version: 2.6.38
-Release: owl3
+Release: owl4
 License: GPL
 Group: Applications/System
 Source0: http://devresources.linuxfoundation.org/dev/iproute2/download/%name-%version.tar.bz2
 # Signature: http://devresources.linuxfoundation.org/dev/iproute2/download/%name-%version.tar.bz2.sig
 Patch0: iproute2-2.4.7-alt-rtacct_daemon.diff
-Patch1: iproute2-2.6.18-alt-ifcfg.diff
-Patch2: iproute2-2.6.18-alt-ip-man.diff
+Patch1: iproute2-2.6.38-alt-ifcfg.diff
+Patch2: iproute2-2.6.38-alt-ip-man.diff
 Patch3: iproute2-2.6.28-alt-format.diff
 Patch4: iproute2-2.6.38-owl-warnings.diff
 Patch5: iproute2-2.6.38-owl-tmp.diff
@@ -74,6 +74,9 @@ ln -sf lnstat %buildroot/%_sbindir/ctstat
 %_mandir/man*/*
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.6.38-owl4
+- Regenerated the ifcfg and ip-man patches since they were fuzzy.
+
 * Mon Feb 27 2012 Solar Designer <solar-at-owl.openwall.com> 2.6.38-owl3
 - Search for the iptables library directory under /lib64 before /lib.
 
@@ -118,5 +121,5 @@ via sending unicast netlink messages to any process on the system.
 * Thu Feb 07 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Tue Dec 28 2001 Michail Litvak <mci-at-owl.openwall.com>
+* Fri Dec 28 2001 Michail Litvak <mci-at-owl.openwall.com>
 - spec-file based on RH's

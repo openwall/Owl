@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/zlib/zlib.spec,v 1.14 2009/09/09 14:17:51 ldv Exp $
+# $Owl: Owl/packages/zlib/zlib.spec,v 1.15 2014/07/12 14:19:46 galaxy Exp $
 
 Summary: The zlib compression and decompression library.
 Name: zlib
 Version: 1.2.3
-Release: owl1
+Release: owl2
 License: BSD
 Group: System Environment/Libraries
 URL: http://www.zlib.net
@@ -13,7 +13,6 @@ Patch1: zlib-1.2.3-alt-gzio-gzerror.diff
 Patch2: zlib-1.2.3-alt-gzio-gzread-transparent.diff
 Patch3: zlib-1.2.3-alt-versioning.diff
 Patch4: zlib-1.2.3-rh-make-test.diff
-PreReq: /sbin/ldconfig
 Prefix: %_prefix
 BuildRoot: /override/%name-%version
 
@@ -96,6 +95,9 @@ install -p -m644 License README {FAQ,ChangeLog,algorithm.txt}.bz2 \
 %docdir/*.bz2
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.2.3-owl2
+- Removed the deprecated PreReq tag.
+
 * Sun Oct 23 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.2.3-owl1
 - Updated to 1.2.3.
 - Imported a bunch of patches from ALT's zlib-1.2.3-alt2 package,

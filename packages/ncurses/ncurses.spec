@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.39 2010/10/19 12:06:39 solar Exp $
+# $Owl: Owl/packages/ncurses/ncurses.spec,v 1.40 2014/07/12 14:14:43 galaxy Exp $
 
 %define BUILD_CXX 0
 %define BUILD_GPM 0
@@ -14,7 +14,7 @@
 Summary: A CRT screen handling and optimization package.
 Name: ncurses
 Version: %basic_version%{?patchlevel:.%patchlevel}
-Release: owl1
+Release: owl2
 License: distributable
 Group: System Environment/Libraries
 URL: http://dickey.his.com/ncurses/ncurses.html
@@ -27,7 +27,6 @@ Source2: ncurses-linux-m
 Source3: ncurses-resetall.sh
 Patch0: ncurses-5.7-owl-glibc-enable_secure.diff
 Patch1: ncurses-5.7-owl-warnings.diff
-PreReq: /sbin/ldconfig
 BuildRoot: /override/%name-%version
 
 %description
@@ -204,6 +203,9 @@ rm %buildroot%_datadir/terminfo/s/screen{,-bce,-s}
 %endif
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 5.7.20101009-owl2
+- Removed the deprecated PreReq tag.
+
 * Sun Oct 17 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 5.7.20101009-owl1
 - Patchlevel is used as version suffix.
 

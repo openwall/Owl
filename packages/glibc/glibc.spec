@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.137 2014/07/07 15:19:04 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.138 2014/07/12 14:09:05 galaxy Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 1.3
-Release: owl22
+Release: owl23
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
@@ -43,7 +43,7 @@ Patch2: glibc-2.3.6-cvs-20060103-ctermid.diff
 Patch3: glibc-2.3.6-cvs-tls_static_nelem.diff
 
 # RH
-Patch100: glibc-2.3.5-fedora.diff
+Patch100: glibc-2.3.6-fedora.diff
 
 # SuSE
 Patch200: glibc-2.3.2-suse-resolv-response-length.diff
@@ -184,7 +184,7 @@ compatibility package with necessary binaries of old libdb libraries.
 
 # RH
 # usual glibc-fedora.patch
-%patch100 -p0
+%patch100 -p1
 
 # SuSE
 # avoid read buffer overruns in apps using res_* calls
@@ -495,6 +495,10 @@ fi
 %endif
 
 %changelog
+* Thu Jul 10 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.6-owl23
+- Regenerated the ctermid, tls_static_nelem, and fedora patches since they
+were fuzzy.
+
 * Mon Jul 07 2014 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl22
 - Added OpenBSD 5.5+ "$2b$" prefix support to crypt_blowfish (same as "$2y$").
 - Replaced the bug 11449 fix introduced in 2.3.6-owl10 with its upstream
@@ -671,7 +675,7 @@ controled through BUILD_LOCALES macro.
 patch also replaces execv() to execvp() to search for cpp binary in PATH.
 - Cleaned up the spec.
 
-* Wed Dec 25 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl3
+* Sat Dec 25 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl3
 - Fixed compat-fake's provides to deal with Owl 1.1 release upgrades
 - Fixed a bug with creating buildtree using %_target_cpu, but accessing it
 using RPM_ARCH variable. Thanks goes to Piotr Janiec, who had pointed and
@@ -705,7 +709,7 @@ further corrections for whatever we've broken with the big update.
 * Mon Mar 01 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl0.3
 - Prepared spec for FHS 2.2
 
-* Thu Feb 24 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl0.2
+* Tue Feb 24 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl0.2
 - Cleaned up spec for building under "stage4" environment.
 
 * Thu Feb 19 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl0.1

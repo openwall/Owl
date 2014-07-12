@@ -1,13 +1,13 @@
-# $Owl: Owl/packages/libutempter/libutempter.spec,v 1.11 2006/01/18 15:59:52 ldv Exp $
+# $Owl: Owl/packages/libutempter/libutempter.spec,v 1.12 2014/07/12 14:09:29 galaxy Exp $
 
 Summary: A privileged helper for utmp/wtmp updates.
 Name: libutempter
 Version: 1.1.4
-Release: owl1
+Release: owl2
 License: LGPL
 Group: System Environment/Base
 Source: ftp://ftp.altlinux.org/pub/people/ldv/utempter/%name-%version.tar.bz2
-PreReq: /sbin/ldconfig, grep, /usr/sbin/groupadd
+Requires(pre): grep, /usr/sbin/groupadd
 Provides: utempter = %version-%release
 Obsoletes: utempter
 Prefix: %_prefix
@@ -59,6 +59,9 @@ grep -q ^utempter: /etc/group || groupadd -g 162 utempter
 %_includedir/utempter.h
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.1.4-owl2
+- Replaced the deprecated PreReq tag with Requires(pre).
+
 * Wed Jan 18 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.1.4-owl1
 - Updated to 1.1.4:
 Enabled almost all diagnostics supported by gcc and fixed all issues found

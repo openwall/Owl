@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/grep/grep.spec,v 1.29 2010/09/22 09:22:00 solar Exp $
+# $Owl: Owl/packages/grep/grep.spec,v 1.30 2014/07/12 14:09:10 galaxy Exp $
 
 Summary: The GNU versions of grep pattern matching utilities.
 Name: grep
 Version: 2.7
-Release: owl1
+Release: owl2
 Epoch: 1
 License: GPL
 Group: Applications/Text
@@ -15,7 +15,7 @@ Patch3: grep-2.6.3-owl-program_name.diff
 Patch4: grep-2.7-alt-owl-bound.diff
 Patch5: grep-2.6.3-deb-man.diff
 Patch6: grep-2.7-owl-warnings.diff
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 BuildRequires: pcre-devel
 BuildRequires: texinfo, gettext, sed
 BuildRoot: /override/%name-%version
@@ -81,6 +81,9 @@ fi
 %_mandir/*/*
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:2.7-owl2
+- Replaced the deprecated PreReq with Requires(post,preun).
+
 * Tue Sep 21 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:2.7-owl1
 - Updated to 2.7.
 - Dropped -deb-mmap and -deb-xmalloc patches (fixed in upstream).

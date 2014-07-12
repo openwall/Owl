@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/db4/db4.spec,v 1.24 2010/02/06 13:30:02 solar Exp $
+# $Owl: Owl/packages/db4/db4.spec,v 1.25 2014/07/12 14:08:41 galaxy Exp $
 
 %define __soversion	4.3
 %define _libdb_a	libdb-%__soversion.a
@@ -165,12 +165,18 @@ popd #%buildroot
 install -pm644 README LICENSE %buildroot%docdir/
 cp -a examples_c* %buildroot%docdir/
 
+# Remove unpackaged files
+rm %buildroot%_libdir/*.la
+
+# caught by the newer RPM
+LIB_MAJ='%__soversion'
+LIB_MAJ="${LIB_MAJ%%.*}"
+rm -- "%buildroot%_libdir/libdb-$LIB_MAJ.so"
+rm -- "%buildroot%_libdir/libdb_cxx-$LIB_MAJ.so"
+
 # Remove unneeded documentation.
 rm %buildroot%docdir/examples_*/tags
 rm -r %buildroot%docdir/java
-
-# Remove unpackaged files
-rm %buildroot%_libdir/*.la
 
 chmod -R u+w %buildroot
 

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/xinetd/xinetd.spec,v 1.43 2012/08/18 20:56:15 solar Exp $
+# $Owl: Owl/packages/xinetd/xinetd.spec,v 1.44 2014/07/12 14:19:44 galaxy Exp $
 
 Summary: The extended Internet services daemon.
 Name: xinetd
 Version: 2.3.15
-Release: owl1
+Release: owl2
 License: BSD with minor restrictions
 Group: System Environment/Daemons
 URL: http://www.xinetd.org
@@ -25,7 +25,7 @@ Patch3: xinetd-2.3.13-alt-parse_inet_addresses.diff
 Patch4: xinetd-2.3.14-rh-man.diff
 Patch5: xinetd-2.3.14-owl-man.diff
 Patch6: xinetd-2.3.15-owl-man-no-selinux.diff
-PreReq: /sbin/chkconfig
+Requires(post,preun): chkconfig
 Requires: tcp_wrappers >= 7.6-owl3.2
 Provides: inetd
 Obsoletes: inetd
@@ -119,6 +119,9 @@ fi
 %_mandir/*/*
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.15-owl2
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+
 * Sat Aug 18 2012 Solar Designer <solar-at-owl.openwall.com> 2.3.15-owl1
 - Updated to 2.3.15.
 - Corrected builtin UDP service names in the provided config files.

@@ -1,16 +1,15 @@
-# $Owl: Owl/packages/libnids/libnids.spec,v 1.21 2010/03/19 09:59:58 solar Exp $
+# $Owl: Owl/packages/libnids/libnids.spec,v 1.22 2014/07/12 14:09:23 galaxy Exp $
 
 Summary: NIDS E-component.
 Name: libnids
 Version: 1.24
-Release: owl1
+Release: owl2
 Epoch: 1
 License: GPL
 Group: System Environment/Libraries
 URL: http://libnids.sourceforge.net
 Source: %name-%version.tar.gz
 Patch0: libnids-1.23-deb-man.diff
-PreReq: /sbin/ldconfig
 BuildRequires: libpcap-devel, libnet-devel >= 1:1.1
 BuildRoot: /override/%name-%version
 
@@ -59,6 +58,9 @@ rm -rf %buildroot
 %_libdir/libnids.a
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:1.24-owl2
+- Dropped the deprecated PreReq tag.
+
 * Fri Mar 19 2010 Solar Designer <solar-at-owl.openwall.com> 1:1.24-owl1
 - Updated to 1.24.
 - Added -Wall -W to the %%optflags.

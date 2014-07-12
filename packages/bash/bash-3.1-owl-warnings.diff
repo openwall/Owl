@@ -1,4 +1,4 @@
-diff -upk.orig bash-3.1.orig/bashhist.c bash-3.1/bashhist.c
+diff -puNr bash-3.1.orig/bashhist.c bash-3.1/bashhist.c
 --- bash-3.1.orig/bashhist.c	2005-10-01 02:30:52 +0000
 +++ bash-3.1/bashhist.c	2006-01-05 19:21:02 +0000
 @@ -570,7 +570,7 @@ hc_erasedups (line)
@@ -10,7 +10,7 @@ diff -upk.orig bash-3.1.orig/bashhist.c bash-3.1/bashhist.c
      {
        if (STREQ (temp->line, line))
  	{
-diff -upk.orig bash-3.1.orig/bashline.c bash-3.1/bashline.c
+diff -puNr bash-3.1.orig/bashline.c bash-3.1/bashline.c
 --- bash-3.1.orig/bashline.c	2005-11-05 20:07:02 +0000
 +++ bash-3.1/bashline.c	2006-01-05 19:34:58 +0000
 @@ -634,7 +634,7 @@ snarf_hosts_from_file (filename)
@@ -71,7 +71,7 @@ diff -upk.orig bash-3.1.orig/bashline.c bash-3.1/bashline.c
      {
        if (passc)
  	{
-diff -upk.orig bash-3.1.orig/braces.c bash-3.1/braces.c
+diff -puNr bash-3.1.orig/braces.c bash-3.1/braces.c
 --- bash-3.1.orig/braces.c	2004-09-17 22:42:36 +0000
 +++ bash-3.1/braces.c	2006-01-05 18:12:47 +0000
 @@ -378,7 +378,7 @@ brace_gobbler (text, tlen, indx, satisfy
@@ -83,7 +83,7 @@ diff -upk.orig bash-3.1.orig/braces.c bash-3.1/braces.c
      {
        if (pass_next)
  	{
-diff -upk.orig bash-3.1.orig/builtins/bind.def bash-3.1/builtins/bind.def
+diff -puNr bash-3.1.orig/builtins/bind.def bash-3.1/builtins/bind.def
 --- bash-3.1.orig/builtins/bind.def	2003-12-19 22:56:34 +0000
 +++ bash-3.1/builtins/bind.def	2006-01-05 19:29:39 +0000
 @@ -114,7 +114,7 @@ bind_builtin (list)
@@ -95,7 +95,7 @@ diff -upk.orig bash-3.1.orig/builtins/bind.def bash-3.1/builtins/bind.def
    return_code = EXECUTION_SUCCESS;
  
    if (!bash_readline_initialized)
-diff -upk.orig bash-3.1.orig/builtins/caller.def bash-3.1/builtins/caller.def
+diff -puNr bash-3.1.orig/builtins/caller.def bash-3.1/builtins/caller.def
 --- bash-3.1.orig/builtins/caller.def	2005-09-10 16:19:57 +0000
 +++ bash-3.1/builtins/caller.def	2006-01-05 18:20:44 +0000
 @@ -76,7 +76,6 @@ caller_builtin (list)
@@ -106,7 +106,7 @@ diff -upk.orig bash-3.1.orig/builtins/caller.def bash-3.1/builtins/caller.def
    intmax_t num;
  
    GET_ARRAY_FROM_VAR ("FUNCNAME", funcname_v, funcname_a);
-diff -upk.orig bash-3.1.orig/builtins/cd.def bash-3.1/builtins/cd.def
+diff -puNr bash-3.1.orig/builtins/cd.def bash-3.1/builtins/cd.def
 --- bash-3.1.orig/builtins/cd.def	2005-10-23 18:16:16 +0000
 +++ bash-3.1/builtins/cd.def	2006-01-05 18:21:08 +0000
 @@ -223,13 +223,13 @@ cd_builtin (list)
@@ -125,7 +125,7 @@ diff -upk.orig bash-3.1.orig/builtins/cd.def bash-3.1/builtins/cd.def
  	{
  	  /* OPT is 1 if the path element is non-empty */
  	  opt = path[0] != '\0';
-diff -upk.orig bash-3.1.orig/builtins/common.c bash-3.1/builtins/common.c
+diff -puNr bash-3.1.orig/builtins/common.c bash-3.1/builtins/common.c
 --- bash-3.1.orig/builtins/common.c	2005-02-11 16:46:46 +0000
 +++ bash-3.1/builtins/common.c	2006-01-05 18:21:34 +0000
 @@ -467,9 +467,6 @@ char *
@@ -138,7 +138,7 @@ diff -upk.orig bash-3.1.orig/builtins/common.c bash-3.1/builtins/common.c
    if (no_symbolic_links)
      {
        FREE (the_current_working_directory);
-diff -upk.orig bash-3.1.orig/builtins/declare.def bash-3.1/builtins/declare.def
+diff -puNr bash-3.1.orig/builtins/declare.def bash-3.1/builtins/declare.def
 --- bash-3.1.orig/builtins/declare.def	2004-11-07 03:42:10 +0000
 +++ bash-3.1/builtins/declare.def	2006-01-05 18:21:49 +0000
 @@ -247,7 +247,7 @@ declare_internal (list, local_var)
@@ -150,7 +150,7 @@ diff -upk.orig bash-3.1.orig/builtins/declare.def bash-3.1/builtins/declare.def
  	{
  	  subscript_start = t;
  	  *t = '\0';
-diff -upk.orig bash-3.1.orig/builtins/echo.def bash-3.1/builtins/echo.def
+diff -puNr bash-3.1.orig/builtins/echo.def bash-3.1/builtins/echo.def
 --- bash-3.1.orig/builtins/echo.def	2005-09-05 15:33:40 +0000
 +++ bash-3.1/builtins/echo.def	2006-01-05 18:23:22 +0000
 @@ -30,6 +30,7 @@ $PRODUCES echo.c
@@ -170,7 +170,7 @@ diff -upk.orig bash-3.1.orig/builtins/echo.def bash-3.1/builtins/echo.def
  	{
  	  switch (i)
  	    {
-diff -upk.orig bash-3.1.orig/builtins/enable.def bash-3.1/builtins/enable.def
+diff -puNr bash-3.1.orig/builtins/enable.def bash-3.1/builtins/enable.def
 --- bash-3.1.orig/builtins/enable.def	2003-12-19 23:07:07 +0000
 +++ bash-3.1/builtins/enable.def	2006-01-05 19:12:30 +0000
 @@ -101,6 +101,9 @@ enable_builtin (list)
@@ -192,7 +192,7 @@ diff -upk.orig bash-3.1.orig/builtins/enable.def bash-3.1/builtins/enable.def
  	{
  	  replaced++;
  	  FASTCOPY ((char *)b, (char *)old_builtin, sizeof (struct builtin));
-diff -upk.orig bash-3.1.orig/builtins/evalstring.c bash-3.1/builtins/evalstring.c
+diff -puNr bash-3.1.orig/builtins/evalstring.c bash-3.1/builtins/evalstring.c
 --- bash-3.1.orig/builtins/evalstring.c	2005-10-30 23:28:24 +0000
 +++ bash-3.1/builtins/evalstring.c	2006-01-05 18:25:34 +0000
 @@ -219,7 +219,7 @@ parse_and_execute (string, from_file, fl
@@ -215,7 +215,7 @@ diff -upk.orig bash-3.1.orig/builtins/evalstring.c bash-3.1/builtins/evalstring.
  
    if (r->instruction != r_input_direction)
      return -1;
-diff -upk.orig bash-3.1.orig/builtins/fg_bg.def bash-3.1/builtins/fg_bg.def
+diff -puNr bash-3.1.orig/builtins/fg_bg.def bash-3.1/builtins/fg_bg.def
 --- bash-3.1.orig/builtins/fg_bg.def	2005-08-24 21:18:52 +0000
 +++ bash-3.1/builtins/fg_bg.def	2006-01-05 18:26:58 +0000
 @@ -150,6 +150,7 @@ fg_bg (list, foreground)
@@ -226,7 +226,7 @@ diff -upk.orig bash-3.1.orig/builtins/fg_bg.def bash-3.1/builtins/fg_bg.def
    if (foreground == 0)
      {
        old_async_pid = last_asynchronous_pid;
-diff -upk.orig bash-3.1.orig/builtins/getopt.c bash-3.1/builtins/getopt.c
+diff -puNr bash-3.1.orig/builtins/getopt.c bash-3.1/builtins/getopt.c
 --- bash-3.1.orig/builtins/getopt.c	2003-12-19 21:49:36 +0000
 +++ bash-3.1/builtins/getopt.c	2006-01-05 18:35:58 +0000
 @@ -178,7 +178,7 @@ sh_getopt (argc, argv, optstring)
@@ -238,7 +238,7 @@ diff -upk.orig bash-3.1.orig/builtins/getopt.c bash-3.1/builtins/getopt.c
      {
        if (sh_opterr)
  	BADOPT (c);
-diff -upk.orig bash-3.1.orig/builtins/getopts.def bash-3.1/builtins/getopts.def
+diff -puNr bash-3.1.orig/builtins/getopts.def bash-3.1/builtins/getopts.def
 --- bash-3.1.orig/builtins/getopts.def	2004-11-07 20:13:55 +0000
 +++ bash-3.1/builtins/getopts.def	2006-01-05 18:32:52 +0000
 @@ -162,6 +162,7 @@ dogetopts (argc, argv)
@@ -249,7 +249,7 @@ diff -upk.orig bash-3.1.orig/builtins/getopts.def bash-3.1/builtins/getopts.def
    special_error = optstr[0] == ':';
  
    if (special_error)
-diff -upk.orig bash-3.1.orig/builtins/help.def bash-3.1/builtins/help.def
+diff -puNr bash-3.1.orig/builtins/help.def bash-3.1/builtins/help.def
 --- bash-3.1.orig/builtins/help.def	2004-12-30 18:59:55 +0000
 +++ bash-3.1/builtins/help.def	2006-01-05 19:30:02 +0000
 @@ -117,7 +117,7 @@ help_builtin (list)
@@ -261,7 +261,7 @@ diff -upk.orig bash-3.1.orig/builtins/help.def bash-3.1/builtins/help.def
  	{
  	  QUIT;
  	  if ((strncmp (pattern, name, plen) == 0) ||
-diff -upk.orig bash-3.1.orig/builtins/history.def bash-3.1/builtins/history.def
+diff -puNr bash-3.1.orig/builtins/history.def bash-3.1/builtins/history.def
 --- bash-3.1.orig/builtins/history.def	2005-09-24 21:42:21 +0000
 +++ bash-3.1/builtins/history.def	2006-01-05 19:30:38 +0000
 @@ -105,6 +105,7 @@ history_builtin (list)
@@ -272,10 +272,10 @@ diff -upk.orig bash-3.1.orig/builtins/history.def bash-3.1/builtins/history.def
    reset_internal_getopt ();
    while ((opt = internal_getopt (list, "acd:npsrw")) != -1)
      {
-diff -upk.orig bash-3.1.orig/builtins/printf.def bash-3.1/builtins/printf.def
+diff -puNr bash-3.1.orig/builtins/printf.def bash-3.1/builtins/printf.def
 --- bash-3.1.orig/builtins/printf.def	2005-10-29 18:51:29 +0000
 +++ bash-3.1/builtins/printf.def	2006-01-05 18:34:27 +0000
-@@ -549,7 +549,7 @@ printstr (fmt, string, len, fieldwidth, 
+@@ -549,7 +549,7 @@ printstr (fmt, string, len, fieldwidth,
  #else
    if (string == 0 || len == 0)
  #endif
@@ -284,7 +284,7 @@ diff -upk.orig bash-3.1.orig/builtins/printf.def bash-3.1/builtins/printf.def
  
  #if 0
    s = fmt;
-diff -upk.orig bash-3.1.orig/builtins/set.def bash-3.1/builtins/set.def
+diff -puNr bash-3.1.orig/builtins/set.def bash-3.1/builtins/set.def
 --- bash-3.1.orig/builtins/set.def	2004-12-19 17:20:25 +0000
 +++ bash-3.1/builtins/set.def	2006-01-05 18:29:36 +0000
 @@ -525,7 +525,7 @@ parse_shellopts (value)
@@ -321,7 +321,7 @@ diff -upk.orig bash-3.1.orig/builtins/set.def bash-3.1/builtins/set.def
        if (!unset_function && valid_array_reference (name))
  	{
  	  t = strchr (name, '[');
-diff -upk.orig bash-3.1.orig/builtins/setattr.def bash-3.1/builtins/setattr.def
+diff -puNr bash-3.1.orig/builtins/setattr.def bash-3.1/builtins/setattr.def
 --- bash-3.1.orig/builtins/setattr.def	2005-08-09 15:32:19 +0000
 +++ bash-3.1/builtins/setattr.def	2006-01-05 18:29:55 +0000
 @@ -261,7 +261,7 @@ set_or_show_attributes (list, attribute,
@@ -333,7 +333,7 @@ diff -upk.orig bash-3.1.orig/builtins/setattr.def bash-3.1/builtins/setattr.def
  	    {
  #if defined (ARRAY_VARS)
  	      if (arrays_only && array_p (var) == 0)
-diff -upk.orig bash-3.1.orig/builtins/trap.def bash-3.1/builtins/trap.def
+diff -puNr bash-3.1.orig/builtins/trap.def bash-3.1/builtins/trap.def
 --- bash-3.1.orig/builtins/trap.def	2005-02-11 16:47:22 +0000
 +++ bash-3.1/builtins/trap.def	2006-01-05 18:30:43 +0000
 @@ -87,7 +87,7 @@ int
@@ -345,7 +345,7 @@ diff -upk.orig bash-3.1.orig/builtins/trap.def bash-3.1/builtins/trap.def
  
    list_signal_names = display = 0;
    result = EXECUTION_SUCCESS;
-diff -upk.orig bash-3.1.orig/builtins/type.def bash-3.1/builtins/type.def
+diff -puNr bash-3.1.orig/builtins/type.def bash-3.1/builtins/type.def
 --- bash-3.1.orig/builtins/type.def	2005-08-24 12:38:34 +0000
 +++ bash-3.1/builtins/type.def	2006-01-05 18:31:04 +0000
 @@ -331,7 +331,7 @@ describe_command (command, dflags)
@@ -357,7 +357,7 @@ diff -upk.orig bash-3.1.orig/builtins/type.def bash-3.1/builtins/type.def
  	{
  	  if (dflags & CDESC_TYPE)
  	    puts ("file");
-diff -upk.orig bash-3.1.orig/builtins/ulimit.def bash-3.1/builtins/ulimit.def
+diff -puNr bash-3.1.orig/builtins/ulimit.def bash-3.1/builtins/ulimit.def
 --- bash-3.1.orig/builtins/ulimit.def	2005-08-04 12:39:04 +0000
 +++ bash-3.1/builtins/ulimit.def	2006-01-05 18:32:03 +0000
 @@ -180,7 +180,9 @@ static int set_limit __P((int, RLIMTYPE,
@@ -385,7 +385,7 @@ diff -upk.orig bash-3.1.orig/builtins/ulimit.def bash-3.1/builtins/ulimit.def
 +#endif
  
  #endif /* !_MINIX */
-diff -upk.orig bash-3.1.orig/error.c bash-3.1/error.c
+diff -puNr bash-3.1.orig/error.c bash-3.1/error.c
 --- bash-3.1.orig/error.c	2005-06-30 14:25:59 +0000
 +++ bash-3.1/error.c	2006-01-05 17:25:52 +0000
 @@ -146,7 +146,9 @@ programming_error (format, va_alist)
@@ -398,7 +398,7 @@ diff -upk.orig bash-3.1.orig/error.c bash-3.1/error.c
  
  #if defined (JOB_CONTROL)
    give_terminal_to (shell_pgrp, 0);
-diff -upk.orig bash-3.1.orig/eval.c bash-3.1/eval.c
+diff -puNr bash-3.1.orig/eval.c bash-3.1/eval.c
 --- bash-3.1.orig/eval.c	2005-10-03 18:48:24 +0000
 +++ bash-3.1/eval.c	2006-01-05 16:58:29 +0000
 @@ -137,7 +137,7 @@ reader_loop ()
@@ -410,7 +410,7 @@ diff -upk.orig bash-3.1.orig/eval.c bash-3.1/eval.c
  	    {
  	      global_command = (COMMAND *)NULL;
  	      current_command_number++;
-diff -upk.orig bash-3.1.orig/execute_cmd.c bash-3.1/execute_cmd.c
+diff -puNr bash-3.1.orig/execute_cmd.c bash-3.1/execute_cmd.c
 --- bash-3.1.orig/execute_cmd.c	2005-11-05 19:37:21 +0000
 +++ bash-3.1/execute_cmd.c	2006-01-05 17:19:16 +0000
 @@ -2477,8 +2477,8 @@ execute_cond_node (cond)
@@ -424,7 +424,7 @@ diff -upk.orig bash-3.1.orig/execute_cmd.c bash-3.1/execute_cmd.c
  		  (cond->op->word[0] == '=' && cond->op->word[1] == '\0'));
  #if defined (COND_REGEXP)
        rmatch = (cond->op->word[0] == '=' && cond->op->word[1] == '~' &&
-@@ -3650,7 +3650,9 @@ execute_disk_command (words, redirects, 
+@@ -3650,7 +3650,9 @@ execute_disk_command (words, redirects,
      }
    else
      {
@@ -434,7 +434,7 @@ diff -upk.orig bash-3.1.orig/execute_cmd.c bash-3.1/execute_cmd.c
        /* Make sure that the pipes are closed in the parent. */
        close_pipes (pipe_in, pipe_out);
  #if defined (PROCESS_SUBSTITUTION) && defined (HAVE_DEV_FD)
-diff -upk.orig bash-3.1.orig/expr.c bash-3.1/expr.c
+diff -puNr bash-3.1.orig/expr.c bash-3.1/expr.c
 --- bash-3.1.orig/expr.c	2005-02-15 15:07:54 +0000
 +++ bash-3.1/expr.c	2006-01-05 17:28:14 +0000
 @@ -414,11 +414,8 @@ expassign ()
@@ -451,7 +451,7 @@ diff -upk.orig bash-3.1.orig/expr.c bash-3.1/expr.c
  
        lhs = savestring (tokstr);
        readtok ();
-diff -upk.orig bash-3.1.orig/findcmd.c bash-3.1/findcmd.c
+diff -puNr bash-3.1.orig/findcmd.c bash-3.1/findcmd.c
 --- bash-3.1.orig/findcmd.c	2005-08-17 20:49:54 +0000
 +++ bash-3.1/findcmd.c	2006-01-05 18:13:35 +0000
 @@ -216,7 +216,7 @@ _find_user_command_internal (name, flags
@@ -463,7 +463,7 @@ diff -upk.orig bash-3.1.orig/findcmd.c bash-3.1/findcmd.c
      path_list = value_cell (var);
    else
      path_list = (char *)NULL;
-diff -upk.orig bash-3.1.orig/general.c bash-3.1/general.c
+diff -puNr bash-3.1.orig/general.c bash-3.1/general.c
 --- bash-3.1.orig/general.c	2005-08-28 19:56:28 +0000
 +++ bash-3.1/general.c	2006-01-05 17:10:55 +0000
 @@ -275,7 +275,7 @@ assignment (string, flags)
@@ -475,7 +475,7 @@ diff -upk.orig bash-3.1.orig/general.c bash-3.1/general.c
      {
        /* The following is safe.  Note that '=' at the start of a word
  	 is not an assignment statement. */
-diff -upk.orig bash-3.1.orig/hashlib.c bash-3.1/hashlib.c
+diff -puNr bash-3.1.orig/hashlib.c bash-3.1/hashlib.c
 --- bash-3.1.orig/hashlib.c	2002-03-18 15:30:23 +0000
 +++ bash-3.1/hashlib.c	2006-01-05 18:08:46 +0000
 @@ -81,7 +81,7 @@ copy_bucket_array (ba, cpdata)
@@ -487,10 +487,10 @@ diff -upk.orig bash-3.1.orig/hashlib.c bash-3.1/hashlib.c
      {
        if (n == 0)
          {
-diff -upk.orig bash-3.1.orig/jobs.c bash-3.1/jobs.c
---- bash-3.1.orig/jobs.c	2005-11-12 04:13:27 +0000
-+++ bash-3.1/jobs.c	2006-01-05 17:30:48 +0000
-@@ -743,7 +743,7 @@ bgp_search (pid)
+diff -puNr bash-3.1.orig/jobs.c bash-3.1/jobs.c
+--- bash-3.1.orig/jobs.c	2014-06-27 20:29:40 +0000
++++ bash-3.1/jobs.c	2014-06-27 20:30:29 +0000
+@@ -746,7 +746,7 @@ bgp_search (pid)
  static void
  bgp_prune ()
  {
@@ -499,7 +499,7 @@ diff -upk.orig bash-3.1.orig/jobs.c bash-3.1/jobs.c
  
    while (bgpids.npid > js.c_childmax)
      {
-@@ -896,8 +896,7 @@ delete_job (job_index, warn_stopped)
+@@ -934,8 +934,7 @@ delete_job (job_index, warn_stopped)
  {
    register JOB *temp;
    PROCESS *proc;
@@ -509,7 +509,7 @@ diff -upk.orig bash-3.1.orig/jobs.c bash-3.1/jobs.c
  
    if (js.j_jobslots == 0 || jobs_list_frozen)
      return;
-@@ -958,7 +957,7 @@ nohup_job (job_index)
+@@ -996,7 +995,7 @@ nohup_job (job_index)
    if (js.j_jobslots == 0)
      return;
  
@@ -518,7 +518,7 @@ diff -upk.orig bash-3.1.orig/jobs.c bash-3.1/jobs.c
      temp->flags |= J_NOHUP;
  }
  
-diff -upk.orig bash-3.1.orig/jobs.h bash-3.1/jobs.h
+diff -puNr bash-3.1.orig/jobs.h bash-3.1/jobs.h
 --- bash-3.1.orig/jobs.h	2005-10-18 15:03:27 +0000
 +++ bash-3.1/jobs.h	2006-01-05 17:44:19 +0000
 @@ -229,6 +229,10 @@ extern void default_tty_job_signals __P(
@@ -532,9 +532,9 @@ diff -upk.orig bash-3.1.orig/jobs.h bash-3.1/jobs.h
  #if defined (JOB_CONTROL)
  extern int job_control;
  #endif
-diff -upk.orig bash-3.1.orig/lib/glob/glob.c bash-3.1/lib/glob/glob.c
---- bash-3.1.orig/lib/glob/glob.c	2005-03-24 17:42:27 +0000
-+++ bash-3.1/lib/glob/glob.c	2006-01-05 18:45:55 +0000
+diff -puNr bash-3.1.orig/lib/glob/glob.c bash-3.1/lib/glob/glob.c
+--- bash-3.1.orig/lib/glob/glob.c	2014-06-27 20:29:40 +0000
++++ bash-3.1/lib/glob/glob.c	2014-06-27 20:30:29 +0000
 @@ -184,7 +184,7 @@ mbskipname (pat, dname)
  {
    int ret;
@@ -552,10 +552,10 @@ diff -upk.orig bash-3.1.orig/lib/glob/glob.c bash-3.1/lib/glob/glob.c
 +  count = lose = skip = nalloca = 0;
  
    firstmalloc = 0;
- 
-diff -upk.orig bash-3.1.orig/lib/glob/sm_loop.c bash-3.1/lib/glob/sm_loop.c
---- bash-3.1.orig/lib/glob/sm_loop.c	2005-10-17 01:21:04 +0000
-+++ bash-3.1/lib/glob/sm_loop.c	2006-01-05 18:53:11 +0000
+   nalloca = 0;
+diff -puNr bash-3.1.orig/lib/glob/sm_loop.c bash-3.1/lib/glob/sm_loop.c
+--- bash-3.1.orig/lib/glob/sm_loop.c	2014-06-27 20:29:40 +0000
++++ bash-3.1/lib/glob/sm_loop.c	2014-06-27 20:30:29 +0000
 @@ -302,7 +302,7 @@ BRACKMATCH (p, test, flags)
       circumflex (`^') in its role in a `nonmatching list'.  A bracket
       expression starting with an unquoted circumflex character produces
@@ -595,7 +595,7 @@ diff -upk.orig bash-3.1.orig/lib/glob/sm_loop.c bash-3.1/lib/glob/sm_loop.c
  		break;
  	      if (pnext == prest)
  		break;
-diff -upk.orig bash-3.1.orig/lib/glob/smatch.c bash-3.1/lib/glob/smatch.c
+diff -puNr bash-3.1.orig/lib/glob/smatch.c bash-3.1/lib/glob/smatch.c
 --- bash-3.1.orig/lib/glob/smatch.c	2005-03-24 17:39:57 +0000
 +++ bash-3.1/lib/glob/smatch.c	2006-01-05 18:53:38 +0000
 @@ -247,7 +247,6 @@ rangecmp_wc (c1, c2)
@@ -606,7 +606,7 @@ diff -upk.orig bash-3.1.orig/lib/glob/smatch.c bash-3.1/lib/glob/smatch.c
  
    if (c1 == c2)
      return 0;
-diff -upk.orig bash-3.1.orig/lib/glob/strmatch.c bash-3.1/lib/glob/strmatch.c
+diff -puNr bash-3.1.orig/lib/glob/strmatch.c bash-3.1/lib/glob/strmatch.c
 --- bash-3.1.orig/lib/glob/strmatch.c	2004-01-31 04:22:04 +0000
 +++ bash-3.1/lib/glob/strmatch.c	2006-01-05 18:48:41 +0000
 @@ -25,7 +25,7 @@
@@ -618,7 +618,7 @@ diff -upk.orig bash-3.1.orig/lib/glob/strmatch.c bash-3.1/lib/glob/strmatch.c
  extern int internal_wstrmatch __P((wchar_t *, wchar_t *, int));
  #endif
  
-diff -upk.orig bash-3.1.orig/lib/sh/makepath.c bash-3.1/lib/sh/makepath.c
+diff -puNr bash-3.1.orig/lib/sh/makepath.c bash-3.1/lib/sh/makepath.c
 --- bash-3.1.orig/lib/sh/makepath.c	2001-11-24 19:27:19 +0000
 +++ bash-3.1/lib/sh/makepath.c	2006-01-05 18:41:19 +0000
 @@ -110,7 +110,7 @@ sh_makepath (path, dir, flags)
@@ -630,7 +630,7 @@ diff -upk.orig bash-3.1.orig/lib/sh/makepath.c bash-3.1/lib/sh/makepath.c
      ;
    if (xpath != path)
      free (xpath);
-diff -upk.orig bash-3.1.orig/lib/sh/netopen.c bash-3.1/lib/sh/netopen.c
+diff -puNr bash-3.1.orig/lib/sh/netopen.c bash-3.1/lib/sh/netopen.c
 --- bash-3.1.orig/lib/sh/netopen.c	2003-12-20 00:10:24 +0000
 +++ bash-3.1/lib/sh/netopen.c	2006-01-05 19:13:27 +0000
 @@ -25,6 +25,8 @@
@@ -656,7 +656,7 @@ diff -upk.orig bash-3.1.orig/lib/sh/netopen.c bash-3.1/lib/sh/netopen.c
  #endif /* !HAVE_NETWORK */
 +
 +#endif /* !NETWORK_REDIRECTIONS */
-diff -upk.orig bash-3.1.orig/lib/sh/pathcanon.c bash-3.1/lib/sh/pathcanon.c
+diff -puNr bash-3.1.orig/lib/sh/pathcanon.c bash-3.1/lib/sh/pathcanon.c
 --- bash-3.1.orig/lib/sh/pathcanon.c	2005-02-22 22:40:56 +0000
 +++ bash-3.1/lib/sh/pathcanon.c	2006-01-05 18:41:38 +0000
 @@ -114,7 +114,7 @@ sh_canonpath (path, flags)
@@ -668,7 +668,7 @@ diff -upk.orig bash-3.1.orig/lib/sh/pathcanon.c bash-3.1/lib/sh/pathcanon.c
      {
        stub_char = DIRSEP;
  #if defined (__CYGWIN__)
-diff -upk.orig bash-3.1.orig/lib/sh/spell.c bash-3.1/lib/sh/spell.c
+diff -puNr bash-3.1.orig/lib/sh/spell.c bash-3.1/lib/sh/spell.c
 --- bash-3.1.orig/lib/sh/spell.c	2001-11-27 17:34:15 +0000
 +++ bash-3.1/lib/sh/spell.c	2006-01-05 18:42:08 +0000
 @@ -95,7 +95,7 @@ spname(oldname, newname)
@@ -680,7 +680,7 @@ diff -upk.orig bash-3.1.orig/lib/sh/spell.c bash-3.1/lib/sh/spell.c
  	;
      }
  }
-diff -upk.orig bash-3.1.orig/lib/sh/strtrans.c bash-3.1/lib/sh/strtrans.c
+diff -puNr bash-3.1.orig/lib/sh/strtrans.c bash-3.1/lib/sh/strtrans.c
 --- bash-3.1.orig/lib/sh/strtrans.c	2004-10-20 17:52:01 +0000
 +++ bash-3.1/lib/sh/strtrans.c	2006-01-05 18:42:44 +0000
 @@ -166,7 +166,7 @@ ansic_quote (str, flags, rlen)
@@ -701,7 +701,7 @@ diff -upk.orig bash-3.1.orig/lib/sh/strtrans.c bash-3.1/lib/sh/strtrans.c
      if (ISPRINT (c) == 0)
        return 1;
  
-diff -upk.orig bash-3.1.orig/lib/sh/tmpfile.c bash-3.1/lib/sh/tmpfile.c
+diff -puNr bash-3.1.orig/lib/sh/tmpfile.c bash-3.1/lib/sh/tmpfile.c
 --- bash-3.1.orig/lib/sh/tmpfile.c	2004-02-12 16:33:36 +0000
 +++ bash-3.1/lib/sh/tmpfile.c	2006-01-05 18:41:57 +0000
 @@ -55,8 +55,6 @@ static unsigned long filenum = 1L;
@@ -713,7 +713,7 @@ diff -upk.orig bash-3.1.orig/lib/sh/tmpfile.c bash-3.1/lib/sh/tmpfile.c
    if (sys_tmpdir)
      return sys_tmpdir;
  
-diff -upk.orig bash-3.1.orig/lib/sh/winsize.c bash-3.1/lib/sh/winsize.c
+diff -puNr bash-3.1.orig/lib/sh/winsize.c bash-3.1/lib/sh/winsize.c
 --- bash-3.1.orig/lib/sh/winsize.c	2005-11-12 04:17:19 +0000
 +++ bash-3.1/lib/sh/winsize.c	2006-01-05 19:02:00 +0000
 @@ -23,6 +23,8 @@
@@ -725,7 +725,7 @@ diff -upk.orig bash-3.1.orig/lib/sh/winsize.c bash-3.1/lib/sh/winsize.c
  
  #if defined (HAVE_UNISTD_H)
  #  include <unistd.h>
-diff -upk.orig bash-3.1.orig/lib/tilde/tilde.c bash-3.1/lib/tilde/tilde.c
+diff -puNr bash-3.1.orig/lib/tilde/tilde.c bash-3.1/lib/tilde/tilde.c
 --- bash-3.1.orig/lib/tilde/tilde.c	2005-05-07 18:49:51 +0000
 +++ bash-3.1/lib/tilde/tilde.c	2006-01-05 18:53:58 +0000
 @@ -196,7 +196,7 @@ tilde_expand (string)
@@ -737,7 +737,7 @@ diff -upk.orig bash-3.1.orig/lib/tilde/tilde.c bash-3.1/lib/tilde/tilde.c
      result = (char *)xmalloc (result_size = (strlen (string) + 16));
    else
      result = (char *)xmalloc (result_size = (strlen (string) + 1));
-diff -upk.orig bash-3.1.orig/locale.c bash-3.1/locale.c
+diff -puNr bash-3.1.orig/locale.c bash-3.1/locale.c
 --- bash-3.1.orig/locale.c	2004-08-02 01:30:19 +0000
 +++ bash-3.1/locale.c	2006-01-05 18:13:12 +0000
 @@ -78,7 +78,6 @@ void
@@ -748,7 +748,7 @@ diff -upk.orig bash-3.1.orig/locale.c bash-3.1/locale.c
  
  #if defined (HAVE_SETLOCALE)
  
-diff -upk.orig bash-3.1.orig/mailcheck.c bash-3.1/mailcheck.c
+diff -puNr bash-3.1.orig/mailcheck.c bash-3.1/mailcheck.c
 --- bash-3.1.orig/mailcheck.c	2004-11-06 01:00:04 +0000
 +++ bash-3.1/mailcheck.c	2006-01-05 18:09:17 +0000
 @@ -338,7 +338,7 @@ remember_mail_dates ()
@@ -769,7 +769,7 @@ diff -upk.orig bash-3.1.orig/mailcheck.c bash-3.1/mailcheck.c
  	    {
  	      puts (temp);
  	      free (temp);
-diff -upk.orig bash-3.1.orig/make_cmd.c bash-3.1/make_cmd.c
+diff -puNr bash-3.1.orig/make_cmd.c bash-3.1/make_cmd.c
 --- bash-3.1.orig/make_cmd.c	2005-07-07 12:14:57 +0000
 +++ bash-3.1/make_cmd.c	2006-01-05 17:11:53 +0000
 @@ -602,7 +602,7 @@ make_here_document (temp)
@@ -789,9 +789,9 @@ diff -upk.orig bash-3.1.orig/make_cmd.c bash-3.1/make_cmd.c
  #endif
  
    temp = (FUNCTION_DEF *)xmalloc (sizeof (FUNCTION_DEF));
-diff -upk.orig bash-3.1.orig/parse.y bash-3.1/parse.y
---- bash-3.1.orig/parse.y	2006-01-09 22:37:22 +0000
-+++ bash-3.1/parse.y	2006-01-09 22:37:55 +0000
+diff -puNr bash-3.1.orig/parse.y bash-3.1/parse.y
+--- bash-3.1.orig/parse.y	2014-06-27 20:29:40 +0000
++++ bash-3.1/parse.y	2014-06-27 20:30:29 +0000
 @@ -192,7 +192,9 @@ static int token_is_assignment __P((char
  static int token_is_ident __P((char *, int));
  #endif
@@ -810,7 +810,7 @@ diff -upk.orig bash-3.1.orig/parse.y bash-3.1/parse.y
  
    QUIT;
  
-@@ -2737,6 +2738,7 @@ parse_matched_pair (qc, open, close, len
+@@ -2738,6 +2739,7 @@ parse_matched_pair (qc, open, close, len
    rflags = (qc == '"') ? P_DQUOTE : (flags & P_DQUOTE);
  
    ret = (char *)xmalloc (retsize = 64);
@@ -818,7 +818,7 @@ diff -upk.orig bash-3.1.orig/parse.y bash-3.1/parse.y
    retind = 0;
  
    start_lineno = line_number;
-@@ -2933,8 +2935,8 @@ static int
+@@ -2944,8 +2946,8 @@ static int
  parse_dparen (c)
       int c;
  {
@@ -829,7 +829,7 @@ diff -upk.orig bash-3.1.orig/parse.y bash-3.1/parse.y
    WORD_DESC *wd;
  
  #if defined (ARITH_FOR_COMMAND)
-@@ -3049,7 +3051,7 @@ cond_error ()
+@@ -3060,7 +3062,7 @@ cond_error ()
      parser_error (cond_lineno, _("unexpected EOF while looking for `]]'"));
    else if (cond_token != COND_ERROR)
      {
@@ -838,7 +838,7 @@ diff -upk.orig bash-3.1.orig/parse.y bash-3.1/parse.y
  	{
  	  parser_error (cond_lineno, _("syntax error in conditional expression: unexpected token `%s'"), etext);
  	  free (etext);
-@@ -3131,7 +3133,7 @@ cond_term ()
+@@ -3142,7 +3144,7 @@ cond_term ()
  	{
  	  if (term)
  	    dispose_cond_node (term);		/* ( */
@@ -847,7 +847,7 @@ diff -upk.orig bash-3.1.orig/parse.y bash-3.1/parse.y
  	    {
  	      parser_error (lineno, _("unexpected token `%s', expected `)'"), etext);
  	      free (etext);
-@@ -3163,7 +3165,7 @@ cond_term ()
+@@ -3174,7 +3176,7 @@ cond_term ()
        else
  	{
  	  dispose_word (op);
@@ -856,7 +856,7 @@ diff -upk.orig bash-3.1.orig/parse.y bash-3.1/parse.y
  	    {
  	      parser_error (line_number, _("unexpected argument `%s' to conditional unary operator"), etext);
  	      free (etext);
-@@ -3204,7 +3206,7 @@ cond_term ()
+@@ -3215,7 +3217,7 @@ cond_term ()
  	}
        else
  	{
@@ -865,7 +865,7 @@ diff -upk.orig bash-3.1.orig/parse.y bash-3.1/parse.y
  	    {
  	      parser_error (line_number, _("unexpected token `%s', conditional binary operator expected"), etext);
  	      free (etext);
-@@ -3224,7 +3226,7 @@ cond_term ()
+@@ -3235,7 +3237,7 @@ cond_term ()
  	}
        else
  	{
@@ -874,7 +874,7 @@ diff -upk.orig bash-3.1.orig/parse.y bash-3.1/parse.y
  	    {
  	      parser_error (line_number, _("unexpected argument `%s' to conditional binary operator"), etext);
  	      free (etext);
-@@ -3242,7 +3244,7 @@ cond_term ()
+@@ -3253,7 +3255,7 @@ cond_term ()
      {
        if (tok < 256)
  	parser_error (line_number, _("unexpected token `%c' in conditional command"), tok);
@@ -883,7 +883,7 @@ diff -upk.orig bash-3.1.orig/parse.y bash-3.1/parse.y
  	{
  	  parser_error (line_number, _("unexpected token `%s' in conditional command"), etext);
  	  free (etext);
-@@ -3986,8 +3988,9 @@ decode_prompt_string (string)
+@@ -3997,8 +3999,9 @@ decode_prompt_string (string)
    result = (char *)xmalloc (result_size = PROMPT_GROWTH);
    result[result_index = 0] = 0;
    temp = (char *)NULL;
@@ -894,7 +894,7 @@ diff -upk.orig bash-3.1.orig/parse.y bash-3.1/parse.y
      {
        if (posixly_correct && c == '!')
  	{
-@@ -4351,10 +4354,10 @@ error_token_from_token (token)
+@@ -4362,10 +4365,10 @@ error_token_from_token (token)
  {
    char *t;
  
@@ -907,7 +907,7 @@ diff -upk.orig bash-3.1.orig/parse.y bash-3.1/parse.y
      return t;
  
    t = (char *)NULL;
-@@ -4506,6 +4509,7 @@ report_syntax_error (message)
+@@ -4517,6 +4520,7 @@ report_syntax_error (message)
    last_command_exit_value = EX_USAGE;
  }
  
@@ -915,7 +915,7 @@ diff -upk.orig bash-3.1.orig/parse.y bash-3.1/parse.y
  /* ??? Needed function. ??? We have to be able to discard the constructs
     created during parsing.  In the case of error, we want to return
     allocated objects to the memory pool.  In the case of no error, we want
-@@ -4516,6 +4520,7 @@ discard_parser_constructs (error_p)
+@@ -4527,6 +4531,7 @@ discard_parser_constructs (error_p)
       int error_p;
  {
  }
@@ -923,7 +923,7 @@ diff -upk.orig bash-3.1.orig/parse.y bash-3.1/parse.y
  
  /************************************************
   *						*
-diff -upk.orig bash-3.1.orig/pathexp.c bash-3.1/pathexp.c
+diff -puNr bash-3.1.orig/pathexp.c bash-3.1/pathexp.c
 --- bash-3.1.orig/pathexp.c	2002-05-06 17:43:05 +0000
 +++ bash-3.1/pathexp.c	2006-01-05 18:12:21 +0000
 @@ -67,7 +67,7 @@ unquoted_glob_pattern_p (string)
@@ -944,7 +944,7 @@ diff -upk.orig bash-3.1.orig/pathexp.c bash-3.1/pathexp.c
      {
        if (numitems + 1 >= maxitems)
  	{
-diff -upk.orig bash-3.1.orig/pcomplete.c bash-3.1/pcomplete.c
+diff -puNr bash-3.1.orig/pcomplete.c bash-3.1/pcomplete.c
 --- bash-3.1.orig/pcomplete.c	2005-11-16 18:42:20 +0000
 +++ bash-3.1/pcomplete.c	2006-01-05 19:28:38 +0000
 @@ -520,6 +520,8 @@ it_init_joblist (itp, jstate)
@@ -965,7 +965,7 @@ diff -upk.orig bash-3.1.orig/pcomplete.c bash-3.1/pcomplete.c
    char *ntxt;		/* dequoted TEXT to use in comparisons */
  
    if (cs->words == 0 || cs->words[0] == '\0')
-diff -upk.orig bash-3.1.orig/redir.c bash-3.1/redir.c
+diff -puNr bash-3.1.orig/redir.c bash-3.1/redir.c
 --- bash-3.1.orig/redir.c	2005-10-11 19:58:13 +0000
 +++ bash-3.1/redir.c	2006-01-05 19:11:27 +0000
 @@ -93,6 +93,7 @@ redirection_error (temp, error)
@@ -1020,7 +1020,7 @@ diff -upk.orig bash-3.1.orig/redir.c bash-3.1/redir.c
  }
  
  /* Return non-zero if any of the redirections in REDIRS alter the standard
-diff -upk.orig bash-3.1.orig/shell.c bash-3.1/shell.c
+diff -puNr bash-3.1.orig/shell.c bash-3.1/shell.c
 --- bash-3.1.orig/shell.c	2005-09-05 02:32:08 +0000
 +++ bash-3.1/shell.c	2006-01-05 16:58:12 +0000
 @@ -796,7 +796,7 @@ parse_shell_options (argv, arg_start, ar
@@ -1032,9 +1032,9 @@ diff -upk.orig bash-3.1.orig/shell.c bash-3.1/shell.c
  	{
  	  switch (arg_character)
  	    {
-diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
---- bash-3.1.orig/subst.c	2006-01-09 22:37:22 +0000
-+++ bash-3.1/subst.c	2006-01-09 22:37:55 +0000
+diff -puNr bash-3.1.orig/subst.c bash-3.1/subst.c
+--- bash-3.1.orig/subst.c	2014-06-27 20:29:40 +0000
++++ bash-3.1/subst.c	2014-06-27 20:30:29 +0000
 @@ -50,6 +50,8 @@
  
  #include "shmbutil.h"
@@ -1237,7 +1237,7 @@ diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
      {
        if (assign_list)
  	{
-@@ -3312,7 +3327,7 @@ remove_wpattern (wparam, wstrlen, wpatte
+@@ -3319,7 +3334,7 @@ remove_wpattern (wparam, wstrlen, wpatte
       int op;
  {
    wchar_t wc;
@@ -1246,7 +1246,7 @@ diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
    wchar_t *ret;
  
    switch (op)
-@@ -3767,6 +3782,7 @@ getpattern (value, quoted, expandpat)
+@@ -3774,6 +3789,7 @@ getpattern (value, quoted, expandpat)
  {
    char *pat, *tword;
    WORD_LIST *l;
@@ -1254,7 +1254,7 @@ diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
    int i;
  
    /* There is a problem here:  how to handle single or double quotes in the
-@@ -3774,7 +3790,6 @@ getpattern (value, quoted, expandpat)
+@@ -3781,7 +3797,6 @@ getpattern (value, quoted, expandpat)
       POSIX.2 says that enclosing double quotes do not cause the pattern to
       be quoted, but does that leave us a problem with @ and array[@] and their
       expansions inside a pattern? */
@@ -1262,7 +1262,7 @@ diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
    if (expandpat && (quoted & (Q_HERE_DOCUMENT|Q_DOUBLE_QUOTES)) && *tword)
      {
        i = 0;
-@@ -4387,6 +4402,7 @@ read_comsub (fd, quoted)
+@@ -4394,6 +4409,7 @@ read_comsub (fd, quoted)
  
    istring = (char *)NULL;
    istring_index = istring_size = bufn = 0;
@@ -1270,7 +1270,7 @@ diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
  
  #ifdef __CYGWIN__
    setmode (fd, O_TEXT);		/* we don't want CR/LF, we want Unix-style */
-@@ -4859,7 +4875,7 @@ parameter_brace_expand_word (name, var_i
+@@ -4866,7 +4882,7 @@ parameter_brace_expand_word (name, var_i
   		  : quote_escapes (temp);
      }
  #endif
@@ -1279,7 +1279,7 @@ diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
      {
        if (var_isset (var) && invisible_p (var) == 0)
  	{
-@@ -5098,6 +5114,7 @@ parameter_brace_expand_length (name)
+@@ -5105,6 +5121,7 @@ parameter_brace_expand_length (name)
      number = number_of_args ();
    else if ((sh_syntaxtab[(unsigned char) name[1]] & CSPECVAR) && name[2] == '\0')
      {
@@ -1287,7 +1287,7 @@ diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
        /* Take the lengths of some of the shell's special parameters. */
        switch (name[1])
  	{
-@@ -5255,6 +5272,7 @@ verify_substring_values (value, substr, 
+@@ -5262,6 +5279,7 @@ verify_substring_values (value, substr,
      return (0);
  
    len = -1;	/* paranoia */
@@ -1295,7 +1295,7 @@ diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
    switch (vtype)
      {
      case VT_VARIABLE:
-@@ -5615,7 +5633,7 @@ pos_params_pat_subst (string, pat, rep, 
+@@ -5622,7 +5640,7 @@ pos_params_pat_subst (string, pat, rep,
  {
    WORD_LIST *save, *params;
    WORD_DESC *w;
@@ -1304,7 +1304,7 @@ diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
  
    save = params = list_rest_of_args ();
    if (save == 0)
-@@ -5681,10 +5699,8 @@ parameter_brace_patsub (varname, value, 
+@@ -5688,10 +5706,8 @@ parameter_brace_patsub (varname, value,
    if (starsub)
      mflags |= MATCH_STARSUB;
  
@@ -1316,7 +1316,7 @@ diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
  
    if (rep && *rep == '\0')
      rep = (char *)NULL;
-@@ -5726,6 +5742,7 @@ parameter_brace_patsub (varname, value, 
+@@ -5733,6 +5749,7 @@ parameter_brace_patsub (varname, value,
       other cases if QUOTED == 0, since the posparams and arrays
       indexed by * or @ do special things when QUOTED != 0. */
  
@@ -1324,7 +1324,7 @@ diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
    switch (vtype)
      {
      case VT_VARIABLE:
-@@ -5831,7 +5848,7 @@ parameter_brace_expand (string, indexp, 
+@@ -5838,7 +5855,7 @@ parameter_brace_expand (string, indexp,
  
    /* Find out what character ended the variable name.  Then
       do the appropriate thing. */
@@ -1333,7 +1333,7 @@ diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
      sindex++;
  
    /* If c is followed by one of the valid parameter expansion
-@@ -5841,7 +5858,7 @@ parameter_brace_expand (string, indexp, 
+@@ -5848,7 +5865,7 @@ parameter_brace_expand (string, indexp,
    if (c == ':' && VALID_PARAM_EXPAND_CHAR (string[sindex]))
      {
        check_nullness++;
@@ -1342,7 +1342,7 @@ diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
  	sindex++;
      }
    else if (c == ':' && string[sindex] != RBRACE)
-@@ -7293,7 +7310,7 @@ string_quote_removal (string, quoted)
+@@ -7300,7 +7317,7 @@ string_quote_removal (string, quoted)
  
    r = result_string = (char *)xmalloc (slen + 1);
  
@@ -1351,7 +1351,7 @@ diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
      {
        switch (c)
  	{
-@@ -7474,7 +7491,7 @@ word_list_split (list)
+@@ -7481,7 +7498,7 @@ word_list_split (list)
  {
    WORD_LIST *result, *t, *tresult, *e;
  
@@ -1360,7 +1360,7 @@ diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
      {
        tresult = word_split (t->word, ifs_value);
  #if 0
-@@ -7789,7 +7806,7 @@ brace_expand_word_list (tlist, eflags)
+@@ -7796,7 +7813,7 @@ brace_expand_word_list (tlist, eflags)
  	{
  	  expansions = brace_expand (tlist->word->word);
  
@@ -1369,7 +1369,7 @@ diff -upk.orig bash-3.1.orig/subst.c bash-3.1/subst.c
  	    {
  	      w = make_word (temp_string);
  	      /* If brace expansion didn't change the word, preserve
-diff -upk.orig bash-3.1.orig/unwind_prot.c bash-3.1/unwind_prot.c
+diff -puNr bash-3.1.orig/unwind_prot.c bash-3.1/unwind_prot.c
 --- bash-3.1.orig/unwind_prot.c	2002-02-28 19:34:05 +0000
 +++ bash-3.1/unwind_prot.c	2006-01-05 18:11:57 +0000
 @@ -235,7 +235,7 @@ unwind_frame_discard_internal (tag, igno
@@ -1390,9 +1390,9 @@ diff -upk.orig bash-3.1.orig/unwind_prot.c bash-3.1/unwind_prot.c
      {
        unwind_protect_list = elt->head.next;
  
-diff -upk.orig bash-3.1.orig/variables.c bash-3.1/variables.c
---- bash-3.1.orig/variables.c	2006-01-09 22:37:22 +0000
-+++ bash-3.1/variables.c	2006-01-09 22:37:55 +0000
+diff -puNr bash-3.1.orig/variables.c bash-3.1/variables.c
+--- bash-3.1.orig/variables.c	2014-06-27 20:29:40 +0000
++++ bash-3.1/variables.c	2014-06-27 20:30:29 +0000
 @@ -144,8 +144,10 @@ static int export_env_size;
  
  #if defined (READLINE)

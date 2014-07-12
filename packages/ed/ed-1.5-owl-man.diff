@@ -1,6 +1,6 @@
---- ed-1.4/doc/ed.1.orig	2009-08-25 21:08:48.000000000 +0000
-+++ ed-1.4/doc/ed.1	2009-08-25 21:14:33.000000000 +0000
-@@ -110,7 +110,7 @@
+--- ed-1.5.orig/doc/ed.1	2010-07-03 16:22:47 +0000
++++ ed-1.5/doc/ed.1	2014-06-28 00:29:50 +0000
+@@ -110,7 +110,7 @@ and
  .IR `!!' .
  .TP 8
  -s
@@ -9,8 +9,8 @@
  .BR ed 's
  standard input is from a script.
  
-@@ -167,7 +167,7 @@
- and is legal wherever it makes sense.
+@@ -166,7 +166,7 @@ address
+ This means "before the first line", and is valid wherever it makes sense.
  
  An address range is two addresses separated either by a comma or
 -semicolon. The value of the first address in a range cannot exceed the
@@ -18,7 +18,7 @@
  value of the second.  If only one address is given in a range, then
  the second address is set to the given address.  If an
  .IR n- tuple
-@@ -543,7 +543,7 @@
+@@ -542,7 +542,7 @@ The current address is set to last line
  (.,.)d
  Deletes the addressed lines from the buffer.
  If there is a line after the deleted range, then the current address is set
@@ -27,7 +27,7 @@
  before the deleted range.
  
  .TP 8
-@@ -994,10 +994,10 @@
+@@ -993,10 +993,10 @@ attempts to write the  buffer if the ter
  
  .SH SEE ALSO
  

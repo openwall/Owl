@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/cpio/cpio.spec,v 1.32 2011/09/15 17:15:54 segoon Exp $
+# $Owl: Owl/packages/cpio/cpio.spec,v 1.33 2014/07/12 14:08:34 galaxy Exp $
 
 Summary: A GNU archiving program.
 Name: cpio
 Version: 2.10.90
-Release: owl3
+Release: owl4
 License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/cpio/
@@ -20,7 +20,7 @@ Patch6: cpio-2.10.90-rh-error.diff
 Patch7: cpio-2.10.90-up-bound.diff
 Patch8: cpio-2.10.90-owl-warnings.diff
 
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 Provides: mt-st, rmt
 Prefix: %_prefix
 BuildRequires: texinfo, automake, autoconf, gettext
@@ -72,6 +72,9 @@ mkdir -p %buildroot/{etc,sbin}
 ln -s %_libexecdir/rmt %buildroot/etc/
 ln -s ..%_libexecdir/rmt %buildroot/sbin/
 
+%find_lang %name || :
+touch '%name.lang'
+
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
 
@@ -83,7 +86,7 @@ if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/cpio.info %_infodir/dir
 fi
 
-%files
+%files -f %name.lang
 %defattr(-,root,root)
 %doc AUTHORS NEWS README THANKS
 /bin/cpio
@@ -95,9 +98,12 @@ fi
 %_mandir/man1/cpio.1*
 %_mandir/man1/mt.1*
 %_mandir/man8/rmt.8*
-%_datadir/locale/*/LC_MESSAGES/cpio.mo
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.10.90-owl4
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+- Used %%find_lang.
+
 * Thu Sep 15 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2.10.90-owl3
 - Added checks of write(2) and lseek(2) return codes to -owl-fixes patch.
 - Fixed build failure with gcc 4.6.1.

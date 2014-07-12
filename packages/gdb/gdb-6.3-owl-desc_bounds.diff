@@ -1,7 +1,6 @@
---- gdb-6.3.orig/gdb/ada-lang.c  2006-10-29 21:24:51 +0000
-+++ gdb-6.3/gdb/ada-lang.c      2006-10-29 21:26:20 +0000
-@@ -1205,8 +1205,8 @@ desc_bounds (struct value *arr)
-       struct type *bounds_type =
+--- gdb-6.3.orig/gdb/ada-lang.c	2004-10-15 09:12:24 +0000
++++ gdb-6.3/gdb/ada-lang.c	2014-06-28 15:13:02 +0000
+@@ -1206,7 +1206,7 @@ desc_bounds (struct value *arr)
          desc_bounds_type (thin_descriptor_type (type));
        LONGEST addr;
  

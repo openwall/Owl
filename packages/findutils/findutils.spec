@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/findutils/findutils.spec,v 1.30 2010/01/26 17:18:56 solar Exp $
+# $Owl: Owl/packages/findutils/findutils.spec,v 1.31 2014/07/12 14:08:58 galaxy Exp $
 
 Summary: The GNU versions of find utilities (find and xargs).
 Name: findutils
 Version: 4.4.2
-Release: owl2
+Release: owl3
 Epoch: 1
 License: GPLv3+
 Group: Applications/File
@@ -13,7 +13,7 @@ URL: http://www.gnu.org/software/findutils/
 Source0: findutils-%version.tar.bz2
 Source1: findutils-ru.po
 Patch0: findutils-4.4.2-owl-info.diff
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 # due to sed -i
 BuildRequires: sed >= 4.1.1
 BuildRequires: automake, autoconf, libtool, gettext, texinfo
@@ -52,6 +52,9 @@ sed -i 's/ locate / /' Makefile*
 rm -rf %buildroot
 %makeinstall
 
+%find_lang %name || :
+touch '%name.lang'
+
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
 
@@ -63,7 +66,7 @@ if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/find.info %_infodir/dir
 fi
 
-%files
+%files -f %name.lang
 %defattr(-,root,root)
 %doc AUTHORS COPYING NEWS.bz2 README README-hacking THANKS
 %_bindir/find
@@ -71,10 +74,13 @@ fi
 %_mandir/man1/find.1*
 %_mandir/man1/xargs.1*
 %_infodir/*.info*
-%_datadir/locale/*/LC_MESSAGES/findutils.mo
 %exclude %_bindir/oldfind
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:4.4.2-owl3
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+- Added %%find_lang.
+
 * Sat Aug 22 2009 Dmitry V. Levin <ldv-at-owl.openwall.com> 1:4.4.2-owl2
 - Build with included regex until glibc is updated.
 

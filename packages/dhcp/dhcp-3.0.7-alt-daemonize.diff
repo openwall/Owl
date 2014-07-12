@@ -1,5 +1,6 @@
---- dhcp/relay/dhcrelay.c
-+++ dhcp/relay/dhcrelay.c
+diff -puNr dhcp-3.0.7.orig/relay/dhcrelay.c dhcp-3.0.7/relay/dhcrelay.c
+--- dhcp-3.0.7.orig/relay/dhcrelay.c	2008-05-14 20:54:24 +0000
++++ dhcp-3.0.7/relay/dhcrelay.c	2014-06-27 21:29:10 +0000
 @@ -106,7 +106,7 @@ int main (argc, argv, envp)
  	int argc;
  	char **argv, **envp;
@@ -50,8 +51,9 @@
  		pid = setsid ();
  	}
  
---- dhcp/server/dhcpd.c
-+++ dhcp/server/dhcpd.c
+diff -puNr dhcp-3.0.7.orig/server/dhcpd.c dhcp-3.0.7/server/dhcpd.c
+--- dhcp-3.0.7.orig/server/dhcpd.c	2014-06-27 21:28:24 +0000
++++ dhcp-3.0.7/server/dhcpd.c	2014-06-27 21:29:10 +0000
 @@ -197,7 +197,7 @@ int main (argc, argv, envp)
  	int argc;
  	char **argv, **envp;
@@ -61,7 +63,7 @@
  	struct servent *ent;
  	char *s;
  	int cftest = 0;
-@@ -227,14 +227,17 @@ int main (argc, argv, envp)
+@@ -226,14 +226,17 @@ int main (argc, argv, envp)
  #endif
  
  	/* Make sure we have stdin, stdout and stderr. */
@@ -86,7 +88,7 @@
  
  	/* Set up the client classification system. */
  	classification_setup ();
-@@ -571,9 +574,12 @@ int main (argc, argv, envp)
+@@ -574,9 +577,12 @@ int main (argc, argv, envp)
  
  	if (daemon) {
  		/* Become session leader and get pid... */
@@ -101,4 +103,4 @@
 +		null_fd = -1;
  		pid = setsid ();
  	}
- 
+ #endif /* !DEBUG */

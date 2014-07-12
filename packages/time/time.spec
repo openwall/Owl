@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/time/time.spec,v 1.10 2005/12/22 02:55:35 solar Exp $
+# $Owl: Owl/packages/time/time.spec,v 1.11 2014/07/12 14:19:32 galaxy Exp $
 
 Summary: A GNU utility for monitoring a program's use of system resources.
 Name: time
 Version: 1.7
-Release: owl15
+Release: owl16
 License: GPL
 Group: Applications/System
 Source0: ftp://ftp.gnu.org/gnu/time/time-%version.tar.gz
@@ -56,6 +56,9 @@ fi
 %_mandir/*/*
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.7-owl16
+- Regenerated the info_quiet patch since it was fuzzy.
+
 * Thu Dec 22 2005 Solar Designer <solar-at-owl.openwall.com> 1.7-owl15
 - Hard-wired the detection of a functioning wait3(2) since the configure
 test is unreliable (assumes that fork/sleep/exit will consume at least one

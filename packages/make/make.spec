@@ -1,15 +1,15 @@
-# $Owl: Owl/packages/make/make.spec,v 1.18 2012/12/06 13:01:56 segoon Exp $
+# $Owl: Owl/packages/make/make.spec,v 1.19 2014/07/12 14:09:32 galaxy Exp $
 
 Summary: A GNU tool which simplifies the build process for users.
 Name: make
 Version: 3.81
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Tools
 URL: http://www.gnu.org/software/make/
 Source: ftp://ftp.gnu.org/gnu/make/make-%version.tar.bz2
 Patch: make-3.81-owl-info.diff
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 Prefix: %_prefix
 BuildRequires: texinfo
 BuildRoot: /override/%name-%version
@@ -39,6 +39,9 @@ rm -rf %buildroot
 %makeinstall
 ln -sf make %buildroot%_bindir/gmake
 
+%find_lang %name || :
+touch '%name.lang'
+
 # Remove unpackaged files
 rm %buildroot%_infodir/dir
 
@@ -50,15 +53,18 @@ if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/make.info %_infodir/dir
 fi
 
-%files
+%files -f %name.lang
 %defattr(-,root,root)
 %doc AUTHORS NEWS.bz2
 %_bindir/*
 %_mandir/man*/*
 %_infodir/*.info*
-%_datadir/locale/*/LC_MESSAGES/make.mo
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.81-owl2
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+- Added %%find_lang.
+
 * Tue Jun 06 2006 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.81-owl1
 - Updated to 3.81.
 

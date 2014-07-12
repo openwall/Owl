@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openntpd/openntpd.spec,v 1.14 2006/09/18 01:17:17 solar Exp $
+# $Owl: Owl/packages/openntpd/openntpd.spec,v 1.15 2014/07/12 14:14:50 galaxy Exp $
 
 Summary: NTP time synchronization server and client.
 Name: openntpd
 Version: 3.7p1
-Release: owl5
+Release: owl6
 License: BSD License
 Group: System Environment/Daemons
 URL: http://www.openntpd.org
@@ -13,13 +13,11 @@ Source2: openntpd.control
 Patch0: openntpd-3.7p1-owl-chroot.diff
 Patch1: openntpd-3.7p1-cvs-20050524-listen_all-skip-NULL.diff
 Prefix: %_prefix
-PreReq: /var/empty
-PreReq: shadow-utils
-PreReq: coreutils
-PreReq: grep
-PreReq: owl-control >= 0.4, owl-control < 2.0
-Requires: chkconfig
+Requires(pre): /var/empty, shadow-utils, coreutils, grep
+Requires(pre,post): owl-control >= 0.4, owl-control < 2.0
+Requires(post,preun): chkconfig
 Requires: openssl
+BuildRequires: rpm-build >= 0:4.11
 BuildRequires: openssl-devel
 BuildRoot: /override/%name-%version
 
@@ -49,8 +47,8 @@ autoreconf -f
 %install
 rm -rf %buildroot
 %__make install DESTDIR=%buildroot INSTALL="install -p"
-mkdir -p %buildroot%_initrddir
-install -p -m755 %_sourcedir/openntpd.init %buildroot%_initrddir/ntpd
+mkdir -p %buildroot%_initddir
+install -p -m755 %_sourcedir/openntpd.init %buildroot%_initddir/ntpd
 mkdir -p %buildroot%_sysconfdir/control.d/facilities
 install -p -m755 %_sourcedir/openntpd.control \
 	%buildroot%_sysconfdir/control.d/facilities/ntpd
@@ -97,12 +95,16 @@ fi
 %defattr(-,root,root,0755)
 %doc CREDITS ChangeLog.bz2 LICENCE README
 %config(noreplace) %_sysconfdir/ntpd.conf
-%config %_initrddir/ntpd
+%config %_initddir/ntpd
 %_sysconfdir/control.d/facilities/ntpd
 %_sbindir/*
 %_mandir/man?/*
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.7p1-owl6
+- Replaced the deprecated PreReq tag with Requires().
+- Replaced the deprecated %%_initrddir macro with %%_initddir.
+
 * Mon Sep 18 2006 Solar Designer <solar-at-owl.openwall.com> 3.7p1-owl5
 - Use the %%_initrddir macro.
 - Adjusted the init script for consistency with the majority of other ones

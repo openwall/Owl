@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.103 2011/02/24 15:49:48 segoon Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.104 2014/07/12 14:14:53 galaxy Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl27
+Release: owl28
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -22,7 +22,7 @@ Patch2: openssh-3.6.1p2-owl-always-auth.diff
 Patch3: openssh-3.6.1p1-owl-pam_userpass.diff
 Patch4: openssh-3.6.1p1-owl-fatal_cleanups.diff
 Patch5: openssh-3.6.1p1-owl-drop-groups.diff
-Patch6: openssh-3.6.1p1-owl-logging.diff
+Patch6: openssh-3.6.1p2-owl-logging.diff
 Patch7: openssh-3.6.1p1-owl-mm.diff
 Patch8: openssh-3.6.1p1-owl-password-changing.diff
 Patch9: openssh-3.6.1p1-owl-openssl-version-check.diff
@@ -44,7 +44,7 @@ Patch24: openssh-3.6.1p2-cvs-20060919-packet_enable_delayed_compress.diff
 Patch25: openssh-3.6.1p2-rh-sftp-memleaks.diff
 Patch26: openssh-3.6.1p2-cvs-20061108-monitor.diff
 Patch27: openssh-3.6.1p2-owl-blacklist.diff
-PreReq: openssl >= 1.0.0, openssl < 1.0.1
+Requires: openssl >= 1.0.0, openssl < 1.0.1
 Requires: pam >= 0:0.80-owl2
 Obsoletes: ssh
 BuildRequires: openssl-devel >= 0.9.7g-owl1
@@ -92,8 +92,8 @@ to SSH servers.
 %package server
 Summary: The OpenSSH server daemon.
 Group: System Environment/Daemons
-PreReq: %name = %version-%release
-PreReq: /sbin/chkconfig, grep, shadow-utils, /dev/urandom
+Requires: %name = %version-%release
+Requires(post,preun): /sbin/chkconfig, grep, shadow-utils, /dev/urandom
 Requires: tcp_wrappers >= 7.6-owl3.2
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: owl-startup
@@ -117,7 +117,7 @@ clients to connect to your host.
 %package blacklist
 Summary: The blacklist file for OpenSSH server.
 Group: System Environment/Daemons
-PreReq: %name-server = %version-%release
+Requires: %name-server = %version-%release
 
 %description blacklist
 SSH (Secure Shell) is a program for logging into a remote machine and for
@@ -151,13 +151,13 @@ rm -r autom4te.cache
 %patch12 -p1
 %patch13 -p0
 %patch14 -p1
-%patch15 -p0
+%patch15 -p1
 %patch16 -p1
 %patch17 -p1
 %patch18 -p1
 %patch19 -p1
 %patch20 -p1
-%patch21 -p0
+%patch21 -p1
 %patch22 -p1
 %patch23 -p1
 %patch24 -p0
@@ -296,6 +296,11 @@ fi
 %attr(0644,root,root) /etc/ssh/blacklist
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.6.1p2-owl28
+- Replaced the deprecated PreReq tag with the corresponding Requires() tags.
+- Regenerated the logging, scp-fixes, and scp-CVE-2006-0225 patches since
+they were fuzzy.
+
 * Thu Feb 24 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.6.1p2-owl27
 - Changed "PreReq" tag to build with openssl-1.0.0d.
 

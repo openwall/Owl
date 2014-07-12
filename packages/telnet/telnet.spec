@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/telnet/telnet.spec,v 1.13 2012/07/22 18:37:14 segoon Exp $
+# $Owl: Owl/packages/telnet/telnet.spec,v 1.14 2014/07/12 14:19:28 galaxy Exp $
 
 Summary: The client program for the telnet remote login protocol.
 Name: telnet
 Version: 3.0
-Release: owl4
+Release: owl5
 License: BSD
 Group: Applications/Internet
 Source0: telnet-%version-20011117.tar.bz2
@@ -25,7 +25,7 @@ Internet.  The telnet package provides a command line telnet client.
 %package server
 Summary: The server program for the telnet remote login protocol.
 Group: System Environment/Daemons
-PreReq: grep, shadow-utils
+Requires(pre): grep, shadow-utils
 Requires: /var/empty, xinetd
 
 %description server
@@ -80,6 +80,9 @@ grep -q ^telnetd: /etc/passwd ||
 %_mandir/man8/telnetd.8*
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.0-owl5
+- Replaced the deprecated PreReq tag with Requires(pre).
+
 * Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0-owl4
 - Added -ltinfo into LDFLAGS to fix build error under binutils >= 2.21.
 

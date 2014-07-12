@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/elinks/elinks.spec,v 1.24 2009/09/07 13:09:25 mci Exp $
+# $Owl: Owl/packages/elinks/elinks.spec,v 1.25 2014/07/12 14:08:57 galaxy Exp $
 
 Summary: Lynx-like text WWW browser with many features.
 Name: elinks
@@ -148,10 +148,10 @@ on what libraries might happen to be installed on the build system.
 - updated to 0.96
 - remove configure patch, because it was included in source
 
-* Sat Jun 07 2001 Michail Litvak <mci-at-owl.openwall.com>
+* Thu Jun 07 2001 Michail Litvak <mci-at-owl.openwall.com>
 - patch configure.in to force error if OpenSSL not found
 
-* Sat Jun 04 2001 Michail Litvak <mci-at-owl.openwall.com>
+* Mon Jun 04 2001 Michail Litvak <mci-at-owl.openwall.com>
 - TMPDIR support
 - compile with SSL
 - include man page into %files

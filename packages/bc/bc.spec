@@ -1,16 +1,16 @@
-# $Owl: Owl/packages/bc/bc.spec,v 1.17 2006/09/05 19:58:21 galaxy Exp $
+# $Owl: Owl/packages/bc/bc.spec,v 1.18 2014/07/12 14:08:18 galaxy Exp $
 
 Summary: GNU's bc (a numeric processing language) and dc (a calculator).
 Name: bc
 Version: 1.06
-Release: owl8
+Release: owl9
 License: GPL
 Group: Applications/Engineering
 Source: ftp://ftp.gnu.org/gnu/bc/bc-%version.tar.gz
 Patch0: bc-1.06-owl-info.diff
 Patch1: bc-1.06-owl-functions-fix.diff
 Patch2: bc-1.06-owl-readline.diff
-PreReq: /sbin/install-info, grep
+Requires(post,preun): /sbin/install-info, grep
 Prefix: %_prefix
 BuildRequires: texinfo, readline-devel >= 0:4.3
 BuildRequires: rpm-build >= 0:4
@@ -59,6 +59,9 @@ fi
 %_infodir/*.info*
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.06-owl9
+- Replaced the deprecated PreReq tag with Requires().
+
 * Sun Sep 03 2006 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.06-owl8
 - Relaxed the build dependency on readline-devel.
 
@@ -86,6 +89,6 @@ fi
 - Fixed a bug in the loading of functions (this affected primarily the
 built-in math library).
 
-* Mon Nov 21 2000 Michail Litvak <mci-at-owl.openwall.com>
+* Tue Nov 21 2000 Michail Litvak <mci-at-owl.openwall.com>
 - Updated to 1.06 version
 - added patch to avoid creation of dir file

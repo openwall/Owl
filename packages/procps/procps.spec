@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/procps/Attic/procps.spec,v 1.34 2012/07/22 18:34:02 segoon Exp $
+# $Owl: Owl/packages/procps/Attic/procps.spec,v 1.35 2014/07/12 14:15:17 galaxy Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
 Version: 3.2.5
-Release: owl10
+Release: owl11
 License: GPL and LGPL
 Group: System Environment/Base
 URL: http://procps.sf.net
@@ -32,7 +32,7 @@ Patch30: procps-3.2.5-owl-top.diff
 Patch31: procps-3.2.5-owl-warnings.diff
 Patch32: procps-3.2.5-owl-PAGE_SIZE.diff
 Patch33: procps-3.2.5-owl-man.diff
-PreReq: /sbin/ldconfig
+Requires(post,postun): /sbin/ldconfig
 BuildRequires: ncurses-devel
 BuildRoot: /override/%name-%version
 
@@ -88,6 +88,10 @@ rm -rf %buildroot
 %_mandir/man?/*
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.2.5-owl11
+- Replace the deprecated PreReq tag with Requires(post,postun).
+- Regenerated the proc-sbuf patch since it was fuzzy.
+
 * Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.2.5-owl10
 - Added -ltinfo into LDFLAGS to fix build error under binutils >= 2.21.
 - Fixed build failure with headers of Linux 2.6.32.

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.54 2010/12/04 05:51:44 solar Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.55 2014/07/12 14:19:21 galaxy Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
 Version: 1.23
-Release: owl4
+Release: owl5
 License: GPLv3+
 Group: Applications/Archiving
 URL: http://www.gnu.org/software/tar/
@@ -17,7 +17,7 @@ Patch2: tar-1.23-owl-info.diff
 Patch3: tar-1.23-owl-rsh-command.diff
 Patch4: tar-1.23-up-20100320.diff
 Patch5: tar-1.23-owl-tests.diff
-PreReq: /sbin/install-info, grep
+Requires(post,preun): /sbin/install-info, grep
 BuildRequires: gettext, texinfo
 BuildRequires: rpm-build >= 0:4, sed >= 4.0.9
 BuildRoot: /override/%name-%version
@@ -95,6 +95,9 @@ fi
 %doc AUTHORS COPYING NEWS.bz2 README THANKS
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.23-owl5
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+
 * Sat Dec 04 2010 Solar Designer <solar-at-owl.openwall.com> 1.23-owl4
 - Adjusted tests/truncate.at for its inherent yet undesirable race condition to
 be less likely triggered, and to use less disk space (2 MB instead of 500 MB).
@@ -158,7 +161,7 @@ added the --ignore-device-id option as an alias to --no-check-device.
 - Fixed two warnings
 - Updated the manual page
 
-* Tue Jan 14 2008 Grigoriy Strokin <grg-at-owl.openwall.com> 1.18-owl2
+* Mon Jan 14 2008 Grigoriy Strokin <grg-at-owl.openwall.com> 1.18-owl2
 - Added a new option: --ignore-device-id.
 
 * Fri Aug 17 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.18-owl1

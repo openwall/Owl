@@ -1,0 +1,58 @@
+diff -puNr iputils-s20101006.orig/Modules/pg3.c iputils-s20101006/Modules/pg3.c
+--- iputils-s20101006.orig/Modules/pg3.c	2010-10-06 11:59:20 +0000
++++ iputils-s20101006/Modules/pg3.c	2014-06-28 15:56:19 +0000
+@@ -89,7 +89,7 @@ pgset "dst 0.0.0.0"
+ #include <linux/ptrace.h>
+ #include <linux/errno.h>
+ #include <linux/ioport.h>
+-#include <linux/malloc.h>
++#include <linux/slab.h>
+ #include <linux/interrupt.h>
+ #include <linux/pci.h>
+ #include <linux/delay.h>
+diff -puNr iputils-s20101006.orig/ping.c iputils-s20101006/ping.c
+--- iputils-s20101006.orig/ping.c	2014-06-28 15:55:25 +0000
++++ iputils-s20101006/ping.c	2014-06-28 15:56:19 +0000
+@@ -1247,7 +1247,9 @@ pr_addr(__u32 addr)
+ }
+ 
+ 
+-/* Set Type of Service (TOS) and other Quality of Service relating bits */
++/* Set Type of Service (TOS) / Differentiated Services (DS) and other 
++ * Quality of Service relating bits
++ */
+ int parsetos(char *str)
+ {
+ 	const char *cp;
+@@ -1268,7 +1270,7 @@ int parsetos(char *str)
+ 	}
+ 
+ 	if (tos > TOS_MAX) {
+-		fprintf(stderr, "ping: the decimal value of TOS bits must be 0-254 (or zero)\n");
++		fprintf(stderr, "ping: the decimal value of TOS bits must be 0-254\n");
+ 		exit(2);
+ 	}
+ 	return(tos);
+diff -puNr iputils-s20101006.orig/rarpd.c iputils-s20101006/rarpd.c
+--- iputils-s20101006.orig/rarpd.c	2010-10-06 11:59:20 +0000
++++ iputils-s20101006/rarpd.c	2014-06-28 15:56:19 +0000
+@@ -10,6 +10,7 @@
+  */
+ 
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <syslog.h>
+ #include <dirent.h>
+ #include <malloc.h>
+diff -puNr iputils-s20101006.orig/rdisc.c iputils-s20101006/rdisc.c
+--- iputils-s20101006.orig/rdisc.c	2010-10-06 11:59:20 +0000
++++ iputils-s20101006/rdisc.c	2014-06-28 15:56:19 +0000
+@@ -32,6 +32,8 @@
+ #include <stdlib.h>
+ #include <sys/types.h>
+ #include <sys/time.h>
++#include <stdlib.h>
++
+ /* Do not use "improved" glibc version! */
+ #include <linux/limits.h>
+ 

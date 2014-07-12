@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.29 2012/08/14 06:12:50 solar Exp $
+# $Owl: Owl/packages/tcsh/tcsh.spec,v 1.30 2014/07/12 14:19:27 galaxy Exp $
 
 Summary: An enhanced version of csh, the C shell.
 Name: tcsh
 Version: 6.18.01
-Release: owl2
+Release: owl3
 License: BSD
 Group: System Environment/Shells
 URL: http://www.tcsh.org/Home
@@ -15,7 +15,7 @@ Source3: skel.tcshrc
 Patch0: tcsh-6.18.01-owl-tmp.diff
 Patch1: tcsh-6.18.01-owl-config.diff
 Patch2: tcsh-6.18.01-owl-warnings.diff
-PreReq: fileutils, grep
+Requires(post,postun): fileutils, grep
 Requires(postun): sed >= 4.0.9
 BuildRequires: perl, groff, libtermcap-devel, glibc-utils
 Provides: csh = %version
@@ -42,7 +42,7 @@ like syntax.
 %build
 %configure
 %__make LIBES="-ltermcap -lcrypt" all
-test -x %__perl && %__perl tcsh.man2html tcsh.man || :
+%__perl tcsh.man2html tcsh.man || :
 %__make -C nls catalogs
 
 %install
@@ -79,6 +79,9 @@ mkdir -p %buildroot/etc/skel
 install -pm 644 %_sourcedir/skel.tcshrc %buildroot/etc/skel/.tcshrc
 install -pm 644 %_sourcedir/csh.{login,cshrc} %buildroot/etc/
 
+%find_lang %name || :
+touch '%name.lang'
+
 %post
 fgrep -qx /bin/csh /etc/shells || echo /bin/csh >> /etc/shells
 fgrep -qx /bin/tcsh /etc/shells || echo /bin/tcsh >> /etc/shells
@@ -88,7 +91,7 @@ if [ $1 -eq 0 ]; then
 	sed -i '/\/bin\/t\?csh/d' /etc/shells
 fi
 
-%files
+%files -f %name.lang
 %defattr(-,root,root)
 %doc NewThings FAQ eight-bit.txt complete.tcsh Fixes tcsh.html
 %config(noreplace) /etc/csh.*
@@ -96,9 +99,14 @@ fi
 %_bindir/tcsh
 %_bindir/csh
 %_mandir/*/*
-%_datadir/locale/*/LC_MESSAGES/tcsh*
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.18.01-owl3
+- Replaced the deprecated PreReq tag with Requires(post,postun).
+- Added %%find_lang.
+- Removed the -x test on %%__perl since it breaks the purpose of the tool
+macros (where one could re-define the macro).
+
 * Tue Aug 14 2012 Solar Designer <solar-at-owl.openwall.com> 6.18.01-owl2
 - Re-introduced the man page patch to reflect the naming of temporary files.
 - Revised the default settings to have fewer personal preferences and to be

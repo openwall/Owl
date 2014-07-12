@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bind/bind.spec,v 1.29 2010/12/09 13:22:49 solar Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.30 2014/07/12 14:08:20 galaxy Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -7,7 +7,7 @@
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.5
-Release: owl7
+Release: owl8
 License: BSD-style
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -49,12 +49,12 @@ Patch12: bind-9.3.6-up-CVE-2009-0696.diff
 Requires: %name-libs = %version-%release
 Requires: owl-startup
 Requires: sysklogd >= 1.4.1-owl9
-PreReq: owl-control >= 0.4, owl-control < 2.0
+Requires(pre,post): owl-control >= 0.4, owl-control < 2.0
 %if %BUILD_OPENSSL
 BuildRequires: openssl-devel
 %endif
 BuildRequires: gcc, gcc-c++, glibc-devel >= 2.3.2, libtool, tar
-BuildRequires: rpm-build >= 0:4
+BuildRequires: rpm-build >= 0:4.11
 BuildRoot: /override/%name-%version
 
 %define _localstatedir	/var
@@ -187,7 +187,7 @@ rm -rf %buildroot
 install -pm644 %_sourcedir/resolver.5 %buildroot%_mandir/man5/
 
 # Install startup script for ISC BIND daemon
-install -pD -m700 addon/bind.init %buildroot%_initrddir/named
+install -pD -m700 addon/bind.init %buildroot%_initddir/named
 
 # Install control files
 install -pD -m700 %_sourcedir/bind-debug.control \
@@ -241,9 +241,9 @@ grep -q ^named: /etc/passwd ||
 		-c 'Domain Name Server' -M named
 if [ $1 -ge 2 ]; then
 	%_sbindir/control-dump bind-debug bind-slave
-	if %_initrddir/named status; then
+	if %_initddir/named status; then
 		touch /var/run/named.restart
-		%_initrddir/named stop || :
+		%_initddir/named stop || :
 	fi
 fi
 
@@ -252,12 +252,12 @@ if [ $1 -ge 2 ]; then
 	%_sbindir/control-restore bind-debug bind-slave
 fi
 /sbin/chkconfig --add named
-test -f /var/run/named.restart && %_initrddir/named start || :
+test -f /var/run/named.restart && %_initddir/named start || :
 rm -f /var/run/named.restart
 
 %preun
 if [ $1 -eq 0 ]; then
-	%_initrddir/named stop || :
+	%_initddir/named stop || :
 	/sbin/chkconfig --del named
 fi
 
@@ -273,7 +273,7 @@ fi
 
 /etc/control.d/facilities/*
 /etc/named.conf
-%config %_initrddir/named
+%config %_initddir/named
 %config(noreplace) /etc/rndc.conf
 /etc/syslog.d/named
 
@@ -349,6 +349,10 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 9.3.5-owl8
+- Replaced the deprecated PreReq tag with Requires(pre,post).
+- Replaced the deprecated %%_initrddir macro with %%_initddir.
+
 * Thu Dec 09 2010 Solar Designer <solar-at-owl.openwall.com> 9.3.5-owl7
 - Disallow zone transfers by default and provide more comments and samples for
 other settings in options.conf (suggested by galaxy@ and gremlin@).

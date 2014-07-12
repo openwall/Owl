@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/gawk/gawk.spec,v 1.22 2010/08/24 16:16:07 solar Exp $
+# $Owl: Owl/packages/gawk/gawk.spec,v 1.23 2014/07/12 14:09:00 galaxy Exp $
 
 %define BUILD_PROFILE 0
 
 Summary: The GNU version of the awk text processing utility.
 Name: gawk
 Version: 3.1.8
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/Text
 Source0: ftp://ftp.gnu.org/gnu/gawk/gawk-%version.tar.bz2
@@ -15,7 +15,7 @@ Patch1: gawk-3.1.8-owl-info.diff
 Patch2: gawk-3.1.8-owl-tmp.diff
 Patch3: gawk-3.1.8-owl-warnings.diff
 Patch4: gawk-3.1.8-owl-man.diff
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 BuildRequires: texinfo >= 4.2
 BuildRoot: /override/%name-%version
 
@@ -112,6 +112,9 @@ fi
 %endif
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.1.8-owl3
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+
 * Tue Aug 24 2010 Solar Designer <solar-at-owl.openwall.com> 3.1.8-owl2
 - Disabled packaging of PostScript documentation (it is not supplied pre-built
 with recent versions of gawk anymore).
@@ -129,7 +132,7 @@ with recent versions of gawk anymore).
 * Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 3.1.1-owl3
 - Deal with info dir entries such that the menu looks pretty.
 
-* Mon Jul 23 2002 Michail Litvak <mci-at-owl.openwall.com>
+* Tue Jul 23 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Moved profiling gawk (pgawk) into separate subpackage, not built by default.
 - Compress PostScript documentation.
 

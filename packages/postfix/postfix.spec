@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.55 2012/02/12 17:44:45 segoon Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.56 2014/07/12 14:15:14 galaxy Exp $
 
 Summary: Postfix mail system.
 Name: postfix
 Version: 2.4.15
-Release: owl2
+Release: owl3
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
@@ -32,7 +32,7 @@ Patch9: postfix-2.4.6-alt-mailbox_unpriv_delivery.diff
 Patch10: postfix-2.4.6-alt-owl-shared.diff
 Patch11: postfix-2.4.6-alt-main.cf.params.diff
 Patch12: postfix-2.4.6-alt-var_virt_maps_legacy.diff
-Patch13: postfix-2.4.6-alt-warnings.diff
+Patch13: postfix-2.4.15-alt-warnings.diff
 Patch14: postfix-2.4.6-alt-postconf-E.diff
 Patch15: postfix-2.4.6-alt-owl-defaults.diff
 Patch16: postfix-2.4.6-alt-owl-doc.diff
@@ -40,7 +40,8 @@ Patch17: postfix-2.4.8-owl-safe_open.diff
 Patch18: postfix-2.4.8-owl-postalias-no-hostname.diff
 Patch19: postfix-2.4.15-owl-version.diff
 Patch20: postfix-2.4.15-owl-linux-3.diff
-PreReq: /sbin/chkconfig, grep, shadow-utils
+Requires(post,preun): chkconfig, grep, shadow-utils
+Requires(post,postun): /sbin/ldconfig
 Requires: owl-control >= 0.4, owl-control < 2.0
 Requires: owl-startup
 BuildRequires: db4-devel >= 4.2, pcre-devel, tinycdb-devel, sed >= 4.1.1
@@ -361,6 +362,7 @@ fi
 %_libdir/%libpostfix_dict
 %_libdir/sendmail
 %attr(700,root,root) %verify(not mode,group) %dir %daemon_directory/postqueuedir
+%daemon_directory/lmtp
 %command_directory/postqueue
 %_bindir/mailq
 %_bindir/newaliases
@@ -368,10 +370,13 @@ fi
 %_bindir/rmail
 %_mandir/man?/*
 %attr(644,root,root) %verify(not md5 mtime size) %ghost %queue_directory/etc/*
-%attr(711,root,root) %dir %queue_directory/dev
 %attr(666,root,root) %ghost %queue_directory/dev/log
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:2.4.15-owl3
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+- Regenerated the warnings patch since it was fuzzy.
+
 * Sun Feb 12 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1:2.4.15-owl2
 - Fixed build failure on Linux 3.x.
 

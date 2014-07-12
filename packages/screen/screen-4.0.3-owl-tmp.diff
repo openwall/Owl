@@ -1,6 +1,7 @@
---- screen-4.0.2/configure.in.orig	Tue Jun  3 11:58:24 2003
-+++ screen-4.0.2/configure.in	Wed Jan  7 23:06:56 2004
-@@ -305,7 +305,7 @@
+diff -puNr screen-4.0.3.orig/configure.in screen-4.0.3/configure.in
+--- screen-4.0.3.orig/configure.in	2014-06-28 18:33:53 +0000
++++ screen-4.0.3/configure.in	2014-06-28 18:34:26 +0000
+@@ -296,7 +296,7 @@ AC_TRY_RUN([
  #define S_IFIFO 0010000
  #endif
  
@@ -9,7 +10,7 @@
  
  main()
  {
-@@ -359,7 +359,7 @@
+@@ -350,7 +350,7 @@ main()
  }
  ], AC_NOTE(- your fifos are usable) fifo=1,
  AC_NOTE(- your fifos are not usable))
@@ -18,7 +19,7 @@
  
  if test -n "$fifo"; then
  AC_CHECKING(for broken fifo implementation)
-@@ -376,7 +376,7 @@
+@@ -367,7 +367,7 @@ AC_TRY_RUN([
  #define S_IFIFO 0010000
  #endif
  
@@ -27,7 +28,7 @@
  
  main()
  {
-@@ -409,7 +409,7 @@
+@@ -400,7 +400,7 @@ main()
  }
  ], AC_NOTE(- your implementation is ok), 
  AC_NOTE(- you have a broken implementation) AC_DEFINE(BROKEN_PIPE) fifobr=1)
@@ -36,7 +37,7 @@
  fi
  
  dnl
-@@ -425,7 +425,7 @@
+@@ -416,7 +416,7 @@ AC_TRY_RUN([
  #include <sys/un.h>
  #include <fcntl.h>
  
@@ -45,7 +46,7 @@
  
  main()
  {
-@@ -471,7 +471,7 @@
+@@ -462,7 +462,7 @@ main()
  }
  ], AC_NOTE(- your sockets are usable) sock=1,
  AC_NOTE(- your sockets are not usable))
@@ -54,7 +55,7 @@
  
  if test -n "$sock"; then
  AC_CHECKING(socket implementation)
-@@ -481,7 +481,7 @@
+@@ -472,7 +472,7 @@ AC_TRY_RUN([
  #include <sys/socket.h>
  #include <sys/un.h>
  
@@ -63,7 +64,7 @@
  
  main()
  {
-@@ -503,7 +503,7 @@
+@@ -494,7 +494,7 @@ main()
  ],AC_NOTE(- you are normal),
  AC_NOTE(- unix domain sockets are not kept in the filesystem)
  AC_DEFINE(SOCK_NOT_IN_FS) socknofs=1)
@@ -72,7 +73,7 @@
  fi
  
  
-@@ -541,7 +541,7 @@
+@@ -532,7 +532,7 @@ AC_TRY_RUN([
  #include <sys/stat.h>
  #include <fcntl.h>
  
@@ -81,7 +82,7 @@
  
  #ifdef NAMEDPIPE
  
-@@ -1194,16 +1194,16 @@
+@@ -1178,16 +1178,16 @@ main() {
  }], AC_DEFINE(USEMEMCPY))
  
  AC_MSG_CHECKING(long file names)
@@ -101,5 +102,5 @@
 -rm -f /tmp/conftest*
 +rm -f conftest*
  
- AC_MSG_CHECKING(for vsprintf)
- AC_TRY_LINK(,[vsprintf(0,0,0);], AC_MSG_RESULT(yes);AC_DEFINE(USEVARARGS), AC_MSG_RESULT(no))
+ AC_DEFINE(USEVARARGS)
+ 

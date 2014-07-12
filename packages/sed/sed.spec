@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/sed/sed.spec,v 1.21 2010/08/26 18:36:37 segoon Exp $
+# $Owl: Owl/packages/sed/sed.spec,v 1.22 2014/07/12 14:15:27 galaxy Exp $
 
 Summary: A GNU stream text editor.
 Name: sed
 Version: 4.2.1
-Release: owl1
+Release: owl2
 License: GPL
 Group: Applications/Text
 URL: http://www.gnu.org/software/sed/
@@ -18,7 +18,7 @@ Patch1: sed-4.0.9-owl-info.diff
 Patch2: sed-4.1.2-alt-doc.diff
 Patch3: sed-4.2.1-alt-doc-sedfaq.diff
 Patch4: sed-4.1.2-deb-doc.diff
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 BuildRequires: texinfo
 BuildRoot: /override/%name-%version
 
@@ -80,6 +80,9 @@ fi
 %_mandir/man*/*
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2.1-owl2
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+
 * Thu Aug 26 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 4.2.1-owl1
 - Updated to 4.2.1.
 - Updated patches.

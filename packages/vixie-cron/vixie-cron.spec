@@ -1,30 +1,30 @@
-# $Owl: Owl/packages/vixie-cron/vixie-cron.spec,v 1.48 2007/03/28 00:25:46 ldv Exp $
+# $Owl: Owl/packages/vixie-cron/vixie-cron.spec,v 1.49 2014/07/12 14:19:38 galaxy Exp $
 
 Summary: Daemon to execute scheduled commands (Vixie Cron).
 Name: vixie-cron
 Version: 4.1.20060426
-Release: owl3
+Release: owl4
 License: distributable
 Group: System Environment/Base
-Source0: vixie-cron-%version.tar.bz2
-Source1: vixie-cron.init
+Source0: %name-%version.tar.bz2
+Source1: %name.init
 Source2: crontab.control
 Source3: at.control
 Source4: crond.pam
-Patch0: vixie-cron-4.1.20040916-alt-warnings.diff
-Patch1: vixie-cron-4.1.20060426-owl-alt-linux.diff
-Patch2: vixie-cron-4.1.20040916-owl-vitmp.diff
-Patch3: vixie-cron-4.1.20040916-owl-crond.diff
-Patch4: vixie-cron-4.1.20060426-owl-st_nlink.diff
-Patch5: vixie-cron-4.1.20040916-alt-owl-Makefile.diff
-Patch6: vixie-cron-4.1.20040916-alt-progname.diff
-Patch7: vixie-cron-4.1.20040916-alt-sigpipe.diff
-Patch8: vixie-cron-4.1.20040916-alt-pam.diff
-Patch9: vixie-cron-4.1.20040916-alt-setlocale.diff
-Patch10: vixie-cron-4.1.20040916-alt-children.diff
-Patch11: vixie-cron-4.1.20060426-owl-tmp.diff
-PreReq: owl-control >= 0.4, owl-control < 2.0
-PreReq: /sbin/chkconfig, grep, shadow-utils
+Patch0: %name-4.1.20040916-alt-warnings.diff
+Patch1: %name-4.1.20060426-owl-alt-linux.diff
+Patch2: %name-4.1.20040916-owl-vitmp.diff
+Patch3: %name-4.1.20040916-owl-crond.diff
+Patch4: %name-4.1.20060426-owl-st_nlink.diff
+Patch5: %name-4.1.20060426-alt-owl-Makefile.diff
+Patch6: %name-4.1.20040916-alt-progname.diff
+Patch7: %name-4.1.20040916-alt-sigpipe.diff
+Patch8: %name-4.1.20040916-alt-pam.diff
+Patch9: %name-4.1.20040916-alt-setlocale.diff
+Patch10: %name-4.1.20040916-alt-children.diff
+Patch11: %name-4.1.20060426-owl-tmp.diff
+Requires(pre,post): owl-control >= 0.4, owl-control < 2.0
+Requires(post,preun): chkconfig, grep, shadow-utils
 Requires: pam >= 0:0.80-owl2
 Provides: at, crond
 Obsoletes: at
@@ -152,6 +152,10 @@ fi
 %attr(640,root,crontab) %config(noreplace) /etc/*.deny
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.1.20060426-owl4
+- Replaced the deprecated PreReq tag with the corresponding Requires() tags.
+- Regenerated the Makefile patch since it was fuzzy.
+
 * Wed Mar 28 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.1.20060426-owl3
 - Hardened system crontab files permissions check to "st_mode & 07533 == 0400".
 - Hardened spool crontab files permissions check to "st_mode & 07577 == 0400".

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.55 2011/03/17 10:38:24 segoon Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.56 2014/07/12 14:14:46 galaxy Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -13,7 +13,7 @@
 Summary: Network exploration tool and security scanner.
 Name: nmap
 Version: 5.51
-Release: owl1
+Release: owl2
 Epoch: 2
 License: GPL
 Group: Applications/System
@@ -36,8 +36,8 @@ Patch4: nmap-5.50-alt-owl-fileexistsandisreadable.diff
 Patch5: nmap-5.50-owl-warnings.diff
 Patch6: nmap-5.50-owl-build.diff
 Patch7: nmap-5.50-owl-nping-drop-priv.diff
-Patch8: nmap-5.50-owl-nping-autoheader.diff
-PreReq: grep, shadow-utils
+Patch8: nmap-5.51-owl-nping-autoheader.diff
+Requires(pre): grep, shadow-utils
 Requires: /var/empty
 %if %BUILD_NDIFF
 # The configure script checks for the Python interpreter, which is why
@@ -219,6 +219,10 @@ grep -q ^nmap: /etc/passwd ||
 %endif
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2:5.51-owl2
+- Replaced the deprecated PreReq tag with Requires(pre).
+- Regenerated the nping-autoheader patch since it was fuzzy.
+
 * Thu Mar 17 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 2:5.51-owl1
 - Updated to 5.51.
 - Enabled ssl support for nping.
@@ -319,7 +323,7 @@ upstream (by Patrick Donnelly).
 * Sat Jun 25 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.48-owl4
 - Rebuilt with libssl.so.5.
 
-* Sun Dec 25 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.48-owl3
+* Sat Dec 25 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.48-owl3
 - Bumped up release to satisfy dependency resolver (fix for openssl
 upgrading issue).
 
@@ -331,8 +335,8 @@ without chrooting if DNS resolver is required.
 - Updated to 3.48 (from Simon with minor changes; the use of included
 libpcre is now forced).
 
-* Fri Oct 02 2003 Simon B <simonb-at-owl.openwall.com> 3.45-owl1
-- Upgrade
+* Thu Oct 02 2003 Simon B <simonb-at-owl.openwall.com> 3.45-owl1
+- Upgraded to 3.45.
 
 * Mon Jun 02 2003 Solar Designer <solar-at-owl.openwall.com> 3.27-owl1
 - Initial packaging for Owl, spec file very loosely based on one found

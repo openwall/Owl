@@ -1,6 +1,6 @@
-diff -uprk.orig vixie-cron-4.1.20040916.orig/linux.mk vixie-cron-4.1.20040916/linux.mk
---- vixie-cron-4.1.20040916.orig/linux.mk	1970-01-01 03:00:00 +0300
-+++ vixie-cron-4.1.20040916/linux.mk	2004-11-03 01:16:51 +0300
+diff -puNr vixie-cron-4.1.20060426.orig/linux.mk vixie-cron-4.1.20060426/linux.mk
+--- vixie-cron-4.1.20060426.orig/linux.mk	1970-01-01 00:00:00 +0000
++++ vixie-cron-4.1.20060426/linux.mk	2004-11-02 22:16:51 +0000
 @@ -0,0 +1,30 @@
 +DESTDIR=
 +MANDIR=$(DESTDIR)/usr/share/man/
@@ -32,9 +32,9 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/linux.mk vixie-cron-4.1.20040916/li
 +	dir=/usr/sbin/;\
 +	[ -z "$(BINGRP)" ] || dir=/usr/bin/; \
 +	install -pD -m755 $(PROG) $(DESTDIR)/$$dir/$(PROG);
-diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.bin/at/Makefile vixie-cron-4.1.20040916/usr.bin/at/Makefile
---- vixie-cron-4.1.20040916.orig/usr.bin/at/Makefile	2003-02-20 23:38:08 +0300
-+++ vixie-cron-4.1.20040916/usr.bin/at/Makefile	2004-11-03 01:16:51 +0300
+diff -puNr vixie-cron-4.1.20060426.orig/usr.bin/at/Makefile vixie-cron-4.1.20060426/usr.bin/at/Makefile
+--- vixie-cron-4.1.20060426.orig/usr.bin/at/Makefile	2003-02-20 20:38:08 +0000
++++ vixie-cron-4.1.20060426/usr.bin/at/Makefile	2004-11-02 22:16:51 +0000
 @@ -12,6 +12,8 @@ MLINKS=	at.1 batch.1
  BINGRP=	crontab
  BINMODE= 2555
@@ -46,11 +46,11 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.bin/at/Makefile vixie-cron-4.1.
 -.include <bsd.prog.mk>
 +#.include <bsd.prog.mk>
 +include ../../linux.mk
-diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.bin/crontab/Makefile vixie-cron-4.1.20040916/usr.bin/crontab/Makefile
---- vixie-cron-4.1.20040916.orig/usr.bin/crontab/Makefile	2002-05-10 01:22:01 +0400
-+++ vixie-cron-4.1.20040916/usr.bin/crontab/Makefile	2004-11-03 01:16:51 +0300
+diff -puNr vixie-cron-4.1.20060426.orig/usr.bin/crontab/Makefile vixie-cron-4.1.20060426/usr.bin/crontab/Makefile
+--- vixie-cron-4.1.20060426.orig/usr.bin/crontab/Makefile	2005-12-19 19:12:17 +0000
++++ vixie-cron-4.1.20060426/usr.bin/crontab/Makefile	2014-06-28 19:02:59 +0000
 @@ -1,12 +1,14 @@
- #	$OpenBSD: Makefile,v 1.4 2002/05/09 21:22:01 millert Exp $
+ #	$OpenBSD: Makefile,v 1.5 2005/12/19 19:12:17 millert Exp $
  
  PROG=	crontab
 -SRCS=	crontab.c misc.c entry.c env.c
@@ -67,9 +67,9 @@ diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.bin/crontab/Makefile vixie-cron
 -.include <bsd.prog.mk>
 +#.include <bsd.prog.mk>
 +include ../../linux.mk
-diff -uprk.orig vixie-cron-4.1.20040916.orig/usr.sbin/cron/Makefile vixie-cron-4.1.20040916/usr.sbin/cron/Makefile
---- vixie-cron-4.1.20040916.orig/usr.sbin/cron/Makefile	2002-07-15 23:26:51 +0400
-+++ vixie-cron-4.1.20040916/usr.sbin/cron/Makefile	2004-11-03 01:16:51 +0300
+diff -puNr vixie-cron-4.1.20060426.orig/usr.sbin/cron/Makefile vixie-cron-4.1.20060426/usr.sbin/cron/Makefile
+--- vixie-cron-4.1.20060426.orig/usr.sbin/cron/Makefile	2002-07-15 19:26:51 +0000
++++ vixie-cron-4.1.20060426/usr.sbin/cron/Makefile	2004-11-02 22:16:51 +0000
 @@ -1,9 +1,10 @@
  #	$OpenBSD: Makefile,v 1.4 2002/07/15 19:26:51 millert Exp $
  

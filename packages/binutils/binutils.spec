@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/binutils/binutils.spec,v 1.30 2012/08/14 01:49:47 solar Exp $
+# $Owl: Owl/packages/binutils/binutils.spec,v 1.31 2014/07/12 14:08:22 galaxy Exp $
 
 %define BUILD_HJL 1
 
@@ -9,7 +9,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.23.51.0.1
-Release: owl1
+Release: owl2
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils/
@@ -20,7 +20,8 @@ Source: ftp://ftp.gnu.org/gnu/binutils/binutils-%version.tar.gz
 %endif
 Patch0: binutils-2.22.52.0.1-owl-info.diff
 Patch1: binutils-2.20.51.0.11-rh-robustify3.diff
-PreReq: /sbin/ldconfig, /sbin/install-info
+Requires(post,postun): /sbin/ldconfig
+Requires(post,preun): /sbin/install-info
 ExcludeArch: ia64
 BuildRequires: texinfo, gettext, flex, bison, libtool
 BuildRoot: /override/%name-%version
@@ -127,6 +128,18 @@ mv ld/NEWS ld-NEWS
 #mv gold/TODO gold-TODO
 #mv gold/NEWS gold-NEWS
 
+echo 'Processing language files:'
+echo '%%defattr(0644,root,root,0755)' > '%name.lang'
+find '%buildroot%_datadir/locale' -type f -name '*.mo' -printf "%f\n" \
+		| sort | uniq | sed 's,\.mo$,,' | while read tool ; do
+	echo "$tool"
+	%find_lang "$tool" || :
+	if [ -s "$tool.lang" ]; then
+		cat "$tool.lang" >> '%name.lang'
+		rm "$tool.lang"
+	fi
+done
+
 %post
 /sbin/ldconfig
 /sbin/install-info --info-dir=%_infodir %_infodir/as.info
@@ -148,7 +161,7 @@ fi
 
 %postun -p /sbin/ldconfig
 
-%files
+%files -f %name.lang
 %defattr(-,root,root)
 %doc COPYING COPYING.LIB COPYING3 COPYING3.LIB
 %doc binutils-NEWS gas-CONTRIBUTORS gas-NEWS ld-NEWS
@@ -162,6 +175,10 @@ fi
 %_datadir/locale/*/LC_MESSAGES/*.mo
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.23.51.0.1-owl2
+- Replaced the deprecated PreReq tag with Requires().
+- Used the %%find_lang macro to handle l10n files.
+
 * Tue Aug 14 2012 Solar Designer <solar-at-owl.openwall.com> 2.23.51.0.1-owl1
 - Updated to 2.23.51.0.1.
 

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/bzip2/bzip2.spec,v 1.32 2010/09/20 17:27:05 ldv Exp $
+# $Owl: Owl/packages/bzip2/bzip2.spec,v 1.33 2014/07/12 14:08:23 galaxy Exp $
 
 Summary: An extremely powerful file compression utility.
 Name: bzip2
 Version: 1.0.6
-Release: owl1
+Release: owl2
 License: BSD-style
 Group: Applications/File
 URL: http://www.bzip.org
@@ -16,7 +16,6 @@ Patch3: bzip2-1.0.6-owl-bzdiff-tmp.diff
 Patch4: bzip2-1.0.6-alt-owl-fopen.diff
 Patch5: bzip2-1.0.6-alt-const.diff
 Patch6: bzip2-1.0.6-alt-progname.diff
-PreReq: /sbin/ldconfig
 Requires: mktemp >= 1:1.3.1
 %ifnarch x86_64
 # Provide this soname for backwards compatibility
@@ -39,7 +38,7 @@ compression capability.
 %package devel
 Summary: Header files and libraries for developing apps which will use bzip2.
 Group: Development/Libraries
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 Requires: %name = %version-%release
 
 %description devel
@@ -109,6 +108,10 @@ fi
 %_infodir/bzip2.*
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.0.6-owl2
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+- Dropped the deprecated PreReq tag for /sbin/ldconfig.
+
 * Mon Sep 20 2010 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.0.6-owl1
 - Updated to 1.0.6 (fixes CVE-2010-0405).
 

@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.13 2011/09/12 10:24:06 segoon Exp $
+# $Owl: Owl/packages/elfutils-libelf/elfutils-libelf.spec,v 1.14 2014/07/12 14:08:55 galaxy Exp $
 
 Summary: Library to read and write ELF files.
 Name: elfutils-libelf
 Version: 0.131
-Release: owl2
+Release: owl3
 License: GPLv2 with exceptions
 Group: System Environment/Libraries
 Source: elfutils-%version.tar.bz2
@@ -39,6 +39,9 @@ different sections of an ELF file.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+
+autoreconf -fis -I m4
+
 bzip2 -9k NEWS
 
 %build
@@ -74,6 +77,9 @@ rm -r %buildroot%_includedir/elfutils
 %_libdir/libelf.so
 
 %changelog
+* Sat Jun 28 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.131-owl3
+- Regenerated the robustify patch since it was fuzzy.
+
 * Mon Sep 12 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 0.131-owl2
 - Fixed build failure with gcc 4.6.1.
 

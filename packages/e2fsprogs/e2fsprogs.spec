@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.58 2011/01/25 17:20:17 solar Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.59 2014/07/12 14:08:51 galaxy Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -13,7 +13,7 @@
 Summary: Utilities for managing ext2/ext3/ext4 filesystems.
 Name: e2fsprogs
 Version: 1.41.14
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 URL: http://e2fsprogs.sourceforge.net
@@ -26,7 +26,6 @@ Patch1: e2fsprogs-1.41.5-owl-blkid-env.diff
 Patch2: e2fsprogs-1.41.5-owl-tests.diff
 Patch3: e2fsprogs-1.41.14-up-fix-computation.diff
 Patch4: e2fsprogs-1.41.14-owl-warnings.diff
-PreReq: /sbin/ldconfig
 BuildRequires: gettext, texinfo, automake, autoconf
 BuildRequires: glibc >= 0:2.2, sed >= 0:4.1
 %if !%USE_PKGCONFIG
@@ -49,7 +48,7 @@ filesystem utilities.
 %package devel
 Summary: Ext2/ext3/ext4 filesystem-specific static libraries and headers.
 Group: Development/Libraries
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 Requires: e2fsprogs = %version-%release
 
 %description devel
@@ -264,6 +263,10 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.41.14-owl2
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+- Dropped the PreReq tag for /sbin/ldconfig.
+
 * Tue Jan 25 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.41.14-owl1
 - Updated to 1.41.14.
 - Updated -owl-warnings patch.
@@ -285,7 +288,7 @@ readline_shutdown function via the previously-uninitialized pointer.
 - Updated to 1.41.9.
 - Updated -owl-warnings patch.
 
-* Thu May 05 2009 Michail Litvak <mci-at-owl.openwall.com> 1.41.5-owl2
+* Tue May 05 2009 Michail Litvak <mci-at-owl.openwall.com> 1.41.5-owl2
 - Fixed compiler warnings.
 
 * Thu Apr 30 2009 Michail Litvak <mci-at-owl.openwall.com> 1.41.5-owl1
@@ -338,7 +341,7 @@ Changeset 1953: Fix SIGBUS through unaligned access to FAT superblocks.
 UID/EUID check.
 - Fixed more compiler warnings, including some for real bugs.
 
-* Mon Mar 01 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.36-owl1
+* Tue Mar 01 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.36-owl1
 - Updated to 1.36.
 - Reviewed all patches, dropped the ones accepted.
 - Dropped the "notitle" patch.
@@ -378,6 +381,6 @@ to Jarno Huuskonen for noticing that this was missing.
 - Added a patch by Miquel van Smoorenburg to fix the progress indicator
 in e2fsck.
 
-* Wed Aug 03 2000 Solar Designer <solar-at-owl.openwall.com>
+* Thu Aug 03 2000 Solar Designer <solar-at-owl.openwall.com>
 - Imported this spec file from RH.
 - Added a patch for the permissions on lost+found.

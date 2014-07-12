@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.47 2006/07/19 22:48:16 solar Exp $
+# $Owl: Owl/packages/SimplePAMApps/SimplePAMApps.spec,v 1.48 2014/07/12 14:07:59 galaxy Exp $
 
 Summary: Simple PAM-based Applications.
 Name: SimplePAMApps
 Version: 0.60
-Release: owl30
+Release: owl31
 License: BSD or GPL
 Group: System Environment/Base
 URL: http://www.kernel.org/pub/linux/libs/pam/
@@ -22,7 +22,7 @@ Patch5: SimplePAMApps-0.60-alt-login-su-strip-argv0.diff
 Patch6: SimplePAMApps-0.60-alt-owl-warnings.diff
 Patch7: SimplePAMApps-0.60-owl-log.diff
 Patch8: SimplePAMApps-0.60-owl-su-pam_acct_mgmt.diff
-PreReq: owl-control >= 0.4, owl-control < 2.0
+Requires(pre,post): owl-control >= 0.4, owl-control < 2.0
 Requires: pam >= 0:0.80-owl2, pam_passwdqc >= 0.2, pam_mktemp, tcb
 Provides: passwd
 Obsoletes: passwd
@@ -105,6 +105,9 @@ fi
 /etc/control.d/facilities/*
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.60-owl31
+- Replaced the deprecated PreReq tag with Requires().
+
 * Thu Jul 20 2006 Solar Designer <solar-at-owl.openwall.com> 0.60-owl30
 - Changed the default control(8) setting for su from "wheelonly" to
 "restricted" (this change affects new installs only).

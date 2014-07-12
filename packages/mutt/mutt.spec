@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/mutt/mutt.spec,v 1.28 2012/07/22 19:55:53 segoon Exp $
+# $Owl: Owl/packages/mutt/mutt.spec,v 1.29 2014/07/12 14:14:40 galaxy Exp $
 
 Summary: A feature-rich text-based mail user agent.
 Name: mutt
 Version: 1.4.2.3
-Release: owl2
+Release: owl3
 License: GPL
 Group: Applications/Internet
 URL: http://www.mutt.org
@@ -16,12 +16,14 @@ Patch2: mutt-1.4.2.1-owl-tmp.diff
 Patch3: mutt-1.4.2.1-owl-bound.diff
 Patch4: mutt-1.4.2.1-owl-man.diff
 Patch5: mutt-1.4.2.3-alt-fixes.diff
+Patch6: mutt-1.4.2.3-owl-autotools.diff
 Requires: mktemp >= 1:1.3.1
 Conflicts: mutt-us
 Provides: mutt-i
 BuildRequires: ncurses-devel
 BuildRequires: openssl-devel >= 0.9.7g-owl1
 BuildRequires: rpm-build >= 0:4
+BuildRequires: autoconf >= 2.69
 BuildRoot: /override/%name-%version
 
 %description
@@ -39,11 +41,13 @@ and more.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
+
+autoreconf -fis -I m4
 
 %{expand:%%define optflags %optflags -fno-strict-aliasing}
 
 %build
-autoreconf -fisv
 export LDFLAGS=-ltinfo
 %configure \
 	--with-docdir=%_docdir/mutt-%version \
@@ -55,14 +59,15 @@ export LDFLAGS=-ltinfo
 %__make
 
 %install
-rm -rf %buildroot
+[ '%buildroot' != '/' -a -d '%buildroot' ] && rm -rf -- '%buildroot'
 %makeinstall \
 	docdir=%buildroot%_docdir/mutt-%version
 
 # We like GPG here.
 cat contrib/gpg.rc %_sourcedir/Muttrc-color >> %buildroot/%_sysconfdir/Muttrc
 
-%find_lang %name
+%find_lang %name || :
+touch '%name.lang'
 
 %files -f %name.lang
 %defattr(-,root,root)
@@ -84,6 +89,9 @@ cat contrib/gpg.rc %_sourcedir/Muttrc-color >> %buildroot/%_sysconfdir/Muttrc
 %exclude %_mandir/man1/mutt_dotlock.*
 
 %changelog
+* Fri Jun 20 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.4.2.3-owl3
+- Fixed the build with new autotools (autoconf 2.69, automake 1.14).
+
 * Sun Jul 22 2012 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.4.2.3-owl2
 - Added -ltinfo into LDFLAGS to fix build error under binutils >= 2.21.
 

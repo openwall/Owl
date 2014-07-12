@@ -1,6 +1,6 @@
-diff -uNp -r nmap-5.50.orig/nping/configure.ac nmap-5.50/nping/configure.ac
---- nmap-5.50.orig/nping/configure.ac	2011-01-31 13:19:40 +0000
-+++ nmap-5.50/nping/configure.ac	2011-01-31 13:33:12 +0000
+diff -puNr nmap-5.51.orig/nping/configure.ac nmap-5.51/nping/configure.ac
+--- nmap-5.51.orig/nping/configure.ac	2011-02-09 02:37:53 +0000
++++ nmap-5.51/nping/configure.ac	2014-06-28 16:38:03 +0000
 @@ -171,7 +171,7 @@ fi
  
  OPENSSL_LIBS=
@@ -8,9 +8,9 @@ diff -uNp -r nmap-5.50.orig/nping/configure.ac nmap-5.50/nping/configure.ac
 -  AC_DEFINE(HAVE_OPENSSL)
 +  AC_DEFINE(HAVE_OPENSSL, 1, [Define to 1 for HAVE_OPENSSL])
    OPENSSL_LIBS="-lssl -lcrypto"
- fi
- 
-@@ -246,7 +246,7 @@ if test $have_libpcap != yes; then
+   LIBS_TMP="$LIBS"
+   LIBS="$LIBS $OPENSSL_LIBS"
+@@ -251,7 +251,7 @@ if test $have_libpcap != yes; then
    PCAP_CLEAN="pcap_clean"
    PCAP_DIST_CLEAN="pcap_dist_clean"
  else
@@ -19,7 +19,7 @@ diff -uNp -r nmap-5.50.orig/nping/configure.ac nmap-5.50/nping/configure.ac
    LIBPCAP_LIBS="-lpcap"
    PCAP_DEPENDS=""
    PCAP_BUILD=""
-@@ -335,7 +335,7 @@ AC_CACHE_CHECK(if sockaddr{} has sa_len 
+@@ -340,7 +340,7 @@ AC_CACHE_CHECK(if sockaddr{} has sa_len
          ac_cv_sockaddr_has_sa_len=yes,
          ac_cv_sockaddr_has_sa_len=no))
  if test $ac_cv_sockaddr_has_sa_len = yes ; then
@@ -28,7 +28,7 @@ diff -uNp -r nmap-5.50.orig/nping/configure.ac nmap-5.50/nping/configure.ac
  fi
  
  
-@@ -352,7 +352,7 @@ AC_CACHE_CHECK(if sockaddr_in{} has sin_
+@@ -357,7 +357,7 @@ AC_CACHE_CHECK(if sockaddr_in{} has sin_
          ac_cv_sockaddr_in_has_sin_len=yes,
          ac_cv_sockaddr_in_has_sin_len=no))
  if test $ac_cv_sockaddr_in_has_sin_len = yes ; then
@@ -37,7 +37,7 @@ diff -uNp -r nmap-5.50.orig/nping/configure.ac nmap-5.50/nping/configure.ac
  fi
  
  
-@@ -369,21 +369,22 @@ AC_CACHE_CHECK(if sockaddr_in6{} has sin
+@@ -374,21 +374,22 @@ AC_CACHE_CHECK(if sockaddr_in6{} has sin
          ac_cv_sockaddr_in6_has_sin6_len=yes,
          ac_cv_sockaddr_in6_has_sin6_len=no))
  if test $ac_cv_sockaddr_in6_has_sin6_len = yes ; then
@@ -63,7 +63,7 @@ diff -uNp -r nmap-5.50.orig/nping/configure.ac nmap-5.50/nping/configure.ac
                               AC_MSG_RESULT(yes) , \
                               AC_MSG_RESULT(no);))
  
-@@ -437,9 +438,54 @@ AC_CACHE_CHECK(if struct ip has ip_sum m
+@@ -442,9 +443,54 @@ AC_CACHE_CHECK(if struct ip has ip_sum m
          ac_cv_ip_has_ip_sum=yes,
          ac_cv_ip_has_ip_sum=no))
  if test $ac_cv_ip_has_ip_sum = yes ; then
@@ -119,7 +119,7 @@ diff -uNp -r nmap-5.50.orig/nping/configure.ac nmap-5.50/nping/configure.ac
  AC_CACHE_CHECK(if function signal is accessible, ac_cv_have_signal,
          AC_TRY_COMPILE(
                  [
-@@ -458,7 +504,7 @@ AC_CACHE_CHECK(if function signal is acc
+@@ -463,7 +509,7 @@ AC_CACHE_CHECK(if function signal is acc
          ac_cv_have_signal=yes,
          ac_cv_have_signal=no))
  if test $ac_cv_have_signal = yes ; then
@@ -128,7 +128,7 @@ diff -uNp -r nmap-5.50.orig/nping/configure.ac nmap-5.50/nping/configure.ac
  fi
  
  
-@@ -466,25 +512,25 @@ fi
+@@ -471,25 +517,25 @@ fi
  
  case "$host" in
    *alpha-dec-osf*)
@@ -161,7 +161,7 @@ diff -uNp -r nmap-5.50.orig/nping/configure.ac nmap-5.50/nping/configure.ac
      # To link with libnet and NM (/usr/lib/libnm.sl) library
      # on HP-UX 11.11 (other versions?) Mikhail Zakharov (zmey20000@yahoo.com)
      AC_CHECK_LIB(nm, open_mib)
-@@ -495,44 +541,44 @@ case "$host" in
+@@ -500,44 +546,44 @@ case "$host" in
      AC_CHECK_LIB(cfg, _system_configuration)
      ;;
    *-solaris2.0*)  

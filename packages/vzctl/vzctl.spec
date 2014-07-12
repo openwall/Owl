@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/vzctl/vzctl.spec,v 1.12 2012/02/27 07:42:53 solar Exp $
+# $Owl: Owl/packages/vzctl/vzctl.spec,v 1.13 2014/07/12 14:19:40 galaxy Exp $
 
 Summary: OpenVZ containers control utility.
 Name: vzctl
 Version: 3.0.23
-Release: owl8
+Release: owl9
 License: GPLv2+
 Group: System Environment/Kernel
 URL: http://openvz.org/
@@ -16,8 +16,9 @@ Patch4: vzctl-3.0.23-alt-postcreate.diff
 Patch5: vzctl-3.0.23-owl-cron.diff
 Patch6: vzctl-3.0.23-owl-mtab-mode.diff
 Patch7: vzctl-3.0.23-owl-vps-create.diff
-PreReq: /sbin/chkconfig
+Requires(post,preun): chkconfig
 Requires: vzquota
+BuildRequires: rpm-build >= 0:4.11
 BuildRoot: /override/%name-%version
 
 %description
@@ -46,7 +47,7 @@ i.e. create, start, shutdown, set various options and limits etc.
 %__make
 
 %install
-make install install-redhat DESTDIR=%buildroot initddir=%_initrddir
+make install install-redhat DESTDIR=%buildroot initddir=%_initddir
 rm %buildroot%_libdir/libvzctl.*
 mkdir -p %buildroot/etc/cron.d/
 touch %buildroot/etc/cron.d/vz
@@ -63,7 +64,7 @@ fi
 
 %files
 %defattr(-,root,root,700)
-%config %_initrddir/vz
+%config %_initddir/vz
 %config(noreplace) /etc/logrotate.d/*
 %_sbindir/*
 %_libdir/lib*
@@ -83,6 +84,10 @@ fi
 %dev(c,126,0) %attr(600,root,root) /dev/vzctl
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.0.23-owl9
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+- Replaced the deprecated %%_initrddir macro with %%_initddir.
+
 * Mon Feb 27 2012 Solar Designer <solar-at-owl.openwall.com> 3.0.23-owl8
 - Don't enable the "vz" service by default, but initialize OpenVZ even when no
 containers are configured to start if the service is started anyway (this

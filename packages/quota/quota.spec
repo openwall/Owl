@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/quota/quota.spec,v 1.27 2010/03/18 09:07:28 solar Exp $
+# $Owl: Owl/packages/quota/quota.spec,v 1.28 2014/07/12 14:15:19 galaxy Exp $
 
 Summary: System administration tools for monitoring users' disk usage.
 Name: quota
 Version: 3.17
-Release: owl1
+Release: owl2
 License: BSD
 Group: System Environment/Base
 URL: http://sourceforge.net/projects/linuxquota/
@@ -73,6 +73,9 @@ rm %buildroot%_datadir/locale/*/LC_MESSAGES/quota.mo
 %_mandir/man?/*
 
 %changelog
+* Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.17-owl2
+- Regenerated the get_loop_device_name patch since it was fuzzy.
+
 * Mon Mar 15 2010 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.17-owl1
 - Updated to 3.17.
 - Updated the -owl-tmp patch since part of it was included upstream.

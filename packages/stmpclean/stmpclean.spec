@@ -1,16 +1,16 @@
-# $Owl: Owl/packages/stmpclean/stmpclean.spec,v 1.17 2010/09/02 21:31:57 solar Exp $
+# $Owl: Owl/packages/stmpclean/stmpclean.spec,v 1.18 2014/07/12 14:17:08 galaxy Exp $
 
 Summary: A safe temporary directory cleaner.
 Name: stmpclean
 Version: 0.3
-Release: owl5
+Release: owl6
 License: BSD
 Group: System Environment/Base
 URL: http://shlang.com/stmpclean/
 Source0: http://shlang.com/stmpclean/%name-%version.tar.gz
 Source1: stmpclean.cron
 Patch0: stmpclean-0.3-owl-fixes.diff
-PreReq: /etc/cron.daily
+Requires: /etc/cron.daily
 Requires: /bin/readlink
 Provides: tmpwatch
 Obsoletes: tmpwatch
@@ -43,6 +43,9 @@ install -m 700 %_sourcedir/stmpclean.cron etc/cron.daily/stmpclean
 /etc/cron.daily/stmpclean
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.3-owl6
+- Replaced the deprecated PreReq tag with a plain Requires tag.
+
 * Thu Sep 02 2010 Solar Designer <solar-at-owl.openwall.com> 0.3-owl5
 - Only run stmpclean on /var/tmp if it is not a symlink to /tmp.
 

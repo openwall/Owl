@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.92 2012/02/27 07:55:19 solar Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.93 2014/07/12 14:15:02 galaxy Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
 Version: 0.43
-Release: owl1
+Release: owl2
 License: GPL
 Group: System Environment/Base
 Source0: initscripts-5.00.tar.gz
@@ -21,12 +21,15 @@ Patch1: initscripts-5.00-owl-network-typo.diff
 Patch2: initscripts-5.00-owl-NETWORKING.diff
 Patch3: initscripts-5.00-owl-ifup-routes.diff
 Patch4: initscripts-5.00-owl-vlan.diff
-PreReq: /sbin/chkconfig
+Requires(post,preun): chkconfig
 Requires: SysVinit, msulogin, /sbin/start-stop-daemon
 Requires: bash >= 2.0, sh-utils
 Requires: mingetty, e2fsprogs >= 1.15, mount, util-linux, net-tools
 Requires: gawk, sed, mktemp
 Requires: /sbin/sysctl
+BuildRequires: popt-devel
+# XXX: usleep is staticly linked with libpopt.a
+BuildRequires: libpopt-devel-static
 Provides: initscripts
 Obsoletes: initscripts
 BuildRoot: /override/%name-%version
@@ -172,6 +175,11 @@ fi
 %doc redhat
 
 %changelog
+* Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.43-owl2
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+- Added a dependency on popt-devel and libpopt-devel-static due to
+usleep.
+
 * Mon Feb 27 2012 Solar Designer <solar-at-owl.openwall.com> 0.43-owl1
 - Allow for /etc/rc.d/init.d/clock to be missing such that we can actually
 remove it in OpenVZ container templates, where it only causes container
@@ -224,7 +232,7 @@ console messages without connecting a keyboard or even if the system freezes
 and status() with support for the "-p" option (same as "--pidfile") for Red Hat
 compatibility.
 
-* Wed Dec 25 2008 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.34-owl1
+* Thu Dec 25 2008 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.34-owl1
 - Added /usr/local/bin and /usr/local/sbin to PATH in functions.
 - Enhanced our "which" emulation to return more relevant results.
 - Enhanced daemon() in functions to dereference symlinks before trying
