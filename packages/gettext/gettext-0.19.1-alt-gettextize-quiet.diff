@@ -1,22 +1,23 @@
---- gettext-0.14.5/gettext-tools/misc/gettextize.in.orig	2005-05-20 20:36:38 +0000
-+++ gettext-0.14.5/gettext-tools/misc/gettextize.in	2006-04-06 14:03:34 +0000
-@@ -155,6 +155,7 @@ Options:
+diff -puNr gettext-0.19.1.orig/gettext-tools/misc/gettextize.in gettext-0.19.1/gettext-tools/misc/gettextize.in
+--- gettext-0.19.1.orig/gettext-tools/misc/gettextize.in	2014-04-23 02:57:42 +0000
++++ gettext-0.19.1/gettext-tools/misc/gettextize.in	2014-06-14 21:36:42 +0000
+@@ -189,6 +189,7 @@ Options:
+       --help           print this help and exit
        --version        print version information and exit
-   -c, --copy           copy files instead of making symlinks
    -f, --force          force writing of new files even if old exist
 +  -q, --quiet          don't ask acknowledgements
-       --intl           install libintl in a subdirectory
+       --intl           install libintl in a subdirectory (deprecated)
+       --po-dir=DIR     specify directory with PO files
        --no-changelog   don't update or create ChangeLog files
-   -n, --dry-run        print modifications but don't perform them
-@@ -194,6 +195,7 @@ func_fatal_error ()
+@@ -236,6 +237,7 @@ unset CLICOLOR_FORCE GREP_OPTIONS
  # - doit            false if --dry-run was given, : otherwise
  {
    force=0
 +  quiet=0
    intldir=
-   try_ln_s=:
-   do_changelog=:
-@@ -210,6 +212,9 @@ func_fatal_error ()
+   podirs=
+   try_ln_s=false
+@@ -252,6 +254,9 @@ unset CLICOLOR_FORCE GREP_OPTIONS
        -f | --force | --forc | --for | --fo | --f )
          shift
          force=1 ;;
@@ -26,7 +27,7 @@
        --help | --hel | --he | --h )
          func_usage; exit 0 ;;
        --intl | --int | --in | --i )
-@@ -1204,10 +1209,12 @@ if $doit; then
+@@ -1320,10 +1325,12 @@ if $doit; then
      5) count="five paragraphs";;
      *) count="$count paragraphs";;
    esac

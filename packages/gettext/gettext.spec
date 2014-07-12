@@ -1,23 +1,32 @@
-# $Owl: Owl/packages/gettext/gettext.spec,v 1.16 2010/01/26 17:18:56 solar Exp $
+# $Owl: Owl/packages/gettext/gettext.spec,v 1.17 2014/07/12 13:51:40 galaxy Exp $
 
 Summary: GNU libraries and utilities for producing multi-lingual messages.
 Name: gettext
-Version: 0.14.6
+Version: 0.19.1
 Release: owl1
-License: GPL/LGPL
+License: GPLv3+/LGPLv2+
 Group: Development/Tools
 URL: http://www.gnu.org/software/gettext/
-# ftp://ftp.gnu.org/gnu/gettext/%name-%version.tar.gz
-Source: %name-%version.tar.bz2
-Patch0: gettext-0.14.5-alt-gettextize-quiet.diff
-Patch1: gettext-0.14.5-alt-m4.diff
-Patch2: gettext-0.14.5-alt-tmp.diff
-Patch3: gettext-0.14.5-alt-warnings.diff
-Patch4: gettext-0.14.5-alt-doc.diff
-PreReq: /sbin/install-info
+Source: ftp://ftp.gnu.org/gnu/%name/%name-%version.tar.xz
+Patch0: %name-0.19.1-owl-tests-xterm.diff
+Patch1: %name-0.19.1-alt-gettextize-quiet.diff
+Patch2: %name-0.19.1-owl-alt-tmp.diff
+Patch3: %name-0.19.1-alt-doc.diff
+Requires(post,preun): /sbin/install-info
 Provides: %name-devel = %version-%release
 Provides: devel(libintl)
-BuildRequires: automake, autoconf, libtool, bison, gcc-c++
+BuildRequires: automake, autoconf >= 2.62, libtool, bison, gcc-c++
+# the following are provided by Owl and should be used:
+# ncurses in Owl are old, so wait till it's updated
+#BuildRequires: ncurses-devel >= 5.9
+# the following are NOT provided by Owl, so gettext uses its own copy
+# I think we need to package them since relying on supplied versions
+# is risky.
+#BuildRequires: expat-devel
+#BuildRequires: libxml2-devel
+#BuildRequires: glib2-devel
+#BuildRequires: libcroco-devel
+#BuildRequires: libunistring-devel
 BuildRoot: /override/%name-%version
 
 %description
@@ -38,12 +47,31 @@ programs.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 
 %{expand:%%define optflags %optflags -Wall}
 
 %build
-%configure --enable-shared --without-included-gettext
+%configure \
+	--disable-rpath \
+	--enable-shared \
+	--disable-static \
+	--enable-nls \
+	--enable-c++ \
+	--enable-libasprintf \
+	--disable-java \
+		--disable-native-java \
+	--disable-git \
+	--disable-csharp \
+	--disable-openmp \
+	--disable-acl \
+	--without-included-gettext \
+	--without-emacs \
+	'--with-listdir=%_datadir/emacs/site-lisp' \
+	--without-included-glib \
+	--with-included-libcroco \
+	--with-included-libxml \
+#
+
 %__make
 
 %check
@@ -51,15 +79,9 @@ programs.
 %__make check
 
 %install
-rm -rf %buildroot
+[ '%buildroot' != '/' -a -d '%buildroot' ] && rm -rf -- '%buildroot'
 
-# Fix busted no-emacs install for $lispdir/po-mode.el
-%makeinstall lispdir=%buildroot%_datadir/emacs/site-lisp \
-	aclocaldir=%buildroot%_datadir/aclocal \
-	gettextsrcdir=%buildroot%_datadir/%name/intl
-
-mv %buildroot%_datadir/%name/intl/{ABOUT-NLS,archive.tar.gz} \
-	%buildroot%_datadir/%name/
+%makeinstall
 
 mkdir -p %buildroot%_datadir/%name/po
 install -pm644 %name-runtime/po/Makefile.in.in %buildroot%_datadir/%name/po/
@@ -70,10 +92,18 @@ mkdir -p %buildroot%_docdir
 mv %buildroot%_datadir/doc/%name %buildroot%docdir
 mv %buildroot%_datadir/doc/libasprintf %buildroot%docdir/
 
+%find_lang %name-runtime || :
+touch '%name-runtime.lang'
+%find_lang %name-tools || :
+touch '%name-tools.lang'
+cat %name-{runtime,tools}.lang > '%name.lang'
+rm -- %name-{runtime,tools}.lang
+
 # Remove unpackaged files
 rm %buildroot%_infodir/dir %buildroot%_libdir/*.la
 
 %post
+/sbin/ldconfig
 /sbin/install-info %_infodir/gettext.info %_infodir/dir
 /sbin/install-info %_infodir/autosprintf.info %_infodir/dir
 
@@ -83,7 +113,9 @@ if [ $1 -eq 0 ]; then
 	/sbin/install-info --delete %_infodir/autosprintf.info %_infodir/dir
 fi
 
-%files
+%postun -p /sbin/ldconfig
+
+%files -f %name.lang
 %defattr(-,root,root)
 %docdir
 %_bindir/*
@@ -93,9 +125,13 @@ fi
 %_libdir/*
 %_datadir/gettext
 %_datadir/aclocal/*
-%_datadir/locale/*/LC_MESSAGES/*
 
 %changelog
+* Sat Jun 14 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.19.1-owl1
+- Updated to 0.19.1.
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+- Added %%find_lang.
+
 * Wed Dec 05 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 0.14.6-owl1
 - Updated to 0.14.6.
 
@@ -104,7 +140,7 @@ fi
 - Imported a bunch of patches from ALT's gettext-0.14.5-alt2 package.
 - Build gettext with libintl provided by glibc.
 
-* Fri Sep 24 2005 Michail Litvak <mci-at-owl.openwall.com>  0.14.1-owl3
+* Sat Sep 24 2005 Michail Litvak <mci-at-owl.openwall.com>  0.14.1-owl3
 - Don't package .la files.
 
 * Thu May 05 2005 Solar Designer <solar-at-owl.openwall.com> 0.14.1-owl2

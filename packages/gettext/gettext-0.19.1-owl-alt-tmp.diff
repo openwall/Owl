@@ -1,0 +1,163 @@
+diff -puNr gettext-0.19.1.orig/gettext-tools/misc/autopoint.in gettext-0.19.1/gettext-tools/misc/autopoint.in
+--- gettext-0.19.1.orig/gettext-tools/misc/autopoint.in	2014-06-10 03:13:58 +0000
++++ gettext-0.19.1/gettext-tools/misc/autopoint.in	2014-06-14 22:08:32 +0000
+@@ -30,33 +30,31 @@ prefix="@prefix@"
+ datarootdir="@datarootdir@"
+ : ${gettext_datadir="@datadir@/gettext"}
+ 
++tmp=
++cur_dir=
++cvs_dir=
++work_dir=
++exit_handler()
++{
++  local rc=$?
++  trap - EXIT
++  [ -z "$tmp" ] || rm -rf -- "$tmp"
++  [ -z "$cur_dir" -o -z "$cvs_dir" ] || rm -rf -- "$cur_dir/$cvs_dir"
++  [ -z "$cur_dir" -o -z "$work_dir" ] || rm -rf -- "$cur_dir/$work_dir"
++  exit $rc
++}
++
++trap exit_handler HUP PIPE INT QUIT TERM EXIT
++
+ # func_tmpdir
+ # creates a temporary directory.
+ # Sets variable
+ # - tmp             pathname of freshly created temporary directory
+ func_tmpdir ()
+ {
+-  # Use the environment variable TMPDIR, falling back to /tmp. This allows
+-  # users to specify a different temporary directory, for example, if their
+-  # /tmp is filled up or too small.
+-  : ${TMPDIR=/tmp}
++  tmp="$(mktemp -dt autopoint.XXXXXXXXXX)" ||
+   {
+-    # Use the mktemp program if available. If not available, hide the error
+-    # message.
+-    tmp=`(umask 077 && mktemp -d "$TMPDIR/gtXXXXXX") 2>/dev/null` &&
+-    test -n "$tmp" && test -d "$tmp"
+-  } ||
+-  {
+-    # Use a simple mkdir command. It is guaranteed to fail if the directory
+-    # already exists.  $RANDOM is bash specific and expands to empty in shells
+-    # other than bash, ksh and zsh.  Its use does not increase security;
+-    # rather, it minimizes the probability of failure in a very cluttered /tmp
+-    # directory.
+-    tmp=$TMPDIR/gt$$-$RANDOM
+-    (umask 077 && mkdir "$tmp")
+-  } ||
+-  {
+-    echo "$0: cannot create a temporary directory in $TMPDIR" >&2
++    echo "$0: cannot create a temporary directory in ${TMPDIR-/tmp}" >&2
+     { (exit 1); exit 1; }
+   }
+ }
+@@ -406,17 +404,12 @@ if test -z "$podirs"; then
+   podirs="po"
+ fi
+ 
++cur_dir="$(pwd)"
+ # Set up a temporary checkout directory.
+ # Set variables
+ # - work_dir        directory containing the temporary checkout
+-work_dir=tmpwrk$$
+-mkdir "$work_dir" || {
+-  if test -d "$work_dir"; then
+-    func_fatal_error "directory $work_dir already exists"
+-  else
+-    func_fatal_error "cannot create directory $work_dir"
+-  fi
+-}
++work_dir="$(mktemp -d tmpwrk.XXXXXXXXXX)" || 
++    func_fatal_error "cannot create temporary work_dir directory"
+ 
+ # We support three archive formats.
+ #
+@@ -438,7 +431,6 @@ case "@ARCHIVE_FORMAT@" in
+     esac \
+       | (cd "$work_dir" && tar xf - "gettext-$ver")
+     if test `find "$work_dir" -type f -print | wc -l` = 0; then
+-      rm -rf "$work_dir"
+       func_fatal_error "infrastructure files for version $ver not found; this is autopoint from GNU $package $version"
+     fi
+     mv "$work_dir/gettext-$ver" "$work_dir/archive"
+@@ -500,16 +492,8 @@ case "@ARCHIVE_FORMAT@" in
+     # given, we need to compare the existing files with the checked out ones.
+     # Set variables
+     # - cvs_dir         directory containing the temporary repository
+-    cvs_dir=tmpcvs$$
+-    # Use an umask of 077, to avoid attacks that work by overwriting files in
+-    # the "$CVSROOT"/CVSROOT directory.
+-    (umask 077 && mkdir "$cvs_dir") || {
+-      if test -d "$cvs_dir"; then
+-        func_fatal_error "directory $cvs_dir already exists"
+-      else
+-        func_fatal_error "cannot create directory $cvs_dir"
+-      fi
+-    }
++    cvs_dir="$(mktemp -d tmpcvs.XXXXXXXXXX)" || exit
++        func_fatal_error "cannot create temporary cvs_dir directory"
+     CVSROOT="$srcdir/$cvs_dir"
+     unset CVS_CLIENT_LOG
+     unset CVS_CLIENT_PORT
+@@ -544,15 +528,12 @@ case "@ARCHIVE_FORMAT@" in
+     (cvs -d "$CVSROOT" checkout -r"$cvsver" archive > /dev/null) 2>&1 | grep -v '^cvs checkout: Updating'
+     find archive -name CVS -type d -print | xargs rm -rf
+     cd ..
+-    rm -rf "$cvs_dir"
+     # Check that really all CVS directories are gone, otherwise we would overwrite
+     # the contents of the user's CVS directories.
+     if test `find $work_dir/archive -name CVS -type d -print | wc -l` != 0; then
+-      rm -rf "$work_dir"
+       func_fatal_error "failed to remove all CVS subdirectories"
+     fi
+     if test `find $work_dir/archive -type f -print | wc -l` = 0; then
+-      rm -rf "$work_dir"
+       func_fatal_error "infrastructure files for version $ver not found; this is autopoint from GNU $package $version"
+     fi
+     ;;
+@@ -563,7 +544,6 @@ case "@ARCHIVE_FORMAT@" in
+     mkdir "$work_dir/archive"
+     gzip -d -c < "$gettext_datadir/archive.git.tar.gz" | (cd "$work_dir/archive" && tar xf -)
+     (cd "$work_dir/archive" && git checkout -q "gettext-$ver") || {
+-      rm -rf "$work_dir"
+       func_fatal_error "infrastructure files for version $ver not found; this is autopoint from GNU $package $version"
+     }
+     (cd "$work_dir/archive" && rm -rf .git .gitignore)
+@@ -690,7 +670,8 @@ func_mkdir_for ()
+     func_mkdir_for "$base"
+     # Recompute base. It was clobbered by the recursive call.
+     base=`echo "$1" | sed -e 's,/[^/]*$,,'`
+-    test -d "$base" || { echo "Creating directory $base"; mkdir "$base"; }
++    test -d "$base" || { echo "Creating directory $base"; mkdir "$base"; } ||
++      func_fatal_error "failed to create directory $base"
+   fi
+ }
+ 
+@@ -704,7 +685,8 @@ func_copy ()
+     func_mkdir_for "$2"
+     rm -f "$2"
+     echo "Copying file $2"
+-    cp "$1" "$2"
++    cp "$1" "$2" ||
++      func_fatal_error "failed to copy file $1 to $2"
+   else
+     echo "Copy file $2"
+   fi
+@@ -718,7 +700,8 @@ func_backup ()
+   if $doit; then
+     if test -f "$1"; then
+       rm -f "$1~"
+-      cp -p "$1" "$1~"
++      cp -p "$1" "$1~" ||
++        func_fatal_error "failed to copy file $1 to $1~"
+     fi
+   fi
+ }
+@@ -759,5 +742,4 @@ for file in `find "$work_dir/archive" -t
+ done
+ 
+ # That's it.
+-rm -rf "$work_dir"
+ exit 0
