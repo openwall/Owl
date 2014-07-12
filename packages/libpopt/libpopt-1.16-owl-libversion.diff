@@ -1,0 +1,19 @@
+--- popt-1.16.orig/Makefile.am	2014-06-19 11:43:00 +0000
++++ popt-1.16/Makefile.am	2014-06-19 13:07:11 +0000
+@@ -2,6 +2,8 @@
+ 
+ AUTOMAKE_OPTIONS = 1.4 foreign
+ 
++LIBRARY_VERSION := 0:$(subst .,,$(VERSION)):0
++
+ LINT =		splint
+ MCCABE =	pmccabe
+ 
+@@ -46,6 +48,7 @@
+ 
+ libpopt_la_SOURCES = popt.c poptparse.c poptconfig.c popthelp.c poptint.c
+ libpopt_la_LDFLAGS = -no-undefined @LTLIBINTL@ @LTLIBICONV@
++libpopt_la_LDFLAGS += -version-info $(LIBRARY_VERSION)
+ 
+ pkgconfigdir = $(prefix)/lib/pkgconfig
+ pkgconfig_DATA = popt.pc
