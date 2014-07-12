@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/libmpc/libmpc.spec,v 1.4 2011/10/24 18:20:13 solar Exp $
+# $Owl: Owl/packages/libmpc/libmpc.spec,v 1.5 2014/07/12 13:53:37 galaxy Exp $
 
 Summary: C library for multiple precision complex arithmetic.
 Name: libmpc
-Version: 0.9
+Version: 1.0.2
 Release: owl1
 License: LGPLv2+
 Group: Development/Tools
@@ -10,6 +10,7 @@ URL: http://www.multiprecision.org
 Source0: mpc-%version.tar.xz
 # http://www.multiprecision.org/mpc/download/mpc-%version.tar.gz
 # Signature: http://www.multiprecision.org/mpc/download/mpc-%version.tar.gz.asc
+BuildRequires: autoconf >= 2.61
 BuildRequires: gmp-devel >= 4.3.2
 BuildRequires: mpfr-devel >= 2.4.2
 BuildRequires: texinfo
@@ -34,6 +35,8 @@ applications.
 
 %prep
 %setup -q -n mpc-%version
+
+autoreconf -fis
 
 %build
 export EGREP=egrep
@@ -60,7 +63,7 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc README NEWS COPYING.LIB
+%doc README NEWS COPYING.LESSER
 %_libdir/libmpc.so.*
 %exclude %_libdir/libmpc.la
 %exclude %_libdir/libmpc.a
@@ -74,5 +77,8 @@ fi
 %exclude %_infodir/dir
 
 %changelog
+* Thu Jan 23 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.0.2-owl1
+- Updated to 1.0.2.
+
 * Fri Oct 21 2011 Vasiliy Kulikov <segoon-at-owl.openwall.com> 0.9-owl1
 - Initial import from Fedora.
