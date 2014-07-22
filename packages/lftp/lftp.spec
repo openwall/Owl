@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/lftp/lftp.spec,v 1.44 2012/05/08 18:21:41 solar Exp $
+# $Owl: Owl/packages/lftp/lftp.spec,v 1.45 2014/07/22 04:39:56 galaxy Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
 Version: 4.3.6
-Release: owl1
+Release: owl2
 License: GPLv3+
 Group: Applications/Internet
 URL: http://lftp.yar.ru
@@ -34,6 +34,11 @@ bzip2 -9k NEWS
 %build
 # Make sure that all message catalogs are built
 unset LINGUAS || :
+
+# Do not pick libexpat up even if it's there
+ac_cv_lib_expat_XML_ParserCreateNS=no
+export ac_cv_lib_expat_XML_ParserCreateNS
+
 %configure \
 	--with-modules --disable-static \
 	--without-gnutls --with-openssl \
@@ -76,6 +81,10 @@ fi
 %_datadir/locale/*/LC_MESSAGES/lftp.mo
 
 %changelog
+* Tue Jul 22 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.3.6-owl2
+- Do not pick libexpat up during the build process even if the library
+is there.
+
 * Tue May 08 2012 Solar Designer <solar-at-owl.openwall.com> 4.3.6-owl1
 - Updated to 4.3.6.
 - Corrected an assertion failure with torrent my_peer_id generation when the
