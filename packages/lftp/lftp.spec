@@ -1,15 +1,14 @@
-# $Owl: Owl/packages/lftp/lftp.spec,v 1.45 2014/07/22 04:39:56 galaxy Exp $
+# $Owl: Owl/packages/lftp/lftp.spec,v 1.46 2014/07/22 05:28:12 galaxy Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
-Version: 4.3.6
-Release: owl2
+Version: 4.5.3
+Release: owl1
 License: GPLv3+
 Group: Applications/Internet
 URL: http://lftp.yar.ru
 Source: http://ftp.yars.free.net/pub/source/lftp/lftp-%version.tar.xz
-Patch0: lftp-4.3.6-owl-torrent-my_peer_id.diff
-Patch1: lftp-4.3.6-up-need_exact_time.diff
+Patch: %name-4.0.9-fc-date_fmt.diff
 Requires: less
 BuildRequires: openssl-devel >= 0.9.7g-owl1, readline-devel >= 0:4.3
 BuildRequires: ncurses-devel, gettext
@@ -27,8 +26,15 @@ command completion, command history, and a lot more.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
+%patch -p1
+
+# Owl does not have pkgconfig, so let's apply a workaround
+cat << EOF > m4/noop.m4
+AC_DEFUN([PKG_PROG_PKG_CONFIG], [:])dnl
+AC_DEFUN([PKG_CHECK_MODULES], [:])dnl
+EOF
+autoreconf -fis
+
 bzip2 -9k NEWS
 
 %build
@@ -81,6 +87,9 @@ fi
 %_datadir/locale/*/LC_MESSAGES/lftp.mo
 
 %changelog
+* Tue Jul 22 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.5.3-owl1
+- Updated to 4.5.3.
+
 * Tue Jul 22 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.3.6-owl2
 - Do not pick libexpat up during the build process even if the library
 is there.
