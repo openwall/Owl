@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.50 2014/07/12 14:08:15 galaxy Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.51 2014/09/25 01:06:17 solar Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
 %define bash_version 3.1
-%define bash_patchlevel 17
+%define bash_patchlevel 18
 Version: %bash_version.%bash_patchlevel
-Release: owl8
+Release: owl1
 Group: System Environment/Shells
 License: GPL
 # ftp://ftp.gnu.org/gnu/bash/bash-%bash_version.tar.gz
@@ -283,6 +283,9 @@ fi
 %docdir/txt
 
 %changelog
+* Thu Sep 25 2014 Solar Designer <solar-at-owl.openwall.com> 3.1.18-owl1
+- Updated to 3.1 patchlevel 18.
+
 * Sat Jun 28 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.1.17-owl8
 - Regenerated the owl-warnings patch since it was fuzzy.
 
