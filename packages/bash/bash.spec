@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.51 2014/09/25 01:06:17 solar Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.52 2014/09/26 23:07:54 solar Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
 %define bash_version 3.1
-%define bash_patchlevel 18
+%define bash_patchlevel 19
 Version: %bash_version.%bash_patchlevel
 Release: owl1
 Group: System Environment/Shells
@@ -283,6 +283,9 @@ fi
 %docdir/txt
 
 %changelog
+* Sat Sep 27 2014 Solar Designer <solar-at-owl.openwall.com> 3.1.19-owl1
+- Updated to 3.1 patchlevel 19.
+
 * Thu Sep 25 2014 Solar Designer <solar-at-owl.openwall.com> 3.1.18-owl1
 - Updated to 3.1 patchlevel 18.
 
