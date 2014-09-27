@@ -193,8 +193,8 @@ diff -puNr bash-3.1.orig/builtins/enable.def bash-3.1/builtins/enable.def
  	  replaced++;
  	  FASTCOPY ((char *)b, (char *)old_builtin, sizeof (struct builtin));
 diff -puNr bash-3.1.orig/builtins/evalstring.c bash-3.1/builtins/evalstring.c
---- bash-3.1.orig/builtins/evalstring.c	2005-10-30 23:28:24 +0000
-+++ bash-3.1/builtins/evalstring.c	2006-01-05 18:25:34 +0000
+--- bash-3.1.orig/builtins/evalstring.c	2014-09-17 02:00:02 +0000
++++ bash-3.1/builtins/evalstring.c	2014-09-27 00:11:23 +0000
 @@ -219,7 +219,7 @@ parse_and_execute (string, from_file, fl
  	      dispose_command (global_command);
  	      global_command = (COMMAND *)NULL;
@@ -204,7 +204,7 @@ diff -puNr bash-3.1.orig/builtins/evalstring.c bash-3.1/builtins/evalstring.c
  	    {
  	      struct fd_bitmap *bitmap;
  
-@@ -316,9 +316,8 @@ static int
+@@ -327,9 +327,8 @@ static int
  cat_file (r)
       REDIRECT *r;
  {
@@ -488,8 +488,8 @@ diff -puNr bash-3.1.orig/hashlib.c bash-3.1/hashlib.c
        if (n == 0)
          {
 diff -puNr bash-3.1.orig/jobs.c bash-3.1/jobs.c
---- bash-3.1.orig/jobs.c	2014-06-27 20:29:40 +0000
-+++ bash-3.1/jobs.c	2014-06-27 20:30:29 +0000
+--- bash-3.1.orig/jobs.c	2014-09-26 23:10:23 +0000
++++ bash-3.1/jobs.c	2014-09-27 00:11:23 +0000
 @@ -746,7 +746,7 @@ bgp_search (pid)
  static void
  bgp_prune ()
@@ -533,8 +533,8 @@ diff -puNr bash-3.1.orig/jobs.h bash-3.1/jobs.h
  extern int job_control;
  #endif
 diff -puNr bash-3.1.orig/lib/glob/glob.c bash-3.1/lib/glob/glob.c
---- bash-3.1.orig/lib/glob/glob.c	2014-06-27 20:29:40 +0000
-+++ bash-3.1/lib/glob/glob.c	2014-06-27 20:30:29 +0000
+--- bash-3.1.orig/lib/glob/glob.c	2014-09-26 23:10:23 +0000
++++ bash-3.1/lib/glob/glob.c	2014-09-27 00:11:23 +0000
 @@ -184,7 +184,7 @@ mbskipname (pat, dname)
  {
    int ret;
@@ -554,8 +554,8 @@ diff -puNr bash-3.1.orig/lib/glob/glob.c bash-3.1/lib/glob/glob.c
    firstmalloc = 0;
    nalloca = 0;
 diff -puNr bash-3.1.orig/lib/glob/sm_loop.c bash-3.1/lib/glob/sm_loop.c
---- bash-3.1.orig/lib/glob/sm_loop.c	2014-06-27 20:29:40 +0000
-+++ bash-3.1/lib/glob/sm_loop.c	2014-06-27 20:30:29 +0000
+--- bash-3.1.orig/lib/glob/sm_loop.c	2014-09-26 23:10:23 +0000
++++ bash-3.1/lib/glob/sm_loop.c	2014-09-27 00:11:23 +0000
 @@ -302,7 +302,7 @@ BRACKMATCH (p, test, flags)
       circumflex (`^') in its role in a `nonmatching list'.  A bracket
       expression starting with an unquoted circumflex character produces
@@ -790,8 +790,8 @@ diff -puNr bash-3.1.orig/make_cmd.c bash-3.1/make_cmd.c
  
    temp = (FUNCTION_DEF *)xmalloc (sizeof (FUNCTION_DEF));
 diff -puNr bash-3.1.orig/parse.y bash-3.1/parse.y
---- bash-3.1.orig/parse.y	2014-06-27 20:29:40 +0000
-+++ bash-3.1/parse.y	2014-06-27 20:30:29 +0000
+--- bash-3.1.orig/parse.y	2014-09-26 23:50:27 +0000
++++ bash-3.1/parse.y	2014-09-27 00:11:23 +0000
 @@ -192,7 +192,9 @@ static int token_is_assignment __P((char
  static int token_is_ident __P((char *, int));
  #endif
@@ -802,7 +802,7 @@ diff -puNr bash-3.1.orig/parse.y bash-3.1/parse.y
  
  static char *error_token_from_token __P((int));
  static char *error_token_from_text __P((void));
-@@ -1869,7 +1871,6 @@ shell_getc (remove_quoted_newline)
+@@ -1881,7 +1883,6 @@ shell_getc (remove_quoted_newline)
    register int i;
    int c;
    unsigned char uc;
@@ -810,7 +810,7 @@ diff -puNr bash-3.1.orig/parse.y bash-3.1/parse.y
  
    QUIT;
  
-@@ -2738,6 +2739,7 @@ parse_matched_pair (qc, open, close, len
+@@ -2752,6 +2753,7 @@ parse_matched_pair (qc, open, close, len
    rflags = (qc == '"') ? P_DQUOTE : (flags & P_DQUOTE);
  
    ret = (char *)xmalloc (retsize = 64);
@@ -818,7 +818,7 @@ diff -puNr bash-3.1.orig/parse.y bash-3.1/parse.y
    retind = 0;
  
    start_lineno = line_number;
-@@ -2944,8 +2946,8 @@ static int
+@@ -2958,8 +2960,8 @@ static int
  parse_dparen (c)
       int c;
  {
@@ -829,7 +829,7 @@ diff -puNr bash-3.1.orig/parse.y bash-3.1/parse.y
    WORD_DESC *wd;
  
  #if defined (ARITH_FOR_COMMAND)
-@@ -3060,7 +3062,7 @@ cond_error ()
+@@ -3074,7 +3076,7 @@ cond_error ()
      parser_error (cond_lineno, _("unexpected EOF while looking for `]]'"));
    else if (cond_token != COND_ERROR)
      {
@@ -838,7 +838,7 @@ diff -puNr bash-3.1.orig/parse.y bash-3.1/parse.y
  	{
  	  parser_error (cond_lineno, _("syntax error in conditional expression: unexpected token `%s'"), etext);
  	  free (etext);
-@@ -3142,7 +3144,7 @@ cond_term ()
+@@ -3156,7 +3158,7 @@ cond_term ()
  	{
  	  if (term)
  	    dispose_cond_node (term);		/* ( */
@@ -847,7 +847,7 @@ diff -puNr bash-3.1.orig/parse.y bash-3.1/parse.y
  	    {
  	      parser_error (lineno, _("unexpected token `%s', expected `)'"), etext);
  	      free (etext);
-@@ -3174,7 +3176,7 @@ cond_term ()
+@@ -3188,7 +3190,7 @@ cond_term ()
        else
  	{
  	  dispose_word (op);
@@ -856,7 +856,7 @@ diff -puNr bash-3.1.orig/parse.y bash-3.1/parse.y
  	    {
  	      parser_error (line_number, _("unexpected argument `%s' to conditional unary operator"), etext);
  	      free (etext);
-@@ -3215,7 +3217,7 @@ cond_term ()
+@@ -3229,7 +3231,7 @@ cond_term ()
  	}
        else
  	{
@@ -865,7 +865,7 @@ diff -puNr bash-3.1.orig/parse.y bash-3.1/parse.y
  	    {
  	      parser_error (line_number, _("unexpected token `%s', conditional binary operator expected"), etext);
  	      free (etext);
-@@ -3235,7 +3237,7 @@ cond_term ()
+@@ -3249,7 +3251,7 @@ cond_term ()
  	}
        else
  	{
@@ -874,7 +874,7 @@ diff -puNr bash-3.1.orig/parse.y bash-3.1/parse.y
  	    {
  	      parser_error (line_number, _("unexpected argument `%s' to conditional binary operator"), etext);
  	      free (etext);
-@@ -3253,7 +3255,7 @@ cond_term ()
+@@ -3267,7 +3269,7 @@ cond_term ()
      {
        if (tok < 256)
  	parser_error (line_number, _("unexpected token `%c' in conditional command"), tok);
@@ -883,7 +883,7 @@ diff -puNr bash-3.1.orig/parse.y bash-3.1/parse.y
  	{
  	  parser_error (line_number, _("unexpected token `%s' in conditional command"), etext);
  	  free (etext);
-@@ -3997,8 +3999,9 @@ decode_prompt_string (string)
+@@ -4011,8 +4013,9 @@ decode_prompt_string (string)
    result = (char *)xmalloc (result_size = PROMPT_GROWTH);
    result[result_index = 0] = 0;
    temp = (char *)NULL;
@@ -894,7 +894,7 @@ diff -puNr bash-3.1.orig/parse.y bash-3.1/parse.y
      {
        if (posixly_correct && c == '!')
  	{
-@@ -4362,10 +4365,10 @@ error_token_from_token (token)
+@@ -4376,10 +4379,10 @@ error_token_from_token (token)
  {
    char *t;
  
@@ -907,7 +907,7 @@ diff -puNr bash-3.1.orig/parse.y bash-3.1/parse.y
      return t;
  
    t = (char *)NULL;
-@@ -4517,6 +4520,7 @@ report_syntax_error (message)
+@@ -4531,6 +4534,7 @@ report_syntax_error (message)
    last_command_exit_value = EX_USAGE;
  }
  
@@ -915,7 +915,7 @@ diff -puNr bash-3.1.orig/parse.y bash-3.1/parse.y
  /* ??? Needed function. ??? We have to be able to discard the constructs
     created during parsing.  In the case of error, we want to return
     allocated objects to the memory pool.  In the case of no error, we want
-@@ -4527,6 +4531,7 @@ discard_parser_constructs (error_p)
+@@ -4541,6 +4545,7 @@ discard_parser_constructs (error_p)
       int error_p;
  {
  }
@@ -1033,8 +1033,8 @@ diff -puNr bash-3.1.orig/shell.c bash-3.1/shell.c
  	  switch (arg_character)
  	    {
 diff -puNr bash-3.1.orig/subst.c bash-3.1/subst.c
---- bash-3.1.orig/subst.c	2014-06-27 20:29:40 +0000
-+++ bash-3.1/subst.c	2014-06-27 20:30:29 +0000
+--- bash-3.1.orig/subst.c	2014-09-26 23:10:23 +0000
++++ bash-3.1/subst.c	2014-09-27 00:11:23 +0000
 @@ -50,6 +50,8 @@
  
  #include "shmbutil.h"
@@ -1391,8 +1391,8 @@ diff -puNr bash-3.1.orig/unwind_prot.c bash-3.1/unwind_prot.c
        unwind_protect_list = elt->head.next;
  
 diff -puNr bash-3.1.orig/variables.c bash-3.1/variables.c
---- bash-3.1.orig/variables.c	2014-06-27 20:29:40 +0000
-+++ bash-3.1/variables.c	2014-06-27 20:30:29 +0000
+--- bash-3.1.orig/variables.c	2014-09-26 23:37:48 +0000
++++ bash-3.1/variables.c	2014-09-27 00:11:23 +0000
 @@ -144,8 +144,10 @@ static int export_env_size;
  
  #if defined (READLINE)
@@ -1416,7 +1416,7 @@ diff -puNr bash-3.1.orig/variables.c bash-3.1/variables.c
  #endif
  static SHELL_VAR *get_self __P((SHELL_VAR *));
  
-@@ -280,7 +283,7 @@ initialize_shell_variables (env, privmod
+@@ -287,7 +290,7 @@ initialize_shell_variables (env, privmod
      shell_function_defs = hash_create (0);
  #endif
  
@@ -1425,16 +1425,16 @@ diff -puNr bash-3.1.orig/variables.c bash-3.1/variables.c
      {
        char_index = 0;
        name = string;
-@@ -317,7 +320,7 @@ initialize_shell_variables (env, privmod
- 	  if (name[char_index - 1] == ')' && name[char_index - 2] == '(')
- 	    name[char_index - 2] = '\0';
+@@ -331,7 +334,7 @@ initialize_shell_variables (env, privmod
+ 	    parse_and_execute (temp_string, temp_name,
+ 			       SEVAL_NONINT|SEVAL_NOHIST|SEVAL_FUNCDEF|SEVAL_ONECMD);
  
 -	  if (temp_var = find_function (temp_name))
 +	  if ((temp_var = find_function (temp_name)))
  	    {
  	      VSETATTR (temp_var, (att_exported|att_imported));
  	      array_needs_making = 1;
-@@ -1035,21 +1038,21 @@ print_var_function (var)
+@@ -1048,21 +1051,21 @@ print_var_function (var)
      } \
    while (0)
  
@@ -1462,7 +1462,7 @@ diff -puNr bash-3.1.orig/variables.c bash-3.1/variables.c
  {
    return (self);
  }
-@@ -1304,7 +1307,9 @@ static SHELL_VAR *
+@@ -1317,7 +1320,9 @@ static SHELL_VAR *
  get_comp_wordbreaks (var)
       SHELL_VAR *var;
  {
@@ -1472,7 +1472,7 @@ diff -puNr bash-3.1.orig/variables.c bash-3.1/variables.c
  
    /* If we don't have anything yet, assign a default value. */
    if (rl_completer_word_break_characters == 0 && bash_readline_initialized == 0)
-@@ -1513,7 +1518,7 @@ var_lookup (name, vcontext)
+@@ -1526,7 +1531,7 @@ var_lookup (name, vcontext)
  
    v = (SHELL_VAR *)NULL;
    for (vc = vcontext; vc; vc = vc->down)
@@ -1481,7 +1481,7 @@ diff -puNr bash-3.1.orig/variables.c bash-3.1/variables.c
        break;
  
    return v;
-@@ -1649,6 +1654,7 @@ make_local_variable (name)
+@@ -1662,6 +1667,7 @@ make_local_variable (name)
    int was_tmpvar;
    char *tmp_value;
  
@@ -1489,7 +1489,7 @@ diff -puNr bash-3.1.orig/variables.c bash-3.1/variables.c
    /* local foo; local foo;  is a no-op. */
    old_var = find_variable (name);
    if (old_var && local_p (old_var) && old_var->context == variable_context)
-@@ -1820,6 +1826,7 @@ make_variable_value (var, value, flags)
+@@ -1833,6 +1839,7 @@ make_variable_value (var, value, flags)
       evaluation done. */
    if (integer_p (var))
      {
@@ -1497,7 +1497,7 @@ diff -puNr bash-3.1.orig/variables.c bash-3.1/variables.c
        if (flags & ASS_APPEND)
  	{
  	  oval = value_cell (var);
-@@ -2031,7 +2038,11 @@ bind_int_variable (lhs, rhs)
+@@ -2044,7 +2051,11 @@ bind_int_variable (lhs, rhs)
       char *lhs, *rhs;
  {
    register SHELL_VAR *v;
@@ -1509,7 +1509,7 @@ diff -puNr bash-3.1.orig/variables.c bash-3.1/variables.c
    int isint, isarr;
  
    isint = isarr = 0;
-@@ -2388,7 +2399,7 @@ makunbound (name, vc)
+@@ -2401,7 +2412,7 @@ makunbound (name, vc)
    char *t;
  
    for (elt = (BUCKET_CONTENTS *)NULL, v = vc; v; v = v->down)
@@ -1518,7 +1518,7 @@ diff -puNr bash-3.1.orig/variables.c bash-3.1/variables.c
        break;
  
    if (elt == 0)
-@@ -3071,7 +3082,7 @@ make_env_array_from_var_list (vars)
+@@ -3105,7 +3116,7 @@ make_env_array_from_var_list (vars)
  
  #define USE_EXPORTSTR (value == var->exportstr)
  
@@ -1527,7 +1527,7 @@ diff -puNr bash-3.1.orig/variables.c bash-3.1/variables.c
      {
  #if defined (__CYGWIN__)
        /* We don't use the exportstr stuff on Cygwin at all. */
-@@ -3483,7 +3494,7 @@ pop_var_context ()
+@@ -3517,7 +3528,7 @@ pop_var_context ()
        return;
      }
  
@@ -1536,7 +1536,7 @@ diff -puNr bash-3.1.orig/variables.c bash-3.1/variables.c
      {
        ret->up = (VAR_CONTEXT *)NULL;
        shell_variables = ret;
-@@ -4060,7 +4071,7 @@ sv_history_control (name)
+@@ -4094,7 +4105,7 @@ sv_history_control (name)
      return;
  
    tptr = 0;
