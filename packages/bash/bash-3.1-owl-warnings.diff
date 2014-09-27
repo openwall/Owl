@@ -1429,8 +1429,8 @@ diff -puNr bash-3.1.orig/variables.c bash-3.1/variables.c
  	  if (name[char_index - 1] == ')' && name[char_index - 2] == '(')
  	    name[char_index - 2] = '\0';
  
--	  if (temp_var = find_function (name))
-+	  if ((temp_var = find_function (name)))
+-	  if (temp_var = find_function (temp_name))
++	  if ((temp_var = find_function (temp_name)))
  	    {
  	      VSETATTR (temp_var, (att_exported|att_imported));
  	      array_needs_making = 1;
