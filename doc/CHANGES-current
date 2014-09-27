@@ -48,15 +48,27 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
-2014/09/25	Package: bash
+2014/09/25 -
+2014/09/27	Package: bash
 SECURITY FIX	Severity: none to high, remote, active
-Updated to 3.1 patchlevel 18.  This fixes a vulnerability with function
-imports, which could in many setups be exploited remotely.
+Updated to 3.1 patchlevel 19 with additional patches by Florian Weimer
+of Red Hat.  This fixes vulnerabilities with and introduces security
+hardening of function imports, which could in many setups be exploited
+remotely.
 References:
 http://www.openwall.com/lists/oss-security/2014/09/24/10
 http://www.openwall.com/lists/oss-security/2014/09/24/11
+http://www.openwall.com/lists/oss-security/2014/09/24/40
+http://www.openwall.com/lists/oss-security/2014/09/25/5
+http://www.openwall.com/lists/oss-security/2014/09/25/13
+http://www.openwall.com/lists/oss-security/2014/09/25/32
+http://www.openwall.com/lists/oss-security/2014/09/26/2
+http://lcamtuf.blogspot.com/2014/09/quick-notes-about-bash-bug-its-impact.html
 https://securityblog.redhat.com/2014/09/24/bash-specially-crafted-environment-variables-code-injection-attack/
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6271
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7169
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7186
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7187
 
 2014/08/16	Package: strace
 Updated to 4.9.
@@ -120,4 +132,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.4 2014/09/25 01:06:16 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.5 2014/09/27 01:21:22 solar Exp $
