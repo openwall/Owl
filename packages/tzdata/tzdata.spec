@@ -1,16 +1,16 @@
-# $Owl: Owl/packages/tzdata/tzdata.spec,v 1.6 2014/10/24 22:00:42 solar Exp $
+# $Owl: Owl/packages/tzdata/tzdata.spec,v 1.7 2014/10/24 22:13:47 solar Exp $
 
 Summary: Timezone data.
 Name: tzdata
-%define tzdata_version 2014e
-%define tzcode_version 2014e
+%define tzdata_version 2014i
+%define tzcode_version 2014i
 Version: %tzdata_version
 Release: owl1
 License: public domain
 Group: System Environment/Base
 URL: http://www.iana.org/time-zones
-Source0: ftp://munnari.oz.au/pub/tzdata%tzdata_version.tar.gz
-Source1: ftp://munnari.oz.au/pub/tzcode%tzcode_version.tar.gz
+Source0: ftp://ftp.iana.org/tz/releases/tzdata%tzdata_version.tar.gz
+Source1: ftp://ftp.iana.org/tz/releases/tzcode%tzcode_version.tar.gz
 BuildRequires: /usr/sbin/zic
 BuildRequires: hardlink
 BuildArchitectures: noarch
@@ -22,32 +22,29 @@ the world.
 
 %prep
 %setup -q -n tzdata -c -a 1
-#tar xzf %SOURCE0
-#tar xzf %SOURCE1
 
 %build
 %__make CC=%__cc CFLAGS='%optflags'
-#fgrep -v tz-art.htm tzcode%tzcode_version/tz-link.htm > \
-#	tzcode%tzcode_version/tz-link.html
 
 %install
 rm -rf %buildroot
-%__make install DESTDIR=%buildroot TOPDIR=/usr TZDIR=%_datadir/zoneinfo
+%__make install DESTDIR=%buildroot TZDIR=%_datadir/zoneinfo
 hardlink -vc %buildroot
 
 %check
-%__make check_character_set check_tables
+%__make check_character_set check_white_space check_sorted check_tables
 
 %files
 %defattr(-,root,root)
 %_datadir/zoneinfo
 %doc README NEWS Theory *.htm*
-%exclude /usr/etc
-%exclude /usr/lib
-%exclude /usr/man
-%exclude %_datadir/zoneinfo-leaps
+%exclude /usr/local
+%exclude /usr/share/zoneinfo-leaps
 
 %changelog
+* Sat Oct 25 2014 Solar Designer <solar-at-owl.openwall.com> 2014i-owl1
+- Updated to 2014i.
+
 * Mon Jul 07 2014 Solar Designer <solar-at-owl.openwall.com> 2014e-owl1
 - Updated to 2014e.
 
