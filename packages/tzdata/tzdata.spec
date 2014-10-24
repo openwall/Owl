@@ -1,25 +1,18 @@
-# $Owl: Owl/packages/tzdata/tzdata.spec,v 1.5 2011/10/26 02:05:40 solar Exp $
+# $Owl: Owl/packages/tzdata/tzdata.spec,v 1.6 2014/10/24 22:00:42 solar Exp $
 
 Summary: Timezone data.
 Name: tzdata
-%define tzdata_version 2011m
-%define tzcode_version 2011i
+%define tzdata_version 2014e
+%define tzcode_version 2014e
 Version: %tzdata_version
 Release: owl1
 License: public domain
 Group: System Environment/Base
 URL: http://www.iana.org/time-zones
-# The tzdata-base-0.tar.bz2 is a simple building infrastructure and
-# a test suite.  It is occasionally updated from glibc sources, and as
-# such is under LGPLv2+, but none of this ever gets to be part of
-# final zoneinfo files.
-Source0: tzdata-base-0.tar.bz2
-# These are official upstream.
-Source1: ftp://munnari.oz.au/pub/tzdata%tzdata_version.tar.gz
-Source2: ftp://munnari.oz.au/pub/tzcode%tzcode_version.tar.gz
+Source0: ftp://munnari.oz.au/pub/tzdata%tzdata_version.tar.gz
+Source1: ftp://munnari.oz.au/pub/tzcode%tzcode_version.tar.gz
 BuildRequires: /usr/sbin/zic
 BuildRequires: hardlink
-BuildRequires: sed >= 4.0.9
 BuildArchitectures: noarch
 BuildRoot: /override/%name-%version
 
@@ -28,37 +21,36 @@ This package contains data files with rules for various timezones around
 the world.
 
 %prep
-%setup -q -n tzdata
-mkdir tzdata%tzdata_version
-tar xzf %SOURCE1 -C tzdata%tzdata_version
-mkdir tzcode%tzcode_version
-tar xzf %SOURCE2 -C tzcode%tzcode_version
-sed -e 's|@objpfx@|'`pwd`'/obj/|' \
-    -e 's|@datadir@|%_datadir|' \
-	Makeconfig.in > Makeconfig
+%setup -q -n tzdata -c -a 1
+#tar xzf %SOURCE0
+#tar xzf %SOURCE1
 
 %build
-%__make
-fgrep -v tz-art.htm tzcode%tzcode_version/tz-link.htm > \
-	tzcode%tzcode_version/tz-link.html
+%__make CC=%__cc CFLAGS='%optflags'
+#fgrep -v tz-art.htm tzcode%tzcode_version/tz-link.htm > \
+#	tzcode%tzcode_version/tz-link.html
 
 %install
 rm -rf %buildroot
-sed -i 's|@install_root@|%buildroot|' Makeconfig
-%__make install
+%__make install DESTDIR=%buildroot TOPDIR=/usr TZDIR=%_datadir/zoneinfo
 hardlink -vc %buildroot
 
 %check
-%__make check
+%__make check_character_set check_tables
 
 %files
 %defattr(-,root,root)
 %_datadir/zoneinfo
-%doc tzcode%tzcode_version/README
-%doc tzcode%tzcode_version/Theory
-%doc tzcode%tzcode_version/tz-link.html
+%doc README NEWS Theory *.htm*
+%exclude /usr/etc
+%exclude /usr/lib
+%exclude /usr/man
+%exclude %_datadir/zoneinfo-leaps
 
 %changelog
+* Mon Jul 07 2014 Solar Designer <solar-at-owl.openwall.com> 2014e-owl1
+- Updated to 2014e.
+
 * Wed Oct 26 2011 Solar Designer <solar-at-owl.openwall.com> 2011m-owl1
 - Updated to 2011m.
 
