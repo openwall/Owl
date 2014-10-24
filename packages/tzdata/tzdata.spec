@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/tzdata/tzdata.spec,v 1.7 2014/10/24 22:13:47 solar Exp $
+# $Owl: Owl/packages/tzdata/tzdata.spec,v 1.8 2014/10/24 22:20:16 solar Exp $
 
 Summary: Timezone data.
 Name: tzdata
@@ -38,8 +38,8 @@ hardlink -vc %buildroot
 %defattr(-,root,root)
 %_datadir/zoneinfo
 %doc README NEWS Theory *.htm*
+%exclude %_datadir/zoneinfo-leaps
 %exclude /usr/local
-%exclude /usr/share/zoneinfo-leaps
 
 %changelog
 * Sat Oct 25 2014 Solar Designer <solar-at-owl.openwall.com> 2014i-owl1
