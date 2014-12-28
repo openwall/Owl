@@ -1,23 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.107 2014/07/12 14:09:22 galaxy Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.108 2014/12/28 20:11:26 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 371.9.1.el5.028stab114.2
-Release: %ovzversion.owl3
+%define ovzversion 400.el5.028stab117.2
+Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: http://openvz.org/Download/kernel/rhel5-testing/028stab114.2
+URL: https://openvz.org/Download/kernel/rhel5/028stab117.2
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab114.2/patches/patch-371.9.1.el5.028stab114.2-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab114.2/patches/patch-371.9.1.el5.028stab114.2-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab117.2/patches/patch-400.el5.028stab117.2-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab117.2/patches/patch-400.el5.028stab117.2-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 Requires: basesystem
 Provides: kernel-drm = 4.3.0
@@ -104,6 +104,9 @@ done
 %files fake
 
 %changelog
+* Sun Dec 28 2014 Solar Designer <solar-at-owl.openwall.com> 2.6.18-400.el5.028stab117.2.owl1
+- Updated to 2.6.18-400.el5.028stab117.2.
+
 * Thu Jul 10 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.6.18-371.9.1.el5.028stab114.2.owl3
 - Replaced the deprecated PreReq tag with the Plain Require tag.
 
