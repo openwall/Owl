@@ -2,7 +2,9 @@ This file lists all changes made between the Owl 3.1 branch point (off
 Owl-current) and the current state of the 3.1-stable branch.
 
 The dates shown in braces indicate when an equivalent change went into
-Owl-current, where applicable.
+Owl-current, where applicable.  Note that although the 3.1 branch point
+was created in mid-2014, Owl 3.1 was never released (not was it intended
+to be) and the Owl 3.1-stable branch was only released in January 2015.
 
 Security fixes have a "Severity" specified for the issue(s) being fixed.
 The three comma-separated metrics given after "Severity:" are: risk
@@ -43,6 +45,45 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl 3.1-stable.
 
-(none recorded yet)
+(2014/12/28)
+2015/01/03	Package: kernel
+SECURITY FIX	Severity: none to high, local, active
+Updated to 2.6.18-400.el5.028stab117.2, which most importantly fixes a
+local privilege escalation vulnerability on x86-64 (CVE-2014-9322).
+References:
+https://openvz.org/Download/kernel/rhel5/028stab117.2
+http://www.openwall.com/lists/oss-security/2014/12/15/6
+https://rhn.redhat.com/errata/RHSA-2014-2008.html
+https://rhn.redhat.com/errata/RHSA-2014-1959.html
+https://openvz.org/Download/kernel/rhel5/028stab116.1
+https://rhn.redhat.com/errata/RHBA-2014-1196.html
+https://rhn.redhat.com/errata/RHSA-2014-1143.html
+https://rhn.redhat.com/errata/RHSA-2014-0926.html
 
-$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.1 2015/01/03 06:10:07 solar Exp $
+(2014/10/25)
+2015/01/03	Package: tzdata
+Updated to 2014i.
+
+(2014/09/25 - 2014/09/27)
+2015/01/03	Package: bash
+SECURITY FIX	Severity: none to high, remote, active
+Updated to 3.1 patchlevel 19 with additional patches by Florian Weimer
+of Red Hat.  This fixes vulnerabilities with and introduces security
+hardening of function imports, which could in many setups be exploited
+remotely.
+References:
+http://www.openwall.com/lists/oss-security/2014/09/24/10
+http://www.openwall.com/lists/oss-security/2014/09/24/11
+http://www.openwall.com/lists/oss-security/2014/09/24/40
+http://www.openwall.com/lists/oss-security/2014/09/25/5
+http://www.openwall.com/lists/oss-security/2014/09/25/13
+http://www.openwall.com/lists/oss-security/2014/09/25/32
+http://www.openwall.com/lists/oss-security/2014/09/26/2
+http://lcamtuf.blogspot.com/2014/09/quick-notes-about-bash-bug-its-impact.html
+https://securityblog.redhat.com/2014/09/24/bash-specially-crafted-environment-variables-code-injection-attack/
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6271
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7169
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7186
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7187
+
+$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.2 2015/01/03 06:14:53 solar Exp $
