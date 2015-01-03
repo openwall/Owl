@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.24 2014/07/12 14:08:49 galaxy Exp $
+# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.25 2015/01/03 23:11:09 solar Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
 Version: 3.0
-Release: owl4
+Release: owl5
 License: GPL
 Group: Applications/Text
 URL: http://www.gnu.org/software/diffutils/
@@ -13,7 +13,7 @@ Patch0: diffutils-2.8.7-owl-info.diff
 Patch1: diffutils-3.0-owl-nanoseconds.diff
 Requires(post,preun): /sbin/install-info
 Prefix: %_prefix
-BuildRequires: texinfo
+BuildRequires: texinfo, help2man
 BuildRequires: rpm-build >= 0:4
 BuildRoot: /override/%name-%version
 
@@ -70,6 +70,9 @@ fi
 %_infodir/diff.info*
 
 %changelog
+* Sun Jan 04 2015 Solar Designer <solar-at-owl.openwall.com> 3.0-owl5
+- BuildRequires: help2man
+
 * Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.0-owl4
 - Replaced the deprecated PreReq tag with Requires(post,preun).
 - Used %%find_lang.
