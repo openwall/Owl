@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gdb/gdb.spec,v 1.29 2012/07/22 18:36:18 segoon Exp $
+# $Owl: Owl/packages/gdb/gdb.spec,v 1.29.2.1 2015/01/03 06:58:37 solar Exp $
 
 Summary: A GNU source-level debugger for C, C++ and Fortran.
 Name: gdb
@@ -134,7 +134,7 @@ fi
 - Imported patch from Gentoo that fixes .gdbinit issue (CAN-2005-1705).
 - Corrected info files installation.
 
-* Fri Jan 15 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.1.1-owl2
+* Sat Jan 15 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 6.1.1-owl2
 - Used %%__make macro instead of plain "make".
 
 * Thu Jul 08 2004 Michail Litvak <mci-at-owl.openwall.com> 6.1.1-owl1

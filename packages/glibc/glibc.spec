@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.137 2014/07/07 15:19:04 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.137.2.1 2015/01/03 06:58:38 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -671,7 +671,7 @@ controled through BUILD_LOCALES macro.
 patch also replaces execv() to execvp() to search for cpp binary in PATH.
 - Cleaned up the spec.
 
-* Wed Dec 25 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl3
+* Sat Dec 25 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl3
 - Fixed compat-fake's provides to deal with Owl 1.1 release upgrades
 - Fixed a bug with creating buildtree using %_target_cpu, but accessing it
 using RPM_ARCH variable. Thanks goes to Piotr Janiec, who had pointed and
@@ -705,7 +705,7 @@ further corrections for whatever we've broken with the big update.
 * Mon Mar 01 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl0.3
 - Prepared spec for FHS 2.2
 
-* Thu Feb 24 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl0.2
+* Tue Feb 24 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl0.2
 - Cleaned up spec for building under "stage4" environment.
 
 * Thu Feb 19 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.2-owl0.1

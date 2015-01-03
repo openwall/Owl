@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/strace/strace.spec,v 1.29 2013/06/05 21:57:21 ldv Exp $
+# $Owl: Owl/packages/strace/strace.spec,v 1.29.2.1 2015/01/03 06:58:40 solar Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
@@ -124,7 +124,7 @@ multi-threaded programs.
 * Thu Jan 25 2001 Michail Litvak <mci-at-owl.openwall.com>
 - Added patch to fix printsock
 
-* Mon Jan 23 2001 Michail Litvak <mci-at-owl.openwall.com>
+* Tue Jan 23 2001 Michail Litvak <mci-at-owl.openwall.com>
 - Imported from RH
 - Removed most of 2.4 related patches...
 - Added patch to compile on 2.2 kernels (strace-4.2-owl-timex.diff)

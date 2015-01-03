@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.58 2011/01/25 17:20:17 solar Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.58.2.1 2015/01/03 06:58:37 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -285,7 +285,7 @@ readline_shutdown function via the previously-uninitialized pointer.
 - Updated to 1.41.9.
 - Updated -owl-warnings patch.
 
-* Thu May 05 2009 Michail Litvak <mci-at-owl.openwall.com> 1.41.5-owl2
+* Tue May 05 2009 Michail Litvak <mci-at-owl.openwall.com> 1.41.5-owl2
 - Fixed compiler warnings.
 
 * Thu Apr 30 2009 Michail Litvak <mci-at-owl.openwall.com> 1.41.5-owl1
@@ -338,7 +338,7 @@ Changeset 1953: Fix SIGBUS through unaligned access to FAT superblocks.
 UID/EUID check.
 - Fixed more compiler warnings, including some for real bugs.
 
-* Mon Mar 01 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.36-owl1
+* Tue Mar 01 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.36-owl1
 - Updated to 1.36.
 - Reviewed all patches, dropped the ones accepted.
 - Dropped the "notitle" patch.
@@ -378,6 +378,6 @@ to Jarno Huuskonen for noticing that this was missing.
 - Added a patch by Miquel van Smoorenburg to fix the progress indicator
 in e2fsck.
 
-* Wed Aug 03 2000 Solar Designer <solar-at-owl.openwall.com>
+* Thu Aug 03 2000 Solar Designer <solar-at-owl.openwall.com>
 - Imported this spec file from RH.
 - Added a patch for the permissions on lost+found.

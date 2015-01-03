@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.53 2012/07/22 18:26:20 segoon Exp $
+# $Owl: Owl/packages/util-linux/util-linux.spec,v 1.53.2.1 2015/01/03 06:58:40 solar Exp $
 
 %define BUILD_MOUNT 1
 %define BUILD_LOSETUP 1
@@ -411,7 +411,7 @@ privileges by "umount -r".
 - Replaced crypto code from international crypto patch (2.2.18.3) to
 unified util-linux crypto patch by Jari Ruusu.
 
-* Tue Apr 14 2003 Michail Litvak <mci-at-owl.openwall.com> 2.11z.2.2.18.3-owl1
+* Mon Apr 14 2003 Michail Litvak <mci-at-owl.openwall.com> 2.11z.2.2.18.3-owl1
 - 2.11z
 - minor spec file cleanups.
 

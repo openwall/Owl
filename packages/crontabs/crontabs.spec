@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/crontabs/crontabs.spec,v 1.18 2006/12/26 15:45:23 ldv Exp $
+# $Owl: Owl/packages/crontabs/crontabs.spec,v 1.18.4.1 2015/01/03 06:58:36 solar Exp $
 
 Summary: System crontab files used to schedule the execution of programs.
 Name: crontabs
@@ -65,7 +65,7 @@ install -m644 run-parts.8 %buildroot%_mandir/man8/
 * Sat Sep 24 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 2.0-owl6
 - Added crond to the package requirements.
 
-* Fri Jan 07 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.0-owl5
+* Wed Jan 07 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.0-owl5
 - Added fixes patch to deal with issues after gcc upgrade.
 - Use %%__cc macro to choose C compiler.
 - Removed "-s" option from compilation process since we are using brp- scripts.
@@ -76,12 +76,12 @@ install -m644 run-parts.8 %buildroot%_mandir/man8/
 * Fri May 25 2001 Solar Designer <solar-at-owl.openwall.com>
 - Fixed SIGCHLD races in run-parts (the code is still far from clean).
 
-* Thu May 16 2001 Michail Litvak <mci-at-owl.openwall.com>
+* Wed May 16 2001 Michail Litvak <mci-at-owl.openwall.com>
 - run-parts source archive renamed to name with version
 - umask patching extracted to separate patch (and improved)
 - use gcc instead of make
 
-* Thu May 15 2001 Michail Litvak <mci-at-owl.openwall.com>
+* Tue May 15 2001 Michail Litvak <mci-at-owl.openwall.com>
 - basically imported from RH, but run-parts imported
   from Debian (debianutils)
 - run-parts patched to use write_loop() instead of just write()

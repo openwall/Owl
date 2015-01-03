@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gawk/gawk.spec,v 1.22 2010/08/24 16:16:07 solar Exp $
+# $Owl: Owl/packages/gawk/gawk.spec,v 1.22.4.1 2015/01/03 06:58:37 solar Exp $
 
 %define BUILD_PROFILE 0
 
@@ -129,7 +129,7 @@ with recent versions of gawk anymore).
 * Mon Aug 19 2002 Michail Litvak <mci-at-owl.openwall.com> 3.1.1-owl3
 - Deal with info dir entries such that the menu looks pretty.
 
-* Mon Jul 23 2002 Michail Litvak <mci-at-owl.openwall.com>
+* Tue Jul 23 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Moved profiling gawk (pgawk) into separate subpackage, not built by default.
 - Compress PostScript documentation.
 

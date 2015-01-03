@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.62 2011/09/13 13:43:18 segoon Exp $
+# $Owl: Owl/packages/shadow-utils/shadow-utils.spec,v 1.62.2.1 2015/01/03 06:58:39 solar Exp $
 
 Summary: Utilities for managing shadow password files and user/group accounts.
 Name: shadow-utils
@@ -304,7 +304,7 @@ Properly check the return value from pam_chauthtok() in
 libmisc/pwdcheck.c: passwd_check() that is used by chfn and chsh commands.
 Thanks to Steve Grubb and Martin Schulze.
 
-* Thu Mar 19 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2:4.0.4.1-owl0.3
+* Fri Mar 19 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2:4.0.4.1-owl0.3
 - Removed gettext patch, we are using autopoint now
 - Changed patch number for userdel-path_prefix
 
@@ -405,7 +405,7 @@ changes.
 - Cleaned up all of the patches fixing several bugs and re-coding a few
 pieces; the tcb patch is still far from clean, though.
 
-* Wed Aug 21 2001 Rafal Wojtczuk <nergal-at-owl.openwall.com>
+* Tue Aug 21 2001 Rafal Wojtczuk <nergal-at-owl.openwall.com>
 - fixed mailbox creation, which was wrong in rh patch
 - added USE_TCB to login.defs.5
 

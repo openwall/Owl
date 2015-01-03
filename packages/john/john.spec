@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.172 2013/07/08 09:57:18 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.172.2.1 2015/01/03 06:58:38 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -637,7 +637,7 @@ password file.
 - Corrected handling of BSDI-style DES-based hashes and of 8-bit characters
 with traditional DES-based hashes; this was broken with the previous change.
 
-* Tue Apr 17 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.37.8-owl1
+* Sun Apr 17 2005 Solar Designer <solar-at-owl.openwall.com> 1.6.37.8-owl1
 - Even more bitslice DES set_key*() optimizations: use a separate loop for
 undoing the old password beyond the new password's length (this simplifies
 the exit check of both loops), store byte offsets into K[] rather than bit

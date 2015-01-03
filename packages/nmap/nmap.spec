@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/nmap/nmap.spec,v 1.55 2011/03/17 10:38:24 segoon Exp $
+# $Owl: Owl/packages/nmap/nmap.spec,v 1.55.2.1 2015/01/03 06:58:39 solar Exp $
 
 %define BUILD_NSE_ENABLED 1
 %define BUILD_NCAT 1
@@ -319,7 +319,7 @@ upstream (by Patrick Donnelly).
 * Sat Jun 25 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> 3.48-owl4
 - Rebuilt with libssl.so.5.
 
-* Sun Dec 25 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.48-owl3
+* Sat Dec 25 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.48-owl3
 - Bumped up release to satisfy dependency resolver (fix for openssl
 upgrading issue).
 
@@ -331,7 +331,7 @@ without chrooting if DNS resolver is required.
 - Updated to 3.48 (from Simon with minor changes; the use of included
 libpcre is now forced).
 
-* Fri Oct 02 2003 Simon B <simonb-at-owl.openwall.com> 3.45-owl1
+* Thu Oct 02 2003 Simon B <simonb-at-owl.openwall.com> 3.45-owl1
 - Upgrade
 
 * Mon Jun 02 2003 Solar Designer <solar-at-owl.openwall.com> 3.27-owl1

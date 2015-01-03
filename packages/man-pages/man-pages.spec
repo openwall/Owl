@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.32 2010/12/05 18:07:35 segoon Exp $
+# $Owl: Owl/packages/man-pages/man-pages.spec,v 1.32.4.1 2015/01/03 06:58:38 solar Exp $
 
 %define posix_version 2003
 %define posix_release a
@@ -160,7 +160,7 @@ than shadow-utils' version).
 - 3.25
 - Updated patch -deb-owl-misc.
 
-* Thu Jun 23 2009 Michail Litvak <mci-at-owl.openwall.com> 3.21-owl1
+* Tue Jun 23 2009 Michail Litvak <mci-at-owl.openwall.com> 3.21-owl1
 - 3.21
 - Updated patches.
 

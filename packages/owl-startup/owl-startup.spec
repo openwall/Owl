@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.92 2012/02/27 07:55:19 solar Exp $
+# $Owl: Owl/packages/owl-startup/owl-startup.spec,v 1.92.2.1 2015/01/03 06:58:39 solar Exp $
 
 Summary: Startup scripts.
 Name: owl-startup
@@ -224,7 +224,7 @@ console messages without connecting a keyboard or even if the system freezes
 and status() with support for the "-p" option (same as "--pidfile") for Red Hat
 compatibility.
 
-* Wed Dec 25 2008 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.34-owl1
+* Thu Dec 25 2008 (GalaxyMaster) <galaxy-at-owl.openwall.com> 0.34-owl1
 - Added /usr/local/bin and /usr/local/sbin to PATH in functions.
 - Enhanced our "which" emulation to return more relevant results.
 - Enhanced daemon() in functions to dereference symlinks before trying

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/patch/patch.spec,v 1.13 2011/02/09 18:39:00 segoon Exp $
+# $Owl: Owl/packages/patch/patch.spec,v 1.13.2.1 2015/01/03 06:58:39 solar Exp $
 
 Summary: The GNU patch command, for modifying/upgrading files.
 Name: patch
@@ -72,6 +72,6 @@ being overwritten.
 * Wed Dec 20 2000 Michail Litvak <mci-at-owl.openwall.com>
 - added patch to fix default backup extension
 
-* Tue Nov 17 2000 Michail Litvak <mci-at-owl.openwall.com>
+* Fri Nov 17 2000 Michail Litvak <mci-at-owl.openwall.com>
 - import from RH and Mandrake
 - sigsegv patch from MDK, stderr from RH

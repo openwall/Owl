@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.81 2014/06/08 13:37:19 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.81.2.1 2015/01/03 06:58:39 solar Exp $
 
 %define shlib_soversion 10
 
@@ -328,7 +328,7 @@ had a dependency on Perl anyway (possibly something to be resolved later).
 * Thu Mar 18 2004 Solar Designer <solar-at-owl.openwall.com> 0.9.7c-owl3
 - Spec file cleanups for issues introduced with the update to 0.9.7+.
 
-* Tue Mar 04 2004 Michail Litvak <mci-at-owl.openwall.com> 0.9.7c-owl2
+* Thu Mar 04 2004 Michail Litvak <mci-at-owl.openwall.com> 0.9.7c-owl2
 - Apply RH's soname convention.
 - Move libs to /lib and place symlinks to /usr/lib.
 

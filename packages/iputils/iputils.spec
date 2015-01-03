@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/iputils/iputils.spec,v 1.33 2011/05/03 16:54:04 solar Exp $
+# $Owl: Owl/packages/iputils/iputils.spec,v 1.33.2.1 2015/01/03 06:58:38 solar Exp $
 
 Summary: Utilities for IPv4/IPv6 networking.
 Name: iputils
@@ -155,7 +155,7 @@ http://www.openwall.com/lists/owl-users/2009/12/10/3
 * Mon Nov 14 2005 Dmitry V. Levin <ldv-at-owl.openwall.com> ss020927-owl4
 - Removed traceroute6 in favour of the traceroute package.
 
-* Wed Jun 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> ss020927-owl3
+* Sun Jun 05 2005 (GalaxyMaster) <galaxy-at-owl.openwall.com> ss020927-owl3
 - Removed verifying permissions and group owner for ping since it's
 controlled by owl-control facility.
 - Cleaned up the spec.
@@ -181,7 +181,7 @@ during package upgrades.
 - Patched ifenslave to use the SIOCBOND* ioctl's instead of the obsolete
 BOND_* ones when building with Linux 2.4+ kernel headers.
 
-* Wed May 30 2002 Michail Litvak <mci-at-owl.openwall.com>
+* Thu May 30 2002 Michail Litvak <mci-at-owl.openwall.com>
 - ss020124
 - include man pages precompiled from sgml sources
 

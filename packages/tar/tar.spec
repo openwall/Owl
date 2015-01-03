@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/tar/tar.spec,v 1.54 2010/12/04 05:51:44 solar Exp $
+# $Owl: Owl/packages/tar/tar.spec,v 1.54.4.1 2015/01/03 06:58:40 solar Exp $
 
 Summary: A GNU file archiving program.
 Name: tar
@@ -158,7 +158,7 @@ added the --ignore-device-id option as an alias to --no-check-device.
 - Fixed two warnings
 - Updated the manual page
 
-* Tue Jan 14 2008 Grigoriy Strokin <grg-at-owl.openwall.com> 1.18-owl2
+* Mon Jan 14 2008 Grigoriy Strokin <grg-at-owl.openwall.com> 1.18-owl2
 - Added a new option: --ignore-device-id.
 
 * Fri Aug 17 2007 Dmitry V. Levin <ldv-at-owl.openwall.com> 1.18-owl1

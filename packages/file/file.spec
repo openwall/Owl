@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/file/file.spec,v 1.27 2010/09/02 21:00:23 solar Exp $
+# $Owl: Owl/packages/file/file.spec,v 1.27.4.1 2015/01/03 06:58:37 solar Exp $
 
 Summary: A utility for determining file types.
 Name: file
@@ -147,6 +147,6 @@ to do their work.
 * Thu Jan 31 2002 Michail Litvak <mci-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Thu Nov 29 2000 Michail Litvak <mci-at-owl.openwall.com>
+* Wed Nov 29 2000 Michail Litvak <mci-at-owl.openwall.com>
 - Imported from RH and updated to 3.33
 - added some patches from Debian and RH

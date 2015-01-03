@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bc/bc.spec,v 1.17 2006/09/05 19:58:21 galaxy Exp $
+# $Owl: Owl/packages/bc/bc.spec,v 1.17.4.1 2015/01/03 06:58:36 solar Exp $
 
 Summary: GNU's bc (a numeric processing language) and dc (a calculator).
 Name: bc
@@ -86,6 +86,6 @@ fi
 - Fixed a bug in the loading of functions (this affected primarily the
 built-in math library).
 
-* Mon Nov 21 2000 Michail Litvak <mci-at-owl.openwall.com>
+* Tue Nov 21 2000 Michail Litvak <mci-at-owl.openwall.com>
 - Updated to 1.06 version
 - added patch to avoid creation of dir file

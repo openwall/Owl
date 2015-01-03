@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/mtree/mtree.spec,v 1.20 2006/04/03 23:49:11 ldv Exp $
+# $Owl: Owl/packages/mtree/mtree.spec,v 1.20.4.1 2015/01/03 06:58:39 solar Exp $
 
 Summary: Map a directory hierarchy.
 Name: mtree
@@ -62,7 +62,7 @@ generic and need to be fed back to *BSDs.
 - Made use of %__cc macro
 - Added a patch to deal with "label at end of compound statement" issue.
 
-* Sun Dec 25 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.1-owl2
+* Sat Dec 25 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.1-owl2
 - Bumped up release to satisfy dependency resolver (fix for openssl
 upgrading issue).
 

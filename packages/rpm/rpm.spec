@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/rpm/rpm.spec,v 1.96 2012/08/15 02:26:52 solar Exp $
+# $Owl: Owl/packages/rpm/rpm.spec,v 1.96.2.1 2015/01/03 06:58:39 solar Exp $
 
 %define WITH_PYTHON 0
 
@@ -645,7 +645,7 @@ dependency checker.
 - Removed "create" from __dbi_cdb definition in macros.in, because it breaks upgrade logic
 - Modified %%pre section to be more friendly to end-user
 
-* Mon May 05 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.17
+* Wed May 05 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.17
 - Finally fixed the problem with db environment opens inside & outside chroot.
 
 * Mon Mar 22 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.2-owl0.16

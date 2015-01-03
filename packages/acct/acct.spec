@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/acct/acct.spec,v 1.42 2010/09/01 11:59:55 segoon Exp $
+# $Owl: Owl/packages/acct/acct.spec,v 1.42.4.1 2015/01/03 06:58:36 solar Exp $
 
 Summary: Utilities for monitoring process activities.
 Name: acct
@@ -184,7 +184,7 @@ so I've removed it from this package.
 - improved logrotate config
 - more cleanups...
 
-* Mon Apr 08 2001 Michail Litvak <mci-at-owl.openwall.com>
+* Sun Apr 08 2001 Michail Litvak <mci-at-owl.openwall.com>
 - spec cleanups
 - acct.logrotate and acct.init was rewritten
 - Obsoletes: psacct

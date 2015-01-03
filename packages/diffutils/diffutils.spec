@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.23 2010/08/25 06:23:19 segoon Exp $
+# $Owl: Owl/packages/diffutils/diffutils.spec,v 1.23.4.1 2015/01/03 06:58:37 solar Exp $
 
 Summary: A GNU collection of diff utilities.
 Name: diffutils
@@ -71,7 +71,7 @@ fi
 * Wed Aug 25 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0-owl3
 - Do not use nanoseconds in diffs.
 
-* Wed Aug 24 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0-owl2
+* Tue Aug 24 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0-owl2
 - Packaged diff.1 again (man-pages doesn't provide it anymore).
 
 * Wed Aug 18 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 3.0-owl1

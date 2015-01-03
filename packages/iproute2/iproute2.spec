@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/iproute2/iproute2.spec,v 1.27 2012/02/27 08:51:31 solar Exp $
+# $Owl: Owl/packages/iproute2/iproute2.spec,v 1.27.2.1 2015/01/03 06:58:38 solar Exp $
 
 Summary: Enhanced IP routing and network devices configuration tools.
 Name: iproute2
@@ -118,5 +118,5 @@ via sending unicast netlink messages to any process on the system.
 * Thu Feb 07 2002 Solar Designer <solar-at-owl.openwall.com>
 - Enforce our new spec file conventions.
 
-* Tue Dec 28 2001 Michail Litvak <mci-at-owl.openwall.com>
+* Fri Dec 28 2001 Michail Litvak <mci-at-owl.openwall.com>
 - spec-file based on RH's

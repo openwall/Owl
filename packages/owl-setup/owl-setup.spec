@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.108 2012/08/14 08:23:51 solar Exp $
+# $Owl: Owl/packages/owl-setup/owl-setup.spec,v 1.108.2.1 2015/01/03 06:58:39 solar Exp $
 
 Summary: Owl configuration tool.
 Name: owl-setup
@@ -141,7 +141,7 @@ of the argument list.
 * Sun Aug 27 2006 Croco <croco-at-owl.openwall.com> 1.1.3-owl1
 - fixed the 'blind interface name request' bug
 
-* Wed Apr 20 2006 Croco <croco-at-owl.openwall.com> 1.1.2-owl1
+* Thu Apr 20 2006 Croco <croco-at-owl.openwall.com> 1.1.2-owl1
 - quick search string displaying added to ncurses item lists
 
 * Mon Apr 10 2006 Croco <croco-at-owl.openwall.com> 1.1.1-owl1
@@ -186,13 +186,13 @@ the help and the fstab windows are closed.
 * Fri Jan 06 2006 Croco <croco-at-owl.openwall.com> 0.33-owl1
 - sorting criteria for kbd/tz selection fine tuned
 
-* Mon Jan 04 2006 Croco <croco-at-owl.openwall.com> 0.32-owl1
+* Wed Jan 04 2006 Croco <croco-at-owl.openwall.com> 0.32-owl1
 - ncurses interface fixed to allow multiline prompts for string queries
   and to omit blank lines atop a menu if there's no caption
 - partition selection dialog now offers to use an unlisted partition
 - two fixes to the 'install kernel headers' feature
 
-* Mon Jan 04 2006 Croco <croco-at-owl.openwall.com> 0.31-owl1
+* Wed Jan 04 2006 Croco <croco-at-owl.openwall.com> 0.31-owl1
 - install kernel headers feature added
 - timezone and keyboard item lists are now alphabetically sorted
 - tmpfs is now offered for /tmp

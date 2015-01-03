@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gettext/gettext.spec,v 1.16 2010/01/26 17:18:56 solar Exp $
+# $Owl: Owl/packages/gettext/gettext.spec,v 1.16.4.1 2015/01/03 06:58:38 solar Exp $
 
 Summary: GNU libraries and utilities for producing multi-lingual messages.
 Name: gettext
@@ -104,7 +104,7 @@ fi
 - Imported a bunch of patches from ALT's gettext-0.14.5-alt2 package.
 - Build gettext with libintl provided by glibc.
 
-* Fri Sep 24 2005 Michail Litvak <mci-at-owl.openwall.com>  0.14.1-owl3
+* Sat Sep 24 2005 Michail Litvak <mci-at-owl.openwall.com>  0.14.1-owl3
 - Don't package .la files.
 
 * Thu May 05 2005 Solar Designer <solar-at-owl.openwall.com> 0.14.1-owl2

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.13 2012/07/22 18:31:08 segoon Exp $
+# $Owl: Owl/packages/cdrkit/cdrkit.spec,v 1.13.2.1 2015/01/03 06:58:36 solar Exp $
 
 %{?!BUILD_NETSCSID:	%define BUILD_NETSCSID 0}
 
@@ -121,7 +121,7 @@ ln -s wodim.1 man1/dvdrecord.1
 - Updated to 1.1.11.
 - Imported rh-buffer_overflow and alt-format patches.
 
-* Sat Aug 23 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.1.10-owl1
+* Mon Aug 23 2010 Vasiliy Kulikov <segoon-at-owl.openwall.com> 1.1.10-owl1
 - Updated to 1.1.10.
 - Updated README-cmakeless.
 - Updated -owl-fixes.

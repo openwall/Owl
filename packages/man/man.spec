@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/man/man.spec,v 1.25 2010/08/19 16:10:34 segoon Exp $
+# $Owl: Owl/packages/man/man.spec,v 1.25.4.1 2015/01/03 06:58:38 solar Exp $
 
 Summary: A set of documentation tools: man, apropos and whatis.
 Name: man
@@ -92,10 +92,10 @@ find /var/cache/man/{,X11R6/,local/}cat[123456789n] -type f -delete
 - Dropped -owl-gentoo-makewhatis-config (fixed in upstream).
 - Updated -owl-makewhatis.
 
-* Thu Dec 25 2005 Michail Litvak <mci-at-owl.openwall.com> 1.6b-owl2
+* Sun Dec 25 2005 Michail Litvak <mci-at-owl.openwall.com> 1.6b-owl2
 - Fixed -makewhatis-config patch.
 
-* Thu Dec 24 2005 Michail Litvak <mci-at-owl.openwall.com> 1.6b-owl1
+* Sat Dec 24 2005 Michail Litvak <mci-at-owl.openwall.com> 1.6b-owl1
 - Updated to 1.6b.
 - Updated patches, added patch from Gentoo.
 

@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/gcc/gcc.spec,v 1.73 2012/08/14 06:48:32 solar Exp $
+# $Owl: Owl/packages/gcc/gcc.spec,v 1.73.2.1 2015/01/03 06:58:37 solar Exp $
 
 # The only supported frontend for now is GXX.
 # Testsuite is not supported because of its requirement for additional
@@ -527,7 +527,7 @@ packages. I hope that after next release of Owl we will drop this crap.
 * Fri Jul 16 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.4.1-owl0
 - Updated to 3.4.1.
 
-* Thu Jun 04 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.4.0-owl0.2
+* Fri Jun 04 2004 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1:3.4.0-owl0.2
 - Updated to 3.4.0.
 - Tested only C and C++ compilers, ObjC has compilation issues when using
 Boehm GC, Ada unsupported by this build.
