@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/bash/bash.spec,v 1.49 2010/12/04 01:35:23 solar Exp $
+# $Owl: Owl/packages/bash/bash.spec,v 1.49.4.1 2015/01/03 05:54:15 solar Exp $
 
 Summary: The GNU Bourne-Again SHell (Bash).
 Name: bash
 %define bash_version 3.1
-%define bash_patchlevel 17
+%define bash_patchlevel 19
 Version: %bash_version.%bash_patchlevel
-Release: owl7
+Release: owl2
 Group: System Environment/Shells
 License: GPL
 # ftp://ftp.gnu.org/gnu/bash/bash-%bash_version.tar.gz
@@ -18,6 +18,8 @@ Source4: dot-bashrc
 Source5: dot-bash_profile
 Source6: dot-bash_logout
 Patch0: bash-3.1-up-patchlevel.diff
+Patch1: bash-3.1.19-rh-parser-bound.diff
+Patch2: bash-3.1.19-rh-variables-affix.diff
 Patch10: bash-3.1-owl-warnings.diff
 Patch11: bash-3.1-owl-tmp.diff
 Patch12: bash-3.1-owl-vitmp.diff
@@ -75,6 +77,8 @@ version %version.
 %prep
 %setup -q -a1 -n bash-%bash_version
 %patch0 -p0
+%patch1 -p1
+%patch2 -p1
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -283,6 +287,19 @@ fi
 %docdir/txt
 
 %changelog
+* Sat Sep 27 2014 Solar Designer <solar-at-owl.openwall.com> 3.1.19-owl2
+- Added ports of parser-oob (fixes CVE-2014-7186, CVE-2014-7187) and
+variables-affix patches, originally by Florian Weimer of Red Hat.
+
+* Sat Sep 27 2014 Solar Designer <solar-at-owl.openwall.com> 3.1.19-owl1
+- Updated to 3.1 patchlevel 19 (fixes CVE-2014-7169).
+
+* Thu Sep 25 2014 Solar Designer <solar-at-owl.openwall.com> 3.1.18-owl1
+- Updated to 3.1 patchlevel 18 (fixes CVE-2014-6271).
+
+* Sat Jun 28 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.1.17-owl8
+- Regenerated the owl-warnings patch since it was fuzzy.
+
 * Sat Dec 04 2010 Solar Designer <solar-at-owl.openwall.com> 3.1.17-owl7
 - Revised the default shell prompt per gremlin@'s suggestion.
 
