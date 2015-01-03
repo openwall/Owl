@@ -3,7 +3,7 @@ Owl-current) and the current state of the 3.1-stable branch.
 
 The dates shown in braces indicate when an equivalent change went into
 Owl-current, where applicable.  Note that although the 3.1 branch point
-was created in mid-2014, Owl 3.1 was never released (not was it intended
+was created in mid-2014, Owl 3.1 was never released (nor was it intended
 to be) and the Owl 3.1-stable branch was only released in January 2015.
 
 Security fixes have a "Severity" specified for the issue(s) being fixed.
@@ -86,4 +86,4 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7169
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7186
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7187
 
-$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.2 2015/01/03 06:14:53 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.3 2015/01/03 06:19:51 solar Exp $
