@@ -1,6 +1,6 @@
-diff -urp openssl-1.0.0m.orig/doc/crypto/EVP_DigestInit.pod openssl-1.0.0m/doc/crypto/EVP_DigestInit.pod
---- openssl-1.0.0m.orig/doc/crypto/EVP_DigestInit.pod	2014-06-05 09:41:31 +0000
-+++ openssl-1.0.0m/doc/crypto/EVP_DigestInit.pod	2014-06-08 13:05:17 +0000
+diff -urp openssl-1.0.0o.orig/doc/crypto/EVP_DigestInit.pod openssl-1.0.0o/doc/crypto/EVP_DigestInit.pod
+--- openssl-1.0.0o.orig/doc/crypto/EVP_DigestInit.pod	2014-10-15 12:51:13 +0000
++++ openssl-1.0.0o/doc/crypto/EVP_DigestInit.pod	2015-01-04 05:55:02 +0000
 @@ -51,15 +51,14 @@ EVP digest routines
   const EVP_MD *EVP_md5(void);
   const EVP_MD *EVP_sha(void);
@@ -30,9 +30,9 @@ diff -urp openssl-1.0.0m.orig/doc/crypto/EVP_DigestInit.pod openssl-1.0.0m/doc/c
  If B<impl> is NULL then the default implementation of digest B<type> is used.
  
  EVP_DigestUpdate() hashes B<cnt> bytes of data at B<d> into the
-@@ -165,7 +164,8 @@ EVP_MD_size(), EVP_MD_block_size(), EVP_
- EVP_MD_CTX_block_size()	and EVP_MD_block_size() return the digest or block
- size in bytes.
+@@ -164,7 +163,8 @@ corresponding OBJECT IDENTIFIER or NID_u
+ EVP_MD_size(), EVP_MD_block_size(), EVP_MD_CTX_size() and
+ EVP_MD_CTX_block_size() return the digest or block size in bytes.
  
 -EVP_md_null(), EVP_md2(), EVP_md5(), EVP_sha(), EVP_sha1(), EVP_dss(),
 +EVP_md_null(), EVP_md2(), EVP_md5(), EVP_sha(), EVP_sha1(),
@@ -40,9 +40,9 @@ diff -urp openssl-1.0.0m.orig/doc/crypto/EVP_DigestInit.pod openssl-1.0.0m/doc/c
  EVP_dss1(), EVP_mdc2() and EVP_ripemd160() return pointers to the
  corresponding EVP_MD structures.
  
-diff -urp openssl-1.0.0m.orig/doc/crypto/EVP_EncryptInit.pod openssl-1.0.0m/doc/crypto/EVP_EncryptInit.pod
---- openssl-1.0.0m.orig/doc/crypto/EVP_EncryptInit.pod	2014-06-05 09:41:31 +0000
-+++ openssl-1.0.0m/doc/crypto/EVP_EncryptInit.pod	2014-06-08 13:05:17 +0000
+diff -urp openssl-1.0.0o.orig/doc/crypto/EVP_EncryptInit.pod openssl-1.0.0o/doc/crypto/EVP_EncryptInit.pod
+--- openssl-1.0.0o.orig/doc/crypto/EVP_EncryptInit.pod	2014-10-15 12:51:13 +0000
++++ openssl-1.0.0o/doc/crypto/EVP_EncryptInit.pod	2015-01-04 05:55:02 +0000
 @@ -91,6 +91,32 @@ EVP_CIPHER_CTX_set_padding - EVP cipher
   int EVP_CIPHER_param_to_asn1(EVP_CIPHER_CTX *c, ASN1_TYPE *type);
   int EVP_CIPHER_asn1_to_param(EVP_CIPHER_CTX *c, ASN1_TYPE *type);

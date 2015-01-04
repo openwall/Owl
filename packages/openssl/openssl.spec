@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.82 2014/07/12 14:14:56 galaxy Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.83 2015/01/04 06:00:07 solar Exp $
 
 %define shlib_soversion 10
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 1.0.0m
-Release: owl2
+Version: 1.0.0o
+Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
@@ -19,7 +19,7 @@ Patch3: openssl-1.0.0b-rh-enginesdir.diff
 Patch4: openssl-1.0.0b-rh-rpath.diff
 Patch5: openssl-0.9.8b-rh-test-use-localhost.diff
 Patch6: openssl-1.0.0b-rh-default-paths.diff
-Patch7: openssl-1.0.0m-rh-owl-man.diff
+Patch7: openssl-1.0.0o-rh-owl-man.diff
 Patch8: openssl-1.0.0b-rh-x509.diff
 Patch9: openssl-1.0.0b-rh-version-engines.diff
 Patch10: openssl-1.0.0m-rh-cipher-change.diff
@@ -107,7 +107,6 @@ This package contains some miscellaneous Perl scripts.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
-#exit 123
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
@@ -249,6 +248,9 @@ bzip2 -9 docs/doc/ssleay.txt
 %exclude  %_datadir/ssl/misc/tsget
 
 %changelog
+* Sun Jan 04 2015 Solar Designer <solar-at-owl.openwall.com> 1.0.0o-owl1
+- Updated to 1.0.0o.
+
 * Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.0.0m-owl2
 - Regenerated the cipher-change patch since it was fuzzy.
 
