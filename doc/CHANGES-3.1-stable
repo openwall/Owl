@@ -45,6 +45,11 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl 3.1-stable.
 
+(2015/01/04)
+2015/01/04	Package: help2man
+New package: help2man, which creates simple man pages from the output of
+programs.  It currently generates the diff(1) man page during Owl build.
+
 (2014/12/28)
 2015/01/03	Package: kernel
 SECURITY FIX	Severity: none to high, local, active
@@ -86,4 +91,4 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7169
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7186
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7187
 
-$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.3 2015/01/03 06:19:51 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.4 2015/01/04 06:29:10 solar Exp $
