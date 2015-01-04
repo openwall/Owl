@@ -1628,3 +1628,551 @@ Patch:
 ! #define PATCHLEVEL 19
   
   #endif /* _PATCHLEVEL_H_ */
+			     BASH PATCH REPORT
+			     =================
+
+Bash-Release: 3.1
+Patch-ID: bash31-020
+
+Bug-Reported-by:	Florian Weimer <fweimer@redhat.com>
+Bug-Reference-ID:
+Bug-Reference-URL:
+
+Bug-Description:
+
+This patch changes the encoding bash uses for exported functions to avoid
+clashes with shell variables and to avoid depending only on an environment
+variable's contents to determine whether or not to interpret it as a shell
+function.
+
+Patch:
+
+*** ../bash-3.1.19/variables.c	2014-09-16 22:00:02.000000000 -0400
+--- variables.c	2014-09-27 21:02:50.000000000 -0400
+***************
+*** 75,78 ****
+--- 75,83 ----
+  #define ifsname(s)	((s)[0] == 'I' && (s)[1] == 'F' && (s)[2] == 'S' && (s)[3] == '\0')
+  
++ #define BASHFUNC_PREFIX		"BASH_FUNC_"
++ #define BASHFUNC_PREFLEN	10	/* == strlen(BASHFUNC_PREFIX */
++ #define BASHFUNC_SUFFIX		"%%"
++ #define BASHFUNC_SUFFLEN	2	/* == strlen(BASHFUNC_SUFFIX) */
++ 
+  extern char **environ;
+  
+***************
+*** 240,244 ****
+  static void dispose_temporary_env __P((sh_free_func_t *));     
+  
+! static inline char *mk_env_string __P((const char *, const char *));
+  static char **make_env_array_from_var_list __P((SHELL_VAR **));
+  static char **make_var_export_array __P((VAR_CONTEXT *));
+--- 245,249 ----
+  static void dispose_temporary_env __P((sh_free_func_t *));     
+  
+! static inline char *mk_env_string __P((const char *, const char *, int));
+  static char **make_env_array_from_var_list __P((SHELL_VAR **));
+  static char **make_var_export_array __P((VAR_CONTEXT *));
+***************
+*** 302,320 ****
+        /* If exported function, define it now.  Don't import functions from
+  	 the environment in privileged mode. */
+!       if (privmode == 0 && read_but_dont_execute == 0 && STREQN ("() {", string, 4))
+  	{
+  	  string_length = strlen (string);
+! 	  temp_string = (char *)xmalloc (3 + string_length + char_index);
+  
+! 	  strcpy (temp_string, name);
+! 	  temp_string[char_index] = ' ';
+! 	  strcpy (temp_string + char_index + 1, string);
+  
+  	  /* Don't import function names that are invalid identifiers from the
+  	     environment. */
+! 	  if (legal_identifier (name))
+! 	    parse_and_execute (temp_string, name, SEVAL_NONINT|SEVAL_NOHIST|SEVAL_FUNCDEF|SEVAL_ONECMD);
+  
+! 	  if (temp_var = find_function (name))
+  	    {
+  	      VSETATTR (temp_var, (att_exported|att_imported));
+--- 307,336 ----
+        /* If exported function, define it now.  Don't import functions from
+  	 the environment in privileged mode. */
+!       if (privmode == 0 && read_but_dont_execute == 0 &&
+! 	  STREQN (BASHFUNC_PREFIX, name, BASHFUNC_PREFLEN) &&
+! 	  STREQ (BASHFUNC_SUFFIX, name + char_index - BASHFUNC_SUFFLEN) &&
+! 	  STREQN ("() {", string, 4))
+  	{
++ 	  size_t namelen;
++ 	  char *tname;		/* desired imported function name */
++ 
++ 	  namelen = char_index - BASHFUNC_PREFLEN - BASHFUNC_SUFFLEN;
++ 
++ 	  tname = name + BASHFUNC_PREFLEN;	/* start of func name */
++ 	  tname[namelen] = '\0';		/* now tname == func name */
++ 
+  	  string_length = strlen (string);
+! 	  temp_string = (char *)xmalloc (namelen + string_length + 2);
+  
+! 	  memcpy (temp_string, tname, namelen);
+! 	  temp_string[namelen] = ' ';
+! 	  memcpy (temp_string + namelen + 1, string, string_length + 1);
+  
+  	  /* Don't import function names that are invalid identifiers from the
+  	     environment. */
+! 	  if (absolute_program (tname) == 0 && (posixly_correct == 0 || legal_identifier (tname)))
+! 	    parse_and_execute (temp_string, tname, SEVAL_NONINT|SEVAL_NOHIST|SEVAL_FUNCDEF|SEVAL_ONECMD);
+  
+! 	  if (temp_var = find_function (tname))
+  	    {
+  	      VSETATTR (temp_var, (att_exported|att_imported));
+***************
+*** 322,326 ****
+  	    }
+  	  else
+! 	    report_error (_("error importing function definition for `%s'"), name);
+  	}
+  #if defined (ARRAY_VARS)
+--- 338,345 ----
+  	    }
+  	  else
+! 	    report_error (_("error importing function definition for `%s'"), tname);
+! 
+! 	  /* Restore original suffix */
+! 	  tname[namelen] = BASHFUNC_SUFFIX[0];
+  	}
+  #if defined (ARRAY_VARS)
+***************
+*** 2215,2219 ****
+  
+    INVALIDATE_EXPORTSTR (var);
+!   var->exportstr = mk_env_string (name, value);
+  
+    array_needs_making = 1;
+--- 2234,2238 ----
+  
+    INVALIDATE_EXPORTSTR (var);
+!   var->exportstr = mk_env_string (name, value, 0);
+  
+    array_needs_making = 1;
+***************
+*** 3003,3021 ****
+  
+  static inline char *
+! mk_env_string (name, value)
+       const char *name, *value;
+  {
+!   int name_len, value_len;
+!   char	*p;
+  
+    name_len = strlen (name);
+    value_len = STRLEN (value);
+!   p = (char *)xmalloc (2 + name_len + value_len);
+!   strcpy (p, name);
+!   p[name_len] = '=';
+    if (value && *value)
+!     strcpy (p + name_len + 1, value);
+    else
+!     p[name_len + 1] = '\0';
+    return (p);
+  }
+--- 3022,3061 ----
+  
+  static inline char *
+! mk_env_string (name, value, isfunc)
+       const char *name, *value;
++      int isfunc;
+  {
+!   size_t name_len, value_len;
+!   char	*p, *q;
+  
+    name_len = strlen (name);
+    value_len = STRLEN (value);
+! 
+!   /* If we are exporting a shell function, construct the encoded function
+!      name. */
+!   if (isfunc && value)
+!     {
+!       p = (char *)xmalloc (BASHFUNC_PREFLEN + name_len + BASHFUNC_SUFFLEN + value_len + 2);
+!       q = p;
+!       memcpy (q, BASHFUNC_PREFIX, BASHFUNC_PREFLEN);
+!       q += BASHFUNC_PREFLEN;
+!       memcpy (q, name, name_len);
+!       q += name_len;
+!       memcpy (q, BASHFUNC_SUFFIX, BASHFUNC_SUFFLEN);
+!       q += BASHFUNC_SUFFLEN;
+!     }
+!   else
+!     {
+!       p = (char *)xmalloc (2 + name_len + value_len);
+!       memcpy (p, name, name_len);
+!       q = p + name_len;
+!     }
+! 
+!   q[0] = '=';
+    if (value && *value)
+!     memcpy (q + 1, value, value_len + 1);
+    else
+!     q[1] = '\0';
+! 
+    return (p);
+  }
+***************
+*** 3092,3096 ****
+  	     using the cached exportstr... */
+  	  list[list_index] = USE_EXPORTSTR ? savestring (value)
+! 					   : mk_env_string (var->name, value);
+  
+  	  if (USE_EXPORTSTR == 0)
+--- 3132,3136 ----
+  	     using the cached exportstr... */
+  	  list[list_index] = USE_EXPORTSTR ? savestring (value)
+! 					   : mk_env_string (var->name, value, function_p (var));
+  
+  	  if (USE_EXPORTSTR == 0)
+*** ../bash-3.1/patchlevel.h	Wed Jul 20 13:58:20 2005
+--- patchlevel.h	Wed Dec  7 13:48:42 2005
+***************
+*** 26,30 ****
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 19
+  
+  #endif /* _PATCHLEVEL_H_ */
+--- 26,30 ----
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 20
+  
+  #endif /* _PATCHLEVEL_H_ */
+			     BASH PATCH REPORT
+			     =================
+
+Bash-Release: 3.1
+Patch-ID: bash31-021
+
+Bug-Reported-by:	Florian Weimer <fweimer@redhat.com>
+Bug-Reference-ID:
+Bug-Reference-URL:
+
+Bug-Description:
+
+There are two local buffer overflows in parse.y that can cause the shell
+to dump core when given many here-documents attached to a single command
+or many nested loops.
+
+Patch:
+
+*** ../bash-3.1.20/parse.y	2014-09-27 12:16:39.000000000 -0400
+--- parse.y	2014-09-30 19:49:41.000000000 -0400
+***************
+*** 167,170 ****
+--- 167,173 ----
+  static int reserved_word_acceptable __P((int));
+  static int yylex __P((void));
++ 
++ static void push_heredoc __P((REDIRECT *));
++ static char *mk_alexpansion __P((char *));
+  static int alias_expand_token __P((char *));
+  static int time_command_acceptable __P((void));
+***************
+*** 259,263 ****
+  /* Variables to manage the task of reading here documents, because we need to
+     defer the reading until after a complete command has been collected. */
+! static REDIRECT *redir_stack[10];
+  int need_here_doc;
+  
+--- 262,268 ----
+  /* Variables to manage the task of reading here documents, because we need to
+     defer the reading until after a complete command has been collected. */
+! #define HEREDOC_MAX 16
+! 
+! static REDIRECT *redir_stack[HEREDOC_MAX];
+  int need_here_doc;
+  
+***************
+*** 285,289 ****
+     index is decremented after a case, select, or for command is parsed. */
+  #define MAX_CASE_NEST	128
+! static int word_lineno[MAX_CASE_NEST];
+  static int word_top = -1;
+  
+--- 290,294 ----
+     index is decremented after a case, select, or for command is parsed. */
+  #define MAX_CASE_NEST	128
+! static int word_lineno[MAX_CASE_NEST+1];
+  static int word_top = -1;
+  
+***************
+*** 430,434 ****
+  			  redir.filename = $2;
+  			  $$ = make_redirection (0, r_reading_until, redir);
+! 			  redir_stack[need_here_doc++] = $$;
+  			}
+  	|	NUMBER LESS_LESS WORD
+--- 435,439 ----
+  			  redir.filename = $2;
+  			  $$ = make_redirection (0, r_reading_until, redir);
+! 			  push_heredoc ($$);
+  			}
+  	|	NUMBER LESS_LESS WORD
+***************
+*** 436,440 ****
+  			  redir.filename = $3;
+  			  $$ = make_redirection ($1, r_reading_until, redir);
+! 			  redir_stack[need_here_doc++] = $$;
+  			}
+  	|	LESS_LESS_LESS WORD
+--- 441,445 ----
+  			  redir.filename = $3;
+  			  $$ = make_redirection ($1, r_reading_until, redir);
+! 			  push_heredoc ($$);
+  			}
+  	|	LESS_LESS_LESS WORD
+***************
+*** 493,497 ****
+  			  $$ = make_redirection
+  			    (0, r_deblank_reading_until, redir);
+! 			  redir_stack[need_here_doc++] = $$;
+  			}
+  	|	NUMBER LESS_LESS_MINUS WORD
+--- 498,502 ----
+  			  $$ = make_redirection
+  			    (0, r_deblank_reading_until, redir);
+! 			  push_heredoc ($$);
+  			}
+  	|	NUMBER LESS_LESS_MINUS WORD
+***************
+*** 500,504 ****
+  			  $$ = make_redirection
+  			    ($1, r_deblank_reading_until, redir);
+! 			  redir_stack[need_here_doc++] = $$;
+  			}
+  	|	GREATER_AND '-'
+--- 505,509 ----
+  			  $$ = make_redirection
+  			    ($1, r_deblank_reading_until, redir);
+! 			  push_heredoc ($$);
+  			}
+  	|	GREATER_AND '-'
+***************
+*** 2211,2214 ****
+--- 2216,2234 ----
+  static int esacs_needed_count;
+  
++ static void
++ push_heredoc (r)
++      REDIRECT *r;
++ {
++   if (need_here_doc >= HEREDOC_MAX)
++     {
++       last_command_exit_value = EX_BADUSAGE;
++       need_here_doc = 0;
++       report_syntax_error (_("maximum here-document count exceeded"));
++       reset_parser ();
++       exit_shell (last_command_exit_value);
++     }
++   redir_stack[need_here_doc++] = r;
++ }
++ 
+  void
+  gather_here_documents ()
+*** ../bash-3.1/patchlevel.h	Wed Jul 20 13:58:20 2005
+--- patchlevel.h	Wed Dec  7 13:48:42 2005
+***************
+*** 26,30 ****
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 20
+  
+  #endif /* _PATCHLEVEL_H_ */
+--- 26,30 ----
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 21
+  
+  #endif /* _PATCHLEVEL_H_ */
+			     BASH PATCH REPORT
+			     =================
+
+Bash-Release: 3.1
+Patch-ID: bash31-022
+
+Bug-Reported-by:	Michal Zalewski <lcamtuf@coredump.cx>
+Bug-Reference-ID:
+Bug-Reference-URL:
+
+Bug-Description:
+
+When bash is parsing a function definition that contains a here-document
+delimited by end-of-file (or end-of-string), it leaves the closing delimiter
+uninitialized.  This can result in an invalid memory access when the parsed
+function is later copied.
+
+Patch:
+
+*** ../bash-3.1.21/make_cmd.c	2005-07-07 08:14:57.000000000 -0400
+--- make_cmd.c	2014-10-02 20:33:47.000000000 -0400
+***************
+*** 672,675 ****
+--- 672,676 ----
+    temp->redirector = source;
+    temp->redirectee = dest_and_filename;
++   temp->here_doc_eof = 0;
+    temp->instruction = instruction;
+    temp->flags = 0;
+*** ../bash-3.1.21/copy_cmd.c	2003-10-07 11:43:44.000000000 -0400
+--- copy_cmd.c	2014-10-02 20:33:47.000000000 -0400
+***************
+*** 117,121 ****
+      case r_reading_until:
+      case r_deblank_reading_until:
+!       new_redirect->here_doc_eof = savestring (redirect->here_doc_eof);
+        /*FALLTHROUGH*/
+      case r_reading_string:
+--- 117,121 ----
+      case r_reading_until:
+      case r_deblank_reading_until:
+!       new_redirect->here_doc_eof = redirect->here_doc_eof ? savestring (redirect->here_doc_eof) : 0;
+        /*FALLTHROUGH*/
+      case r_reading_string:
+*** ../bash-3.1/patchlevel.h	Wed Jul 20 13:58:20 2005
+--- patchlevel.h	Wed Dec  7 13:48:42 2005
+***************
+*** 26,30 ****
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 21
+  
+  #endif /* _PATCHLEVEL_H_ */
+--- 26,30 ----
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 22
+  
+  #endif /* _PATCHLEVEL_H_ */
+			     BASH PATCH REPORT
+			     =================
+
+Bash-Release: 3.1
+Patch-ID: bash31-023
+
+Bug-Reported-by:	Michal Zalewski <lcamtuf@coredump.cx>
+Bug-Reference-ID:
+Bug-Reference-URL:
+
+Bug-Description:
+
+A combination of nested command substitutions and function importing from
+the environment can cause bash to execute code appearing in the environment
+variable value following the function definition.
+
+Patch:
+
+*** ../bash-3.1.22/builtins/evalstring.c	2014-09-16 22:00:02.000000000 -0400
+--- builtins/evalstring.c	2014-10-04 16:10:47.000000000 -0400
+***************
+*** 44,47 ****
+--- 44,48 ----
+  #include "../redir.h"
+  #include "../trap.h"
++ #include "../bashintl.h"
+  
+  #if defined (HISTORY)
+***************
+*** 224,233 ****
+  	      struct fd_bitmap *bitmap;
+  
+! 	      if ((flags & SEVAL_FUNCDEF) && command->type != cm_function_def)
+  		{
+! 		  internal_warning ("%s: ignoring function definition attempt", from_file);
+! 		  should_jump_to_top_level = 0;
+! 		  last_result = last_command_exit_value = EX_BADUSAGE;
+! 		  break;
+  		}
+  
+--- 225,247 ----
+  	      struct fd_bitmap *bitmap;
+  
+! 	      if (flags & SEVAL_FUNCDEF)
+  		{
+! 		  char *x;
+! 
+! 		  /* If the command parses to something other than a straight
+! 		     function definition, or if we have not consumed the entire
+! 		     string, or if the parser has transformed the function
+! 		     name (as parsing will if it begins or ends with shell
+! 		     whitespace, for example), reject the attempt */
+! 		  if (command->type != cm_function_def ||
+! 		      ((x = parser_remaining_input ()) && *x) ||
+! 		      (STREQ (from_file, command->value.Function_def->name->word) == 0))
+! 		    {
+! 		      internal_warning (_("%s: ignoring function definition attempt"), from_file);
+! 		      should_jump_to_top_level = 0;
+! 		      last_result = last_command_exit_value = EX_BADUSAGE;
+! 		      reset_parser ();
+! 		      break;
+! 		    }
+  		}
+  
+***************
+*** 289,293 ****
+  
+  	      if (flags & SEVAL_ONECMD)
+! 		break;
+  	    }
+  	}
+--- 303,310 ----
+  
+  	      if (flags & SEVAL_ONECMD)
+! 		{
+! 		  reset_parser ();
+! 		  break;
+! 		}
+  	    }
+  	}
+*** ../bash-3.1.22/parse.y	2014-09-30 19:49:41.000000000 -0400
+--- parse.y	2014-10-04 16:10:47.000000000 -0400
+***************
+*** 2122,2125 ****
+--- 2122,2135 ----
+  }
+  
++ char *
++ parser_remaining_input ()
++ {
++   if (shell_input_line == 0)
++     return 0;
++   if (shell_input_line_index < 0 || shell_input_line_index >= shell_input_line_len)
++     return '\0';	/* XXX */
++   return (shell_input_line + shell_input_line_index);
++ }
++ 
+  #ifdef INCLUDE_UNUSED
+  /* Back the input pointer up by one, effectively `ungetting' a character. */
+*** ../bash-3.1.22/shell.h	2003-06-01 15:04:36.000000000 -0400
+--- shell.h	2014-10-04 16:10:47.000000000 -0400
+***************
+*** 160,163 ****
+--- 160,165 ----
+  
+  /* Let's try declaring these here. */
++ extern char *parser_remaining_input __P((void));
++ 
+  extern sh_parser_state_t *save_parser_state __P((sh_parser_state_t *));
+  extern void restore_parser_state __P((sh_parser_state_t *));
+*** ../bash-3.1/patchlevel.h	Wed Jul 20 13:58:20 2005
+--- patchlevel.h	Wed Dec  7 13:48:42 2005
+***************
+*** 26,30 ****
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 22
+  
+  #endif /* _PATCHLEVEL_H_ */
+--- 26,30 ----
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 23
+  
+  #endif /* _PATCHLEVEL_H_ */
