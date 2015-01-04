@@ -48,6 +48,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
+2015/01/04	Package: bash
+Updated to 3.1 patchlevel 23.
+
 2015/01/04	Package: help2man
 New package: help2man, which creates simple man pages from the output of
 programs.  It currently generates the diff(1) man page during Owl build.
@@ -153,4 +156,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.8 2015/01/03 23:11:09 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.9 2015/01/04 05:37:59 solar Exp $
