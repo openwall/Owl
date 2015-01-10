@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/tzdata/tzdata.spec,v 1.8 2014/10/24 22:20:16 solar Exp $
+# $Owl: Owl/packages/tzdata/tzdata.spec,v 1.9 2015/01/10 19:53:28 solar Exp $
 
 Summary: Timezone data.
 Name: tzdata
 %define tzdata_version 2014i
 %define tzcode_version 2014i
 Version: %tzdata_version
-Release: owl1
+Release: owl2
 License: public domain
 Group: System Environment/Base
 URL: http://www.iana.org/time-zones
@@ -29,6 +29,10 @@ the world.
 %install
 rm -rf %buildroot
 %__make install DESTDIR=%buildroot TZDIR=%_datadir/zoneinfo
+mv %buildroot%_datadir/zoneinfo{-leaps,/right}
+# ALT Linux has the following two lines - do we need this?
+#mkdir %buildroot%_datadir/zoneinfo/posix
+#cp -al %buildroot%_datadir/zoneinfo/[A-Z]* %buildroot%_datadir/zoneinfo/posix/
 hardlink -vc %buildroot
 
 %check
@@ -36,12 +40,17 @@ hardlink -vc %buildroot
 
 %files
 %defattr(-,root,root)
-%_datadir/zoneinfo
 %doc README NEWS Theory *.htm*
-%exclude %_datadir/zoneinfo-leaps
+%_datadir/zoneinfo
+%exclude %_datadir/zoneinfo-posix
+%exclude %_datadir/zoneinfo/localtime
 %exclude /usr/local
 
 %changelog
+* Sat Jan 10 2015 Solar Designer <solar-at-owl.openwall.com> 2014i-owl2
+- Install zoneinfo-leaps (excluded in the 2014 updates) as zoneinfo/right.
+- Explicitly exclude the zoneinfo-posix symlink (older RPM didn't care).
+
 * Sat Oct 25 2014 Solar Designer <solar-at-owl.openwall.com> 2014i-owl1
 - Updated to 2014i.
 
