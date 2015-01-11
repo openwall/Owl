@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/libmpc/libmpc.spec,v 1.5 2014/07/12 13:53:37 galaxy Exp $
+# $Owl: Owl/packages/libmpc/libmpc.spec,v 1.6 2015/01/11 23:53:15 solar Exp $
 
 Summary: C library for multiple precision complex arithmetic.
 Name: libmpc
@@ -9,7 +9,7 @@ Group: Development/Tools
 URL: http://www.multiprecision.org
 Source0: mpc-%version.tar.xz
 # http://www.multiprecision.org/mpc/download/mpc-%version.tar.gz
-# Signature: http://www.multiprecision.org/mpc/download/mpc-%version.tar.gz.asc
+# Signature: http://www.multiprecision.org/mpc/download/mpc-%version.tar.gz.sig
 BuildRequires: autoconf >= 2.61
 BuildRequires: gmp-devel >= 4.3.2
 BuildRequires: mpfr-devel >= 2.4.2
