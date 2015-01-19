@@ -232,7 +232,7 @@ an application using libbz2 or potentially to execute arbitrary code via
 a crafted "bzip2-compressed" file.
 References:
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0405
-http://xorl.wordpress.com/2010/09/21/cve-2010-0405-bzip2-integer-overflow/
+https://xorl.wordpress.com/2010/09/21/cve-2010-0405-bzip2-integer-overflow/
 
 2010/09/02 -
 2010/09/18	Package: pam_mktemp
@@ -1547,4 +1547,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.308 2014/07/05 08:30:39 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.309 2015/01/19 16:24:34 solar Exp $
