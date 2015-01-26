@@ -1,24 +1,26 @@
-# $Owl: Owl/packages/libnss/libnss.spec,v 1.1 2014/07/12 13:55:34 galaxy Exp $
+# $Owl: Owl/packages/libnss/libnss.spec,v 1.2 2015/01/26 03:06:36 galaxy Exp $
 
 %define def_with() %{expand:%%{!?_with_%1: %%{!?_without_%1: %%global _with_%1 --with-%1%{?2:=%2}}}}
 %define def_without() %{expand:%%{!?_with_%1: %%{!?_without_%1: %%global _without_%1 --without-%1}}}
 
-%def_with    tests
+# Beware that the test suite runs for quite a long time (e.g. it takes 30 mins
+# on Intel Xeon E3-1230 V2), so by default we skip the tests.
+%def_without    test
 
 Summary: Network Security Services (NSS) Library
 Name: libnss
-Version: 3.16.1
+Version: 3.17.3
 Release: owl1
 License: Mozilla
 URL: https://developer.mozilla.org/en/docs/NSS
 Group: System/Libraries
 BuildRoot: /override/%name-%version
-BuildRequires: libnspr-devel >= 4.10.5
+BuildRequires: libnspr-devel >= 4.10.7
 BuildRequires: zlib-devel
 BuildRequires: libsqlite-devel
 Provides: nss
 
-Source: ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_16_1_RTM/src/nss-%version.tar.gz
+Source: ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_17_3_RTM/src/nss-%version.tar.gz
 Source1: %name.config.in
 Source2: %name.empty-nssdb.tar.xz
 Source3: %name.setup
@@ -151,15 +153,10 @@ mkdir -m755 -p '%buildroot/%_lib'
 mv -v -- '%buildroot%_libdir'/libnss{,util}3.so '%buildroot/%_lib/'
 
 %check
-if ! grep -q -E '\s*[[:digit:]].+\slocalhost\.localdomain(\s|\s*$)' /etc/hosts
-then
-	cat << EOF
-WARNING: tests require a definition of localhost.localdomain in /etc/hosts
-         file in order to run.  We could not find such a record there, hence
-         we are skipping the test suite.
-EOF
-	exit 0
-fi
+# We need a defined entry for localhost.localdomain to run tests
+# There is an assumption that 'localhost' can be resolved.
+echo 'localhost.localdomain localhost' > .host.aliases
+export HOSTALIASES=$(pwd)/.host.aliases
 
 # Run test suite.
 export BUILD_OPT=1 
@@ -193,7 +190,11 @@ pushd tests/
 # %%define nss_ssl_tests "normal_fips"
 # %%define nss_ssl_run "cov auth"
 
-HOST=localhost DOMSUF=localdomain PORT="$MYRAND" NSS_CYCLES=%{?nss_cycles} NSS_TESTS=%{?nss_tests} NSS_SSL_TESTS=%{?nss_ssl_tests} NSS_SSL_RUN=%{?nss_ssl_run} ./all.sh
+HOST=localhost DOMSUF=localdomain \
+PORT="$MYRAND" \
+NSS_CYCLES=%{?nss_cycles} NSS_TESTS=%{?nss_tests} \
+NSS_SSL_TESTS=%{?nss_ssl_tests} NSS_SSL_RUN=%{?nss_ssl_run} \
+./all.sh
 
 popd
 killall "$RANDSERV" || :
@@ -267,6 +268,13 @@ echo "test suite completed"
 %exclude %_bindir/vfyserv
 
 %changelog
+* Mon Jan 26 2015 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.17.3-owl1
+- Updated to 3.17.3.
+- The test suite is disabled by default since it is a long running one.
+
+* Fri Oct 10 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.17.1-owl1
+- Updated to 3.17.1.
+
 * Mon Jun 16 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.16.1-owl1
 - Initial release for Owl.
 - Introduced the devel-static sub-package.

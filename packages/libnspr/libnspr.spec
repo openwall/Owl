@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/libnspr/libnspr.spec,v 1.1 2014/07/12 13:54:52 galaxy Exp $
+# $Owl: Owl/packages/libnspr/libnspr.spec,v 1.2 2015/01/26 03:06:33 galaxy Exp $
 
 Summary: Netscape Portable Runtime (NSPR) Library
 Name: libnspr
-Version: 4.10.6
+Version: 4.10.7
 Release: owl1
 License: Mozilla
 URL: https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR
@@ -81,6 +81,9 @@ echo 'test suite completed'
 %_libdir/lib*.a
 
 %changelog
+* Fri Oct 10 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.10.7-owl1
+- Updated to 4.10.7.
+
 * Mon Jun 16 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.10.6-owl1
 - Initial release for Owl.
 - Relocated libplc4.so, libplds4.so, and libnspr4.so to /%%_lib since for

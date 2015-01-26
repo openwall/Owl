@@ -48,6 +48,20 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
+2015/01/26	Package: libnss
+SECURITY FIX	Severity: none to low, local, passive
+Updated to 3.17.3. which includes a fix for "RSA PKCS#1 signature
+verification forgery is possible due to too-permissive SignatureAlgorithm
+parameter parsing" (CVE-2014-1568) since version 3.17.1.  The only part
+affected by this in Owl is RPM since it is the only package using NSS
+currently.
+References:
+https://bugzilla.mozilla.org/show_bug.cgi?id=1064636
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-1568
+
+2015/01/26	Package: libnspr
+Updated to 4.10.7.
+
 2015/01/04	Package: openssl
 SECURITY FIX	Severity: none to medium, remote, active
 Updated to 1.0.0o, which fixes "Information leak in pretty printing
@@ -167,4 +181,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.10 2015/01/04 06:08:20 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.11 2015/01/26 03:06:28 galaxy Exp $
