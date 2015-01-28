@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.138 2014/07/12 14:09:05 galaxy Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.139 2015/01/28 04:06:51 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 1.3
-Release: owl23
+Release: owl24
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
@@ -68,7 +68,7 @@ Patch312: glibc-2.3.5-alt-linux-dl-execstack.diff
 Patch313: glibc-2.3.5-alt-assume_kernel.diff
 Patch314: glibc-2.3.6-alt-__libc_enable_secure.diff
 
-# Owl
+# Owl, as well as upstream fixes backported to Owl later
 Patch400: glibc-2.3.6-owl-crypt_freesec.diff
 Patch401: glibc-2.3.5-owl-alt-res_randomid.diff
 Patch402: glibc-2.3.2-owl-iscntrl.diff
@@ -86,6 +86,7 @@ Patch413: glibc-2.3.6-owl-rh-pld-linker.diff
 Patch414: glibc-2.3.6-owl-gcc-4.3.diff
 Patch415: glibc-2.3.6-up-memcmp.diff
 Patch416: glibc-2.3.6-up-ld_linux.diff
+Patch417: glibc-2.3.6-up-rh-CVE-2015-0235.diff
 
 Requires: /etc/nsswitch.conf
 Provides: glibc-crypt_blowfish = %crypt_bf_version, ldconfig
@@ -271,6 +272,7 @@ if [ "`gcc --version | head -n 1 | grep -oE '[0-9.]+' | tr . 0`" -gt 40300 ]; th
 fi
 %patch415 -p1
 %patch416 -p1
+%patch417 -p1
 
 # XXX: check sparcv9 builds and probably fix this.
 #%ifarch sparcv9
@@ -495,6 +497,10 @@ fi
 %endif
 
 %changelog
+* Wed Jan 28 2015 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl24
+- Backported the CVE-2015-0235 (GHOST) fix from upstream via Red Hat's patch
+revision for their glibc 2.5 in RHEL5.
+
 * Thu Jul 10 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 2.3.6-owl23
 - Regenerated the ctermid, tls_static_nelem, and fedora patches since they
 were fuzzy.
