@@ -62,7 +62,7 @@ Owl).  While there's no known security impact on Owl itself, Owl with
 third-party software added (as many real-world installs have) may be
 affected, with worst-case impact ranging up to a remote root compromise.
 References:
-http://openwall.com/lists/oss-security/2015/01/27/9
+http://www.openwall.com/lists/oss-security/2015/01/27/9
 https://community.qualys.com/blogs/laws-of-vulnerabilities/2015/01/27/the-ghost-vulnerability
 https://sourceware.org/bugzilla/show_bug.cgi?id=15014
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0235
@@ -201,4 +201,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.13 2015/01/28 04:06:51 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.14 2015/01/28 04:43:45 solar Exp $
