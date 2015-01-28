@@ -45,6 +45,26 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl 3.1-stable.
 
+(2015/01/28)
+2015/01/28	Package: glibc
+SECURITY FIX	Severity: none to high, remote, active
+Backported upstream's fix for a buffer overflow in gethostbyname*()
+functions, which could be triggered via a crafted IP address argument.
+Depending on the application that uses these functions, this
+vulnerability could allow a local or a remote attacker to execute
+arbitrary code.  Due to the analysis by Qualys (referenced below), it is
+known that the issue could be exploited remotely via Exim (which we do
+not include in Owl) or locally via clockdiff or procmail if these are
+installed SUID/SGID or with filesystem capabilities (not the case on
+Owl).  While there's no known security impact on Owl itself, Owl with
+third-party software added (as many real-world installs have) may be
+affected, with worst-case impact ranging up to a remote root compromise.
+References:
+http://openwall.com/lists/oss-security/2015/01/27/9
+https://community.qualys.com/blogs/laws-of-vulnerabilities/2015/01/27/the-ghost-vulnerability
+https://sourceware.org/bugzilla/show_bug.cgi?id=15014
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0235
+
 (2015/01/04)
 2015/01/04	Package: openssl
 SECURITY FIX	Severity: none to medium, remote, active
@@ -107,4 +127,4 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7169
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7186
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7187
 
-$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.6 2015/01/04 06:40:31 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.7 2015/01/28 04:30:59 solar Exp $
