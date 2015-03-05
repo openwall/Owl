@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.175 2015/03/05 16:18:32 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.176 2015/03/05 16:24:03 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -203,6 +203,8 @@ install -m 644 -p run/{mailer,makechr,relbench} doc/
 - 3x interleaving for bcrypt on x86-64, except in AVX-enabled builds.
 Provides significant speedup on Core 2 CPUs.
 - Recognize the $2b$ bcrypt prefix.
+- Added linux-mic make target for Intel MIC (first generation Xeon Phi, aka
+Knights Corner), along with use of 512-bit SIMD intrinsics for bitslice DES.
 
 * Tue Feb 24 2015 Solar Designer <solar-at-owl.openwall.com> 1.8.0.3-owl1
 - Fixed a bug where unaligned access SSE/AVX instructions would unnecessarily
