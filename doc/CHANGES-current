@@ -48,6 +48,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
+2015/03/06	Package: strace
+Updated to 4.10.
+
 2015/01/28	Package: glibc
 SECURITY FIX	Severity: none to high, remote, active
 Backported upstream's fix for a buffer overflow in gethostbyname*()
@@ -201,4 +204,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.14 2015/01/28 04:43:45 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.15 2015/03/06 16:43:58 ldv Exp $
