@@ -1,14 +1,13 @@
-# $Owl: Owl/packages/strace/strace.spec,v 1.32 2015/01/10 20:35:23 solar Exp $
+# $Owl: Owl/packages/strace/strace.spec,v 1.33 2015/03/06 16:43:47 ldv Exp $
 
 Summary: Tracks and displays system calls associated with a running process.
 Name: strace
-Version: 4.9
-Release: owl2
+Version: 4.10
+Release: owl1
 License: BSD
 Group: Development/Debuggers
 URL: http://sourceforge.net/projects/strace/
 Source: http://download.sourceforge.net/%name/%name-%version.tar.xz
-Patch0: strace-4.9-owl-aligned_u64.diff
 # Signature: http://download.sourceforge.net/%name/%name-%version.tar.xz.sig
 BuildRequires: time, xz
 BuildRoot: /override/%name-%version
@@ -31,7 +30,6 @@ commands do.
 
 %prep
 %setup -q
-%patch0 -p1
 xz ChangeLog*
 
 %build
@@ -58,6 +56,9 @@ export SLEEP_A_BIT='sleep 0.1'
 %_bindir/strace-graph
 
 %changelog
+* Fri Mar 06 2015 Dmitry V. Levin <ldv-at-owl.openwall.com> 4.10-owl1
+- Updated to 4.10.
+
 * Sat Jan 10 2015 Solar Designer <solar-at-owl.openwall.com> 4.9-owl2
 - Corrected build with older Linux kernel headers.
 
