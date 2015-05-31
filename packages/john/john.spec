@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.176 2015/03/05 16:24:03 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.177 2015/05/31 12:51:01 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.8.0.4
+Version: 1.8.0.5
 %define charsets_version 20130529
 Release: owl1
 License: GPL
@@ -199,6 +199,20 @@ install -m 644 -p run/{mailer,makechr,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sun May 31 2015 Solar Designer <solar-at-owl.openwall.com> 1.8.0.5-owl1
+- Fixed an out of bounds write bug in the external mode virtual machine.
+- In the generic crypt(3) format, detect descrypt with valid vs. invalid salts
+as separate id's for our heuristics on supported hash types.
+- Made a minor optimization to MMX and SSE2 assembly code (in 32-bit builds)
+for LM hash.
+- When built with --fork support, disallow session names with all-digit
+suffixes since these clash with those produced by --fork.
+- Forward SIGTERM to --fork'ed children.
+- Set stdout to line buffered (rather than potentially fully buffered), except
+for "--stdout", "--show", and auxiliary programs such as "unshadow".
+- On Windows, restore normal processing of Ctrl-C in case our parent (such as
+Johnny the GUI) had disabled it.
+
 * Thu Mar 05 2015 Solar Designer <solar-at-owl.openwall.com> 1.8.0.4-owl1
 - 3x interleaving for bcrypt on x86-64, except in AVX-enabled builds.
 Provides significant speedup on Core 2 CPUs.
