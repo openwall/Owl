@@ -45,6 +45,19 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl 3.1-stable.
 
+(2015/06/09)
+2015/06/09	Package: kernel
+SECURITY FIX	Severity: high, local, active
+Updated to 2.6.18-406.el5.028stab119.1,  Most importantly, this fixes a
+possible I/O vector array overrun, which could allow for local privilege
+escalation (CVE-2015-1805).
+References:
+https://openvz.org/Download/kernel/rhel5-testing/028stab119.1
+http://rhn.redhat.com/errata/RHSA-2015-1042.html
+http://www.openwall.com/lists/oss-security/2015/06/06/2
+https://openvz.org/Download/kernel/rhel5/028stab118.1
+http://rhn.redhat.com/errata/RHSA-2015-0164.html
+
 (2015/01/28)
 2015/01/28	Package: glibc
 SECURITY FIX	Severity: none to high, remote, active
@@ -127,4 +140,4 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7169
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7186
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7187
 
-$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.8 2015/01/28 04:43:45 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.9 2015/06/09 12:06:05 solar Exp $
