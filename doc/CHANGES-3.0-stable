@@ -382,7 +382,7 @@ https://rhn.redhat.com/errata/RHSA-2011-0927.html
 https://rhn.redhat.com/errata/RHSA-2011-0833.html
 https://bugs.gentoo.org/show_bug.cgi?id=325805
 https://bugs.gentoo.org/attachment.cgi?id=236721
-http://forums.gentoo.org/viewtopic-t-731366.html
+https://forums.gentoo.org/viewtopic-t-731366.html
 http://www.openwall.com/lists/kernel-hardening/2011/07/12/1
 
 (2011/05/03 - 2011/07/25)
@@ -652,4 +652,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.36 2014/06/14 17:58:39 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.37 2015/06/09 12:11:09 solar Exp $
