@@ -14,13 +14,13 @@ diff -urpN linux-2.6.18-406.el5.028stab119.1/Documentation/sysctl/kernel.txt lin
  value of dmesg_restrict.
 diff -urpN linux-2.6.18-406.el5.028stab119.1/Makefile linux-2.6.18-406.el5.028stab119.1-owl/Makefile
 --- linux-2.6.18-406.el5.028stab119.1/Makefile	2015-06-04 08:57:51 +0000
-+++ linux-2.6.18-406.el5.028stab119.1-owl/Makefile	2015-06-09 10:58:18 +0000
++++ linux-2.6.18-406.el5.028stab119.1-owl/Makefile	2015-06-11 22:19:26 +0000
 @@ -1,7 +1,7 @@
  VERSION = 2
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -prep
-+EXTRAVERSION = -406.el5.028stab119.1.owl1
++EXTRAVERSION = -406.el5.028stab119.1.owl2
  RHEL_MAJOR = 5
  RHEL_MINOR = 11
  NAME=Avast! A bilge rat!
@@ -867,6 +867,26 @@ diff -urpN linux-2.6.18-406.el5.028stab119.1/fs/filesystems.c linux-2.6.18-406.e
  }
  EXPORT_SYMBOL(check_fs_presence);
  
+diff -urpN linux-2.6.18-406.el5.028stab119.1/fs/namei.c linux-2.6.18-406.el5.028stab119.1-owl/fs/namei.c
+--- linux-2.6.18-406.el5.028stab119.1/fs/namei.c	2015-06-04 08:57:51 +0000
++++ linux-2.6.18-406.el5.028stab119.1-owl/fs/namei.c	2015-06-11 22:18:49 +0000
+@@ -967,14 +967,12 @@ static __always_inline void follow_dotdo
+                         read_unlock(&current->fs->lock);
+ 			break;
+ 		}
++		read_unlock(&current->fs->lock);
+ #ifdef CONFIG_VE
+ 		if (nd->dentry == get_exec_env()->fs_root &&
+-		    nd->mnt == get_exec_env()->fs_rootmnt) {
+-			read_unlock(&current->fs->lock);
++		    !ve_is_super(get_exec_env()))
+ 			break;
+-		}
+ #endif
+-		read_unlock(&current->fs->lock);
+ 		spin_lock(&dcache_lock);
+ 		if (nd->dentry != nd->mnt->mnt_root) {
+ 			nd->dentry = dget(nd->dentry->d_parent);
 diff -urpN linux-2.6.18-406.el5.028stab119.1/fs/namespace.c linux-2.6.18-406.el5.028stab119.1-owl/fs/namespace.c
 --- linux-2.6.18-406.el5.028stab119.1/fs/namespace.c	2015-06-04 08:57:51 +0000
 +++ linux-2.6.18-406.el5.028stab119.1-owl/fs/namespace.c	2015-06-09 10:58:18 +0000
