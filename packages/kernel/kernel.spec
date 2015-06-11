@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.109 2015/06/09 11:11:45 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.110 2015/06/11 22:58:28 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 406.el5.028stab119.1
-Release: %ovzversion.owl1
+Release: %ovzversion.owl2
 License: GPLv2
 Group: System Environment/Kernel
 URL: https://openvz.org/Download/kernel/rhel5-testing/028stab119.1
@@ -104,6 +104,9 @@ done
 %files fake
 
 %changelog
+* Thu Jun 11 2015 Solar Designer <solar-at-owl.openwall.com> 2.6.18-406.el5.028stab119.1.owl2
+- CVE-2015-2925 fix for OpenVZ containers.
+
 * Tue Jun 09 2015 Solar Designer <solar-at-owl.openwall.com> 2.6.18-406.el5.028stab119.1.owl1
 - Updated to 2.6.18-406.el5.028stab119.1.
 
