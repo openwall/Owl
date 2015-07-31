@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bind/bind.spec,v 1.29 2010/12/09 13:22:49 solar Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.29.4.1 2015/07/31 09:41:59 solar Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -7,7 +7,7 @@
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.5
-Release: owl7
+Release: owl7.3.1.1
 License: BSD-style
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -45,6 +45,12 @@ Patch9: bind-9.3.1-owl-rfc-index.diff
 Patch10: bind-9.3.5-openbsd-owl-expand_fdsets.diff
 Patch11: bind-9.3.5-owl-CVE-2008-5077.diff
 Patch12: bind-9.3.6-up-CVE-2009-0696.diff
+Patch13: bind-9.3.5-P2-rh-owl-CVE-2010-3613.diff
+Patch14: bind-9.3.5-P2-rh-CVE-2011-4313.diff
+Patch15: bind-9.3.5-P2-rh-CVE-2012-1667.diff
+Patch16: bind-9.3.5-P2-rh-CVE-2012-4244.diff
+Patch17: bind-9.3.5-P2-rh-CVE-2012-5166.diff
+Patch18: bind-9.3.5-P2-rh-CVE-2015-5477.diff
 
 Requires: %name-libs = %version-%release
 Requires: owl-startup
@@ -124,6 +130,12 @@ for building applications with ISC BIND libraries.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
 
 install -pm644 %_sourcedir/rfc1912.txt.bz2 doc/rfc/
 find doc -type f -name '*.txt' -print0 |
@@ -349,6 +361,15 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Fri Jul 31 2015 Solar Designer <solar-at-owl.openwall.com> 9.3.5-owl7.3.1.1
+- Reviewed the patches in bind-9.3.6-25.P1.el5_11.3 and added those for
+CVE-2010-3613, CVE-2011-4313 (probably unneeded here, as per the discussion
+on oss-security back in 2011), CVE-2012-1667, CVE-2012-4244, CVE-2012-5166,
+CVE-2015-5477.  Some other patches were not added for being DNSSEC-specific,
+or too invasive (most notably, the one for CVE-2014-8500, which hasn't been
+tested separately from the complex patch for RH bug 572848), or fixing too
+minor issues (CVE-2012-1033, which isn't even included in ISC's matrix).
+
 * Thu Dec 09 2010 Solar Designer <solar-at-owl.openwall.com> 9.3.5-owl7
 - Disallow zone transfers by default and provide more comments and samples for
 other settings in options.conf (suggested by galaxy@ and gremlin@).
