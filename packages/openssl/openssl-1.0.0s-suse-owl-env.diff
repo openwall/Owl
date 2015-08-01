@@ -1,0 +1,163 @@
+diff -urp openssl-1.0.0s.orig/crypto/conf/conf_api.c openssl-1.0.0s/crypto/conf/conf_api.c
+--- openssl-1.0.0s.orig/crypto/conf/conf_api.c	2015-06-11 13:01:06 +0000
++++ openssl-1.0.0s/crypto/conf/conf_api.c	2015-08-01 06:40:21 +0000
+@@ -140,7 +140,7 @@ char *_CONF_get_string(const CONF *conf,
+             v = lh_CONF_VALUE_retrieve(conf->data, &vv);
+             if (v != NULL)
+                 return (v->value);
+-            if (strcmp(section, "ENV") == 0) {
++            if (!OPENSSL_issetugid() && (strcmp(section, "ENV") == 0)) {
+                 p = getenv(name);
+                 if (p != NULL)
+                     return (p);
+@@ -154,7 +154,7 @@ char *_CONF_get_string(const CONF *conf,
+         else
+             return (NULL);
+     } else
+-        return (getenv(name));
++        return (OPENSSL_issetugid() ? NULL : getenv(name));
+ }
+ 
+ #if 0                           /* There's no way to provide error checking
+diff -urp openssl-1.0.0s.orig/crypto/conf/conf_mod.c openssl-1.0.0s/crypto/conf/conf_mod.c
+--- openssl-1.0.0s.orig/crypto/conf/conf_mod.c	2015-06-11 13:01:06 +0000
++++ openssl-1.0.0s/crypto/conf/conf_mod.c	2015-08-01 06:41:03 +0000
+@@ -526,6 +526,9 @@ char *CONF_get1_default_config_file(void
+     char *file;
+     int len;
+ 
++    if (OPENSSL_issetugid())
++        return NULL;
++
+     file = getenv("OPENSSL_CONF");
+     if (file)
+         return BUF_strdup(file);
+diff -urp openssl-1.0.0s.orig/crypto/cryptlib.c openssl-1.0.0s/crypto/cryptlib.c
+--- openssl-1.0.0s.orig/crypto/cryptlib.c	2015-06-11 14:10:15 +0000
++++ openssl-1.0.0s/crypto/cryptlib.c	2015-08-01 06:57:51 +0000
+@@ -666,7 +666,7 @@ void OPENSSL_cpuid_setup(void)
+         return;
+ 
+     trigger = 1;
+-    if ((env = getenv("OPENSSL_ia32cap")))
++    if (!OPENSSL_issetugid() && (env = getenv("OPENSSL_ia32cap")))
+         OPENSSL_ia32cap_P = strtoul(env, NULL, 0) | (1 << 10);
+     else
+         OPENSSL_ia32cap_P = OPENSSL_ia32_cpuid() | (1 << 10);
+diff -urp openssl-1.0.0s.orig/crypto/engine/eng_list.c openssl-1.0.0s/crypto/engine/eng_list.c
+--- openssl-1.0.0s.orig/crypto/engine/eng_list.c	2015-06-11 13:01:06 +0000
++++ openssl-1.0.0s/crypto/engine/eng_list.c	2015-08-01 06:45:03 +0000
+@@ -368,10 +368,12 @@ ENGINE *ENGINE_by_id(const char *id)
+      */
+     if (strcmp(id, "dynamic")) {
+ # ifdef OPENSSL_SYS_VMS
+-        if ((load_dir = getenv("OPENSSL_ENGINES")) == 0)
++        if (OPENSSL_issetugid() ||
++            ((load_dir = getenv("OPENSSL_ENGINES")) == NULL))
+             load_dir = "SSLROOT:[ENGINES]";
+ # else
+-        if ((load_dir = getenv("OPENSSL_ENGINES")) == 0)
++        if (OPENSSL_issetugid() ||
++            ((load_dir = getenv("OPENSSL_ENGINES")) == NULL))
+             load_dir = ENGINESDIR;
+ # endif
+         iterator = ENGINE_by_id("dynamic");
+diff -urp openssl-1.0.0s.orig/crypto/sparcv9cap.c openssl-1.0.0s/crypto/sparcv9cap.c
+--- openssl-1.0.0s.orig/crypto/sparcv9cap.c	2015-06-11 14:10:15 +0000
++++ openssl-1.0.0s/crypto/sparcv9cap.c	2015-08-01 06:57:07 +0000
+@@ -101,7 +101,7 @@ void OPENSSL_cpuid_setup(void)
+         return;
+     trigger = 1;
+ 
+-    if ((e = getenv("OPENSSL_sparcv9cap"))) {
++    if (!OPENSSL_issetugid() && (e = getenv("OPENSSL_sparcv9cap"))) {
+         OPENSSL_sparcv9cap_P = strtoul(e, NULL, 0);
+         return;
+     }
+@@ -187,7 +187,7 @@ void OPENSSL_cpuid_setup(void)
+         return;
+     trigger = 1;
+ 
+-    if ((e = getenv("OPENSSL_sparcv9cap"))) {
++    if (!OPENSSL_issetugid() && (e = getenv("OPENSSL_sparcv9cap"))) {
+         OPENSSL_sparcv9cap_P = strtoul(e, NULL, 0);
+         return;
+     }
+diff -urp openssl-1.0.0s.orig/crypto/x509/by_dir.c openssl-1.0.0s/crypto/x509/by_dir.c
+--- openssl-1.0.0s.orig/crypto/x509/by_dir.c	2015-06-11 13:01:06 +0000
++++ openssl-1.0.0s/crypto/x509/by_dir.c	2015-08-01 06:46:50 +0000
+@@ -128,7 +128,8 @@ static int dir_ctrl(X509_LOOKUP *ctx, in
+     switch (cmd) {
+     case X509_L_ADD_DIR:
+         if (argl == X509_FILETYPE_DEFAULT) {
+-            dir = (char *)getenv(X509_get_default_cert_dir_env());
++            if (!OPENSSL_issetugid())
++                dir = getenv(X509_get_default_cert_dir_env());
+             if (dir)
+                 ret = add_cert_dir(ld, dir, X509_FILETYPE_PEM);
+             else
+diff -urp openssl-1.0.0s.orig/crypto/x509/by_file.c openssl-1.0.0s/crypto/x509/by_file.c
+--- openssl-1.0.0s.orig/crypto/x509/by_file.c	2015-06-11 13:01:06 +0000
++++ openssl-1.0.0s/crypto/x509/by_file.c	2015-08-01 06:47:38 +0000
+@@ -92,12 +92,13 @@ static int by_file_ctrl(X509_LOOKUP *ctx
+                         long argl, char **ret)
+ {
+     int ok = 0;
+-    char *file;
++    char *file = NULL;
+ 
+     switch (cmd) {
+     case X509_L_FILE_LOAD:
+         if (argl == X509_FILETYPE_DEFAULT) {
+-            file = (char *)getenv(X509_get_default_cert_file_env());
++            if (!OPENSSL_issetugid())
++                file = getenv(X509_get_default_cert_file_env());
+             if (file)
+                 ok = (X509_load_cert_crl_file(ctx, file,
+                                               X509_FILETYPE_PEM) != 0);
+diff -urp openssl-1.0.0s.orig/crypto/x509/x509_vfy.c openssl-1.0.0s/crypto/x509/x509_vfy.c
+--- openssl-1.0.0s.orig/crypto/x509/x509_vfy.c	2015-06-11 14:11:11 +0000
++++ openssl-1.0.0s/crypto/x509/x509_vfy.c	2015-08-01 06:48:32 +0000
+@@ -483,7 +483,7 @@ static int check_chain_extensions(X509_S
+          * A hack to keep people who don't want to modify their software
+          * happy
+          */
+-        if (getenv("OPENSSL_ALLOW_PROXY_CERTS"))
++        if (!OPENSSL_issetugid() && getenv("OPENSSL_ALLOW_PROXY_CERTS"))
+             allow_proxy_certs = 1;
+         purpose = ctx->param->purpose;
+     }
+diff -urp openssl-1.0.0s.orig/engines/ccgost/gost_ctl.c openssl-1.0.0s/engines/ccgost/gost_ctl.c
+--- openssl-1.0.0s.orig/engines/ccgost/gost_ctl.c	2015-06-11 13:01:06 +0000
++++ openssl-1.0.0s/engines/ccgost/gost_ctl.c	2015-08-01 06:50:55 +0000
+@@ -58,13 +58,14 @@ int gost_control_func(ENGINE *e, int cmd
+ 
+ const char *get_gost_engine_param(int param)
+ {
+-    char *tmp;
++    const char *tmp = NULL;
+     if (param < 0 || param > GOST_PARAM_MAX)
+         return NULL;
+     if (gost_params[param] != NULL) {
+         return gost_params[param];
+     }
+-    tmp = getenv(gost_envnames[param]);
++    if (!OPENSSL_issetugid())
++        tmp = getenv(gost_envnames[param]);
+     if (tmp) {
+         if (gost_params[param])
+             OPENSSL_free(gost_params[param]);
+@@ -76,10 +77,11 @@ const char *get_gost_engine_param(int pa
+ 
+ int gost_set_default_param(int param, const char *value)
+ {
+-    const char *tmp;
++    const char *tmp = NULL;
+     if (param < 0 || param > GOST_PARAM_MAX)
+         return 0;
+-    tmp = getenv(gost_envnames[param]);
++    if (!OPENSSL_issetugid())
++        tmp = getenv(gost_envnames[param]);
+     /*
+      * if there is value in the environment, use it, else -passed string *
+      */

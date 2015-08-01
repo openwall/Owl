@@ -1,0 +1,21 @@
+diff -urp openssl-1.0.0s.orig/ssl/ssltest.c openssl-1.0.0s/ssl/ssltest.c
+--- openssl-1.0.0s.orig/ssl/ssltest.c	2015-06-11 14:10:15 +0000
++++ openssl-1.0.0s/ssl/ssltest.c	2015-08-01 06:07:45 +0000
+@@ -907,6 +907,7 @@ int main(int argc, char *argv[])
+ 
+ #ifndef OPENSSL_NO_KRB5
+     if (c_ssl && c_ssl->kssl_ctx) {
++#if 0
+         char localhost[MAXHOSTNAMELEN + 2];
+ 
+         if (gethostname(localhost, sizeof localhost - 1) == 0) {
+@@ -916,6 +917,9 @@ int main(int argc, char *argv[])
+                 goto end;
+             }
+             kssl_ctx_setstring(c_ssl->kssl_ctx, KSSL_SERVER, localhost);
++#else
++            kssl_ctx_setstring(c_ssl->kssl_ctx, KSSL_SERVER, "localhost");
++#endif
+         }
+     }
+ #endif                          /* OPENSSL_NO_KRB5 */

@@ -1,0 +1,23 @@
+diff -urp openssl-1.0.0s.orig/ssl/dtls1.h openssl-1.0.0s/ssl/dtls1.h
+--- openssl-1.0.0s.orig/ssl/dtls1.h	2015-06-11 14:10:15 +0000
++++ openssl-1.0.0s/ssl/dtls1.h	2015-08-01 06:33:14 +0000
+@@ -199,9 +199,6 @@ typedef struct dtls1_state_st {
+      * loss.
+      */
+     record_pqueue buffered_app_data;
+-    /* Is set when listening for new connections with dtls1_listen() */
+-    unsigned int listen;
+-    unsigned int link_mtu;      /* max on-the-wire DTLS packet size */
+     unsigned int mtu;           /* max DTLS packet size */
+     struct hm_header_st w_msg_hdr;
+     struct hm_header_st r_msg_hdr;
+@@ -220,6 +217,9 @@ typedef struct dtls1_state_st {
+     unsigned int handshake_fragment_len;
+     unsigned int retransmitting;
+     unsigned int change_cipher_spec_ok;
++    /* Is set when listening for new connections with dtls1_listen() */
++    unsigned int listen;
++    unsigned int link_mtu;      /* max on-the-wire DTLS packet size */
+ } DTLS1_STATE;
+ 
+ typedef struct dtls1_record_data_st {

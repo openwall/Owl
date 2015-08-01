@@ -1,6 +1,6 @@
-diff -urp openssl-1.0.0o.orig/doc/crypto/EVP_DigestInit.pod openssl-1.0.0o/doc/crypto/EVP_DigestInit.pod
---- openssl-1.0.0o.orig/doc/crypto/EVP_DigestInit.pod	2014-10-15 12:51:13 +0000
-+++ openssl-1.0.0o/doc/crypto/EVP_DigestInit.pod	2015-01-04 05:55:02 +0000
+diff -urp openssl-1.0.0s.orig/doc/crypto/EVP_DigestInit.pod openssl-1.0.0s/doc/crypto/EVP_DigestInit.pod
+--- openssl-1.0.0s.orig/doc/crypto/EVP_DigestInit.pod	2015-06-11 14:01:49 +0000
++++ openssl-1.0.0s/doc/crypto/EVP_DigestInit.pod	2015-08-01 06:12:19 +0000
 @@ -51,15 +51,14 @@ EVP digest routines
   const EVP_MD *EVP_md5(void);
   const EVP_MD *EVP_sha(void);
@@ -40,9 +40,9 @@ diff -urp openssl-1.0.0o.orig/doc/crypto/EVP_DigestInit.pod openssl-1.0.0o/doc/c
  EVP_dss1(), EVP_mdc2() and EVP_ripemd160() return pointers to the
  corresponding EVP_MD structures.
  
-diff -urp openssl-1.0.0o.orig/doc/crypto/EVP_EncryptInit.pod openssl-1.0.0o/doc/crypto/EVP_EncryptInit.pod
---- openssl-1.0.0o.orig/doc/crypto/EVP_EncryptInit.pod	2014-10-15 12:51:13 +0000
-+++ openssl-1.0.0o/doc/crypto/EVP_EncryptInit.pod	2015-01-04 05:55:02 +0000
+diff -urp openssl-1.0.0s.orig/doc/crypto/EVP_EncryptInit.pod openssl-1.0.0s/doc/crypto/EVP_EncryptInit.pod
+--- openssl-1.0.0s.orig/doc/crypto/EVP_EncryptInit.pod	2015-06-11 14:10:15 +0000
++++ openssl-1.0.0s/doc/crypto/EVP_EncryptInit.pod	2015-08-01 06:12:19 +0000
 @@ -91,6 +91,32 @@ EVP_CIPHER_CTX_set_padding - EVP cipher
   int EVP_CIPHER_param_to_asn1(EVP_CIPHER_CTX *c, ASN1_TYPE *type);
   int EVP_CIPHER_asn1_to_param(EVP_CIPHER_CTX *c, ASN1_TYPE *type);

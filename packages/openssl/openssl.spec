@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.83 2015/01/04 06:00:07 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.84 2015/08/01 07:17:13 solar Exp $
 
 %define shlib_soversion 10
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 1.0.0o
+Version: 1.0.0s
 Release: owl1
 License: distributable
 Group: System Environment/Libraries
@@ -12,21 +12,15 @@ URL: http://www.openssl.org
 Source: %name-%version.tar.xz
 # Source: ftp://ftp.openssl.org/source/%name-%version.tar.gz
 # Signature: ftp://ftp.openssl.org/source/%name-%version.tar.gz.asc
-Patch0: openssl-1.0.0b-owl-alt-issetugid.diff
-Patch1: openssl-1.0.0b-gosta-pkcs12-fix.diff
-Patch2: openssl-1.0.0b-rh-alt-soversion.diff
-Patch3: openssl-1.0.0b-rh-enginesdir.diff
-Patch4: openssl-1.0.0b-rh-rpath.diff
-Patch5: openssl-0.9.8b-rh-test-use-localhost.diff
-Patch6: openssl-1.0.0b-rh-default-paths.diff
-Patch7: openssl-1.0.0o-rh-owl-man.diff
-Patch8: openssl-1.0.0b-rh-x509.diff
-Patch9: openssl-1.0.0b-rh-version-engines.diff
-Patch10: openssl-1.0.0m-rh-cipher-change.diff
-Patch11: openssl-1.0.0b-rh-env-nozlib.diff
-Patch12: openssl-1.0.0-beta4-rh-dtls1-abi.diff
-Patch13: openssl-1.0.0m-owl-warnings.diff
-Patch14: openssl-1.0.0d-suse-env.diff
+Patch0: openssl-1.0.0s-owl-alt-issetugid.diff
+Patch1: openssl-1.0.0s-rh-alt-soversion.diff
+Patch2: openssl-1.0.0s-rh-enginesdir.diff
+Patch3: openssl-1.0.0s-rh-rpath.diff
+Patch4: openssl-1.0.0s-rh-test-use-localhost.diff
+Patch5: openssl-1.0.0s-rh-owl-man.diff
+Patch6: openssl-1.0.0s-rh-cipher-change.diff
+Patch7: openssl-1.0.0s-rh-dtls1-abi.diff
+Patch8: openssl-1.0.0s-suse-owl-env.diff
 BuildRequires: perl, diffutils
 # Due to sed -i.
 BuildRequires: sed >= 4.1.1
@@ -106,12 +100,6 @@ This package contains some miscellaneous Perl scripts.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
-%patch13 -p1
-%patch14 -p1
 
 bzip2 -9k CHANGES CHANGES.SSLeay
 
@@ -248,6 +236,14 @@ bzip2 -9 docs/doc/ssleay.txt
 %exclude  %_datadir/ssl/misc/tsget
 
 %changelog
+* Sat Aug 01 2015 Solar Designer <solar-at-owl.openwall.com> 1.0.0s-owl1
+- Updated to 1.0.0s.
+- Dropped some patches in order to stay closer to upstream.
+- Regenerated all remaining patches due to the source code reformatting between
+1.0.0q and 1.0.0r.
+- In the -env patch, added protection of OPENSSL_ia32cap and OPENSSL_sparcv9cap
+env vars, based on exhaustive re-review of the code for uses of getenv().
+
 * Sun Jan 04 2015 Solar Designer <solar-at-owl.openwall.com> 1.0.0o-owl1
 - Updated to 1.0.0o.
 
