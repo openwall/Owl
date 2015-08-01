@@ -1,6 +1,7 @@
---- openssl/Configure
-+++ openssl/Configure
-@@ -1545,7 +1545,7 @@ while (<IN>)
+diff -urp openssl-1.0.0s.orig/Configure openssl-1.0.0s/Configure
+--- openssl-1.0.0s.orig/Configure	2015-06-11 14:10:15 +0000
++++ openssl-1.0.0s/Configure	2015-08-01 05:55:09 +0000
+@@ -1554,7 +1554,7 @@ while (<IN>)
  	if ($shared_extension ne "" && $shared_extension =~ /^\.s([ol])\.[^\.]*$/)
  		{
  		my $sotmp = $1;
@@ -9,7 +10,7 @@
  		}
  	elsif ($shared_extension ne "" && $shared_extension =~ /^\.[^\.]*\.dylib$/)
  		{
-@@ -1554,7 +1554,7 @@ while (<IN>)
+@@ -1563,7 +1563,7 @@ while (<IN>)
  	elsif ($shared_extension ne "" && $shared_extension =~ /^\.s([ol])\.[^\.]*\.[^\.]*$/)
  		{
  		my $sotmp = $1;
@@ -18,8 +19,9 @@
  		}
  	elsif ($shared_extension ne "" && $shared_extension =~ /^\.[^\.]*\.[^\.]*\.dylib$/)
  		{
---- openssl/Makefile.org
-+++ openssl/Makefile.org
+diff -urp openssl-1.0.0s.orig/Makefile.org openssl-1.0.0s/Makefile.org
+--- openssl-1.0.0s.orig/Makefile.org	2015-06-11 14:10:15 +0000
++++ openssl-1.0.0s/Makefile.org	2015-08-01 05:55:09 +0000
 @@ -10,6 +10,7 @@ SHLIB_VERSION_HISTORY=
  SHLIB_MAJOR=
  SHLIB_MINOR=
@@ -39,7 +41,7 @@
  	done
  
  build-shared: do_$(SHLIB_TARGET) link-shared
-@@ -302,14 +304,15 @@ build-shared: do_$(SHLIB_TARGET) link-shared
+@@ -302,14 +304,15 @@ build-shared: do_$(SHLIB_TARGET) link-sh
  do_$(SHLIB_TARGET):
  	@ set -e; libs='-L. $(SHLIBDEPS)'; for i in $(SHLIBDIRS); do \
  		if [ "$$i" = "ssl" -a -n "$(LIBKRB5)" ]; then \
@@ -57,8 +59,9 @@
  	done
  
  libcrypto.pc: Makefile
---- openssl/Makefile.shared
-+++ openssl/Makefile.shared
+diff -urp openssl-1.0.0s.orig/Makefile.shared openssl-1.0.0s/Makefile.shared
+--- openssl-1.0.0s.orig/Makefile.shared	2015-06-11 13:01:06 +0000
++++ openssl-1.0.0s/Makefile.shared	2015-08-01 05:55:09 +0000
 @@ -66,6 +66,10 @@ LIBCOMPATVERSIONS=
  # dependencies to other libraries.
  LIBDEPS=
@@ -70,7 +73,7 @@
  #------------------------------------------------------------------------------
  # The rest is private to this makefile.
  
-@@ -149,9 +153,10 @@ DETECT_GNU_LD=($(CC) -Wl,-V /dev/null 2>&1 | grep '^GNU ld' )>/dev/null
+@@ -149,9 +153,10 @@ DETECT_GNU_LD=($(CC) -Wl,-V /dev/null 2>
  DO_GNU_SO=$(CALC_VERSIONS); \
  	SHLIB=lib$(LIBNAME).so; \
  	SHLIB_SUFFIX=; \
@@ -82,14 +85,14 @@
  
  DO_GNU_APP=LDFLAGS="$(CFLAGS) -Wl,-rpath,$(LIBRPATH)"
  
---- openssl/crypto/opensslv.h
-+++ openssl/crypto/opensslv.h
-@@ -83,7 +83,7 @@
+diff -urp openssl-1.0.0s.orig/crypto/opensslv.h openssl-1.0.0s/crypto/opensslv.h
+--- openssl-1.0.0s.orig/crypto/opensslv.h	2015-06-11 14:13:36 +0000
++++ openssl-1.0.0s/crypto/opensslv.h	2015-08-01 05:55:43 +0000
+@@ -84,6 +84,6 @@
   * should only keep the versions that are binary compatible with the current.
   */
- #define SHLIB_VERSION_HISTORY ""
--#define SHLIB_VERSION_NUMBER "1.0.0"
-+#define SHLIB_VERSION_NUMBER "1.0.0d"
+ # define SHLIB_VERSION_HISTORY ""
+-# define SHLIB_VERSION_NUMBER "1.0.0"
++# define SHLIB_VERSION_NUMBER "1.0.0d"
  
- 
- #endif /* HEADER_OPENSSLV_H */
+ #endif                          /* HEADER_OPENSSLV_H */
