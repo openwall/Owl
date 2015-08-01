@@ -48,6 +48,20 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
+2015/08/01	Package: openssl
+SECURITY FIX	Severity: none to medium, remote, passive to active
+Updated to 1.0.0s, which fixes many Low and Moderate severity issues
+(per OpenSSL's classification), as well as one High severity issue in
+the client: silent downgrades of RSA to EXPORT_RSA (CVE-2015-0204), with
+the corresponding attack known as FREAK.
+References:
+https://www.openssl.org/news/secadv_20150108.txt
+https://www.openssl.org/news/secadv_20150319.txt
+https://www.openssl.org/news/secadv_20150611.txt
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0204
+https://freakattack.com
+https://en.wikipedia.org/wiki/FREAK
+
 2015/07/31	Package: bind
 SECURITY FIX	Severity: low, remote, active
 Merged multiple DoS vulnerability fixes from Red Hat's package, most
@@ -236,4 +250,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.18 2015/08/01 03:57:33 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.19 2015/08/01 07:37:13 solar Exp $
