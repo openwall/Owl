@@ -48,6 +48,16 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
+2015/07/31	Package: bind
+SECURITY FIX	Severity: low, remote, active
+Merged multiple DoS vulnerability fixes from Red Hat's package, most
+notably for the easily triggerable error in handling of TKEY queries
+(CVE-2015-5477).
+References:
+http://www.openwall.com/lists/oss-security/2015/07/29/3
+https://kb.isc.org/article/AA-01272
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-5477
+
 2015/06/11	Package: kernel
 SECURITY FIX	Severity: high, local, active
 Fixed OpenVZ container filesystem (simfs) escape vulnerability via bind
@@ -226,4 +236,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.17 2015/06/11 23:18:14 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.18 2015/08/01 03:57:33 solar Exp $
