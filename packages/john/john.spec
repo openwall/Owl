@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.178 2015/06/04 05:50:11 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.179 2016/01/21 08:57:14 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.8.0.6
+Version: 1.8.0.7
 %define charsets_version 20130529
 Release: owl1
 License: GPL
@@ -199,6 +199,14 @@ install -m 644 -p run/{mailer,makechr,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Thu Jan 21 2016 Solar Designer <solar-at-owl.openwall.com> 1.8.0.7-owl1
+- Introduced a number of optimizations for faster handling of large password
+hash files, including loading, cracking, and "--show".  Some of these use more
+memory than before, yet in a more efficient manner.
+- Implemented special-case handling of repeated rule commands '$', '^', '[',
+']', '{', and '}', as well as faster handling of the 'D' command.
+- Made assorted bugfixes, and portability and documentation enhancements.
+
 * Thu Jun 04 2015 Solar Designer <solar-at-owl.openwall.com> 1.8.0.6-owl1
 - Fixed an out of bounds write bug in the external mode virtual machine.
 - In the generic crypt(3) format, detect descrypt with valid vs. invalid salts
