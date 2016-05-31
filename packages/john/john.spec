@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.180 2016/05/31 07:32:44 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.181 2016/05/31 09:15:05 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -201,6 +201,7 @@ install -m 644 -p run/{mailer,makechr,relbench} doc/
 %changelog
 * Tue May 31 2016 Solar Designer <solar-at-owl.openwall.com> 1.8.0.8-owl1
 - Dropped undocumented special handling of "Mc" in 'c' and 'C' rule commands.
+- Clarified external mode's C-like language and its drawbacks in doc/EXTERNAL.
 
 * Thu Jan 21 2016 Solar Designer <solar-at-owl.openwall.com> 1.8.0.7-owl1
 - Introduced a number of optimizations for faster handling of large password
