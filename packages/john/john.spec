@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.179 2016/01/21 08:57:14 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.180 2016/05/31 07:32:44 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.8.0.7
+Version: 1.8.0.8
 %define charsets_version 20130529
 Release: owl1
 License: GPL
@@ -199,6 +199,9 @@ install -m 644 -p run/{mailer,makechr,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Tue May 31 2016 Solar Designer <solar-at-owl.openwall.com> 1.8.0.8-owl1
+- Dropped undocumented special handling of "Mc" in 'c' and 'C' rule commands.
+
 * Thu Jan 21 2016 Solar Designer <solar-at-owl.openwall.com> 1.8.0.7-owl1
 - Introduced a number of optimizations for faster handling of large password
 hash files, including loading, cracking, and "--show".  Some of these use more
