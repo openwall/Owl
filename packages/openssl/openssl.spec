@@ -1,10 +1,10 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.84 2015/08/01 07:17:13 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.85 2016/08/23 21:45:08 solar Exp $
 
 %define shlib_soversion 10
 
 Summary: Secure Sockets Layer and cryptography libraries and tools.
 Name: openssl
-Version: 1.0.0s
+Version: 1.0.0t
 Release: owl1
 License: distributable
 Group: System Environment/Libraries
@@ -21,6 +21,7 @@ Patch5: openssl-1.0.0s-rh-owl-man.diff
 Patch6: openssl-1.0.0s-rh-cipher-change.diff
 Patch7: openssl-1.0.0s-rh-dtls1-abi.diff
 Patch8: openssl-1.0.0s-suse-owl-env.diff
+Patch9: openssl-1.0.0t-up-rh-20160712-test-smime-certs.diff
 BuildRequires: perl, diffutils
 # Due to sed -i.
 BuildRequires: sed >= 4.1.1
@@ -91,6 +92,11 @@ This package contains some miscellaneous Perl scripts.
 
 %prep
 %setup -q
+# Workaround upstream OpenSSL 1.0.0t packaging issues
+%__make links
+pushd test
+ln -s . openssl-1.0.0t
+popd
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -100,6 +106,7 @@ This package contains some miscellaneous Perl scripts.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 bzip2 -9k CHANGES CHANGES.SSLeay
 
@@ -130,7 +137,7 @@ ADD_ARGS=%_os-%_arch
 ./Configure shared -DSSL_ALLOW_ADH \
 	--prefix=%_prefix \
 	--libdir=%_lib \
-	--enginesdir=%_libdir/openssl/engines  \
+	--enginesdir=%_libdir/openssl/engines \
 	enable-md2 enable-rfc3779 enable-tlsext zlib \
 	enable-camellia enable-seed enable-tlsext \
 	enable-cms \
@@ -233,9 +240,15 @@ bzip2 -9 docs/doc/ssleay.txt
 %attr(0755,root,root) %_bindir/c_rehash
 %attr(0755,root,root) %openssldir/misc/CA.pl
 %attr(0644,root,root) %_mandir/man1/CA.pl.1*
-%exclude  %_datadir/ssl/misc/tsget
+%exclude %_datadir/ssl/misc/tsget
 
 %changelog
+* Tue Aug 23 2016 Solar Designer <solar-at-owl.openwall.com> 1.0.0t-owl1
+- Updated to 1.0.0t.
+- Updated the recently expired S/MIME test certificates using upstream script
+and Red Hat patch from https://bugzilla.redhat.com/show_bug.cgi?id=1335097 as
+otherwise the package failed to build with the tests enabled.
+
 * Sat Aug 01 2015 Solar Designer <solar-at-owl.openwall.com> 1.0.0s-owl1
 - Updated to 1.0.0s.
 - Dropped some patches in order to stay closer to upstream.
