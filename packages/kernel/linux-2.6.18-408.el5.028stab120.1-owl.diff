@@ -20,7 +20,7 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/Makefile linux-2.6.18-408.el5.028st
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -prep
-+EXTRAVERSION = -408.el5.028stab120.1.owl0
++EXTRAVERSION = -408.el5.028stab120.1.owl1
  RHEL_MAJOR = 5
  RHEL_MINOR = 11
  NAME=Avast! A bilge rat!
@@ -1680,6 +1680,18 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/mm/mempolicy.c linux-2.6.18-408.el5
  	if (!mm)
  		return 0;
  
+diff -urpN linux-2.6.18-408.el5.028stab120.1/mm/migrate.c linux-2.6.18-408.el5.028stab120.1-owl/mm/migrate.c
+--- linux-2.6.18-408.el5.028stab120.1/mm/migrate.c	2016-01-25 08:11:41 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/mm/migrate.c	2016-08-23 18:13:25 +0000
+@@ -890,7 +890,7 @@ asmlinkage long sys_move_pages(pid_t pid
+ 
+ 	/* Find the mm_struct */
+ 	read_lock(&tasklist_lock);
+-	task = pid ? find_task_by_pid_all(pid) : current;
++	task = pid ? find_task_by_pid_ve(pid) : current;
+ 	if (!task) {
+ 		read_unlock(&tasklist_lock);
+ 		return -ESRCH;
 diff -urpN linux-2.6.18-408.el5.028stab120.1/mm/oom_kill.c linux-2.6.18-408.el5.028stab120.1-owl/mm/oom_kill.c
 --- linux-2.6.18-408.el5.028stab120.1/mm/oom_kill.c	2016-01-25 08:11:41 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/mm/oom_kill.c	2016-08-23 15:41:27 +0000
