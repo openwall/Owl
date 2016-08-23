@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.104 2014/07/12 14:14:53 galaxy Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.105 2016/08/23 20:29:58 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
 Version: 3.6.1p2
-Release: owl28
+Release: owl29
 License: BSD
 Group: Applications/Internet
 URL: http://www.openssh.com/portable.html
@@ -44,6 +44,7 @@ Patch24: openssh-3.6.1p2-cvs-20060919-packet_enable_delayed_compress.diff
 Patch25: openssh-3.6.1p2-rh-sftp-memleaks.diff
 Patch26: openssh-3.6.1p2-cvs-20061108-monitor.diff
 Patch27: openssh-3.6.1p2-owl-blacklist.diff
+Patch28: openssh-3.6.1p2-up-20160722-monitor-uaf.diff
 Requires: openssl >= 1.0.0, openssl < 1.0.1
 Requires: pam >= 0:0.80-owl2
 Obsoletes: ssh
@@ -164,6 +165,7 @@ rm -r autom4te.cache
 %patch25 -p1
 %patch26 -p1
 %patch27 -p1
+%patch28 -p1
 bzip2 -9k ChangeLog
 
 %{expand:%%define _sysconfdir %_sysconfdir/ssh}
@@ -179,9 +181,6 @@ export LIBS="-lcrypt -lpam -lpam_misc -lpam_userpass"
 	--with-default-path=/bin:%_bindir:/usr/local/bin \
 	--with-privsep-path=/var/empty \
 	--with-privsep-user=sshd
-%ifarch alphaev56 alphapca56 alphaev6 alphaev67
-%__make deattack.o CFLAGS="%optflags -mcpu=ev5 -Wall"
-%endif
 %__make
 
 %install
@@ -296,6 +295,10 @@ fi
 %attr(0644,root,root) /etc/ssh/blacklist
 
 %changelog
+* Tue Aug 23 2016 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl29
+- Backported upstream fix for a use-after-free in debugging output in the
+privsep monitor.
+
 * Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.6.1p2-owl28
 - Replaced the deprecated PreReq tag with the corresponding Requires() tags.
 - Regenerated the logging, scp-fixes, and scp-CVE-2006-0225 patches since
