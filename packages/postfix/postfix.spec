@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/postfix/postfix.spec,v 1.58 2016/05/31 07:40:30 solar Exp $
+# $Owl: Owl/packages/postfix/postfix.spec,v 1.59 2016/08/23 15:16:02 solar Exp $
 
 Summary: Postfix mail system.
 Name: postfix
 Version: 2.4.15
-Release: owl4
+Release: owl5
 Epoch: 1
 License: IBM Public License
 Group: System Environment/Daemons
@@ -374,6 +374,10 @@ fi
 %attr(666,root,root) %ghost %queue_directory/dev/log
 
 %changelog
+* Tue Aug 23 2016 Solar Designer <solar-at-owl.openwall.com> 1:2.4.15-owl5
+- Dropped the empty comment line from /etc/postfix/main.cf.params so that the
+file is in sorted order including the comment lines.
+
 * Tue May 31 2016 Solar Designer <solar-at-owl.openwall.com> 1:2.4.15-owl4
 - Added LC_COLLATE=C to a sort invocation in
 postfix-2.4.6-alt-main.cf.params.diff, where previously only one of two lists
