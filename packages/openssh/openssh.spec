@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssh/openssh.spec,v 1.105 2016/08/23 20:29:58 solar Exp $
+# $Owl: Owl/packages/openssh/openssh.spec,v 1.106 2016/08/23 20:34:54 solar Exp $
 
 Summary: The OpenSSH implementation of SSH protocol versions 1 and 2.
 Name: openssh
@@ -172,6 +172,8 @@ bzip2 -9k ChangeLog
 %{expand:%%define _datadir %_datadir/ssh}
 %{expand:%%define _libexecdir %_libexecdir/ssh}
 
+%{expand:%%define optflags %optflags -fno-strict-aliasing}
+
 %build
 export LIBS="-lcrypt -lpam -lpam_misc -lpam_userpass"
 %configure \
@@ -298,6 +300,9 @@ fi
 * Tue Aug 23 2016 Solar Designer <solar-at-owl.openwall.com> 3.6.1p2-owl29
 - Backported upstream fix for a use-after-free in debugging output in the
 privsep monitor.
+- Build with -fno-strict-aliasing because of aliasing rules violations at least
+in monitor_fdpass.c, as detected by gcc.
+- Dropped the obsolete June 2002 workaround for building deattack.c on Alpha.
 
 * Sun Jun 29 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 3.6.1p2-owl28
 - Replaced the deprecated PreReq tag with the corresponding Requires() tags.
