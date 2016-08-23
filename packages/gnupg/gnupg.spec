@@ -1,9 +1,9 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.53 2014/07/12 14:09:07 galaxy Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.54 2016/08/23 14:44:34 solar Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.4.18
-Release: owl2
+Version: 1.4.21
+Release: owl1
 License: GPL
 Group: Applications/Cryptography
 URL: http://www.gnupg.org
@@ -12,7 +12,7 @@ Source0: %name-%version.tar.xz
 # Signature: ftp://ftp.gnupg.org/gcrypt/gnupg/%name-%version.tar.bz2.sig
 Source1: gpgsplit.1
 Source2: lspgpot.1
-Patch0: gnupg-1.4.18-alt.diff
+Patch0: gnupg-1.4.21-alt.diff
 Patch1: gnupg-1.4.11-alt-owl-info.diff
 Patch2: gnupg-1.4.11-owl-setuid.diff
 Requires(post,preun): /sbin/install-info
@@ -83,15 +83,17 @@ fi
 %_bindir/lspgpot
 %_datadir/locale/*/*/*
 %_libdir/%name
-%_mandir/man1/*
-%_mandir/man7/gnupg.*
-%_infodir/gnupg1.*
+%_mandir/man?/*
+%_infodir/*.info*
 %_libexecdir/*
 %dir %_datadir/gnupg
 %config(noreplace) %_datadir/gnupg/options.skel
 %exclude %_datadir/gnupg/FAQ
 
 %changelog
+* Tue Aug 23 2016 Solar Designer <solar-at-owl.openwall.com> 1.4.21-owl1
+- Updated to 1.4.21.
+
 * Thu Jul 10 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.4.18-owl2
 - Replaced the deprecated PreReq tag with Requires(post,preun).
 
