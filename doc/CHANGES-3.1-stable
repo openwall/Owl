@@ -77,7 +77,7 @@ SECURITY FIX	Severity: high, local, active
 Fixed OpenVZ container filesystem (simfs) escape vulnerability via bind
 mounts (CVE-2015-2925).
 References:
-https://bugzilla.openvz.org/show_bug.cgi?id=3256
+https://bugs.openvz.org/browse/OVZ-6296
 http://www.openwall.com/lists/oss-security/2015/04/03/7
 https://access.redhat.com/security/cve/CVE-2015-2925
 https://bugzilla.redhat.com/show_bug.cgi?id=1209367
@@ -111,7 +111,7 @@ third-party software added (as many real-world installs have) may be
 affected, with worst-case impact ranging up to a remote root compromise.
 References:
 http://www.openwall.com/lists/oss-security/2015/01/27/9
-https://community.qualys.com/blogs/laws-of-vulnerabilities/2015/01/27/the-ghost-vulnerability
+https://blog.qualys.com/laws-of-vulnerabilities/2015/01/27/the-ghost-vulnerability
 https://sourceware.org/bugzilla/show_bug.cgi?id=15014
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0235
 
@@ -171,10 +171,10 @@ http://www.openwall.com/lists/oss-security/2014/09/25/13
 http://www.openwall.com/lists/oss-security/2014/09/25/32
 http://www.openwall.com/lists/oss-security/2014/09/26/2
 http://lcamtuf.blogspot.com/2014/09/quick-notes-about-bash-bug-its-impact.html
-https://securityblog.redhat.com/2014/09/24/bash-specially-crafted-environment-variables-code-injection-attack/
+https://access.redhat.com/blogs/766093/posts/1976383
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6271
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7169
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7186
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7187
 
-$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.12 2015/08/01 07:48:41 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.13 2016/08/23 22:06:29 solar Exp $
