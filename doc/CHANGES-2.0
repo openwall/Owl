@@ -257,7 +257,7 @@ and a server to negotiate the SSL 2.0 protocol even if these parties
 both support SSL 3.0 or TLS 1.0.  The SSL 2.0 protocol is known to have
 severe cryptographic weaknesses and is supported as a fallback only.
 References:
-http://www.openssl.org/news/secadv_20051011.txt
+https://www.openssl.org/news/secadv_20051011.txt
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-2969
 
 2005/09/30	Package: tcsh
@@ -772,7 +772,7 @@ this could lead to a denial of service.  For the applications which
 are a part of Owl, it's only individual invocations of network clients
 which are affected and may be caused to crash by a malicious server.
 References:
-http://www.openssl.org/news/secadv_20040317.txt
+https://www.openssl.org/news/secadv_20040317.txt
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0079
 
 2004/02/20 -
@@ -829,4 +829,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Owl: Owl/doc/CHANGES-2.0,v 1.204 2011/08/27 11:56:24 solar Exp $
+$Owl: Owl/doc/CHANGES-2.0,v 1.205 2016/08/23 21:57:31 solar Exp $
