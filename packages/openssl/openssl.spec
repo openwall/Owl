@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/openssl/openssl.spec,v 1.85 2016/08/23 21:45:08 solar Exp $
+# $Owl: Owl/packages/openssl/openssl.spec,v 1.86 2016/08/23 23:09:37 solar Exp $
 
 %define shlib_soversion 10
 
@@ -9,9 +9,11 @@ Release: owl1
 License: distributable
 Group: System Environment/Libraries
 URL: http://www.openssl.org
-Source: %name-%version.tar.xz
-# Source: ftp://ftp.openssl.org/source/%name-%version.tar.gz
+Source0: %name-%version.tar.xz
+# Source0: ftp://ftp.openssl.org/source/%name-%version.tar.gz
 # Signature: ftp://ftp.openssl.org/source/%name-%version.tar.gz.asc
+Source1: cacert-20160420.pem.xz
+# https://curl.haxx.se/ca/cacert.pem
 Patch0: openssl-1.0.0s-owl-alt-issetugid.diff
 Patch1: openssl-1.0.0s-rh-alt-soversion.diff
 Patch2: openssl-1.0.0s-rh-enginesdir.diff
@@ -202,6 +204,9 @@ cp -a doc docs/
 rm -rf docs/doc/{apps,crypto,ssl}
 bzip2 -9 docs/doc/ssleay.txt
 
+xzcat %SOURCE1 > %buildroot%openssldir/cert.pem
+touch -r %SOURCE1 %buildroot%openssldir/cert.pem
+
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
@@ -221,6 +226,7 @@ bzip2 -9 docs/doc/ssleay.txt
 %dir %attr(0755,root,root) %openssldir/certs
 %dir %attr(0755,root,root) %openssldir/misc
 %dir %attr(0700,root,root) %openssldir/private
+%attr(0644,root,root) %openssldir/cert.pem
 %attr(0755,root,root) %_libdir/openssl/engines
 
 %files devel
@@ -248,6 +254,9 @@ bzip2 -9 docs/doc/ssleay.txt
 - Updated the recently expired S/MIME test certificates using upstream script
 and Red Hat patch from https://bugzilla.redhat.com/show_bug.cgi?id=1335097 as
 otherwise the package failed to build with the tests enabled.
+- Added %openssldir/cert.pem from https://curl.haxx.se/ca/cacert.pem (we should
+later move this to its own package, and likely change the file location to be
+consistent with other modern distros).
 
 * Sat Aug 01 2015 Solar Designer <solar-at-owl.openwall.com> 1.0.0s-owl1
 - Updated to 1.0.0s.
