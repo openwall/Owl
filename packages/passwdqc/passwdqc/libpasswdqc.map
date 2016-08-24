@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/passwdqc/passwdqc/libpasswdqc.map,v 1.2 2009/10/09 22:09:33 solar Exp $
+# $Owl: Owl/packages/passwdqc/passwdqc/libpasswdqc.map,v 1.2.4.1 2016/08/24 02:45:55 solar Exp $
 
 {
   global:

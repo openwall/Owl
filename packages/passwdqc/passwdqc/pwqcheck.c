@@ -1,23 +1,24 @@
 /*
  * Copyright (c) 2008,2009 by Dmitry V. Levin
- * Copyright (c) 2010 by Solar Designer
+ * Copyright (c) 2010,2016 by Solar Designer
  * See LICENSE
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "passwdqc.h"
 
-static void clean(char *dst, int size)
+static void clean(char *dst, size_t size)
 {
 	if (!dst)
 		return;
-	memset(dst, 0, size);
+	_passwdqc_memzero(dst, size);
 	free(dst);
 }
 
-static char *read_line(unsigned int size, int eof_ok)
+static char *read_line(size_t size, int eof_ok)
 {
 	char *p, *buf = malloc(size + 1);
 
@@ -73,7 +74,7 @@ static struct passwd *parse_pwline(char *line, struct passwd *pw)
 			return NULL;
 		}
 		if (p->pw_passwd)
-			memset(p->pw_passwd, 0, strlen(p->pw_passwd));
+			_passwdqc_memzero(p->pw_passwd, strlen(p->pw_passwd));
 		memcpy(pw, p, sizeof(*pw));
 	} else {
 		memset(pw, 0, sizeof(*pw));
@@ -131,7 +132,7 @@ int main(int argc, const char **argv)
 	char *parse_reason, *newpass, *oldpass, *pwline;
 	struct passwd pwbuf, *pw;
 	int lines_to_read = 3, multi = 0;
-	int size = 8192;
+	size_t size = 8192;
 	int rc = 1;
 
 	while (argc > 1 && argv[1][0] == '-') {
@@ -173,8 +174,8 @@ next_arg:
 		return rc;
 	}
 
-	if (params.qc.max + 1 > size)
-		size = params.qc.max + 1;
+	if ((size_t)params.qc.max + 1 > size)
+		size = (size_t)params.qc.max + 1;
 
 next_pass:
 	oldpass = pwline = NULL; pw = NULL;
@@ -204,7 +205,7 @@ next_pass:
 		printf("Bad passphrase (%s)\n", check_reason);
 
 cleanup:
-	memset(&pwbuf, 0, sizeof(pwbuf));
+	_passwdqc_memzero(&pwbuf, sizeof(pwbuf));
 	clean(pwline, size);
 	clean(oldpass, size);
 	clean(newpass, size);

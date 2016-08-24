@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2003,2005,2012 by Solar Designer.  See LICENSE.
+ * Copyright (c) 2000-2003,2005,2012,2016 by Solar Designer.  See LICENSE.
  */
 
 #ifdef __FreeBSD__
@@ -165,7 +165,7 @@ static int say(pam_handle_t *pamh, int style, const char *format, ...)
 	} else {
 		status = PAM_ABORT;
 	}
-	memset(buffer, 0, sizeof(buffer));
+	_passwdqc_memzero(buffer, sizeof(buffer));
 
 	return status;
 }
@@ -173,7 +173,7 @@ static int say(pam_handle_t *pamh, int style, const char *format, ...)
 static int check_max(passwdqc_params_qc_t *qc, pam_handle_t *pamh,
     const char *newpass)
 {
-	if ((int)strlen(newpass) > qc->max) {
+	if (strlen(newpass) > (size_t)qc->max) {
 		if (qc->max != 8) {
 			say(pamh, PAM_ERROR_MSG, MESSAGE_TOOLONG);
 			return -1;
@@ -208,7 +208,7 @@ static int check_pass(struct passwd *pw, const char *pass)
 #endif
 		}
 		retval = (hash && !strcmp(hash, spw->sp_pwdp)) ? 0 : -1;
-		memset(spw->sp_pwdp, 0, strlen(spw->sp_pwdp));
+		_passwdqc_memzero(spw->sp_pwdp, strlen(spw->sp_pwdp));
 		return retval;
 	}
 #endif
@@ -217,7 +217,7 @@ static int check_pass(struct passwd *pw, const char *pass)
 	if (strlen(pw->pw_passwd) >= 13)
 		hash = crypt(pass, pw->pw_passwd);
 	retval = (hash && !strcmp(hash, pw->pw_passwd)) ? 0 : -1;
-	memset(pw->pw_passwd, 0, strlen(pw->pw_passwd));
+	_passwdqc_memzero(pw->pw_passwd, strlen(pw->pw_passwd));
 	return retval;
 }
 
@@ -303,8 +303,10 @@ PAM_EXTERN int pam_sm_chauthtok(pam_handle_t *pamh, int flags,
 
 	if (params.pam.flags & F_NON_UNIX) {
 		pw = &fake_pw;
+		memset(pw, 0, sizeof(*pw));
 		pw->pw_name = (char *)user;
 		pw->pw_gecos = "";
+		pw->pw_dir = "";
 	} else {
 /* As currently implemented, we don't avoid timing leaks for valid vs. not
  * usernames and hashes.  Normally, the username would have already been
@@ -317,7 +319,7 @@ PAM_EXTERN int pam_sm_chauthtok(pam_handle_t *pamh, int flags,
 		if ((params.pam.flags & F_CHECK_OLDAUTHTOK) && !am_root(pamh)
 		    && (!oldpass || check_pass(pw, oldpass)))
 			status = PAM_AUTH_ERR;
-		memset(pw->pw_passwd, 0, strlen(pw->pw_passwd));
+		_passwdqc_memzero(pw->pw_passwd, strlen(pw->pw_passwd));
 		if (status != PAM_SUCCESS)
 			return status;
 	}

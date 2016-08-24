@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2002,2010,2013 by Solar Designer.  See LICENSE.
+ * Copyright (c) 2000-2002,2010,2013,2016 by Solar Designer.  See LICENSE.
  */
 
 #include <stdio.h>
@@ -237,10 +237,10 @@ static char *reverse(const char *src)
 
 static void clean(char *dst)
 {
-	if (dst) {
-		memset(dst, 0, strlen(dst));
-		free(dst);
-	}
+	if (!dst)
+		return;
+	_passwdqc_memzero(dst, strlen(dst));
+	free(dst);
 }
 
 /*
@@ -443,7 +443,7 @@ const char *passwdqc_check(const passwdqc_params_qc_t *params,
 	char *u_oldpass;
 	char *u_name, *u_gecos, *u_dir;
 	const char *reason;
-	int length;
+	size_t length;
 
 	u_newpass = u_reversed = NULL;
 	u_oldpass = NULL;
@@ -451,23 +451,24 @@ const char *passwdqc_check(const passwdqc_params_qc_t *params,
 
 	reason = REASON_ERROR;
 
-	if (oldpass && !strcmp(oldpass, newpass)) {
-		reason = REASON_SAME;
-		goto out;
-	}
-
 	length = strlen(newpass);
 
-	if (length < params->min[4]) {
+	if (length < (size_t)params->min[4]) {
 		reason = REASON_SHORT;
 		goto out;
 	}
 
-	if (length > params->max) {
+	if (length > 10000) {
+		reason = REASON_LONG;
+		goto out;
+	}
+
+	if (length > (size_t)params->max) {
 		if (params->max == 8) {
 			truncated[0] = '\0';
 			strncat(truncated, newpass, 8);
 			newpass = truncated;
+			length = 8;
 			if (oldpass && !strncmp(oldpass, newpass, 8)) {
 				reason = REASON_SAME;
 				goto out;
@@ -478,9 +479,15 @@ const char *passwdqc_check(const passwdqc_params_qc_t *params,
 		}
 	}
 
+	if (oldpass && !strcmp(oldpass, newpass)) {
+		reason = REASON_SAME;
+		goto out;
+	}
+
 	if (is_simple(params, newpass, 0, 0)) {
 		reason = REASON_SIMPLE;
-		if (length < params->min[1] && params->min[1] <= params->max)
+		if (length < (size_t)params->min[1] &&
+		    params->min[1] <= params->max)
 			reason = REASON_SIMPLESHORT;
 		goto out;
 	}
@@ -521,7 +528,7 @@ const char *passwdqc_check(const passwdqc_params_qc_t *params,
 		reason = is_word_based(params, u_reversed, newpass, 0x100);
 
 out:
-	memset(truncated, 0, sizeof(truncated));
+	_passwdqc_memzero(truncated, sizeof(truncated));
 	clean(u_newpass);
 	clean(u_reversed);
 	clean(u_oldpass);
