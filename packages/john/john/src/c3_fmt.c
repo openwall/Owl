@@ -3,7 +3,7 @@
  * Solaris' MT-safe crypt(3C) with OpenMP parallelization.
  *
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 2009-2013 by Solar Designer
+ * Copyright (c) 2009-2015 by Solar Designer
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted.
@@ -72,16 +72,18 @@ static struct crypt_data *crypt_data[MAX_THREADS];
 
 static int valid(char *ciphertext, struct fmt_main *self)
 {
-	int length, count_base64, id, pw_length;
+	int length, count_base64, count_base64_2, id, pw_length;
 	char pw[PLAINTEXT_LENGTH + 1], *new_ciphertext;
 /* We assume that these are zero-initialized */
 	static char sup_length[BINARY_SIZE], sup_id[0x80];
 
-	length = count_base64 = 0;
+	length = count_base64 = count_base64_2 = 0;
 	while (ciphertext[length]) {
-		if (atoi64[ARCH_INDEX(ciphertext[length])] != 0x7F &&
-		    (ciphertext[0] == '_' || length >= 2))
+		if (atoi64[ARCH_INDEX(ciphertext[length])] != 0x7F) {
 			count_base64++;
+			if (length >= 2)
+				count_base64_2++;
+		}
 		length++;
 	}
 
@@ -89,16 +91,19 @@ static int valid(char *ciphertext, struct fmt_main *self)
 		return 0;
 
 	id = 0;
-	if (length == 13 && count_base64 == 11)
+	if (length == 13 && count_base64 == 13) /* valid salt */
 		id = 1;
 	else
-	if (length >= 13 &&
-	    count_base64 >= length - 2 && /* allow for invalid salt */
-	    (length - 2) % 11 == 0)
+	if (length == 13 && count_base64_2 == 11) /* invalid salt */
 		id = 2;
 	else
-	if (length == 20 && count_base64 == 19 && ciphertext[0] == '_')
+	if (length >= 13 &&
+	    count_base64_2 >= length - 2 && /* allow for invalid salt */
+	    (length - 2) % 11 == 0)
 		id = 3;
+	else
+	if (length == 20 && count_base64 == 19 && ciphertext[0] == '_')
+		id = 4;
 	else
 	if (ciphertext[0] == '$') {
 		id = (unsigned char)ciphertext[1];
@@ -212,6 +217,7 @@ static void *salt(char *ciphertext)
 		else
 		if (length == 60 &&
 		    (!strncmp(ciphertext, "$2a$", 4) ||
+		    !strncmp(ciphertext, "$2b$", 4) ||
 		    !strncmp(ciphertext, "$2x$", 4) ||
 		    !strncmp(ciphertext, "$2y$", 4)))
 			cut = 29;

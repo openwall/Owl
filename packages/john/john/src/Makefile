@@ -1,6 +1,6 @@
 #
 # This file is part of John the Ripper password cracker,
-# Copyright (c) 1996-2013 by Solar Designer
+# Copyright (c) 1996-2015 by Solar Designer
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted.
@@ -26,6 +26,8 @@ OMPFLAGS =
 #OMPFLAGS = -fopenmp -msse2
 # Mac OS X (llvm-gcc) with OpenMP
 #OMPFLAGS = -fopenmp -D_FORTIFY_SOURCE=0
+# icc with OpenMP
+#OMPFLAGS = -openmp
 # Sun Studio with OpenMP (set the OMP_NUM_THREADS env var at runtime)
 #OMPFLAGS = -xopenmp
 CFLAGS = -c -Wall -Wdeclaration-after-statement -O2 -fomit-frame-pointer $(OMPFLAGS)
@@ -97,6 +99,7 @@ default:
 	@echo "linux-x86-sse2           Linux, x86 32-bit with SSE2 (most common, if 32-bit)"
 	@echo "linux-x86-mmx            Linux, x86 32-bit with MMX (for old computers)"
 	@echo "linux-x86-any            Linux, x86 32-bit (for truly ancient computers)"
+	@echo "linux-mic                Linux, Intel MIC (Xeon Phi)"
 	@echo "linux-arm32le-neon       Linux, ARM 32-bit little-endian w/NEON (best)"
 	@echo "linux-arm32le            Linux, ARM 32-bit little-endian"
 	@echo "linux-alpha              Linux, Alpha"
@@ -137,8 +140,6 @@ default:
 	@echo "solaris-x86-mmx-gcc      Solaris, x86 with MMX, gcc"
 	@echo "solaris-x86-any-cc       Solaris, x86, cc"
 	@echo "solaris-x86-any-gcc      Solaris, x86, gcc"
-	@echo "sco-x86-any-gcc          SCO, x86, gcc"
-	@echo "sco-x86-any-cc           SCO, x86, cc"
 	@echo "tru64-alpha              Tru64 (Digital UNIX, OSF/1), Alpha"
 	@echo "aix-ppc32                AIX, PowerPC 32-bit"
 	@echo "macosx-x86-64            Mac OS X 10.5+, Xcode 3.0+, x86-64 with SSE2 (best)"
@@ -242,6 +243,16 @@ linux-x86-any:
 		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o x86.o" \
 		CFLAGS="$(CFLAGS) -DHAVE_CRYPT" \
 		LDFLAGS="$(LDFLAGS) -lcrypt"
+
+linux-mic:
+	$(LN) mic.h arch.h
+	$(MAKE) $(PROJ) \
+		JOHN_OBJS="$(JOHN_OBJS) c3_fmt.o" \
+		CC=icc \
+		CFLAGS="$(CFLAGS) -no-opt-prefetch -mmic -openmp -DHAVE_CRYPT" \
+		LDFLAGS="$(LDFLAGS) -mmic -openmp -lcrypt" \
+		OPT_INLINE="$(OPT_NORMAL) -finline-functions"
+	@echo "You'll likely need to scp Intel's OpenMP runtime library such as /opt/intel/*/compiler/lib/mic/libiomp?.so over to the target MIC cards and set LD_LIBRARY_PATH in order to run the produced john binary"
 
 linux-arm32le-neon:
 	$(LN) arm32le.h arch.h
@@ -557,32 +568,6 @@ solaris-x86-any-gcc:
 solaris-x86.o: x86.S
 	$(CPP) $(CPPFLAGS) -P -DDUMBAS x86.S | $(TR) \; \\n > tmp.s
 	$(AS) $(ASFLAGS) tmp.s -o solaris-x86.o
-	$(RM) tmp.s
-
-sco-x86-any-gcc:
-	$(RM) arch.h
-	ln -s x86-any.h arch.h
-	$(MAKE) $(PROJ) \
-		SHELL=/bin/sh \
-		JOHN_OBJS="$(JOHN_OBJS) sco-x86.o"
-
-sco-x86-any-cc:
-	$(RM) arch.h
-	ln -s x86-any.h arch.h
-	$(MAKE) $(PROJ) \
-		SHELL=/bin/sh \
-		JOHN_OBJS="$(JOHN_OBJS) sco-x86.o" \
-		CC=cc \
-		CFLAGS="-c -b elf -O3" \
-		ASFLAGS="-c -b elf" \
-		OPT_NORMAL="-K loop_unroll,no_inline" \
-		OPT_INLINE="-K inline"
-
-# SCO is even worse than Solaris x86
-sco-x86.o: x86.S
-	$(CPP) $(CPPFLAGS) -DDUMBAS x86.S | \
-		$(TR) \; \\n | $(SED) 's/\([%.]\) /\1/g' > tmp.s
-	$(AS) $(ASFLAGS) tmp.s -o sco-x86.o
 	$(RM) tmp.s
 
 tru64-alpha:

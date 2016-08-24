@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-2013 by Solar Designer
+ * Copyright (c) 1996-2016 by Solar Designer
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted.
@@ -96,7 +96,7 @@ static struct opt_entry opt_list[] = {
 
 #define JOHN_USAGE \
 "John the Ripper password cracker, version " JOHN_VERSION "\n" \
-"Copyright (c) 1996-2013 by " JOHN_COPYRIGHT "\n" \
+"Copyright (c) 1996-2016 by " JOHN_COPYRIGHT "\n" \
 "Homepage: http://www.openwall.com/john/\n" \
 "\n" \
 "Usage: %s [OPTIONS] [PASSWORD-FILES]\n" \
@@ -182,6 +182,24 @@ void opt_init(char *name, int argc, char **argv)
 	opt_check(opt_list, options.flags, argv);
 
 	if (options.session) {
+#if OS_FORK
+		char *p = strrchr(options.session, '.');
+		int bad = 0;
+		if (p) {
+			while (*++p) {
+				if (*p < '0' || *p > '9') {
+					bad = 0;
+					break;
+				}
+				bad = 1;
+			}
+		}
+		if (bad) {
+			fprintf(stderr,
+			    "Invalid session name: all-digits suffix\n");
+			error();
+		}
+#endif
 		rec_name = options.session;
 		rec_name_completed = 0;
 	}

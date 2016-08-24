@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-99,2003,2005,2009,2010 by Solar Designer
+ * Copyright (c) 1996-99,2003,2005,2009,2010,2015,2016 by Solar Designer
  */
 
 #include <stdio.h>
@@ -349,7 +349,7 @@ char *rules_apply(char *word, char *rule, int split, char *last)
 		in = buffer[2];
 
 	length = 0;
-	while (length < RULE_WORD_SIZE - 1) {
+	while (length < RULE_WORD_SIZE) {
 		if (!(in[length] = word[length]))
 			break;
 		length++;
@@ -378,7 +378,8 @@ char *rules_apply(char *word, char *rule, int split, char *last)
 	which = 0;
 
 	while (RULE) {
-		in[RULE_WORD_SIZE - 1] = 0;
+		if (length >= RULE_WORD_SIZE)
+			in[length = RULE_WORD_SIZE - 1] = 0;
 
 		switch (LAST) {
 /* Crack 4.1 rules */
@@ -424,9 +425,6 @@ char *rules_apply(char *word, char *rule, int split, char *last)
 					    conv_tolower[ARCH_INDEX(in[pos])];
 				in[pos] = 0;
 			}
-			if (in[0] != 'M' || in[1] != 'c')
-				break;
-			in[2] = conv_toupper[ARCH_INDEX(in[2])];
 			break;
 
 		case 'r':
@@ -486,18 +484,46 @@ char *rules_apply(char *word, char *rule, int split, char *last)
 
 		case '$':
 			VALUE(in[length++])
+			if (NEXT == '$') {
+				(void)RULE;
+				VALUE(in[length++])
+				if (NEXT == '$') {
+					(void)RULE;
+					VALUE(in[length++])
+				}
+			}
 			in[length] = 0;
 			break;
 
 		case '^':
 			{
-				char *out;
+				char *out, a, b;
 				GET_OUT
+				VALUE(a)
+				if (NEXT != '^') {
+					out[0] = a;
+					memcpy(&out[1], in, ++length);
+					in = out;
+					break;
+				}
+				(void)RULE;
+				VALUE(b)
+				if (NEXT != '^') {
+					out[0] = b;
+					out[1] = a;
+					memcpy(&out[2], in, length + 1);
+					length += 2;
+					in = out;
+					break;
+				}
+				(void)RULE;
 				VALUE(out[0])
-				strcpy(&out[1], in);
+				out[1] = b;
+				out[2] = a;
+				memcpy(&out[3], in, length + 1);
+				length += 3;
 				in = out;
 			}
-			length++;
 			break;
 
 		case 'x':
@@ -588,20 +614,34 @@ char *rules_apply(char *word, char *rule, int split, char *last)
 
 /* Crack 5.0 rules */
 		case '[':
-			if (length) {
-				char *out;
-				GET_OUT
-				strcpy(out, &in[1]);
-				length--;
-				in = out;
-				break;
+			{
+				int count = 1;
+				while (NEXT == '[') {
+					(void)RULE;
+					count++;
+				}
+				if ((length -= count) > 0) {
+					char *out;
+					GET_OUT
+					memcpy(out, &in[count], length + 1);
+					in = out;
+					break;
+				}
+				in[length = 0] = 0;
 			}
-			in[0] = 0;
 			break;
 
 		case ']':
-			if (length)
-				in[--length] = 0;
+			{
+				int count = 1;
+				while (NEXT == ']') {
+					(void)RULE;
+					count++;
+				}
+				if ((length -= count) < 0)
+					length = 0;
+				in[length] = 0;
+			}
 			break;
 
 		case 'C':
@@ -613,8 +653,6 @@ char *rules_apply(char *word, char *rule, int split, char *last)
 					    conv_toupper[ARCH_INDEX(in[pos])];
 				in[pos] = 0;
 			}
-			if (in[0] == 'm' && in[1] == 'C')
-				in[2] = conv_tolower[ARCH_INDEX(in[2])];
 			break;
 
 		case 't':
@@ -716,12 +754,9 @@ char *rules_apply(char *word, char *rule, int split, char *last)
 				int pos;
 				POSITION(pos)
 				if (pos < length) {
-					char *out;
-					GET_OUT
-					memcpy(out, in, pos);
-					strcpy(&out[pos], &in[pos + 1]);
+					memmove(&in[pos], &in[pos + 1],
+					    length - pos);
 					length--;
-					in = out;
 				}
 			}
 			break;
@@ -729,10 +764,19 @@ char *rules_apply(char *word, char *rule, int split, char *last)
 		case '{':
 			if (length) {
 				char *out;
+				int count = 1;
+				while (NEXT == '{') {
+					(void)RULE;
+					count++;
+				}
+				while (count >= length)
+					count -= length;
+				if (!count)
+					break;
 				GET_OUT
-				strcpy(out, &in[1]);
-				in[1] = 0;
-				strcat(out, in);
+				memcpy(out, &in[count], length - count);
+				memcpy(&out[length - count], in, count);
+				out[length] = 0;
 				in = out;
 				break;
 			}
@@ -743,10 +787,19 @@ char *rules_apply(char *word, char *rule, int split, char *last)
 			if (length) {
 				char *out;
 				int pos;
+				int count = 1;
+				while (NEXT == '}') {
+					(void)RULE;
+					count++;
+				}
+				while (count >= length)
+					count -= length;
+				if (!count)
+					break;
 				GET_OUT
-				out[0] = in[pos = length - 1];
-				in[pos] = 0;
-				strcpy(&out[1], in);
+				memcpy(out, &in[pos = length - count], count);
+				memcpy(&out[count], in, pos);
+				out[length] = 0;
 				in = out;
 				break;
 			}
@@ -825,7 +878,8 @@ char *rules_apply(char *word, char *rule, int split, char *last)
 				POSITION(mpos)
 				POSITION(count)
 				POSITION(ipos)
-				mleft = (int)(rules_vars['m'] + 1) - mpos;
+				mleft = (int)(unsigned char)
+				    (rules_vars['m'] + 1) - mpos;
 				if (count > mleft)
 					count = mleft;
 				if (count <= 0)

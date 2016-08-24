@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-2001,2003,2010-2013 by Solar Designer
+ * Copyright (c) 1996-2001,2003,2010-2013,2015 by Solar Designer
  */
 
 #include "arch.h"
@@ -22,7 +22,7 @@
 
 #define DES_BS_VECTOR_LOOPS 0
 
-#if defined(__ARM_NEON__) && DES_BS_DEPTH == 64
+#if defined(__ARM_NEON) && DES_BS_DEPTH == 64
 #include <arm_neon.h>
 
 typedef uint32x2_t vtype;
@@ -53,7 +53,7 @@ typedef uint32x2_t vtype;
 #define vshr(dst, src, shift) \
 	(dst) = vshr_n_u32((src), (shift))
 
-#elif defined(__ARM_NEON__) && ARCH_BITS == 32 && DES_BS_DEPTH == 96
+#elif defined(__ARM_NEON) && ARCH_BITS == 32 && DES_BS_DEPTH == 96
 #include <arm_neon.h>
 
 typedef struct {
@@ -87,7 +87,7 @@ typedef struct {
 	(dst).f = vbsl_u32((c).f, (b).f, (a).f); \
 	(dst).g = (((a).g & ~(c).g) ^ ((b).g & (c).g))
 
-#elif defined(__ARM_NEON__) && DES_BS_DEPTH == 128 && defined(DES_BS_2X64)
+#elif defined(__ARM_NEON) && DES_BS_DEPTH == 128 && defined(DES_BS_2X64)
 #include <arm_neon.h>
 
 typedef struct {
@@ -122,7 +122,7 @@ typedef struct {
 	(dst).f = vbsl_u32((c).f, (b).f, (a).f); \
 	(dst).g = vbsl_u32((c).g, (b).g, (a).g)
 
-#elif defined(__ARM_NEON__) && DES_BS_DEPTH == 128
+#elif defined(__ARM_NEON) && DES_BS_DEPTH == 128
 #include <arm_neon.h>
 
 typedef uint32x4_t vtype;
@@ -153,7 +153,7 @@ typedef uint32x4_t vtype;
 #define vshr(dst, src, shift) \
 	(dst) = vshrq_n_u32((src), (shift))
 
-#elif defined(__ARM_NEON__) && \
+#elif defined(__ARM_NEON) && \
     ((ARCH_BITS == 64 && DES_BS_DEPTH == 192) || \
     (ARCH_BITS == 32 && DES_BS_DEPTH == 160))
 #include <arm_neon.h>
@@ -189,7 +189,7 @@ typedef struct {
 	(dst).f = vbslq_u32((c).f, (b).f, (a).f); \
 	(dst).g = (((a).g & ~(c).g) ^ ((b).g & (c).g))
 
-#elif defined(__ARM_NEON__) && DES_BS_DEPTH == 256
+#elif defined(__ARM_NEON) && DES_BS_DEPTH == 256
 #include <arm_neon.h>
 
 typedef struct {
@@ -316,6 +316,31 @@ typedef struct {
 #define vsel(dst, a, b, c) \
 	(dst).f = vec_sel((a).f, (b).f, (vector bool int)(c).f); \
 	(dst).g = vec_sel((a).g, (b).g, (vector bool int)(c).g)
+
+#elif defined(__MIC__) && DES_BS_DEPTH == 512
+#include <immintrin.h>
+
+typedef __m512i vtype;
+
+#define vst(dst, ofs, src) \
+	_mm512_store_epi32((vtype *)((DES_bs_vector *)&(dst) + (ofs)), (src))
+
+#define vxorf(a, b) \
+	_mm512_xor_epi32((a), (b))
+
+#define vand(dst, a, b) \
+	(dst) = _mm512_and_epi32((a), (b))
+#define vor(dst, a, b) \
+	(dst) = _mm512_or_epi32((a), (b))
+#define vandn(dst, a, b) \
+	(dst) = _mm512_andnot_epi32((b), (a))
+
+#define vshl1(dst, src) \
+	(dst) = _mm512_add_epi32((src), (src))
+#define vshl(dst, src, shift) \
+	(dst) = _mm512_slli_epi32((src), (shift))
+#define vshr(dst, src, shift) \
+	(dst) = _mm512_srli_epi32((src), (shift))
 
 #elif defined(__AVX__) && DES_BS_DEPTH == 256 && !defined(DES_BS_NO_AVX256)
 #include <immintrin.h>

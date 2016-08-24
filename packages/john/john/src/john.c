@@ -1,6 +1,6 @@
 /*
  * This file is part of John the Ripper password cracker,
- * Copyright (c) 1996-2004,2006,2009-2013 by Solar Designer
+ * Copyright (c) 1996-2004,2006,2009-2013,2015 by Solar Designer
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted.
@@ -151,8 +151,8 @@ static void john_omp_init(void)
 }
 
 #if OMP_FALLBACK
-#if defined(__DJGPP__) || defined(__CYGWIN32__)
-#error OMP_FALLBACK is incompatible with the current DOS and Win32 code
+#if defined(__DJGPP__) || defined(__CYGWIN__)
+#error OMP_FALLBACK is incompatible with the current DOS and Windows code
 #endif
 #define HAVE_JOHN_OMP_FALLBACK
 static void john_omp_fallback(char **argv) {
@@ -307,6 +307,7 @@ static void john_wait(void)
 
 	log_event("Waiting for %d child%s to terminate",
 	    waiting_for, waiting_for == 1 ? "" : "ren");
+	log_flush();
 	fprintf(stderr, "Waiting for %d child%s to terminate\n",
 	    waiting_for, waiting_for == 1 ? "" : "ren");
 
@@ -493,8 +494,8 @@ static void CPU_detect_or_fallback(char **argv, int make_check)
 	if (!CPU_detect()) {
 #if CPU_REQ
 #if CPU_FALLBACK
-#if defined(__DJGPP__) || defined(__CYGWIN32__)
-#error CPU_FALLBACK is incompatible with the current DOS and Win32 code
+#if defined(__DJGPP__) || defined(__CYGWIN__)
+#error CPU_FALLBACK is incompatible with the current DOS and Windows code
 #endif
 		if (!make_check) {
 #define CPU_FALLBACK_PATHNAME JOHN_SYSTEMWIDE_EXEC "/" CPU_FALLBACK_BINARY
@@ -551,6 +552,11 @@ static void john_init(char *name, int argc, char **argv)
 	john_register_all(); /* maybe restricted to one format by options */
 	common_init();
 	sig_init();
+
+	if (!make_check && !(options.flags & (FLG_SHOW_CHK | FLG_STDOUT))) {
+		fflush(stdout);
+		setvbuf(stdout, NULL, _IOLBF, 0);
+	}
 
 	john_load();
 }
@@ -679,7 +685,7 @@ int main(int argc, char **argv)
 		name = argv[0];
 #endif
 
-#ifdef __CYGWIN32__
+#ifdef __CYGWIN__
 	strlwr(name);
 	if (strlen(name) > 4 && !strcmp(name + strlen(name) - 4, ".exe"))
 		name[strlen(name) - 4] = 0;
