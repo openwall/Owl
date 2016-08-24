@@ -205,7 +205,7 @@ Backported upstream fixes for multiple OpenSSL signature verification
 API misuses.
 References:
 http://www.openwall.com/lists/oss-security/2009/01/07/2
-http://www.openssl.org/news/secadv_20090107.txt
+https://www.openssl.org/news/secadv_20090107.txt
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-5077
 
 (2008/08/14)
@@ -255,7 +255,6 @@ fingerprint.  This effort was supported by CivicActions.  References:
 http://www.openwall.com/lists/oss-security/2008/05/27/3
 http://www.debian.org/security/2008/dsa-1571
 http://www.ubuntu.com/usn/usn-612-1/
-http://metasploit.com/users/hdm/tools/debian-openssl/
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-0166
 
 (2008/03/26)
@@ -302,7 +301,7 @@ function.  It is unclear whether the bug had any security impact.
 References:
 http://lists.openwall.net/bugtraq/2007/09/27/14
 http://lists.openwall.net/bugtraq/2007/10/01/7
-http://www.openssl.org/news/secadv_20071012.txt
+https://www.openssl.org/news/secadv_20071012.txt
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-5135
 
 (2007/08/30)
@@ -383,7 +382,7 @@ An attacker is able to add arbitrary content to a signed message, and
 the receiver of the message may not be able to distinguish the forged
 and the properly signed parts of the message.
 References:
-http://www.coresecurity.com/content/gnupg-and-gnupg-clients-unsigned-data-injection-vulnerability
+https://www.coresecurity.com/content/gnupg-and-gnupg-clients-unsigned-data-injection-vulnerability
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-1263
 
 (2007/02/21)
@@ -509,7 +508,7 @@ SSL_get_shared_ciphers() and a DoS bug in the SSLv2 client code, both
 discovered and patched by Tavis Ormandy and Will Drewry of Google
 Security Team (CVE-2006-3738, CVE-2006-4343).
 References:
-http://www.openssl.org/news/secadv_20060928.txt
+https://www.openssl.org/news/secadv_20060928.txt
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-2937
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-2940
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-3738
@@ -532,7 +531,7 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4338
 SECURITY FIX	Severity: none to medium, remote, passive to active
 Applied upstream patch to avoid RSA signature forgery.
 References:
-http://www.openssl.org/news/secadv_20060905.txt
+https://www.openssl.org/news/secadv_20060905.txt
 http://www.imc.org/ietf-openpgp/mail-archive/msg06063.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4339
 
@@ -601,4 +600,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.82 2014/06/14 18:45:57 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.83 2016/08/24 16:21:20 solar Exp $
