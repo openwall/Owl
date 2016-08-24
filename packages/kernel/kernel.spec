@@ -1,23 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.106.2.3 2015/06/11 22:59:12 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.106.2.4 2016/08/24 02:52:45 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 406.el5.028stab119.1
-Release: %ovzversion.owl2
+%define ovzversion 408.el5.028stab120.1
+Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: https://openvz.org/Download/kernel/rhel5-testing/028stab119.1
+URL: https://openvz.org/Download/kernel/rhel5-testing/028stab120.1
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab119.1/patches/patch-406.el5.028stab119.1-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab119.1/patches/patch-406.el5.028stab119.1-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab120.1/patches/patch-408.el5.028stab120.1-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab120.1/patches/patch-408.el5.028stab120.1-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 Requires: basesystem
 Provides: kernel-drm = 4.3.0
@@ -104,6 +104,11 @@ done
 %files fake
 
 %changelog
+* Tue Aug 23 2016 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl1
+- Updated to 2.6.18-408.el5.028stab120.1.
+- Applied Dmitry V. Levin's patch to fix a kernel panic triggerable via the
+move_pages() syscall.
+
 * Thu Jun 11 2015 Solar Designer <solar-at-owl.openwall.com> 2.6.18-406.el5.028stab119.1.owl2
 - CVE-2015-2925 fix for OpenVZ containers.
 
