@@ -129,7 +129,7 @@ https://bugzilla.redhat.com/show_bug.cgi?id=1209367
 
 2015/06/09	Package: kernel
 SECURITY FIX	Severity: high, local, active
-Updated to 2.6.18-406.el5.028stab119.1,  Most importantly, this fixes a
+Updated to 2.6.18-406.el5.028stab119.1.  Most importantly, this fixes a
 possible I/O vector array overrun, which could allow for local privilege
 escalation (CVE-2015-1805).
 References:
@@ -295,4 +295,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.21 2016/08/24 01:43:31 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.22 2016/08/24 04:25:39 solar Exp $
