@@ -48,6 +48,51 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
+2016/08/23	Package: openssh
+Backported upstream fix for a use-after-free in sshd's debugging output,
+with no known security impact.
+
+2016/08/23	Package: openssl
+SECURITY FIX	Severity: none to high, remote, active
+Updated to 1.0.0t, which fixes the "X509_ATTRIBUTE memory leak"
+(CVE-2015-3195) and "Race condition handling PSK identify hint"
+(CVE-2015-3196) vulnerabilities.  Neither of these affects the uses of
+OpenSSL in Owl, but third-party applications using Owl's OpenSSL might
+be affected.  The "high" impact potential is for the double-free
+possibility mentioned in the OpenSSL advisory, even though the OpenSSL
+team has rated the corresponding issue as "low" overall severity
+(possibly considering its low risk probability, or/and other mitigating
+factors).  This Owl package update also adds a CA certificate bundle.
+Reference:
+https://www.openssl.org/news/secadv/20151203.txt
+
+2016/08/23	Package: kernel
+SECURITY FIX	Severity: low, local, active
+Updated to 2.6.18-408.el5.028stab120.1, which addresses several DoS
+vulnerabilities, and additionally fixed a kernel panic triggerable via
+the move_pages() syscall.
+Reference:
+https://openvz.org/Download/kernel/rhel5-testing/028stab120.1
+
+2016/08/23	Package: gnupg
+SECURITY FIX	Severity: medium, remote, passive
+Updated to 1.4.21, which, compared to 1.4.18, fixes side-channel leaks
+(CVE-2014-3591, CVE-2015-0837) and a bug in the random number generator
+where an attacker who obtains 4640 bits from the RNG could trivially
+predict the next 160 bits of output (CVE-2016-6313).
+References:
+https://lists.gnupg.org/pipermail/gnupg-announce/2016q3/000395.html
+http://www.openwall.com/lists/oss-security/2016/08/17/8
+https://lists.gnupg.org/pipermail/gnupg-announce/2015q4/000382.html
+https://lists.gnupg.org/pipermail/gnupg-announce/2015q1/000363.html
+http://www.cs.tau.ac.il/~tromer/radioexp/
+
+2016/07/20	Package: passwdqc
+In version 1.3.1, fixed a bug in pam_passwdqc's rarely used "non-unix"
+option.  The bug existed since passwdqc 1.1.3, released in 2009.
+Reference:
+http://www.openwall.com/lists/announce/2016/07/22/1
+
 2015/08/01	Package: openssl
 SECURITY FIX	Severity: none to medium, remote, passive to active
 Updated to 1.0.0s, which fixes many Low and Moderate severity issues
@@ -250,4 +295,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.20 2016/08/23 21:57:31 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.21 2016/08/24 01:43:31 solar Exp $
