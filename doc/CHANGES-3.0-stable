@@ -165,7 +165,7 @@ http://www.openwall.com/lists/oss-security/2011/03/02/2
 http://wiki.openvz.org/Download/kernel/rhel5/028stab098.1
 https://rhn.redhat.com/errata/RHSA-2012-0107.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-0207
-http://womble.decadent.org.uk/blog/igmp-denial-of-service-in-linux-cve-2012-0207.html
+https://womble.decadent.org.uk/blog/igmp-denial-of-service-in-linux-cve-2012-0207.html
 http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=654876
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3638
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-4086
@@ -625,10 +625,10 @@ affected openssl function.  There are currently no known applications
 printing untrusted certificates, where application crash would be
 considered a security issue.
 References:
-http://openssl.org/news/secadv_20101202.txt
+https://openssl.org/news/secadv_20101202.txt
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4180
 https://bugzilla.redhat.com/show_bug.cgi?id=659462
-http://openssl.org/news/secadv_20090325.txt
+https://openssl.org/news/secadv_20090325.txt
 https://bugzilla.redhat.com/show_bug.cgi?id=492304
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-0590
 
@@ -652,4 +652,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.37 2015/06/09 12:11:09 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.38 2016/08/24 16:25:19 solar Exp $
