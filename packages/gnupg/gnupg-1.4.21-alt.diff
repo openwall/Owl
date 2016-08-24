@@ -1,0 +1,362 @@
+ Makefile.am      |  4 ++--
+ cipher/rsa.c     | 49 ++++++++++++++++++++++++++++++++++++++++++-------
+ configure.ac     |  5 +----
+ doc/gpg.texi     |  4 ++++
+ g10/gpg.c        |  7 +++++++
+ g10/options.skel | 37 +++++++++++++------------------------
+ po/ru.po         |  4 ++--
+ util/strgutil.c  | 26 ++++++++++++++++++++++++++
+ 8 files changed, 97 insertions(+), 39 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 44adf6a..5b1913f 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -37,14 +37,14 @@ else
+ bzlib =
+ endif
+ 
+-SUBDIRS = m4 intl zlib ${bzlib} util mpi cipher tools \
++SUBDIRS = m4 ${bzlib} util mpi cipher tools \
+           g10 keyserver po doc ${checks}
+ 
+ EXTRA_DIST = scripts/config.rpath PROJECTS BUGS config.h.in	\
+              autogen.sh ChangeLog-2011 po/ChangeLog-2011	\
+              util/ChangeLog-2011 scripts/ChangeLog-2011		\
+              doc/ChangeLog-2011 tools/ChangeLog-2011		\
+-             zlib/ChangeLog-2011 m4/ChangeLog-2011		\
++             m4/ChangeLog-2011		\
+              include/ChangeLog-2011 g10/ChangeLog-2011		\
+              checks/ChangeLog-2011 cipher/ChangeLog-2011	\
+              intl/ChangeLog-2011 keyserver/ChangeLog-2011	\
+diff --git a/cipher/rsa.c b/cipher/rsa.c
+index 5efab1d..5bc51b7 100644
+--- a/cipher/rsa.c
++++ b/cipher/rsa.c
+@@ -192,19 +192,54 @@ generate( RSA_secret_key *sk, unsigned nbits )
+ 
+ 
+ /****************
+- * Test wether the secret key is valid.
+- * Returns: true if this is a valid key.
++ * Test whether the secret key is valid.
++ * Returns: nonzero if this is a valid key.
+  */
+ static int
+ check_secret_key( RSA_secret_key *sk )
+ {
+-    int rc;
+-    MPI temp = mpi_alloc( mpi_get_nlimbs(sk->p)*2 );
+-
++    int rc = 0;
++    MPI temp    = mpi_alloc_secure ( mpi_get_nlimbs(sk->p) + mpi_get_nlimbs(sk->q) );
++    MPI p_1     = mpi_copy (sk->p); /* (p-1) */
++    MPI q_1     = mpi_copy (sk->p); /* (q-1) */
++    MPI p_1_q_1 = mpi_alloc_secure ( mpi_get_nlimbs(sk->p) + mpi_get_nlimbs(sk->q) ); /* (p-1)(q-1) */
++
++    /* Calculate (p-1)(q-1). */
++    mpi_sub_ui(p_1, p_1, 1);
++    mpi_sub_ui(q_1, q_1, 1);
++    mpi_mul(p_1_q_1, p_1, q_1);
++
++    /* Check pq = n. */
+     mpi_mul(temp, sk->p, sk->q );
+-    rc = mpi_cmp( temp, sk->n );
++    if( 0 != mpi_cmp(temp, sk->n ) )
++	goto end;
++
++    /* Check gcd(e, (p-1)(q-1)) = 1. */
++    if( ! mpi_gcd(temp, sk->e, p_1_q_1) )
++	goto end;
++
++    /* Check de == 1 (mod (p-1)) and (mod (q-1)), i.e. d = e^-1. */
++    mpi_mulm(temp, sk->d, sk->e, p_1);
++    if( 0 != mpi_cmp_ui(temp, 1))
++	goto end;
++    mpi_mulm(temp, sk->d, sk->e, q_1);
++    if( 0 != mpi_cmp_ui(temp, 1))
++	goto end;
++
++    /* Check up == 1 (mod q). */
++    mpi_mulm(temp, sk->u, sk->p, sk->q);
++    if( 0 != mpi_cmp_ui(temp, 1))
++	goto end;
++
++    /* Success.  Fall through to deallocation code. */
++    rc = 1;
++
++ end:
+     mpi_free(temp);
+-    return !rc;
++    mpi_free(p_1);
++    mpi_free(q_1);
++    mpi_free(p_1_q_1);
++    return rc;
+ }
+ 
+ 
+diff --git a/configure.ac b/configure.ac
+index 8133537..2229096 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -869,7 +869,7 @@ dnl Checks for libraries.
+ AM_PO_SUBDIRS
+ AM_GNU_GETTEXT_VERSION([0.19.3])
+ if test "$try_gettext" = yes; then
+-  AM_GNU_GETTEXT(,[need-ngettext])
++  AM_GNU_GETTEXT(,[need-ngettext],[external])
+   # gettext requires some extra checks.  These really should be part of
+   # the basic AM_GNU_GETTEXT macro.  TODO: move other gettext-specific
+   # function checks to here.
+@@ -1472,7 +1472,6 @@ fi
+ AC_CONFIG_FILES([
+ Makefile
+ m4/Makefile
+-intl/Makefile
+ po/Makefile.in
+ util/Makefile
+ mpi/Makefile
+@@ -1484,8 +1483,6 @@ keyserver/gpgkeys_test
+ doc/Makefile
+ tools/Makefile
+ tools/gpg-zip
+-zlib/Makefile
+-bzlib/Makefile
+ checks/Makefile
+ ])
+ AC_OUTPUT
+diff --git a/doc/gpg.texi b/doc/gpg.texi
+index 12a6d60..c8921b7 100644
+--- a/doc/gpg.texi
++++ b/doc/gpg.texi
+@@ -1253,6 +1253,10 @@ Valid values for @code{name} are:
+   @opindex display-charset:koi8-r
+   The usual Russian set (rfc1489).
+ 
++  @item cp1251
++  @opindex display-charset:cp1251
++  The cp1251 aka windows-1251 Cyrillic set.
++
+   @item utf-8
+   @opindex display-charset:utf-8
+   Bypass all translations and assume
+diff --git a/g10/gpg.c b/g10/gpg.c
+index 416d44e..71ebcb6 100644
+--- a/g10/gpg.c
++++ b/g10/gpg.c
+@@ -1721,6 +1721,13 @@ reopen_std(void)
+ 
+   if(did_stdin==2 || did_stdout==2 || did_stderr==2)
+     exit(3);
++
++  gid_t gid = getgid();
++  if(getegid() != gid && setgid(gid))
++    {
++      fprintf(complain,"gpg: fatal: failed to reset gid: %s\n", strerror(errno));
++      exit(3);
++    }
+ #endif /* HAVE_STAT && !HAVE_W32_SYSTEM */
+ }
+ 
+diff --git a/g10/options.skel b/g10/options.skel
+index 21bd09b..9f31507 100644
+--- a/g10/options.skel
++++ b/g10/options.skel
+@@ -23,20 +23,17 @@
+ #
+ # See the man page for a list of options.
+ 
+-# Uncomment the following option to get rid of the copyright notice
+-
+-#no-greeting
++# Comment out the following option to reenable the copyright notice.
++no-greeting
+ 
+ # If you have more than 1 secret key in your keyring, you may want to
+ # uncomment the following option and set your preferred keyid.
+-
+ #default-key 621CC013
+ 
+ # If you do not pass a recipient to gpg, it will ask for one.  Using
+ # this option you can encrypt to a default key.  Key validation will
+ # not be done in this case.  The second form uses the default key as
+ # default recipient.
+-
+ #default-recipient some-user-id
+ #default-recipient-self
+ 
+@@ -45,20 +42,17 @@
+ # mail client that does not automatically encrypt mail to your key.
+ # In the example, this option allows you to read your local copy of
+ # encrypted mail that you've sent to others.
+-
+ #encrypt-to some-key-id
+ 
+ # By default GnuPG creates version 4 signatures for data files as
+ # specified by OpenPGP.  Some earlier (PGP 6, PGP 7) versions of PGP
+ # require the older version 3 signatures.  Setting this option forces
+ # GnuPG to create version 3 signatures.
+-
+ #force-v3-sigs
+ 
+ # Because some mailers change lines starting with "From " to ">From "
+ # it is good to handle such lines in a special way when creating
+ # cleartext signatures; all other PGP versions do it this way too.
+-
+ #no-escape-from-lines
+ 
+ # If you do not use the Latin-1 (ISO-8859-1) charset, you should tell
+@@ -68,7 +62,6 @@
+ # translation.  Note that future version of GnuPG will change to UTF-8
+ # as default character set.  In most cases this option is not required
+ # as GnuPG is able to figure out the correct charset at runtime.
+-
+ #charset utf-8
+ 
+ # Group names may be defined like this:
+@@ -80,13 +73,11 @@
+ # cannot make an group that points to another group.  Note also that
+ # if there are spaces in the recipient name, this will appear as two
+ # recipients.  In these cases it is better to use the key ID.
+-
+ #group mynames = paige 0x12345678 joe patti
+ 
+ # Lock the file only once for the lifetime of a process.  If you do
+ # not define this, the lock will be obtained and released every time
+ # it is needed, which is usually preferable.
+-
+ #lock-once
+ 
+ # GnuPG can send and receive keys to and from a keyserver.  These
+@@ -115,7 +106,6 @@
+ # such a "server", which spreads the load over a number of physical
+ # servers.  To see the IP address of the server actually used, you may use
+ # the "--keyserver-options debug".
+-
+ keyserver hkp://keys.gnupg.net
+ #keyserver mailto:pgp-public-keys@keys.nl.pgp.net
+ #keyserver ldap://keyserver.pgp.com
+@@ -150,17 +140,14 @@ keyserver hkp://keys.gnupg.net
+ #
+ # no-include-attributes : do not include attribute IDs (aka "photo IDs")
+ #                         when sending keys to the keyserver.
+-
+ #keyserver-options auto-key-retrieve
+ 
+ # Display photo user IDs in key listings
+-
+-# list-options show-photos
++#list-options show-photos
+ 
+ # Display photo user IDs when a signature from a key with a photo is
+ # verified
+-
+-# verify-options show-photos
++#verify-options show-photos
+ 
+ # Use this program to display photo user IDs
+ #
+@@ -183,14 +170,14 @@ keyserver hkp://keys.gnupg.net
+ # to use your regular JPEG image viewer.
+ #
+ # Some other viewers:
+-# photo-viewer "qiv %i"
+-# photo-viewer "ee %i"
++#photo-viewer "qiv %i"
++#photo-viewer "ee %i"
+ #
+ # This one saves a copy of the photo ID in your home directory:
+-# photo-viewer "cat > ~/photoid-for-key-%k.%t"
++#photo-viewer "cat > ~/photoid-for-key-%k.%t"
+ #
+ # Use your MIME handler to view photos:
+-# photo-viewer "metamail -q -d -b -c %T -s 'KeyID 0x%k' -f GnuPG"
++#photo-viewer "metamail -q -d -b -c %T -s 'KeyID 0x%k' -f GnuPG"
+ 
+ # Passphrase agent
+ #
+@@ -198,9 +185,8 @@ keyserver hkp://keys.gnupg.net
+ # the new Assuan based one (currently available in the "newpg" package
+ # at ftp.gnupg.org/gcrypt/alpha/aegypten/).  To make use of the agent,
+ # you have to run an agent as daemon and use the option
+-#
+-# use-agent
+-# 
++#use-agent
++
+ # which tries to use the agent but will fallback to the regular mode
+ # if there is a problem connecting to the agent.  The normal way to
+ # locate the agent is by looking at the environment variable
+@@ -237,3 +223,6 @@ keyserver hkp://keys.gnupg.net
+ #
+ # Try CERT, then PKA, then LDAP, then hkp://subkeys.net:
+ #auto-key-locate cert pka ldap hkp://subkeys.pgp.net
++
++# Comment out the next line to reenable the warning about "using insecure memory".
++no-secmem-warning
+diff --git a/po/ru.po b/po/ru.po
+index 6ffeb62..19755b9 100644
+--- a/po/ru.po
++++ b/po/ru.po
+@@ -40,7 +40,7 @@ msgstr "невозможно заблокировать `%s': %s\n"
+ #: cipher/random.c:430 cipher/random.c:609
+ #, c-format
+ msgid "waiting for lock on `%s'...\n"
+-msgstr "ожидание блокировки `%s'\n"
++msgstr "ожидание блокировки `%s'...\n"
+ 
+ #: cipher/random.c:473 g10/card-util.c:787 g10/dearmor.c:59 g10/dearmor.c:108
+ #: g10/encode.c:182 g10/encode.c:472 g10/gpg.c:1028 g10/gpg.c:3615
+@@ -5569,7 +5569,7 @@ msgstr "ВНИМАНИЕ: обнаружен слабый ключ - смени
+ #: g10/seckey-cert.c:366
+ msgid "generating the deprecated 16-bit checksum for secret key protection\n"
+ msgstr ""
+-"создание нерекомендуемой 16-битной контрольной суммы для защиты ключа\n"
++"создание не рекомендуемой 16-битной контрольной суммы для защиты ключа\n"
+ 
+ #: g10/seskey.c:51
+ msgid "weak key created - retrying\n"
+diff --git a/util/strgutil.c b/util/strgutil.c
+index 3d45405..5eef7b1 100644
+--- a/util/strgutil.c
++++ b/util/strgutil.c
+@@ -77,6 +77,25 @@ static ushort koi8_unicode[128] = {
+     0x042c,0x042b,0x0417,0x0428,0x042d,0x0429,0x0427,0x042a
+ };
+ 
++static ushort cp1251_unicode[128] = {
++    0x0402,0x0403,0x201a,0x0453,0x201e,0x2026,0x2020,0x2021,
++    0x20ac,0x2030,0x0409,0x2039,0x040a,0x040c,0x040b,0x040f,
++    0x0452,0x2018,0x2019,0x201c,0x201d,0x2022,0x2013,0x2014,
++    0xffff,0x2122,0x0459,0x203a,0x045a,0x045c,0x045b,0x045f,
++    0x00a0,0x040e,0x045e,0x0408,0x00a4,0x0490,0x00a6,0x00a7,
++    0x0401,0x00a9,0x0404,0x00ab,0x00ac,0x00ad,0x00ae,0x0407,
++    0x00b0,0x00b1,0x0406,0x0456,0x0491,0x00b5,0x00b6,0x00b7,
++    0x0451,0x2116,0x0454,0x00bb,0x0458,0x0405,0x0455,0x0457,
++    0x0410,0x0411,0x0412,0x0413,0x0414,0x0415,0x0416,0x0417,
++    0x0418,0x0419,0x041a,0x041b,0x041c,0x041d,0x041e,0x041f,
++    0x0420,0x0421,0x0422,0x0423,0x0424,0x0425,0x0426,0x0427,
++    0x0428,0x0429,0x042a,0x042b,0x042c,0x042d,0x042e,0x042f,
++    0x0430,0x0431,0x0432,0x0433,0x0434,0x0435,0x0436,0x0437,
++    0x0438,0x0439,0x043a,0x043b,0x043c,0x043d,0x043e,0x043f,
++    0x0440,0x0441,0x0442,0x0443,0x0444,0x0445,0x0446,0x0447,
++    0x0448,0x0449,0x044a,0x044b,0x044c,0x044d,0x044e,0x044f
++};
++
+ static ushort latin2_unicode[128] = {
+     0x0080,0x0081,0x0082,0x0083,0x0084,0x0085,0x0086,0x0087,
+     0x0088,0x0089,0x008A,0x008B,0x008C,0x008D,0x008E,0x008F,
+@@ -707,6 +726,13 @@ set_native_charset( const char *newset )
+ 	active_charset = koi8_unicode;
+         use_iconv = 0;
+     }
++    else if( !ascii_strcasecmp( newset, "cp1251" )
++        || !ascii_strcasecmp (newset, "windows-1251" ) ) {
++	active_charset_name = "cp1251";
++        no_translation = 0;
++	active_charset = cp1251_unicode;
++        use_iconv = 0;
++    }
+     else
+ 	return G10ERR_GENERAL;
+ #endif /*!USE_GNUPG_ICONV*/

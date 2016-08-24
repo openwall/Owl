@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.52 2014/07/07 10:06:41 solar Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.52.2.1 2016/08/24 02:50:16 solar Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.4.18
+Version: 1.4.21
 Release: owl1
 License: GPL
 Group: Applications/Cryptography
@@ -12,10 +12,10 @@ Source0: %name-%version.tar.xz
 # Signature: ftp://ftp.gnupg.org/gcrypt/gnupg/%name-%version.tar.bz2.sig
 Source1: gpgsplit.1
 Source2: lspgpot.1
-Patch0: gnupg-1.4.18-alt.diff
+Patch0: gnupg-1.4.21-alt.diff
 Patch1: gnupg-1.4.11-alt-owl-info.diff
 Patch2: gnupg-1.4.11-owl-setuid.diff
-PreReq: /sbin/install-info
+Requires(post,preun): /sbin/install-info
 Provides: gpg, openpgp
 BuildRequires: zlib-devel, bzip2-devel, texinfo, readline-devel >= 0:4.3
 BuildRequires: rpm-build >= 0:4
@@ -83,15 +83,20 @@ fi
 %_bindir/lspgpot
 %_datadir/locale/*/*/*
 %_libdir/%name
-%_mandir/man1/*
-%_mandir/man7/gnupg.*
-%_infodir/gnupg1.*
+%_mandir/man?/*
+%_infodir/*.info*
 %_libexecdir/*
 %dir %_datadir/gnupg
 %config(noreplace) %_datadir/gnupg/options.skel
 %exclude %_datadir/gnupg/FAQ
 
 %changelog
+* Tue Aug 23 2016 Solar Designer <solar-at-owl.openwall.com> 1.4.21-owl1
+- Updated to 1.4.21.
+
+* Thu Jul 10 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.4.18-owl2
+- Replaced the deprecated PreReq tag with Requires(post,preun).
+
 * Mon Jul 07 2014 Solar Designer <solar-at-owl.openwall.com> 1.4.18-owl1
 - Updated to 1.4.18.
 - Switched to using a combined ALT Linux patch.
