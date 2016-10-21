@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/bind/bind.spec,v 1.32 2016/10/17 01:50:23 solar Exp $
+# $Owl: Owl/packages/bind/bind.spec,v 1.33 2016/10/21 03:12:55 solar Exp $
 
 %{?!BUILD_DEVEL:   %define BUILD_DEVEL 0}
 %{?!BUILD_IPV6:    %define BUILD_IPV6 0}
@@ -7,7 +7,7 @@
 Summary: ISC BIND - DNS server.
 Name: bind
 Version: 9.3.5
-Release: owl10
+Release: owl11
 License: BSD-style
 URL: http://www.isc.org/products/BIND/
 Group: System Environment/Daemons
@@ -56,6 +56,7 @@ Patch20: bind-9.3.5-P2-rh-CVE-2015-8000.diff
 Patch21: bind-9.3.5-P2-rh-CVE-2015-8704.diff
 Patch22: bind-9.3.5-P2-rh-CVE-2016-1285-CVE-2016-1286.diff
 Patch23: bind-9.3.5-P2-rh-CVE-2016-2776.diff
+Patch24: bind-9.3.5-P2-rh-CVE-2016-2848.diff
 
 Requires: %name-libs = %version-%release
 Requires: owl-startup
@@ -146,6 +147,7 @@ for building applications with ISC BIND libraries.
 %patch21 -p1
 %patch22 -p1
 %patch23 -p1
+%patch24 -p1
 
 install -pm644 %_sourcedir/rfc1912.txt.bz2 doc/rfc/
 find doc -type f -name '*.txt' -print0 |
@@ -371,6 +373,9 @@ fi
 %_mandir/man8/nsupdate.8*
 
 %changelog
+* Fri Oct 21 2016 Solar Designer <solar-at-owl.openwall.com> 9.3.5-owl11
+- Added a patch from bind-9.3.6-25.P1.el5_11.10 for CVE-2016-2848.
+
 * Mon Oct 17 2016 Solar Designer <solar-at-owl.openwall.com> 9.3.5-owl10
 - Added patches from bind-9.3.6-25.P1.el5_11.9 for CVE-2015-5722 (likely
 unneeded since DNSSEC-specific), CVE-2015-8000, CVE-2015-8704, CVE-2016-1285
