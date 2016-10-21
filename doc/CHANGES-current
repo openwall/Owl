@@ -48,14 +48,19 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
-2016/10/17	Package: bind
+2016/10/17 -
+2016/10/21	Package: bind
 SECURITY FIX	Severity: low, remote, active
 Merged multiple DoS vulnerability fixes from Red Hat's package, most
-notably for another easily triggerable assertion (CVE-2016-2776).
+notably for two easily triggerable assertion failures (CVE-2016-2776,
+CVE-2016-2848).
 References:
 http://www.openwall.com/lists/oss-security/2016/09/27/8
 https://kb.isc.org/article/AA-01419
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2776
+http://www.openwall.com/lists/oss-security/2016/10/20/7
+https://kb.isc.org/article/AA-01433/74/CVE-2016-2848
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2848
 
 2016/08/23	Package: openssh
 Backported upstream fix for a use-after-free in sshd's debugging output,
@@ -304,4 +309,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.23 2016/10/17 02:00:29 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.24 2016/10/21 03:23:04 solar Exp $
