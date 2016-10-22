@@ -20,7 +20,7 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/Makefile linux-2.6.18-408.el5.028st
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -prep
-+EXTRAVERSION = -408.el5.028stab120.1.owl2
++EXTRAVERSION = -408.el5.028stab120.1.owl3
  RHEL_MAJOR = 5
  RHEL_MINOR = 11
  NAME=Avast! A bilge rat!
@@ -1525,7 +1525,7 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/fuse.h linux-2.6.18-4
  struct fuse_open_out {
 diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/mm.h linux-2.6.18-408.el5.028stab120.1-owl/include/linux/mm.h
 --- linux-2.6.18-408.el5.028stab120.1/include/linux/mm.h	2016-01-25 08:11:41 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/include/linux/mm.h	2016-10-22 15:45:06 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/include/linux/mm.h	2016-10-22 16:55:25 +0000
 @@ -1193,6 +1193,8 @@ int remap_pfn_range(struct vm_area_struc
  int vm_insert_page(struct vm_area_struct *, unsigned long addr, struct page *);
  int vm_insert_pfn(struct vm_area_struct *vma, unsigned long addr,
@@ -1535,6 +1535,15 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/mm.h linux-2.6.18-408
  
  struct page *follow_page(struct vm_area_struct *, unsigned long address,
  			unsigned int foll_flags);
+@@ -1200,6 +1202,8 @@ struct page *follow_page(struct vm_area_
+ #define FOLL_TOUCH	0x02	/* mark page accessed */
+ #define FOLL_GET	0x04	/* do get_page on page */
+ #define FOLL_ANON	0x08	/* give ZERO_PAGE if no pgtable */
++#define FOLL_FORCE	0x10	/* get_user_pages read/write w/o permission */
++#define FOLL_COW	0x4000	/* internal GUP flag */
+ 
+ #ifdef CONFIG_XEN
+ typedef int (*pte_fn_t)(pte_t *pte, struct page *pmd_page, unsigned long addr,
 diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/sched.h linux-2.6.18-408.el5.028stab120.1-owl/include/linux/sched.h
 --- linux-2.6.18-408.el5.028stab120.1/include/linux/sched.h	2016-01-25 08:11:41 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/include/linux/sched.h	2016-08-23 15:41:27 +0000
@@ -2129,8 +2138,69 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/kernel/ve/vecalls.c linux-2.6.18-40
  
 diff -urpN linux-2.6.18-408.el5.028stab120.1/mm/memory.c linux-2.6.18-408.el5.028stab120.1-owl/mm/memory.c
 --- linux-2.6.18-408.el5.028stab120.1/mm/memory.c	2016-01-25 08:11:41 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/mm/memory.c	2016-10-22 15:45:06 +0000
-@@ -2587,6 +2587,53 @@ out_nomap:
++++ linux-2.6.18-408.el5.028stab120.1-owl/mm/memory.c	2016-10-22 16:53:50 +0000
+@@ -1130,7 +1130,23 @@ out2:
+ out:
+ 	return NULL;
+ }
++ 
++static inline bool can_follow_write_pte(pte_t pte, struct page *page,
++					unsigned int flags)
++{
++	if (pte_write(pte))
++		return true;
+ 
++	/*
++	 * Make sure that we are really following CoWed page. We do not really
++	 * have to care about exclusiveness of the page because we only want
++	 * to ensure that once COWed page hasn't disappeared in the meantime.
++	 */
++	if ((flags & FOLL_FORCE) && (flags & FOLL_COW))
++		return page && PageAnon(page);
++
++	return false;
++}
+ 
+ /*
+  * Do a quick page-table lookup for a single page.
+@@ -1179,9 +1195,9 @@ struct page *follow_page(struct vm_area_
+ 	pte = *ptep;
+ 	if (!pte_present(pte))
+ 		goto no_page;
+-	if ((flags & FOLL_WRITE) && !pte_write(pte))
+-		goto unlock;
+ 	page = vm_normal_page(vma, address, pte);
++	if ((flags & FOLL_WRITE) && !can_follow_write_pte(pte, page, flags))
++		goto no_page;
+ 	if (unlikely(!page))
+ 		goto bad_page;
+ 
+@@ -1350,6 +1366,8 @@ int get_user_pages(struct task_struct *t
+ 			foll_flags |= FOLL_GET;
+ 		if (!write && use_zero_page(vma))
+ 			foll_flags |= FOLL_ANON;
++		if (force)
++			foll_flags |= FOLL_FORCE;
+ 
+ 		do {
+ 			struct page *page;
+@@ -1365,11 +1383,12 @@ int get_user_pages(struct task_struct *t
+ 				/*
+ 				 * The VM_FAULT_WRITE bit tells us that do_wp_page has
+ 				 * broken COW when necessary, even if maybe_mkwrite
+-				 * decided not to set pte_write. We can thus safely do
+-				 * subsequent page lookups as if they were reads.
++				 * decided not to set pte_write. We cannot simply drop
++				 * FOLL_WRITE here because the COWed page might be
++				 * gone by the time we do the subsequent page lookups.
+ 				 */
+ 				if (ret & VM_FAULT_WRITE)
+-					foll_flags &= ~FOLL_WRITE;
++					foll_flags |= FOLL_COW;
+ 				
+ 				switch (ret & ~VM_FAULT_WRITE) {
+ 				case VM_FAULT_MINOR:
+@@ -2587,6 +2606,53 @@ out_nomap:
  	return ret;
  }
  
