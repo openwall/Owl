@@ -14,7 +14,7 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/Documentation/sysctl/kernel.txt lin
  value of dmesg_restrict.
 diff -urpN linux-2.6.18-408.el5.028stab120.1/Makefile linux-2.6.18-408.el5.028stab120.1-owl/Makefile
 --- linux-2.6.18-408.el5.028stab120.1/Makefile	2016-01-25 08:11:41 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/Makefile	2016-08-23 15:52:23 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/Makefile	2016-10-22 18:57:47 +0000
 @@ -1,7 +1,7 @@
  VERSION = 2
  PATCHLEVEL = 6
@@ -2138,7 +2138,7 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/kernel/ve/vecalls.c linux-2.6.18-40
  
 diff -urpN linux-2.6.18-408.el5.028stab120.1/mm/memory.c linux-2.6.18-408.el5.028stab120.1-owl/mm/memory.c
 --- linux-2.6.18-408.el5.028stab120.1/mm/memory.c	2016-01-25 08:11:41 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/mm/memory.c	2016-10-22 16:53:50 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/mm/memory.c	2016-10-22 18:57:19 +0000
 @@ -1130,7 +1130,23 @@ out2:
  out:
  	return NULL;
@@ -2184,7 +2184,7 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/mm/memory.c linux-2.6.18-408.el5.02
  
  		do {
  			struct page *page;
-@@ -1365,11 +1383,12 @@ int get_user_pages(struct task_struct *t
+@@ -1365,11 +1383,16 @@ int get_user_pages(struct task_struct *t
  				/*
  				 * The VM_FAULT_WRITE bit tells us that do_wp_page has
  				 * broken COW when necessary, even if maybe_mkwrite
@@ -2194,13 +2194,18 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/mm/memory.c linux-2.6.18-408.el5.02
 +				 * FOLL_WRITE here because the COWed page might be
 +				 * gone by the time we do the subsequent page lookups.
  				 */
- 				if (ret & VM_FAULT_WRITE)
+-				if (ret & VM_FAULT_WRITE)
 -					foll_flags &= ~FOLL_WRITE;
-+					foll_flags |= FOLL_COW;
++				if (ret & VM_FAULT_WRITE) {
++					if ((vma->vm_flags & VM_WRITE))
++						foll_flags &= ~FOLL_WRITE;
++					else
++						foll_flags |= FOLL_COW;
++				}
  				
  				switch (ret & ~VM_FAULT_WRITE) {
  				case VM_FAULT_MINOR:
-@@ -2587,6 +2606,53 @@ out_nomap:
+@@ -2587,6 +2610,53 @@ out_nomap:
  	return ret;
  }
  
