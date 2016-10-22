@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.112 2016/08/23 18:17:31 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.113 2016/10/22 16:36:12 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 408.el5.028stab120.1
-Release: %ovzversion.owl1
+Release: %ovzversion.owl2
 License: GPLv2
 Group: System Environment/Kernel
 URL: https://openvz.org/Download/kernel/rhel5-testing/028stab120.1
@@ -104,6 +104,9 @@ done
 %files fake
 
 %changelog
+* Sat Oct 22 2016 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl2
+- Merged in Red Hat's fixes from -412.
+
 * Tue Aug 23 2016 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl1
 - Updated to 2.6.18-408.el5.028stab120.1.
 - Applied Dmitry V. Levin's patch to fix a kernel panic triggerable via the
