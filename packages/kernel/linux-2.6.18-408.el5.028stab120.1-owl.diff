@@ -14,13 +14,13 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/Documentation/sysctl/kernel.txt lin
  value of dmesg_restrict.
 diff -urpN linux-2.6.18-408.el5.028stab120.1/Makefile linux-2.6.18-408.el5.028stab120.1-owl/Makefile
 --- linux-2.6.18-408.el5.028stab120.1/Makefile	2016-01-25 08:11:41 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/Makefile	2016-08-23 15:52:23 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/Makefile	2016-10-23 19:55:18 +0000
 @@ -1,7 +1,7 @@
  VERSION = 2
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -prep
-+EXTRAVERSION = -408.el5.028stab120.1.owl2
++EXTRAVERSION = -408.el5.028stab120.1.owl4
  RHEL_MAJOR = 5
  RHEL_MINOR = 11
  NAME=Avast! A bilge rat!
@@ -1995,7 +1995,25 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/kernel/printk.c linux-2.6.18-408.el
  
 diff -urpN linux-2.6.18-408.el5.028stab120.1/kernel/ptrace.c linux-2.6.18-408.el5.028stab120.1-owl/kernel/ptrace.c
 --- linux-2.6.18-408.el5.028stab120.1/kernel/ptrace.c	2016-01-25 08:11:41 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/kernel/ptrace.c	2016-08-23 15:41:27 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/kernel/ptrace.c	2016-10-23 19:55:50 +0000
+@@ -41,7 +41,7 @@ static int __access_process_vm(struct ta
+ 	struct page *page;
+ 	void *old_buf = buf;
+ 
+-	down_read(&mm->mmap_sem);
++	down_write(&mm->mmap_sem);
+ 	/* ignore errors, just check how much was sucessfully transfered */
+ 	while (len) {
+ 		int bytes, ret, offset;
+@@ -72,7 +72,7 @@ static int __access_process_vm(struct ta
+ 		buf += bytes;
+ 		addr += bytes;
+ 	}
+-	up_read(&mm->mmap_sem);
++	up_write(&mm->mmap_sem);
+ 	
+ 	return buf - old_buf;
+ }
 @@ -1470,7 +1470,7 @@ found:
  	BUG_ON(state->parent != tsk);
  	rcu_read_unlock();
@@ -2127,6 +2145,17 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/kernel/ve/vecalls.c linux-2.6.18-40
  	return 0;
  }
  
+diff -urpN linux-2.6.18-408.el5.028stab120.1/mm/madvise.c linux-2.6.18-408.el5.028stab120.1-owl/mm/madvise.c
+--- linux-2.6.18-408.el5.028stab120.1/mm/madvise.c	2016-01-25 08:11:41 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/mm/madvise.c	2016-10-23 19:56:21 +0000
+@@ -23,7 +23,6 @@ static int madvise_need_mmap_write(int b
+ 	switch (behavior) {
+ 	case MADV_REMOVE:
+ 	case MADV_WILLNEED:
+-	case MADV_DONTNEED:
+ 	case MADV_DEACTIVATE:
+ 		return 0;
+ 	default:
 diff -urpN linux-2.6.18-408.el5.028stab120.1/mm/memory.c linux-2.6.18-408.el5.028stab120.1-owl/mm/memory.c
 --- linux-2.6.18-408.el5.028stab120.1/mm/memory.c	2016-01-25 08:11:41 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/mm/memory.c	2016-10-22 15:45:06 +0000
