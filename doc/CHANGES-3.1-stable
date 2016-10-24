@@ -45,6 +45,29 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl 3.1-stable.
 
+(2016/10/23)
+2016/10/24	Package: kernel
+SECURITY FIX	Severity: high, local, active
+Added a mitigation for the "Dirty COW" Linux kernel privilege escalation
+vulnerability (CVE-2016-5195).
+References:
+http://www.openwall.com/lists/oss-security/2016/10/21/1
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5195
+
+(2016/10/17 - 2016/10/21)
+2016/10/24	Package: bind
+SECURITY FIX	Severity: low, remote, active
+Merged multiple DoS vulnerability fixes from Red Hat's package, most
+notably for two easily triggerable assertion failures (CVE-2016-2776,
+CVE-2016-2848).
+References:
+http://www.openwall.com/lists/oss-security/2016/09/27/8
+https://kb.isc.org/article/AA-01419
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2776
+http://www.openwall.com/lists/oss-security/2016/10/20/7
+https://kb.isc.org/article/AA-01433/74/CVE-2016-2848
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-2848
+
 (2016/08/23)
 2016/08/23	Package: openssh
 Backported upstream fix for a use-after-free in sshd's debugging output,
@@ -232,4 +255,4 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7169
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7186
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7187
 
-$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.15 2016/08/24 04:25:29 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.16 2016/10/24 03:17:28 solar Exp $
