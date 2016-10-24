@@ -14,13 +14,13 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/Documentation/sysctl/kernel.txt lin
  value of dmesg_restrict.
 diff -urpN linux-2.6.18-408.el5.028stab120.1/Makefile linux-2.6.18-408.el5.028stab120.1-owl/Makefile
 --- linux-2.6.18-408.el5.028stab120.1/Makefile	2016-01-25 08:11:41 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/Makefile	2016-08-23 15:52:23 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/Makefile	2016-10-23 19:55:18 +0000
 @@ -1,7 +1,7 @@
  VERSION = 2
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -prep
-+EXTRAVERSION = -408.el5.028stab120.1.owl1
++EXTRAVERSION = -408.el5.028stab120.1.owl4
  RHEL_MAJOR = 5
  RHEL_MINOR = 11
  NAME=Avast! A bilge rat!
@@ -100,6 +100,18 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/arch/i386/kernel/vmlinux.lds.S linu
  	}
  
    STABS_DEBUG
+diff -urpN linux-2.6.18-408.el5.028stab120.1/arch/s390/kernel/head64.S linux-2.6.18-408.el5.028stab120.1-owl/arch/s390/kernel/head64.S
+--- linux-2.6.18-408.el5.028stab120.1/arch/s390/kernel/head64.S	2016-01-25 08:11:36 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/arch/s390/kernel/head64.S	2016-10-22 15:45:06 +0000
+@@ -295,7 +295,7 @@ startup_continue:
+ 	.long	0xb2b10000		# store facility list
+ 	tm	0xc8,0x08		# check bit for clearing-by-ASCE
+ 	bno	0f-.LPG1(%r13)
+-	lhi	%r1,2094
++	lhi	%r1,2048
+ 	lhi	%r2,0
+ 	.long	0xb98e2001
+ 	oi	7(%r12),0x80		# set IDTE flag
 diff -urpN linux-2.6.18-408.el5.028stab120.1/arch/x86_64/Kconfig linux-2.6.18-408.el5.028stab120.1-owl/arch/x86_64/Kconfig
 --- linux-2.6.18-408.el5.028stab120.1/arch/x86_64/Kconfig	2016-01-25 08:11:40 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/arch/x86_64/Kconfig	2016-08-23 15:41:27 +0000
@@ -732,6 +744,77 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/drivers/serial/8250_early.c linux-2
  
  	/* Wait for transmitter to become empty and restore the IER */
  	wait_for_xmitr(port);
+diff -urpN linux-2.6.18-408.el5.028stab120.1/drivers/video/fbmem.c linux-2.6.18-408.el5.028stab120.1-owl/drivers/video/fbmem.c
+--- linux-2.6.18-408.el5.028stab120.1/drivers/video/fbmem.c	2006-11-29 19:28:40 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/drivers/video/fbmem.c	2016-10-22 15:45:06 +0000
+@@ -1125,14 +1125,12 @@ fb_mmap(struct file *file, struct vm_are
+ 	struct fb_info *info = registered_fb[fbidx];
+ 	struct fb_ops *fb = info->fbops;
+ 	unsigned long off;
++	unsigned long mmio_pgoff;
+ #if !defined(__sparc__) || defined(__sparc_v9__)
+ 	unsigned long start;
+ 	u32 len;
+ #endif
+ 
+-	if (vma->vm_pgoff > (~0UL >> PAGE_SHIFT))
+-		return -EINVAL;
+-	off = vma->vm_pgoff << PAGE_SHIFT;
+ 	if (!fb)
+ 		return -ENODEV;
+ 	if (fb->fb_mmap) {
+@@ -1151,27 +1149,22 @@ fb_mmap(struct file *file, struct vm_are
+ 	/* !sparc32... */
+ 	lock_kernel();
+ 
+-	/* frame buffer memory */
++	/*
++	 * Ugh. This can be either the frame buffer mapping, or
++	 * if pgoff points past it, the mmio mapping.
++	 */
+ 	start = info->fix.smem_start;
+-	len = PAGE_ALIGN((start & ~PAGE_MASK) + info->fix.smem_len);
+-	if (off >= len) {
+-		/* memory mapped io */
+-		off -= len;
+-		if (info->var.accel_flags) {
+-			unlock_kernel();
+-			return -EINVAL;
+-		}
++	len = info->fix.smem_len;
++	mmio_pgoff = PAGE_ALIGN((start & ~PAGE_MASK) + len) >> PAGE_SHIFT;
++	if (vma->vm_pgoff >= mmio_pgoff) {
++		vma->vm_pgoff -= mmio_pgoff;
+ 		start = info->fix.mmio_start;
+-		len = PAGE_ALIGN((start & ~PAGE_MASK) + info->fix.mmio_len);
++		len = info->fix.mmio_len;
+ 	}
+ 	unlock_kernel();
+-	start &= PAGE_MASK;
+-	if ((vma->vm_end - vma->vm_start + off) > len)
+-		return -EINVAL;
+-	off += start;
+-	vma->vm_pgoff = off >> PAGE_SHIFT;
+-	/* This is an IO map - tell maydump to skip this VMA */
++
+ 	vma->vm_flags |= VM_IO | VM_RESERVED;
++
+ #if defined(__mc68000__)
+ #if defined(CONFIG_SUN3)
+ 	pgprot_val(vma->vm_page_prot) |= SUN3_PAGE_NOCACHE;
+@@ -1207,10 +1200,8 @@ fb_mmap(struct file *file, struct vm_are
+ #else
+ #warning What do we have to do here??
+ #endif
+-	if (io_remap_pfn_range(vma, vma->vm_start, off >> PAGE_SHIFT,
+-			     vma->vm_end - vma->vm_start, vma->vm_page_prot))
+-		return -EAGAIN;
+-	return 0;
++
++	return vm_iomap_memory(vma, start, len);
+ #endif /* !sparc32 */
+ }
+ 
 diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/Kconfig linux-2.6.18-408.el5.028stab120.1-owl/fs/Kconfig
 --- linux-2.6.18-408.el5.028stab120.1/fs/Kconfig	2016-01-25 08:11:41 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/fs/Kconfig	2016-08-23 15:41:27 +0000
@@ -794,6 +877,36 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/compat.c linux-2.6.18-408.el5.02
  		security_bprm_free(bprm);
  		acct_update_integrals(current);
  		kfree(bprm);
+diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/dcache.c linux-2.6.18-408.el5.028stab120.1-owl/fs/dcache.c
+--- linux-2.6.18-408.el5.028stab120.1/fs/dcache.c	2016-01-25 08:11:40 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/fs/dcache.c	2016-10-22 15:45:06 +0000
+@@ -2009,6 +2009,7 @@ struct dentry *d_materialise_unique(stru
+ 			if (d_isparent(alias, dentry)) {
+ 				/* Check for loops */
+ 				actual = ERR_PTR(-ELOOP);
++				spin_unlock(&dcache_lock);
+ 			} else if (IS_ROOT(alias)) {
+ 				/* Is this an anonymous mountpoint that we
+ 				 * could splice into our tree? */
+@@ -2033,7 +2034,7 @@ struct dentry *d_materialise_unique(stru
+ 					       inode->i_sb->s_id);
+ 				dput(alias);
+ 			}
+-			goto out_unlock_dcache;
++			goto out;
+ 		}
+ 	}
+ 
+@@ -2049,8 +2050,8 @@ found_lock:
+ found:
+ 	_d_rehash(actual);
+ 	spin_unlock(&actual->d_lock);
+-out_unlock_dcache:
+ 	spin_unlock(&dcache_lock);
++out:
+ 	if (actual == dentry) {
+ 		security_d_instantiate(dentry, inode);
+ 		return NULL;
 diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/exec.c linux-2.6.18-408.el5.028stab120.1-owl/fs/exec.c
 --- linux-2.6.18-408.el5.028stab120.1/fs/exec.c	2016-01-25 08:11:40 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/fs/exec.c	2016-08-23 15:41:27 +0000
@@ -855,6 +968,22 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/exec.c linux-2.6.18-408.el5.028s
  		free_arg_pages(bprm);
  		security_bprm_free(bprm);
  		acct_update_integrals(current);
+diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/ext4/mballoc.c linux-2.6.18-408.el5.028stab120.1-owl/fs/ext4/mballoc.c
+--- linux-2.6.18-408.el5.028stab120.1/fs/ext4/mballoc.c	2016-01-25 08:11:39 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/fs/ext4/mballoc.c	2016-10-22 15:45:06 +0000
+@@ -2030,7 +2030,11 @@ repeat:
+ 			struct ext4_group_info *grp;
+ 			struct ext4_group_desc *desc;
+ 
+-			if (group == ngroups)
++			/*
++			 * Artificially restricted ngroups for non-extent
++			 * files makes group > ngroups possible on first loop.
++			 */
++			if (group >= ngroups)
+ 				group = 0;
+ 
+ 			/* quick check to skip empty groups */
 diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/filesystems.c linux-2.6.18-408.el5.028stab120.1-owl/fs/filesystems.c
 --- linux-2.6.18-408.el5.028stab120.1/fs/filesystems.c	2016-01-25 08:11:41 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/fs/filesystems.c	2016-08-23 15:41:27 +0000
@@ -867,6 +996,160 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/filesystems.c linux-2.6.18-408.e
  }
  EXPORT_SYMBOL(check_fs_presence);
  
+diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/fuse/dir.c linux-2.6.18-408.el5.028stab120.1-owl/fs/fuse/dir.c
+--- linux-2.6.18-408.el5.028stab120.1/fs/fuse/dir.c	2016-01-25 08:11:39 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/fs/fuse/dir.c	2016-10-22 15:45:06 +0000
+@@ -388,7 +388,7 @@ static int fuse_create_open(struct inode
+ 	struct fuse_conn *fc = get_fuse_conn(dir);
+ 	struct fuse_req *req;
+ 	struct fuse_req *forget_req;
+-	struct fuse_open_in inarg;
++	struct fuse_create_in inarg;
+ 	struct fuse_open_out outopen;
+ 	struct fuse_entry_out outentry;
+ 	struct fuse_file *ff;
+@@ -412,15 +412,20 @@ static int fuse_create_open(struct inode
+ 	if (!ff)
+ 		goto out_put_request;
+ 
++	if (!fc->dont_mask)
++		mode &= ~current->fs->umask;
++
+ 	flags &= ~O_NOCTTY;
+ 	memset(&inarg, 0, sizeof(inarg));
+ 	memset(&outentry, 0, sizeof(outentry));
+ 	inarg.flags = flags;
+ 	inarg.mode = mode;
++	inarg.umask = current->fs->umask;
+ 	req->in.h.opcode = FUSE_CREATE;
+ 	req->in.h.nodeid = get_node_id(dir);
+ 	req->in.numargs = 2;
+-	req->in.args[0].size = sizeof(inarg);
++	req->in.args[0].size = fc->minor < 12 ? sizeof(struct fuse_open_in) :
++						sizeof(inarg);
+ 	req->in.args[0].value = &inarg;
+ 	req->in.args[1].size = entry->d_name.len + 1;
+ 	req->in.args[1].value = entry->d_name.name;
+@@ -557,12 +562,17 @@ static int fuse_mknod(struct inode *dir,
+ 	if (IS_ERR(req))
+ 		return PTR_ERR(req);
+ 
++	if (!fc->dont_mask)
++		mode &= ~current->fs->umask;
++
+ 	memset(&inarg, 0, sizeof(inarg));
+ 	inarg.mode = mode;
+ 	inarg.rdev = new_encode_dev(rdev);
++	inarg.umask = current->fs->umask;
+ 	req->in.h.opcode = FUSE_MKNOD;
+ 	req->in.numargs = 2;
+-	req->in.args[0].size = sizeof(inarg);
++	req->in.args[0].size = fc->minor < 12 ? FUSE_COMPAT_MKNOD_IN_SIZE :
++						sizeof(inarg);
+ 	req->in.args[0].value = &inarg;
+ 	req->in.args[1].size = entry->d_name.len + 1;
+ 	req->in.args[1].value = entry->d_name.name;
+@@ -589,8 +599,12 @@ static int fuse_mkdir(struct inode *dir,
+ 	if (IS_ERR(req))
+ 		return PTR_ERR(req);
+ 
++	if (!fc->dont_mask)
++		mode &= ~current->fs->umask;
++
+ 	memset(&inarg, 0, sizeof(inarg));
+ 	inarg.mode = mode;
++	inarg.umask = current->fs->umask;
+ 	req->in.h.opcode = FUSE_MKDIR;
+ 	req->in.numargs = 2;
+ 	req->in.args[0].size = sizeof(inarg);
+diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/fuse/fuse_i.h linux-2.6.18-408.el5.028stab120.1-owl/fs/fuse/fuse_i.h
+--- linux-2.6.18-408.el5.028stab120.1/fs/fuse/fuse_i.h	2016-01-25 08:11:41 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/fs/fuse/fuse_i.h	2016-10-22 15:45:06 +0000
+@@ -391,6 +391,9 @@ struct fuse_conn {
+ 	/** Is bmap not implemented by fs? */
+ 	unsigned no_bmap:1;
+ 
++	/** Don't apply umask to creation modes */
++	unsigned dont_mask:1;
++
+ 	/** The number of requests waiting for completion */
+ 	atomic_t num_waiting;
+ 
+diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/fuse/inode.c linux-2.6.18-408.el5.028stab120.1-owl/fs/fuse/inode.c
+--- linux-2.6.18-408.el5.028stab120.1/fs/fuse/inode.c	2016-01-25 08:11:41 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/fs/fuse/inode.c	2016-10-22 15:45:06 +0000
+@@ -535,6 +535,8 @@ static void process_init_reply(struct fu
+ 				fc->no_lock = 1;
+ 			if (arg->flags & FUSE_ATOMIC_O_TRUNC)
+ 				fc->atomic_o_trunc = 1;
++			if (arg->flags & FUSE_DONT_MASK)
++				fc->dont_mask = 1;
+ 		} else {
+ 			ra_pages = fc->max_read / PAGE_CACHE_SIZE;
+ 			fc->no_lock = 1;
+@@ -557,7 +559,8 @@ static void fuse_send_init(struct fuse_c
+ 	arg->major = FUSE_KERNEL_VERSION;
+ 	arg->minor = FUSE_KERNEL_MINOR_VERSION;
+ 	arg->max_readahead = fc->bdi.ra_pages * PAGE_CACHE_SIZE;
+-	arg->flags |= FUSE_ASYNC_READ | FUSE_POSIX_LOCKS | FUSE_ATOMIC_O_TRUNC;
++	arg->flags |= FUSE_ASYNC_READ | FUSE_POSIX_LOCKS | FUSE_ATOMIC_O_TRUNC |
++		FUSE_DONT_MASK;
+ 	req->in.h.opcode = FUSE_INIT;
+ 	req->in.numargs = 1;
+ 	req->in.args[0].size = sizeof(*arg);
+@@ -619,6 +622,11 @@ static int fuse_fill_super(struct super_
+ 	if (!fc)
+ 		return -ENOMEM;
+ 
++	/* Handle umasking inside the fuse code */
++	if (sb->s_flags & MS_POSIXACL)
++		fc->dont_mask = 1;
++	sb->s_flags |= MS_POSIXACL;
++
+ 	fc->flags = d.flags;
+ 	fc->user_id = d.user_id;
+ 	fc->group_id = d.group_id;
+diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/gfs2/inode.c linux-2.6.18-408.el5.028stab120.1-owl/fs/gfs2/inode.c
+--- linux-2.6.18-408.el5.028stab120.1/fs/gfs2/inode.c	2016-01-25 08:11:39 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/fs/gfs2/inode.c	2016-10-22 15:45:06 +0000
+@@ -283,7 +283,7 @@ static void gfs2_set_nlink(struct inode
+ static int gfs2_dinode_in(struct gfs2_inode *ip, const void *buf)
+ {
+ 	const struct gfs2_dinode *str = buf;
+-	struct timespec atime;
++	struct timespec footime;
+ 	u16 height, depth;
+ 
+ 	if (unlikely(ip->i_no_addr != be64_to_cpu(str->di_num.no_addr)))
+@@ -305,14 +305,20 @@ static int gfs2_dinode_in(struct gfs2_in
+ 	ip->i_disksize = be64_to_cpu(str->di_size);
+ 	i_size_write(&ip->i_inode, ip->i_disksize);
+ 	gfs2_set_inode_blocks(&ip->i_inode, be64_to_cpu(str->di_blocks));
+-	atime.tv_sec = be64_to_cpu(str->di_atime);
+-	atime.tv_nsec = be32_to_cpu(str->di_atime_nsec);
+-	if (timespec_compare(&ip->i_inode.i_atime, &atime) < 0)
+-		ip->i_inode.i_atime = atime;
+-	ip->i_inode.i_mtime.tv_sec = be64_to_cpu(str->di_mtime);
+-	ip->i_inode.i_mtime.tv_nsec = be32_to_cpu(str->di_mtime_nsec);
+-	ip->i_inode.i_ctime.tv_sec = be64_to_cpu(str->di_ctime);
+-	ip->i_inode.i_ctime.tv_nsec = be32_to_cpu(str->di_ctime_nsec);
++	footime.tv_sec = be64_to_cpu(str->di_atime);
++	footime.tv_nsec = be32_to_cpu(str->di_atime_nsec);
++	if (timespec_compare(&ip->i_inode.i_atime, &footime) < 0)
++		ip->i_inode.i_atime = footime;
++
++	footime.tv_sec = be64_to_cpu(str->di_mtime);
++	footime.tv_nsec = be32_to_cpu(str->di_mtime_nsec);
++	if (timespec_compare(&ip->i_inode.i_mtime, &footime) < 0)
++		ip->i_inode.i_mtime = footime;
++
++	footime.tv_sec = be64_to_cpu(str->di_ctime);
++	footime.tv_nsec = be32_to_cpu(str->di_ctime_nsec);
++	if (timespec_compare(&ip->i_inode.i_ctime, &footime) < 0)
++		ip->i_inode.i_ctime = footime;
+ 
+ 	ip->i_goal = be64_to_cpu(str->di_goal_meta);
+ 	ip->i_generation = be64_to_cpu(str->di_generation);
 diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/namespace.c linux-2.6.18-408.el5.028stab120.1-owl/fs/namespace.c
 --- linux-2.6.18-408.el5.028stab120.1/fs/namespace.c	2016-01-25 08:11:41 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/fs/namespace.c	2016-08-23 15:41:27 +0000
@@ -1095,6 +1378,53 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/sysfs/inode.c linux-2.6.18-408.e
  /*
   * sysfs has a different i_mutex lock order behavior for i_mutex than other
   * filesystems; sysfs i_mutex is called in many places with subsystem locks
+diff -urpN linux-2.6.18-408.el5.028stab120.1/include/asm-s390/pgtable.h linux-2.6.18-408.el5.028stab120.1-owl/include/asm-s390/pgtable.h
+--- linux-2.6.18-408.el5.028stab120.1/include/asm-s390/pgtable.h	2016-01-25 08:11:39 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/include/asm-s390/pgtable.h	2016-10-22 15:45:06 +0000
+@@ -53,6 +53,11 @@ extern void paging_init(void);
+  */
+ extern char empty_zero_page[PAGE_SIZE];
+ #define ZERO_PAGE(vaddr) (virt_to_page(empty_zero_page))
++
++/* TODO: s390 cannot support io_remap_pfn_range... */
++#define io_remap_pfn_range(vma, vaddr, pfn, size, prot) 	       \
++	remap_pfn_range(vma, vaddr, pfn, size, prot)
++
+ #endif /* !__ASSEMBLY__ */
+ 
+ /*
+diff -urpN linux-2.6.18-408.el5.028stab120.1/include/asm-s390/tlbflush.h linux-2.6.18-408.el5.028stab120.1-owl/include/asm-s390/tlbflush.h
+--- linux-2.6.18-408.el5.028stab120.1/include/asm-s390/tlbflush.h	2016-01-25 08:11:39 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/include/asm-s390/tlbflush.h	2016-10-22 15:45:06 +0000
+@@ -62,11 +62,11 @@ static inline void __tlb_flush_full(stru
+ /*
+  * Flush all tlb entries of a page table on all cpus.
+  */
+-static inline void __tlb_flush_idte(pgd_t *pgd)
++static inline void __tlb_flush_idte(unsigned long asce)
+ {
+ 	asm volatile(
+ 		"	.insn	rrf,0xb98e0000,0,%0,%1,0"
+-		: : "a" (2048), "a" (__pa(pgd) & PAGE_MASK) : "cc" );
++		: : "a" (2048), "a" (asce) : "cc" );
+ }
+ 
+ static inline void __tlb_flush_mm(struct mm_struct * mm)
+@@ -79,7 +79,13 @@ static inline void __tlb_flush_mm(struct
+ 	 * only ran on the local cpu.
+ 	 */
+ 	if (MACHINE_HAS_IDTE) {
+-		__tlb_flush_idte(mm->pgd);
++		unsigned long asce_bits;
++#ifndef __s390x__
++		asce_bits = _SEGMENT_TABLE | USER_STD_MASK;
++#else /* __s390x__ */
++		asce_bits = _REGION_TABLE | USER_STD_MASK;
++#endif /* __s390x__ */
++		__tlb_flush_idte(__pa(mm->pgd) | asce_bits);
+ 		return;
+ 	}
+ 	__tlb_flush_full(mm);
 diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/binfmts.h linux-2.6.18-408.el5.028stab120.1-owl/include/linux/binfmts.h
 --- linux-2.6.18-408.el5.028stab120.1/include/linux/binfmts.h	2016-01-25 08:11:39 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/include/linux/binfmts.h	2016-08-23 15:41:27 +0000
@@ -1122,6 +1452,89 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/dmar.h linux-2.6.18-4
  static inline int alloc_irte(struct intel_iommu *iommu, int irq, u16 count)
  {
  	return -1;
+diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/fuse.h linux-2.6.18-408.el5.028stab120.1-owl/include/linux/fuse.h
+--- linux-2.6.18-408.el5.028stab120.1/include/linux/fuse.h	2016-01-25 08:11:39 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/include/linux/fuse.h	2016-10-22 15:45:06 +0000
+@@ -20,6 +20,9 @@
+  *
+  * 7.10
+  *  - add nonseekable open flag
++ *
++ * 7.11
++ *  - add umask flag to input argument of open, mknod and mkdir
+  */
+ 
+ #ifndef _LINUX_FUSE_H
+@@ -32,7 +35,7 @@
+ #define FUSE_KERNEL_VERSION 7
+ 
+ /** Minor version number of this interface */
+-#define FUSE_KERNEL_MINOR_VERSION 10
++#define FUSE_KERNEL_MINOR_VERSION 12
+ 
+ /** The node ID of the root inode */
+ #define FUSE_ROOT_ID 1
+@@ -112,11 +115,13 @@ struct fuse_file_lock {
+ 
+ /**
+  * INIT request/reply flags
++ * FUSE_DONT_MASK: don't apply umask to file mode on create operations
+  */
+ #define FUSE_ASYNC_READ		(1 << 0)
+ #define FUSE_POSIX_LOCKS	(1 << 1)
+ #define FUSE_FILE_OPS		(1 << 2)
+ #define FUSE_ATOMIC_O_TRUNC	(1 << 3)
++#define FUSE_DONT_MASK		(1 << 6)
+ 
+ /**
+  * Release flags
+@@ -225,14 +230,18 @@ struct fuse_attr_out {
+ 	struct fuse_attr attr;
+ };
+ 
++#define FUSE_COMPAT_MKNOD_IN_SIZE 8
++
+ struct fuse_mknod_in {
+ 	__u32	mode;
+ 	__u32	rdev;
++	__u32	umask;
++	__u32	padding;
+ };
+ 
+ struct fuse_mkdir_in {
+ 	__u32	mode;
+-	__u32	padding;
++	__u32	umask;
+ };
+ 
+ struct fuse_rename_in {
+@@ -264,7 +273,14 @@ struct fuse_setattr_in {
+ 
+ struct fuse_open_in {
+ 	__u32	flags;
++	__u32	unused;
++};
++
++struct fuse_create_in {
++	__u32	flags;
+ 	__u32	mode;
++	__u32	umask;
++	__u32	padding;
+ };
+ 
+ struct fuse_open_out {
+diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/mm.h linux-2.6.18-408.el5.028stab120.1-owl/include/linux/mm.h
+--- linux-2.6.18-408.el5.028stab120.1/include/linux/mm.h	2016-01-25 08:11:41 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/include/linux/mm.h	2016-10-22 15:45:06 +0000
+@@ -1193,6 +1193,8 @@ int remap_pfn_range(struct vm_area_struc
+ int vm_insert_page(struct vm_area_struct *, unsigned long addr, struct page *);
+ int vm_insert_pfn(struct vm_area_struct *vma, unsigned long addr,
+ 			unsigned long pfn);
++int vm_iomap_memory(struct vm_area_struct *vma, unsigned long start, unsigned long len);
++
+ 
+ struct page *follow_page(struct vm_area_struct *, unsigned long address,
+ 			unsigned int foll_flags);
 diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/sched.h linux-2.6.18-408.el5.028stab120.1-owl/include/linux/sched.h
 --- linux-2.6.18-408.el5.028stab120.1/include/linux/sched.h	2016-01-25 08:11:41 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/include/linux/sched.h	2016-08-23 15:41:27 +0000
@@ -1582,7 +1995,25 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/kernel/printk.c linux-2.6.18-408.el
  
 diff -urpN linux-2.6.18-408.el5.028stab120.1/kernel/ptrace.c linux-2.6.18-408.el5.028stab120.1-owl/kernel/ptrace.c
 --- linux-2.6.18-408.el5.028stab120.1/kernel/ptrace.c	2016-01-25 08:11:41 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/kernel/ptrace.c	2016-08-23 15:41:27 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/kernel/ptrace.c	2016-10-23 19:55:50 +0000
+@@ -41,7 +41,7 @@ static int __access_process_vm(struct ta
+ 	struct page *page;
+ 	void *old_buf = buf;
+ 
+-	down_read(&mm->mmap_sem);
++	down_write(&mm->mmap_sem);
+ 	/* ignore errors, just check how much was sucessfully transfered */
+ 	while (len) {
+ 		int bytes, ret, offset;
+@@ -72,7 +72,7 @@ static int __access_process_vm(struct ta
+ 		buf += bytes;
+ 		addr += bytes;
+ 	}
+-	up_read(&mm->mmap_sem);
++	up_write(&mm->mmap_sem);
+ 	
+ 	return buf - old_buf;
+ }
 @@ -1470,7 +1470,7 @@ found:
  	BUG_ON(state->parent != tsk);
  	rcu_read_unlock();
@@ -1613,7 +2044,7 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/kernel/relay.c linux-2.6.18-408.el5
   *	relay_open - create a new relay channel
 diff -urpN linux-2.6.18-408.el5.028stab120.1/kernel/sched.c linux-2.6.18-408.el5.028stab120.1-owl/kernel/sched.c
 --- linux-2.6.18-408.el5.028stab120.1/kernel/sched.c	2016-01-25 08:11:41 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/kernel/sched.c	2016-08-23 15:41:27 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/kernel/sched.c	2016-10-22 16:21:22 +0000
 @@ -857,7 +857,9 @@ done_noswitch:
  
  idle:
@@ -1624,6 +2055,53 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/kernel/sched.c linux-2.6.18-408.el5
  	vcpu = task_vcpu(this_pcpu()->idle);
  	__vcpu_get(vcpu);
  	spin_unlock(&fairsched_lock);
+@@ -2219,7 +2221,9 @@ find_idlest_group(struct sched_domain *s
+ 		}
+ 
+ 		/* Adjust by relative CPU power of the group */
+-		avg_load = (avg_load * SCHED_LOAD_SCALE) / group->cpu_power;
++		avg_load = (avg_load * SCHED_LOAD_SCALE);
++		if (group->cpu_power != 0)
++			avg_load /= group->cpu_power;
+ 
+ 		if (local_group) {
+ 			this_load = avg_load;
+@@ -3744,7 +3748,9 @@ find_busiest_group(struct sched_domain *
+ 		total_pwr += group->cpu_power;
+ 
+ 		/* Adjust by relative CPU power of the group */
+-		avg_load = (avg_load * SCHED_LOAD_SCALE) / group->cpu_power;
++		avg_load = (avg_load * SCHED_LOAD_SCALE);
++		if (group->cpu_power != 0)
++			avg_load /= group->cpu_power;
+ 
+ 		group_capacity = group->cpu_power / SCHED_LOAD_SCALE;
+ 
+@@ -3901,7 +3907,9 @@ small_imbalance:
+ 		pwr_now /= SCHED_LOAD_SCALE;
+ 
+ 		/* Amount of load we'd subtract */
+-		tmp = busiest_load_per_task*SCHED_LOAD_SCALE/busiest->cpu_power;
++		tmp = busiest_load_per_task*SCHED_LOAD_SCALE;
++		if (busiest->cpu_power != 0)
++			tmp /= busiest->cpu_power;
+ 		if (max_load > tmp)
+ 			pwr_move += busiest->cpu_power *
+ 				min(busiest_load_per_task, max_load - tmp);
+@@ -3909,9 +3917,11 @@ small_imbalance:
+ 		/* Amount of load we'd add */
+ 		if (max_load*busiest->cpu_power <
+ 				busiest_load_per_task*SCHED_LOAD_SCALE)
+-			tmp = max_load*busiest->cpu_power/this->cpu_power;
++			tmp = max_load*busiest->cpu_power;
+ 		else
+-			tmp = busiest_load_per_task*SCHED_LOAD_SCALE/this->cpu_power;
++			tmp = busiest_load_per_task*SCHED_LOAD_SCALE;
++		if (this->cpu_power != 0)
++			tmp /= this->cpu_power;
+ 		pwr_move += this->cpu_power*min(this_load_per_task, this_load + tmp);
+ 		pwr_move /= SCHED_LOAD_SCALE;
+ 
 diff -urpN linux-2.6.18-408.el5.028stab120.1/kernel/sys.c linux-2.6.18-408.el5.028stab120.1-owl/kernel/sys.c
 --- linux-2.6.18-408.el5.028stab120.1/kernel/sys.c	2016-01-25 08:11:41 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/kernel/sys.c	2016-08-23 15:41:27 +0000
@@ -1667,6 +2145,74 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/kernel/ve/vecalls.c linux-2.6.18-40
  	return 0;
  }
  
+diff -urpN linux-2.6.18-408.el5.028stab120.1/mm/madvise.c linux-2.6.18-408.el5.028stab120.1-owl/mm/madvise.c
+--- linux-2.6.18-408.el5.028stab120.1/mm/madvise.c	2016-01-25 08:11:41 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/mm/madvise.c	2016-10-23 19:56:21 +0000
+@@ -23,7 +23,6 @@ static int madvise_need_mmap_write(int b
+ 	switch (behavior) {
+ 	case MADV_REMOVE:
+ 	case MADV_WILLNEED:
+-	case MADV_DONTNEED:
+ 	case MADV_DEACTIVATE:
+ 		return 0;
+ 	default:
+diff -urpN linux-2.6.18-408.el5.028stab120.1/mm/memory.c linux-2.6.18-408.el5.028stab120.1-owl/mm/memory.c
+--- linux-2.6.18-408.el5.028stab120.1/mm/memory.c	2016-01-25 08:11:41 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/mm/memory.c	2016-10-22 15:45:06 +0000
+@@ -2587,6 +2587,53 @@ out_nomap:
+ 	return ret;
+ }
+ 
++/**
++ * vm_iomap_memory - remap memory to userspace
++ * @vma: user vma to map to
++ * @start: start of area
++ * @len: size of area
++ *
++ * This is a simplified io_remap_pfn_range() for common driver use. The
++ * driver just needs to give us the physical memory range to be mapped,
++ * we'll figure out the rest from the vma information.
++ *
++ * NOTE! Some drivers might want to tweak vma->vm_page_prot first to get
++ * whatever write-combining details or similar.
++ */
++int vm_iomap_memory(struct vm_area_struct *vma, unsigned long start, unsigned long len)
++{
++	unsigned long vm_len, pfn, pages;
++
++	/* Check that the physical memory area passed in looks valid */
++	if (start + len < start)
++		return -EINVAL;
++	/*
++	 * You *really* shouldn't map things that aren't page-aligned,
++	 * but we've historically allowed it because IO memory might
++	 * just have smaller alignment.
++	 */
++	len += start & ~PAGE_MASK;
++	pfn = start >> PAGE_SHIFT;
++	pages = (len + ~PAGE_MASK) >> PAGE_SHIFT;
++	if (pfn + pages < pfn)
++		return -EINVAL;
++
++	/* We start the mapping 'vm_pgoff' pages into the area */
++	if (vma->vm_pgoff > pages)
++		return -EINVAL;
++	pfn += vma->vm_pgoff;
++	pages -= vma->vm_pgoff;
++
++	/* Can we fit all of the mapping? */
++	vm_len = vma->vm_end - vma->vm_start;
++	if (vm_len >> PAGE_SHIFT > pages)
++		return -EINVAL;
++
++	/* Ok, let it rip */
++	return io_remap_pfn_range(vma, vma->vm_start, pfn, vm_len, vma->vm_page_prot);
++}
++EXPORT_SYMBOL(vm_iomap_memory);
++
+ /*
+  * This is like a special single-page "expand_{down|up}wards()",
+  * except we must first make sure that 'address{-|+}PAGE_SIZE'
 diff -urpN linux-2.6.18-408.el5.028stab120.1/mm/mempolicy.c linux-2.6.18-408.el5.028stab120.1-owl/mm/mempolicy.c
 --- linux-2.6.18-408.el5.028stab120.1/mm/mempolicy.c	2016-01-25 08:11:41 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/mm/mempolicy.c	2016-08-23 15:41:27 +0000

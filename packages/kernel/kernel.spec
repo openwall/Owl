@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.106.2.4 2016/08/24 02:52:45 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.106.2.5 2016/10/24 03:14:49 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 408.el5.028stab120.1
-Release: %ovzversion.owl1
+Release: %ovzversion.owl4
 License: GPLv2
 Group: System Environment/Kernel
 URL: https://openvz.org/Download/kernel/rhel5-testing/028stab120.1
@@ -104,6 +104,12 @@ done
 %files fake
 
 %changelog
+* Sun Oct 23 2016 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl4
+- Merged in Red Hat's fixes from -412.
+- To mitigate CVE-2016-5195 "Dirty COW", take mmap_sem for writing on
+MADV_DONTNEED, PTRACE_POKEDATA, PTRACE_POKETEXT, and as it happens also on
+PTRACE_PEEKDATA, PTRACE_PEEKTEXT.
+
 * Tue Aug 23 2016 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl1
 - Updated to 2.6.18-408.el5.028stab120.1.
 - Applied Dmitry V. Levin's patch to fix a kernel panic triggerable via the
