@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.116 2016/10/23 19:54:18 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.117 2016/10/24 03:07:54 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -104,7 +104,7 @@ done
 %files fake
 
 %changelog
-* Sat Oct 22 2016 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl4
+* Sun Oct 23 2016 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl4
 - Merged in Red Hat's fixes from -412.
 - To mitigate CVE-2016-5195 "Dirty COW", take mmap_sem for writing on
 MADV_DONTNEED, PTRACE_POKEDATA, PTRACE_POKETEXT, and as it happens also on
