@@ -1524,8 +1524,8 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/fuse.h linux-2.6.18-4
  
  struct fuse_open_out {
 diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/mm.h linux-2.6.18-408.el5.028stab120.1-owl/include/linux/mm.h
---- linux-2.6.18-408.el5.028stab120.1/include/linux/mm.h	2016-01-25 08:11:41 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/include/linux/mm.h	2016-10-22 15:45:06 +0000
+--- linux-2.6.18-408.el5.028stab120.1/include/linux/mm.h	2016-12-10 01:29:41 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/include/linux/mm.h	2016-12-10 01:29:54 +0000
 @@ -1193,6 +1193,8 @@ int remap_pfn_range(struct vm_area_struc
  int vm_insert_page(struct vm_area_struct *, unsigned long addr, struct page *);
  int vm_insert_pfn(struct vm_area_struct *vma, unsigned long addr,
@@ -1535,6 +1535,14 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/mm.h linux-2.6.18-408
  
  struct page *follow_page(struct vm_area_struct *, unsigned long address,
  			unsigned int foll_flags);
+@@ -1200,6 +1202,7 @@ struct page *follow_page(struct vm_area_
+ #define FOLL_TOUCH	0x02	/* mark page accessed */
+ #define FOLL_GET	0x04	/* do get_page on page */
+ #define FOLL_ANON	0x08	/* give ZERO_PAGE if no pgtable */
++#define FOLL_COW	0x4000	/* internal GUP flag */
+ 
+ #ifdef CONFIG_XEN
+ typedef int (*pte_fn_t)(pte_t *pte, struct page *pmd_page, unsigned long addr,
 diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/sched.h linux-2.6.18-408.el5.028stab120.1-owl/include/linux/sched.h
 --- linux-2.6.18-408.el5.028stab120.1/include/linux/sched.h	2016-01-25 08:11:41 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/include/linux/sched.h	2016-08-23 15:41:27 +0000
