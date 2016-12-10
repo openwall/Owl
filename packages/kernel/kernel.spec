@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.118 2016/12/10 01:09:03 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.119 2016/12/10 23:32:33 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 408.el5.028stab120.1
-Release: %ovzversion.owl5
+Release: %ovzversion.owl6
 License: GPLv2
 Group: System Environment/Kernel
 URL: https://openvz.org/Download/kernel/rhel5-testing/028stab120.1
@@ -104,6 +104,14 @@ done
 %files fake
 
 %changelog
+* Sat Dec 10 2016 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl6
+- Reduced CONFIG_NR_CPUS from 255 to 96 in order to mitigate the kernel package
+installed size increase of the previous change (was 15 MB).  Most of the size
+increase came from the .gnu.linkonce.this_module sections, which are instances
+of "struct module", which in turn contains an array of size NR_CPUS of cache
+line aligned reference counts (thus, NR_CPUS times 64 bytes per module).  With
+our current module count, this change saves almost 9 MB.
+
 * Sat Dec 10 2016 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl5
 - Merged in Red Hat's CVE-2016-5195 "Dirty COW" fix from -416 (slightly
 different from the fix included in OpenVZ's 120.3 released earlier) while also
