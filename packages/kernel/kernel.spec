@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.117 2016/10/24 03:07:54 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.118 2016/12/10 01:09:03 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 408.el5.028stab120.1
-Release: %ovzversion.owl4
+Release: %ovzversion.owl5
 License: GPLv2
 Group: System Environment/Kernel
 URL: https://openvz.org/Download/kernel/rhel5-testing/028stab120.1
@@ -104,6 +104,16 @@ done
 %files fake
 
 %changelog
+* Sat Dec 10 2016 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl5
+- Merged in Red Hat's CVE-2016-5195 "Dirty COW" fix from -416 (slightly
+different from the fix included in OpenVZ's 120.3 released earlier) while also
+keeping the mitigation introduced in owl4.
+- In the x86_64 config, enabled CONFIG_MICROCODE=m, CONFIG_NUMA=y and many
+related options, CONFIG_HUGETLB_PAGE=y, CONFIG_HUGETLBFS=y, CONFIG_I2C=m and
+many sensors (similar to RHEL's), bumped up CONFIG_NR_CPUS from 32 to 255.
+Tested many of these on a Dell PowerEdge R720xd with 2x E5-2660 v2 (NUMA, huge
+pages, some I2C sensors, 40 logical CPUs).
+
 * Sun Oct 23 2016 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl4
 - Merged in Red Hat's fixes from -412.
 - To mitigate CVE-2016-5195 "Dirty COW", take mmap_sem for writing on
