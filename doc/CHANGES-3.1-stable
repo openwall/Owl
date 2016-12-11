@@ -45,6 +45,14 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl 3.1-stable.
 
+(2016/12/10)
+2016/12/11	Package: kernel
+Merged in Red Hat's CVE-2016-5195 "Dirty COW" fix while also keeping the
+mitigation introduced in Owl earlier.  In the kernel build for x86-64,
+bumped up the maximum number of logical CPUs from 32 to 96, enabled
+support for NUMA, huge pages, hugetlbfs, modules for I2C and many
+sensors (similar to what's enabled in RHEL) and CPU microcode update.
+
 (2016/10/23)
 2016/10/24	Package: kernel
 SECURITY FIX	Severity: high, local, active
@@ -255,4 +263,4 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7169
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7186
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7187
 
-$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.16 2016/10/24 03:17:28 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.17 2016/12/11 09:34:17 solar Exp $
