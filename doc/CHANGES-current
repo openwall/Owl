@@ -48,6 +48,13 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
+2016/12/10	Package: kernel
+Merged in Red Hat's CVE-2016-5195 "Dirty COW" fix while also keeping the
+mitigation introduced in Owl earlier.  In the kernel build for x86-64,
+bumped up the maximum number of logical CPUs from 32 to 96, enabled
+support for NUMA, huge pages, hugetlbfs, modules for I2C and many
+sensors (similar to what's enabled in RHEL) and CPU microcode update.
+
 2016/10/23	Package: kernel
 SECURITY FIX	Severity: high, local, active
 Added a mitigation for the "Dirty COW" Linux kernel privilege escalation
@@ -317,4 +324,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.25 2016/10/24 03:10:57 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.26 2016/12/11 09:32:10 solar Exp $
