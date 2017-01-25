@@ -66,7 +66,7 @@ could allow for DoS or privilege escalation in x86_64 kernel builds
 running on Intel CPUs, even though RHEL5 kernels are currently
 understood to be unaffected.
 References:
-http://openvz.org/Download/kernel/rhel5-testing/028stab114.2
+https://openvz.org/Download/kernel/rhel5-testing/028stab114.2
 https://rhn.redhat.com/errata/RHSA-2014-0740.html
 http://www.openwall.com/lists/oss-security/2014/07/08/16
 http://www.openwall.com/lists/oss-security/2014/07/08/9
@@ -142,7 +142,7 @@ kernel and thus escalate their privileges to root, escape from an OpenVZ
 container, etc.  (However, the risk probability might have been low due
 to the race being difficult to win.)
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab106.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab106.1
 https://rhn.redhat.com/errata/RHSA-2013-0621.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-0871
 http://www.openwall.com/lists/oss-security/2013/02/15/16
@@ -193,12 +193,12 @@ attacks are likely possible in those cases, thereby making this one fix
 relatively unimportant.  Red Hat has also fixed a flaw in the dl2k
 driver (CVE-2012-2313), which is not included in our kernel builds.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab104.3
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab104.2
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab104.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab104.3
+https://openvz.org/Download/kernel/rhel5-testing/028stab104.2
+https://openvz.org/Download/kernel/rhel5-testing/028stab104.1
 https://rhn.redhat.com/errata/RHSA-2012-1445.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-2100
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab103.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab103.1
 https://rhn.redhat.com/errata/RHSA-2012-1174.html
 
 2012/08/18	Package: openssl
@@ -229,10 +229,10 @@ release notes referenced below do not affect Owl's builds of the kernel
 (they're in Xen and extended taskstats functionality, which we do not
 include).
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab102.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab102.1
 https://rhn.redhat.com/errata/RHSA-2012-1061.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-3375
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab101.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab101.1
 
 2012/08/14	Package: glibc
 Corrected the processing of '\x80' characters in extended DES-based
@@ -303,9 +303,9 @@ by other than the same program instance that opened these special files.
 Reverted the dmesg_restrict sysctl tri-state feature in favor of the
 approach taken by OpenVZ.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab100.2
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab099.4
-http://wiki.openvz.org/Download/kernel/rhel5/028stab099.3
+https://openvz.org/Download/kernel/rhel5-testing/028stab100.2
+https://openvz.org/Download/kernel/rhel5-testing/028stab099.4
+https://openvz.org/Download/kernel/rhel5/028stab099.3
 https://rhn.redhat.com/errata/RHSA-2012-0150.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-1083
 http://www.openwall.com/lists/oss-security/2011/03/02/1
@@ -340,7 +340,7 @@ container-aware.  Enabled CONFIG_NFSD=m, CONFIG_CIFS=m,
 CONFIG_NET_SCHED=y, CONFIG_NET_RADIO=y, CONFIG_PCCARD=m and lots of WiFi
 drivers as modules.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5/028stab098.1
+https://openvz.org/Download/kernel/rhel5/028stab098.1
 https://rhn.redhat.com/errata/RHSA-2012-0107.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-0207
 https://womble.decadent.org.uk/blog/igmp-denial-of-service-in-linux-cve-2012-0207.html
@@ -392,7 +392,7 @@ are in the NFS client and thus require an NFS mount to be present and
 accessible to a local attacker.  Please refer to the CVE IDs and other
 references below for more detail.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab097.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab097.1
 https://rhn.redhat.com/errata/RHSA-2012-0007.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-1020
 http://www.halfdog.net/Security/2011/SuidBinariesAndProcInterface/
@@ -413,7 +413,7 @@ Rhine NIC driver (as a module).  Although the corresponding RHEL update
 fixed multiple vulnerabilities, only the taskstats io infoleak
 (CVE-2011-2494) is relevant to Owl kernel builds.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab096.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab096.1
 https://rhn.redhat.com/errata/RHSA-2011-1479.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2494
 http://www.openwall.com/lists/oss-security/2011/06/24/6
@@ -442,7 +442,7 @@ being live-migrated on Owl host systems.  Finally, we've changed the
 default for CONFIG_PCNET32 from =m to =y for ease of use under VMware,
 which emulates NIC of this type by default.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5/028stab095.1
+https://openvz.org/Download/kernel/rhel5/028stab095.1
 https://rhn.redhat.com/errata/RHSA-2011-1386.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2695
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2696
@@ -541,9 +541,9 @@ builds, either because we do not build the affected components, or in
 case of CVE-2011-2495 because we already had the permissions on
 /proc/PID/io restricted before Owl 3.0 release.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5/028stab094.3
+https://openvz.org/Download/kernel/rhel5/028stab094.3
 https://rhn.redhat.com/errata/RHSA-2011-1212.html
-http://wiki.openvz.org/Download/kernel/rhel5/028stab093.2
+https://openvz.org/Download/kernel/rhel5/028stab093.2
 https://rhn.redhat.com/errata/RHSA-2011-1065.html
 http://www.openwall.com/lists/kernel-hardening/2011/09/27/3
 
@@ -576,8 +576,8 @@ set_user() to execve(2) and adjusted set_user() so that it can't fail.
 These changes were desirable to address missing setuid(2) return value
 check vulnerabilities in user-space programs.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5/028stab092.2
-http://wiki.openvz.org/Download/kernel/rhel5/028stab091.1
+https://openvz.org/Download/kernel/rhel5/028stab092.2
+https://openvz.org/Download/kernel/rhel5/028stab091.1
 https://rhn.redhat.com/errata/RHSA-2011-0927.html
 https://rhn.redhat.com/errata/RHSA-2011-0833.html
 https://bugs.gentoo.org/show_bug.cgi?id=325805
@@ -666,8 +666,8 @@ non-security issues with page tables accounting, AMD Bulldozer boot
 process, OOM killer, and CPU stats bugs.  It also introduces numerous
 features.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5/028stab089.1
-http://wiki.openvz.org/Download/kernel/rhel5/028stab085.5
+https://openvz.org/Download/kernel/rhel5/028stab089.1
+https://openvz.org/Download/kernel/rhel5/028stab085.5
 https://rhn.redhat.com/errata/RHSA-2011-0429.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-1090
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-1478
@@ -698,7 +698,7 @@ itself in some 64-bit programs inside containers with some Linux
 distributions (not Owl) crashing with SIGSEGV.  The issue was new with
 -238 kernels (thus, it was not present in Owl 3.0, nor in 3.0-stable).
 References:
-http://wiki.openvz.org/Download/kernel/rhel5/028stab085.3
+https://openvz.org/Download/kernel/rhel5/028stab085.3
 https://bugs.openvz.org/browse/OVZ-4946
 
 2011/03/21	Package: kernel
@@ -740,8 +740,8 @@ includes a fix for CVE-2010-4655, but it was already included in our
 calculation of fragmented ICMP echo request datagrams (reported by Piotr
 Meyer).  Disabled the eepro100 driver in favor of e100.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab085.2
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab085.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab085.2
+https://openvz.org/Download/kernel/rhel5-testing/028stab085.1
 https://rhn.redhat.com/errata/RHSA-2011-0303.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4249
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4251
@@ -775,7 +775,7 @@ kmem accounting bug.  Enabled Ethernet bridge support, PPP_MPPE, and ULOG
 netfilter target.  For more info, see the changelog for the kernel
 package.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab084.3
+https://openvz.org/Download/kernel/rhel5-testing/028stab084.3
 https://bugs.openvz.org/browse/OVZ-4893
 
 2011/02/09	Package: patch
@@ -821,7 +821,7 @@ believed to be fixed in 028stab084.1).  Applied upstream's initial "fix
 for non-4levels page tables acct" (the bug was introduced in 084.1, so
 we did not have it before).
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab084.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab084.1
 https://bugs.openvz.org/browse/OVZ-4891
 
 2011/02/02	Package: patch
@@ -847,7 +847,7 @@ on systems with more than 8 logical CPUs) and working around the other
 (VDSO, which is now temporarily disabled on x86_64, to be re-enabled
 with the next kernel update).
 Reference:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab083.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab083.1
 
 2011/01/29	Package: nmap
 Updated to 5.50.
@@ -874,9 +874,9 @@ the security fixes described in the Red Hat security advisories
 referenced below were already included in our previous kernel revision
 (in Owl 3.0) with our own backports from a "testing" Red Hat kernel.)
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab083.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab083.1
 https://rhn.redhat.com/errata/RHSA-2011-0163.html
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab082.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab082.1
 https://rhn.redhat.com/errata/RHSA-2011-0004.html
 http://www.openwall.com/lists/oss-security/2011/01/28/1
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4655
@@ -909,4 +909,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/CHANGES-3.1,v 1.126.2.3 2016/08/23 22:06:29 solar Exp $
+$Owl: Owl/doc/CHANGES-3.1,v 1.126.2.4 2017/01/25 10:01:33 solar Exp $
