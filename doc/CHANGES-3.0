@@ -90,7 +90,7 @@ CONFIG_SECURITY_DMESG_RESTRICT).  Merged Red Hat's fix for "Bug 614957 -
 ext4: mount error path corrupts slab memory" (the bug could be triggered
 by a sysadmin making a typo in a "mount" command or in /etc/fstab).
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab079.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab079.1
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4258
 http://www.openwall.com/lists/oss-security/2010/12/02/3
 http://www.openwall.com/lists/oss-security/2010/12/02/7
@@ -213,8 +213,8 @@ from OpenVZ's 028stab070.5 (the same as Red Hat's from their -194.11.4
 RHEL5 kernel).  This was a "local root" vulnerability on 64-bit kernels
 built with 32-bit compatibility enabled.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab071.5
-http://wiki.openvz.org/Download/kernel/rhel5/028stab070.5
+https://openvz.org/Download/kernel/rhel5-testing/028stab071.5
+https://openvz.org/Download/kernel/rhel5/028stab070.5
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3081
 https://bugzilla.redhat.com/show_bug.cgi?id=634457
 https://rhn.redhat.com/errata/RHSA-2010-0704.html
@@ -267,9 +267,9 @@ and of course preserved our usual changes.  Enabled CONFIG_FUSION_* and
 CONFIG_PCNET32 (as modules) for easier Owl installation into VMware and
 VirtualBox VMs.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab071.3
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab071.2
-http://wiki.openvz.org/Download/kernel/rhel5/028stab070.4
+https://openvz.org/Download/kernel/rhel5-testing/028stab071.3
+https://openvz.org/Download/kernel/rhel5-testing/028stab071.2
+https://openvz.org/Download/kernel/rhel5/028stab070.4
 https://rhn.redhat.com/errata/RHSA-2010-0661.html
 https://rhn.redhat.com/errata/RHSA-2010-0610.html
 http://www.openwall.com/lists/oss-security/2010/08/16/1
@@ -394,7 +394,7 @@ Boot CD/DVD drive device autodetection has been implemented (needed to
 locate the root filesystem when booting off a CD/DVD with LILO).  ext4
 filesystem support has been enabled.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5/028stab070.2
+https://openvz.org/Download/kernel/rhel5/028stab070.2
 https://rhn.redhat.com/errata/RHSA-2010-0504.html
 
 2010/06/14	Package: john
@@ -1546,4 +1546,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.311 2016/10/24 03:27:06 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.312 2017/01/25 09:54:10 solar Exp $
