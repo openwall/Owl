@@ -14,13 +14,13 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/Documentation/sysctl/kernel.txt lin
  value of dmesg_restrict.
 diff -urpN linux-2.6.18-408.el5.028stab120.1/Makefile linux-2.6.18-408.el5.028stab120.1-owl/Makefile
 --- linux-2.6.18-408.el5.028stab120.1/Makefile	2016-01-25 08:11:41 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/Makefile	2016-12-10 01:07:59 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/Makefile	2017-01-25 09:21:56 +0000
 @@ -1,7 +1,7 @@
  VERSION = 2
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -prep
-+EXTRAVERSION = -408.el5.028stab120.1.owl6
++EXTRAVERSION = -408.el5.028stab120.1.owl7
  RHEL_MAJOR = 5
  RHEL_MINOR = 11
  NAME=Avast! A bilge rat!
@@ -1524,8 +1524,8 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/fuse.h linux-2.6.18-4
  
  struct fuse_open_out {
 diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/mm.h linux-2.6.18-408.el5.028stab120.1-owl/include/linux/mm.h
---- linux-2.6.18-408.el5.028stab120.1/include/linux/mm.h	2016-12-10 01:29:41 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/include/linux/mm.h	2016-12-10 01:29:54 +0000
+--- linux-2.6.18-408.el5.028stab120.1/include/linux/mm.h	2016-01-25 08:11:41 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/include/linux/mm.h	2017-01-25 09:20:33 +0000
 @@ -1193,6 +1193,8 @@ int remap_pfn_range(struct vm_area_struc
  int vm_insert_page(struct vm_area_struct *, unsigned long addr, struct page *);
  int vm_insert_pfn(struct vm_area_struct *vma, unsigned long addr,
@@ -3696,7 +3696,7 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/net/llc/af_llc.c linux-2.6.18-408.e
  		goto out;
 diff -urpN linux-2.6.18-408.el5.028stab120.1/net/socket.c linux-2.6.18-408.el5.028stab120.1-owl/net/socket.c
 --- linux-2.6.18-408.el5.028stab120.1/net/socket.c	2016-01-25 08:11:41 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/net/socket.c	2016-08-23 15:41:27 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/net/socket.c	2017-01-25 09:21:30 +0000
 @@ -1190,6 +1190,7 @@ int vz_security_protocol_check(int proto
  	case  IPPROTO_TCP:
  	case  IPPROTO_UDP:
@@ -3705,6 +3705,57 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/net/socket.c linux-2.6.18-408.el5.0
  		break;
  	default:
  		return -EAFNOSUPPORT;
+@@ -2198,31 +2199,31 @@ int __sys_recvmmsg(int fd, struct mmsghd
+ 			break;
+ 	}
+ 
+-out_put:
+-	fput_light(sock->file, fput_needed);
+-
+ 	if (err == 0)
+-		return datagrams;
++		goto out_put;
++
++	if (datagrams == 0) {
++		datagrams = err;
++		goto out_put;
++	}
+ 
+-	if (datagrams != 0) {
++	/*
++	 * We may return less entries than requested (vlen) if the
++	 * sock is non block and there aren't enough datagrams...
++	 */
++	if (err != -EAGAIN) {
+ 		/*
+-		 * We may return less entries than requested (vlen) if the
+-		 * sock is non block and there aren't enough datagrams...
++		 * ... or  if recvmsg returns an error after we
++		 * received some datagrams, where we record the
++		 * error to return on the next call or if the
++		 * app asks about it using getsockopt(SO_ERROR).
+ 		 */
+-		if (err != -EAGAIN) {
+-			/*
+-			 * ... or  if recvmsg returns an error after we
+-			 * received some datagrams, where we record the
+-			 * error to return on the next call or if the
+-			 * app asks about it using getsockopt(SO_ERROR).
+-			 */
+-			sock->sk->sk_err = -err;
+-		}
+-
+-		return datagrams;
++		sock->sk->sk_err = -err;
+ 	}
++out_put:
++	fput_light(sock->file, fput_needed);
+ 
+-	return err;
++	return datagrams;
+ }
+ 
+ asmlinkage long sys_recvmmsg(int fd, struct mmsghdr __user *mmsg,
 diff -urpN linux-2.6.18-408.el5.028stab120.1/scripts/kconfig/lxdialog/check-lxdialog.sh linux-2.6.18-408.el5.028stab120.1-owl/scripts/kconfig/lxdialog/check-lxdialog.sh
 --- linux-2.6.18-408.el5.028stab120.1/scripts/kconfig/lxdialog/check-lxdialog.sh	2006-09-20 03:42:06 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/scripts/kconfig/lxdialog/check-lxdialog.sh	2012-08-18 16:53:51 +0000

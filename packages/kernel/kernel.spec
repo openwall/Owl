@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.106.2.6 2016/12/11 09:22:20 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.106.2.7 2017/01/25 10:00:26 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 408.el5.028stab120.1
-Release: %ovzversion.owl6
+Release: %ovzversion.owl7
 License: GPLv2
 Group: System Environment/Kernel
 URL: https://openvz.org/Download/kernel/rhel5-testing/028stab120.1
@@ -104,6 +104,10 @@ done
 %files fake
 
 %changelog
+* Wed Jan 25 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl7
+- Merged in a fix of use after free in the recvmmsg() exit path (CVE-2016-7117)
+from Red Hat's -417.
+
 * Sat Dec 10 2016 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl6
 - Reduced CONFIG_NR_CPUS from 255 to 96 in order to mitigate the kernel package
 installed size increase of the previous change (was 15 MB).  Most of the size
