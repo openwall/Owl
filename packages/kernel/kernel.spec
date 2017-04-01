@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.120 2017/01/25 09:27:42 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.121 2017/04/01 21:09:00 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 408.el5.028stab120.1
-Release: %ovzversion.owl7
+Release: %ovzversion.owl8
 License: GPLv2
 Group: System Environment/Kernel
 URL: https://openvz.org/Download/kernel/rhel5-testing/028stab120.1
@@ -104,6 +104,9 @@ done
 %files fake
 
 %changelog
+* Sun Apr 02 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl8
+- Merged upstream fix to locking in net/ipv4/ping.c: ping_unhash().
+
 * Wed Jan 25 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl7
 - Merged in a fix of use after free in the recvmmsg() exit path (CVE-2016-7117)
 from Red Hat's -417.

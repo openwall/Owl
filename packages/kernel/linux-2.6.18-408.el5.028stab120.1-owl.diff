@@ -14,13 +14,13 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/Documentation/sysctl/kernel.txt lin
  value of dmesg_restrict.
 diff -urpN linux-2.6.18-408.el5.028stab120.1/Makefile linux-2.6.18-408.el5.028stab120.1-owl/Makefile
 --- linux-2.6.18-408.el5.028stab120.1/Makefile	2016-01-25 08:11:41 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/Makefile	2017-01-25 09:21:56 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/Makefile	2017-04-01 21:03:32 +0000
 @@ -1,7 +1,7 @@
  VERSION = 2
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -prep
-+EXTRAVERSION = -408.el5.028stab120.1.owl7
++EXTRAVERSION = -408.el5.028stab120.1.owl8
  RHEL_MAJOR = 5
  RHEL_MINOR = 11
  NAME=Avast! A bilge rat!
@@ -2630,7 +2630,7 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/net/ipv4/icmp.c linux-2.6.18-408.el
  		.handler = icmp_discard,
 diff -urpN linux-2.6.18-408.el5.028stab120.1/net/ipv4/ping.c linux-2.6.18-408.el5.028stab120.1-owl/net/ipv4/ping.c
 --- linux-2.6.18-408.el5.028stab120.1/net/ipv4/ping.c	1970-01-01 00:00:00 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/net/ipv4/ping.c	2014-07-10 10:47:30 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/net/ipv4/ping.c	2017-04-01 21:04:11 +0000
 @@ -0,0 +1,1012 @@
 +/*
 + * INET		An implementation of the TCP/IP protocol suite for the LINUX
@@ -2839,14 +2839,14 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/net/ipv4/ping.c linux-2.6.18-408.el
 +{
 +	struct inet_sock *isk = inet_sk(sk);
 +	ping_debug("ping_v4_unhash(isk=%p,isk->num=%u)\n", isk, isk->num);
++	write_lock_bh(&ping_table.lock);
 +	if (sk_hashed(sk)) {
-+		write_lock_bh(&ping_table.lock);
 +		sk_del_node_init(sk);
 +		sock_put(sk);
 +		isk->num = isk->sport = 0;
 +		sock_prot_dec_use(sk->sk_prot);
-+		write_unlock_bh(&ping_table.lock);
 +	}
++	write_unlock_bh(&ping_table.lock);
 +}
 +
 +static int ping_init_sock(struct sock *sk)

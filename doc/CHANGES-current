@@ -48,6 +48,16 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
+2017/04/02	Package: kernel
+SECURITY FIX	Severity: high, local, active
+Merged upstream fix to locking in net/ipv4/ping.c: ping_unhash(), where
+the race condition could have been exploited by container root into e.g.
+container escape.  Without a vulnerability in ping(1), the issue was not
+triggerable by non-root users (neither host nor container).
+References:
+http://www.openwall.com/lists/oss-security/2017/03/24/6
+http://lists.openwall.net/netdev/2017/03/25/16
+
 2017/01/25	Package: kernel
 SECURITY FIX	Severity: high, local, active
 Merged in a fix of use-after-free in the recvmmsg() exit path
@@ -335,4 +345,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.27 2017/01/25 09:42:02 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.28 2017/04/01 22:13:51 solar Exp $
