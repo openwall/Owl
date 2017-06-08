@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.121 2017/04/01 21:09:00 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.122 2017/06/07 23:47:16 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 408.el5.028stab120.1
-Release: %ovzversion.owl8
+Release: %ovzversion.owl9
 License: GPLv2
 Group: System Environment/Kernel
 URL: https://openvz.org/Download/kernel/rhel5-testing/028stab120.1
@@ -104,6 +104,12 @@ done
 %files fake
 
 %changelog
+* Wed Jun 07 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl9
+- Backported upstream reimplementation of restricted hard links, controllable
+via the fs.protected_hardlinks sysctl and enabled by default, similar to what
+we had as part of CONFIG_HARDEN_LINK in -ow patches and what grsecurity had as
+part of CONFIG_GRKERNSEC_LINK.
+
 * Sun Apr 02 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl8
 - Merged upstream fix to locking in net/ipv4/ping.c: ping_unhash().
 

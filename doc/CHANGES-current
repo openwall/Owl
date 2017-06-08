@@ -48,6 +48,12 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
+2017/06/08	Package: kernel
+Backported upstream reimplementation of restricted hard links,
+controllable via the fs.protected_hardlinks sysctl and enabled by
+default, similar to what we had as part of CONFIG_HARDEN_LINK in -ow
+patches and what grsecurity had as part of CONFIG_GRKERNSEC_LINK.
+
 2017/04/02	Package: kernel
 SECURITY FIX	Severity: high, local, active
 Merged upstream fix to locking in net/ipv4/ping.c: ping_unhash(), where
@@ -345,4 +351,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.28 2017/04/01 22:13:51 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.29 2017/06/08 00:08:12 solar Exp $
