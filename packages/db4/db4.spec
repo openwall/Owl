@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/db4/db4.spec,v 1.26 2017/06/15 12:55:48 solar Exp $
+# $Owl: Owl/packages/db4/db4.spec,v 1.27 2017/06/15 14:18:27 solar Exp $
 
 %define __soversion	4.3
 %define _libdb_a	libdb-%__soversion.a
@@ -229,9 +229,7 @@ chmod -R u+w %buildroot
 
 %changelog
 * Thu Jun 15 2017 Solar Designer <solar-at-owl.openwall.com> 4.3.29-owl6
-- If dbenv is NULL, don't open the DB_CONFIG file as it would be in the current
-directory whereas the documented behavior is for it to be in the environment's
-home directory.
+- Don't open the DB_CONFIG file in the current directory.
 
 * Sun Aug 16 2009 Solar Designer <solar-at-owl.openwall.com> 4.3.29-owl5
 - Don't require the main package in -doc.
