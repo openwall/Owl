@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.123 2017/06/19 13:53:56 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.124 2017/06/19 15:21:53 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 408.el5.028stab120.1
-Release: %ovzversion.owl10
+Release: %ovzversion.owl11
 License: GPLv2
 Group: System Environment/Kernel
 URL: https://openvz.org/Download/kernel/rhel5-testing/028stab120.1
@@ -104,6 +104,10 @@ done
 %files fake
 
 %changelog
+* Mon Jun 19 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl11
+- On SUID/SGID exec, limit the size of argv+envp to 512 KiB and the stack size
+to 8 MiB, similarly to what grsecurity did in 2012.
+
 * Mon Jun 19 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl10
 - For ping sockets, use inet_sockraw_ops instead of inet_dgram_ops, with the
 only difference being that the latter used udp_poll(), which upon a combination
