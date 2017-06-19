@@ -1631,7 +1631,7 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/binfmts.h linux-2.6.1
 +#define MAX_ARG_STACK (0xC0000000UL / 4)
 +#define MAX_ARG_STRINGS (MAX_ARG_STACK / 5)
 +#define MAX_ARG_STACK_SUGID (512 * 1024)
-+#define MAX_RLIMIT_STACK_SUGID (8 * 1024 * 1024)
++#define MAX_RLIMIT_STACK_SUGID (10 * 1024 * 1024)
  
  /* sizeof(linux_binprm->buf) */
  #define BINPRM_BUF_SIZE 128

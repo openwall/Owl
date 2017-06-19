@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.124 2017/06/19 15:21:53 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.125 2017/06/19 17:39:45 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -106,7 +106,7 @@ done
 %changelog
 * Mon Jun 19 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl11
 - On SUID/SGID exec, limit the size of argv+envp to 512 KiB and the stack size
-to 8 MiB, similarly to what grsecurity did in 2012.
+to 10 MiB, similarly to what grsecurity did in 2012.
 
 * Mon Jun 19 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl10
 - For ping sockets, use inet_sockraw_ops instead of inet_dgram_ops, with the
