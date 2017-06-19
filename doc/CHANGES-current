@@ -48,12 +48,21 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
+2017/06/19	Package: kernel
+SECURITY FIX	Severity: none to high, local, active
+On SUID/SGID exec, limit the size of argv+envp to 512 KiB and the stack
+size to 8 MiB, similarly to what grsecurity did in 2012.  This prevents
+some of the stack/heap clash attacks described by Qualys, while some
+others were already prevented for years by our glibc hardening changes.
+Reference:
+http://www.openwall.com/lists/oss-security/2017/06/19/1
+
 2017/06/15	Package: db4
 SECURITY FIX	Severity: medium to high, local, active
 Don't open the DB_CONFIG file in the current directory.  This unexpected
 property of db4 could have allowed for local DoS, information leaks, and
 privilege escalation via programs using db4, including Postfix.
-References:
+Reference:
 http://www.openwall.com/lists/oss-security/2017/06/15/3
 
 2017/06/08	Package: kernel
@@ -363,4 +372,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.31 2017/06/19 15:26:04 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.32 2017/06/19 15:49:27 solar Exp $
