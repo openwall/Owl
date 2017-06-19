@@ -58,7 +58,7 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/Makefile linux-2.6.18-408.el5.028st
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -prep
-+EXTRAVERSION = -408.el5.028stab120.1.owl9
++EXTRAVERSION = -408.el5.028stab120.1.owl10
  RHEL_MAJOR = 5
  RHEL_MINOR = 11
  NAME=Avast! A bilge rat!
@@ -2636,7 +2636,7 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/net/ipv4/af_inet.c linux-2.6.18-408
 +		.type =       SOCK_DGRAM,
 +		.protocol =   IPPROTO_ICMP,
 +		.prot =       &ping_prot,
-+		.ops =        &inet_dgram_ops,
++		.ops =        &inet_sockraw_ops,
 +		.no_check =   UDP_CSUM_DEFAULT,
 +		.flags =      INET_PROTOSW_REUSE,
 +       },

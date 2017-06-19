@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.122 2017/06/07 23:47:16 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.123 2017/06/19 13:53:56 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 408.el5.028stab120.1
-Release: %ovzversion.owl9
+Release: %ovzversion.owl10
 License: GPLv2
 Group: System Environment/Kernel
 URL: https://openvz.org/Download/kernel/rhel5-testing/028stab120.1
@@ -104,6 +104,15 @@ done
 %files fake
 
 %changelog
+* Mon Jun 19 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl10
+- For ping sockets, use inet_sockraw_ops instead of inet_dgram_ops, with the
+only difference being that the latter used udp_poll(), which upon a combination
+of flags would unnecessarily compute UDP checksum.  The same bug had worse
+consequences in newer upstream kernels, where it was discovered and reported by
+Sasha Levin and investigated and fixed by Eric Dumazet:
+http://lists.openwall.net/netdev/2017/06/03/13
+http://lists.openwall.net/netdev/2017/06/03/26
+
 * Wed Jun 07 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl9
 - Backported upstream reimplementation of restricted hard links, controllable
 via the fs.protected_hardlinks sysctl and enabled by default, similar to what
