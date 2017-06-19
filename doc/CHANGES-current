@@ -60,7 +60,11 @@ http://www.openwall.com/lists/oss-security/2017/06/15/3
 Backported upstream reimplementation of restricted hard links,
 controllable via the fs.protected_hardlinks sysctl and enabled by
 default, similar to what we had as part of CONFIG_HARDEN_LINK in -ow
-patches and what grsecurity had as part of CONFIG_GRKERNSEC_LINK.
+patches and what grsecurity had as part of CONFIG_GRKERNSEC_LINK.  This
+reinforces the group crontab vs. root privilege separation in our
+package of ISC/Vixie Cron.
+Reference:
+http://www.openwall.com/lists/oss-security/2017/06/08/3
 
 2017/04/02	Package: kernel
 SECURITY FIX	Severity: high, local, active
@@ -359,4 +363,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.30 2017/06/15 14:52:23 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.31 2017/06/19 15:26:04 solar Exp $
