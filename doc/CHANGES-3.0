@@ -90,7 +90,7 @@ CONFIG_SECURITY_DMESG_RESTRICT).  Merged Red Hat's fix for "Bug 614957 -
 ext4: mount error path corrupts slab memory" (the bug could be triggered
 by a sysadmin making a typo in a "mount" command or in /etc/fstab).
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab079.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab079.1
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4258
 http://www.openwall.com/lists/oss-security/2010/12/02/3
 http://www.openwall.com/lists/oss-security/2010/12/02/7
@@ -213,8 +213,8 @@ from OpenVZ's 028stab070.5 (the same as Red Hat's from their -194.11.4
 RHEL5 kernel).  This was a "local root" vulnerability on 64-bit kernels
 built with 32-bit compatibility enabled.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab071.5
-http://wiki.openvz.org/Download/kernel/rhel5/028stab070.5
+https://openvz.org/Download/kernel/rhel5-testing/028stab071.5
+https://openvz.org/Download/kernel/rhel5/028stab070.5
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3081
 https://bugzilla.redhat.com/show_bug.cgi?id=634457
 https://rhn.redhat.com/errata/RHSA-2010-0704.html
@@ -232,7 +232,7 @@ an application using libbz2 or potentially to execute arbitrary code via
 a crafted "bzip2-compressed" file.
 References:
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0405
-http://xorl.wordpress.com/2010/09/21/cve-2010-0405-bzip2-integer-overflow/
+https://xorl.wordpress.com/2010/09/21/cve-2010-0405-bzip2-integer-overflow/
 
 2010/09/02 -
 2010/09/18	Package: pam_mktemp
@@ -267,9 +267,9 @@ and of course preserved our usual changes.  Enabled CONFIG_FUSION_* and
 CONFIG_PCNET32 (as modules) for easier Owl installation into VMware and
 VirtualBox VMs.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab071.3
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab071.2
-http://wiki.openvz.org/Download/kernel/rhel5/028stab070.4
+https://openvz.org/Download/kernel/rhel5-testing/028stab071.3
+https://openvz.org/Download/kernel/rhel5-testing/028stab071.2
+https://openvz.org/Download/kernel/rhel5/028stab070.4
 https://rhn.redhat.com/errata/RHSA-2010-0661.html
 https://rhn.redhat.com/errata/RHSA-2010-0610.html
 http://www.openwall.com/lists/oss-security/2010/08/16/1
@@ -394,7 +394,7 @@ Boot CD/DVD drive device autodetection has been implemented (needed to
 locate the root filesystem when booting off a CD/DVD with LILO).  ext4
 filesystem support has been enabled.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5/028stab070.2
+https://openvz.org/Download/kernel/rhel5/028stab070.2
 https://rhn.redhat.com/errata/RHSA-2010-0504.html
 
 2010/06/14	Package: john
@@ -921,7 +921,7 @@ Backported upstream fixes for multiple OpenSSL signature verification
 API misuses.
 References:
 http://www.openwall.com/lists/oss-security/2009/01/07/2
-http://www.openssl.org/news/secadv_20090107.txt
+https://www.openssl.org/news/secadv_20090107.txt
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-5077
 
 2008/11/02	Package: tar
@@ -981,7 +981,6 @@ fingerprint.  This effort was supported by CivicActions.  References:
 http://www.openwall.com/lists/oss-security/2008/05/27/3
 http://www.debian.org/security/2008/dsa-1571
 http://www.ubuntu.com/usn/usn-612-1/
-http://metasploit.com/users/hdm/tools/debian-openssl/
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-0166
 
 2008/05/18	Package: nmap
@@ -1079,7 +1078,7 @@ function.  It is unclear whether the bug had any security impact.
 References:
 http://lists.openwall.net/bugtraq/2007/09/27/14
 http://lists.openwall.net/bugtraq/2007/10/01/7
-http://www.openssl.org/news/secadv_20071012.txt
+https://www.openssl.org/news/secadv_20071012.txt
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-5135
 
 2007/10/08	Package: cvs
@@ -1185,7 +1184,7 @@ An attacker is able to add arbitrary content to a signed message, and
 the receiver of the message may not be able to distinguish the forged
 and the properly signed parts of the message.
 References:
-http://www.coresecurity.com/content/gnupg-and-gnupg-clients-unsigned-data-injection-vulnerability
+https://www.coresecurity.com/content/gnupg-and-gnupg-clients-unsigned-data-injection-vulnerability
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-1263
 
 2007/02/25	Package: openssl
@@ -1246,7 +1245,7 @@ Applied upstream fix for heap buffer overflow bug in gpg when running
 gpg interactively.
 References:
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-6169
-http://lists.gnupg.org/pipermail/gnupg-announce/2006q4/000241.html
+https://lists.gnupg.org/pipermail/gnupg-announce/2006q4/000241.html
 
 2006/11/28	Package: tar
 SECURITY FIX	Severity: high, indirect, passive
@@ -1306,7 +1305,7 @@ http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4925
 SECURITY FIX	Severity: none to low/high, remote, active/passive
 Updated to 0.9.7l, which includes fixes for four security issues.
 References:
-http://www.openssl.org/news/secadv_20060928.txt
+https://www.openssl.org/news/secadv_20060928.txt
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-2937
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-2940
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-3738
@@ -1336,7 +1335,7 @@ Updated to 1.20.1.
 SECURITY FIX	Severity: none to medium, remote, passive to active
 Applied upstream patch to avoid RSA signature forgery.
 References:
-http://www.openssl.org/news/secadv_20060905.txt
+https://www.openssl.org/news/secadv_20060905.txt
 http://www.imc.org/ietf-openpgp/mail-archive/msg06063.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4339
 
@@ -1361,7 +1360,7 @@ SECURITY FIX	Severity: high, remote, passive
 Updated to 1.4.5.  This includes fixes for two more possible memory
 allocation bugs, similar to the problem fixed in 1.4.3-owl1.
 References:
-http://lists.gnupg.org/pipermail/gnupg-announce/2006q3/000229.html
+https://lists.gnupg.org/pipermail/gnupg-announce/2006q3/000229.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-3746
 
 2006/06/28	Package: gnupg
@@ -1512,9 +1511,9 @@ SECURITY FIX	Severity: medium, indirect, passive
 Updated to 1.4.2.2.  This includes fixes for the signature verification
 vulnerabilities discovered by Tavis Ormandy of Gentoo.
 References:
-http://lists.gnupg.org/pipermail/gnupg-announce/2006q1/000211.html
+https://lists.gnupg.org/pipermail/gnupg-announce/2006q1/000211.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0455
-http://lists.gnupg.org/pipermail/gnupg-announce/2006q1/000216.html
+https://lists.gnupg.org/pipermail/gnupg-announce/2006q1/000216.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0049
 
 2006/03/05	Package: nmap
@@ -1547,4 +1546,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.301.2.6 2014/07/05 08:30:40 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.301.2.7 2017/06/29 17:16:57 solar Exp $
