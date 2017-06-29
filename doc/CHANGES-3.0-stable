@@ -144,25 +144,25 @@ segment (Owl does not include such SUID/SGID programs).  Other security
 flaws reported as fixed in the release notes referenced below do not
 affect Owl's builds of the kernel.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab104.3
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab104.2
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab104.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab104.3
+https://openvz.org/Download/kernel/rhel5-testing/028stab104.2
+https://openvz.org/Download/kernel/rhel5-testing/028stab104.1
 https://rhn.redhat.com/errata/RHSA-2012-1445.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-2100
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab103.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab103.1
 https://rhn.redhat.com/errata/RHSA-2012-1174.html
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab102.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab102.1
 https://rhn.redhat.com/errata/RHSA-2012-1061.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-3375
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab101.1
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab100.2
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab099.4
-http://wiki.openvz.org/Download/kernel/rhel5/028stab099.3
+https://openvz.org/Download/kernel/rhel5-testing/028stab101.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab100.2
+https://openvz.org/Download/kernel/rhel5-testing/028stab099.4
+https://openvz.org/Download/kernel/rhel5/028stab099.3
 https://rhn.redhat.com/errata/RHSA-2012-0150.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-1083
 http://www.openwall.com/lists/oss-security/2011/03/02/1
 http://www.openwall.com/lists/oss-security/2011/03/02/2
-http://wiki.openvz.org/Download/kernel/rhel5/028stab098.1
+https://openvz.org/Download/kernel/rhel5/028stab098.1
 https://rhn.redhat.com/errata/RHSA-2012-0107.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-0207
 https://womble.decadent.org.uk/blog/igmp-denial-of-service-in-linux-cve-2012-0207.html
@@ -205,7 +205,7 @@ are in the NFS client and thus require an NFS mount to be present and
 accessible to a local attacker.  Please refer to the CVE IDs and other
 references below for more detail.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab097.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab097.1
 https://rhn.redhat.com/errata/RHSA-2012-0007.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-1020
 http://www.halfdog.net/Security/2011/SuidBinariesAndProcInterface/
@@ -227,7 +227,7 @@ Rhine NIC driver (as a module).  Although the corresponding RHEL update
 fixed multiple vulnerabilities, only the taskstats io infoleak
 (CVE-2011-2494) is relevant to Owl kernel builds.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab096.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab096.1
 https://rhn.redhat.com/errata/RHSA-2011-1479.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2494
 http://www.openwall.com/lists/oss-security/2011/06/24/6
@@ -254,7 +254,7 @@ being live-migrated on Owl host systems.  Finally, we've changed the
 default for CONFIG_PCNET32 from =m to =y for ease of use under VMware,
 which emulates NIC of this type by default.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5/028stab095.1
+https://openvz.org/Download/kernel/rhel5/028stab095.1
 https://rhn.redhat.com/errata/RHSA-2011-1386.html
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2695
 http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2696
@@ -341,9 +341,9 @@ builds, either because we do not build the affected components, or in
 case of CVE-2011-2495 because we already had the permissions on
 /proc/PID/io restricted before Owl 3.0 release.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5/028stab094.3
+https://openvz.org/Download/kernel/rhel5/028stab094.3
 https://rhn.redhat.com/errata/RHSA-2011-1212.html
-http://wiki.openvz.org/Download/kernel/rhel5/028stab093.2
+https://openvz.org/Download/kernel/rhel5/028stab093.2
 https://rhn.redhat.com/errata/RHSA-2011-1065.html
 http://www.openwall.com/lists/kernel-hardening/2011/09/27/3
 
@@ -376,8 +376,8 @@ set_user() to execve(2) and adjusted set_user() so that it can't fail.
 These changes were desirable to address missing setuid(2) return value
 check vulnerabilities in user-space programs.
 References:
-http://wiki.openvz.org/Download/kernel/rhel5/028stab092.2
-http://wiki.openvz.org/Download/kernel/rhel5/028stab091.1
+https://openvz.org/Download/kernel/rhel5/028stab092.2
+https://openvz.org/Download/kernel/rhel5/028stab091.1
 https://rhn.redhat.com/errata/RHSA-2011-0927.html
 https://rhn.redhat.com/errata/RHSA-2011-0833.html
 https://bugs.gentoo.org/show_bug.cgi?id=325805
@@ -561,14 +561,14 @@ changes (and the rationale behind them) in the change log for the kernel
 package.
 References:
 http://www.openwall.com/lists/oss-security/2011/01/28/1
-http://wiki.openvz.org/Download/kernel/rhel5/028stab089.1
-http://wiki.openvz.org/Download/kernel/rhel5/028stab085.5
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab085.2
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab085.1
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab084.3
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab084.1
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab083.1
-http://wiki.openvz.org/Download/kernel/rhel5-testing/028stab082.1
+https://openvz.org/Download/kernel/rhel5/028stab089.1
+https://openvz.org/Download/kernel/rhel5/028stab085.5
+https://openvz.org/Download/kernel/rhel5-testing/028stab085.2
+https://openvz.org/Download/kernel/rhel5-testing/028stab085.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab084.3
+https://openvz.org/Download/kernel/rhel5-testing/028stab084.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab083.1
+https://openvz.org/Download/kernel/rhel5-testing/028stab082.1
 https://rhn.redhat.com/errata/RHSA-2011-0004.html
 https://rhn.redhat.com/errata/RHSA-2011-0163.html
 https://rhn.redhat.com/errata/RHSA-2011-0303.html
@@ -652,4 +652,4 @@ vim-enhanced subpackage to correct a packaging error where some files
 in vim-enhanced were dependent upon files from vim-syntax, which is not
 installed by default.
 
-$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.39 2016/08/24 17:46:11 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.0-stable,v 1.1.2.40 2017/06/29 17:19:28 solar Exp $
