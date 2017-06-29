@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.106.2.8 2017/04/01 22:25:37 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.106.2.9 2017/06/29 16:34:07 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 408.el5.028stab120.1
-Release: %ovzversion.owl8
+Release: %ovzversion.owl11
 License: GPLv2
 Group: System Environment/Kernel
 URL: https://openvz.org/Download/kernel/rhel5-testing/028stab120.1
@@ -104,6 +104,25 @@ done
 %files fake
 
 %changelog
+* Mon Jun 19 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl11
+- On SUID/SGID exec, limit the size of argv+envp to 512 KiB and the stack size
+to 10 MiB, similarly to what grsecurity did in 2012.
+
+* Mon Jun 19 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl10
+- For ping sockets, use inet_sockraw_ops instead of inet_dgram_ops, with the
+only difference being that the latter used udp_poll(), which upon a combination
+of flags would unnecessarily compute UDP checksum.  The same bug had worse
+consequences in newer upstream kernels, where it was discovered and reported by
+Sasha Levin and investigated and fixed by Eric Dumazet:
+http://lists.openwall.net/netdev/2017/06/03/13
+http://lists.openwall.net/netdev/2017/06/03/26
+
+* Wed Jun 07 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl9
+- Backported upstream reimplementation of restricted hard links, controllable
+via the fs.protected_hardlinks sysctl and enabled by default, similar to what
+we had as part of CONFIG_HARDEN_LINK in -ow patches and what grsecurity had as
+part of CONFIG_GRKERNSEC_LINK.
+
 * Sun Apr 02 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl8
 - Merged upstream fix to locking in net/ipv4/ping.c: ping_unhash().
 

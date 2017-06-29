@@ -1,3 +1,41 @@
+diff -urpN linux-2.6.18-408.el5.028stab120.1/Documentation/sysctl/fs.txt linux-2.6.18-408.el5.028stab120.1-owl/Documentation/sysctl/fs.txt
+--- linux-2.6.18-408.el5.028stab120.1/Documentation/sysctl/fs.txt	2016-01-25 08:11:36 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/Documentation/sysctl/fs.txt	2017-06-06 21:06:19 +0000
+@@ -26,6 +26,7 @@ Currently, these files are in /proc/sys/
+ - nr_open
+ - overflowuid
+ - overflowgid
++- protected_hardlinks
+ - suid_dumpable
+ - super-max
+ - super-nr
+@@ -145,6 +146,26 @@ The default is 65534.
+ 
+ ==============================================================
+ 
++protected_hardlinks:
++
++A long-standing class of security issues is the hardlink-based
++time-of-check-time-of-use race, most commonly seen in world-writable
++directories like /tmp. The common method of exploitation of this flaw
++is to cross privilege boundaries when following a given hardlink (i.e. a
++root process follows a hardlink created by another user). Additionally,
++on systems without separated partitions, this stops unauthorized users
++from "pinning" vulnerable setuid/setgid files against being upgraded by
++the administrator, or linking to special files.
++
++When set to "0", hardlink creation behavior is unrestricted.
++
++When set to "1" hardlinks cannot be created by users if they do not
++already own the source file, or do not have read/write access to it.
++
++This protection is based on the restrictions in Openwall and grsecurity.
++
++==============================================================
++
+ suid_dumpable:
+ 
+ This value can be used to query and set the core dump mode for setuid
 diff -urpN linux-2.6.18-408.el5.028stab120.1/Documentation/sysctl/kernel.txt linux-2.6.18-408.el5.028stab120.1-owl/Documentation/sysctl/kernel.txt
 --- linux-2.6.18-408.el5.028stab120.1/Documentation/sysctl/kernel.txt	2016-01-25 08:11:40 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/Documentation/sysctl/kernel.txt	2016-08-23 15:41:27 +0000
@@ -14,13 +52,13 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/Documentation/sysctl/kernel.txt lin
  value of dmesg_restrict.
 diff -urpN linux-2.6.18-408.el5.028stab120.1/Makefile linux-2.6.18-408.el5.028stab120.1-owl/Makefile
 --- linux-2.6.18-408.el5.028stab120.1/Makefile	2016-01-25 08:11:41 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/Makefile	2017-04-01 21:03:32 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/Makefile	2017-06-19 15:03:44 +0000
 @@ -1,7 +1,7 @@
  VERSION = 2
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -prep
-+EXTRAVERSION = -408.el5.028stab120.1.owl8
++EXTRAVERSION = -408.el5.028stab120.1.owl11
  RHEL_MAJOR = 5
  RHEL_MINOR = 11
  NAME=Avast! A bilge rat!
@@ -828,7 +866,7 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/Kconfig linux-2.6.18-408.el5.028
  	  This file system is a part of Virtuozzo. It intoduces a fake
 diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/compat.c linux-2.6.18-408.el5.028stab120.1-owl/fs/compat.c
 --- linux-2.6.18-408.el5.028stab120.1/fs/compat.c	2016-01-25 08:11:40 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/fs/compat.c	2016-08-23 15:41:27 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/fs/compat.c	2017-06-19 14:56:34 +0000
 @@ -57,6 +57,10 @@
  #include <asm/mmu_context.h>
  #include <asm/ioctls.h>
@@ -849,7 +887,15 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/compat.c linux-2.6.18-408.el5.02
  /*
   * compat_do_execve() is mostly a copy of do_execve(), with the exception
   * that it processes 32 bit argv and envp pointers.
-@@ -1751,6 +1757,19 @@ int compat_do_execve(char * filename,
+@@ -1745,12 +1751,27 @@ int compat_do_execve(char * filename,
+ {
+ 	struct linux_binprm *bprm;
+ 	struct file *file;
++	int have_old_rlim_stack = 0;
++	unsigned long old_rlim_stack = 0;
+ 	int retval;
+ 
+ 	retval = virtinfo_gencall(VIRTINFO_DOEXECVE, NULL);
  	if (retval)
  		return retval;
  
@@ -869,7 +915,23 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/compat.c linux-2.6.18-408.el5.02
  	retval = -ENOMEM;
  	bprm = kzalloc(sizeof(*bprm), GFP_KERNEL);
  	if (!bprm)
-@@ -1808,6 +1827,7 @@ int compat_do_execve(char * filename,
+@@ -1787,6 +1808,15 @@ int compat_do_execve(char * filename,
+ 	if (retval < 0)
+ 		goto out;
+ 
++	if (bprm->e_uid != current->euid || bprm->e_gid != current->egid) {
++		old_rlim_stack = current->signal->rlim[RLIMIT_STACK].rlim_cur;
++		if (old_rlim_stack > MAX_RLIMIT_STACK_SUGID) {
++			current->signal->rlim[RLIMIT_STACK].rlim_cur =
++			    MAX_RLIMIT_STACK_SUGID;
++			have_old_rlim_stack = 1;
++		}
++	}
++
+ 	retval = copy_strings_kernel(1, &bprm->filename, bprm);
+ 	if (retval < 0)
+ 		goto out;
+@@ -1808,6 +1838,7 @@ int compat_do_execve(char * filename,
  	retval = search_binary_handler(bprm, regs);
  	if (retval >= 0) {
  		/* execve success */
@@ -877,6 +939,16 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/compat.c linux-2.6.18-408.el5.02
  		security_bprm_free(bprm);
  		acct_update_integrals(current);
  		kfree(bprm);
+@@ -1815,6 +1846,9 @@ int compat_do_execve(char * filename,
+ 	}
+ 
+ out:
++	if (have_old_rlim_stack)
++		current->signal->rlim[RLIMIT_STACK].rlim_cur = old_rlim_stack;
++
+ 	if (bprm->security)
+ 		security_bprm_free(bprm);
+ 
 diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/dcache.c linux-2.6.18-408.el5.028stab120.1-owl/fs/dcache.c
 --- linux-2.6.18-408.el5.028stab120.1/fs/dcache.c	2016-01-25 08:11:40 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/fs/dcache.c	2016-10-22 15:45:06 +0000
@@ -909,7 +981,7 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/dcache.c linux-2.6.18-408.el5.02
  		return NULL;
 diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/exec.c linux-2.6.18-408.el5.028stab120.1-owl/fs/exec.c
 --- linux-2.6.18-408.el5.028stab120.1/fs/exec.c	2016-01-25 08:11:40 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/fs/exec.c	2016-08-23 15:41:27 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/fs/exec.c	2017-06-19 14:56:27 +0000
 @@ -62,6 +62,10 @@
  #include <asm/mmu_context.h>
  #include <asm/tlb.h>
@@ -921,17 +993,20 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/exec.c linux-2.6.18-408.el5.028s
  #ifdef CONFIG_KMOD
  #include <linux/kmod.h>
  #endif
-@@ -231,7 +235,8 @@ struct page *get_arg_page(struct linux_b
+@@ -231,7 +235,11 @@ struct page *get_arg_page(struct linux_b
  		 *  - the program will have a reasonable amount of stack left
  		 *    to work from.
  		 */
 -		if (size > rlim[RLIMIT_STACK].rlim_cur / 4) {
 +		if (size > rlim[RLIMIT_STACK].rlim_cur / 4 ||
-+		    size > MAX_ARG_STACK) {
++		    size > MAX_ARG_STACK ||
++		    (size > MAX_ARG_STACK_SUGID &&
++		    (bprm->e_uid != current->euid ||
++		    bprm->e_gid != current->egid))) {
  			put_page(page);
  			return NULL;
  		}
-@@ -1459,6 +1464,8 @@ int search_binary_handler(struct linux_b
+@@ -1459,6 +1467,8 @@ int search_binary_handler(struct linux_b
  
  EXPORT_SYMBOL(search_binary_handler);
  
@@ -940,7 +1015,15 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/exec.c linux-2.6.18-408.el5.028s
  /*
   * sys_execve() executes a new program.
   */
-@@ -1475,6 +1482,19 @@ int do_execve(char * filename,
+@@ -1469,12 +1479,27 @@ int do_execve(char * filename,
+ {
+ 	struct linux_binprm *bprm;
+ 	struct file *file;
++	int have_old_rlim_stack = 0;
++	unsigned long old_rlim_stack = 0;
+ 	int retval;
+ 
+ 	retval = virtinfo_gencall(VIRTINFO_DOEXECVE, NULL);
  	if (retval)
  		return retval;
  
@@ -960,7 +1043,23 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/exec.c linux-2.6.18-408.el5.028s
  	retval = -ENOMEM;
  	bprm = kzalloc(sizeof(*bprm), GFP_KERNEL);
  	if (!bprm)
-@@ -1532,6 +1552,7 @@ int do_execve(char * filename,
+@@ -1511,6 +1536,15 @@ int do_execve(char * filename,
+ 	if (retval < 0)
+ 		goto out;
+ 
++	if (bprm->e_uid != current->euid || bprm->e_gid != current->egid) {
++		old_rlim_stack = current->signal->rlim[RLIMIT_STACK].rlim_cur;
++		if (old_rlim_stack > MAX_RLIMIT_STACK_SUGID) {
++			current->signal->rlim[RLIMIT_STACK].rlim_cur =
++			    MAX_RLIMIT_STACK_SUGID;
++			have_old_rlim_stack = 1;
++		}
++	}
++
+ 	retval = copy_strings_kernel(1, &bprm->filename, bprm);
+ 	if (retval < 0)
+ 		goto out;
+@@ -1532,6 +1566,7 @@ int do_execve(char * filename,
  	retval = search_binary_handler(bprm,regs);
  	if (retval >= 0) {
  		/* execve success */
@@ -968,6 +1067,16 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/exec.c linux-2.6.18-408.el5.028s
  		free_arg_pages(bprm);
  		security_bprm_free(bprm);
  		acct_update_integrals(current);
+@@ -1540,6 +1575,9 @@ int do_execve(char * filename,
+ 	}
+ 
+ out:
++	if (have_old_rlim_stack)
++		current->signal->rlim[RLIMIT_STACK].rlim_cur = old_rlim_stack;
++
+ 	free_arg_pages(bprm);
+ 	if (bprm->security)
+ 		security_bprm_free(bprm);
 diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/ext4/mballoc.c linux-2.6.18-408.el5.028stab120.1-owl/fs/ext4/mballoc.c
 --- linux-2.6.18-408.el5.028stab120.1/fs/ext4/mballoc.c	2016-01-25 08:11:39 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/fs/ext4/mballoc.c	2016-10-22 15:45:06 +0000
@@ -1150,6 +1259,92 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/gfs2/inode.c linux-2.6.18-408.el
  
  	ip->i_goal = be64_to_cpu(str->di_goal_meta);
  	ip->i_generation = be64_to_cpu(str->di_generation);
+diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/namei.c linux-2.6.18-408.el5.028stab120.1-owl/fs/namei.c
+--- linux-2.6.18-408.el5.028stab120.1/fs/namei.c	2016-01-25 08:11:41 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/fs/namei.c	2017-06-07 23:55:16 +0000
+@@ -665,6 +665,72 @@ static inline void path_to_nameidata(str
+ 	nd->dentry = path->dentry;
+ }
+ 
++int sysctl_protected_hardlinks __read_mostly = 1;
++
++/**
++ * safe_hardlink_source - Check for safe hardlink conditions
++ * @nd: the source to hardlink from
++ *
++ * Return false if at least one of the following conditions:
++ *    - inode is not a regular file
++ *    - inode is setuid
++ *    - inode is setgid and group-exec
++ *    - access failure for read and write
++ *
++ * Otherwise returns true.
++ */
++static bool safe_hardlink_source(struct nameidata *nd)
++{
++	struct inode *inode = nd->dentry->d_inode;
++	umode_t mode = inode->i_mode;
++
++	/* Special files should not get pinned to the filesystem. */
++	if (!S_ISREG(mode))
++		return false;
++
++	/* Setuid files should not get pinned to the filesystem. */
++	if (mode & S_ISUID)
++		return false;
++
++	/* Executable setgid files should not get pinned to the filesystem. */
++	if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP))
++		return false;
++
++	/* Hardlinking to unreadable or unwritable sources is dangerous. */
++	if (vfs_permission(nd, MAY_READ | MAY_WRITE))
++		return false;
++
++	return true;
++}
++
++/**
++ * may_linkat - Check permissions for creating a hardlink
++ * @nd: the source to hardlink from
++ *
++ * Block hardlink when all of:
++ *  - sysctl_protected_hardlinks enabled
++ *  - fsuid does not match inode
++ *  - hardlink source is unsafe (see safe_hardlink_source() above)
++ *  - not CAP_FOWNER in a namespace with the inode owner uid mapped
++ *
++ * Returns 0 if successful, -ve on error.
++ */
++static int may_linkat(struct nameidata *nd)
++{
++	if (!sysctl_protected_hardlinks)
++		return 0;
++
++	/* Source inode owner (or CAP_FOWNER) can hardlink all they like,
++	 * otherwise, it must be a safe source.
++	 */
++	if (current->fsuid == nd->dentry->d_inode->i_uid ||
++	    capable(CAP_FOWNER) ||
++	    safe_hardlink_source(nd))
++		return 0;
++
++	return -EPERM;
++}
++
+ static __always_inline int __do_follow_link(struct vfs_path *path, struct nameidata *nd)
+ {
+ 	int error;
+@@ -2629,6 +2695,9 @@ asmlinkage long sys_linkat(int olddfd, c
+ 	error = -EXDEV;
+ 	if (old_nd.mnt != nd.mnt)
+ 		goto out_release;
++	error = may_linkat(&old_nd);
++	if (error)
++		goto out_release;
+ 	new_dentry = lookup_create(&nd, 0);
+ 	error = PTR_ERR(new_dentry);
+ 	if (!IS_ERR(new_dentry)) {
 diff -urpN linux-2.6.18-408.el5.028stab120.1/fs/namespace.c linux-2.6.18-408.el5.028stab120.1-owl/fs/namespace.c
 --- linux-2.6.18-408.el5.028stab120.1/fs/namespace.c	2016-01-25 08:11:41 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/fs/namespace.c	2016-08-23 15:41:27 +0000
@@ -1427,14 +1622,16 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/include/asm-s390/tlbflush.h linux-2
  	__tlb_flush_full(mm);
 diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/binfmts.h linux-2.6.18-408.el5.028stab120.1-owl/include/linux/binfmts.h
 --- linux-2.6.18-408.el5.028stab120.1/include/linux/binfmts.h	2016-01-25 08:11:39 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/include/linux/binfmts.h	2016-08-23 15:41:27 +0000
-@@ -13,7 +13,8 @@ struct pt_regs;
++++ linux-2.6.18-408.el5.028stab120.1-owl/include/linux/binfmts.h	2017-06-19 14:40:12 +0000
+@@ -13,7 +13,10 @@ struct pt_regs;
   */
  #define MAX_ARG_PAGES 32
  #define MAX_ARG_STRLEN (PAGE_SIZE * 32)
 -#define MAX_ARG_STRINGS 0x7FFFFFFF
 +#define MAX_ARG_STACK (0xC0000000UL / 4)
 +#define MAX_ARG_STRINGS (MAX_ARG_STACK / 5)
++#define MAX_ARG_STACK_SUGID (512 * 1024)
++#define MAX_RLIMIT_STACK_SUGID (10 * 1024 * 1024)
  
  /* sizeof(linux_binprm->buf) */
  #define BINPRM_BUF_SIZE 128
@@ -1452,6 +1649,17 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/dmar.h linux-2.6.18-4
  static inline int alloc_irte(struct intel_iommu *iommu, int irq, u16 count)
  {
  	return -1;
+diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/fs.h linux-2.6.18-408.el5.028stab120.1-owl/include/linux/fs.h
+--- linux-2.6.18-408.el5.028stab120.1/include/linux/fs.h	2016-01-25 08:11:41 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/include/linux/fs.h	2017-06-07 23:55:16 +0000
+@@ -51,6 +51,7 @@ extern int leases_enable, lease_break_ti
+ extern int odirect_enable;
+ extern int snapapi_enable;
+ extern int lsyscall_enable;
++extern int sysctl_protected_hardlinks;
+ 
+ #ifdef CONFIG_DNOTIFY
+ extern int dir_notify_enable;
 diff -urpN linux-2.6.18-408.el5.028stab120.1/include/linux/fuse.h linux-2.6.18-408.el5.028stab120.1-owl/include/linux/fuse.h
 --- linux-2.6.18-408.el5.028stab120.1/include/linux/fuse.h	2016-01-25 08:11:39 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/include/linux/fuse.h	2016-10-22 15:45:06 +0000
@@ -2129,6 +2337,26 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/kernel/sys.c linux-2.6.18-408.el5.0
  		return -EAGAIN;
  	}
  
+diff -urpN linux-2.6.18-408.el5.028stab120.1/kernel/sysctl.c linux-2.6.18-408.el5.028stab120.1-owl/kernel/sysctl.c
+--- linux-2.6.18-408.el5.028stab120.1/kernel/sysctl.c	2016-01-25 08:11:41 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/kernel/sysctl.c	2017-06-07 23:55:16 +0000
+@@ -1679,6 +1679,16 @@ static ctl_table fs_table[] = {
+ 		.proc_handler	= &proc_dointvec
+ 	},
+ 	{
++		.ctl_name	= CTL_UNNUMBERED,
++		.procname	= "protected_hardlinks",
++		.data		= &sysctl_protected_hardlinks,
++		.maxlen		= sizeof(int),
++		.mode		= 0600,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &zero,
++		.extra2		= &one,
++	},
++	{
+ 		.ctl_name	= KERN_SETUID_DUMPABLE,
+ 		.procname	= "suid_dumpable",
+ 		.data		= &suid_dumpable,
 diff -urpN linux-2.6.18-408.el5.028stab120.1/kernel/ve/ve.c linux-2.6.18-408.el5.028stab120.1-owl/kernel/ve/ve.c
 --- linux-2.6.18-408.el5.028stab120.1/kernel/ve/ve.c	2016-01-25 08:11:41 +0000
 +++ linux-2.6.18-408.el5.028stab120.1-owl/kernel/ve/ve.c	2016-08-23 15:44:15 +0000
@@ -2463,7 +2691,7 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/net/ipv4/Makefile linux-2.6.18-408.
  obj-$(CONFIG_SYN_COOKIES) += syncookies.o
 diff -urpN linux-2.6.18-408.el5.028stab120.1/net/ipv4/af_inet.c linux-2.6.18-408.el5.028stab120.1-owl/net/ipv4/af_inet.c
 --- linux-2.6.18-408.el5.028stab120.1/net/ipv4/af_inet.c	2016-01-25 08:11:41 +0000
-+++ linux-2.6.18-408.el5.028stab120.1-owl/net/ipv4/af_inet.c	2016-08-23 15:41:27 +0000
++++ linux-2.6.18-408.el5.028stab120.1-owl/net/ipv4/af_inet.c	2017-06-19 15:03:24 +0000
 @@ -104,6 +104,7 @@
  #include <net/inet_connection_sock.h>
  #include <net/tcp.h>
@@ -2481,7 +2709,7 @@ diff -urpN linux-2.6.18-408.el5.028stab120.1/net/ipv4/af_inet.c linux-2.6.18-408
 +		.type =       SOCK_DGRAM,
 +		.protocol =   IPPROTO_ICMP,
 +		.prot =       &ping_prot,
-+		.ops =        &inet_dgram_ops,
++		.ops =        &inet_sockraw_ops,
 +		.no_check =   UDP_CSUM_DEFAULT,
 +		.flags =      INET_PROTOSW_REUSE,
 +       },
