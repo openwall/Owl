@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/db4/db4.spec,v 1.24 2010/02/06 13:30:02 solar Exp $
+# $Owl: Owl/packages/db4/db4.spec,v 1.24.4.1 2017/06/29 16:31:26 solar Exp $
 
 %define __soversion	4.3
 %define _libdb_a	libdb-%__soversion.a
@@ -9,7 +9,7 @@
 Summary: The Berkeley DB database library (version 4) for C.
 Name: db4
 Version: 4.3.29
-Release: owl5
+Release: owl6
 License: Sleepycat
 Group: System Environment/Libraries
 URL: http://www.sleepycat.com
@@ -23,6 +23,7 @@ Patch2: db-4.3.29.1.diff
 Patch3: db-4.3.29-cvs-20051006-db185.diff
 Patch4: db-4.3.29-up-configure-mutex.diff
 Patch5: db-4.3.29-alt-configure.diff
+Patch6: db-4.3.29-owl-DB_CONFIG.diff
 Obsoletes: db1, db1-devel
 BuildRequires: perl, libtool, ed, gcc-c++, glibc-utils
 BuildRoot: /override/%name-%version
@@ -96,6 +97,7 @@ popd
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 # Package missing docs.
 cp -p docs/gsg/JAVA/returns.html docs/gsg/C/
@@ -165,12 +167,18 @@ popd #%buildroot
 install -pm644 README LICENSE %buildroot%docdir/
 cp -a examples_c* %buildroot%docdir/
 
+# Remove unpackaged files
+rm %buildroot%_libdir/*.la
+
+# caught by the newer RPM
+LIB_MAJ='%__soversion'
+LIB_MAJ="${LIB_MAJ%%.*}"
+rm -- "%buildroot%_libdir/libdb-$LIB_MAJ.so"
+rm -- "%buildroot%_libdir/libdb_cxx-$LIB_MAJ.so"
+
 # Remove unneeded documentation.
 rm %buildroot%docdir/examples_*/tags
 rm -r %buildroot%docdir/java
-
-# Remove unpackaged files
-rm %buildroot%_libdir/*.la
 
 chmod -R u+w %buildroot
 
@@ -220,6 +228,9 @@ chmod -R u+w %buildroot
 %endif
 
 %changelog
+* Thu Jun 15 2017 Solar Designer <solar-at-owl.openwall.com> 4.3.29-owl6
+- Don't open the DB_CONFIG file in the current directory.
+
 * Sun Aug 16 2009 Solar Designer <solar-at-owl.openwall.com> 4.3.29-owl5
 - Don't require the main package in -doc.
 

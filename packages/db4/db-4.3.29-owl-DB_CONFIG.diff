@@ -1,0 +1,11 @@
+--- db-4.3.29/env/env_open.c.orig	2004-12-23 02:58:21 +0000
++++ db-4.3.29/env/env_open.c	2017-06-15 13:59:43 +0000
+@@ -500,7 +500,7 @@ __dbenv_config(dbenv, db_home, flags)
+ 	if (p == NULL)
+ 		fp = NULL;
+ 	else {
+-		fp = fopen(p, "r");
++		fp = strcmp(p, "DB_CONFIG") ? fopen(p, "r") : NULL;
+ 		__os_free(dbenv, p);
+ 	}
+ 
