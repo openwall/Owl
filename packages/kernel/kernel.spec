@@ -1,23 +1,23 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.125 2017/06/19 17:39:45 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.126 2017/10/18 15:22:42 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 408.el5.028stab120.1
-Release: %ovzversion.owl11
+%define ovzversion 419.el5.028stab122.4
+Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
-URL: https://openvz.org/Download/kernel/rhel5-testing/028stab120.1
+URL: https://openvz.org/Download/kernel/rhel5/028stab122.4
 Source0: linux-2.6.18.tar.xz
 # Source0: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2
 # Signature: http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.18.tar.bz2.sign
 Source1: dot-config-i686
 Source2: dot-config-x86_64
 Patch0: patch-%ovzversion-combined.xz
-# http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab120.1/patches/patch-408.el5.028stab120.1-combined.gz
-# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18-testing/028stab120.1/patches/patch-408.el5.028stab120.1-combined.gz.asc
+# http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab122.4/patches/patch-419.el5.028stab122.4-combined.gz
+# Signature: http://download.openvz.org/kernel/branches/rhel5-2.6.18/028stab122.4/patches/patch-419.el5.028stab122.4-combined.gz.asc
 Patch1: linux-%version-%ovzversion-owl.diff
 Requires: basesystem
 Provides: kernel-drm = 4.3.0
@@ -104,6 +104,9 @@ done
 %files fake
 
 %changelog
+* Wed Oct 18 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-419.el5.028stab122.4.owl1
+- Updated to 2.6.18-419.el5.028stab122.4.
+
 * Mon Jun 19 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-408.el5.028stab120.1.owl11
 - On SUID/SGID exec, limit the size of argv+envp to 512 KiB and the stack size
 to 10 MiB, similarly to what grsecurity did in 2012.
