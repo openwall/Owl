@@ -48,6 +48,29 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
+2017/10/19	Package: kernel
+SECURITY FIX	Severity: none to high, local, active
+Updated to 2.6.18-419.el5.028stab122.4.  This addresses the issue of
+Position Independent Executables' (PIE) data potentially overlapping in
+memory with their stack areas (CVE-2017-1000253).  (Un)fortunately, on
+Owl we do not yet build our SUID/SGID binaries as PIE (which would be a
+security enhancement if it were not for this issue), so this did not
+affect Owl itself, but it could affect third-party SUID/SGID binaries
+installed on Owl (including e.g. as part of third-party distros in
+containers).  The many other security issues also addressed with this
+upstream update, as compared to the much older upstream revision we
+built upon previously, had already been fixed or worked around in prior
+kernel updates for Owl.
+References:
+http://www.openwall.com/lists/oss-security/2017/09/26/16
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-1000253
+https://openvz.org/Download/kernel/rhel5/028stab122.4
+https://openvz.org/Download/kernel/rhel5/028stab122.3
+https://openvz.org/Download/kernel/rhel5/028stab122.2
+https://openvz.org/Download/kernel/rhel5/028stab122.1
+https://openvz.org/Download/kernel/rhel5/028stab120.3
+https://openvz.org/Download/kernel/rhel5/028stab120.2
+
 2017/06/19	Package: kernel
 SECURITY FIX	Severity: none to high, local, active
 On SUID/SGID exec, limit the size of argv+envp to 512 KiB and the stack
@@ -373,4 +396,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.33 2017/06/19 17:39:45 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.34 2017/10/19 11:41:37 solar Exp $
