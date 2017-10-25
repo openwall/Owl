@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.182 2016/07/08 13:38:26 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.183 2017/10/25 18:51:46 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.8.0.9
+Version: 1.8.0.10
 %define charsets_version 20130529
 Release: owl1
 License: GPL
@@ -199,6 +199,9 @@ install -m 644 -p run/{mailer,makechr,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Wed Oct 25 2017 Solar Designer <solar-at-owl.openwall.com> 1.8.0.10-owl1
+- Don't probe for alternate config file names (like john.ini when on Unix).
+
 * Fri Jul 08 2016 Solar Designer <solar-at-owl.openwall.com> 1.8.0.9-owl1
 - Fixed a bug introduced in version 1.7.4 in the wordlist rules engine, where
 some sequences of rule commands could overflow a word buffer.
