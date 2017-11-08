@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.183 2017/10/25 18:51:46 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.184 2017/11/08 20:33:19 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.8.0.10
+Version: 1.8.0.11
 %define charsets_version 20130529
 Release: owl1
 License: GPL
@@ -199,6 +199,14 @@ install -m 644 -p run/{mailer,makechr,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Wed Nov 08 2017 Solar Designer <solar-at-owl.openwall.com> 1.8.0.11-owl1
+- DokuWiki" external mode sample has been added to the default john.conf.
+- Increased SALT_HASH_LOG from 12 to 20, just like it had been done in jumbo.
+This should be affordable, even though it is wasteful for some formats (some
+have smaller salts, but currently have no way to declare that).
+- Dropped the smallest bitmap size (4-bit index, which was normally unused
+anyway) and introduced a new largest one (30-bit index).
+
 * Wed Oct 25 2017 Solar Designer <solar-at-owl.openwall.com> 1.8.0.10-owl1
 - Don't probe for alternate config file names (like john.ini when on Unix).
 
