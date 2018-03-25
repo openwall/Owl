@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.185 2017/12/02 21:05:56 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.186 2018/03/25 19:07:33 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.8.0.12
+Version: 1.8.0.13
 %define charsets_version 20130529
 Release: owl1
 License: GPL
@@ -199,6 +199,9 @@ install -m 644 -p run/{mailer,makechr,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sun Mar 25 2018 Solar Designer <solar-at-owl.openwall.com> 1.8.0.13-owl1
+- Fixed operator precedence in the external mode compiler to be the same as C.
+
 * Sat Dec 02 2017 Solar Designer <solar-at-owl.openwall.com> 1.8.0.12-owl1
 - Dropped use of our custom int64 in favor of standard uint64_t.
 
