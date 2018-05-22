@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/glibc/glibc.spec,v 1.137.2.2 2015/01/28 04:29:37 solar Exp $
+# $Owl: Owl/packages/glibc/glibc.spec,v 1.137.2.3 2018/05/22 16:47:29 solar Exp $
 
 %define BUILD_PROFILE 0
 %define BUILD_LOCALES 1
@@ -11,7 +11,7 @@ Summary: The GNU libc libraries.
 Name: glibc
 Version: %basevers%{?snapshot:.%snapshot}
 %define crypt_bf_version 1.3
-Release: owl24
+Release: owl25
 License: LGPL
 Group: System Environment/Libraries
 URL: http://www.gnu.org/software/libc/
@@ -87,6 +87,8 @@ Patch414: glibc-2.3.6-owl-gcc-4.3.diff
 Patch415: glibc-2.3.6-up-memcmp.diff
 Patch416: glibc-2.3.6-up-ld_linux.diff
 Patch417: glibc-2.3.6-up-rh-CVE-2015-0235.diff
+Patch418: glibc-2.3.6-up-owl-CVE-2013-4332.diff
+Patch419: glibc-2.3.6-up-owl-CVE-2017-15670.diff
 
 Requires: /etc/nsswitch.conf
 Provides: glibc-crypt_blowfish = %crypt_bf_version, ldconfig
@@ -273,6 +275,8 @@ fi
 %patch415 -p1
 %patch416 -p1
 %patch417 -p1
+%patch418 -p1
+%patch419 -p1
 
 # XXX: check sparcv9 builds and probably fix this.
 #%ifarch sparcv9
@@ -497,6 +501,11 @@ fi
 %endif
 
 %changelog
+* Wed Oct 25 2017 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl25
+- Backported upstream fix for the recently discovered glob heap buffer overflow
+(CVE-2017-15670) and while at it also for integer overflows in pvalloc, valloc,
+and posix_memalign/memalign/aligned_alloc (CVE-2013-4332).
+
 * Wed Jan 28 2015 Solar Designer <solar-at-owl.openwall.com> 2.3.6-owl24
 - Backported the CVE-2015-0235 (GHOST) fix from upstream via Red Hat's patch
 revision for their glibc 2.5 in RHEL5.
