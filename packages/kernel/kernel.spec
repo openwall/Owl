@@ -1,11 +1,11 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.106.2.10 2017/10/21 16:47:18 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.106.2.11 2018/05/22 16:48:52 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
 Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
-%define ovzversion 419.el5.028stab122.4
+%define ovzversion 431.el5.028stab123.1
 Release: %ovzversion.owl1
 License: GPLv2
 Group: System Environment/Kernel
@@ -104,6 +104,9 @@ done
 %files fake
 
 %changelog
+* Sun May 20 2018 Solar Designer <solar-at-owl.openwall.com> 2.6.18-431.el5.028stab123.1.owl1
+- Updated to 2.6.18-431.el5.028stab123.1.
+
 * Wed Oct 18 2017 Solar Designer <solar-at-owl.openwall.com> 2.6.18-419.el5.028stab122.4.owl1
 - Updated to 2.6.18-419.el5.028stab122.4.
 
