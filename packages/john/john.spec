@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.186 2018/03/25 19:07:33 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.187 2018/05/22 16:52:28 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -206,7 +206,7 @@ install -m 644 -p run/{mailer,makechr,relbench} doc/
 - Dropped use of our custom int64 in favor of standard uint64_t.
 
 * Wed Nov 08 2017 Solar Designer <solar-at-owl.openwall.com> 1.8.0.11-owl1
-- DokuWiki" external mode sample has been added to the default john.conf.
+- "DokuWiki" external mode sample has been added to the default john.conf.
 - Increased SALT_HASH_LOG from 12 to 20, just like it had been done in jumbo.
 This should be affordable, even though it is wasteful for some formats (some
 have smaller salts, but currently have no way to declare that).
