@@ -1142,7 +1142,7 @@ name servers.  The weakness used to make it easier for remote attackers
 to guess the next query id and perform DNS cache poisoning.
 References:
 http://www.trusteer.com/bind9dns
-http://marc.info/?l=bind-announce&m=118531674631565
+https://marc.info/?l=bind-announce&m=118531674631565
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-2926
 
 2007/06/01	Package: owl-cdrom
@@ -1200,9 +1200,9 @@ The second issue allowed remote DoS attack via a type ANY DNS query
 response that contains multiple RR sets in the answer section, which
 triggers an assertion error if DNSSEC validation is enabled.
 References:
-http://marc.info/?l=bind-announce&m=116968519321296
+https://marc.info/?l=bind-announce&m=116968519321296
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-0493
-http://marc.info/?l=bind-announce&m=116968519300764
+https://marc.info/?l=bind-announce&m=116968519300764
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-0494
 
 2007/01/18	Package: strace
@@ -1546,4 +1546,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.313 2018/05/23 19:23:52 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.314 2018/05/23 19:32:15 solar Exp $

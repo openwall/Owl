@@ -284,7 +284,7 @@ umount available to non-root users with control(8) (by default, only
 root can invoke umount) and specified any filesystems with restrictive
 flags (such as nosuid or nodev) as user-mountable.
 References:
-http://marc.info/?l=bugtraq&m=112656096125857
+https://marc.info/?l=bugtraq&m=112656096125857
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-2876
 
 2005/09/05	Package: john
@@ -569,7 +569,7 @@ DoS by a malicious smbfs server; potential: remote root by a malicious
 server).
 References:
 https://isec.pl/en/vulnerabilities/isec-0017-binfmt_elf.txt
-http://marc.info/?l=bugtraq&m=110091183206580
+https://marc.info/?l=bugtraq&m=110091183206580
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0883
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0949
 
@@ -674,7 +674,7 @@ the default kernels on Owl CDs, it's only the Intel PRO/1000 Gigabit
 Ethernet driver (e1000) which has a vulnerability allowing for more
 than a DoS attack fixed with this update.
 References:
-http://marc.info/?l=openwall-announce&m=108763826328168
+http://www.openwall.com/lists/announce/2004/06/19/1
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0495
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0554
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0535
@@ -829,4 +829,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Owl: Owl/doc/CHANGES-2.0,v 1.206 2018/05/23 19:23:52 solar Exp $
+$Owl: Owl/doc/CHANGES-2.0,v 1.207 2018/05/23 19:32:15 solar Exp $
