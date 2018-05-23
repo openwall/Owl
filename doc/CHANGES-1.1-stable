@@ -10,8 +10,8 @@ SECURITY FIX	Severity: high, local, active
 Updated to Linux 2.4.30-ow3.  This version fixes the ELF core dump
 vulnerability discovered by Paul Starzetz.
 References:
-http://www.isec.pl/vulnerabilities/isec-0023-coredump.txt
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1263
+https://isec.pl/en/vulnerabilities/isec-0023-coredump.txt
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1263
 
 2005/03/28	Package: telnet
 SECURITY FIX	Severity: high, remote, passive
@@ -20,8 +20,8 @@ might have allowed a malicious Telnet server to execute arbitrary
 machine code within the context of the telnet client process used to
 connect to the server.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0469
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0468
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0469
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0468
 
 2005/02/06	Package: cpio
 SECURITY FIX	Severity: low, local, passive
@@ -29,7 +29,7 @@ Obey the current umask when creating output files; previously, the
 files would be created with mode 666.  Thanks to Mike O'Connor for
 bringing this up.
 Reference:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-1999-1572
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-1999-1572
 
 2005/01/20	kernel
 SECURITY FIX	Severity: high, local, active
@@ -42,10 +42,10 @@ the Openwall patch applied since the vulnerable code is only compiled
 in if one explicitly enables CONFIG_BINFMT_ELF_AOUT, an option
 introduced by the patch.
 References:
-http://www.isec.pl/vulnerabilities/isec-0022-pagefault.txt
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0001
-http://www.isec.pl/vulnerabilities/isec-0021-uselib.txt
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-1235
+https://isec.pl/en/vulnerabilities/isec-0022-pagefault.txt
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0001
+https://isec.pl/en/vulnerabilities/isec-0021-uselib.txt
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-1235
 
 2004/11/23 -
 2004/11/28	kernel; Package: net-tools
@@ -59,10 +59,10 @@ support vulnerabilities discovered by Stefan Esser (confirmed: remote
 DoS by a malicious smbfs server; potential: remote root by a malicious
 server).
 References:
-http://www.isec.pl/vulnerabilities/isec-0017-binfmt_elf.txt
-http://marc.info/?l=bugtraq&m=110091183206580
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0883
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0949
+https://isec.pl/en/vulnerabilities/isec-0017-binfmt_elf.txt
+https://marc.info/?l=bugtraq&m=110091183206580
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0883
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0949
 
 2004/08/04 -
 2004/08/15	kernel
@@ -79,9 +79,9 @@ not been enabled in the default kernels on Owl CDs.  However, as the
 potential impact of both issues is a local root compromise, an upgrade
 of older Linux 2.4.x installs to 2.4.26-ow3+ is highly recommended.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0497
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0415
-http://www.isec.pl/vulnerabilities/isec-0016-procleaks.txt
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0497
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0415
+https://isec.pl/en/vulnerabilities/isec-0016-procleaks.txt
 
 (2004/06/22)
 2004/06/26	Package: dhcp
@@ -104,10 +104,10 @@ the default kernels on Owl CDs, it's only the Intel PRO/1000 Gigabit
 Ethernet driver (e1000) which has a vulnerability allowing for more
 than a DoS attack fixed with this update.
 References:
-http://marc.info/?l=openwall-announce&m=108763826328168
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0495
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0554
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0535
+https://marc.info/?l=openwall-announce&m=108763826328168
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0495
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0554
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0535
 
 2004/06/09	Package: shadow-utils
 SECURITY FIX	Severity: none to low, local, active
@@ -130,18 +130,18 @@ that CVS server provides any security against a malicious client.  If
 required, any restrictions on the actions CVS server is allowed to
 perform should be imposed at the OS level.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0396
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0414
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0416
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0417
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0418
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0396
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0414
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0416
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0417
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0418
 
 2004/06/07	Package: openssh
 SECURITY FIX	Severity: high, remote, passive
 Fixed directory traversal vulnerability in scp which allowed malicious
 SSH servers to overwrite arbitrary files on the client system.
 Reference:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0175
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0175
 
 (2004/04/18)
 2004/04/22	kernel
@@ -153,10 +153,10 @@ the bug would lead to a local root compromise.  Also included in this
 kernel release is a fix for the ext3/XFS information leak discovered
 by Solar Designer and a number of other relatively minor fixes.
 References:
-http://www.isec.pl/vulnerabilities/isec-0015-msfilter.txt
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0424
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0177
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0133
+https://isec.pl/en/vulnerabilities/isec-0015-msfilter.txt
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0424
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0177
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0133
 
 (2004/04/14)
 2004/04/14	Package: cvs
@@ -174,8 +174,8 @@ server provides any security against a malicious client being able to
 access arbitrary files available under the privileges granted to the
 CVS server at the OS level.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0180
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0405
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0180
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0405
 
 (2004/03/18)
 2004/04/14	Package: openssl
@@ -188,7 +188,7 @@ are a part of Owl, it's only individual invocations of network clients
 which are affected and may be caused to crash by a malicious server.
 References:
 http://www.openssl.org/news/secadv_20040317.txt
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0079
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0079
 
 (2004/02/08)
 2004/04/14	Package: SimplePAMApps
@@ -219,4 +219,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 2004/01/15	Owl/doc/DOWNLOAD, Owl/doc/*/DOWNLOAD, Owl/doc/fr/CREDITS
 Sync'ed with the minor post-release updates made in Owl-current.
 
-$Owl: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.34 2011/08/27 11:58:08 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-1.1-stable,v 1.1.2.35 2018/05/23 20:03:44 solar Exp $
