@@ -146,7 +146,7 @@ BIND's own access controls (such as the "allow-query" directive) are
 ineffective against the attack.
 References:
 http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=538975
-http://www.kb.cert.org/vuls/id/725188
+https://www.kb.cert.org/vuls/id/725188
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-0696
 
 (2009/07/07)
@@ -240,7 +240,7 @@ SECURITY FIX	Severity: medium, remote, active
 Updated to 9.3.5-P1, which additionally randomizes UDP query ports to
 improve resilience to DNS cache poisoning attacks.
 References:
-http://www.kb.cert.org/vuls/id/800113
+https://www.kb.cert.org/vuls/id/800113
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-1447
 
 (2008/05/27)
@@ -541,9 +541,9 @@ SECURITY FIX	Severity: none to low, remote, active
 Updated to 9.3.2-P1, which fixes a couple of bugs that allowed for DoS
 attacks on certain BIND configurations.
 References:
-http://www.kb.cert.org/vuls/id/915404
+https://www.kb.cert.org/vuls/id/915404
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4095
-http://www.kb.cert.org/vuls/id/697164
+https://www.kb.cert.org/vuls/id/697164
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4096
 
 (2006/08/04)
@@ -600,4 +600,4 @@ References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.85 2018/05/23 20:03:05 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-2.0-stable,v 1.1.2.86 2018/05/23 20:06:40 solar Exp $
