@@ -4,8 +4,7 @@ http://www.openwall.com/Owl/
 
 Owl can be downloaded from the following official mirrors:
 
-ftp://mirrors.kernel.org/openwall/Owl/	(USA)
-	http://mirrors.kernel.org/openwall/Owl/
+https://mirrors.kernel.org/openwall/Owl/	(worldwide)
 	rsync://mirrors.kernel.org/mirrors/openwall/Owl/
 ftp://distro.ibiblio.org/openwall/Owl/	(USA)
 	http://distro.ibiblio.org/openwall/Owl/
@@ -13,7 +12,6 @@ ftp://ftp1.ru.openwall.com/pub/Owl/	(Moscow, Russia)
 ftp://ftp2.ru.openwall.com/pub/Owl/	(Moscow, Russia)
 ftp://ftp.fr.openwall.com/pub/Owl/	(France)
 ftp://ftp.cz.openwall.com/pub/Owl/	(Czech Republic)
-ftp://ftp.mathematik.uni-marburg.de/pub/mirror/openwall/Owl/	(Germany)
 ftp://ftp.cc.uoc.gr/mirrors/linux/openwall/Owl/	(Greece)
 	http://ftp.cc.uoc.gr/mirrors/linux/openwall/Owl/
 ftp://mirror.optusnet.com.au/pub/Owl/	(Australia)
@@ -74,4 +72,4 @@ Finally, the CVSweb interface is provided at:
 
 http://cvsweb.openwall.com
 
-$Owl: Owl/doc/DOWNLOAD,v 1.57 2014/06/14 18:08:41 solar Exp $
+$Owl: Owl/doc/DOWNLOAD,v 1.57.2.1 2018/05/23 19:45:44 solar Exp $
