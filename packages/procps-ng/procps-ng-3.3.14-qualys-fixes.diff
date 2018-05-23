@@ -1,0 +1,3248 @@
+diff -urp procps-ng-3.3.14/pgrep.c procps-ng-3.3.14-qualys/pgrep.c
+--- procps-ng-3.3.14/pgrep.c	2018-04-10 11:14:00 +0000
++++ procps-ng-3.3.14-qualys/pgrep.c	2018-05-23 12:34:15 +0000
+@@ -54,6 +54,12 @@
+ #include "proc/devname.h"
+ #include "proc/sysinfo.h"
+ 
++#define grow_size(x) do { \
++	if ((x) < 0 || (size_t)(x) >= INT_MAX / 5 / sizeof(struct el)) \
++		xerrx(EXIT_FAILURE, _("integer overflow")); \
++	(x) = (x) * 5 / 4 + 4; \
++} while (0)
++
+ static int i_am_pkill = 0;
+ 
+ struct el {
+@@ -158,7 +164,7 @@ static struct el *split_list (const char
+ 
+ 	do {
+ 		if (i == size) {
+-			size = size * 5 / 4 + 4;
++			grow_size(size);
+ 			/* add 1 because slot zero is a count */
+ 			list = xrealloc (list, (1 + size) * sizeof *list);
+ 		}
+@@ -186,8 +192,8 @@ static struct el *split_list (const char
+  * contains a plain number, FALSE if there are any non-digits. */
+ static int strict_atol (const char *restrict str, long *restrict value)
+ {
+-	int res = 0;
+-	int sign = 1;
++	long res = 0;
++	long sign = 1;
+ 
+ 	if (*str == '+')
+ 		++str;
+@@ -245,11 +251,11 @@ static struct el *read_pidfile(void)
+ 	if(opt_lock && !has_flock(fd) && !has_fcntl(fd))
+ 		goto out;
+ 	memset(buf,'\0',sizeof buf);
+-	n = read(fd,buf+1,sizeof buf-2);
++	n = read(fd,buf,sizeof buf-1);
+ 	if (n<1)
+ 		goto out;
+-	pid = strtoul(buf+1,&endp,10);
+-	if(endp<=buf+1 || pid<1 || pid>0x7fffffff)
++	pid = strtoul(buf,&endp,10);
++	if(endp<=buf || pid<1 || pid>0x7fffffff)
+ 		goto out;
+ 	if(*endp && !isspace(*endp))
+ 		goto out;
+@@ -354,13 +360,13 @@ static int conv_ns (const char *restrict
+ static int match_numlist (long value, const struct el *restrict list)
+ {
+ 	int found = 0;
+-	if (list == NULL)
+-		found = 0;
+-	else {
++	if (list != NULL) {
+ 		int i;
+ 		for (i = list[0].num; i > 0; i--) {
+-			if (list[i].num == value)
++			if (list[i].num == value) {
+ 				found = 1;
++				break;
++			}
+ 		}
+ 	}
+ 	return found;
+@@ -369,13 +375,13 @@ static int match_numlist (long value, co
+ static int match_strlist (const char *restrict value, const struct el *restrict list)
+ {
+ 	int found = 0;
+-	if (list == NULL)
+-		found = 0;
+-	else {
++	if (list != NULL) {
+ 		int i;
+ 		for (i = list[0].num; i > 0; i--) {
+-			if (! strcmp (list[i].str, value))
++			if (! strcmp (list[i].str, value)) {
+ 				found = 1;
++				break;
++			}
+ 		}
+ 	}
+ 	return found;
+@@ -385,14 +391,14 @@ static int match_ns (const proc_t *task,
+ {
+ 	int found = 1;
+ 	int i;
+-
+ 	for (i = 0; i < NUM_NS; i++) {
+ 		if (ns_flags & (1 << i)) {
+-			if (task->ns[i] != ns_task->ns[i])
++			if (task->ns[i] != ns_task->ns[i]) {
+ 				found = 0;
++				break;
++			}
+ 		}
+ 	}
+-
+ 	return found;
+ }
+ 
+@@ -483,6 +489,7 @@ static struct el * select_procs (int *nu
+ {
+ 	PROCTAB *ptp;
+ 	proc_t task;
++	proc_t subtask;
+ 	unsigned long long saved_start_time;      /* for new/old support */
+ 	pid_t saved_pid = 0;                      /* for new/old support */
+ 	int matches = 0;
+@@ -490,9 +497,9 @@ static struct el * select_procs (int *nu
+ 	regex_t *preg;
+ 	pid_t myself = getpid();
+ 	struct el *list = NULL;
+-	char cmdline[CMDSTRSIZE];
+-	char cmdsearch[CMDSTRSIZE];
+-	char cmdoutput[CMDSTRSIZE];
++	char cmdline[CMDSTRSIZE] = "";
++	char cmdsearch[CMDSTRSIZE] = "";
++	char cmdoutput[CMDSTRSIZE] = "";
+ 	proc_t ns_task;
+ 
+ 	ptp = do_openproc();
+@@ -510,6 +517,7 @@ static struct el * select_procs (int *nu
+ 	}
+ 
+ 	memset(&task, 0, sizeof (task));
++	memset(&subtask, 0, sizeof (subtask));
+ 	while(readproc(ptp, &task)) {
+ 		int match = 1;
+ 
+@@ -547,34 +555,41 @@ static struct el * select_procs (int *nu
+ 		}
+ 		if (task.cmdline && (opt_longlong || opt_full) ) {
+ 			int i = 0;
+-			int bytes = sizeof (cmdline) - 1;
++			int bytes = sizeof (cmdline);
++			char *str = cmdline;
+ 
+ 			/* make sure it is always NUL-terminated */
+-			cmdline[bytes] = 0;
+-			/* make room for SPC in loop below */
+-			--bytes;
+-
+-			strncpy (cmdline, task.cmdline[i], bytes);
+-			bytes -= strlen (task.cmdline[i++]);
+-			while (task.cmdline[i] && bytes > 0) {
+-				strncat (cmdline, " ", bytes);
+-				strncat (cmdline, task.cmdline[i], bytes);
+-				bytes -= strlen (task.cmdline[i++]) + 1;
++			*str = '\0';
++
++			while (task.cmdline[i] && bytes > 1) {
++				const int len = snprintf(str, bytes, "%s%s", i ? " " : "", task.cmdline[i]);
++				if (len < 0) {
++					*str = '\0';
++					break;
++				}
++				if (len >= bytes) {
++					break;
++				}
++				str += len;
++				bytes -= len;
++				i++;
+ 			}
+ 		}
+ 
+ 		if (opt_long || opt_longlong || (match && opt_pattern)) {
+ 			if (opt_longlong && task.cmdline)
+-				strncpy (cmdoutput, cmdline, CMDSTRSIZE);
++				strncpy (cmdoutput, cmdline, sizeof cmdoutput - 1);
+ 			else
+-				strncpy (cmdoutput, task.cmd, CMDSTRSIZE);
++				strncpy (cmdoutput, task.cmd, sizeof cmdoutput - 1);
++			cmdoutput[sizeof cmdoutput - 1] = '\0';
+ 		}
+ 
+ 		if (match && opt_pattern) {
+ 			if (opt_full && task.cmdline)
+-				strncpy (cmdsearch, cmdline, CMDSTRSIZE);
++				strncpy (cmdsearch, cmdline, sizeof cmdsearch - 1);
+ 			else
+-				strncpy (cmdsearch, task.cmd, CMDSTRSIZE);
++				strncpy (cmdsearch, task.cmd, sizeof cmdsearch - 1);
++			cmdsearch[sizeof cmdsearch - 1] = '\0';
+ 
+ 			if (regexec (preg, cmdsearch, 0, NULL, 0) != 0)
+ 				match = 0;
+@@ -598,7 +613,7 @@ static struct el * select_procs (int *nu
+ 				matches = 0;
+ 			}
+ 			if (matches == size) {
+-				size = size * 5 / 4 + 4;
++				grow_size(size);
+ 				list = xrealloc(list, size * sizeof *list);
+ 			}
+ 			if (list && (opt_long || opt_longlong || opt_echo)) {
+@@ -615,8 +630,6 @@ static struct el * select_procs (int *nu
+ 			// argparse time, but a further
+ 			// control is free
+ 			if (opt_threads && !i_am_pkill) {
+-				proc_t subtask;
+-				memset(&subtask, 0, sizeof (subtask));
+ 				while (readtask(ptp, &task, &subtask)){
+ 					// don't add redundand tasks
+ 					if (task.XXXID == subtask.XXXID)
+@@ -624,10 +637,8 @@ static struct el * select_procs (int *nu
+ 
+ 					// eventually grow output buffer
+ 					if (matches == size) {
+-						size = size * 5 / 4 + 4;
+-						list = realloc(list, size * sizeof *list);
+-						if (list == NULL)
+-							exit (EXIT_FATAL);
++						grow_size(size);
++						list = xrealloc(list, size * sizeof *list);
+ 					}
+ 					if (opt_long || opt_longlong) {
+ 						list[matches].str = xstrdup (cmdoutput);
+@@ -635,19 +646,9 @@ static struct el * select_procs (int *nu
+ 					} else {
+ 						list[matches++].num = subtask.XXXID;
+ 					}
+-					memset(&subtask, 0, sizeof (subtask));
+ 				}
+ 			}
+-
+-
+-
+ 		}
+-
+-
+-
+-
+-
+-		memset (&task, 0, sizeof (task));
+ 	}
+ 	closeproc (ptp);
+ 	*num = matches;
+diff -urp procps-ng-3.3.14/pidof.c procps-ng-3.3.14-qualys/pidof.c
+--- procps-ng-3.3.14/pidof.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/pidof.c	2018-05-23 12:34:15 +0000
+@@ -20,6 +20,7 @@
+ 
+ #include <stdio.h>
+ #include <getopt.h>
++#include <limits.h>
+ 
+ #include "c.h"
+ #include "fileutils.h"
+@@ -29,7 +30,12 @@
+ #include "proc/version.h" /* procps_version */
+ 
+ 
+-#define grow_size(x)	(x = x * 5 / 4 + 1024)
++#define grow_size(x) do { \
++	if ((x) < 0 || (size_t)(x) >= INT_MAX / 5 / sizeof(struct el)) \
++		xerrx(EXIT_FAILURE, _("integer overflow")); \
++	(x) = (x) * 5 / 4 + 1024; \
++} while (0)
++
+ #define safe_free(x)	if (x) { free(x); x=NULL; }
+ 
+ 
+@@ -136,7 +142,6 @@ static void select_procs (void)
+ 	static int size = 0;
+ 	char *cmd_arg0, *cmd_arg0base;
+ 	char *cmd_arg1, *cmd_arg1base;
+-	char *pos;
+ 	char *program_base;
+ 	char *root_link;
+ 	char *exe_link;
+@@ -158,12 +163,11 @@ static void select_procs (void)
+ 			safe_free(root_link);
+ 
+ 			if (!match) {  /* root check failed */
+-				memset (&task, 0, sizeof (task));
+ 				continue;
+ 			}
+ 		}
+ 
+-		if (!is_omitted(task.XXXID) && task.cmdline) {
++		if (!is_omitted(task.XXXID) && task.cmdline && *task.cmdline) {
+ 
+ 			cmd_arg0 = *task.cmdline;
+ 
+@@ -194,12 +198,10 @@ static void select_procs (void)
+ 
+ 			} else if (opt_scripts_too && *(task.cmdline+1)) {
+ 
+-				pos = cmd_arg1base = cmd_arg1 = *(task.cmdline+1);
++				cmd_arg1 = *(task.cmdline+1);
+ 
+ 				/* get the arg1 base name */
+-				while (*pos != '\0') {
+-					if (*(pos++) == '/') cmd_arg1base = pos;
+-				}
++				cmd_arg1base = get_basename(cmd_arg1);
+ 
+ 				/* if script, then task.cmd = argv1, otherwise task.cmd = argv0 */
+ 				if (task.cmd &&
+@@ -233,8 +235,6 @@ static void select_procs (void)
+ 			}
+ 
+ 		}
+-
+-		memset (&task, 0, sizeof (task));
+ 	}
+ 
+ 	closeproc (ptp);
+@@ -324,6 +324,7 @@ int main (int argc, char **argv)
+ 		case 'c':
+ 			if (geteuid() == 0) {
+ 				opt_rootdir_check = 1;
++				safe_free(pidof_root);
+ 				pidof_root = pid_link(getpid(), "root");
+ 			}
+ 			break;
+diff -urp procps-ng-3.3.14/pmap.c procps-ng-3.3.14-qualys/pmap.c
+--- procps-ng-3.3.14/pmap.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/pmap.c	2018-05-23 12:34:15 +0000
+@@ -30,6 +30,7 @@
+ #include <sys/types.h>
+ #include <unistd.h>
+ #include <assert.h>
++#include <limits.h>
+ 
+ #include "c.h"
+ #include "fileutils.h"
+@@ -173,9 +174,9 @@ static void discover_shm_minor(void)
+ 		unsigned KLONG start, end;
+ 		unsigned long long file_offset, inode;
+ 		unsigned dev_major, dev_minor;
+-		sscanf(mapbuf_b, "%" KLF "x-%" KLF "x %31s %llx %x:%x %llu", &start,
+-		       &end, perms, &file_offset, &dev_major, &dev_minor,
+-		       &inode);
++		if (sscanf(mapbuf_b, "%" KLF "x-%" KLF "x %31s %llx %x:%x %llu", &start,
++			&end, perms, &file_offset, &dev_major, &dev_minor, &inode) < 6)
++			continue;
+ 		tmp = strchr(mapbuf_b, '\n');
+ 		if (tmp)
+ 			*tmp = '\0';
+@@ -207,12 +208,12 @@ out_destroy:
+ 	return;
+ }
+ 
+-static char *mapping_name(proc_t * p, unsigned KLONG addr,
++static const char *mapping_name(const proc_t * p, unsigned KLONG addr,
+ 				unsigned KLONG len, const char *mapbuf_b,
+ 				unsigned showpath, unsigned dev_major,
+ 				unsigned dev_minor, unsigned long long inode)
+ {
+-	char *cp;
++	const char *cp;
+ 
+ 	if (!dev_major && dev_minor == shm_minor && strstr(mapbuf_b, "/SYSV")) {
+ 		static char shmbuf[64];
+@@ -227,14 +228,6 @@ static char *mapping_name(proc_t * p, un
+ 		return cp[1] ? cp + 1 : cp;
+ 	}
+ 
+-	cp = strchr(mapbuf_b, '/');
+-	if (cp) {
+-		if (showpath)
+-			return cp;
+-		/* it WILL succeed */
+-		return strrchr(cp, '/') + 1;
+-	}
+-
+ 	cp = _("  [ anon ]");
+ 	if ((p->start_stack >= addr) && (p->start_stack <= addr + len))
+ 		cp = _("  [ stack ]");
+@@ -246,7 +239,8 @@ static char *mapping_name(proc_t * p, un
+ #define DETL "31"		/* for format strings */
+ #define NUM_LENGTH 21		/* python says: len(str(2**64)) == 20 */
+ #define NUML "20"		/* for format strings */
+-#define VMFLAGS_LENGTH 81 /* There are 27 posible 2 character vmflags as of this patch */
++#define VMFLAGS_LENGTH 128	/* 30 2-char space-separated flags == 90+1, but be safe */
++#define VMFL "127"		/* for format strings */
+ 
+ struct listnode {
+ 	char description[DETAIL_LENGTH];
+@@ -327,6 +321,8 @@ static void print_extended_maps (FILE *f
+ 		c = mapbuf[strlen(mapbuf) - 1];
+ 		while (c != '\n') {
+ 			ret = fgets(mapbuf, sizeof mapbuf, f);
++			if (!ret || !mapbuf[0])
++				xerrx(EXIT_FAILURE, _("Unknown format in smaps file!"));
+ 			c = mapbuf[strlen(mapbuf) - 1];
+ 		}
+ 
+@@ -338,8 +334,8 @@ static void print_extended_maps (FILE *f
+ 		if (strlen(inode ) > maxw5)	maxw5 = strlen(inode);
+ 
+ 		ret = fgets(mapbuf, sizeof mapbuf, f);
+-		nfields = sscanf(mapbuf, "%"DETL"[^:]: %"NUML"[0-9] kB %c",
+-				 detail_desc, value_str, &c);
++		nfields = ret ? sscanf(mapbuf, "%"DETL"[^:]: %"NUML"[0-9] kB %c",
++					detail_desc, value_str, &c) : 0;
+ 		listnode = listhead;
+ 		/* === READ MAPPING DETAILS === */
+ 		while (ret != NULL && nfields == 2) {
+@@ -381,16 +377,18 @@ static void print_extended_maps (FILE *f
+ 			listnode = listnode->next;
+ loop_end:
+ 			ret = fgets(mapbuf, sizeof mapbuf, f);
+-			nfields = sscanf(mapbuf, "%"DETL"[^:]: %"NUML"[0-9] kB %c",
+-					 detail_desc, value_str, &c);
++			nfields = ret ? sscanf(mapbuf, "%"DETL"[^:]: %"NUML"[0-9] kB %c",
++						detail_desc, value_str, &c) : 0;
+ 		}
+ 
+ 		/* === GET VMFLAGS === */
+-		nfields = sscanf(mapbuf, "VmFlags: %[a-z ]", vmflags);
++		nfields = ret ? sscanf(mapbuf, "VmFlags: %"VMFL"[a-z ]", vmflags) : 0;
+ 		if (nfields == 1) {
++			int len = strlen(vmflags);
++			if (len > 0 && vmflags[len-1] == ' ') vmflags[--len] = '\0';
++			if (len > maxwv) maxwv = len;
+ 			if (! has_vmflags) has_vmflags = 1;
+ 			ret = fgets(mapbuf, sizeof mapbuf, f);
+-			if (strlen(vmflags) > maxwv) maxwv = strlen(vmflags);
+ 		}
+ 
+ 		if (firstmapping == 2) { /* width measurement stage, do not print anything yet */
+@@ -433,7 +431,7 @@ loop_end:
+ 					justify_print(listnode->description, listnode->max_width, 1);
+ 
+ 				if (has_vmflags && is_enabled("VmFlags"))
+-					printf(" %*s", maxwv, "VmFlags");
++					maxwv = justify_print("VmFlags", maxwv, 1);
+ 
+ 				if (is_enabled(nls_Mapping))
+ 					justify_print(nls_Mapping, 0, 0);
+@@ -511,14 +509,17 @@ loop_end:
+ 	/* We don't free() the list, it's used for all PIDs passed as arguments */
+ }
+ 
+-static int one_proc(proc_t * p)
++static int one_proc(const proc_t * p)
+ {
+ 	char buf[32];
+ 	FILE *fp;
+ 	unsigned long total_shared = 0ul;
+ 	unsigned long total_private_readonly = 0ul;
+ 	unsigned long total_private_writeable = 0ul;
++	unsigned KLONG start = 0;
+ 	unsigned KLONG diff = 0;
++	unsigned KLONG end = 0;
++	char perms[32] = "";
+ 	const char *cp2 = NULL;
+ 	unsigned long long rss = 0ull;
+ 	unsigned long long private_dirty = 0ull;
+@@ -538,17 +539,18 @@ static int one_proc(proc_t * p)
+ 	printf("%u:   %s\n", p->tgid, cmdbuf);
+ 
+ 	if (x_option || X_option || c_option) {
+-		sprintf(buf, "/proc/%u/smaps", p->tgid);
++		snprintf(buf, sizeof buf, "/proc/%u/smaps", p->tgid);
+ 		if ((fp = fopen(buf, "r")) == NULL)
+ 			return 1;
+ 	} else {
+-		sprintf(buf, "/proc/%u/maps", p->tgid);
++		snprintf(buf, sizeof buf, "/proc/%u/maps", p->tgid);
+ 		if ((fp = fopen(buf, "r")) == NULL)
+ 			return 1;
+ 	}
+ 
+ 	if (X_option || c_option) {
+ 		print_extended_maps(fp);
++		fclose(fp);
+ 		return 0;
+ 	}
+ 
+@@ -585,10 +587,8 @@ static int one_proc(proc_t * p)
+ 	}
+ 
+ 	while (fgets(mapbuf, sizeof mapbuf, fp)) {
+-		char perms[32];
+ 		/* to clean up unprintables */
+ 		char *tmp;
+-		unsigned KLONG start, end;
+ 		unsigned long long file_offset, inode;
+ 		unsigned dev_major, dev_minor;
+ 		unsigned long long smap_value;
+@@ -614,8 +614,8 @@ static int one_proc(proc_t * p)
+ 					continue;
+ 				}
+ 				if (strcmp("Swap", smap_key) == 0) {
+-					/*doesn't matter as long as last */
+-					printf("%0*" KLF "x %*lu %*llu %*llu %*s %s\n",
++					/* doesn't matter as long as last */
++					if (cp2) printf("%0*" KLF "x %*lu %*llu %*llu %*s %s\n",
+ 					       maxw1, start,
+ 					       maxw2, (unsigned long)(diff >> 10),
+ 					       maxw3, rss,
+@@ -624,16 +624,18 @@ static int one_proc(proc_t * p)
+ 					       cp2);
+ 					/* reset some counters */
+ 					rss = shared_dirty = private_dirty = 0ull;
+-					diff = 0;
++					start = diff = end = 0;
++					perms[0] = '\0';
++					cp2 = NULL;
+ 					continue;
+ 				}
+ 			}
+ 			/* Other keys or not a key-value pair */
+ 			continue;
+ 		}
+-		sscanf(mapbuf, "%" KLF "x-%" KLF "x %31s %llx %x:%x %llu", &start,
+-		       &end, perms, &file_offset, &dev_major, &dev_minor,
+-		       &inode);
++		if (sscanf(mapbuf, "%" KLF "x-%" KLF "x %31s %llx %x:%x %llu", &start,
++			&end, perms, &file_offset, &dev_major, &dev_minor, &inode) != 7)
++			continue;
+ 
+ 		if (end - 1 < range_low)
+ 			continue;
+@@ -744,26 +746,29 @@ static int one_proc(proc_t * p)
+ 	return 0;
+ }
+ 
+-static void range_arguments(char *optarg)
++static void range_arguments(const char *optarg)
+ {
+ 	char *arg1;
+ 	char *arg2;
+-
+-	arg1 = xstrdup(optarg);
++	char *const copy = xstrdup(optarg);
++	if (!copy)
++		goto fail;
++	arg1 = copy;
+ 	arg2 = strchr(arg1, ',');
+ 	if (arg2)
+-		*arg2 = '\0';
+-	if (arg2)
+-		++arg2;
++		*arg2++ = '\0';
+ 	else
+ 		arg2 = arg1;
+-	if (arg1 && *arg1)
++	if (*arg1)
+ 		range_low = STRTOUKL(arg1, &arg1, 16);
+ 	if (*arg2)
+ 		range_high = STRTOUKL(arg2, &arg2, 16);
+-	if (arg1 && (*arg1 || *arg2))
+-		xerrx(EXIT_FAILURE, "%s: '%s'", _("failed to parse argument"),
+-		      optarg);
++	if (*arg1 || *arg2)
++		goto fail;
++	free(copy);
++	return;
++fail:
++	xerrx(EXIT_FAILURE, "%s: '%s'", _("failed to parse argument"), optarg);
+ }
+ 
+ 
+@@ -828,7 +833,7 @@ static int config_read (char *rc_filenam
+ 				trimmed += SECTION_STR_MAPPING_LEN;
+ 				section_id = SECTION_ID_MAPPING;
+ 			} else {
+-				while (*trimmed != ']' || *trimmed == '\0') trimmed++;
++				while (*trimmed != ']' && *trimmed != '\0') trimmed++;
+ 				if (*trimmed == ']') {
+ 					section_id = SECTION_ID_UNSUPPORTED;
+ 					xwarnx(_("unsupported section found in the config - line %d"), line_cnt);
+@@ -1133,6 +1138,8 @@ int main(int argc, char **argv)
+ 
+ 	}
+ 
++	if ((size_t)argc >= INT_MAX / sizeof(pid_t))
++		xerrx(EXIT_FAILURE, _("too many arguments"));
+ 	pidlist = xmalloc(sizeof(pid_t) * (argc+1));
+ 
+ 	while (*argv) {
+diff -urp procps-ng-3.3.14/proc/alloc.c procps-ng-3.3.14-qualys/proc/alloc.c
+--- procps-ng-3.3.14/proc/alloc.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/proc/alloc.c	2018-05-23 12:34:15 +0000
+@@ -30,21 +30,21 @@ static void xdefault_error(const char *r
+     va_list va;
+ 
+     va_start(va, fmts);
+-    fprintf(stderr, fmts, va);
++    vfprintf(stderr, fmts, va);
+     va_end(va);
+ }
+ 
+ message_fn xalloc_err_handler = xdefault_error;
+ 
+ 
+-void *xcalloc(unsigned int size) {
++void *xcalloc(size_t size) {
+     void * p;
+ 
+     if (size == 0)
+         ++size;
+     p = calloc(1, size);
+     if (!p) {
+-        xalloc_err_handler("%s failed to allocate %u bytes of memory", __func__, size);
++        xalloc_err_handler("%s failed to allocate %zu bytes of memory", __func__, size);
+         exit(EXIT_FAILURE);
+     }
+     return p;
+@@ -57,20 +57,20 @@ void *xmalloc(size_t size) {
+         ++size;
+     p = malloc(size);
+     if (!p) {
+-	xalloc_err_handler("%s failed to allocate %zu bytes of memory", __func__, size);
++        xalloc_err_handler("%s failed to allocate %zu bytes of memory", __func__, size);
+         exit(EXIT_FAILURE);
+     }
+     return(p);
+ }
+ 
+-void *xrealloc(void *oldp, unsigned int size) {
++void *xrealloc(void *oldp, size_t size) {
+     void *p;
+ 
+     if (size == 0)
+         ++size;
+     p = realloc(oldp, size);
+     if (!p) {
+-        xalloc_err_handler("%s failed to allocate %u bytes of memory", __func__, size);
++        xalloc_err_handler("%s failed to allocate %zu bytes of memory", __func__, size);
+         exit(EXIT_FAILURE);
+     }
+     return(p);
+@@ -80,13 +80,17 @@ char *xstrdup(const char *str) {
+     char *p = NULL;
+ 
+     if (str) {
+-        unsigned int size = strlen(str) + 1;
++        size_t size = strlen(str) + 1;
++        if (size < 1) {
++            xalloc_err_handler("%s refused to allocate %zu bytes of memory", __func__, size);
++            exit(EXIT_FAILURE);
++        }
+         p = malloc(size);
+         if (!p) {
+-            xalloc_err_handler("%s failed to allocate %u bytes of memory", __func__, size);
++            xalloc_err_handler("%s failed to allocate %zu bytes of memory", __func__, size);
+             exit(EXIT_FAILURE);
+         }
+-        strcpy(p, str);
++        memcpy(p, str, size);
+     }
+     return(p);
+ }
+diff -urp procps-ng-3.3.14/proc/alloc.h procps-ng-3.3.14-qualys/proc/alloc.h
+--- procps-ng-3.3.14/proc/alloc.h	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/proc/alloc.h	2018-05-23 12:34:15 +0000
+@@ -10,9 +10,9 @@ typedef void (*message_fn)(const char *_
+  /* change xalloc_err_handler to override the default fprintf(stderr... */
+ extern message_fn xalloc_err_handler;
+ 
+-extern void *xcalloc(unsigned int size) MALLOC;
++extern void *xcalloc(size_t size) MALLOC;
+ extern void *xmalloc(size_t size) MALLOC;
+-extern void *xrealloc(void *oldp, unsigned int size) MALLOC;
++extern void *xrealloc(void *oldp, size_t size) MALLOC;
+ extern char *xstrdup(const char *str) MALLOC;
+ 
+ EXTERN_C_END
+diff -urp procps-ng-3.3.14/proc/devname.c procps-ng-3.3.14-qualys/proc/devname.c
+--- procps-ng-3.3.14/proc/devname.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/proc/devname.c	2018-05-23 12:34:15 +0000
+@@ -288,10 +288,11 @@ static int guess_name(char *restrict con
+ static int link_name(char *restrict const buf, unsigned maj, unsigned min, int pid, const char *restrict name){
+   struct stat sbuf;
+   char path[32];
+-  int count;
+-  sprintf(path, "/proc/%d/%s", pid, name);  /* often permission denied */
++  ssize_t count;
++  const int len = snprintf(path, sizeof path, "/proc/%d/%s", pid, name);  /* often permission denied */
++  if(len <= 0 || (size_t)len >= sizeof path) return 0;
+   count = readlink(path,buf,TTY_NAME_SIZE-1);
+-  if(count == -1) return 0;
++  if(count <= 0 || count >= TTY_NAME_SIZE-1) return 0;
+   buf[count] = '\0';
+   if(stat(buf, &sbuf) < 0) return 0;
+   if(min != MINOR_OF(sbuf.st_rdev)) return 0;
+@@ -340,17 +341,17 @@ unsigned dev_to_tty(char *restrict ret,
+   if(  link_name(tmp, MAJOR_OF(dev), MINOR_OF(dev), pid, "fd/255")) goto abbrev;
+   // fall through if unable to find a device file
+ no_tty:
+-  strcpy(ret, "?");
++  strcpy(ret, chop >= 1 ? "?" : "");
+   return 1;
+ abbrev:
+   if((flags&ABBREV_DEV) && !strncmp(tmp,"/dev/",5) && tmp[5]) tmp += 5;
+   if((flags&ABBREV_TTY) && !strncmp(tmp,"tty",  3) && tmp[3]) tmp += 3;
+   if((flags&ABBREV_PTS) && !strncmp(tmp,"pts/", 4) && tmp[4]) tmp += 4;
+   /* gotta check before we chop or we may chop someone else's memory */
+-  if(chop + (unsigned long)(tmp-buf) <= sizeof buf)
++  if(chop + (unsigned long)(tmp-buf) < sizeof buf)
+     tmp[chop] = '\0';
+   /* replace non-ASCII characters with '?' and return the number of chars */
+-  for(;;){
++  while(i < chop){
+     c = *tmp;
+     tmp++;
+     if(!c) break;
+diff -urp procps-ng-3.3.14/proc/escape.c procps-ng-3.3.14-qualys/proc/escape.c
+--- procps-ng-3.3.14/proc/escape.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/proc/escape.c	2018-05-23 12:34:15 +0000
+@@ -20,6 +20,7 @@
+ #include <stdio.h>
+ #include <sys/types.h>
+ #include <string.h>
++#include <limits.h>
+ #include "procps.h"
+ #include "escape.h"
+ #include "readproc.h"
+@@ -32,12 +33,22 @@
+ # include <langinfo.h>
+ #endif
+ 
++#define SECURE_ESCAPE_ARGS(dst, bytes, cells) do { \
++  if ((bytes) <= 0) return 0; \
++  *(dst) = '\0'; \
++  if ((bytes) >= INT_MAX) return 0; \
++  if ((cells) >= INT_MAX) return 0; \
++  if ((cells) <= 0) return 0; \
++} while (0)
++
+ #if (__GNU_LIBRARY__ >= 6) && (!defined(__UCLIBC__) || defined(__UCLIBC_HAS_WCHAR__))
+ static int escape_str_utf8(char *restrict dst, const char *restrict src, int bufsize, int *maxcells){
+   int my_cells = 0;
+   int my_bytes = 0;
+   mbstate_t s;
+ 
++  SECURE_ESCAPE_ARGS(dst, bufsize, *maxcells);
++
+   memset(&s, 0, sizeof (s));
+ 
+   for(;;) {
+@@ -77,7 +88,7 @@ static int escape_str_utf8(char *restric
+       /* multibyte - printable */
+       int wlen = wcwidth(wc);
+ 
+-      if (wlen==0) {
++      if (wlen<=0) {
+ 	// invisible multibyte -- we don't ignore it, because some terminal
+ 	// interpret it wrong and more safe is replace it with '?'
+ 	*(dst++) = '?';
+@@ -87,7 +98,7 @@ static int escape_str_utf8(char *restric
+       } else {
+         // multibyte - printable
+         // Got space?
+-        if (my_cells+wlen > *maxcells || my_bytes+1+len >= bufsize) break;
++        if (wlen > *maxcells-my_cells || len >= bufsize-(my_bytes+1)) break;
+         // 0x9b is control byte for some terminals
+         if (memchr(src, 0x9B, len)) {
+ 	  // unsafe multibyte
+@@ -146,6 +157,7 @@ int escape_str(char *restrict dst, const
+   }
+ #endif
+ 
++  SECURE_ESCAPE_ARGS(dst, bufsize, *maxcells);
+   if(bufsize > *maxcells+1) bufsize=*maxcells+1; // FIXME: assumes 8-bit locale
+ 
+   for(;;){
+@@ -172,6 +184,8 @@ int escape_str(char *restrict dst, const
+ int escape_strlist(char *restrict dst, char *restrict const *restrict src, size_t bytes, int *cells){
+   size_t i = 0;
+ 
++  SECURE_ESCAPE_ARGS(dst, bytes, *cells);
++
+   for(;;){
+     i += escape_str(dst+i, *src, bytes-i, cells);
+     if(bytes-i < 3) break;  // need room for space, a character, and the NUL
+@@ -190,6 +204,8 @@ int escape_command(char *restrict const
+   int overhead = 0;
+   int end = 0;
+ 
++  SECURE_ESCAPE_ARGS(outbuf, bytes, *cells);
++
+   if(flags & ESC_ARGS){
+     char **lc = (char**)pp->cmdline;
+     if(lc && *lc) return escape_strlist(outbuf, lc, bytes, cells);
+@@ -201,11 +217,10 @@ int escape_command(char *restrict const
+     if(pp->state=='Z') overhead += 10;    // chars in " <defunct>"
+     else flags &= ~ESC_DEFUNCT;
+   }
+-  if(overhead + 1 >= *cells){  // if no room for even one byte of the command name
+-    // you'd damn well better have _some_ space
+-//    outbuf[0] = '-';  // Oct23
+-    outbuf[1] = '\0';
+-    return 1;
++  if(overhead + 1 >= *cells || // if no room for even one byte of the command name
++     overhead + 1 >= bytes){
++    outbuf[0] = '\0';
++    return 0;
+   }
+   if(flags & ESC_BRACKETS){
+     outbuf[end++] = '[';
+@@ -231,8 +246,15 @@ int escape_command(char *restrict const
+ // using the traditional escape.h calling conventions
+ int escaped_copy(char *restrict dst, const char *restrict src, int bufsize, int *maxroom){
+   int n;
++
++  SECURE_ESCAPE_ARGS(dst, bufsize, *maxroom);
+   if (bufsize > *maxroom+1) bufsize = *maxroom+1;
++
+   n = snprintf(dst, bufsize, "%s", src);
++  if (n < 0) {
++    *dst = '\0';
++    return 0;
++  }
+   if (n >= bufsize) n = bufsize-1;
+   *maxroom -= n;
+   return n;
+diff -urp procps-ng-3.3.14/proc/readproc.c procps-ng-3.3.14-qualys/proc/readproc.c
+--- procps-ng-3.3.14/proc/readproc.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/proc/readproc.c	2018-05-23 12:34:15 +0000
+@@ -37,6 +37,8 @@
+ #include <dirent.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <limits.h>
++#include <stdint.h>
+ #ifdef WITH_SYSTEMD
+ #include <systemd/sd-login.h>
+ #endif
+@@ -78,8 +80,10 @@ static unsigned long long unhex(const ch
+     unsigned long long ull = 0;
+     for(;;){
+         char c = *cp++;
+-        if(unlikely(c<0x30)) break;
+-        ull = (ull<<4) | (c - (c>0x57) ? 0x57 : 0x30) ;
++        if(!( (c >= '0' && c <= '9') ||
++              (c >= 'A' && c <= 'F') ||
++              (c >= 'a' && c <= 'f') )) break;
++        ull = (ull<<4) | (c - (c >= 'a' ? 'a'-10 : c >= 'A' ? 'A'-10 : '0'));
+     }
+     return ull;
+ }
+@@ -250,8 +254,8 @@ ENTER(0x220);
+ 
+         // examine a field name (hash and compare)
+     base:
+-        if(unlikely(!*S)) break;
+-        entry = table[(GPERF_TABLE_SIZE -1) & (asso[(int)S[3]] + asso[(int)S[2]] + asso[(int)S[0]])];
++        if(unlikely(!S[0] || !S[1] || !S[2] || !S[3])) break;
++        entry = table[(GPERF_TABLE_SIZE -1) & (asso[S[3]&127] + asso[S[2]&127] + asso[S[0]&127])];
+         colon = strchr(S, ':');
+         if(unlikely(!colon)) break;
+         if(unlikely(colon[1]!='\t')) break;
+@@ -384,9 +388,9 @@ ENTER(0x220);
+         continue;
+     case_Groups:
+     {   char *nl = strchr(S, '\n');
+-        int j = nl ? (nl - S) : strlen(S);
++        size_t j = nl ? (size_t)(nl - S) : strlen(S);
+ 
+-        if (j) {
++        if (j > 0 && j < INT_MAX) {
+             P->supgid = xmalloc(j+1);       // +1 in case space disappears
+             memcpy(P->supgid, S, j);
+             if (unlikely(' ' != P->supgid[--j])) ++j;
+@@ -461,10 +465,24 @@ static void supgrps_from_supgids (proc_t
+     s = p->supgid;
+     t = 0;
+     do {
+-        if (',' == *s) ++s;
+-        g = pwcache_get_group((uid_t)strtol(s, &s, 10));
+-        p->supgrp = xrealloc(p->supgrp, P_G_SZ+t+2);
+-        t += snprintf(p->supgrp+t, P_G_SZ+2, "%s%s", t ? "," : "", g);
++        const int max = P_G_SZ+2;
++        char *end = NULL;
++        gid_t gid;
++        int len;
++
++        while (',' == *s) ++s;
++        gid = strtol(s, &end, 10);
++        if (end <= s) break;
++        s = end;
++        g = pwcache_get_group(gid);
++
++        if (t >= INT_MAX - max) break;
++        p->supgrp = xrealloc(p->supgrp, t + max);
++
++        len = snprintf(p->supgrp+t, max, "%s%s", t ? "," : "", g);
++        if (len <= 0) (p->supgrp+t)[len = 0] = '\0';
++        else if (len >= max) len = max-1;
++        t += len;
+     } while (*s);
+ }
+ 
+@@ -490,7 +508,7 @@ static const char *ns_names[] = {
+ };
+ 
+ const char *get_ns_name(int id) {
+-    if (id >= NUM_NS)
++    if (id < 0 || id >= NUM_NS)
+         return NULL;
+     return ns_names[id];
+ }
+@@ -498,6 +516,8 @@ const char *get_ns_name(int id) {
+ int get_ns_id(const char *name) {
+     int i;
+ 
++    if (!name)
++        return -1;
+     for (i = 0; i < NUM_NS; i++)
+         if (!strcmp(ns_names[i], name))
+             return i;
+@@ -563,7 +583,7 @@ static void sd2proc(proc_t *restrict p)
+ // Reads /proc/*/stat files, being careful not to trip over processes with
+ // names like ":-) 1 2 3 4 5 6".
+ static void stat2proc(const char* S, proc_t *restrict P) {
+-    unsigned num;
++    size_t num;
+     char* tmp;
+ 
+ ENTER(0x160);
+@@ -574,15 +594,19 @@ ENTER(0x160);
+     P->sched = -1;
+     P->nlwp = 0;
+ 
+-    S = strchr(S, '(') + 1;
++    S = strchr(S, '(');
++    if(unlikely(!S)) return;
++    S++;
+     tmp = strrchr(S, ')');
++    if(unlikely(!tmp)) return;
++    if(unlikely(!tmp[1])) return;
+     num = tmp - S;
+     if(unlikely(num >= sizeof P->cmd)) num = sizeof P->cmd - 1;
+     memcpy(P->cmd, S, num);
+     P->cmd[num] = '\0';
+     S = tmp + 2;                 // skip ") "
+ 
+-    num = sscanf(S,
++    sscanf(S,
+        "%c "
+        "%d %d %d %d %d "
+        "%lu %lu %lu %lu %lu "
+@@ -635,7 +659,7 @@ static void statm2proc(const char* s, pr
+ static int file2str(const char *directory, const char *what, struct utlbuf_s *ub) {
+  #define buffGRW 1024
+     char path[PROCPATHLEN];
+-    int fd, num, tot_read = 0;
++    int fd, num, tot_read = 0, len;
+ 
+     /* on first use we preallocate a buffer of minimum size to emulate
+        former 'local static' behavior -- even if this read fails, that
+@@ -643,11 +667,16 @@ static int file2str(const char *director
+        ( besides, with this xcalloc we will never need to use memcpy ) */
+     if (ub->buf) ub->buf[0] = '\0';
+     else ub->buf = xcalloc((ub->siz = buffGRW));
+-    sprintf(path, "%s/%s", directory, what);
++    len = snprintf(path, sizeof path, "%s/%s", directory, what);
++    if (len <= 0 || (size_t)len >= sizeof path) return -1;
+     if (-1 == (fd = open(path, O_RDONLY, 0))) return -1;
+     while (0 < (num = read(fd, ub->buf + tot_read, ub->siz - tot_read))) {
+         tot_read += num;
+         if (tot_read < ub->siz) break;
++        if (ub->siz >= INT_MAX - buffGRW) {
++            tot_read--;
++            break;
++        }
+         ub->buf = xrealloc(ub->buf, (ub->siz += buffGRW));
+     };
+     ub->buf[tot_read] = '\0';
+@@ -659,11 +688,12 @@ static int file2str(const char *director
+ 
+ static char** file2strvec(const char* directory, const char* what) {
+     char buf[2048];	/* read buf bytes at a time */
+-    char *p, *rbuf = 0, *endbuf, **q, **ret;
++    char *p, *rbuf = 0, *endbuf, **q, **ret, *strp;
+     int fd, tot = 0, n, c, end_of_file = 0;
+     int align;
+ 
+-    sprintf(buf, "%s/%s", directory, what);
++    const int len = snprintf(buf, sizeof buf, "%s/%s", directory, what);
++    if(len <= 0 || (size_t)len >= sizeof buf) return NULL;
+     fd = open(buf, O_RDONLY, 0);
+     if(fd==-1) return NULL;
+ 
+@@ -671,18 +701,23 @@ static char** file2strvec(const char* di
+     while ((n = read(fd, buf, sizeof buf - 1)) >= 0) {
+ 	if (n < (int)(sizeof buf - 1))
+ 	    end_of_file = 1;
+-	if (n == 0 && rbuf == 0) {
+-	    close(fd);
+-	    return NULL;	/* process died between our open and read */
++	if (n <= 0 && tot <= 0) { /* nothing read now, nothing read before */
++	    break;		/* process died between our open and read */
+ 	}
+-	if (n < 0) {
+-	    if (rbuf)
+-		free(rbuf);
+-	    close(fd);
+-	    return NULL;	/* read error */
++	/* ARG_LEN is our guesstimated median length of a command-line argument
++	   or environment variable (the minimum is 1, the maximum is 131072) */
++	#define ARG_LEN 64
++	if (tot >= INT_MAX / (ARG_LEN + (int)sizeof(char*)) * ARG_LEN - n) {
++	    end_of_file = 1; /* integer overflow: null-terminate and break */
++	    n = 0; /* but tot > 0 */
+ 	}
+-	if (end_of_file && (n == 0 || buf[n-1]))/* last read char not null */
++	#undef ARG_LEN
++	if (end_of_file &&
++	    ((n > 0 && buf[n-1] != '\0') ||	/* last read char not null */
++	     (n <= 0 && rbuf[tot-1] != '\0')))	/* last read char not null */
+ 	    buf[n++] = '\0';			/* so append null-terminator */
++
++	if (n <= 0) break; /* unneeded (end_of_file = 1) but avoid realloc */
+ 	rbuf = xrealloc(rbuf, tot + n);		/* allocate more memory */
+ 	memcpy(rbuf + tot, buf, n);		/* copy buffer into it */
+ 	tot += n;				/* increment total byte ctr */
+@@ -690,29 +725,34 @@ static char** file2strvec(const char* di
+ 	    break;
+     }
+     close(fd);
+-    if (n <= 0 && !end_of_file) {
++    if (n < 0 || tot <= 0) {	/* error, or nothing read */
+ 	if (rbuf) free(rbuf);
+ 	return NULL;		/* read error */
+     }
++    rbuf[tot-1] = '\0'; /* belt and suspenders (the while loop did it, too) */
+     endbuf = rbuf + tot;			/* count space for pointers */
+     align = (sizeof(char*)-1) - ((tot + sizeof(char*)-1) & (sizeof(char*)-1));
+-    for (c = 0, p = rbuf; p < endbuf; p++) {
+-	if (!*p || *p == '\n')
++    c = sizeof(char*);				/* one extra for NULL term */
++    for (p = rbuf; p < endbuf; p++) {
++	if (!*p || *p == '\n') {
++	    if (c >= INT_MAX - (tot + (int)sizeof(char*) + align)) break;
+ 	    c += sizeof(char*);
++	}
+ 	if (*p == '\n')
+ 	    *p = 0;
+     }
+-    c += sizeof(char*);				/* one extra for NULL term */
+ 
+     rbuf = xrealloc(rbuf, tot + c + align);	/* make room for ptrs AT END */
+     endbuf = rbuf + tot;			/* addr just past data buf */
+     q = ret = (char**) (endbuf+align);		/* ==> free(*ret) to dealloc */
+-    *q++ = p = rbuf;				/* point ptrs to the strings */
+-    endbuf--;					/* do not traverse final NUL */
+-    while (++p < endbuf)
+-    	if (!*p)				/* NUL char implies that */
+-	    *q++ = p+1;				/* next string -> next char */
+-
++    for (strp = p = rbuf; p < endbuf; p++) {
++	if (!*p) {				/* NUL char implies that */
++	    if (c < 2 * (int)sizeof(char*)) break;
++	    c -= sizeof(char*);
++	    *q++ = strp;			/* point ptrs to the strings */
++	    strp = p+1;				/* next string -> next char */
++	}
++    }
+     *q = 0;					/* null ptr list terminator */
+     return ret;
+ }
+@@ -722,10 +762,15 @@ static char** file2strvec(const char* di
+     //     PROC_EDITCGRPCVT, PROC_EDITCMDLCVT and PROC_EDITENVRCVT
+ static int read_unvectored(char *restrict const dst, unsigned sz, const char* whom, const char *what, char sep) {
+     char path[PROCPATHLEN];
+-    int fd;
++    int fd, len;
+     unsigned n = 0;
+ 
+-    snprintf(path, sizeof(path), "%s/%s", whom, what);
++    if(sz <= 0) return 0;
++    if(sz >= INT_MAX) sz = INT_MAX-1;
++    dst[0] = '\0';
++
++    len = snprintf(path, sizeof(path), "%s/%s", whom, what);
++    if(len <= 0 || (size_t)len >= sizeof(path)) return 0;
+     fd = open(path, O_RDONLY);
+     if(fd==-1) return 0;
+ 
+@@ -735,16 +780,16 @@ static int read_unvectored(char *restric
+             if(errno==EINTR) continue;
+             break;
+         }
++        if(r<=0) break;  // EOF
+         n += r;
+         if(n==sz) {      // filled the buffer
+             --n;         // make room for '\0'
+             break;
+         }
+-        if(r==0) break;  // EOF
+     }
+     close(fd);
+     if(n){
+-        int i=n;
++        unsigned i = n;
+         while(i && dst[i-1]=='\0') --i; // skip trailing zeroes
+         while(i--)
+             if(dst[i]=='\n' || dst[i]=='\0') dst[i]=sep;
+@@ -757,9 +802,10 @@ static int read_unvectored(char *restric
+ static char** vectorize_this_str (const char* src) {
+  #define pSZ  (sizeof(char*))
+     char *cpy, **vec;
+-    int adj, tot;
++    size_t adj, tot;
+ 
+     tot = strlen(src) + 1;                       // prep for our vectors
++    if (tot < 1 || tot >= INT_MAX) tot = INT_MAX-1; // integer overflow?
+     adj = (pSZ-1) - ((tot + pSZ-1) & (pSZ-1));   // calc alignment bytes
+     cpy = xcalloc(tot + adj + (2 * pSZ));        // get new larger buffer
+     snprintf(cpy, tot, "%s", src);               // duplicate their string
+@@ -776,7 +822,7 @@ static char** vectorize_this_str (const
+ static void fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
+  #define vMAX ( MAX_BUFSZ - (int)(dst - dst_buffer) )
+     char *src, *dst, *grp, *eob, *name;
+-    int tot, x, whackable_int = MAX_BUFSZ;
++    int tot, x, whackable_int = MAX_BUFSZ, len;
+ 
+     *(dst = dst_buffer) = '\0';                  // empty destination
+     tot = read_unvectored(src_buffer, MAX_BUFSZ, directory, "cgroup", '\0');
+@@ -788,7 +834,10 @@ static void fill_cgroup_cvt (const char*
+ #if 0
+         grp += strspn(grp, "0123456789:");       // jump past group number
+ #endif
+-        dst += snprintf(dst, vMAX, "%s", (dst > dst_buffer) ? "," : "");
++        if (vMAX <= 1) break;
++        len = snprintf(dst, vMAX, "%s", (dst > dst_buffer) ? "," : "");
++        if (len < 0 || len >= vMAX) break;
++        dst += len;
+         dst += escape_str(dst, grp, vMAX, &whackable_int);
+     }
+     p->cgroup = vectorize_this_str(dst_buffer[0] ? dst_buffer : "-");
+@@ -1176,8 +1225,7 @@ static int simple_nextpid(PROCTAB *restr
+   }
+   p->tgid = strtoul(ent->d_name, NULL, 10);
+   p->tid = p->tgid;
+-  memcpy(path, "/proc/", 6);
+-  strcpy(path+6, ent->d_name);  // trust /proc to not contain evil top-level entries
++  snprintf(path, PROCPATHLEN, "/proc/%s", ent->d_name);
+   return 1;
+ }
+ 
+@@ -1296,11 +1344,19 @@ proc_t* readtask(PROCTAB *restrict const
+ #ifdef QUICK_THREADS
+     MK_THREAD(t);
+ #else
+-    t->environ = NULL;
+-    t->cmdline = vectorize_this_str("n/a");
+-    t->cgroup  = NULL;
+-    t->supgid  = NULL;
+-    t->supgrp  = NULL;
++    t->environ  = NULL;
++    t->cmdline  = vectorize_this_str("n/a");
++    t->cgroup   = NULL;
++    t->cgname   = NULL;
++    t->supgid   = NULL;
++    t->supgrp   = NULL;
++    t->sd_mach  = NULL;
++    t->sd_ouid  = NULL;
++    t->sd_seat  = NULL;
++    t->sd_sess  = NULL;
++    t->sd_slice = NULL;
++    t->sd_unit  = NULL;
++    t->sd_uunit = NULL;
+ #endif
+     return t;
+   }
+@@ -1327,13 +1383,17 @@ out:
+ proc_t* readeither (PROCTAB *restrict const PT, proc_t *restrict x) {
+     static proc_t skel_p;    // skeleton proc_t, only uses tid + tgid
+     static proc_t *new_p;    // for process/task transitions
++    static int canary;
+     char path[PROCPATHLEN];
+     proc_t *saved_x, *ret;
+ 
+     saved_x = x;
+     if (!x) x = xcalloc(sizeof(*x));
+     else free_acquired(x,1);
+-    if (new_p) goto next_task;
++    if (new_p) {
++        if (new_p->tid != canary) new_p = NULL;
++        goto next_task;
++    }
+ 
+ next_proc:
+     new_p = NULL;
+@@ -1350,7 +1410,10 @@ next_task:
+     || (!(ret = PT->taskreader(PT,new_p,x,path)))) {       // simple_readtask
+         goto next_proc;
+     }
+-    if (!new_p) new_p = ret;
++    if (!new_p) {
++        new_p = ret;
++        canary = new_p->tid;
++    }
+     return ret;
+ 
+ end_procs:
+@@ -1366,7 +1429,7 @@ PROCTAB* openproc(int flags, ...) {
+     va_list ap;
+     struct stat sbuf;
+     static int did_stat;
+-    PROCTAB* PT = xmalloc(sizeof(PROCTAB));
++    PROCTAB* PT = xcalloc(sizeof(PROCTAB));
+ 
+     if (!did_stat){
+         task_dir_missing = stat("/proc/self/task", &sbuf);
+@@ -1470,6 +1533,10 @@ proc_t** readproctab(int flags, ...) {
+     if (!PT)
+       return 0;
+     do {					/* read table: */
++	if (n < 0 || (size_t)n >= INT_MAX / sizeof(proc_t*)) {
++	    xalloc_err_handler("integer overflow in %s (%s=%zu)", __func__, "n", (size_t)n);
++	    exit(EXIT_FAILURE);
++	}
+ 	tab = xrealloc(tab, (n+1)*sizeof(proc_t*));/* realloc as we go, using */
+ 	tab[n] = readproc_direct(PT, NULL);     /* final null to terminate */
+     } while (tab[n++]);				  /* stop when NULL reached */
+@@ -1477,33 +1544,44 @@ proc_t** readproctab(int flags, ...) {
+     return tab;
+ }
+ 
++#define grow_by_size(ptr, nmemb, over, size) do { \
++    if ((size_t)(nmemb) >= INT_MAX / 5) { \
++        xalloc_err_handler("integer overflow in %s (%s=%zu)", __func__, #nmemb, (size_t)(nmemb)); \
++        exit(EXIT_FAILURE); \
++    } \
++    (nmemb) = (nmemb) * 5 / 4 + (over); \
++    if ((size_t)(nmemb) >= SSIZE_MAX / (size)) { \
++        xalloc_err_handler("integer overflow in %s (%s=%zu)", __func__, #nmemb, (size_t)(nmemb)); \
++        exit(EXIT_FAILURE); \
++    } \
++    (ptr) = xrealloc((ptr), (nmemb) * (size)); \
++} while (0)
++
+ // Try again, this time with threads and selection.
+ proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *buf), PROCTAB *restrict const PT) {
+     static proc_data_t pd;
+     proc_t** ptab = NULL;
+-    unsigned n_proc_alloc = 0;
+-    unsigned n_proc = 0;
++    size_t n_proc_alloc = 0;
++    size_t n_proc = 0;
+ 
+     proc_t** ttab = NULL;
+-    unsigned n_task_alloc = 0;
+-    unsigned n_task = 0;
++    size_t n_task_alloc = 0;
++    size_t n_task = 0;
+ 
+     proc_t*  data = NULL;
+-    unsigned n_alloc = 0;
+-    unsigned long n_used = 0;
++    size_t n_alloc = 0;
++    uintptr_t n_used = 0;
+ 
+     for(;;){
+         proc_t *tmp;
+         if(n_alloc == n_used){
+           //proc_t *old = data;
+-          n_alloc = n_alloc*5/4+30;  // grow by over 25%
+-          data = xrealloc(data,sizeof(proc_t)*n_alloc);
++          grow_by_size(data, n_alloc, 30, sizeof(proc_t));
+           memset(data+n_used, 0, sizeof(proc_t)*(n_alloc-n_used));
+         }
+         if(n_proc_alloc == n_proc){
+           //proc_t **old = ptab;
+-          n_proc_alloc = n_proc_alloc*5/4+30;  // grow by over 25%
+-          ptab = xrealloc(ptab,sizeof(proc_t*)*n_proc_alloc);
++          grow_by_size(ptab, n_proc_alloc, 30, sizeof(proc_t*));
+         }
+         tmp = readproc_direct(PT, data+n_used);
+         if(!tmp) break;
+@@ -1514,16 +1592,14 @@ proc_data_t *readproctab2(int(*want_proc
+           proc_t *t;
+           if(n_alloc == n_used){
+             proc_t *old = data;
+-            n_alloc = n_alloc*5/4+30;  // grow by over 25%
+-            data = xrealloc(data,sizeof(proc_t)*n_alloc);
++            grow_by_size(data, n_alloc, 30, sizeof(proc_t));
+             // have to move tmp too
+             tmp = data+(tmp-old);
+-            memset(data+n_used+1, 0, sizeof(proc_t)*(n_alloc-(n_used+1)));
++            memset(data+n_used, 0, sizeof(proc_t)*(n_alloc-n_used));
+           }
+           if(n_task_alloc == n_task){
+             //proc_t **old = ttab;
+-            n_task_alloc = n_task_alloc*5/4+1;  // grow by over 25%
+-            ttab = xrealloc(ttab,sizeof(proc_t*)*n_task_alloc);
++            grow_by_size(ttab, n_task_alloc, 1, sizeof(proc_t*));
+           }
+           t = readtask_direct(PT, tmp, data+n_used);
+           if(!t) break;
+@@ -1544,8 +1620,8 @@ proc_data_t *readproctab2(int(*want_proc
+       pd.n   = n_proc;
+     }
+     // change array indexes to pointers
+-    while(n_proc--) ptab[n_proc] = data+(long)(ptab[n_proc]);
+-    while(n_task--) ttab[n_task] = data+(long)(ttab[n_task]);
++    while(n_proc--) ptab[n_proc] = data+(uintptr_t)(ptab[n_proc]);
++    while(n_task--) ttab[n_task] = data+(uintptr_t)(ttab[n_task]);
+ 
+     return &pd;
+ }
+@@ -1554,14 +1630,13 @@ proc_data_t *readproctab2(int(*want_proc
+ proc_data_t *readproctab3 (int(*want_task)(proc_t *buf), PROCTAB *restrict const PT) {
+     static proc_data_t pd;
+     proc_t **tab = NULL;
+-    unsigned n_alloc = 0;
+-    unsigned n_used = 0;
++    size_t n_alloc = 0;
++    size_t n_used = 0;
+     proc_t *p = NULL;
+ 
+     for (;;) {
+         if (n_alloc == n_used) {
+-            n_alloc = n_alloc*5/4+30;  // grow by over 25%
+-            tab = xrealloc(tab,sizeof(proc_t*)*n_alloc);
++            grow_by_size(tab, n_alloc, 30, sizeof(proc_t*));
+         }
+         // let this next guy allocate the necessary proc_t storage
+         // (or recycle it) since he can't tolerate realloc relocations
+@@ -1588,7 +1663,7 @@ proc_t * get_proc_stats(pid_t pid, proc_
+     static char path[32];
+     struct stat statbuf;
+ 
+-    sprintf(path, "/proc/%d", pid);
++    snprintf(path, sizeof path, "/proc/%d", pid);
+     if (stat(path, &statbuf)) {
+         perror("stat");
+         return NULL;
+diff -urp procps-ng-3.3.14/proc/sig.c procps-ng-3.3.14-qualys/proc/sig.c
+--- procps-ng-3.3.14/proc/sig.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/proc/sig.c	2018-05-23 12:34:15 +0000
+@@ -181,7 +181,7 @@ int signal_name_to_number(const char *re
+     val = strtol(name,&endp,10);
+     if(*endp || endp==name) return -1; /* not valid */
+   }
+-  if(val+SIGRTMIN>127) return -1; /* not valid */
++  if(val<0 || val+SIGRTMIN>127) return -1; /* not valid */
+   return val+offset;
+ }
+ 
+@@ -199,33 +199,36 @@ const char *signal_number_to_name(int si
+ }
+ 
+ int print_given_signals(int argc, const char *restrict const *restrict argv, int max_line){
+-  char buf[1280]; /* 128 signals, "RTMIN+xx" is largest */
++  char tmpbuf[16];
++  char buf[128 * sizeof tmpbuf]; /* 128 signals, "RTMIN+xx" is largest */
+   int ret = 0;  /* to be used as exit code by caller */
+   int place = 0; /* position on this line */
+-  int amt;
+-  if(argc > 128) return 1;
++  if(argc < 0 || argc > 128) return 1;
+   while(argc--){
+-    char tmpbuf[16];
++    int amt = -1;
+     const char *restrict const txt = *argv;
+     if(*txt >= '0' && *txt <= '9'){
+       long val;
+       char *endp;
+       val = strtol(txt,&endp,10);
+-      if(*endp){
+-        fprintf(stderr, "Signal \"%s\" not known.\n", txt);
+-        ret = 1;
+-        goto end;
++      if(*endp || endp==txt){
++        amt = -1;
++      }else{
++        amt = snprintf(tmpbuf, sizeof tmpbuf, "%s", signal_number_to_name(val));
+       }
+-      amt = sprintf(tmpbuf, "%s", signal_number_to_name(val));
+     }else{
+       int sno;
+       sno = signal_name_to_number(txt);
+       if(sno == -1){
+-        fprintf(stderr, "Signal \"%s\" not known.\n", txt);
+-        ret = 1;
+-        goto end;
++        amt = -1;
++      }else{
++        amt = snprintf(tmpbuf, sizeof tmpbuf, "%d", sno);
+       }
+-      amt = sprintf(tmpbuf, "%d", sno);
++    }
++    if(amt <= 0 || (size_t)amt >= sizeof tmpbuf){
++      fprintf(stderr, "Signal \"%s\" not known.\n", txt);
++      ret = 1;
++      goto end;
+     }
+ 
+     if(!place){
+@@ -268,7 +271,10 @@ char *strtosig(const char *restrict s){
+     p += 3;
+   if (isdigit(*p)){
+     numsignal = strtol(s,&endp,10);
+-    if(*endp || endp==s) return NULL; /* not valid */
++    if(*endp || endp==s){ /* not valid */
++      free(copy);
++      return NULL;
++    }
+   }
+   if (numsignal){
+     for (i = 0; i < number_of_signals; i++){
+@@ -280,9 +286,9 @@ char *strtosig(const char *restrict s){
+   } else {
+     for (i = 0; i < number_of_signals; i++){
+       if (strcmp(p, sigtable[i].name) == 0){
+-	converted = malloc(sizeof(char) * 8);
++	converted = malloc(12);
+ 	if (converted)
+-	  snprintf(converted, sizeof(converted) - 1, "%d", sigtable[i].num);
++	  snprintf(converted, 12, "%d", sigtable[i].num);
+ 	break;
+       }
+     }
+diff -urp procps-ng-3.3.14/proc/slab.c procps-ng-3.3.14-qualys/proc/slab.c
+--- procps-ng-3.3.14/proc/slab.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/proc/slab.c	2018-05-23 12:34:15 +0000
+@@ -48,6 +48,7 @@ static struct slab_info *free_index;
+  */
+ static struct slab_info *get_slabnode(void)
+ {
++	static const struct slab_info initializer;
+ 	struct slab_info *node;
+ 
+ 	if (free_index) {
+@@ -56,7 +57,7 @@ static struct slab_info *get_slabnode(vo
+ 	} else {
+ 		node = xmalloc(sizeof(struct slab_info));
+ 	}
+-
++	*node = initializer;
+ 	return node;
+ }
+ 
+@@ -242,7 +243,7 @@ static int parse_slabinfo11(struct slab_
+ 				&curr->nr_active_slabs, &curr->nr_slabs,
+ 				&curr->pages_per_slab);
+ 
+-		if (assigned < 6) {
++		if (assigned < 7) {
+ 			fprintf(stderr, "unrecognizable data in  your slabinfo version 1.1\n\r");
+ 			if(slab_badname_detect(buffer))
+ 				fprintf(stderr, "Found an error in cache name at line %s\n", buffer);
+diff -urp procps-ng-3.3.14/proc/slab.h procps-ng-3.3.14-qualys/proc/slab.h
+--- procps-ng-3.3.14/proc/slab.h	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/proc/slab.h	2018-05-23 12:34:15 +0000
+@@ -4,7 +4,7 @@
+ #define SLAB_INFO_NAME_LEN      128
+ 
+ struct slab_info {
+-	char name[SLAB_INFO_NAME_LEN];  /* name of this cache */
++	char name[SLAB_INFO_NAME_LEN+1];  /* name of this cache */
+ 	struct slab_info *next;
+ 	unsigned long cache_size;       /* size of entire cache */
+ 	unsigned nr_objs;               /* number of objects in this cache */
+diff -urp procps-ng-3.3.14/proc/sysinfo.c procps-ng-3.3.14-qualys/proc/sysinfo.c
+--- procps-ng-3.3.14/proc/sysinfo.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/proc/sysinfo.c	2018-05-23 12:34:15 +0000
+@@ -25,6 +25,8 @@
+ #include <string.h>
+ #include <ctype.h>
+ #include <locale.h>
++#include <limits.h>
++#include <errno.h>
+ 
+ #include <unistd.h>
+ #include <fcntl.h>
+@@ -249,89 +251,75 @@ static void old_Hertz_hack(void){
+ 
+ // same as:   euid != uid || egid != gid
+ #ifndef AT_SECURE
+-#define AT_SECURE      23     // secure mode boolean (true if setuid, etc.)
++#define AT_SECURE       23    // secure mode boolean (true if setuid, etc.)
+ #endif
+ 
+ #ifndef AT_CLKTCK
+ #define AT_CLKTCK       17    // frequency of times()
+ #endif
+ 
+-#define NOTE_NOT_FOUND 42
+-
+ extern char** environ;
+ 
+-static unsigned long find_elf_note(unsigned long type)
++static bool find_elf_note(const unsigned long type, unsigned long *const valp)
+ {
+ #ifdef __CYGWIN__
+-  return NOTE_NOT_FOUND;
++  return false;
+ #else
+-  ElfW(auxv_t) auxv_struct;
+-  ElfW(auxv_t) *auxv_temp;
+-  FILE *fd;
+   int i;
+   static ElfW(auxv_t) *auxv = NULL;
+-  unsigned long *ep = (unsigned long *)environ;
+-  unsigned long ret_val = NOTE_NOT_FOUND;
+-
+ 
+-  if(!auxv) {
++  if (!auxv) {
++    const long pagesize = sysconf(_SC_PAGESIZE);
++    const int max_auxv = (pagesize < 4096 ? 4096 : pagesize > 65536 ? 65536 : pagesize) / sizeof(*auxv);
+ 
+-    fd = fopen("/proc/self/auxv", "rb");
+-
+-    if(!fd) {  // can't open auxv? that could be caused by euid change
++    FILE *const fp = fopen("/proc/self/auxv", "rb");
++    if (!fp) { // can't open auxv? that could be caused by euid change
+                // ... and we need to fall back to the old and unsafe
+                // ... method that doesn't work when calling library
+                // ... functions with dlopen -> FIXME :(
+-
+-      while(*ep++);  // for ELF executables, notes are pushed
+-      while(*ep){    // ... before environment and args
+-        if(ep[0]==type) return ep[1];
+-        ep+=2;
++      const unsigned long *ep = (void *)environ;
++      while (*ep++); // for ELF executables, notes are pushed
++      while (*ep) {  // ... before environment and args
++        if (ep[0] == type) {
++          *valp = ep[1];
++          return true;
++        }
++        ep += 2;
+       }
+-      return NOTE_NOT_FOUND;
++      return false;
+     }
+ 
+-    auxv = (ElfW(auxv_t) *) malloc(getpagesize());
++    auxv = calloc(max_auxv + 1, sizeof(*auxv));
+     if (!auxv) {
+-      perror("malloc");
++      perror("calloc");
+       exit(EXIT_FAILURE);
+     }
+ 
+-    i = 0;
+-    do {
+-      fread(&auxv_struct, sizeof(ElfW(auxv_t)), 1, fd);
+-      auxv[i] = auxv_struct;
+-      i++;
+-    } while (auxv_struct.a_type != AT_NULL);
+-
+-    fclose(fd);
++    for (i = 0; i < max_auxv; i++) {
++      if (fread(auxv + i, sizeof(*auxv), 1, fp) != 1) break;
++      if (auxv[i].a_type == AT_NULL) break;
++    }
++    auxv[i].a_type = AT_NULL;
++    auxv[i].a_un.a_val = 0;
+ 
++    fclose(fp);
+   }
+ 
+-  auxv_temp = auxv;
+-  i = 0;
+-  do {
+-    if(auxv_temp[i].a_type == type) {
+-      ret_val = (unsigned long)auxv_temp[i].a_un.a_val;
+-      break;
++  for (i = 0; auxv[i].a_type != AT_NULL; i++) {
++    if (auxv[i].a_type == type) {
++      *valp = auxv[i].a_un.a_val;
++      return true;
+     }
+-    i++;
+-  } while (auxv_temp[i].a_type != AT_NULL);
+-
+-  if (auxv){
+-	  auxv_temp = NULL;
+-	  free(auxv);
+-	  auxv = NULL;
+   }
+-  return ret_val;
++  return false;
+ #endif
+ }
+ 
+ int have_privs;
+ 
+ static int check_for_privs(void){
+-  unsigned long rc = find_elf_note(AT_SECURE);
+-  if(rc==NOTE_NOT_FOUND){
++  unsigned long rc = -1;
++  if(!find_elf_note(AT_SECURE, &rc)){
+     // not valid to run this code after UID or GID change!
+     // (if needed, may use AT_UID and friends instead)
+     rc = geteuid() != getuid() || getegid() != getgid();
+@@ -349,13 +337,16 @@ static void init_libproc(void){
+ 
+ #ifdef __linux__
+   if(linux_version_code > LINUX_VERSION(2, 4, 0)){
+-    Hertz = find_elf_note(AT_CLKTCK);
+-    if(Hertz!=NOTE_NOT_FOUND) return;
++    unsigned long hz = -1;
++    if(find_elf_note(AT_CLKTCK, &hz)){
++      Hertz = hz;
++      return;
++    }
+ //  fputs("2.4+ kernel w/o ELF notes? -- report this\n", stderr);
+   }
+ #endif /* __linux __ */
+ #if defined(__FreeBSD_kernel__) || defined(__FreeBSD__)
+-  /* On FreeBSD the Hertz hack is unrelaible, there is no ELF note and
++  /* On FreeBSD the Hertz hack is unreliable, there is no ELF note and
+    * Hertz isn't defined in asm/params.h
+    * See Debian Bug #460331
+    */
+@@ -522,7 +513,7 @@ void getstat(jiff *restrict cuse, jiff *
+   int need_vmstat_file = 0;
+   int need_proc_scan = 0;
+   const char* b;
+-  buff[BUFFSIZE-1] = 0;  /* ensure null termination in buffer */
++  memset(buff, '\0', BUFFSIZE);  /* ensure null termination in buffer */
+ 
+   if(fd){
+     lseek(fd, 0L, SEEK_SET);
+@@ -1042,6 +1033,10 @@ unsigned int getdiskstat(struct disk_sta
+     }
+     fields = sscanf(buff, " %*d %*d %34s %*u %*u %*u %*u %*u %*u %*u %*u %*u %*u %u", devname, &dummy);
+     if (fields == 2 && is_disk(devname)){
++      if (cDisk < 0 || (size_t)cDisk >= INT_MAX / sizeof(struct disk_stat)) {
++        errno = EFBIG;
++        crash("/proc/diskstats");
++      }
+       (*disks) = xrealloc(*disks, (cDisk+1)*sizeof(struct disk_stat));
+       sscanf(buff,  "   %*d    %*d %31s %u %u %llu %u %u %u %llu %u %u %u %u",
+         //&disk_major,
+@@ -1062,6 +1057,10 @@ unsigned int getdiskstat(struct disk_sta
+         (*disks)[cDisk].partitions=0;
+       cDisk++;
+     }else{
++      if (cPartition < 0 || (size_t)cPartition >= INT_MAX / sizeof(struct partition_stat)) {
++        errno = EFBIG;
++        crash("/proc/diskstats");
++      }
+       (*partitions) = xrealloc(*partitions, (cPartition+1)*sizeof(struct partition_stat));
+       fflush(stdout);
+       sscanf(buff,  (fields == 2)
+@@ -1099,6 +1098,10 @@ unsigned int getslabinfo (struct slab_ca
+   while (fgets(buff,BUFFSIZE-1,fd)){
+     if(!memcmp("slabinfo - version:",buff,19)) continue; // skip header
+     if(*buff == '#')                           continue; // skip comments
++    if(cSlab < 0 || (size_t)cSlab >= INT_MAX / sizeof(struct slab_cache)){
++      errno = EFBIG;
++      crash("/proc/slabinfo");
++    }
+     (*slab) = xrealloc(*slab, (cSlab+1)*sizeof(struct slab_cache));
+     sscanf(buff,  "%47s %u %u %u %u",  // allow 47; max seen is 24
+       (*slab)[cSlab].name,
+@@ -1126,7 +1129,7 @@ unsigned get_pid_digits(void){
+   ret = 5;
+   fd = open("/proc/sys/kernel/pid_max", O_RDONLY);
+   if(fd==-1) goto out;
+-  rc = read(fd, pidbuf, sizeof pidbuf);
++  rc = read(fd, pidbuf, sizeof pidbuf - 1);
+   close(fd);
+   if(rc<3) goto out;
+   pidbuf[rc] = '\0';
+diff -urp procps-ng-3.3.14/proc/version.h procps-ng-3.3.14-qualys/proc/version.h
+--- procps-ng-3.3.14/proc/version.h	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/proc/version.h	2018-05-23 12:34:15 +0000
+@@ -30,7 +30,7 @@ extern "C" {
+ int procps_linux_version(void);
+ 
+ /* Convenience macros for composing/decomposing version codes */
+-#define LINUX_VERSION(x,y,z)   (0x10000*(x) + 0x100*(y) + z)
++#define LINUX_VERSION(x,y,z)   (0x10000*(x) + 0x100*(y) + (z))
+ #define LINUX_VERSION_MAJOR(x) (((x)>>16) & 0xFF)
+ #define LINUX_VERSION_MINOR(x) (((x)>> 8) & 0xFF)
+ #define LINUX_VERSION_PATCH(x) ( (x)      & 0xFF)
+diff -urp procps-ng-3.3.14/proc/whattime.c procps-ng-3.3.14-qualys/proc/whattime.c
+--- procps-ng-3.3.14/proc/whattime.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/proc/whattime.c	2018-05-23 12:34:15 +0000
+@@ -38,7 +38,7 @@
+ #include "whattime.h"
+ #include "sysinfo.h"
+ 
+-static char buf[128];
++static char buf[256];
+ static double av[3];
+ 
+ char *sprint_uptime(int human_readable) {
+@@ -60,6 +60,7 @@ char *sprint_uptime(int human_readable)
+       realtime->tm_hour, realtime->tm_min, realtime->tm_sec);
+   } else {
+     pos = 0;
++    buf[0] = '\0';
+   }
+ 
+ /* read and calculate the amount of uptime */
+diff -urp procps-ng-3.3.14/ps/display.c procps-ng-3.3.14-qualys/ps/display.c
+--- procps-ng-3.3.14/ps/display.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/ps/display.c	2018-05-23 12:34:15 +0000
+@@ -66,6 +66,7 @@ static void signal_handler(int signo){
+       error_at_line(0, 0, __FILE__, __LINE__, "%s", _("please report this bug"));
+       signal(signo, SIG_DFL);  /* allow core file creation */
+       kill(getpid(), signo);
++      _exit(EXIT_FAILURE);
+   }
+ }
+ 
+@@ -291,7 +292,7 @@ static void lists_and_needs(void){
+   needs_for_sort = check_sort_needs(sort_list);
+ 
+   // move process-only flags to the process
+-  proc_format_needs |= (task_format_needs &~ PROC_ONLY_FLAGS);
++  proc_format_needs |= (task_format_needs & PROC_ONLY_FLAGS);
+   task_format_needs &= ~PROC_ONLY_FLAGS;
+ 
+   if(bsd_c_option){
+@@ -468,14 +469,22 @@ static void show_proc_array(PROCTAB *res
+ /***** show tree */
+ /* this needs some optimization work */
+ #define ADOPTED(x) 1
++
++#define IS_LEVEL_SAFE(level) \
++  ((level) >= 0 && (size_t)(level) < sizeof(forest_prefix))
++
+ static void show_tree(const int self, const int n, const int level, const int have_sibling){
+   int i = 0;
++
++  if(!IS_LEVEL_SAFE(level))
++    catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
++
+   if(level){
+     /* add prefix of "+" or "L" */
+     if(have_sibling) forest_prefix[level-1] = '+';
+     else             forest_prefix[level-1] = 'L';
+-    forest_prefix[level] = '\0';
+   }
++  forest_prefix[level] = '\0';
+   show_one_proc(processes[self],format_list);  /* first show self */
+   for(;;){  /* look for children */
+     if(i >= n) return; /* no children */
+@@ -486,8 +495,8 @@ static void show_tree(const int self, co
+     /* change our prefix to "|" or " " for the children */
+     if(have_sibling) forest_prefix[level-1] = '|';
+     else             forest_prefix[level-1] = ' ';
+-    forest_prefix[level] = '\0';
+   }
++  forest_prefix[level] = '\0';
+   for(;;){
+     int self_pid;
+     int more_children = 1;
+@@ -498,16 +507,18 @@ static void show_tree(const int self, co
+     else
+       if(processes[i+1]->ppid != self_pid) more_children = 0;
+     if(self_pid==1 && ADOPTED(processes[i]) && forest_type!='u')
+-      show_tree(i++, n, level,   more_children);
++      show_tree(i++, n, level, more_children);
+     else
+-      show_tree(i++, n, level+1, more_children);
++      show_tree(i++, n, IS_LEVEL_SAFE(level+1) ? level+1 : level, more_children);
+     if(!more_children) break;
+   }
+-  /* chop prefix that children added -- do we need this? */
++  /* chop prefix that children added */
+   forest_prefix[level] = '\0';
+ //  memset(processes[self], '$', sizeof(proc_t));  /* debug */
+ }
+ 
++#undef IS_LEVEL_SAFE
++
+ /***** show forest */
+ static void show_forest(const int n){
+   int i = n;
+diff -urp procps-ng-3.3.14/ps/output.c procps-ng-3.3.14-qualys/ps/output.c
+--- procps-ng-3.3.14/ps/output.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/ps/output.c	2018-05-23 12:34:15 +0000
+@@ -80,15 +80,14 @@
+ 
+ #define COLWID 240 /* satisfy snprintf, which is faster than sprintf */
+ 
+-static unsigned max_rightward = 0x12345678; /* space for RIGHT stuff */
+-static unsigned max_leftward = 0x12345678; /* space for LEFT stuff */
++static unsigned max_rightward = OUTBUF_SIZE-1; /* space for RIGHT stuff */
++static unsigned max_leftward = OUTBUF_SIZE-1; /* space for LEFT stuff */
+ 
+ 
+ 
+ static int wide_signals;  /* true if we have room */
+ 
+ static time_t seconds_since_1970;
+-static unsigned long page_shift;
+ 
+ 
+ /*************************************************************************/
+@@ -339,11 +338,13 @@ STIME	stime	hms or md time format
+ static int forest_helper(char *restrict const outbuf){
+   char *p = forest_prefix;
+   char *q = outbuf;
+-  int rightward=max_rightward;
++  int rightward = max_rightward < OUTBUF_SIZE ? max_rightward : OUTBUF_SIZE-1;
++  *q = '\0';
+   if(!*p) return 0;
+   /* Arrrgh! somebody defined unix as 1 */
+   if(forest_type == 'u') goto unixy;
+   while(*p){
++    if (rightward < 4) break;
+     switch(*p){
+     case ' ': strcpy(q, "    ");  break;
+     case 'L': strcpy(q, " \\_ "); break;
+@@ -351,10 +352,6 @@ static int forest_helper(char *restrict
+     case '|': strcpy(q, " |  ");  break;
+     case '\0': return q-outbuf;    /* redundant & not used */
+     }
+-    if (rightward-4 < 0) {
+-      *(q+rightward)='\0';
+-      return max_rightward;
+-    }
+     q += 4;
+     rightward -= 4;
+     p++;
+@@ -362,6 +359,7 @@ static int forest_helper(char *restrict
+   return q-outbuf;   /* gcc likes this here */
+ unixy:
+   while(*p){
++    if (rightward < 2) break;
+     switch(*p){
+     case ' ': strcpy(q, "  "); break;
+     case 'L': strcpy(q, "  "); break;
+@@ -369,10 +367,6 @@ unixy:
+     case '|': strcpy(q, "  "); break;
+     case '\0': return q-outbuf;    /* redundant & not used */
+     }
+-    if (rightward-2 < 0) {
+-      *(q+rightward)='\0';
+-      return max_rightward;
+-    }
+     q += 2;
+     rightward -= 2;
+     p++;
+@@ -394,6 +388,9 @@ Modifications to the arguments are not s
+ 
+ // FIXME: some of these may hit the guard page in forest mode
+ 
++#define OUTBUF_SIZE_AT(endp) \
++  (((endp) >= outbuf && (endp) < outbuf + OUTBUF_SIZE) ? (outbuf + OUTBUF_SIZE) - (endp) : 0)
++
+ /*
+  * "args", "cmd", "command" are all the same:  long  unless  c
+  * "comm", "ucmd", "ucomm"  are all the same:  short unless -f
+@@ -407,15 +404,15 @@ static int pr_args(char *restrict const
+   rightward -= fh;
+ 
+   if(pp->cmdline && !bsd_c_option)
+-    endp += escaped_copy(endp, *pp->cmdline, OUTBUF_SIZE, &rightward);
++    endp += escaped_copy(endp, *pp->cmdline, OUTBUF_SIZE_AT(endp), &rightward);
+   else
+-    endp += escape_command(endp, pp, OUTBUF_SIZE, &rightward, ESC_DEFUNCT);
++    endp += escape_command(endp, pp, OUTBUF_SIZE_AT(endp), &rightward, ESC_DEFUNCT);
+ 
+-  if(bsd_e_option && rightward>1) {
++  if(bsd_e_option && rightward>1 && OUTBUF_SIZE_AT(endp)>1) {
+     if(pp->environ && *pp->environ) {
+       *endp++ = ' ';
+       rightward--;
+-      endp += escape_strlist(endp, pp->environ, OUTBUF_SIZE, &rightward);
++      endp += escape_strlist(endp, pp->environ, OUTBUF_SIZE_AT(endp), &rightward);
+     }
+   }
+   return max_rightward-rightward;
+@@ -434,15 +431,15 @@ static int pr_comm(char *restrict const
+   rightward -= fh;
+ 
+   if(pp->cmdline && unix_f_option)
+-    endp += escaped_copy(endp, *pp->cmdline, OUTBUF_SIZE, &rightward);
++    endp += escaped_copy(endp, *pp->cmdline, OUTBUF_SIZE_AT(endp), &rightward);
+   else
+-    endp += escape_command(endp, pp, OUTBUF_SIZE, &rightward, ESC_DEFUNCT);
++    endp += escape_command(endp, pp, OUTBUF_SIZE_AT(endp), &rightward, ESC_DEFUNCT);
+ 
+-  if(bsd_e_option && rightward>1) {
++  if(bsd_e_option && rightward>1 && OUTBUF_SIZE_AT(endp)>1) {
+     if(pp->environ && *pp->environ) {
+       *endp++ = ' ';
+       rightward--;
+-      endp += escape_strlist(endp, pp->environ, OUTBUF_SIZE, &rightward);
++      endp += escape_strlist(endp, pp->environ, OUTBUF_SIZE_AT(endp), &rightward);
+     }
+   }
+   return max_rightward-rightward;
+@@ -474,11 +471,13 @@ static int pr_fname(char *restrict const
+   if (rightward>8)  /* 8=default, but forest maybe feeds more */
+     rightward = 8;
+ 
+-  endp += escape_str(endp, pp->cmd, OUTBUF_SIZE, &rightward);
++  endp += escape_str(endp, pp->cmd, OUTBUF_SIZE_AT(endp), &rightward);
+   //return endp - outbuf;
+   return max_rightward-rightward;
+ }
+ 
++#undef OUTBUF_SIZE_AT
++
+ /* elapsed wall clock time, [[dd-]hh:]mm:ss format (not same as "time") */
+ static int pr_etime(char *restrict const outbuf, const proc_t *restrict const pp){
+   unsigned long t;
+@@ -885,8 +884,8 @@ static int pr_bsdstart(char *restrict co
+   start = getbtime() + pp->start_time / Hertz;
+   seconds_ago = seconds_since_1970 - start;
+   if(seconds_ago < 0) seconds_ago=0;
+-  if(seconds_ago > 3600*24)  strcpy(outbuf, ctime(&start)+4);
+-  else                       strcpy(outbuf, ctime(&start)+10);
++  if(seconds_ago > 3600*24)  snprintf(outbuf, COLWID, "%s", ctime(&start)+4);
++  else                       snprintf(outbuf, COLWID, "%s", ctime(&start)+10);
+   outbuf[6] = '\0';
+   return 6;
+ }
+@@ -1022,6 +1021,7 @@ static int pr_stime(char *restrict const
+   const char *fmt;
+   int tm_year;
+   int tm_yday;
++  size_t len;
+   our_time = localtime(&seconds_since_1970);   /* not reentrant */
+   tm_year = our_time->tm_year;
+   tm_yday = our_time->tm_yday;
+@@ -1030,7 +1030,9 @@ static int pr_stime(char *restrict const
+   fmt = "%H:%M";                                   /* 03:02 23:59 */
+   if(tm_yday != proc_time->tm_yday) fmt = "%b%d";  /* Jun06 Aug27 */
+   if(tm_year != proc_time->tm_year) fmt = "%Y";    /* 1991 2001 */
+-  return strftime(outbuf, 42, fmt, proc_time);
++  len = strftime(outbuf, COLWID, fmt, proc_time);
++  if(len <= 0 || len >= COLWID) outbuf[len = 0] = '\0';
++  return len;
+ }
+ 
+ static int pr_start(char *restrict const outbuf, const proc_t *restrict const pp){
+@@ -1048,14 +1050,15 @@ static int pr_start(char *restrict const
+ 
+ #ifdef SIGNAL_STRING
+ static int help_pr_sig(char *restrict const outbuf, const char *restrict const sig){
+-  long len = 0;
+-  len = strlen(sig);
++  const size_t len = strlen(sig);
+   if(wide_signals){
+     if(len>8) return snprintf(outbuf, COLWID, "%s", sig);
+     return snprintf(outbuf, COLWID, "00000000%s", sig);
+   }
+   if(len-strspn(sig,"0") > 8)
+     return snprintf(outbuf, COLWID, "<%s", sig+len-8);
++  if(len < 8)
++    return snprintf(outbuf, COLWID, "%s%s", "00000000"+len, sig);
+   return snprintf(outbuf, COLWID,  "%s", sig+len-8);
+ }
+ #else
+@@ -1143,7 +1146,7 @@ static int do_pr_name(char *restrict con
+       return len;  /* returns number of cells */
+ 
+     // only use '+' when not on a multi-byte char, else show uid
+-    if ((unsigned)outbuf[max_rightward-1] < 127) {
++    if (max_rightward >= 1 && (unsigned)outbuf[max_rightward-1] < 127) {
+       len = max_rightward-1;
+       outbuf[len++] = '+';
+       outbuf[len] = 0;
+@@ -1338,7 +1341,7 @@ static int pr_context(char *restrict con
+     len = strlen(context);
+     if(len > max_len) len = max_len;
+     memcpy(outbuf, context, len);
+-    if (outbuf[len-1] == '\n') --len;
++    if (len >= 1 && outbuf[len-1] == '\n') --len;
+     outbuf[len] = '\0';
+     ps_freecon(context);
+   }else{
+@@ -2037,14 +2040,22 @@ void show_one_proc(const proc_t *restric
+ 	max_rightward = active_cols - ( (correct>actual) ? correct : actual );
+       }
+     }
++    if(max_rightward <= 0) max_rightward = 0;
++    else if(max_rightward >= OUTBUF_SIZE) max_rightward = OUTBUF_SIZE-1;
++
+     max_leftward  = fmt->width + actual - correct; /* TODO check this */
++    if(max_leftward <= 0) max_leftward = 0;
++    else if(max_leftward >= OUTBUF_SIZE) max_leftward = OUTBUF_SIZE-1;
+ 
+ //    fprintf(stderr, "cols: %d, max_rightward: %d, max_leftward: %d, actual: %d, correct: %d\n",
+ //		    active_cols, max_rightward, max_leftward, actual, correct);
+ 
+     /* prepare data and calculate leftpad */
+     if(likely(p) && likely(fmt->pr)) amount = (*fmt->pr)(outbuf,p);
+-    else amount = strlen(strcpy(outbuf, fmt->name)); /* AIX or headers */
++    else amount = snprintf(outbuf, OUTBUF_SIZE, "%s", fmt->name); /* AIX or headers */
++
++    if(amount < 0) outbuf[amount = 0] = '\0';
++    else if(amount >= OUTBUF_SIZE) outbuf[amount = OUTBUF_SIZE-1] = '\0';
+ 
+     switch((fmt->flags) & CF_JUST_MASK){
+     case 0:  /* for AIX, assigned outside this file */
+@@ -2109,6 +2120,7 @@ void show_one_proc(const proc_t *restric
+     if(unlikely(space>SPACE_AMOUNT)) space=SPACE_AMOUNT;  // only so much available
+ 
+     /* real size -- don't forget in 'amount' is number of cells */
++    outbuf[OUTBUF_SIZE-1] = '\0';
+     sz = strlen(outbuf);
+ 
+     /* print data, set x position stuff */
+@@ -2148,17 +2160,6 @@ void init_output(void){
+   int outbuf_pages;
+   char *outbuf;
+ 
+-  switch(page_size){
+-  case 65536: page_shift = 16; break;
+-  case 32768: page_shift = 15; break;
+-  case 16384: page_shift = 14; break;
+-  case  8192: page_shift = 13; break;
+-  default: fprintf(stderr, _("unknown page size (assume 4096)\n"));
+-  case  4096: page_shift = 12; break;
+-  case  2048: page_shift = 11; break;
+-  case  1024: page_shift = 10; break;
+-  }
+-
+   // add page_size-1 to round up
+   outbuf_pages = (OUTBUF_SIZE+SPACE_AMOUNT+page_size-1)/page_size;
+   outbuf = mmap(
+@@ -2169,6 +2170,9 @@ void init_output(void){
+     -1,
+     0
+   );
++  if(outbuf == MAP_FAILED)
++    catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
++
+   memset(outbuf, ' ', SPACE_AMOUNT);
+   if(SPACE_AMOUNT==page_size) mprotect(outbuf, page_size, PROT_READ);
+   mprotect(outbuf + page_size*outbuf_pages, page_size, PROT_NONE); // guard page
+diff -urp procps-ng-3.3.14/ps/sortformat.c procps-ng-3.3.14-qualys/ps/sortformat.c
+--- procps-ng-3.3.14/ps/sortformat.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/ps/sortformat.c	2018-05-23 12:34:15 +0000
+@@ -22,6 +22,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <limits.h>
+ 
+ #include <sys/types.h>
+ 
+@@ -172,7 +173,7 @@ static const char *aix_format_parse(sf_n
+         return _("AIX field descriptor processing bug");
+       }
+     } else {
+-      int len;
++      size_t len;
+       len = strcspn(walk, "%");
+       memcpy(buf,walk,len);
+       if(0){
+@@ -183,7 +184,7 @@ double_percent:
+       buf[len] = '\0';
+       walk += len;
+       fnode = malloc(sizeof(format_node));
+-      fnode->width = len;
++      fnode->width = len < INT_MAX ? len : INT_MAX;
+       fnode->name = strdup(buf);
+       fnode->pr = NULL;     /* checked for */
+       fnode->need = 0;
+@@ -259,6 +260,7 @@ static const char *format_parse(sf_node
+     format_node *endp;
+     char *equal_loc;
+     char *colon_loc;
++    if(!walk) catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
+     sep_loc = strpbrk(walk," ,\t\n");
+     /* if items left, then sep_loc is not in header override */
+     if(items && sep_loc) *sep_loc = '\0';
+@@ -271,7 +273,7 @@ static const char *format_parse(sf_node
+     if(colon_loc){   /* if width override */
+       *colon_loc = '\0';
+       colon_loc++;
+-      if(strspn(colon_loc,"0123456789") != strlen(colon_loc) || *colon_loc=='0' || !*colon_loc){
++      if(strspn(colon_loc,"0123456789") != strlen(colon_loc) || *colon_loc=='0' || !*colon_loc || atoi(colon_loc) <= 0){
+         free(buf);
+         goto badwidth;
+       }
+@@ -296,11 +298,12 @@ static const char *format_parse(sf_node
+       }
+       // FIXME: enforce signal width to 8, 9, or 16 (grep: SIGNAL wide_signals)
+       fnode->width = atoi(colon_loc); // already verified to be a number
++      if(fnode->width <= 0) catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
+     }
+     endp = fnode; while(endp->next) endp = endp->next;  /* find end */
+     endp->next = sfn->f_cooked;
+     sfn->f_cooked = fnode;
+-    walk = sep_loc + 1; /* point to next item, if any */
++    walk = sep_loc ? sep_loc + 1 : NULL; /* point to next item, if any */
+   }
+   free(buf);
+   already_parsed_format = 1;
+@@ -428,6 +431,7 @@ static const char *verify_short_sort(con
+   walk = arg;
+   for(;;){
+     tmp = *walk;
++    if(tmp < 0 || (size_t)tmp >= sizeof(checkoff)) return _("bad sorting code");
+     switch(tmp){
+     case '\0':
+       return NULL;   /* looks good */
+diff -urp procps-ng-3.3.14/pwdx.c procps-ng-3.3.14-qualys/pwdx.c
+--- procps-ng-3.3.14/pwdx.c	2016-11-23 20:51:08 +0000
++++ procps-ng-3.3.14-qualys/pwdx.c	2018-05-23 12:34:15 +0000
+@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
+ 	for (i = 0; i < argc; i++) {
+ 		char *s;
+ 		ssize_t len, buflen;
+-		/* Constant 10 is the length of strings "/proc/" + "/cwd" + 1 */
++		/* Constant 10 is the length of strings "/proc/" + "/cwd" */
+ 		char *buf;
+ 		buflen = 10 + strlen(argv[i]) + 1;
+ 		buf = xmalloc(buflen);
+diff -urp procps-ng-3.3.14/skill.c procps-ng-3.3.14-qualys/skill.c
+--- procps-ng-3.3.14/skill.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/skill.c	2018-05-23 12:34:15 +0000
+@@ -68,13 +68,13 @@ static int ns_pid;
+ static proc_t ns_task;
+ 
+ #define ENLIST(thing,addme) do{ \
+-if(!thing##s) thing##s = xmalloc(sizeof(*thing##s)*saved_argc); \
++if(thing##_count < 0 || (size_t)thing##_count >= INT_MAX / sizeof(*thing##s)) \
++	xerrx(EXIT_FAILURE, _("integer overflow")); \
++thing##s = xrealloc(thing##s, sizeof(*thing##s)*(thing##_count+1)); \
+ thing##s[thing##_count++] = addme; \
+ }while(0)
+ 
+ static int my_pid;
+-static int saved_argc;
+-
+ static int sig_or_pri;
+ 
+ enum {
+@@ -131,13 +131,15 @@ static void hurt_proc(int tty, int uid,
+ 	char dn_buf[1000];
+ 	dev_to_tty(dn_buf, 999, tty, pid, ABBREV_DEV);
+ 	if (run_time->interactive) {
+-		char *buf;
++		char *buf = NULL;
+ 		size_t len = 0;
+ 		fprintf(stderr, "%-8s %-8s %5d %-16.16s   ? ",
+ 			(char *)dn_buf, pwcache_get_user(uid), pid, cmd);
+ 		fflush (stdout);
+-		if (getline(&buf, &len, stdin) == -1)
++		if (getline(&buf, &len, stdin) == -1) {
++			free(buf);
+ 			return;
++		}
+ 		if (rpmatch(buf) < 1) {
+ 			free(buf);
+ 			return;
+@@ -174,6 +176,7 @@ static void check_proc(int pid, struct r
+ 	int tty;
+ 	int fd;
+ 	int i;
++	ssize_t len;
+ 	if (pid == my_pid || pid == 0)
+ 		return;
+ 	/* pid (cmd) state ppid pgrp session tty */
+@@ -185,7 +188,8 @@ static void check_proc(int pid, struct r
+ 			xwarn(_("cannot open file %s"), buf);
+ 		return;
+ 	}
+-	fstat(fd, &statbuf);
++	if (fstat(fd, &statbuf) != 0)
++		goto closure;
+ 	if (uids) {
+ 		/* check the EUID */
+ 		i = uid_count;
+@@ -195,15 +199,21 @@ static void check_proc(int pid, struct r
+ 		if (i == -1)
+ 			goto closure;
+ 	}
+-	if (read(fd, buf, 128) <= 0)
+-	    goto closure;
+-	buf[127] = '\0';
++	len = read(fd, buf, sizeof(buf));
++	if (len <= 0 || (size_t)len >= sizeof(buf))
++		goto closure;
++	buf[len] = '\0';
+ 	tmp = strrchr(buf, ')');
++	if (!tmp)
++		goto closure;
+ 	*tmp++ = '\0';
+ 	i = 5;
+ 	while (i--)
+-		while (*tmp++ != ' ')
+-			/* scan to find tty */ ;
++		do {
++			if (!*tmp)
++				goto closure;
++			/* scan to find tty */
++		} while (*tmp++ != ' ');
+ 	tty = atoi(tmp);
+ 	if (ttys) {
+ 		i = tty_count;
+@@ -213,7 +223,10 @@ static void check_proc(int pid, struct r
+ 		if (i == -1)
+ 			goto closure;
+ 	}
+-	tmp = strchr(buf, '(') + 1;
++	tmp = strchr(buf, '(');
++	if (!tmp)
++		goto closure;
++	tmp++;
+ 	if (cmds) {
+ 		i = cmd_count;
+ 		/* fast comparison trick -- useful? */
+@@ -419,7 +432,6 @@ static void __attribute__ ((__noreturn__
+     kill_main(int argc, char **argv)
+ {
+ 	int signo, i;
+-	int loop = 1;
+ 	long pid;
+ 	int exitvalue = EXIT_SUCCESS;
+     char *sig_option;
+@@ -446,7 +458,7 @@ static void __attribute__ ((__noreturn__
+ 		signo = SIGTERM;
+ 
+ 	opterr=0; /* suppress errors on -123 */
+-	while (loop == 1 && (i = getopt_long(argc, argv, "l::Ls:hV", longopts, NULL)) != -1)
++	while ((i = getopt_long(argc, argv, "l::Ls:hV", longopts, NULL)) != -1)
+ 		switch (i) {
+ 		case 'l':
+             sig_option = NULL;
+@@ -491,8 +503,7 @@ static void __attribute__ ((__noreturn__
+ 				exitvalue = EXIT_FAILURE;
+ 			    exit(exitvalue);
+ 			}
+-			loop=0;
+-			break;
++			xerrx(EXIT_FAILURE, _("internal error"));
+ 		default:
+ 			kill_usage(stderr);
+ 		}
+@@ -525,8 +536,6 @@ static void _skillsnice_usage(int line)
+ #define skillsnice_usage() _skillsnice_usage(__LINE__)
+ #endif
+ 
+-#define NEXTARG (argc?( argc--, ((argptr=*++argv)) ):NULL)
+-
+ /* common skill/snice argument parsing code */
+ 
+ static int snice_prio_option(int *argc, char **argv)
+@@ -542,10 +551,9 @@ static int snice_prio_option(int *argc,
+ 			if (prio < INT_MIN || INT_MAX < prio)
+ 				xerrx(EXIT_FAILURE,
+ 				     _("priority %lu out of range"), prio);
++			memmove(argv + i, argv + i + 1,
++				sizeof(char *) * (nargs - i));
+ 			nargs--;
+-			if (nargs - i)
+-				memmove(argv + i, argv + i + 1,
+-					sizeof(char *) * (nargs - i));
+ 		} else
+ 			i++;
+ 	}
+@@ -598,8 +606,6 @@ static void skillsnice_parse(int argc,
+ 			sig_or_pri = signo;
+ 	}
+ 
+-	pid_count = 0;
+-
+ 	while ((ch =
+ 		getopt_long(argc, argv, "c:dfilnp:Lt:u:vwhV", longopts,
+ 			    NULL)) != -1)
+@@ -626,7 +632,6 @@ static void skillsnice_parse(int argc,
+ 			ENLIST(pid,
+ 			       strtol_or_err(optarg,
+ 					     _("failed to parse argument")));
+-			pid_count++;
+ 			break;
+ 		case 'L':
+ 			pretty_print_signals();
+@@ -695,7 +700,6 @@ static void skillsnice_parse(int argc,
+ 		num = strtol(argv[0], &end, 10);
+ 		if (errno == 0 && argv[0] != end && end != NULL && *end == '\0') {
+ 			ENLIST(pid, num);
+-			pid_count++;
+ 		} else {
+ 			ENLIST(cmd, argv[0]);
+ 		}
+diff -urp procps-ng-3.3.14/slabtop.c procps-ng-3.3.14-qualys/slabtop.c
+--- procps-ng-3.3.14/slabtop.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/slabtop.c	2018-05-23 12:34:15 +0000
+@@ -364,6 +364,7 @@ int main(int argc, char *argv[])
+ 		memset(&stats, 0, sizeof(struct slab_stat));
+ 
+ 		if (get_slabinfo(&slab_list, &stats)) {
++			slab_list = NULL;
+ 			retval = EXIT_FAILURE;
+ 			break;
+ 		}
+@@ -436,7 +437,8 @@ int main(int argc, char *argv[])
+ 
+ 	if (is_tty)
+ 		tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
+-	free_slabinfo(slab_list);
++	if (slab_list)
++		free_slabinfo(slab_list);
+ 	if (!run_once)
+ 		endwin();
+ 	return retval;
+diff -urp procps-ng-3.3.14/tload.c procps-ng-3.3.14-qualys/tload.c
+--- procps-ng-3.3.14/tload.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/tload.c	2018-05-23 12:34:15 +0000
+@@ -43,13 +43,14 @@
+ #include <sys/ioctl.h>
+ #include <termios.h>
+ #include <unistd.h>
++#include <limits.h>
+ 
+ static char *screen;
+ 
+ static int nrows = 25;
+ static int ncols = 80;
+ static int scr_size;
+-static int fd = 1;
++static int fd = STDOUT_FILENO;
+ static unsigned int dly = 5;
+ static jmp_buf jb;
+ 
+@@ -70,9 +71,13 @@ static void setsize(int i)
+ 		if (win.ws_row > 0)
+ 			nrows = win.ws_row;
+ 	}
++	if (ncols < 2 || ncols >= INT_MAX)
++		xerrx(EXIT_FAILURE, _("screen too small or too large"));
++	if (nrows < 2 || nrows >= INT_MAX / ncols)
++		xerrx(EXIT_FAILURE, _("screen too small or too large"));
+ 	scr_size = nrows * ncols;
+ 	if (scr_size < 2)
+-		xerr(EXIT_FAILURE, _("screen too small"));
++		xerrx(EXIT_FAILURE, _("screen too small"));
+ 	if (screen == NULL)
+ 		screen = (char *)xmalloc(scr_size);
+ 	else
+@@ -81,7 +86,7 @@ static void setsize(int i)
+ 	memset(screen, ' ', scr_size - 1);
+ 	*(screen + scr_size - 2) = '\0';
+ 	if (i)
+-		longjmp(jb, 0);
++		longjmp(jb, 1);
+ }
+ 
+ static void __attribute__ ((__noreturn__)) usage(FILE * out)
+@@ -150,7 +155,7 @@ int main(int argc, char **argv)
+ 		}
+ 
+ 	if (argc > optind)
+-		if ((fd = open(argv[optind], 1)) == -1)
++		if ((fd = open(argv[optind], O_WRONLY)) == -1)
+ 			xerr(EXIT_FAILURE, _("can not open tty"));
+ 
+ 	setsize(0);
+@@ -190,7 +195,7 @@ int main(int argc, char **argv)
+ 		for (i = 1;; ++i) {
+ 			char *p;
+ 			row = nrows - (i * scale_fact);
+-			if (row < 0)
++			if (row < 0 || row >= nrows)
+ 				break;
+ 			if (*(p = screen + row * ncols + col) == ' ')
+ 				*p = '-';
+@@ -205,8 +210,8 @@ int main(int argc, char **argv)
+ 			for (row = nrows - 2; row >= 0; --row)
+ 				*(screen + row * ncols + col) = ' ';
+ 		}
+-		i = sprintf(screen, " %.2f, %.2f, %.2f", av[0], av[1], av[2]);
+-		if (i > 0)
++		i = snprintf(screen, scr_size, " %.2f, %.2f, %.2f", av[0], av[1], av[2]);
++		if (i > 0 && i < scr_size)
+ 			screen[i] = ' ';
+ 
+ 		if (write(fd, "\033[H", 3) < 0)
+diff -urp procps-ng-3.3.14/top/top.c procps-ng-3.3.14-qualys/top/top.c
+--- procps-ng-3.3.14/top/top.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/top/top.c	2018-05-23 12:34:15 +0000
+@@ -22,6 +22,7 @@
+ #include <fcntl.h>
+ #include <float.h>
+ #include <limits.h>
++#include <stdint.h>
+ #include <pwd.h>
+ #include <signal.h>
+ #include <stdarg.h>
+@@ -203,7 +204,7 @@ static int   *PHash_sav = HHash_one,   /
+ static int Autox_array [EU_MAXPFLGS],
+            Autox_found;
+ #define AUTOX_NO      EU_MAXPFLGS
+-#define AUTOX_COL(f)  if (EU_MAXPFLGS > f) Autox_array[f] = Autox_found = 1
++#define AUTOX_COL(f)  if (EU_MAXPFLGS > f && f >= 0) Autox_array[f] = Autox_found = 1
+ #define AUTOX_MODE   (0 > Rc.fixed_widest)
+ 
+         /* Support for scale_mem and scale_num (to avoid duplication. */
+@@ -344,9 +345,17 @@ static const char *fmtmk (const char *fm
+         /*
+          * This guy is just our way of avoiding the overhead of the standard
+          * strcat function (should the caller choose to participate) */
+-static inline char *scat (char *dst, const char *src) {
+-   while (*dst) dst++;
+-   while ((*(dst++) = *(src++)));
++static inline char *scat (char *dst, const char *src, char *buf, size_t size) {
++   char *end = buf + size;
++   if (size <= 0) return buf;
++   if (dst < buf) return buf;
++
++   while (dst < end && *dst) dst++;
++   while (dst < end && (*(dst++) = *(src++)));
++   if (dst >= end) {
++      *--end = '\0';
++      return end;
++   }
+    return --dst;
+ } // end: scat
+ 
+@@ -581,6 +590,7 @@ static void sig_abexit (int sig) {
+       , sig, signal_number_to_name(sig), Myname);
+    signal(sig, SIG_DFL);     // allow core dumps, if applicable
+    raise(sig);               // ( plus set proper return code )
++   _exit(sig | 0x80);        // if default sig action is ignore
+ } // end: sig_abexit
+ 
+ 
+@@ -652,7 +662,7 @@ static void xalloc_our_handler (const ch
+    va_start(va, fmts);
+    vsnprintf(buf, sizeof(buf), fmts, va);
+    va_end(va);
+-   scat(buf, "\n");
++   scat(buf, "\n", buf, sizeof(buf));
+    bye_bye(buf);
+ } // end: xalloc_our_handler
+ 
+@@ -835,7 +845,7 @@ static void capsmk (WIN_t *q) {
+    } else {
+       q->capclr_sum[0] = '\0';
+ #ifdef USE_X_COLHDR
+-      snprintf(q->capclr_msg, sizeof(q->capclr_pmt), "%s%s"
++      snprintf(q->capclr_msg, sizeof(q->capclr_msg), "%s%s"
+          , Cap_reverse, q->cap_bold);
+ #else
+       STRLCPY(q->capclr_msg, Cap_reverse)
+@@ -962,16 +972,16 @@ static void show_special (int interact,
+          if ('~' == ch) ch = *(sub_end + 1) - '0';
+          switch (ch) {
+             case 0:                    // no end delim, captab makes normal
+-               *(sub_end + 1) = '\0';  // extend str end, then fall through
+-               *(sub_end + 2) = '\0';  // ( +1 optimization for usual path )
+             case 1: case 2: case 3: case 4:
+             case 5: case 6: case 7: case 8:
+                *sub_end = '\0';
+                snprintf(tmp, sizeof(tmp), "%s%.*s%s"
+                   , Curwin->captab[ch], utf8_embody(sub_beg, room), sub_beg, Caps_off);
+-               rp = scat(rp, tmp);
++               rp = scat(rp, tmp, row, sizeof(row));
+                room -= (sub_end - sub_beg);
+                room += utf8_delta(sub_beg);
++               if (!ch) goto done_substrings;
++               if (!*(sub_end + 1)) goto done_substrings;
+                sub_beg = (sub_end += 2);
+                break;
+             default:                   // nothin' special, just text
+@@ -979,6 +989,7 @@ static void show_special (int interact,
+          }
+          if (0 >= room) break;         // skip substrings that won't fit
+       }
++done_substrings:
+ 
+       if (interact) PUTT("%s%s\n", row, Cap_clr_eol);
+       else PUFF("%s%s\n", row, Caps_endline);
+@@ -1643,7 +1654,10 @@ static inline const char *make_num (long
+       goto end_justifies;
+ 
+    if (width < snprintf(buf, sizeof(buf), "%ld", num)) {
++      if (width <= 0 || (size_t)width >= sizeof(buf))
++         width = sizeof(buf)-1;
+       buf[width-1] = COLPLUSCH;
++      buf[width] = '\0';
+       AUTOX_COL(col);
+    }
+ end_justifies:
+@@ -1658,7 +1672,10 @@ static inline const char *make_str (cons
+    static char buf[SCREENMAX];
+ 
+    if (width < snprintf(buf, sizeof(buf), "%s", str)) {
++      if (width <= 0 || (size_t)width >= sizeof(buf))
++         width = sizeof(buf)-1;
+       buf[width-1] = COLPLUSCH;
++      buf[width] = '\0';
+       AUTOX_COL(col);
+    }
+    return justify_pad(buf, width, justr);
+@@ -1848,6 +1865,9 @@ end_justifies:
+    // for calibrate_fields and summary_show 1st pass
+ #define L_DEFAULT  PROC_FILLSTAT
+ 
++#define UNSAFE_SORTINDX(indx, size) \
++   ((indx) < 0 || (size_t)(indx) >= (size))
++
+         /* These are our gosh darn 'Fields' !
+            They MUST be kept in sync with pflags !! */
+ static FLD_t Fieldstab[] = {
+@@ -1956,7 +1976,8 @@ static void adj_geometry (void) {
+ #endif
+ 
+    // we might disappoint some folks (but they'll deserve it)
+-   if (SCREENMAX < Screen_cols) Screen_cols = SCREENMAX;
++   if (Screen_cols > SCREENMAX) Screen_cols = SCREENMAX;
++   if (Screen_cols < W_MIN_COL) Screen_cols = W_MIN_COL;
+ 
+    if (!w_set) {
+       if (Width_mode > 0)              // -w with arg, we'll try to honor
+@@ -1996,8 +2017,10 @@ static void adj_geometry (void) {
+       Screen_rows = w_rows ? w_rows : INT_MAX;
+       Pseudo_size = (sizeof(*Pseudo_screen) * ROWMAXSIZ);
+    } else {
++      const int max_rows = INT_MAX / (sizeof(*Pseudo_screen) * ROWMAXSIZ);
+       if (w_cols && w_cols < Screen_cols) Screen_cols = w_cols;
+       if (w_rows && w_rows < Screen_rows) Screen_rows = w_rows;
++      if (Screen_rows < 0 || Screen_rows > max_rows) Screen_rows = max_rows;
+       Pseudo_size = (sizeof(*Pseudo_screen) * ROWMAXSIZ) * Screen_rows;
+    }
+    // we'll only grow our Pseudo_screen, never shrink it
+@@ -2036,13 +2059,15 @@ static void build_headers (void) {
+ 
+    do {
+       if (VIZISw(w)) {
++         if (UNSAFE_SORTINDX(w->rc.sortindx, sizeof(Fieldstab) / sizeof(Fieldstab[0])))
++            w->rc.sortindx = EU_PID;
+          memset((s = w->columnhdr), 0, sizeof(w->columnhdr));
+-         if (Rc.mode_altscr) s = scat(s, fmtmk("%d", w->winnum));
++         if (Rc.mode_altscr) s = scat(s, fmtmk("%d", w->winnum), w->columnhdr, sizeof(w->columnhdr));
+          for (i = 0; i < w->maxpflgs; i++) {
+             f = w->procflgs[i];
+ #ifdef USE_X_COLHDR
+             if (CHKw(w, Show_HICOLS) && f == w->rc.sortindx) {
+-               s = scat(s, fmtmk("%s%s", Caps_off, w->capclr_msg));
++               s = scat(s, fmtmk("%s%s", Caps_off, w->capclr_msg), w->columnhdr, sizeof(w->columnhdr));
+                w->hdrcaplen += strlen(Caps_off) + strlen(w->capclr_msg);
+             }
+ #else
+@@ -2052,10 +2077,10 @@ static void build_headers (void) {
+             Frames_libflags |= Fieldstab[f].lflg;
+             s = scat(s, utf8_justify(N_col(f)
+                , VARcol(f) ? w->varcolsz : Fieldstab[f].width
+-               , CHKw(w, Fieldstab[f].align)));
++               , CHKw(w, Fieldstab[f].align)), w->columnhdr, sizeof(w->columnhdr));
+ #ifdef USE_X_COLHDR
+             if (CHKw(w, Show_HICOLS) && f == w->rc.sortindx) {
+-               s = scat(s, fmtmk("%s%s", Caps_off, w->capclr_hdr));
++               s = scat(s, fmtmk("%s%s", Caps_off, w->capclr_hdr), w->columnhdr, sizeof(w->columnhdr));
+                w->hdrcaplen += strlen(Caps_off) + strlen(w->capclr_hdr);
+             }
+ #endif
+@@ -2119,12 +2144,13 @@ static void calibrate_fields (void) {
+          w->hdrcaplen = 0;   // really only used with USE_X_COLHDR
+          // build window's pflgsall array, establish upper bounds for maxpflgs
+          for (i = 0, w->totpflgs = 0; i < EU_MAXPFLGS; i++) {
+-            if (FLDviz(w, i)) {
++            if (FLDviz(w, i) && w->totpflgs < PFLAGSSIZ) {
+                f = FLDget(w, i);
+ #ifdef USE_X_COLHDR
+                w->pflgsall[w->totpflgs++] = f;
+ #else
+-               if (CHKw(w, Show_HICOLS) && f == w->rc.sortindx) {
++               if (CHKw(w, Show_HICOLS) && f == w->rc.sortindx &&
++                  w->totpflgs <= PFLAGSSIZ - 3) {
+                   w->pflgsall[w->totpflgs++] = EU_XON;
+                   w->pflgsall[w->totpflgs++] = f;
+                   w->pflgsall[w->totpflgs++] = EU_XOF;
+@@ -2139,7 +2165,7 @@ static void calibrate_fields (void) {
+             while accounting for a possible leading window number */
+          w->varcolsz = varcolcnt = 0;
+          *(s = w->columnhdr) = '\0';
+-         if (Rc.mode_altscr) s = scat(s, " ");
++         if (Rc.mode_altscr) s = scat(s, " ", w->columnhdr, sizeof(w->columnhdr));
+          for (i = 0; i + w->begpflg < w->totpflgs; i++) {
+             f = w->pflgsall[i + w->begpflg];
+             w->procflgs[i] = f;
+@@ -2151,10 +2177,10 @@ static void calibrate_fields (void) {
+             // oops, won't fit -- we're outta here...
+             if (Screen_cols < ((int)(s - w->columnhdr) + len)) break;
+             if (VARcol(f)) { ++varcolcnt; w->varcolsz += strlen(h); }
+-            s = scat(s, fmtmk("%*.*s", len, len, h));
++            s = scat(s, fmtmk("%*.*s", len, len, h), w->columnhdr, sizeof(w->columnhdr));
+          }
+ #ifndef USE_X_COLHDR
+-         if (EU_XON == w->procflgs[i - 1]) --i;
++         if (i >= 1 && EU_XON == w->procflgs[i - 1]) --i;
+ #endif
+ 
+          /* establish the final maxpflgs and prepare to grow the variable column
+@@ -2167,7 +2193,8 @@ static void calibrate_fields (void) {
+          /* establish the field where all remaining fields would still
+             fit within screen width, including a leading window number */
+          *(s = w->columnhdr) = '\0';
+-         if (Rc.mode_altscr) s = scat(s, " ");
++         if (Rc.mode_altscr) s = scat(s, " ", w->columnhdr, sizeof(w->columnhdr));
++         w->endpflg = 0;
+          for (i = w->totpflgs - 1; -1 < i; i--) {
+             f = w->pflgsall[i];
+ #ifndef USE_X_COLHDR
+@@ -2176,7 +2203,7 @@ static void calibrate_fields (void) {
+             h = N_col(f);
+             len = (VARcol(f) ? (int)strlen(h) : Fieldstab[f].width) + COLPADSIZ;
+             if (Screen_cols < ((int)(s - w->columnhdr) + len)) break;
+-            s = scat(s, fmtmk("%*.*s", len, len, h));
++            s = scat(s, fmtmk("%*.*s", len, len, h), w->columnhdr, sizeof(w->columnhdr));
+             w->endpflg = i;
+          }
+ #ifndef USE_X_COLHDR
+@@ -2308,7 +2335,8 @@ static void fields_utility (void) {
+ #endif
+  #define swapEM  { char c; unSCRL; c = w->rc.fieldscur[i]; \
+        w->rc.fieldscur[i] = *p; *p = c; p = &w->rc.fieldscur[i]; }
+- #define spewFI  { char *t; f = w->rc.sortindx; t = strchr(w->rc.fieldscur, f + FLD_OFFSET); \
++ #define spewFI  { char *t; if (UNSAFE_SORTINDX(w->rc.sortindx, EU_MAXPFLGS)) w->rc.sortindx = EU_PID; \
++       f = w->rc.sortindx; t = strchr(w->rc.fieldscur, f + FLD_OFFSET); \
+        if (!t) t = strchr(w->rc.fieldscur, (f + FLD_OFFSET) | 0x80); \
+        i = (t) ? (int)(t - w->rc.fieldscur) : 0; }
+    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
+@@ -2705,6 +2733,15 @@ static inline void hstput (unsigned idx)
+ #undef _HASH_
+ #endif
+ 
++
++#define grow_by_size(nmemb, over, size) do { \
++   if ((nmemb) < 0 || (size_t)(nmemb) >= INT_MAX / 5) \
++      error_exit("integer overflow in procs_refresh"); \
++   (nmemb) = (nmemb) * 5 / 4 + (over); \
++   if ((nmemb) < 0 || (size_t)(nmemb) >= SSIZE_MAX / (size)) \
++      error_exit("integer overflow in procs_refresh"); \
++} while (0)
++
+         /*
+          * Refresh procs *Helper* function to eliminate yet one more need
+          * to loop through our darn proc_t table.  He's responsible for:
+@@ -2776,7 +2813,7 @@ static void procs_hlp (proc_t *this) {
+    }
+ 
+    if (Frame_maxtask+1 >= HHist_siz) {
+-      HHist_siz = HHist_siz * 5 / 4 + 100;
++      grow_by_size(HHist_siz, 100, sizeof(HST_t));
+       PHist_sav = alloc_r(PHist_sav, sizeof(HST_t) * HHist_siz);
+       PHist_new = alloc_r(PHist_new, sizeof(HST_t) * HHist_siz);
+    }
+@@ -2838,7 +2875,7 @@ static void procs_refresh (void) {
+ 
+    for (;;) {
+       if (n_used == n_alloc) {
+-         n_alloc = 10 + ((n_alloc * 5) / 4);     // grow by over 25%
++         grow_by_size(n_alloc, 10, sizeof(proc_t*));
+          private_ppt = alloc_r(private_ppt, sizeof(proc_t*) * n_alloc);
+          // ensure NULL pointers for the additional memory just acquired
+          memset(private_ppt + n_used, 0, sizeof(proc_t*) * (n_alloc - n_used));
+@@ -2865,6 +2902,8 @@ static void procs_refresh (void) {
+  #undef n_used
+ } // end: procs_refresh
+ 
++#undef grow_by_size
++
+ 
+         /*
+          * This serves as our interface to the memory & cpu count (sysinfo)
+@@ -3444,7 +3483,7 @@ static void inspection_utility (int pid)
+       Inspect.tab[sel].caps = "~4"; dst[0] = '\0'; \
+       for (i = 0; i < Inspect.total; i++) { char _s[SMLBUFSIZ]; \
+          snprintf(_s, sizeof(_s), " %s %s", Inspect.tab[i].name, Inspect.tab[i].caps); \
+-         strcat(dst, _s); } }
++         scat(dst, _s, dst, sizeof(dst)); } }
+    char sels[MEDBUFSIZ];
+    static int sel;
+    int i, key;
+@@ -3570,6 +3609,7 @@ static void before (char *me) {
+ #define SIGRTMAX 32
+ #endif
+    // lastly, establish a robust signals environment
++   memset(&sa, 0, sizeof(sa));
+    sigemptyset(&sa.sa_mask);
+    // with user position preserved through SIGWINCH, we must avoid SA_RESTART
+    sa.sa_flags = 0;
+@@ -3663,6 +3703,8 @@ static int config_cvt (WIN_t *q) {
+    strcpy(q->rc.fieldscur, fields_dst);
+ 
+    // lastly, we must adjust the old sort field enum...
++   if (UNSAFE_SORTINDX(q->rc.sortindx, sizeof(fields_src) / sizeof(fields_src[0])))
++      return 1;
+    x = q->rc.sortindx;
+    q->rc.sortindx = fields_src[x] - FLD_OFFSET;
+ 
+@@ -3689,6 +3731,8 @@ static const char *config_file (FILE *fp
+    if (Rc.id < 'a' || Rc.id > RCF_VERSION_ID)
+       return p;
+    // you saw that, right?  (fscanf stickin' it to 'i')
++   if (i < 0 || i >= GROUPSMAX)
++      return p;
+    Curwin = &Winstk[i];
+    // this may be ugly, but it keeps us locale independent...
+    *delay = (float)tmp_whole + (float)tmp_fract / 1000;
+@@ -3710,6 +3754,8 @@ error Hey, fix the above fscanf 'PFLAGSS
+       if (3 > fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d\n"
+          , &w->rc.winflags, &w->rc.sortindx, &w->rc.maxtasks, &w->rc.graph_cpus, &w->rc.graph_mems))
+             return p;
++      if (UNSAFE_SORTINDX(w->rc.sortindx, sizeof(Fieldstab) / sizeof(Fieldstab[0])))
++         return p;
+       if (4 != fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
+          , &w->rc.summclr, &w->rc.msgsclr
+          , &w->rc.headclr, &w->rc.taskclr))
+@@ -3722,13 +3768,13 @@ error Hey, fix the above fscanf 'PFLAGSS
+          case 'f':                          // 3.3.0 thru 3.3.3 (ng)
+             SETw(w, Show_JRNUMS);
+          case 'g':                          // from 3.3.4 thru 3.3.8
+-            scat(w->rc.fieldscur, RCF_PLUS_H);
++            scat(w->rc.fieldscur, RCF_PLUS_H, w->rc.fieldscur, sizeof(w->rc.fieldscur));
+          case 'h':                          // this is release 3.3.9
+             w->rc.graph_cpus = w->rc.graph_mems = 0;
+             // these next 2 are really global, but best documented here
+             Rc.summ_mscale = Rc.task_mscale = SK_Kb;
+          case 'i':                          // actual RCF_VERSION_ID
+-            scat(w->rc.fieldscur, RCF_PLUS_J);
++            scat(w->rc.fieldscur, RCF_PLUS_J, w->rc.fieldscur, sizeof(w->rc.fieldscur));
+          case 'j':                          // and the next version
+          default:
+             if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
+@@ -3747,6 +3793,8 @@ error Hey, fix the above fscanf 'PFLAGSS
+    if (fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
+       , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale, &Rc.zero_suppress))
+          ;                                  // avoid -Wunused-result
++   if (Rc.fixed_widest < -1 || Rc.fixed_widest > SCREENMAX)
++      Rc.fixed_widest = 0;
+ 
+    // we'll start off Inspect stuff with 1 'potential' blank line
+    // ( only realized if we end up with Inspect.total > 0 )
+@@ -3755,6 +3803,9 @@ error Hey, fix the above fscanf 'PFLAGSS
+       size_t lraw = strlen(Inspect.raw) +1;
+       char *s;
+ 
++      if (i < 0 || (size_t)i >= INT_MAX / sizeof(struct I_ent)) break;
++      if (lraw >= INT_MAX - sizeof(fbuf)) break;
++
+       if (!fgets(fbuf, sizeof(fbuf), fp)) break;
+       lraw += strlen(fbuf) +1;
+       Inspect.raw = alloc_r(Inspect.raw, lraw);
+@@ -3810,6 +3861,20 @@ error Hey, fix the above fscanf 'PFLAGSS
+ } // end: config_file
+ 
+ 
++static int snprintf_Rc_name (const char *const format, ...) __attribute__((format(printf,1,2)));
++static int snprintf_Rc_name (const char *const format, ...) {
++   int len;
++   va_list ap;
++   va_start(ap, format);
++   len = vsnprintf(Rc_name, sizeof(Rc_name), format, ap);
++   va_end(ap);
++   if (len <= 0 || (size_t)len >= sizeof(Rc_name)) {
++      Rc_name[0] = '\0';
++      return 0;
++   }
++   return len;
++}
++
+         /*
+          * Try reading up to 3 rcfiles
+          * 1. 'SYS_RCRESTRICT' contains two lines consisting of the secure
+@@ -3842,23 +3907,31 @@ static void configs_read (void) {
+       fclose(fp);
+    }
+ 
++   Rc_name[0] = '\0'; // "fopen() shall fail if pathname is an empty string."
+    // attempt to use the legacy file first, if we cannot access that file, use
+    // the new XDG basedir locations (XDG_CONFIG_HOME or HOME/.config) instead.
+    p_home = getenv("HOME");
+-   if (!p_home || p_home[0] == '\0')
+-      p_home = ".";
+-   snprintf(Rc_name, sizeof(Rc_name), "%s/.%src", p_home, Myname);
++   if (!p_home || p_home[0] != '/') {
++      const struct passwd *const pwd = getpwuid(getuid());
++      if (!pwd || !(p_home = pwd->pw_dir) || p_home[0] != '/') {
++         p_home = NULL;
++      }
++   }
++   if (p_home) {
++      snprintf_Rc_name("%s/.%src", p_home, Myname);
++   }
+ 
+    if (!(fp = fopen(Rc_name, "r"))) {
+       p = getenv("XDG_CONFIG_HOME");
+       // ensure the path we get is absolute, fallback otherwise.
+       if (!p || p[0] != '/') {
++         if (!p_home) goto system_default;
+          p = fmtmk("%s/.config", p_home);
+          (void)mkdir(p, 0700);
+       }
+-      snprintf(Rc_name, sizeof(Rc_name), "%s/procps", p);
++      if (!snprintf_Rc_name("%s/procps", p)) goto system_default;
+       (void)mkdir(Rc_name, 0700);
+-      snprintf(Rc_name, sizeof(Rc_name), "%s/procps/%src", p, Myname);
++      if (!snprintf_Rc_name("%s/procps/%src", p, Myname)) goto system_default;
+       fp = fopen(Rc_name, "r");
+    }
+ 
+@@ -3867,6 +3940,7 @@ static void configs_read (void) {
+       fclose(fp);
+       if (p) goto default_or_error;
+    } else {
++system_default:
+       fp = fopen(SYS_RCDEFAULTS, "r");
+       if (fp) {
+          p = config_file(fp, SYS_RCDEFAULTS, &tmp_delay);
+@@ -3884,7 +3958,6 @@ default_or_error:
+ #ifdef RCFILE_NOERR
+ {  RCF_t rcdef = DEF_RCFILE;
+    int i;
+-   fclose(fp);
+    Rc = rcdef;
+    for (i = 0 ; i < GROUPSMAX; i++)
+       Winstk[i].rc  = Rc.win[i];
+@@ -4045,7 +4118,7 @@ static void parse_args (char **args) {
+                if (cp[1]) pn = &cp[1];
+                else if (*args) { pn = *args; ai = 1; }
+                if (pn && !(ci = strspn(pn, numbs_str))) { ai = 0; pn = NULL; }
+-               if (pn && (!mkfloat(pn, &tmp, 1) || tmp < W_MIN_COL))
++               if (pn && (!mkfloat(pn, &tmp, 1) || tmp < W_MIN_COL || tmp > SCREENMAX))
+                   error_exit(fmtmk(N_fmt(BAD_widtharg_fmt), pn));
+                Width_mode = (int)tmp;
+                cp++;
+@@ -4580,6 +4653,9 @@ static void other_selection (int ch) {
+          , inc ? N_txt(WORD_include_txt) : N_txt(WORD_exclude_txt)));
+       return;
+    }
++   if (Curwin->osel_prt && strlen(Curwin->osel_prt) >= INT_MAX - (sizeof(raw) + 6)) {
++      return;
++   }
+    osel = alloc_c(sizeof(struct osel_s));
+    osel->inc = inc;
+    osel->enu = enu;
+@@ -4744,7 +4820,7 @@ static void keys_global (int ch) {
+       case 'X':
+       {  int wide = get_int(fmtmk(N_fmt(XTRA_fixwide_fmt), Rc.fixed_widest));
+          if (wide > GET_NUM_NOT) {
+-            if (wide > -1) Rc.fixed_widest = wide;
++            if (wide >= 0 && wide <= SCREENMAX) Rc.fixed_widest = wide;
+             else Rc.fixed_widest = -1;
+          }
+       }
+@@ -5375,13 +5451,13 @@ static void summary_hlp (CPU_t *cpu, con
+ 
+    /* display some kinda' cpu state percentages
+       (who or what is explained by the passed prefix) */
+-   if (Curwin->rc.graph_cpus) {
+-      static struct {
+-         const char *user, *syst, *type;
+-      } gtab[] = {
+-         { "%-.*s~7", "%-.*s~8", Graph_bars },
+-         { "%-.*s~4", "%-.*s~6", Graph_blks }
+-      };
++   static const struct {
++      const char *user, *syst, *type;
++   } gtab[] = {
++      { "%-.*s~7", "%-.*s~8", Graph_bars },
++      { "%-.*s~4", "%-.*s~6", Graph_blks }
++   };
++   if (Curwin->rc.graph_cpus >= 1 && (size_t)Curwin->rc.graph_cpus <= sizeof(gtab) / sizeof(gtab[0])) {
+       char user[SMLBUFSIZ], syst[SMLBUFSIZ], dual[MEDBUFSIZ];
+       int ix = Curwin->rc.graph_cpus - 1;
+       float pct_user = (float)(u_frme + n_frme) * scale,
+@@ -5496,32 +5572,33 @@ numa_nope:
+    } // end: View_STATES
+ 
+    // Display Memory and Swap stats
+-   if (isROOM(View_MEMORY, 2)) {
++   static struct {
++      float div;
++      const char *fmts;
++      const char *label;
++   } scaletab[] = {
++      { 1, "%.0f ", NULL },                             // kibibytes
++#ifdef BOOST_MEMORY
++      { 1024.0, "%#.3f ", NULL },                       // mebibytes
++      { 1024.0*1024, "%#.3f ", NULL },                  // gibibytes
++      { 1024.0*1024*1024, "%#.3f ", NULL },             // tebibytes
++      { 1024.0*1024*1024*1024, "%#.3f ", NULL },        // pebibytes
++      { 1024.0*1024*1024*1024*1024, "%#.3f ", NULL }    // exbibytes
++#else
++      { 1024.0, "%#.1f ", NULL },                       // mebibytes
++      { 1024.0*1024, "%#.1f ", NULL },                  // gibibytes
++      { 1024.0*1024*1024, "%#.1f ", NULL },             // tebibytes
++      { 1024.0*1024*1024*1024, "%#.1f ", NULL },        // pebibytes
++      { 1024.0*1024*1024*1024*1024, "%#.1f ", NULL }    // exbibytes
++#endif
++   };
++   if (isROOM(View_MEMORY, 2) &&
++       Rc.summ_mscale >= 0 && (size_t)Rc.summ_mscale < sizeof(scaletab) / sizeof(scaletab[0])) {
+     #define bfT(n)  buftab[n].buf
+     #define scT(e)  scaletab[Rc.summ_mscale]. e
+     #define mkM(x) (float)kb_main_ ## x / scT(div)
+     #define mkS(x) (float)kb_swap_ ## x / scT(div)
+     #define prT(b,z) { if (9 < snprintf(b, 10, scT(fmts), z)) b[8] = '+'; }
+-      static struct {
+-         float div;
+-         const char *fmts;
+-         const char *label;
+-      } scaletab[] = {
+-         { 1, "%.0f ", NULL },                             // kibibytes
+-#ifdef BOOST_MEMORY
+-         { 1024.0, "%#.3f ", NULL },                       // mebibytes
+-         { 1024.0*1024, "%#.3f ", NULL },                  // gibibytes
+-         { 1024.0*1024*1024, "%#.3f ", NULL },             // tebibytes
+-         { 1024.0*1024*1024*1024, "%#.3f ", NULL },        // pebibytes
+-         { 1024.0*1024*1024*1024*1024, "%#.3f ", NULL }    // exbibytes
+-#else
+-         { 1024.0, "%#.1f ", NULL },                       // mebibytes
+-         { 1024.0*1024, "%#.1f ", NULL },                  // gibibytes
+-         { 1024.0*1024*1024, "%#.1f ", NULL },             // tebibytes
+-         { 1024.0*1024*1024*1024, "%#.1f ", NULL },        // pebibytes
+-         { 1024.0*1024*1024*1024*1024, "%#.1f ", NULL }    // exbibytes
+-#endif
+-      };
+       struct { //                                            0123456789
+       // snprintf contents of each buf (after SK_Kb):       'nnnn.nnn 0'
+       // and prT macro might replace space at buf[8] with:   ------> +
+@@ -5537,13 +5614,13 @@ numa_nope:
+          scaletab[5].label = N_txt(AMT_exxabyte_txt);
+       }
+ 
+-      if (w->rc.graph_mems) {
+-         static struct {
+-            const char *used, *misc, *swap, *type;
+-         } gtab[] = {
+-            { "%-.*s~7", "%-.*s~8", "%-.*s~8", Graph_bars },
+-            { "%-.*s~4", "%-.*s~6", "%-.*s~6", Graph_blks }
+-         };
++      static const struct {
++         const char *used, *misc, *swap, *type;
++      } gtab[] = {
++         { "%-.*s~7", "%-.*s~8", "%-.*s~8", Graph_bars },
++         { "%-.*s~4", "%-.*s~6", "%-.*s~6", Graph_blks }
++      };
++      if (w->rc.graph_mems >= 1 && (size_t)w->rc.graph_mems <= sizeof(gtab) / sizeof(gtab[0])) {
+          char used[SMLBUFSIZ], util[SMLBUFSIZ], dual[MEDBUFSIZ];
+          float pct_used, pct_misc, pct_swap;
+          int ix, num_used, num_misc;
+@@ -5621,10 +5698,10 @@ static const char *task_show (const WIN_
+ 
+    // we must begin a row with a possible window number in mind...
+    *(rp = rbuf) = '\0';
+-   if (Rc.mode_altscr) rp = scat(rp, " ");
++   if (Rc.mode_altscr) rp = scat(rp, " ", rbuf, sizeof(rbuf));
+ 
+    for (x = 0; x < q->maxpflgs; x++) {
+-      const char *cp;
++      const char *cp = NULL;
+       FLG_t       i = q->procflgs[x];
+       #define S   Fieldstab[i].scale        // these used to be variables
+       #define W   Fieldstab[i].width        // but it's much better if we
+@@ -5831,7 +5908,7 @@ static const char *task_show (const WIN_
+ 
+       if (cp) {
+          if (q->osel_tot && !osel_matched(q, i, cp)) return "";
+-         rp = scat(rp, cp);
++         rp = scat(rp, cp, rbuf, sizeof(rbuf));
+       }
+       #undef S
+       #undef W
+@@ -5877,8 +5954,8 @@ static int window_show (WIN_t *q, int wm
+  /* the isBUSY macro determines if a task is 'active' --
+     it returns true if some cpu was used since the last sample.
+     ( actual 'running' tasks will be a subset of those selected ) */
+- #define isBUSY(x)   (0 < x->pcpu)
+- #define winMIN(a,b) ((a < b) ? a : b)
++ #define isBUSY(x)   (0 < (x)->pcpu)
++ #define winMIN(a,b) (((a) < (b)) ? (a) : (b))
+    int i, lwin;
+ 
+    // Display Column Headings -- and distract 'em while we sort (maybe)
+@@ -5891,6 +5968,8 @@ static int window_show (WIN_t *q, int wm
+       else Frame_srtflg = -1;
+       Frame_ctimes = CHKw(q, Show_CTIMES);          // this & next, only maybe
+       Frame_cmdlin = CHKw(q, Show_CMDLIN);
++      if (UNSAFE_SORTINDX(q->rc.sortindx, sizeof(Fieldstab) / sizeof(Fieldstab[0])))
++         q->rc.sortindx = EU_PID;
+       qsort(q->ppt, Frame_maxtask, sizeof(proc_t*), Fieldstab[q->rc.sortindx].sort);
+    }
+ 
+diff -urp procps-ng-3.3.14/top/top.h procps-ng-3.3.14-qualys/top/top.h
+--- procps-ng-3.3.14/top/top.h	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/top/top.h	2018-05-23 12:34:15 +0000
+@@ -547,10 +547,11 @@ typedef struct WIN_t {
+                . subject to optimization, thus MAY be discarded */
+ #define PUFF(fmt,arg...) do { \
+       char _str[ROWMAXSIZ], *_eol; \
+-      _eol = _str + snprintf(_str, sizeof(_str), fmt, ## arg); \
++      const int _len = snprintf(_str, sizeof(_str), fmt, ## arg); \
++      _eol = _str + (_len < 0 ? 0 : (size_t)_len >= sizeof(_str) ? sizeof(_str)-1 : (size_t)_len); \
+       if (Batch) { \
+-         while (*(--_eol) == ' '); *(++_eol) = '\0'; putp(_str); } \
+-      else { \
++         while (_eol > _str && _eol[-1] == ' ') _eol--; *_eol = '\0'; putp(_str); } \
++      else if (Pseudo_row >= 0 && Pseudo_row < Screen_rows) { \
+          char *_ptr = &Pseudo_screen[Pseudo_row * ROWMAXSIZ]; \
+          if (Pseudo_row + 1 < Screen_rows) ++Pseudo_row; \
+          if (!strcmp(_ptr, _str)) putp("\n"); \
+diff -urp procps-ng-3.3.14/uptime.c procps-ng-3.3.14-qualys/uptime.c
+--- procps-ng-3.3.14/uptime.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/uptime.c	2018-05-23 12:34:15 +0000
+@@ -39,15 +39,18 @@ static void print_uptime_since()
+ 	struct timeval tim;
+ 
+ 	/* Get the current time and convert it to a double */
+-	gettimeofday(&tim, NULL);
++	if (gettimeofday(&tim, NULL) != 0)
++		xerr(EXIT_FAILURE, "gettimeofday");
+ 	now = tim.tv_sec + (tim.tv_usec / 1000000.0);
+ 
+ 	/* Get the uptime and calculate when that was */
+-	uptime(&uptime_secs, &idle_secs);
++	if (uptime(&uptime_secs, &idle_secs) == 0)
++		xerrx(EXIT_FAILURE, "uptime");
+ 	up_since_secs = (time_t) ((now - uptime_secs) + 0.5);
+ 
+ 	/* Show this */
+-	up_since = localtime(&up_since_secs);
++	if ((up_since = localtime(&up_since_secs)) == NULL)
++		xerrx(EXIT_FAILURE, "localtime");
+ 	printf("%04d-%02d-%02d %02d:%02d:%02d\n",
+ 		up_since->tm_year + 1900, up_since->tm_mon + 1, up_since->tm_mday,
+ 		up_since->tm_hour, up_since->tm_min, up_since->tm_sec);
+diff -urp procps-ng-3.3.14/vmstat.c procps-ng-3.3.14-qualys/vmstat.c
+--- procps-ng-3.3.14/vmstat.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/vmstat.c	2018-05-23 12:34:15 +0000
+@@ -255,8 +255,11 @@ static void new_header(void)
+ 	if (t_option) {
+ 		(void) time( &the_time );
+ 		tm_ptr = localtime( &the_time );
+-		if (strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
+-			timebuf[strlen(timestamp_header) - 1] = '\0';
++		if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
++			const size_t len = strlen(timestamp_header);
++			if (len >= 1 && len - 1 < sizeof(timebuf)) {
++				timebuf[len - 1] = '\0';
++			}
+ 		} else {
+ 			timebuf[0] = '\0';
+ 		}
+@@ -307,7 +310,11 @@ static void new_format(void)
+ 	if (t_option) {
+ 		(void) time( &the_time );
+ 		tm_ptr = localtime( &the_time );
+-		strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
++		if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr)) {
++			;
++		} else {
++			timebuf[0] = '\0';
++		}
+ 	}
+ 
+ 	duse = *cpu_use + *cpu_nic;
+@@ -360,7 +367,11 @@ static void new_format(void)
+ 		if (t_option) {
+ 			(void) time( &the_time );
+ 			tm_ptr = localtime( &the_time );
+-			strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
++			if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr)) {
++				;
++			} else {
++				timebuf[0] = '\0';
++			}
+ 		}
+ 
+ 		duse =
+@@ -557,8 +568,11 @@ static void diskheader(void)
+ 	if (t_option) {
+ 		(void) time( &the_time );
+ 		tm_ptr = localtime( &the_time );
+-		if (strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
+-			timebuf[strlen(timestamp_header) - 1] = '\0';
++		if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
++			const size_t len = strlen(timestamp_header);
++			if (len >= 1 && len - 1 < sizeof(timebuf)) {
++				timebuf[len - 1] = '\0';
++			}
+ 		} else {
+ 			timebuf[0] = '\0';
+ 		}
+@@ -591,7 +605,11 @@ static void diskformat(void)
+ 		if (t_option) {
+ 			(void) time( &the_time );
+ 			tm_ptr = localtime( &the_time );
+-			strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
++			if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr)) {
++				;
++			} else {
++				timebuf[0] = '\0';
++			}
+ 		}
+ 
+ 		if (!moreheaders)
+@@ -630,7 +648,11 @@ static void diskformat(void)
+ 			if (t_option) {
+ 				(void) time( &the_time );
+ 				tm_ptr = localtime( &the_time );
+-				strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
++				if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr)) {
++					;
++				} else {
++					timebuf[0] = '\0';
++				}
+ 			}
+ 
+ 			for (i = 0; i < ndisks; i++, k++) {
+@@ -878,7 +900,7 @@ int main(int argc, char *argv[])
+ 
+ 	while ((c =
+ 		getopt_long(argc, argv, "afmnsdDp:S:wthV", longopts,
+-			    NULL)) != EOF)
++			    NULL)) != -1)
+ 		switch (c) {
+ 		case 'V':
+ 			printf(PROCPS_NG_VERSION);
+@@ -909,7 +931,7 @@ int main(int argc, char *argv[])
+ 		case 'p':
+ 			statMode |= PARTITIONSTAT;
+ 			partition = optarg;
+-			if (memcmp(partition, "/dev/", 5) == 0)
++			if (strncmp(partition, "/dev/", 5) == 0)
+ 				partition += 5;
+ 			break;
+ 		case 'S':
+diff -urp procps-ng-3.3.14/w.c procps-ng-3.3.14-qualys/w.c
+--- procps-ng-3.3.14/w.c	2018-03-03 07:11:55 +0000
++++ procps-ng-3.3.14-qualys/w.c	2018-05-23 12:34:15 +0000
+@@ -113,21 +113,22 @@ static void print_host(const char *restr
+ /* This routine prints the display part of the host or IPv6 link address interface */
+ static void print_display_or_interface(const char *restrict host, int len, int restlen)
+ {
+-	char *disp,*tmp;
++	const char *const end = host + (len > 0 ? len : 0);
++	const char *disp, *tmp;
+ 
+ 	if (restlen <= 0) return; /* not enough space for printing anything */
+ 
+ 	/* search for a collon (might be a display) */
+-	disp = (char *)host;
+-	while ( (disp < (host + len)) && (*disp != ':') && isprint(*disp) ) disp++;
++	disp = host;
++	while ( (disp < end) && (*disp != ':') && isprint(*disp) ) disp++;
+ 
+ 	/* colon found */
+-	if (*disp == ':') {
++	if (disp < end && *disp == ':') {
+ 		/* detect multiple colons -> IPv6 in the host (not a display) */
+ 		tmp = disp+1;
+-		while ( (tmp < (host + len)) && (*tmp != ':') && isprint(*tmp) ) tmp++;
++		while ( (tmp < end) && (*tmp != ':') && isprint(*tmp) ) tmp++;
+ 
+-		if (*tmp != ':') { /* multiple colons not found - it's a display */
++		if (tmp >= end || *tmp != ':') { /* multiple colons not found - it's a display */
+ 
+ 			/* number of chars till the end of the input field */
+ 			len -= (disp - host);
+@@ -149,9 +150,9 @@ static void print_display_or_interface(c
+ 		} else { /* multiple colons found - it's an IPv6 address */
+ 
+ 			/* search for % (interface separator in case of IPv6 link address) */
+-			while ( (tmp < (host + len)) && (*tmp != '%') && isprint(*tmp) ) tmp++;
++			while ( (tmp < end) && (*tmp != '%') && isprint(*tmp) ) tmp++;
+ 
+-			if (*tmp == '%') { /* interface separator found */
++			if (tmp < end && *tmp == '%') { /* interface separator found */
+ 
+ 				/* number of chars till the end of the input field */
+ 				len -= (tmp - host);
+@@ -170,7 +171,6 @@ static void print_display_or_interface(c
+ 					fputc('-', stdout);
+ 				}
+ 			}
+-
+ 		}
+ 	}
+ 
+@@ -236,7 +236,7 @@ static void print_time_ival7(time_t t, i
+ {
+ 	if ((long)t < (long)0) {
+ 		/* system clock changed? */
+-		printf("   ?   ");
++		fprintf(fout, "   ?   ");
+ 		return;
+ 	}
+ 	if (oldstyle) {
+@@ -283,10 +283,8 @@ static time_t idletime(const char *restr
+ }
+ 
+ /* 7 character formatted login time */
+-
+ static void print_logintime(time_t logt, FILE * fout)
+ {
+-
+ 	/* Abbreviated of weekday can be longer than 3 characters,
+ 	 * see for instance hu_HU.  Using 16 is few bytes more than
+ 	 * enough.  */
+@@ -296,23 +294,29 @@ static void print_logintime(time_t logt,
+ 	int today;
+ 
+ 	curt = time(NULL);
++	if (curt == (time_t)(-1)) goto error;
+ 	curtm = localtime(&curt);
++	if (!curtm) goto error;
+ 	/* localtime returns a pointer to static memory */
+ 	today = curtm->tm_yday;
+ 	logtm = localtime(&logt);
++	if (!logtm) goto error;
+ 	if (curt - logt > 12 * 60 * 60 && logtm->tm_yday != today) {
+ 		if (curt - logt > 6 * 24 * 60 * 60) {
+-		        strftime(time_str, sizeof(time_str), "%b", logtm);
++			if (!strftime(time_str, sizeof(time_str), "%b", logtm)) goto error;
+ 			fprintf(fout, " %02d%3s%02d", logtm->tm_mday,
+ 				time_str, logtm->tm_year % 100);
+ 		} else {
+-		        strftime(time_str, sizeof(time_str), "%a", logtm);
++			if (!strftime(time_str, sizeof(time_str), "%a", logtm)) goto error;
+ 			fprintf(fout, " %3s%02d  ", time_str,
+ 				logtm->tm_hour);
+ 		}
+ 	} else {
+ 		fprintf(fout, " %02d:%02d  ", logtm->tm_hour, logtm->tm_min);
+ 	}
++	return;
++error:
++	fprintf(fout, " ???????");
+ }
+ 
+ /*
+@@ -575,11 +579,14 @@ int main(int argc, char **argv)
+ 		maxcmd = atoi(p);
+ 	else
+ 		maxcmd = MAX_CMD_WIDTH;
+-	if (MAX_CMD_WIDTH < maxcmd)
+-		maxcmd = MAX_CMD_WIDTH;
++#define CLAMP_CMD_WIDTH(cw) do { \
++	if ((cw) < MIN_CMD_WIDTH) (cw) = MIN_CMD_WIDTH; \
++	if ((cw) > MAX_CMD_WIDTH) (cw) = MAX_CMD_WIDTH; \
++} while (0)
++	CLAMP_CMD_WIDTH(maxcmd);
+ 	maxcmd -= 21 + userlen + (from ? fromlen : 0) + (longform ? 20 : 0);
+-	if (maxcmd < MIN_CMD_WIDTH)
+-        maxcmd = MIN_CMD_WIDTH;
++	CLAMP_CMD_WIDTH(maxcmd);
++#undef CLAMP_CMD_WIDTH
+ 
+ 	procs = readproctab(PROC_FILLCOM | PROC_FILLUSR | PROC_FILLSTAT);
+ 
