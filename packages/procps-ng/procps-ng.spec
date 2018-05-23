@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/procps-ng/procps-ng.spec,v 1.1 2018/05/23 16:42:11 solar Exp $
+# $Owl: Owl/packages/procps-ng/procps-ng.spec,v 1.2 2018/05/23 16:51:44 solar Exp $
 
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps-ng
@@ -68,6 +68,7 @@ ln -s ..%_sbindir/sysctl %buildroot/sbin/
 %exclude /unwanted
 %exclude %_libdir/libprocps.la
 # Fedora has the below in -devel subpackage
+%exclude %_libdir/libprocps.so
 %exclude %_libdir/pkgconfig/libprocps.pc
 %exclude %_includedir/proc
 %exclude %_mandir/man3
