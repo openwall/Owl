@@ -8,7 +8,7 @@ and ask questions.  To subscribe, send an empty message to
 available on the web:
 
 http://www.openwall.com/lists/owl-users/
-http://marc.info/?l=owl-users
+https://marc.info/?l=owl-users
 http://dir.gmane.org/gmane.linux.openwall.user
 
 In addition to the owl-users list, you have the option to direct your
@@ -17,4 +17,4 @@ comments regarding Owl to us privately via <feedback at cvs.openwall.com>.
 Please report potential security issues to <security at cvs.openwall.com>
 and non-security bugs to <bugs at cvs.openwall.com>.
 
-$Owl: Owl/doc/CONTACT,v 1.7 2007/06/15 14:18:02 solar Exp $
+$Owl: Owl/doc/CONTACT,v 1.7.4.1 2018/05/23 19:45:21 solar Exp $

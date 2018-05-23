@@ -63,14 +63,14 @@ removal from the core Perl distribution), and rmtree not be used on
 directory trees potentially under an attacker's control.
 References:
 http://rt.perl.org/rt3/Public/Bug/Display.html?id=48156
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-1927
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-1927
 http://www.openwall.com/lists/oss-security/2010/05/20/5
-http://www.mail-archive.com/debian-bugs-rc@lists.debian.org/msg220612.html
+https://www.mail-archive.com/debian-bugs-rc@lists.debian.org/msg220612.html
 https://rhn.redhat.com/errata/RHSA-2010-0458.html
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-1168
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-1168
 http://www.openwall.com/lists/oss-security/2008/11/28/2
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-5302
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-5303
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-5302
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-5303
 
 2010/12/09	Packages: owl-cdrom, owl-setup
 Added new boot label called "safe" to the CD boot menu.  Currently, this
@@ -91,7 +91,7 @@ ext4: mount error path corrupts slab memory" (the bug could be triggered
 by a sysadmin making a typo in a "mount" command or in /etc/fstab).
 References:
 https://openvz.org/Download/kernel/rhel5-testing/028stab079.1
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4258
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-4258
 http://www.openwall.com/lists/oss-security/2010/12/02/3
 http://www.openwall.com/lists/oss-security/2010/12/02/7
 http://www.openwall.com/lists/oss-security/2010/12/08/4
@@ -125,7 +125,7 @@ arbitrary code execution with the privileges of the CVS server process
 on the system hosting the CVS repository when a remote user eventually
 checks out a revision of the affected file.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3846
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3846
 http://cvs.savannah.gnu.org/viewvc/cvs/ccvs/src/rcs.c?r1=1.262.4.65&r2=1.262.4.66
 https://bugzilla.redhat.com/show_bug.cgi?id=642146
 
@@ -170,11 +170,11 @@ of these modules are in use on default installs of Owl, and they never
 were, hence there was no impact for default installs.
 References:
 http://www.openwall.com/lists/oss-security/2010/08/16/2
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3316
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3316
 http://www.openwall.com/lists/oss-security/2010/09/21/3
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3435
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3430
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3431
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3435
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3430
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3431
 
 2010/10/06 -
 2010/10/16	Package: vim
@@ -215,7 +215,7 @@ built with 32-bit compatibility enabled.
 References:
 https://openvz.org/Download/kernel/rhel5-testing/028stab071.5
 https://openvz.org/Download/kernel/rhel5/028stab070.5
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3081
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3081
 https://bugzilla.redhat.com/show_bug.cgi?id=634457
 https://rhn.redhat.com/errata/RHSA-2010-0704.html
 https://access.redhat.com/articles/40258
@@ -231,7 +231,7 @@ bzip2/libbz2.  An attacker could use the vulnerability to crash bzip2 or
 an application using libbz2 or potentially to execute arbitrary code via
 a crafted "bzip2-compressed" file.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0405
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0405
 https://xorl.wordpress.com/2010/09/21/cve-2010-0405-bzip2-integer-overflow/
 
 2010/09/02 -
@@ -410,7 +410,7 @@ Updated to 4.0.7.  This changes the default behavior of lftp(1) and the
 lftpget(1) script to no longer trust and use a possible server-provided
 filename instead of the user-specified download filename.
 Reference:
-http://www.ocert.org/advisories/ocert-2010-001.html
+https://ocert.org/advisories/ocert-2010-001.html
 
 2010/04/14	Package: strace
 Updated to 4.5.20.
@@ -452,7 +452,7 @@ option to use rmt (just like cpio does), and we applied a number of
 post-release fixes for regressions introduced in the 1.23 release.
 References:
 http://www.agrs.tu-berlin.de/index.php?id=78327
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0624
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0624
 http://lists.gnu.org/archive/html/bug-tar/2010-03/msg00036.html
 
 2010/03/20	Package: hdparm
@@ -516,7 +516,7 @@ by an unsuspecting user on a 64-bit system would lead to a gzip crash or
 potentially to arbitrary code execution with the privileges of the user
 running gzip.
 Reference:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0001
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0001
 
 2009/12/17 -
 2010/01/18	Package: john
@@ -541,7 +541,7 @@ file and tricking a privileged user into executing a libltdl-based
 application in the same directory.
 References:
 http://lists.gnu.org/archive/html/libtool/2009-11/msg00059.html
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-3736
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-3736
 
 2009/11/28	Package: rpm;
 		Owl/build/buildworld.sh;
@@ -678,9 +678,9 @@ sigaltstack local information leak affecting 64-bit kernel builds.
 References:
 http://lists.openwall.net/bugtraq/2009/08/13/11
 http://www.openwall.com/lists/oss-security/2009/08/14/2
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-2692
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-2692
 http://www.openwall.com/lists/oss-security/2009/08/05/1
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-2847
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-2847
 
 2009/08/22	Package: rpm
 Introduced the configure-presets script, which pre-defines a bunch of
@@ -759,8 +759,8 @@ BIND's own access controls (such as the "allow-query" directive) are
 ineffective against the attack.
 References:
 http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=538975
-http://www.kb.cert.org/vuls/id/725188
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-0696
+https://www.kb.cert.org/vuls/id/725188
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-0696
 
 2009/07/20	kernel
 SECURITY FIX	Severity: none to high, local to remote, active
@@ -779,7 +779,7 @@ into 2.6.x kernels recently.
 References:
 http://git.kernel.org/linus/a3ca86aea507904148870946d599e07a340b39bf
 http://www.openwall.com/lists/oss-security/2009/07/16/1
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-1895
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-1895
 
 2009/07/18 -
 2009/07/19	Package: vsftpd
@@ -811,7 +811,7 @@ had any impact on versions 3.0.x of the DHCP server, and there is a
 specific reason why it might not have had any impact, yet we're fixing
 the underlying bug.  Discovery and patch by Christoph Biedl.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-1892
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2009-1892
 http://www.openwall.com/lists/owl-users/2009/07/16/1
 
 2009/07/11	Package: postfix
@@ -835,7 +835,7 @@ unsafe, with the worst-case impact being arbitrary code execution
 (depending on processing inside glibc).
 References:
 http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=498678
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-4109
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-4109
 
 2009/07/05	Package: man-pages
 Updated to 3.21.
@@ -922,7 +922,7 @@ API misuses.
 References:
 http://www.openwall.com/lists/oss-security/2009/01/07/2
 https://www.openssl.org/news/secadv_20090107.txt
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-5077
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-5077
 
 2008/11/02	Package: tar
 Updated to 1.20.
@@ -964,8 +964,8 @@ SECURITY FIX	Severity: medium, remote, active
 Updated to 9.3.5-P1, which additionally randomizes UDP query ports to
 improve resilience to DNS cache poisoning attacks.
 References:
-http://www.kb.cert.org/vuls/id/800113
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-1447
+https://www.kb.cert.org/vuls/id/800113
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-1447
 
 2008/06/29	Package: vsftpd
 Updated to 2.0.6.
@@ -981,7 +981,7 @@ fingerprint.  This effort was supported by CivicActions.  References:
 http://www.openwall.com/lists/oss-security/2008/05/27/3
 http://www.debian.org/security/2008/dsa-1571
 http://www.ubuntu.com/usn/usn-612-1/
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-0166
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-0166
 
 2008/05/18	Package: nmap
 Updated to 4.62.
@@ -1004,7 +1004,7 @@ Updated to 1.0.5.  This release fixes a potential buffer over-read bug,
 which allowed user-assisted remote attackers to cause a crash in libbz2
 via a crafted file.
 Reference:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-1372
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-1372
 
 2008/02/13	Package: pcre
 Updated to 7.6.
@@ -1042,7 +1042,7 @@ will allocate a buffer that is far too small.  This can lead to either a
 crash or potentially a heap-based buffer overflow.
 Thanks to Rafal Wojtczuk of McAfee Avert Labs for reporting this issue.
 Reference:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-5497
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-5497
 
 2007/12/05	Package: gettext
 Updated to 0.14.6.
@@ -1079,7 +1079,7 @@ References:
 http://lists.openwall.net/bugtraq/2007/09/27/14
 http://lists.openwall.net/bugtraq/2007/10/01/7
 https://www.openssl.org/news/secadv_20071012.txt
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-5135
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-5135
 
 2007/10/08	Package: cvs
 Updated to 1.11.22.
@@ -1109,8 +1109,8 @@ helptags_one function, which allowed user-assisted remote attackers to
 execute arbitrary code via format string specifiers in a help-tags tag
 in a help file.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-2438
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-2953
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-2438
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-2953
 
 2007/08/18	kernel
 Updated to Linux 2.4.35-ow2.  The single known security-relevant change
@@ -1125,8 +1125,8 @@ mappings (generic).
 References:
 http://www.openwall.com/lists/announce/2007/08/08/1
 http://www.openwall.com/lists/announce/2007/08/14/1
-http://www.isec.pl/vulnerabilities/isec-0024-death-signal.txt
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-3848
+https://isec.pl/en/vulnerabilities/isec-0024-death-signal.txt
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-3848
 
 2007/08/18	Package: cpio
 Updated to 2.9.
@@ -1142,8 +1142,8 @@ name servers.  The weakness used to make it easier for remote attackers
 to guess the next query id and perform DNS cache poisoning.
 References:
 http://www.trusteer.com/bind9dns
-http://marc.info/?l=bind-announce&m=118531674631565
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-2926
+https://marc.info/?l=bind-announce&m=118531674631565
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-2926
 
 2007/06/01	Package: owl-cdrom
 In the default kernel for x86, enabled more IDE chipset drivers, common
@@ -1156,8 +1156,8 @@ previously.
 Updated to 1.4.2.3.  This release fixes msgid validation in APOP
 authentication and potential buffer overflow in passwd GECOS field parser.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-1558
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-2683
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-1558
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-2683
 
 2007/03/25 -
 2007/05/22	Package: file
@@ -1165,7 +1165,7 @@ SECURITY FIX	Severity: high, indirect, passive
 Fixed potential heap buffer overflow in the file_printf function of the
 libmagic library.
 Reference:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-1536
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-1536
 
 2007/03/29	Package: lftp
 Updated to 3.5.10.
@@ -1185,7 +1185,7 @@ the receiver of the message may not be able to distinguish the forged
 and the properly signed parts of the message.
 References:
 https://www.coresecurity.com/content/gnupg-and-gnupg-clients-unsigned-data-injection-vulnerability
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-1263
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-1263
 
 2007/02/25	Package: openssl
 Updated to 0.9.7m.
@@ -1200,10 +1200,10 @@ The second issue allowed remote DoS attack via a type ANY DNS query
 response that contains multiple RR sets in the answer section, which
 triggers an assertion error if DNSSEC validation is enabled.
 References:
-http://marc.info/?l=bind-announce&m=116968519321296
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-0493
-http://marc.info/?l=bind-announce&m=116968519300764
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-0494
+https://marc.info/?l=bind-announce&m=116968519321296
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-0493
+https://marc.info/?l=bind-announce&m=116968519300764
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-0494
 
 2007/01/18	Package: strace
 Updated to 4.5.15.
@@ -1237,14 +1237,14 @@ Updated to 1.4.6.  This includes a fix for a remotely controllable
 function pointer vulnerability: using malformed OpenPGP packets an
 attacker was able to modify and dereference a function pointer in gpg.
 Reference:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-6235
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-6235
 
 2006/11/28	Package: gnupg
 SECURITY FIX	Severity: high, indirect, passive
 Applied upstream fix for heap buffer overflow bug in gpg when running
 gpg interactively.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-6169
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-6169
 https://lists.gnupg.org/pipermail/gnupg-announce/2006q4/000241.html
 
 2006/11/28	Package: tar
@@ -1254,7 +1254,7 @@ in GNU tar (where a malicious archive containing GNUTYPE_NAMES record
 with a symbolic link could specify files to be extracted to outside of
 the intended directory tree).
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-6097
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-6097
 http://lists.openwall.net/full-disclosure/2006/11/21/20
 
 2006/11/19	Package: rpm
@@ -1263,21 +1263,21 @@ showQueryPackage function.  Although this particular bug is fixed,
 it remains unsafe to invoke "rpm" queries on untrusted package files.
 References:
 https://bugzilla.redhat.com/show_bug.cgi?id=212833
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-5466
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-5466
 
 2006/11/09	Package: openssh
 Backported upstream fix for a bug in the sshd privilege separation
 monitor that weakened its verification of successful authentication.
 References:
 http://lists.mindrot.org/pipermail/openssh-unix-dev/2006-November/024882.html
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-5794
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-5794
 
 2006/11/07	Package: texinfo
 SECURITY FIX	Severity: high, indirect, passive
 Applied upstream patch that fixes potential heap buffer overflow in
 texindex utility.
 Reference:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4810
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4810
 
 2006/10/29	Package: screen
 SECURITY FIX	Severity: low, remote, passive
@@ -1286,7 +1286,7 @@ handling.  The bugs could be used to crash/hang screen by writing a
 special string to a window.
 References:
 http://lists.gnu.org/archive/html/screen-users/2006-10/msg00028.html
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4573
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4573
 
 2006/10/03	Package: openssh
 SECURITY FIX	Severity: low/none to high, remote/local, active
@@ -1296,20 +1296,20 @@ vulnerability (severity: none to high, local, active), CRC compensation
 attack detector DoS (severity: low, remote, active), client NULL
 dereference on protocol error (severity: low, remote, passive).
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2004-2069
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0225
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4924
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4925
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2004-2069
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0225
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4924
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4925
 
 2006/09/29	Package: openssl
 SECURITY FIX	Severity: none to low/high, remote, active/passive
 Updated to 0.9.7l, which includes fixes for four security issues.
 References:
 https://www.openssl.org/news/secadv_20060928.txt
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-2937
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-2940
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-3738
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4343
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-2937
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-2940
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-3738
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4343
 
 2006/09/27	Package: dhcp
 Updated to 3.0.4.
@@ -1320,10 +1320,10 @@ Fixed multiple vulnerabilities (stack buffer overflow, heap buffer
 underflow, heap buffer overflow, infinite loop) discovered by Tavis
 Ormandy of Google Security Team.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4335
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4336
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4337
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4338
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4335
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4336
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4337
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4338
 
 2006/09/19	Package: bison
 Updated to 2.3.
@@ -1337,17 +1337,17 @@ Applied upstream patch to avoid RSA signature forgery.
 References:
 https://www.openssl.org/news/secadv_20060905.txt
 http://www.imc.org/ietf-openpgp/mail-archive/msg06063.html
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4339
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4339
 
 2006/09/06	Package: bind
 SECURITY FIX	Severity: none to low, remote, active
 Updated to 9.3.2-P1, which fixes a couple of bugs that allowed for DoS
 attacks on certain BIND configurations.
 References:
-http://www.kb.cert.org/vuls/id/915404
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4095
-http://www.kb.cert.org/vuls/id/697164
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4096
+https://www.kb.cert.org/vuls/id/915404
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4095
+https://www.kb.cert.org/vuls/id/697164
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-4096
 
 2006/08/17	kernel
 Updated to Linux 2.4.33-ow1.
@@ -1361,7 +1361,7 @@ Updated to 1.4.5.  This includes fixes for two more possible memory
 allocation bugs, similar to the problem fixed in 1.4.3-owl1.
 References:
 https://lists.gnupg.org/pipermail/gnupg-announce/2006q3/000229.html
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-3746
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-3746
 
 2006/06/28	Package: gnupg
 Updated to 1.4.4.
@@ -1371,7 +1371,7 @@ SECURITY FIX	Severity: high, remote, passive
 Applied an upstream fix for potential stack-based buffer overflow when
 processing an overly long namespace from IMAP server.
 Reference:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-3242
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-3242
 
 2006/06/25	Package: nmap
 Updated to 4.11.
@@ -1385,7 +1385,7 @@ Updated to 1.4.3.  Applied a fix for integer overflow vulnerability in
 packet processing that could allow a remote attacker to cause gpg to crash
 and possibly overwrite memory via a message packet with a large length.
 Reference:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-3082
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-3082
 
 2006/06/12	Package: hdparm
 Updated to 6.6.
@@ -1512,9 +1512,9 @@ Updated to 1.4.2.2.  This includes fixes for the signature verification
 vulnerabilities discovered by Tavis Ormandy of Gentoo.
 References:
 https://lists.gnupg.org/pipermail/gnupg-announce/2006q1/000211.html
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0455
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0455
 https://lists.gnupg.org/pipermail/gnupg-announce/2006q1/000216.html
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0049
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0049
 
 2006/03/05	Package: nmap
 Updated to 4.02 Alpha1.
@@ -1544,6 +1544,6 @@ Backported upstream fix for potential heap buffer overrun in handling
 extended headers.
 References:
 http://lists.gnu.org/archive/html/bug-tar/2005-06/msg00029.html
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-0300
 
-$Owl: Owl/doc/CHANGES-3.0,v 1.308.2.4 2017/01/25 10:01:32 solar Exp $
+$Owl: Owl/doc/CHANGES-3.0,v 1.308.2.5 2018/05/23 19:45:20 solar Exp $

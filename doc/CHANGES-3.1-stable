@@ -386,9 +386,9 @@ http://www.openwall.com/lists/oss-security/2014/09/25/32
 http://www.openwall.com/lists/oss-security/2014/09/26/2
 http://lcamtuf.blogspot.com/2014/09/quick-notes-about-bash-bug-its-impact.html
 https://access.redhat.com/blogs/766093/posts/1976383
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6271
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7169
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7186
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7187
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6271
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7169
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7186
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7187
 
-$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.23 2018/05/23 17:46:22 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.24 2018/05/23 19:45:20 solar Exp $

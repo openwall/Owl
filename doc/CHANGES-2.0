@@ -113,7 +113,7 @@ into format strings may allow attackers to overwrite arbitrary memory
 in the Perl interpreter and possibly execute arbitrary code via format
 string specifiers with large values.
 Reference:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2005-3962
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2005-3962
 
 2005/11/27	Package: vsftpd
 Updated to 2.0.3.
@@ -258,7 +258,7 @@ both support SSL 3.0 or TLS 1.0.  The SSL 2.0 protocol is known to have
 severe cryptographic weaknesses and is supported as a fallback only.
 References:
 https://www.openssl.org/news/secadv_20051011.txt
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-2969
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-2969
 
 2005/09/30	Package: tcsh
 Updated to 6.14.00.
@@ -284,8 +284,8 @@ umount available to non-root users with control(8) (by default, only
 root can invoke umount) and specified any filesystems with restrictive
 flags (such as nosuid or nodev) as user-mountable.
 References:
-http://marc.info/?l=bugtraq&m=112656096125857
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-2876
+https://marc.info/?l=bugtraq&m=112656096125857
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-2876
 
 2005/09/05	Package: john
 All of the documentation has been updated to apply to the current
@@ -383,8 +383,8 @@ checks to BFD library and readelf utility to avoid integer overflows
 overflow), fixes for potential stack-based buffer overflows in
 readelf utility, and a fix for the .gdbinit issue in gdb.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1704
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1705
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1704
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1705
 
 2005/05/26	Package: libtool
 Updated to 1.5.18.
@@ -402,9 +402,9 @@ gunzip was used with the -N option), for race condition in the file
 permission handling code of gzip and gunzip, and fix of zgrep and
 bzgrep utilities to properly sanitize arguments.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1228
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0988
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0758
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1228
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0988
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0758
 
 2005/05/17	Package: diffutils
 Updated to 2.8.7.
@@ -425,8 +425,8 @@ Updated to Linux 2.4.30-ow1 and later to 2.4.30-ow3.  Linux 2.4.30
 core dump vulnerability discovered by Paul Starzetz unexploitable.
 Linux 2.4.30-ow3 includes a real fix for said vulnerability.
 References:
-http://www.isec.pl/vulnerabilities/isec-0023-coredump.txt
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1263
+https://isec.pl/en/vulnerabilities/isec-0023-coredump.txt
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1263
 
 2005/05/05 -
 2005/05/11	Package: cpio
@@ -435,8 +435,8 @@ Updated to 2.6.  Added fixes for directory traversal (where a
 malicious archive could specify files to be extracted to outside of
 the intended directory tree) and for certain race condition issues.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1229
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1111
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1229
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-1111
 
 2005/05/07	Packages: coreutils, fileutils, sh-utils, textutils,
 		shadow-utils; Owl/build/installorder.conf
@@ -472,8 +472,8 @@ might have allowed a malicious Telnet server to execute arbitrary
 machine code within the context of the telnet client process used to
 connect to the server.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0469
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0468
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0469
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0468
 
 2005/03/25	Package: e2fsprogs
 Updated to 1.37.
@@ -508,7 +508,7 @@ world-read/writable and updated its documentation to reflect the
 remaining security and reliability problems.  Thanks to Jeroen van
 Wolffelaar for discovering this problem and reporting it to Debian.
 Reference:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0452
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0452
 
 2005/02/06	Package: cpio
 SECURITY FIX	Severity: low, local, passive
@@ -516,7 +516,7 @@ Obey the current umask when creating output files; previously, the
 files would be created with mode 666.  Thanks to Mike O'Connor for
 bringing this up.
 Reference:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-1999-1572
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-1999-1572
 
 2005/01/20	kernel
 SECURITY FIX	Severity: high, local, active
@@ -529,10 +529,10 @@ the Openwall patch applied since the vulnerable code is only compiled
 in if one explicitly enables CONFIG_BINFMT_ELF_AOUT, an option
 introduced by the patch.
 References:
-http://www.isec.pl/vulnerabilities/isec-0022-pagefault.txt
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0001
-http://www.isec.pl/vulnerabilities/isec-0021-uselib.txt
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-1235
+https://isec.pl/en/vulnerabilities/isec-0022-pagefault.txt
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2005-0001
+https://isec.pl/en/vulnerabilities/isec-0021-uselib.txt
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-1235
 
 2005/01/12 -
 2005/01/20	Packages: gcc, glibc, SysVinit, crontabs, db4, dhcp,
@@ -568,10 +568,10 @@ support vulnerabilities discovered by Stefan Esser (confirmed: remote
 DoS by a malicious smbfs server; potential: remote root by a malicious
 server).
 References:
-http://www.isec.pl/vulnerabilities/isec-0017-binfmt_elf.txt
-http://marc.info/?l=bugtraq&m=110091183206580
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0883
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0949
+https://isec.pl/en/vulnerabilities/isec-0017-binfmt_elf.txt
+https://marc.info/?l=bugtraq&m=110091183206580
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0883
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0949
 
 2004/11/11	Package: shadow-utils
 "useradd" and related tools will now optionally allow user and group
@@ -639,9 +639,9 @@ not been enabled in the default kernels on Owl CDs.  However, as the
 potential impact of both issues is a local root compromise, an upgrade
 of older Linux 2.4.x installs to 2.4.26-ow3+ is highly recommended.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0497
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0415
-http://www.isec.pl/vulnerabilities/isec-0016-procleaks.txt
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0497
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0415
+https://isec.pl/en/vulnerabilities/isec-0016-procleaks.txt
 
 2004/07/27	Package: iptables
 Updated to 1.2.11.
@@ -674,10 +674,10 @@ the default kernels on Owl CDs, it's only the Intel PRO/1000 Gigabit
 Ethernet driver (e1000) which has a vulnerability allowing for more
 than a DoS attack fixed with this update.
 References:
-http://marc.info/?l=openwall-announce&m=108763826328168
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0495
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0554
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0535
+http://www.openwall.com/lists/announce/2004/06/19/1
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0495
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0554
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0535
 
 2004/06/09	Package: shadow-utils
 SECURITY FIX	Severity: none to low, local, active
@@ -700,18 +700,18 @@ that CVS server provides any security against a malicious client.  If
 required, any restrictions on the actions CVS server is allowed to
 perform should be imposed at the OS level.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0396
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0414
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0416
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0417
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0418
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0396
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0414
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0416
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0417
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0418
 
 2004/06/07	Package: openssh
 SECURITY FIX	Severity: high, remote, passive
 Fixed directory traversal vulnerability in scp which allowed malicious
 SSH servers to overwrite arbitrary files on the client system.
 Reference:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0175
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0175
 
 2004/06/02	Package: scanlogd
 chroot to /var/empty to further reduce the impact of potential bugs in
@@ -740,10 +740,10 @@ Broadcom Tigon3 Gigabit Ethernet driver and the BusLogic SCSI
 controller driver, but will not include support for IrDA (had to drop
 it to make room for the extra device drivers).
 References:
-http://www.isec.pl/vulnerabilities/isec-0015-msfilter.txt
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0424
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0177
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0133
+https://isec.pl/en/vulnerabilities/isec-0015-msfilter.txt
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0424
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0177
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0133
 
 2004/04/14	Package: cvs
 SECURITY FIX	Severity: high, remote, passive
@@ -760,8 +760,8 @@ server provides any security against a malicious client being able to
 access arbitrary files available under the privileges granted to the
 CVS server at the OS level.
 References:
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0180
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0405
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0180
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0405
 
 2004/03/18	Package: openssl
 SECURITY FIX	Severity: low, remote, passive to active
@@ -773,7 +773,7 @@ are a part of Owl, it's only individual invocations of network clients
 which are affected and may be caused to crash by a malicious server.
 References:
 https://www.openssl.org/news/secadv_20040317.txt
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0079
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2004-0079
 
 2004/02/20 -
 2004/02/24	Packages: readline, bash, bc, gdb, lftp
@@ -829,4 +829,4 @@ Corrected a segfault with --stdin introduced with John 1.6.34.2.
 The startup script will now accept command-line options for syslogd
 and klogd specified in /etc/sysconfig/syslog.
 
-$Owl: Owl/doc/CHANGES-2.0,v 1.204.2.1 2016/08/23 22:06:29 solar Exp $
+$Owl: Owl/doc/CHANGES-2.0,v 1.204.2.2 2018/05/23 19:45:20 solar Exp $

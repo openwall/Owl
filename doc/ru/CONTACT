@@ -7,7 +7,7 @@ http://www.openwall.com/Owl/
 адресу <owl-users-subscribe ПРИ lists.openwall.com>. Архив списка доступен
 на MARC:
 
-http://marc.info/?l=owl-users
+https://marc.info/?l=owl-users
 
 В дополнение к списку рассылки owl-users, вы можете адресовать свои
 комментарии непосредственно разработчикам по адресу
@@ -17,4 +17,4 @@ http://marc.info/?l=owl-users
 отправлять на <security ПРИ cvs.openwall.com>, а об остальных ошибках -
 на <bugs ПРИ cvs.openwall.com>.
 
-$Owl: Owl/doc/ru/CONTACT,v 1.9 2007/06/15 15:04:58 solar Exp $
+$Owl: Owl/doc/ru/CONTACT,v 1.9.4.1 2018/05/23 19:45:21 solar Exp $

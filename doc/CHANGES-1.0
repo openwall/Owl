@@ -59,10 +59,10 @@ intended for making and extracting tape backups rather than archives
 obtained from untrusted sources.  Be very careful with what input you
 pass it and what user you run it as.
 References:
-http://marc.info/?l=bugtraq&m=99496364810666
-http://marc.info/?l=bugtraq&m=103314336129887
-http://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2001-1267
-http://marc.info/?l=bugtraq&m=90674255917321
+https://marc.info/?l=bugtraq&m=99496364810666
+https://marc.info/?l=bugtraq&m=103314336129887
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CAN-2001-1267
+https://marc.info/?l=bugtraq&m=90674255917321
 
 2002/09/19 -
 2002/09/28	Package: xinetd
@@ -989,4 +989,4 @@ we've released.  Thus, this isn't a security update.
 2001/05/15	Owl/doc/fr/*
 New files: French translations of the documentation, from Denis Ducamp.
 
-$Owl: Owl/doc/CHANGES-1.0,v 1.10 2008/01/21 13:31:13 solar Exp $
+$Owl: Owl/doc/CHANGES-1.0,v 1.10.4.1 2018/05/23 19:45:20 solar Exp $
