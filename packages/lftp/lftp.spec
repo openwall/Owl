@@ -1,14 +1,15 @@
-# $Owl: Owl/packages/lftp/lftp.spec,v 1.46 2014/07/22 05:28:12 galaxy Exp $
+# $Owl: Owl/packages/lftp/lftp.spec,v 1.47 2018/05/24 15:46:22 solar Exp $
 
 Summary: Sophisticated command line file transfer program.
 Name: lftp
-Version: 4.5.3
+Version: 4.8.3
 Release: owl1
 License: GPLv3+
 Group: Applications/Internet
 URL: http://lftp.yar.ru
 Source: http://ftp.yars.free.net/pub/source/lftp/lftp-%version.tar.xz
-Patch: %name-4.0.9-fc-date_fmt.diff
+Patch0: lftp-4.8.3-fedora-date_fmt.diff
+Patch1: lftp-4.8.3-owl-portability.diff
 Requires: less
 BuildRequires: openssl-devel >= 0.9.7g-owl1, readline-devel >= 0:4.3
 BuildRequires: ncurses-devel, gettext
@@ -26,14 +27,8 @@ command completion, command history, and a lot more.
 
 %prep
 %setup -q
-%patch -p1
-
-# Owl does not have pkgconfig, so let's apply a workaround
-cat << EOF > m4/noop.m4
-AC_DEFUN([PKG_PROG_PKG_CONFIG], [:])dnl
-AC_DEFUN([PKG_CHECK_MODULES], [:])dnl
-EOF
-autoreconf -fis
+%patch0 -p1
+%patch1 -p1
 
 bzip2 -9k NEWS
 
@@ -76,17 +71,22 @@ fi
 %files
 %defattr(-,root,root)
 %doc AUTHORS BUGS COPYING FAQ FEATURES NEWS.bz2 README README.debug-levels
-%doc THANKS TODO lftp.lsm
+%doc THANKS TODO
 %config /etc/lftp.conf
 %_bindir/*
 %_libdir/liblftp*.so*
-%exclude %_libdir/*.la
 %_libdir/lftp
 %_mandir/man?/lftp*
 %_datadir/lftp
 %_datadir/locale/*/LC_MESSAGES/lftp.mo
+%exclude %_libdir/*.la
+%exclude %_datadir/applications/lftp.desktop
+%exclude %_datadir/icons/hicolor/*/apps/*
 
 %changelog
+* Thu May 24 2018 Solar Designer <solar-at-owl.openwall.com> 4.8.3-owl1
+- Updated to 4.8.3 along with updated date_fmt patch from Fedora.
+
 * Tue Jul 22 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 4.5.3-owl1
 - Updated to 4.5.3.
 

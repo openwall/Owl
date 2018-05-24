@@ -1,0 +1,25 @@
+diff -urp lftp-4.8.3.orig/src/Http.cc lftp-4.8.3/src/Http.cc
+--- lftp-4.8.3.orig/src/Http.cc	2017-09-20 07:59:31 +0000
++++ lftp-4.8.3/src/Http.cc	2018-05-24 12:42:04 +0000
+@@ -26,6 +26,7 @@
+ #include <errno.h>
+ #include <stdarg.h>
+ #include <time.h>
++#include <limits.h>
+ #include <fnmatch.h>
+ #include <locale.h>
+ #include <assert.h>
+@@ -785,9 +786,11 @@ void Http::SendRequest(const char *conne
+ 		     (long long)((limit==FILE_END || limit>entity_size ? entity_size : limit)-1),
+ 		     (long long)entity_size);
+       }
+-      if(entity_date!=NO_DATE)
++      if((entity_date!=NO_DATE) && (entity_date>0L && entity_date<INT_MAX))
+       {
+-	 Send("Last-Modified: %s\r\n",FormatLastModified(entity_date).get());
++	 char d[256];
++	 strftime(d, sizeof(d), "%a, %d %b %H:%M:%S %Y GMT", gmtime(&entity_date));
++	 Send("Last-Modified: %s\r\n",d);
+ 	 Send("X-OC-MTime: %ld\r\n",(long)entity_date);	 // for OwnCloud
+       }
+       break;
