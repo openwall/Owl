@@ -52,13 +52,13 @@ diff -urpN linux-2.6.18-431.el5.028stab123.1/Documentation/sysctl/kernel.txt lin
  value of dmesg_restrict.
 diff -urpN linux-2.6.18-431.el5.028stab123.1/Makefile linux-2.6.18-431.el5.028stab123.1-owl/Makefile
 --- linux-2.6.18-431.el5.028stab123.1/Makefile	2018-05-17 07:40:45 +0000
-+++ linux-2.6.18-431.el5.028stab123.1-owl/Makefile	2018-05-20 16:39:35 +0000
++++ linux-2.6.18-431.el5.028stab123.1-owl/Makefile	2018-06-28 12:31:33 +0000
 @@ -1,7 +1,7 @@
  VERSION = 2
  PATCHLEVEL = 6
  SUBLEVEL = 18
 -EXTRAVERSION = -prep
-+EXTRAVERSION = -431.el5.028stab123.1.owl1
++EXTRAVERSION = -431.el5.028stab123.1.owl2
  RHEL_MAJOR = 5
  RHEL_MINOR = 11
  NAME=Avast! A bilge rat!
@@ -1290,6 +1290,17 @@ diff -urpN linux-2.6.18-431.el5.028stab123.1/fs/sysfs/inode.c linux-2.6.18-431.e
  /*
   * sysfs has a different i_mutex lock order behavior for i_mutex than other
   * filesystems; sysfs i_mutex is called in many places with subsystem locks
+diff -urpN linux-2.6.18-431.el5.028stab123.1/include/asm-x86_64/processor.h linux-2.6.18-431.el5.028stab123.1-owl/include/asm-x86_64/processor.h
+--- linux-2.6.18-431.el5.028stab123.1/include/asm-x86_64/processor.h	2018-05-17 07:40:45 +0000
++++ linux-2.6.18-431.el5.028stab123.1-owl/include/asm-x86_64/processor.h	2018-06-28 12:18:23 +0000
+@@ -269,6 +269,7 @@ struct tss_struct {
+ 	 */
+ #ifndef __GENKSYMS__
+ 	unsigned long		stack_canary;
++	unsigned long		stack_padding;
+ 	unsigned long           stack[64];
+ #endif
+ } __attribute__((packed, __aligned__(PAGE_SIZE)));
 diff -urpN linux-2.6.18-431.el5.028stab123.1/include/linux/binfmts.h linux-2.6.18-431.el5.028stab123.1-owl/include/linux/binfmts.h
 --- linux-2.6.18-431.el5.028stab123.1/include/linux/binfmts.h	2018-05-17 07:40:43 +0000
 +++ linux-2.6.18-431.el5.028stab123.1-owl/include/linux/binfmts.h	2018-05-20 16:37:29 +0000

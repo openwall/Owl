@@ -48,6 +48,13 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
+2018/06/28	Package: kernel
+Fixed a regression introduced with the previous update (to -431) where
+some 32-bit syscalls would fail with EFAULT on a 64-bit kernel because
+of improper alignment of the newly introduced KAISER/KPTI trampoline
+stack.  This fix is due to investigation and patch by Pavel Kankovsky
+and bug report by Chris Bopp.
+
 2018/05/24	Package: lftp
 Updated to 4.8.3.
 
@@ -446,4 +453,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.38 2018/05/24 15:50:11 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.39 2018/06/28 13:33:37 solar Exp $
