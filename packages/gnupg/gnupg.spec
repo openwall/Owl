@@ -1,8 +1,8 @@
-# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.54 2016/08/23 14:44:34 solar Exp $
+# $Owl: Owl/packages/gnupg/gnupg.spec,v 1.55 2018/07/03 13:18:37 solar Exp $
 
 Summary: A GNU utility for secure communication and data storage.
 Name: gnupg
-Version: 1.4.21
+Version: 1.4.23
 Release: owl1
 License: GPL
 Group: Applications/Cryptography
@@ -12,7 +12,7 @@ Source0: %name-%version.tar.xz
 # Signature: ftp://ftp.gnupg.org/gcrypt/gnupg/%name-%version.tar.bz2.sig
 Source1: gpgsplit.1
 Source2: lspgpot.1
-Patch0: gnupg-1.4.21-alt.diff
+Patch0: gnupg-1.4.23-alt.diff
 Patch1: gnupg-1.4.11-alt-owl-info.diff
 Patch2: gnupg-1.4.11-owl-setuid.diff
 Requires(post,preun): /sbin/install-info
@@ -91,6 +91,10 @@ fi
 %exclude %_datadir/gnupg/FAQ
 
 %changelog
+* Tue Jul 03 2018 Solar Designer <solar-at-owl.openwall.com> 1.4.23-owl1
+- Updated to 1.4.23 with the ALT patch based on 1.4.22-alt2 with the upstream
+backports removed (included in 1.4.23).
+
 * Tue Aug 23 2016 Solar Designer <solar-at-owl.openwall.com> 1.4.21-owl1
 - Updated to 1.4.21.
 
