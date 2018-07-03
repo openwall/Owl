@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.106.2.11 2018/05/22 16:48:52 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.106.2.12 2018/07/03 13:44:36 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 431.el5.028stab123.1
-Release: %ovzversion.owl1
+Release: %ovzversion.owl2
 License: GPLv2
 Group: System Environment/Kernel
 URL: https://openvz.org/Download/kernel/rhel5/028stab122.4
@@ -104,6 +104,12 @@ done
 %files fake
 
 %changelog
+* Thu Jun 28 2018 Solar Designer <solar-at-owl.openwall.com> 2.6.18-431.el5.028stab123.1.owl2
+- Fixed a regression introduced with the previous update (to -431) where some
+32-bit syscalls would fail with EFAULT on a 64-bit kernel because of improper
+alignment of the newly introduced KAISER/KPTI trampoline stack.  This fix is
+due to investigation and patch by Pavel Kankovsky and bug report by Chris Bopp.
+
 * Sun May 20 2018 Solar Designer <solar-at-owl.openwall.com> 2.6.18-431.el5.028stab123.1.owl1
 - Updated to 2.6.18-431.el5.028stab123.1.
 
