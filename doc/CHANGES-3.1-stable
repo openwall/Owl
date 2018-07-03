@@ -45,6 +45,26 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl 3.1-stable.
 
+(2018/07/03)
+2018/07/03	Package: gnupg
+SECURITY FIX	Severity: medium, local/indirect, passive
+Updated to 1.4.23, which, compared to 1.4.21, fixes a side-channel leak
+(CVE-2017-7526) and a bypass of signature verification in third-party
+programs that invoke GnuPG (CVE-2018-12020).
+References:
+http://www.openwall.com/lists/oss-security/2017/07/06/8
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-7526
+http://www.openwall.com/lists/oss-security/2018/06/08/2
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-12020
+
+(2018/06/28)
+2018/07/03	Package: kernel
+Fixed a regression introduced with the previous update (to -431) where
+some 32-bit syscalls would fail with EFAULT on a 64-bit kernel because
+of improper alignment of the newly introduced KAISER/KPTI trampoline
+stack.  This fix is due to investigation and patch by Pavel Kankovsky
+and bug report by Chris Bopp.
+
 (2018/05/23)
 2018/05/23	Packages: procps, procps-ng
 SECURITY FIX	Severity: high, local, passive
@@ -391,4 +411,4 @@ https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7169
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7186
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-7187
 
-$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.24 2018/05/23 19:45:20 solar Exp $
+$Owl: Owl/doc/Attic/CHANGES-3.1-stable,v 1.1.2.25 2018/07/03 13:51:13 solar Exp $
