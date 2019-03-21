@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.187 2018/05/22 16:52:28 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.188 2019/03/21 21:30:46 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.8.0.13
+Version: 1.8.0.14
 %define charsets_version 20130529
 Release: owl1
 License: GPL
@@ -199,6 +199,14 @@ install -m 644 -p run/{mailer,makechr,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Thu Mar 21 2019 Solar Designer <solar-at-owl.openwall.com> 1.8.0.14-owl1
+- Dropped undocumented limitation of the 'M' and 'Q' rule commands where they
+would sometimes memorize/check only up to the current hash type's length limit
+yet this optimization wouldn't necessarily be transparent (e.g., if a later
+command would extract a substring from above the hash type's length limit and
+bring it to within the limit).
+- Applied assorted other bugfixes and cleanups, some of them based on jumbo's.
+
 * Sun Mar 25 2018 Solar Designer <solar-at-owl.openwall.com> 1.8.0.13-owl1
 - Fixed operator precedence in the external mode compiler to be the same as C.
 
