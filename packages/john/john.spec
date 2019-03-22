@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.188 2019/03/21 21:30:46 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.189 2019/03/22 11:28:57 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.8.0.14
+Version: 1.8.0.15
 %define charsets_version 20130529
 Release: owl1
 License: GPL
@@ -199,6 +199,15 @@ install -m 644 -p run/{mailer,makechr,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Fri Mar 22 2019 Solar Designer <solar-at-owl.openwall.com> 1.8.0.15-owl1
+- Added linux-x86-64-avx512 and linux-x86-64-avx2 make targets, which use
+respectively AVX-512 and AVX2 for bitslice DES.  (These are not used in the Owl
+package because of Owl's old gcc and Linux kernel.)
+- Dropped use of 256-bit AVX (the original "floating point" one) in 32-bit
+builds, dropped compile-time support for other weird bitslice DES vector types
+(these were for experiments only and didn't provide performance improvement on
+almost any real hardware).
+
 * Thu Mar 21 2019 Solar Designer <solar-at-owl.openwall.com> 1.8.0.14-owl1
 - Dropped undocumented limitation of the 'M' and 'Q' rule commands where they
 would sometimes memorize/check only up to the current hash type's length limit
