@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.189 2019/03/22 11:28:57 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.190 2019/03/23 12:15:28 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.8.0.15
+Version: 1.8.0.16
 %define charsets_version 20130529
 Release: owl1
 License: GPL
@@ -199,6 +199,12 @@ install -m 644 -p run/{mailer,makechr,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Sat Mar 23 2019 Solar Designer <solar-at-owl.openwall.com> 1.8.0.16-owl1
+- Added runtime detection of AVX2 and AVX-512, loosely based on work by magnum
+in jumbo (thanks!)
+- Added linux-x86-avx512 and linux-x86-avx2 make targets (32-bit, mostly for
+testing in case the 32-bit AVX2 code is later needed e.g. for a Win32 build).
+
 * Fri Mar 22 2019 Solar Designer <solar-at-owl.openwall.com> 1.8.0.15-owl1
 - Added linux-x86-64-avx512 and linux-x86-64-avx2 make targets, which use
 respectively AVX-512 and AVX2 for bitslice DES.  (These are not used in the Owl
