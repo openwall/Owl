@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.192 2019/04/08 01:33:49 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.193 2019/04/12 01:03:52 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -6,7 +6,7 @@
 
 Summary: John the Ripper password cracker.
 Name: john
-Version: 1.8.0.18
+Version: 1.9.0
 %define charsets_version 20130529
 Release: owl1
 License: GPL
@@ -199,6 +199,9 @@ install -m 644 -p run/{mailer,makechr,relbench} doc/
 %attr(644,root,root) %_datadir/john/*.chr
 
 %changelog
+* Fri Apr 12 2019 Solar Designer <solar-at-owl.openwall.com> 1.9.0-owl1
+- Documentation updates.
+
 * Mon Apr 08 2019 Solar Designer <solar-at-owl.openwall.com> 1.8.0.18-owl1
 - Benchmark using all-different candidate passwords of length 7 by default.
 
