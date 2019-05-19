@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/john/john.spec,v 1.193 2019/04/12 01:03:52 solar Exp $
+# $Owl: Owl/packages/john/john.spec,v 1.194 2019/05/19 15:10:03 solar Exp $
 
 %define BUILD_AVX 1
 %define BUILD_XOP 1
@@ -11,7 +11,7 @@ Version: 1.9.0
 Release: owl1
 License: GPL
 Group: Applications/System
-URL: http://www.openwall.com/john/
+URL: https://www.openwall.com/john/
 Source0: john-%version.tar.gz
 Source1: john-charsets-%charsets_version.tar.xz
 BuildRoot: /override/%name-%version
@@ -433,7 +433,7 @@ status line to be displayed, respectively.
 - The bitslice DES S-box expressions have been replaced with those generated
 by Roman Rusakov specifically for John the Ripper.  The corresponding assembly
 code for x86 with MMX, SSE2, and for x86-64 with SSE2 has been re-generated.
-This effort has been sponsored by Rapid7: http://www.rapid7.com
+This effort has been sponsored by Rapid7: https://www.rapid7.com
 - Corrected support for bcrypt (OpenBSD Blowfish) hashes of passwords
 containing non-ASCII characters (that is, characters with the 8th bit set).
 Added support for such hashes produced by crypt_blowfish up to 1.0.4, which
@@ -633,7 +633,7 @@ vs. incompatible ones.
 - Use sysconf(_SC_CLK_TCK) instead of CLK_TCK when _SC_CLK_TCK is known to
 be available or CLK_TCK is not (needed for glibc 2.3.90+).
 - Worked around a gcc 4.1.0 strict aliasing bug affecting BF_std.c, BF_body:
-http://gcc.gnu.org/bugzilla/show_bug.cgi?id=26587
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=26587
 - Added a separate DO_ALIGN(5) (cache line alignment) into x86.S after a
 possible switch to .bss from .data or .text.
 - Added "notes to packagers" to params.h.
