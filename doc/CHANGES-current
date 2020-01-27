@@ -48,6 +48,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
+2020/01/26	Package: e2fsprogs
+Updated to 1.45.5
+
 2018/07/03	Package: gnupg
 SECURITY FIX	Severity: medium, local/indirect, passive
 Updated to 1.4.23, which, compared to 1.4.21, fixes a side-channel leak
@@ -464,4 +467,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.40 2018/07/03 13:28:38 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.41 2020/01/27 22:46:39 sergio Exp $

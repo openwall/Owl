@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.59 2014/07/12 14:08:51 galaxy Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.60 2020/01/27 22:43:56 sergio Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -12,8 +12,8 @@
 
 Summary: Utilities for managing ext2/ext3/ext4 filesystems.
 Name: e2fsprogs
-Version: 1.41.14
-Release: owl2
+Version: 1.45.5
+Release: owl1
 License: GPL
 Group: System Environment/Base
 URL: http://e2fsprogs.sourceforge.net
@@ -21,11 +21,8 @@ URL: http://e2fsprogs.sourceforge.net
 Source: e2fsprogs-%version.tar.xz
 # Signature: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz.asc
 # http://repo.or.cz/w/e2fsprogs.git?a=shortlog;h=maint
-Patch0: e2fsprogs-1.41.5-alt-fixes.diff
-Patch1: e2fsprogs-1.41.5-owl-blkid-env.diff
-Patch2: e2fsprogs-1.41.5-owl-tests.diff
-Patch3: e2fsprogs-1.41.14-up-fix-computation.diff
-Patch4: e2fsprogs-1.41.14-owl-warnings.diff
+Patch0: e2fsprogs-1.45.5-owl-Makefile.diff
+Patch1: e2fsprogs-1.45.5-owl-tests.diff
 BuildRequires: gettext, texinfo, automake, autoconf
 BuildRequires: glibc >= 0:2.2, sed >= 0:4.1
 %if !%USE_PKGCONFIG
@@ -59,10 +56,7 @@ ext2, ext3, and/or ext4 filesystem-specific programs.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-bzip2 -9k RELEASE-NOTES
+bzip2 -9fk RELEASE-NOTES
 
 # remove these unwanted header files just in case
 rm -r include
@@ -72,7 +66,7 @@ find -type f -print0 |
 	xargs -r0 grep -lZ '^static void usage' -- |
 	xargs -r0 sed -i 's/^static void usage/__attribute__((noreturn)) &/' --
 
-%{expand:%%define optflags %optflags -Wall}
+%{expand:%%define optflags %optflags -Wall -std=gnu99}
 
 %build
 export CC="%__cc"
@@ -80,6 +74,7 @@ export CC="%__cc"
 	--disable-e2initrd-helper \
 	--disable-tls \
 	--disable-uuidd \
+	--disable-defrag \
 	--enable-elf-shlibs \
 	--enable-htree \
 	--enable-nls \
@@ -143,6 +138,8 @@ fi
 
 %config(noreplace) %_sysconfdir/*.conf
 
+#/etc/cron.d/e2scrub_all
+
 /sbin/badblocks
 /sbin/blkid
 /sbin/debugfs
@@ -150,23 +147,25 @@ fi
 /sbin/e2fsck
 /sbin/e2image
 /sbin/e2label
+/sbin/e2mmpstatus
 /sbin/findfs
 /sbin/fsck
 /sbin/fsck.ext2
 /sbin/fsck.ext3
 /sbin/fsck.ext4
-/sbin/fsck.ext4dev
 /sbin/logsave
 /sbin/mke2fs
 /sbin/mkfs.ext2
 /sbin/mkfs.ext3
 /sbin/mkfs.ext4
-/sbin/mkfs.ext4dev
 /sbin/resize2fs
 /sbin/tune2fs
+#/sbin/e2scrub
+#/sbin/e2scrub_all
 /sbin/e2undo
 %_sbindir/filefrag
 %_sbindir/e2freefrag
+%_sbindir/e4crypt
 %_sbindir/mklost+found
 
 /%_lib/libblkid.so.*
@@ -190,21 +189,23 @@ fi
 %_mandir/man8/e2fsck.8*
 %_mandir/man8/e2image.8*
 %_mandir/man8/e2label.8*
+%_mandir/man8/e2mmpstatus.8.gz*
+#%_mandir/man8/e2scrub.8.gz*
+#%_mandir/man8/e2scrub_all.8.gz*
 %_mandir/man8/e2undo.8*
 %_mandir/man8/filefrag.8*
 %_mandir/man8/e2freefrag.8*
+%_mandir/man8/e4crypt.8.gz*
 %_mandir/man8/findfs.8*
 %_mandir/man8/fsck.8*
 %_mandir/man8/fsck.ext2.8*
 %_mandir/man8/fsck.ext3.8*
 %_mandir/man8/fsck.ext4.8*
-%_mandir/man8/fsck.ext4dev.8*
 %_mandir/man8/logsave.8*
 %_mandir/man8/mke2fs.8*
 %_mandir/man8/mkfs.ext2.8*
 %_mandir/man8/mkfs.ext3.8*
 %_mandir/man8/mkfs.ext4.8*
-%_mandir/man8/mkfs.ext4dev.8*
 %_mandir/man8/mklost+found.8*
 %_mandir/man8/resize2fs.8*
 %_mandir/man8/tune2fs.8*
@@ -227,6 +228,7 @@ fi
 %_libdir/libss.so
 %_libdir/libuuid.a
 %_libdir/libuuid.so
+#%_libdir/e2fsprogs/e2scrub_all_cron
 
 %if %USE_PKGCONFIG
 %_libdir/pkgconfig/blkid.pc
@@ -244,6 +246,7 @@ fi
 %_includedir/blkid
 %_includedir/e2p
 %_includedir/et
+%_includedir/com_err.h
 %_includedir/ext2fs
 %_includedir/ss
 %_includedir/uuid
@@ -263,6 +266,12 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
+* Tue Jan 07 2020 (Sergio) <don.sergio.q-at-gmail.com> 1.45.5-ow1
+- Updated to 1.45.5.
+- Updated -owl-tests patch.
+- Dropped legacy patches.
+- A e2scrub removed from the package (Makefile patched and install strings commented).
+
 * Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.41.14-owl2
 - Replaced the deprecated PreReq tag with Requires(post,preun).
 - Dropped the PreReq tag for /sbin/ldconfig.
