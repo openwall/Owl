@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.61 2020/02/04 19:28:13 solar Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.62 2020/02/04 19:51:00 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -17,10 +17,10 @@ Release: owl1
 License: GPL
 Group: System Environment/Base
 URL: http://e2fsprogs.sourceforge.net
-# http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz
-Source: e2fsprogs-%version.tar.xz
-# Signature: http://prdownloads.sourceforge.net/e2fsprogs/e2fsprogs-%version.tar.gz.asc
-# http://repo.or.cz/w/e2fsprogs.git?a=shortlog;h=maint
+Source: https://mirrors.edge.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v%version/e2fsprogs-%version.tar.xz
+# Signature: https://mirrors.edge.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v%version/e2fsprogs-%version.tar.sign
+# https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git
+# https://repo.or.cz/w/e2fsprogs.git?a=shortlog;h=maint
 Patch0: e2fsprogs-1.45.5-owl-Makefile.diff
 Patch1: e2fsprogs-1.45.5-owl-tests.diff
 BuildRequires: gettext, texinfo, automake, autoconf
