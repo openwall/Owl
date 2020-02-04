@@ -63,6 +63,12 @@ https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-5094
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1572
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0247
 
+2019/12/25	Package: passwdqc
+Updated to 1.4.0.
+
+2019/04/12	Package: john
+Updated to 1.9.0.
+
 2018/07/03	Package: gnupg
 SECURITY FIX	Severity: medium, local/indirect, passive
 Updated to 1.4.23, which, compared to 1.4.21, fixes a side-channel leak
@@ -479,4 +485,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.43 2020/02/04 20:20:43 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.44 2020/02/04 20:23:08 solar Exp $
