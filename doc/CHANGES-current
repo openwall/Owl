@@ -56,8 +56,8 @@ filesystem images have been found and fixed in e2fsprogs components.
 Those vulnerabilities don't pose a risk to typical systems that do not
 use untrusted filesystem images, but are high impact on those that do.
 References:
-https://blog.talosintelligence.com/2020/01/e2fsprogs-remote-code-execution-vuln-jan-2020.html
 https://talosintelligence.com/vulnerability_reports/TALOS-2019-0973
+https://talosintelligence.com/vulnerability_reports/TALOS-2019-0887
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-5188
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-5094
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1572
@@ -485,4 +485,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.44 2020/02/04 20:23:08 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.45 2020/02/04 21:21:02 solar Exp $
