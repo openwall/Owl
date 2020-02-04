@@ -48,8 +48,20 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
-2020/01/26	Package: e2fsprogs
-Updated to 1.45.5
+2020/02/04	Package: e2fsprogs
+SECURITY FIX	Severity: none to high, indirect, passive
+Updated to 1.45.5.  Since the version of e2fsprogs that we had packaged
+previously, multiple vulnerabilities with attack vectors via malicious
+filesystem images have been found and fixed in e2fsprogs components.
+Those vulnerabilities don't pose a risk to typical systems that do not
+use untrusted filesystem images, but are high impact on those that do.
+References:
+https://blog.talosintelligence.com/2020/01/e2fsprogs-remote-code-execution-vuln-jan-2020.html
+https://talosintelligence.com/vulnerability_reports/TALOS-2019-0973
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-5188
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-5094
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1572
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-0247
 
 2018/07/03	Package: gnupg
 SECURITY FIX	Severity: medium, local/indirect, passive
@@ -467,4 +479,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.41 2020/01/27 22:46:39 sergio Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.42 2020/02/04 20:15:03 solar Exp $
