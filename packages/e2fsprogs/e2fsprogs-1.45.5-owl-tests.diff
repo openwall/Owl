@@ -20,5 +20,5 @@
  echo ""
  
 -exit 1
-+# Temporary suppress the error return code
++# Temporarily suppress the error return code
 +exit 0

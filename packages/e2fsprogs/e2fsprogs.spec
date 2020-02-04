@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.60 2020/01/27 22:43:56 sergio Exp $
+# $Owl: Owl/packages/e2fsprogs/e2fsprogs.spec,v 1.61 2020/02/04 19:28:13 solar Exp $
 
 # Owl doesn't have pkgconfig yet
 %define USE_PKGCONFIG 0
@@ -24,7 +24,7 @@ Source: e2fsprogs-%version.tar.xz
 Patch0: e2fsprogs-1.45.5-owl-Makefile.diff
 Patch1: e2fsprogs-1.45.5-owl-tests.diff
 BuildRequires: gettext, texinfo, automake, autoconf
-BuildRequires: glibc >= 0:2.2, sed >= 0:4.1
+BuildRequires: glibc >= 0:2.2, sed >= 0:4.1, coreutils >= 8.22
 %if !%USE_PKGCONFIG
 BuildRequires: rpm-build >= 0:4
 %endif
@@ -266,11 +266,10 @@ fi
 %_mandir/man3/uuid_unparse.3*
 
 %changelog
-* Tue Jan 07 2020 (Sergio) <don.sergio.q-at-gmail.com> 1.45.5-ow1
-- Updated to 1.45.5.
+* Tue Feb 04 2020 Sergio <sergio-at-owl.openwall.com> 1.45.5-ow1
+- Updated to 1.45.5, excluding e2scrub for now.
 - Updated -owl-tests patch.
 - Dropped legacy patches.
-- A e2scrub removed from the package (Makefile patched and install strings commented).
 
 * Mon Jun 30 2014 (GalaxyMaster) <galaxy-at-owl.openwall.com> 1.41.14-owl2
 - Replaced the deprecated PreReq tag with Requires(post,preun).
