@@ -86,10 +86,10 @@ Updated to 4.8.3.
 
 2018/05/23	Packages: procps, procps-ng
 SECURITY FIX	Severity: high, local, passive
-Replaced procps with procps-ng 3.3.14 plus all Qualys patches fixing a number
-of issues that Qualys found during their security audit, including some issues
-that might have allowed successful attacks on a user (or root) invoking top(1)
-or other procps programs.
+Replaced procps with procps-ng 3.3.14 plus all Qualys patches fixing a
+number of issues that Qualys found during their security audit,
+including some issues that might have allowed successful attacks on a
+user (or root) invoking top(1) or other procps programs.
 References:
 http://www.openwall.com/lists/oss-security/2018/05/17/1
 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-1122
@@ -479,4 +479,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.42 2020/02/04 20:15:03 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.43 2020/02/04 20:20:43 solar Exp $
