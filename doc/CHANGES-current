@@ -48,6 +48,25 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
+2020/05/19	Package: kernel
+SECURITY FIX	Severity: high, local, active
+Merged the most relevant fixes from RHEL5's -436, including for the
+following local vulnerabilities: use-after-free in sys_mq_notify()
+allowing for a local root compromise and container escape by any user
+(CVE-2017-11176), divide-by-zero in __tcp_select_window() allowing for a
+local DoS (CVE-2017-14106), use-after-free in ALSA allowing for a local
+root compromise by a host user in group "audio" if the vulnerable kernel
+module is loaded (CVE-2017-15265).  Also fixed is an inconsistency in
+modify_ldt(2)'s memory (de)allocation, which got introduced along with
+KPTI in our update to -431 and is known as Red Hat's "bug 1584622" and
+might have had local security impact.
+References:
+https://access.redhat.com/errata/RHSA-2018:3822
+https://access.redhat.com/errata/RHSA-2018:2172
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-11176
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-14106
+https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-15265
+
 2020/02/04	Package: e2fsprogs
 SECURITY FIX	Severity: none to high, indirect, passive
 Updated to 1.45.5.  Since the version of e2fsprogs that we had packaged
@@ -485,4 +504,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.45 2020/02/04 21:21:02 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.46 2020/05/19 18:18:41 solar Exp $
