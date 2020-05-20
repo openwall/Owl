@@ -1,4 +1,4 @@
-# $Owl: Owl/packages/kernel/kernel.spec,v 1.106.2.12 2018/07/03 13:44:36 solar Exp $
+# $Owl: Owl/packages/kernel/kernel.spec,v 1.106.2.13 2020/05/20 14:30:07 solar Exp $
 
 %{?!BUILD_MODULES: %define BUILD_MODULES 1}
 
@@ -6,7 +6,7 @@ Summary: The Linux kernel.
 Name: kernel
 Version: 2.6.18
 %define ovzversion 431.el5.028stab123.1
-Release: %ovzversion.owl2
+Release: %ovzversion.owl3
 License: GPLv2
 Group: System Environment/Kernel
 URL: https://openvz.org/Download/kernel/rhel5/028stab122.4
@@ -104,6 +104,15 @@ done
 %files fake
 
 %changelog
+* Tue May 19 2020 Solar Designer <solar-at-owl.openwall.com> 2.6.18-431.el5.028stab123.1.owl3
+- Merged the most relevant fixes from Red Hat's -436:
+  - [alsa] seq: Fix use-after-free at creating a port (Denys Vlasenko) [1503379] {CVE-2017-15265}
+  - [ipc] mqueue: fix a use-after-free in sys_mq_notify() (Radomir Vrbovsky) [1476123] {CVE-2017-11176}
+  - [x86] fix kexec load warnings with PTI enabled (Rafael Aquini) [1576191]
+  - [net] tcp: fix 0 divide in __tcp_select_window (Davide Caratti) [1488343] {CVE-2017-14106}
+  - [net] tcp: initialize rcv_mss to TCP_MIN_MSS instead of 0 (Davide Caratti) [1488343] {CVE-2017-14106}
+  - [x86] adjust / fix LDT handling for PTI (Rafael Aquini) [1584622]
+
 * Thu Jun 28 2018 Solar Designer <solar-at-owl.openwall.com> 2.6.18-431.el5.028stab123.1.owl2
 - Fixed a regression introduced with the previous update (to -431) where some
 32-bit syscalls would fail with EFAULT on a 64-bit kernel because of improper
