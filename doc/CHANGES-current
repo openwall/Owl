@@ -48,6 +48,9 @@ clarify the specific issue(s) and their severities in the description.
 
 	Changes made between Owl 3.1 and Owl-current.
 
+2021/01/11	Package: tcb
+Updated to 1.2.
+
 2020/05/19	Package: kernel
 SECURITY FIX	Severity: high, local, active
 Merged the most relevant fixes from RHEL5's -436, including for the
@@ -505,4 +508,4 @@ Updated to 1.14.
 2014/07/12	Package: autoconf
 Updated to 2.69.
 
-$Owl: Owl/doc/CHANGES-current,v 1.47 2020/05/19 18:42:53 solar Exp $
+$Owl: Owl/doc/CHANGES-current,v 1.48 2021/01/11 14:10:20 solar Exp $
